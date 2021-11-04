@@ -1284,8 +1284,8 @@ export function updateKubernetesTemplateAPI (id, payload) {
   return http.put(`/api/aslan/template/yaml/${id}`, payload)
 }
 
-export function validateKubernetesAPI (payload) {
-  return http.post(`/api/aslan/template/yaml/validation`, payload)
+export function praseKubernetesTemplateAPI (payload) {
+  return http.post(`/api/aslan/template/yaml/getVariables`, payload)
 }
 
 export function getKubernetesAPI (id) {
@@ -1306,10 +1306,6 @@ export function loadServiceFromKubernetesTemplateAPI (payload) {
 
 export function reloadServiceFromKubernetesTemplateAPI (payload) {
   return http.post(`/api/aslan/service/template/reload`, payload)
-}
-
-export function updateKubernetesTemplateVariablesAPI (id, payload) {
-  return http.put(`/api/aslan/template/yaml/${id}/variables`, payload)
 }
 
 // helm env and service

@@ -103,7 +103,7 @@
 </template>
 <script>
 import { getKubernetesTemplateBuildReferenceAPI } from '@api'
-import { cloneDeep, unionBy } from 'lodash'
+import { unionBy } from 'lodash'
 export default {
   data () {
     return {

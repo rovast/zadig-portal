@@ -31,10 +31,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="目标分支" prop="repo.branch"
+          v-if="checkGitRepo"
           :rules="[
-          { required: true, message: '请输入目标分支', trigger: ['blur', 'change'] }
+          { required: true, message: webhookSwap.repo.is_regular ? '请输入正则表达式配置' : '请选择目标分支', trigger: ['blur', 'change'] }
         ]">
-          <el-input style="width: 100%;" v-if="checkGitRepo && webhookSwap.repo.is_regular"  v-model="webhookSwap.repo.branch" placeholder="请输入正则表达式配置" size="small"></el-input>
+          <el-input style="width: 100%;" v-if="webhookSwap.repo.is_regular"  v-model="webhookSwap.repo.branch" placeholder="请输入正则表达式配置" size="small"></el-input>
           <el-select v-else
                      style="width: 100%;"
                      v-model="webhookSwap.repo.branch"
@@ -48,13 +49,29 @@
                        :value="branch.name">
             </el-option>
           </el-select>
-          <div v-if="checkGitRepo">
-            <el-switch v-model="webhookSwap.repo.is_regular" active-text="正则表达式配置" @change="webhookSwap.repo.branch = '';matchedBranchNames=null;"></el-switch>
-            <div v-show="webhookSwap.repo.is_regular">
-              <span v-show="matchedBranchNames">当前正则匹配到的分支：{{matchedBranchNames && matchedBranchNames.length === 0 ? '无': ''}}</span>
-              <span style="display: inline-block; padding-right: 10px;" v-for="branch in matchedBranchNames" :key="branch">{{ branch }}</span>
-            </div>
+          <el-switch v-model="webhookSwap.repo.is_regular" active-text="正则表达式配置" @change="webhookSwap.repo.branch = '';matchedBranchNames=null;"></el-switch>
+          <div v-show="webhookSwap.repo.is_regular">
+            <span v-show="matchedBranchNames">当前正则匹配到的分支：{{matchedBranchNames && matchedBranchNames.length === 0 ? '无': ''}}</span>
+            <span style="display: inline-block; padding-right: 10px;" v-for="branch in matchedBranchNames" :key="branch">{{ branch }}</span>
           </div>
+        </el-form-item>
+        <el-form-item label="目标分支" prop="repo.branch"
+          v-else
+          :rules="[
+          { required: true, message: '请选择目标分支', trigger: ['blur', 'change'] }
+        ]">
+          <el-select style="width: 100%;"
+                     v-model="webhookSwap.repo.branch"
+                     size="small"
+                     filterable
+                     clearable
+                     placeholder="请选择">
+            <el-option v-for="(branch,index) in webhookBranches[webhookSwap.repo.repo_name]"
+                       :key="index"
+                       :label="branch.name"
+                       :value="branch.name">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item v-if="webhookSwap.repo.source==='gerrit'"
                       label="触发事件"
@@ -185,7 +202,7 @@ export default {
   data () {
     this.validateRepo = (rule, value, callback) => {
       if (Object.keys(value).length === 0) {
-        callback(new Error('请输入代码库'))
+        callback(new Error('请选择代码库'))
       } else {
         callback()
       }
@@ -194,7 +211,7 @@ export default {
       events: [
         {
           required: true,
-          message: '请输入触发事件',
+          message: '请选择触发事件',
           trigger: ['blur', 'change']
         }
       ],
@@ -256,7 +273,7 @@ export default {
       checkRegularAPI(payload).then(res => {
         that.matchedBranchNames = res || []
       })
-    }, 200),
+    }, 500),
     editWebhook (index) {
       this.webhookEditMode = true
       this.currenteditWebhookIndex = index
@@ -362,9 +379,10 @@ export default {
     },
     webhookRepos: {
       get: function () {
-        return this.avaliableRepos.map(repo => {
-          return { ...repo, is_regular: false }
+        this.avaliableRepos.forEach(repo => {
+          this.$set(repo, 'is_regular', false)
         })
+        return this.avaliableRepos
       }
     },
     checkGitRepo () {

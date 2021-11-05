@@ -146,7 +146,6 @@
         :branchName="source.branchName"
         :remoteName="source.remoteName"
         :showTree="workSpaceModalVisible"
-        :closeFileTree="closeFileTree"
         :type="gitName"
         :url="source.url"
         :changeSelectPath="changeSelectPath"
@@ -299,16 +298,14 @@ export default {
         this.workSpaceModalVisible = true
       })
     },
-    closeFileTree () {
+    closeFileTree (successServices) {
       this.$store.commit('SERVICE_DIALOG_VISIBLE', false)
       this.$store.dispatch('queryService', {
         projectName: this.$route.params.project_name
       })
-      const services = this.selectPath.map(path => {
-        const names = path.split('/')
-        const name = names[names.length - 1]
+      const services = successServices.map(service => {
         return {
-          serviceName: name,
+          serviceName: service,
           type: this.isUpdate ? 'update' : 'create'
         }
       })
@@ -358,7 +355,7 @@ export default {
         payload
       ).catch(error => console.log(error))
       if (res) {
-        this.closeFileTree()
+        this.closeFileTree(res.successServices || [])
       }
       this.loading = false
     },

@@ -13,8 +13,9 @@
                       :title="ann.content.title"
                       :content="ann.content.content"></announcement>
         <topbar></topbar>
-        <router-view>
+        <router-view class="main-content">
         </router-view>
+        <FloatLink class="main-float"></FloatLink>
       </div>
     </div>
   </div>
@@ -28,6 +29,7 @@ import sidebar from './home/sidebar.vue'
 import subSidebar from './home/sub_sidebar.vue'
 import topbar from './home/topbar.vue'
 import announcement from './home/announcement.vue'
+import FloatLink from './home/float_link.vue'
 export default {
   data () {
     return {
@@ -63,7 +65,8 @@ export default {
     sidebar,
     topbar,
     subSidebar,
-    announcement
+    announcement,
+    FloatLink
   },
   created () {
     this.$store.dispatch('getSignupStatus').then(() => {
@@ -165,6 +168,18 @@ body {
         overflow: auto;
         -webkit-box-orient: vertical;
         -webkit-box-direction: normal;
+
+        .main-content {
+          position: relative;
+          z-index: 0;
+        }
+
+        .main-float {
+          position: fixed;
+          right: 20px;
+          bottom: 20px;
+          z-index: 1;
+        }
       }
     }
   }

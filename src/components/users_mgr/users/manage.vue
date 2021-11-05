@@ -133,7 +133,6 @@
 import {
   addUserAPI,
   usersAPI,
-  deleteUserAPI,
   getSystemRoleBindingsAPI,
   addSystemRoleBindingsAPI
 } from '@api'

@@ -597,15 +597,6 @@ export function getTestReportAPI (projectName, workflowName, taskID, testJobName
   )
 }
 
-// Install
-export function checkOrganizationHasSignupAPI () {
-  return http.get('/api/directory/check')
-}
-
-export function createOrganizationInfoAPI (payload) {
-  return http.post('/api/directory/organization', payload)
-}
-
 // User Management
 
 export function usersAPI (payload) {
@@ -700,9 +691,6 @@ export function deleteGithubAppAPI (id) {
 }
 
 // Account
-export function registrationChangeAPI (payload) {
-  return http.put(`/api/directory/isOpenRegistry`, { openRegistry: payload })
-}
 
 export function getConnectorsAPI () {
   return http.get(`/api/v1/connectors`)
@@ -726,16 +714,16 @@ export function syncLDAPAPI (id) {
 
 // Jira
 export function getJiraAPI () {
-  return http.get(`/api/directory/jira`)
+  return http.get(`/api/v1/jira`)
 }
 export function updateJiraAPI (payload) {
-  return http.post(`/api/directory/jira`, payload)
+  return http.patch(`/api/v1/jira`, payload)
 }
 export function deleteJiraAPI () {
-  return http.delete(`/api/directory/jira`)
+  return http.delete(`/api/v1/jira`)
 }
 export function createJiraAPI (payload) {
-  return http.post(`/api/directory/jira`, payload)
+  return http.post(`/api/v1/jira`, payload)
 }
 
 // Jenkins
@@ -765,29 +753,36 @@ export function queryJenkinsParams (jobName) {
 
 // Mail
 export function getEmailHostAPI () {
-  return http.get(`/api/directory/emailHosts`)
+  return http.get(`/api/v1/emails/host`)
 }
 
 export function deleteEmailHostAPI () {
-  return http.delete(`/api/directory/emailHosts`)
+  return http.delete(`/api/v1/emails/host`)
 }
 
 export function createEmailHostAPI (payload) {
-  return http.post(`/api/directory/emailHosts`, payload)
+  return http.post(`/api/v1/emails/host`, payload)
+}
+
+export function updateEmailHostAPI (payload) {
+  return http.patch(`/api/v1/emails/host`, payload)
 }
 
 export function getEmailServiceAPI () {
-  return http.get(`/api/directory/emailServices`)
+  return http.get(`/api/v1/emails/service`)
 }
 
 export function deleteEmailServiceAPI () {
-  return http.delete(`/api/directory/emailServices`)
+  return http.delete(`/api/v1/emails/service`)
 }
 
 export function createEmailServiceAPI (payload) {
-  return http.post(`/api/directory/emailServices`, payload)
+  return http.post(`/api/v1/emails/service`, payload)
 }
 
+export function updateeEmailServiceAPI (payload) {
+  return http.patch(`/api/v1/emails/service`, payload)
+}
 // ----- System Setting-Application -----
 
 export function getAllAppsAPI () {

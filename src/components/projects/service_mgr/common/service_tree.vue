@@ -1063,7 +1063,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'signupStatus', 'productList'
+      'productList'
     ]),
     envNameList () {
       const envNameList = []

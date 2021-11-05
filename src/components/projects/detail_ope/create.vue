@@ -396,7 +396,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['signupStatus']),
     currentUserId () {
       return this.$store.state.login.userinfo.uid
     },

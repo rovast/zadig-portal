@@ -10,14 +10,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 export default {
   methods: {
   },
   computed: {
-    ...mapGetters([
-      'signupStatus'
-    ])
+
   }
 }
 </script>

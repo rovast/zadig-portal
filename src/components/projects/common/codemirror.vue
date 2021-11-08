@@ -57,7 +57,7 @@ export default {
   height: 100%;
 
   .codemirror {
-    height: 100%;
+    height: calc(~'100% + 5px');
     margin: -5px;
 
     /deep/.CodeMirror {

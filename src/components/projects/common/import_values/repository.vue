@@ -169,6 +169,8 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+@import url('~@assets/css/common/scroll-bar.less');
+
 .value-repo-container {
   .repo-attr {
     span {
@@ -207,22 +209,7 @@ export default {
     overflow: auto;
     line-height: 20px;
 
-    &::-webkit-scrollbar-track {
-      background-color: #f5f5f5;
-      border-radius: 6px;
-      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    }
-
-    &::-webkit-scrollbar {
-      width: 6px;
-      background-color: #f5f5f5;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: #b7b8b9;
-      border-radius: 6px;
-      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    }
+    .scrollBar2();
   }
 
   .error-tip {

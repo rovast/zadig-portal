@@ -12,11 +12,11 @@
         <el-form-item label="邮箱" prop="email">
           <el-input size="small" v-model="addUser.email"></el-input>
         </el-form-item>
-        <el-form-item label="手机" prop="phone">
-          <el-input size="small" v-model="addUser.phone"></el-input>
-        </el-form-item>
         <el-form-item label="昵称" prop="name">
           <el-input size="small" v-model="addUser.name"></el-input>
+        </el-form-item>
+        <el-form-item label="手机" prop="phone">
+          <el-input size="small" v-model="addUser.phone"></el-input>
         </el-form-item>
         <el-form-item label="角色" prop="isAdmin">
           <el-radio-group v-model="addUser.isAdmin">
@@ -42,7 +42,7 @@
                 v-if="searchInputVisible"
                 size="small"
                 v-model.lazy="searchUser"
-                placeholder="请输入用户名"
+                placeholder="请输入昵称"
                 autofocus
                 clearable
                 prefix-icon="el-icon-search"
@@ -72,7 +72,7 @@
               <!-- Details -->
               <div class="name-listing-description">
                 <h3 class="name-listing-title">
-                  {{ scope.row.name ? `${scope.row.account}(${scope.row.name})`: scope.row.account }}
+                  {{ scope.row.name ? `${scope.row.name}(${scope.row.account})`: scope.row.account }}
                   <el-tag size="mini" effect="plain">{{ scope.row.role === 'admin'?'管理员':'普通用户' }}</el-tag>
                 </h3>
                 <!-- Name Listing Footer -->
@@ -196,7 +196,7 @@ export default {
         name: [
           {
             type: 'string',
-            required: false,
+            required: true,
             message: '请输入昵称',
             trigger: 'blur'
           }
@@ -235,7 +235,7 @@ export default {
       const payload = {
         page: page_index,
         per_page: page_size,
-        account: keyword
+        name: keyword
       }
       const usersData = await usersAPI(payload).catch(error =>
         console.log(error)

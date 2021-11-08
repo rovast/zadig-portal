@@ -30,6 +30,10 @@ export default {
   methods: {
     handleNodeClick (data) {
       console.log(data)
+    },
+    validate () {
+      console.log('validate config')
+      return Promise.resolve(true)
     }
   },
   components: {

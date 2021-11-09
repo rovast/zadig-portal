@@ -1,6 +1,6 @@
 <template>
   <div class="float-link">
-    <el-popover class="link-popover" placement="top-start" trigger="hover">
+    <el-popover class="link-popover" placement="top-end" trigger="hover">
       <div slot="reference" class="icon">
         <el-button type="primary" plain circle icon=" iconfont iconlink1" size="mini"></el-button>
       </div>
@@ -15,16 +15,20 @@
 
 <script>
 import { getExternalLinksAPI } from '@api'
+import { mapState } from 'vuex'
 export default {
   data () {
-    return {
-      links: []
-    }
+    return {}
+  },
+  computed: {
+    ...mapState({
+      links: state => state.external_link.links
+    })
   },
   methods: {
     getExternalLinks () {
       getExternalLinksAPI().then(res => {
-        this.links = res || []
+        this.$store.commit('SET_EXTERNAL_LINK', res || [])
       })
     }
   },
@@ -42,6 +46,7 @@ export default {
 }
 
 .link-title {
+  min-width: 150px;
   margin-bottom: 8px;
   font-weight: 500;
   font-size: 14px;

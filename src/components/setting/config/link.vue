@@ -56,6 +56,7 @@ export default {
     },
     getExternalLinks () {
       getExternalLinksAPI().then(res => {
+        this.$store.commit('SET_EXTERNAL_LINK', res || [])
         this.links = (res || []).map(re => {
           return {
             ...re,

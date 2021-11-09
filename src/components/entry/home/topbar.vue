@@ -107,7 +107,7 @@
                     </div>
                     <ul class="content profile-list">
                       <li class="profile-list__item active">
-                        <span>{{userInfo.account}}</span>
+                        <span>{{userInfo.name?`${userInfo.name}(${userInfo.account})`:userInfo.account}}</span>
                         <el-tag v-if="role.includes('admin')"
                                 size="mini"
                                 type="primary"
@@ -157,7 +157,7 @@
                    class="menu-avatar"
                    alt="">
               <span class="username">
-                {{ userInfo.account}}
+                <span>{{userInfo.name?`${userInfo.name}(${userInfo.account})`:userInfo.account}}</span>
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </span>
             </div>
@@ -228,7 +228,7 @@ export default {
   .username {
     display: inline-block;
     margin-left: 10px;
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .el-icon--right {

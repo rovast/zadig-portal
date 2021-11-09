@@ -3,6 +3,7 @@ import qs from 'qs'
 import store from 'storejs'
 import Element from 'element-ui'
 import errorMap from '@/utilities/errorMap'
+import Store from '../store'
 const specialAPIs = ['/api/aslan/system/operation', '/api/aslan/delivery/artifacts', '/api/aslan/environment/kube/workloads']
 const ignoreErrReq = '/api/aslan/services/validateUpdate/'
 const reqExps = [/api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/workloads/, /api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/groups/]
@@ -57,7 +58,7 @@ http.interceptors.request.use((config) => {
     config.cancelToken = analyticsReqSource.sourceToken
   }
   // Set token for forgot password.
-  if (config.url === '/reset' && config.data.token) {
+  if (config.url === '/api/v1/reset' && config.data.token) {
     config.headers.Authorization = 'Bearer ' + config.data.token
   }
   // Set Authorization Header.
@@ -121,21 +122,20 @@ http.interceptors.response.use(
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       console.log(error.response)
-      if (document.title !== '登录' && document.title !== '系统初始化') {
+      if (document.title !== '登录') {
         // unauthorized 401
         if (error.response.status === 401) {
           const redirectPath = window.location.pathname + window.location.search
           Element.Message.error('登录信息失效, 请返回重新登录')
-          if (redirectPath.includes('/setup/')) {
-            window.location.href = `/signin`
-          } else {
-            window.location.href = `/signin?redirect=${redirectPath}`
-          }
+          Store.dispatch('LOGINOUT')
+          window.location.href = `/signin?redirect=${redirectPath}`
         } else if (error.response.status === 403) {
           Element.Message.error('暂无权限')
         } else if (error.response.data.code !== 6168) {
           displayError(error)
         }
+      } else if (document.title === '登录') {
+        displayError(error)
       }
     } else {
       // Something happened in setting up the request that triggered an Error
@@ -225,16 +225,16 @@ export function taskPendingSSEAPI () {
 }
 
 // Env
-export function listProductAPI (envType = '', productName = '') {
+export function listProductAPI (envType = '', projectName = '') {
   if (envType) {
-    return http.get(`/api/aslan/environment/environments?projectName=${productName}&envType=${envType}`)
+    return http.get(`/api/aslan/environment/environments?projectName=${projectName}&envType=${envType}`)
   } else {
-    return http.get(`/api/aslan/environment/environments?projectName=${productName}`)
+    return http.get(`/api/aslan/environment/environments?projectName=${projectName}`)
   }
 }
 
 export function getServicePipelineAPI (projectName, envName, serviceName, serviceType) {
-  return http.get(`/api/aslan/workflow/servicetask/workflows/${projectName}/${envName}/${serviceName}/${serviceType}`)
+  return http.get(`/api/aslan/workflow/servicetask/workflows/${projectName}/${envName}/${serviceName}/${serviceType}?projectName=${projectName}`)
 }
 
 export function envRevisionsAPI (projectName, envName) {
@@ -243,18 +243,18 @@ export function envRevisionsAPI (projectName, envName) {
 
 export function productServicesAPI (projectName, envName, envSource, searchName = '', perPage = 20, page = 1) {
   if (envSource === 'helm' || envSource === 'external') {
-    return http.get(`/api/aslan/environment/environments/${projectName}/workloads?env=${envName}&filter=name=${searchName}&perPage=${perPage}&page=${page}`)
+    return http.get(`/api/aslan/environment/environments/${projectName}/workloads?env=${envName}&projectName=${projectName}&filter=name=${searchName}&perPage=${perPage}&page=${page}`)
   } else {
-    return http.get(`/api/aslan/environment/environments/${projectName}/groups?envName=${envName}&serviceName=${searchName}&perPage=${perPage}&page=${page}`)
+    return http.get(`/api/aslan/environment/environments/${projectName}/groups?projectName=${projectName}&envName=${envName}&serviceName=${searchName}&perPage=${perPage}&page=${page}`)
   }
 }
 
 export function fetchGroupsDataAPI (name, envName) {
-  return http.get(`/api/aslan/environment/environments/${name}/groups?envName=${envName}`)
+  return http.get(`/api/aslan/environment/environments/${name}/groups?projectName=${name}&envName=${envName}`)
 }
 
 export function productEnvInfoAPI (projectName, envName) {
-  return http.get(`/api/aslan/environment/environments/${projectName}?envName=${envName}`)
+  return http.get(`/api/aslan/environment/environments/${projectName}?projectName=${projectName}&envName=${envName}`)
 }
 
 // Project
@@ -280,7 +280,7 @@ export function serviceTemplateAPI (name, type, projectName) {
 }
 
 export function serviceTemplateAfterRenderAPI (product_name, service_name, env_name) {
-  return http.get(`/api/aslan/environment/diff/products/${product_name}/service/${service_name}?envName=${env_name}`)
+  return http.get(`/api/aslan/environment/diff/products/${product_name}/service/${service_name}?projectName=${product_name}&envName=${env_name}`)
 }
 
 export function saveServiceTemplateAPI (payload) {
@@ -477,15 +477,15 @@ export function setFavoriteAPI (payload) {
   return http.post('/api/aslan/workflow/favorite', payload)
 }
 
-export function deleteFavoriteAPI (productName, workflowName, type) {
-  return http.delete(`/api/aslan/workflow/favorite/${productName}/${workflowName}/${type}?projectName=${productName}`)
+export function deleteFavoriteAPI (projectName, workflowName, type) {
+  return http.delete(`/api/aslan/workflow/favorite/${projectName}/${workflowName}/${type}?projectName=${projectName}`)
 }
-export function workflowAPI (name) {
-  return http.get(`/api/aslan/workflow/workflow/find/${name}`)
+export function workflowAPI (projectName, name) {
+  return http.get(`/api/aslan/workflow/workflow/find/${name}?projectName=${projectName}`)
 }
 
-export function workflowPresetAPI (productName) {
-  return http.get(`/api/aslan/workflow/workflow/preset/${productName}?projectName=${productName}`)
+export function workflowPresetAPI (projectName) {
+  return http.get(`/api/aslan/workflow/workflow/preset/${projectName}?projectName=${projectName}`)
 }
 
 export function createWorkflowAPI (data) {
@@ -508,19 +508,19 @@ export function copyWorkflowAPI (projectName, oldName, newName) {
   return http.put(`/api/aslan/workflow/workflow/old/${oldName}/new/${newName}?projectName=${projectName}`)
 }
 
-export function precreateWorkflowTaskAPI (workflowName, envName) {
-  return http.get(`/api/aslan/workflow/workflowtask/preset/${envName}/${workflowName}`)
+export function precreateWorkflowTaskAPI (projectName, workflowName, envName) {
+  return http.get(`/api/aslan/workflow/workflowtask/preset/${envName}/${workflowName}?projectName=${projectName}`)
 }
-export function createWorkflowTaskAPI (productName, envName) {
-  return http.get(`/api/aslan/workflow/workflowtask/targets/${productName}/${envName}`)
+export function createWorkflowTaskAPI (projectName, envName) {
+  return http.get(`/api/aslan/workflow/workflowtask/targets/${projectName}/${envName}?projectName=${projectName}`)
 }
 
 export function getRegistryWhenBuildAPI (projectName) {
   return http.get(`/api/aslan/system/registry?projectName=${projectName}`)
 }
 
-export function getBuildTargetsAPI (productName) {
-  return http.get(`/api/aslan/build/targets/${productName}?projectName=${productName}`)
+export function getBuildTargetsAPI (projectName) {
+  return http.get(`/api/aslan/build/targets/${projectName}?projectName=${projectName}`)
 }
 
 export function runWorkflowAPI (projectName, data, isArtifact = false) {
@@ -539,8 +539,8 @@ export function cancelWorkflowAPI (projectName, workflowName, taskID) {
   return http.delete(`/api/aslan/workflow/workflowtask/id/${taskID}/pipelines/${workflowName}?projectName=${projectName}`)
 }
 
-export function workflowTaskListAPI (name, start, max, workflowType = '') {
-  return http.get(`/api/aslan/workflow/workflowtask/max/${max}/start/${start}/pipelines/${name}?projectName=${name}&workflowType=${workflowType}`)
+export function workflowTaskListAPI (projectName, name, start, max, workflowType = '') {
+  return http.get(`/api/aslan/workflow/workflowtask/max/${max}/start/${start}/pipelines/${name}?projectName=${projectName}&workflowType=${workflowType}`)
 }
 
 export function workflowTaskDetailAPI (projectName, workflowName, taskID, workflowType = '') {
@@ -556,20 +556,20 @@ export function workflowTaskDetailSSEAPI (projectName, workflowName, taskID, wor
 export function testsAPI (projectName = '', testType = '') {
   return http.get(`/api/aslan/testing/test?projectName=${projectName}&testType=${testType}`)
 }
-export function testDetailAPI (productName = '') {
-  return http.get(`/api/aslan/testing/testdetail?projectName=${productName}`)
+export function testDetailAPI (projectName = '') {
+  return http.get(`/api/aslan/testing/testdetail?projectName=${projectName}`)
 }
 
 export function runTestsAPI (payload) {
   return http.post(`/api/aslan/testing/testtask?projectName=${payload.product_name}`, payload)
 }
 
-export function restartTestTaskAPI (productName, testName, taskID) {
-  return http.post(`/api/aslan/testing/testtask/productName/${productName}/id/${taskID}/pipelines/${testName}/restart?projectName=${productName}`)
+export function restartTestTaskAPI (projectName, testName, taskID) {
+  return http.post(`/api/aslan/testing/testtask/projectName/${projectName}/id/${taskID}/pipelines/${testName}/restart?projectName=${projectName}`)
 }
 
-export function cancelTestTaskAPI (productName, testName, taskID) {
-  return http.delete(`/api/aslan/testing/testtask/productName/${productName}/id/${taskID}/pipelines/${testName}?projectName=${productName}`)
+export function cancelTestTaskAPI (projectName, testName, taskID) {
+  return http.delete(`/api/aslan/testing/testtask/projectName/${projectName}/id/${taskID}/pipelines/${testName}?projectName=${projectName}`)
 }
 
 export function singleTestAPI (name, projectName = '') {
@@ -595,15 +595,6 @@ export function getTestReportAPI (projectName, workflowName, taskID, testJobName
   return http.get(
     `/api/aslan/testing/itreport/workflow/${workflowName}/id/${taskID}/names/${testJobName}/service/${serviceName}?projectName=${projectName}&testType=${testType}&workflowType=${workflowType}`
   )
-}
-
-// Install
-export function checkOrganizationHasSignupAPI () {
-  return http.get('/api/directory/check')
-}
-
-export function createOrganizationInfoAPI (payload) {
-  return http.post('/api/directory/organization', payload)
 }
 
 // User Management
@@ -639,24 +630,24 @@ export function deleteUserAPI (uid) {
 // ----- Syetem Setting-Integration -----
 
 // Code
-export function getCodeSourceAPI (page_size = 0, page_index = 0) {
+export function getCodeSourceAPI () {
   return http.get(`/api/aslan/code/codehost`)
 }
 
-export function getCodeSourceByAdminAPI (page_size = 0, page_index = 0) {
-  return http.get(`/api/directory/codehostss/search?per_page=${page_size}&page=${page_index}`)
+export function getCodeProviderAPI () {
+  return http.get(`/api/v1/codehosts`)
 }
 
 export function createCodeSourceAPI (payload) {
-  return http.post(`/api/directory/codehosts`, payload)
+  return http.post(`/api/v1/codehosts`, payload)
 }
 
 export function deleteCodeSourceAPI (code_source_id) {
-  return http.delete(`/api/directory/codehosts/${code_source_id}`)
+  return http.delete(`/api/v1/codehosts/${code_source_id}`)
 }
 
 export function updateCodeSourceAPI (code_source_id, payload) {
-  return http.put(`/api/directory/codehosts/${code_source_id}`, payload)
+  return http.patch(`/api/v1/codehosts/${code_source_id}`, payload)
 }
 
 export function getRepoOwnerByIdAPI (id, key = '') {
@@ -700,9 +691,6 @@ export function deleteGithubAppAPI (id) {
 }
 
 // Account
-export function registrationChangeAPI (payload) {
-  return http.put(`/api/directory/isOpenRegistry`, { openRegistry: payload })
-}
 
 export function getConnectorsAPI () {
   return http.get(`/api/v1/connectors`)
@@ -726,16 +714,16 @@ export function syncLDAPAPI (id) {
 
 // Jira
 export function getJiraAPI () {
-  return http.get(`/api/directory/jira`)
+  return http.get(`/api/v1/jira`)
 }
 export function updateJiraAPI (payload) {
-  return http.post(`/api/directory/jira`, payload)
+  return http.patch(`/api/v1/jira`, payload)
 }
 export function deleteJiraAPI () {
-  return http.delete(`/api/directory/jira`)
+  return http.delete(`/api/v1/jira`)
 }
 export function createJiraAPI (payload) {
-  return http.post(`/api/directory/jira`, payload)
+  return http.post(`/api/v1/jira`, payload)
 }
 
 // Jenkins
@@ -765,29 +753,36 @@ export function queryJenkinsParams (jobName) {
 
 // Mail
 export function getEmailHostAPI () {
-  return http.get(`/api/directory/emailHosts`)
+  return http.get(`/api/v1/emails/host`)
 }
 
 export function deleteEmailHostAPI () {
-  return http.delete(`/api/directory/emailHosts`)
+  return http.delete(`/api/v1/emails/host`)
 }
 
 export function createEmailHostAPI (payload) {
-  return http.post(`/api/directory/emailHosts`, payload)
+  return http.post(`/api/v1/emails/host`, payload)
+}
+
+export function updateEmailHostAPI (payload) {
+  return http.patch(`/api/v1/emails/host`, payload)
 }
 
 export function getEmailServiceAPI () {
-  return http.get(`/api/directory/emailServices`)
+  return http.get(`/api/v1/emails/service`)
 }
 
 export function deleteEmailServiceAPI () {
-  return http.delete(`/api/directory/emailServices`)
+  return http.delete(`/api/v1/emails/service`)
 }
 
 export function createEmailServiceAPI (payload) {
-  return http.post(`/api/directory/emailServices`, payload)
+  return http.post(`/api/v1/emails/service`, payload)
 }
 
+export function updateeEmailServiceAPI (payload) {
+  return http.patch(`/api/v1/emails/service`, payload)
+}
 // ----- System Setting-Application -----
 
 export function getAllAppsAPI () {
@@ -996,7 +991,7 @@ export function updateEnvTemplateAPI (projectName, payload) {
 
 // Env and Service
 export function createProductAPI (payload, envType = '') {
-  return http.post('/api/aslan/environment/environments', payload)
+  return http.post(`/api/aslan/environment/environments?projectName=${payload.product_name}`, payload)
 }
 
 export function updateServiceAPI (product, service, type, env, data, envType = '') {
@@ -1031,48 +1026,48 @@ export function rollbackConfigmapAPI (envType = '', payload) {
   return http.post(`/api/aslan/environment/configmaps?projectName=${payload.product_name}&envType=${envType}`, payload)
 }
 
-export function deleteProductEnvAPI (productName, envName, envType = '') {
-  return http.delete(`/api/aslan/environment/environments/${productName}?projectName=${productName}&envName=${envName}&envType=${envType}`)
+export function deleteProductEnvAPI (projectName, envName, envType = '') {
+  return http.delete(`/api/aslan/environment/environments/${projectName}?projectName=${projectName}&envName=${envName}&envType=${envType}`)
 }
 
-export function restartPodAPI (podName, productName, envType = '') {
-  return http.delete(`/api/aslan/environment/kube/pods/${podName}?projectName=${productName}&envType=${envType}`)
+export function restartPodAPI (podName, projectName, envType = '') {
+  return http.delete(`/api/aslan/environment/kube/pods/${podName}?projectName=${projectName}&envType=${envType}`)
 }
 
-export function restartServiceOriginAPI (productName, serviceName, envName = '', envType = '') {
-  return http.post(`/api/aslan/environment/environments/${productName}/services/${serviceName}/restart?projectName=${productName}&envName=${envName}&envType=${envType}`)
+export function restartServiceOriginAPI (projectName, serviceName, envName = '', envType = '') {
+  return http.post(`/api/aslan/environment/environments/${projectName}/services/${serviceName}/restart?projectName=${projectName}&envName=${envName}&envType=${envType}`)
 }
 
-export function restartServiceAPI (productName, serviceName, envName = '', scaleName, type, envType = '') {
-  return http.post(`/api/aslan/environment/environments/${productName}/services/${serviceName}/restartNew?projectName=${productName}&envName=${envName}&type=${type}&name=${scaleName}&envType=${envType}`)
+export function restartServiceAPI (projectName, serviceName, envName = '', scaleName, type, envType = '') {
+  return http.post(`/api/aslan/environment/environments/${projectName}/services/${serviceName}/restartNew?projectName=${projectName}&envName=${envName}&type=${type}&name=${scaleName}&envType=${envType}`)
 }
 
 export function restartPmServiceAPI (payload) {
   return http.post(`/api/aslan/workflow/servicetask?projectName=${payload.product_name}&`, payload)
 }
 
-export function scaleServiceAPI (productName, serviceName, envName = '', scaleName, scaleNumber, type, envType = '') {
+export function scaleServiceAPI (projectName, serviceName, envName = '', scaleName, scaleNumber, type, envType = '') {
   return http.post(
-    `/api/aslan/environment/environments/${productName}/services/${serviceName}/scaleNew/${scaleNumber}?projectName=${productName}&envName=${envName}&type=${type}&name=${scaleName}&envType=${envType}`
+    `/api/aslan/environment/environments/${projectName}/services/${serviceName}/scaleNew/${scaleNumber}?projectName=${projectName}&envName=${envName}&type=${type}&name=${scaleName}&envType=${envType}`
   )
 }
 
-export function scaleEventAPI (productName, scaleName, envName = '', type, envType = '') {
-  return http.get(`/api/aslan/environment/kube/events?projectName=${productName}&envName=${envName}&type=${type}&name=${scaleName}&envType=${envType}`)
+export function scaleEventAPI (projectName, scaleName, envName = '', type, envType = '') {
+  return http.get(`/api/aslan/environment/kube/events?projectName=${projectName}&envName=${envName}&type=${type}&name=${scaleName}&envType=${envType}`)
 }
-export function podEventAPI (productName, podName, envName = '', envType = '') {
-  return http.get(`/api/aslan/environment/kube/pods/${podName}/events?projectName=${productName}&envName=${envName}&envType=${envType}`)
+export function podEventAPI (projectName, podName, envName = '', envType = '') {
+  return http.get(`/api/aslan/environment/kube/pods/${podName}/events?projectName=${projectName}&envName=${envName}&envType=${envType}`)
 }
-export function exportYamlAPI (productName, serviceName, envName = '', envType = '') {
-  return http.get(`/api/aslan/environment/export/service?serviceName=${serviceName}&envName=${envName}&projectName=${productName}&envType=${envType}`)
-}
-
-export function getProductInfo (productName, envName = '') {
-  return http.get(`/api/aslan/environment/environments/${productName}?projectName=${productName}&envName=${envName}`)
+export function exportYamlAPI (projectName, serviceName, envName = '', envType = '') {
+  return http.get(`/api/aslan/environment/export/service?serviceName=${serviceName}&envName=${envName}&projectName=${projectName}&envType=${envType}`)
 }
 
-export function getServiceInfo (productName, serviceName, envName = '', envType = '', workLoadType) {
-  return http.get(`/api/aslan/environment/environments/${productName}/services/${serviceName}?projectName=${productName}&envName=${envName}&envType=${envType}&workLoadType=${workLoadType}`)
+export function getProductInfo (projectName, envName = '') {
+  return http.get(`/api/aslan/environment/environments/${projectName}?projectName=${projectName}&envName=${envName}`)
+}
+
+export function getServiceInfo (projectName, serviceName, envName = '', envType = '', workLoadType) {
+  return http.get(`/api/aslan/environment/environments/${projectName}/services/${serviceName}?projectName=${projectName}&envName=${envName}&envType=${envType}&workLoadType=${workLoadType}`)
 }
 
 export function autoUpgradeEnvAPI (projectName, payload, force = '') {
@@ -1081,7 +1076,7 @@ export function autoUpgradeEnvAPI (projectName, payload, force = '') {
 
 // Login
 export function userLoginAPI (payload) {
-  return http.post(`/login`, payload)
+  return http.post(`/api/v1/login`, payload)
 }
 
 // Profile
@@ -1168,11 +1163,11 @@ export function productHostingNamespaceAPI (clusterId) {
 
 // Forgot password
 export function retrievePasswordAPI (account) {
-  return http.get(`/retrieve?account=${account}`)
+  return http.get(`/api/v1/retrieve?account=${account}`)
 }
 
 export function changePasswordAPI (payload) {
-  return http.post('/reset', payload)
+  return http.post('/api/v1/reset', payload)
 }
 
 // Template Helm
@@ -1200,12 +1195,12 @@ export function deleteChartTemplateAPI (name) {
   return http.delete(`/api/aslan/template/charts/${name}`)
 }
 
-export function createTemplateServiceAPI (productName, payload) {
-  return http.post(`/api/aslan/service/helm/services?projectName=${productName}`, payload)
+export function createTemplateServiceAPI (projectName, payload) {
+  return http.post(`/api/aslan/service/helm/services?projectName=${projectName}`, payload)
 }
 
-export function createTemplateMultiServiceAPI (productName, payload) {
-  return http.post(`/api/aslan/service/helm/services/bulk?productName=${productName}`, payload)
+export function createTemplateMultiServiceAPI (projectName, payload) {
+  return http.post(`/api/aslan/service/helm/services/bulk?projectName=${projectName}`, payload)
 }
 
 export function getHelmTemplateVariableAPI (name) {
@@ -1284,44 +1279,44 @@ export function reloadServiceFromKubernetesTemplateAPI (payload) {
 }
 
 // helm env and service
-export function getChartValuesYamlAPI (productName, envName, serviceName = []) {
-  return http.get(`/api/aslan/environment/rendersets/renderchart?projectName=${productName}&envName=${envName}&serviceName=${serviceName.join(',')}`)
+export function getChartValuesYamlAPI (projectName, envName, serviceName = []) {
+  return http.get(`/api/aslan/environment/rendersets/renderchart?projectName=${projectName}&envName=${envName}&serviceName=${serviceName.join(',')}`)
 }
 
-export function getAllChartValuesYamlAPI (productName, envName, serviceName = []) {
-  return http.get(`/api/aslan/environment/environments/estimated-renderchart?projectName=${productName}&envName=${envName}&serviceName=${serviceName.join(',')}`)
+export function getAllChartValuesYamlAPI (projectName, envName, serviceName = []) {
+  return http.get(`/api/aslan/environment/environments/estimated-renderchart?projectName=${projectName}&envName=${envName}&serviceName=${serviceName.join(',')}`)
 }
 
-export function getEnvDefaultVariableAPI (productName, envName) {
-  return http.get(`/api/aslan/environment/rendersets/default-values?productName=${productName}&envName=${envName}`)
+export function getEnvDefaultVariableAPI (projectName, envName) {
+  return http.get(`/api/aslan/environment/rendersets/default-values?projectName=${projectName}&envName=${envName}`)
 }
 
-export function createHelmProductEnvAPI (productName, payload) {
-  return http.post(`/api/aslan/environment/environments/${productName}/helm`, payload)
+export function createHelmProductEnvAPI (projectName, payload) {
+  return http.post(`/api/aslan/environment/environments/${projectName}/helm?projectName=${projectName}`, payload)
 }
 
-export function updateHelmProductEnvAPI (productName, payload) {
-  return http.put(`/api/aslan/environment/environments/${productName}/multiHelmEnv`, payload)
+export function updateHelmProductEnvAPI (projectName, payload) {
+  return http.put(`/api/aslan/environment/environments/${projectName}/multiHelmEnv?projectName=${projectName}`, payload)
 }
 
-export function updateHelmEnvVarAPI (productName, envName, payload) {
-  return http.put(`/api/aslan/environment/environments/${productName}/renderset?envName=${envName}`, payload)
+export function updateHelmEnvVarAPI (projectName, envName, payload) {
+  return http.put(`/api/aslan/environment/environments/${projectName}/renderset?projectName=${projectName}&envName=${envName}`, payload)
 }
 
-export function updateMatchRulesAPI (productName, payload) {
-  return http.put(`/api/aslan/project/products/${productName}/searching-rules`, payload)
+export function updateMatchRulesAPI (projectName, payload) {
+  return http.put(`/api/aslan/project/products/${projectName}/searching-rules?projectName=${projectName}`, payload)
 }
 
-export function getMatchRulesAPI (productName) {
-  return http.get(`/api/aslan/project/products/${productName}/searching-rules`)
+export function getMatchRulesAPI (projectName) {
+  return http.get(`/api/aslan/project/products/${projectName}/searching-rules?projectName=${projectName}`)
 }
 
-export function getCreateHelmEnvStatusAPI (productName) {
-  return http.get(`/api/aslan/environment/environments/${productName}/status`)
+export function getCreateHelmEnvStatusAPI (projectName) {
+  return http.get(`/api/aslan/environment/environments/${projectName}/status?projectName=${projectName}`)
 }
 
-export function getCalculatedValuesYamlAPI ({ productName, serviceName, envName, format, scene }, payload) { // defaultValues, overrideYaml, overrideValues
-  return http.post(`/api/aslan/environment/environments/${productName}/estimated-values?format=${format}&envName=${envName}&serviceName=${serviceName}&scene=${scene}`, payload)
+export function getCalculatedValuesYamlAPI ({ projectName, serviceName, envName, format, scene }, payload) { // defaultValues, overrideYaml, overrideValues
+  return http.post(`/api/aslan/environment/environments/${projectName}/estimated-values??projectName=${projectName}&format=${format}&envName=${envName}&serviceName=${serviceName}&scene=${scene}`, payload)
 }
 
 export function getValuesYamlFromGitAPI ({ codehostID, owner, repo, branch, valuesPaths }) {
@@ -1346,7 +1341,7 @@ export function queryServiceWorkloads (projectName, envName) {
 }
 
 export function postWorkloads (payload) {
-  return http.post(`/api/aslan/service/workloads`, payload)
+  return http.post(`/api/aslan/service/workloads?projectName=${payload.product_name}`, payload)
 }
 
 export function editWorkloads (payload) {

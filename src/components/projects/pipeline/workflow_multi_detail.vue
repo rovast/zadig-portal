@@ -177,7 +177,7 @@ export default {
   },
   methods: {
     async refreshHistoryTask () {
-      const res = await workflowTaskListAPI(this.workflowName, this.pageStart, this.pageSize)
+      const res = await workflowTaskListAPI(this.projectName, this.workflowName, this.pageStart, this.pageSize)
       this.processTestData(res)
       this.workflowTasks = res.data
       this.total = res.total
@@ -215,7 +215,7 @@ export default {
       })
     },
     fetchHistory (start, max) {
-      workflowTaskListAPI(this.workflowName, start, max).then(res => {
+      workflowTaskListAPI(this.projectName, this.workflowName, start, max).then(res => {
         this.processTestData(res)
         this.workflowTasks = res.data
         this.total = res.total
@@ -251,10 +251,10 @@ export default {
           }
         }
       }).then(({ value }) => {
-        deleteWorkflowAPI(name).then(() => {
+        deleteWorkflowAPI(this.$route.params.project_name, name).then(() => {
           this.$message.success('删除成功')
           this.$router.push(`/v1/projects/detail/${this.projectName}/pipelines`)
-          this.$store.dispatch('refreshWorkflowList')
+          this.$store.dispatch('refreshWorkflowList', this.projectName)
         })
       })
     },
@@ -268,10 +268,10 @@ export default {
     clearTimeout(this.timerId)
   },
   mounted () {
-    workflowAPI(this.workflowName).then(res => {
+    this.projectName = this.$route.params.project_name
+    workflowAPI(this.projectName, this.workflowName).then(res => {
       this.workflow = res
     })
-    this.projectName = this.$route.params.project_name
     this.refreshHistoryTask()
     bus.$emit('set-topbar-title', {
       title: '',

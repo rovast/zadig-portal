@@ -19,6 +19,9 @@ import VueIntro from 'vue-introjs'
 import 'intro.js/introjs.css'
 import { analyticsRequestAPI } from '@api'
 import { JSEncrypt } from 'jsencrypt'
+import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill'
+global.EventSource = EventSourcePolyfill || NativeEventSource
+
 Vue.use(VueIntro)
 
 Vue.prototype.$utils = utils
@@ -48,7 +51,7 @@ const isSuperAdmin = () => {
   return utils.roleCheck().superAdmin
 }
 const userName = () => {
-  return utils.getUsername()
+  return utils.getUserName()
 }
 const analyticsRequest = (to, from) => {
   const hostname = window.location.hostname

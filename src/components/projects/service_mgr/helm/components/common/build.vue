@@ -1300,7 +1300,6 @@ export default {
     },
     async loadPage () {
       const projectName = this.projectName
-      const orgId = this.currentOrganizationId
       this.$set(this.buildConfig, 'name', this.projectName + '-build-' + this.name)
       this.$set(this.jenkinsBuild, 'name', this.projectName + '-build-' + this.name)
       const response = await getServiceTargetsAPI(projectName).catch(error => console.log(error))
@@ -1386,9 +1385,6 @@ export default {
     },
     buildAdd () {
       return this.$route.query.build_add ? this.$route.query.build_add : false
-    },
-    currentOrganizationId () {
-      return this.$store.state.login.userinfo.organization.id
     },
     projectName () {
       return this.$route.params.project_name

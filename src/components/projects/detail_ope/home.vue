@@ -46,7 +46,7 @@
          element-loading-spinner="iconfont iconfont-loading iconxiangmuloading"
          class="projects-grid">
       <el-row :gutter="12">
-        <el-col v-for="(project,index) in projects"
+        <el-col v-for="(project,index) in productList"
                 :key="index"
                 :span="6">
           <el-card shadow="hover"
@@ -57,10 +57,10 @@
                 <span class="el-dropdown-link">
                   <i class="el-icon-more"></i></span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item :command="{action:'edit',project_name:project.product_name}">
+                  <el-dropdown-item :command="{action:'edit',project_name:project.name}">
                     修改
                   </el-dropdown-item>
-                  <el-dropdown-item :command="{action:'delete',project_name:project.product_name}">
+                  <el-dropdown-item :command="{action:'delete',project_name:project.name}">
                     删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -70,11 +70,14 @@
               <div class="content">
                 <div class="card-header">
                   <div class="quickstart-icon">
-                    <span>{{project.product_name.slice(0, 1).toUpperCase()}}</span>
+                    <span>{{project.name.slice(0, 1).toUpperCase()}}</span>
                   </div>
                   <div class="card-text">
                     <h4 class="project-name">
-                      {{project.project_name?project.project_name:project.product_name}}
+                      {{project.project_name?project.project_name:project.name}}&nbsp;
+                      <el-tooltip v-if="!project.public" effect="dark" content="私有项目" placement="top">
+                        <i  class="icon iconfont iconprivate"></i>
+                      </el-tooltip>
                     </h4>
                   </div>
                   <div class="info">
@@ -88,28 +91,28 @@
                 <el-tooltip effect="dark"
                             content="工作流"
                             placement="top">
-                  <router-link :to="`/v1/projects/detail/${project.product_name}/pipelines`">
+                  <router-link :to="`/v1/projects/detail/${project.name}/pipelines`">
                     <span class="icon iconfont icongongzuoliucheng"></span>
                   </router-link>
                 </el-tooltip>
                 <el-tooltip effect="dark"
                             content="构建管理"
                             placement="top">
-                  <router-link :to="`/v1/projects/detail/${project.product_name}/builds`">
+                  <router-link :to="`/v1/projects/detail/${project.name}/builds`">
                     <span class="icon iconfont icongoujianzhong"></span>
                   </router-link>
                 </el-tooltip>
                 <el-tooltip effect="dark"
                             content="测试管理"
                             placement="top">
-                  <router-link :to="`/v1/projects/detail/${project.product_name}/test`">
+                  <router-link :to="`/v1/projects/detail/${project.name}/test`">
                     <span class="icon iconfont icontest"></span>
                   </router-link>
                 </el-tooltip>
                 <el-tooltip effect="dark"
                             content="查看服务"
                             placement="top">
-                  <router-link :to="`/v1/projects/detail/${project.product_name}/services`">
+                  <router-link :to="`/v1/projects/detail/${project.name}/services`">
                     <span class="icon iconfont iconrongqifuwu"></span>
                   </router-link>
                 </el-tooltip>
@@ -118,7 +121,7 @@
           </el-card>
         </el-col>
       </el-row>
-      <div v-if="projects.length === 0"
+      <div v-if="productList.length === 0"
            class="no-product">
         <img src="@assets/icons/illustration/product.svg"
              alt="">
@@ -130,15 +133,18 @@
          element-loading-text="加载中..."
          element-loading-spinner="iconfont iconfont-loading iconxiangmuloading"
          class="projects-list">
-      <el-table v-if="projects.length > 0"
-                :data="projects"
+      <el-table v-if="productList.length > 0"
+                :data="productList"
                 stripe
                 style="width: 100%;">
         <el-table-column label="项目名称">
           <template slot-scope="scope">
-            <router-link :to="`/v1/projects/detail/${scope.row.product_name}`"
+            <router-link :to="`/v1/projects/detail/${scope.row.name}`"
                          class="project-name">
-              {{scope.row.project_name?scope.row.project_name:scope.row.product_name }}
+              {{scope.row.project_name?scope.row.project_name:scope.row.name }}
+              <el-tooltip v-if="!scope.row.public" effect="dark" content="私有项目" placement="top">
+                <i class="icon iconfont iconprivate"></i>
+              </el-tooltip>
             </router-link>
           </template>
         </el-table-column>
@@ -150,24 +156,24 @@
         </el-table-column>
         <el-table-column label="更新信息">
           <template slot-scope="scope">
-            <div><i class="el-icon-time"></i> {{ $utils.convertTimestamp(scope.row.update_time) }}
+            <div><i class="el-icon-time"></i> {{ $utils.convertTimestamp(scope.row.updatedAt || '') }}
             </div>
-            <div><i class="el-icon-user"></i> {{ scope.row.update_by }}</div>
+            <div><i class="el-icon-user"></i> {{ scope.row.updatedBy || '' }}</div>
           </template>
         </el-table-column>
         <el-table-column label="">
           <template slot-scope="scope">
-            <router-link :to="`/v1/projects/detail/${scope.row.product_name}`">
+            <router-link :to="`/v1/projects/detail/${scope.row.name}`">
               <el-button class="operation"
                          type="text">配置</el-button>
             </router-link>
-            <el-button @click="deleteProject(scope.row.product_name)"
+            <el-button @click="deleteProject(scope.row.name)"
                        class="operation"
                        type="text">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div v-if="projects.length === 0"
+      <div v-if="productList.length === 0"
            class="no-product">
         <img src="@assets/icons/illustration/product.svg"
              alt="">
@@ -178,28 +184,19 @@
 </template>
 <script>
 import bus from '@utils/event_bus'
-import { getProjectsAPI, listWorkflowAPI, getProductsAPI, getBuildConfigsAPI, getSingleProjectAPI, deleteProjectAPI } from '@api'
-import { flattenDeep } from 'lodash'
+import { listWorkflowAPI, getBuildConfigsAPI, getSingleProjectAPI, getServiceTemplatesAPI, deleteProjectAPI } from '@api'
+import { mapGetters } from 'vuex'
+
 export default {
   data () {
     return {
-      projects: [],
       loading: false,
       currentTab: 'grid'
     }
   },
   methods: {
-    getProjects () {
-      this.loading = true
-      getProjectsAPI().then(
-        response => {
-          this.projects = this.$utils.deepSortOn(response, 'product_name')
-          this.loading = false
-        }
-      )
-    },
     toProject (project) {
-      this.$router.push(`/v1/projects/detail/${project.product_name}`)
+      this.$router.push(`/v1/projects/detail/${project.name}`)
     },
     handleCommand (command) {
       if (command.action === 'delete') {
@@ -209,13 +206,13 @@ export default {
       }
     },
     async deleteProject (projectName) {
-      const externalFlag = this.projects.filter(project => project.product_name === projectName)[0].product_feature.create_env_type === 'external'
-      const result = await Promise.all([listWorkflowAPI(), getProductsAPI(projectName), getSingleProjectAPI(projectName), getBuildConfigsAPI(projectName)])
-      const workflows = result[0].filter(w => w.product_tmpl_name === projectName).map((element) => { return element.name })
-      const envNames = result[1].map((element) => { return element.name })
-      const services = flattenDeep(result[2].services)
+      const result = await Promise.all([getSingleProjectAPI(projectName), listWorkflowAPI(projectName), getServiceTemplatesAPI(projectName), getBuildConfigsAPI(projectName)])
+      const externalFlag = result[0].product_feature.create_env_type
+      const workflows = result[1].filter(w => w.product_tmpl_name === projectName).map((element) => { return element.name })
+      const services = result[2].data.filter(element => element.product_name === projectName).map((element) => { return element.service_name })
       const buildConfigs = result[3].map((element) => { return element.name })
-      const htmlTemplate = externalFlag
+      const envNames = this.productList.filter(elemnet => elemnet.name === projectName)[0].envs
+      const htmlTemplate = externalFlag === 'external'
         ? `
         <p>该项目下的以下资源会被取消托管，<span style="color:red">请谨慎操作！！</span></p>
         <span><b>服务：</b>${services.length > 0 ? services.join(', ') : '无'}</span><br>
@@ -254,7 +251,7 @@ export default {
                 type: 'success',
                 message: '项目删除成功'
               })
-              this.getProjects()
+              this.$store.dispatch('getProjectList')
             }
           )
         })
@@ -266,8 +263,13 @@ export default {
         })
     }
   },
+  computed: {
+    ...mapGetters([
+      'productList'
+    ])
+  },
   mounted () {
-    this.getProjects()
+    this.$store.dispatch('getProjectList')
     bus.$emit('show-sidebar', true)
     bus.$emit('set-topbar-title', { title: '项目', breadcrumb: [] })
     bus.$emit('set-sub-sidebar-title', {
@@ -279,24 +281,6 @@ export default {
 </script>
 
 <style lang="less" >
-.show-guide-class {
-  min-width: 200px !important;
-
-  span {
-    padding: 3px;
-    color: #303133;
-    font-size: 14px;
-  }
-
-  .introjs-donebutton {
-    color: #333;
-
-    &:focus {
-      border: 2px solid #1989fa;
-    }
-  }
-}
-
 .project-home-container {
   position: relative;
   flex: 1;
@@ -413,6 +397,10 @@ export default {
         font-weight: 400;
         font-size: 16px;
         text-align: left;
+
+        .iconprivate::before {
+          color: #c8c9cc;
+        }
       }
 
       .operation {
@@ -559,12 +547,10 @@ export default {
                 font-size: 20px;
                 text-overflow: ellipsis;
                 cursor: pointer;
-              }
 
-              .project-desc {
-                display: inline-block;
-                margin-top: 12px;
-                font-size: 14px;
+                .iconprivate::before {
+                  color: #c8c9cc;
+                }
               }
             }
 
@@ -573,15 +559,6 @@ export default {
             }
 
             .info {
-              .project-name {
-                margin: 0;
-                padding: 0;
-                color: #1989fa;
-                font-size: 18px;
-                text-overflow: ellipsis;
-                cursor: pointer;
-              }
-
               .project-desc {
                 display: inline-block;
                 margin-top: 12px;
@@ -591,16 +568,6 @@ export default {
           }
         }
       }
-    }
-  }
-
-  .projects-grid,
-  .projects-list {
-    .show-tag {
-      color: #1989fa;
-      font-size: 12px;
-      white-space: nowrap;
-      vertical-align: top;
     }
   }
 }

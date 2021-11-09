@@ -36,6 +36,14 @@
                   <i class="el-icon-delete"></i>
                   <span class="add-filter-value-title">删除</span>
                 </button>
+                <router-link v-if="isProjectAdmin"
+                             :to="`/v1/projects/detail/${projectName}/rbac`">
+                  <button type="button"
+                          class="display-btn">
+                    <i class="el-icon-lock"></i>
+                    <span class="add-filter-value-title">权限</span>
+                  </button>
+                </router-link>
               </div>
 
             </div>
@@ -48,19 +56,6 @@
             <h4 class="section-title"
                 style="margin-top: 0;">
               基本信息
-              <el-popover trigger="hover"
-                          placement="right">
-                <div class="project-desc-show">
-                  <h4>管理员</h4>
-                  <p>
-                    {{projectAdminArray.length ? projectAdminArray.join(' , ') : 'N/A'}}
-                  </p>
-                  <h4>描述</h4>
-                  <p class="desc-show">{{currentProject && currentProject.desc}}</p>
-                </div>
-                <i slot="reference"
-                   class="el-icon-warning-outline"></i>
-              </el-popover>
             </h4>
             <div class="info-list">
               <el-row type="flex"
@@ -286,31 +281,22 @@
   </div>
 </template>
 <script>
-import { getProductInfo, getBuildConfigsAPI, deleteProjectAPI, getClusterListAPI, getProjectInfoAPI, listProductAPI, usersAPI, downloadDevelopCLIAPI } from '@api'
+import { getProjectInfoAPI, getProductInfo, deleteProjectAPI, getClusterListAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
 import { mapGetters } from 'vuex'
 import { getProductStatus } from '@utils/word_translate'
 import { wordTranslate } from '@utils/word_translate.js'
 import { whetherOnboarding } from '@utils/onboarding_route'
 import bus from '@utils/event_bus'
-import _ from 'lodash'
 export default {
   data () {
     return {
       currentProject: {},
       envList: [],
       allCluster: [],
-      buildConfigs: [],
-      detailLoading: true,
-      usersList: []
+      detailLoading: true
     }
   },
   methods: {
-    getBuildConfig () {
-      const projectName = this.projectName
-      getBuildConfigsAPI(projectName).then((res) => {
-        this.buildConfigs = res
-      })
-    },
     getProdStatus (status, updateble) {
       return getProductStatus(status, updateble)
     },
@@ -358,30 +344,30 @@ export default {
         }
       }
     },
-    deleteProject () {
-      const externalFlag = this.currentProject.product_feature.create_env_type === 'external'
-      const services = _.flattenDeep(this.currentProject.services)
-      const envNames = this.envList.map((element) => { return element.env_name })
-      const buildConfigs = this.buildConfigs.map((element) => { return element.name })
-      const workflows = this.workflows.map((element) => { return element.name })
-      const allWorkflows = workflows
-      const htmlTemplate = externalFlag
-        ? `
-          <p>该项目下的以下资源会被取消托管，<span style="color:red">请谨慎操作！！</span></p>
-          <span><b>服务：</b>${services.length > 0 ? services.join(', ') : '无'}</span><br>
-          <span><b>环境：</b>${envNames.length > 0 ? envNames.join(', ') : '无'}</span><br>
-          <p>该项目下的以下资源会同时被删除，<span style="color:red">请谨慎操作！！</span></p>
-          <span><b>构建：</b>${buildConfigs.length > 0 ? buildConfigs.join(', ') : '无'}</span><br>
-          <span><b>工作流：</b>${allWorkflows.length > 0 ? allWorkflows.join(', ') : '无'}</span>
-        `
-        : `
-          该项目下的资源会同时被删除<span style="color:red">请谨慎操作！！</span><br>
-          <span><b>服务：</b>${services.length > 0 ? services.join(', ') : '无'}</span><br>
-          <span><b>构建：</b>${buildConfigs.length > 0 ? buildConfigs.join(', ') : '无'}</span><br>
-          <span><b>环境：</b>${envNames.length > 0 ? envNames.join(', ') : '无'}</span><br>
-          <span><b>工作流：</b>${allWorkflows.length > 0 ? allWorkflows.join(', ') : '无'}</span>
-        `
+    async deleteProject () {
       const projectName = this.projectName
+      const externalFlag = this.currentProject.product_feature.create_env_type
+      const workflows = this.workflows.map((element) => { return element.name })
+      const envNames = this.envList.map((element) => { return element.env_name })
+      const result = await Promise.all([getServiceTemplatesAPI(projectName), getBuildConfigsAPI(projectName)])
+      const services = result[0].data.filter(element => element.product_name === projectName).map((element) => { return element.service_name })
+      const buildConfigs = result[1].map((element) => { return element.name })
+      const htmlTemplate = externalFlag === 'external'
+        ? `
+        <p>该项目下的以下资源会被取消托管，<span style="color:red">请谨慎操作！！</span></p>
+        <span><b>服务：</b>${services.length > 0 ? services.join(', ') : '无'}</span><br>
+        <span><b>环境：</b>${envNames.length > 0 ? envNames.join(', ') : '无'}</span><br>
+        <p>该项目下的以下资源会同时被删除，<span style="color:red">请谨慎操作！！</span></p>
+        <span><b>构建：</b>${buildConfigs.length > 0 ? buildConfigs.join(', ') : '无'}</span><br>
+        <span><b>工作流：</b>${workflows.length > 0 ? workflows.join(', ') : '无'}</span>
+      `
+        : `
+        该项目下的资源会同时被删除<span style="color:red">请谨慎操作！！</span><br>
+        <span><b>服务：</b>${services.length > 0 ? services.join(', ') : '无'}</span><br>
+        <span><b>构建：</b>${buildConfigs.length > 0 ? buildConfigs.join(', ') : '无'}</span><br>
+        <span><b>环境：</b>${envNames.length > 0 ? envNames.join(', ') : '无'}</span><br>
+        <span><b>工作流：</b>${workflows.length > 0 ? workflows.join(', ') : '无'}</span>
+        `
       this.$prompt(htmlTemplate, `请输入项目名 ${projectName} 确认删除`, {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -439,12 +425,6 @@ export default {
         this.detailLoading = false
       })
     },
-    getUserList () {
-      const orgId = this.currentOrganizationId
-      usersAPI(orgId).then((res) => {
-        this.usersList = res.data
-      })
-    },
     selectSystemToDownloadCLI (check) {
       downloadDevelopCLIAPI(check).then(res => {
         const aEle = document.createElement('a')
@@ -469,23 +449,11 @@ export default {
     ...mapGetters([
       'workflowList'
     ]),
-    currentOrganizationId () {
-      return this.$store.state.login.userinfo.organization.id
-    },
-    projectAdminArray () {
-      return this.usersList
-        ? this.usersList.filter(userInfo => {
-          return this.currentProject.user_ids ? this.currentProject.user_ids.includes(userInfo.id) : false
-        }).map(user => {
-          return user.name
-        })
-        : []
-    },
     isProjectAdmin () {
       if (this.$utils.roleCheck().superAdmin) {
         return true
       }
-      return this.currentProject.user_ids ? this.currentProject.user_ids.includes(this.$store.state.login.userinfo.info.id) : false
+      return this.currentProject.admins ? this.currentProject.admins.includes(this.$store.state.login.userinfo.uid) : false
     }
   },
   components: {
@@ -494,17 +462,15 @@ export default {
     this.getProject(this.projectName)
   },
   mounted () {
-    this.$store.dispatch('getWorkflowList')
+    this.$store.dispatch('getWorkflowList', this.projectName)
     this.getEnvList()
     this.getCluster()
-    this.getBuildConfig()
     bus.$emit('show-sidebar', true)
     bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
     bus.$emit('set-sub-sidebar-title', {
       title: '',
       routerList: []
     })
-    this.getUserList()
   }
 }
 </script>

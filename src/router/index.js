@@ -335,6 +335,14 @@ const routes = [
         ]
       },
       {
+        path: 'projects/detail/:project_name/rbac',
+        component: () => import(/* webpackChunkName: "project-rbac" */ '@/components/projects/rbac/home.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '权限管理'
+        }
+      },
+      {
         path: 'projects/detail/:project_name/pipelines/multi/:workflow_name',
         component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_multi_detail.vue'),
         meta: {
@@ -524,7 +532,6 @@ const routes = [
     component: onboarding_home,
     meta: {
       requiresAuth: true,
-      requiresSuperAdmin: false,
       title: '交付中心'
     },
     children: [
@@ -607,7 +614,6 @@ const routes = [
     component: onboarding_home,
     meta: {
       requiresAuth: true,
-      requiresSuperAdmin: true,
       title: '用户管理'
     },
     children: [
@@ -655,8 +661,7 @@ const routes = [
     path: '/v1/system',
     component: onboarding_home,
     meta: {
-      requiresAuth: true,
-      requiresSuperAdmin: false
+      requiresAuth: true
     },
     children: [
       {

@@ -402,7 +402,7 @@
 
 <script>
 import gitfileTree from '@/components/common/gitfile_tree.vue'
-import { deleteServiceTemplateAPI, autoUpgradeEnvAPI, getSingleProjectAPI, updateEnvTemplateAPI, getCodeSourceAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI, loadRepoServiceAPI, validPreloadService, getCodeSourceByAdminAPI, updateServicesOrchestrationAPI } from '@api'
+import { deleteServiceTemplateAPI, autoUpgradeEnvAPI, getSingleProjectAPI, updateEnvTemplateAPI, getCodeSourceAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI, loadRepoServiceAPI, validPreloadService, getCodeProviderAPI, updateServicesOrchestrationAPI } from '@api'
 import { mapGetters } from 'vuex'
 export default {
   props: {
@@ -599,7 +599,7 @@ export default {
       })
     },
     async getProducts () {
-      await this.$store.dispatch('getProductList')
+      await this.$store.dispatch('getProjectList')
     },
     getServiceGroup () {
       this.serviceGroup = []
@@ -668,7 +668,7 @@ export default {
       this.$refs.sourceForm.validate((valid) => {
         if (valid) {
           this.importLoading = true
-          loadRepoServiceAPI(codehostId, repoOwner, repoName, branchName, remoteName, repoUUID, payload).then((res) => {
+          loadRepoServiceAPI(this.projectName, codehostId, repoOwner, repoName, branchName, remoteName, repoUUID, payload).then((res) => {
             this.$emit('onRefreshService')
             this.$emit('onRefreshSharedService')
             this.$emit('update:showNext', true)
@@ -739,7 +739,7 @@ export default {
         this.askSaveYamlConfig()
         return
       }
-      const res = await getCodeSourceByAdminAPI(1)
+      const res = await getCodeProviderAPI(0)
       if (cmd && this.deployType === 'k8s') {
         if (cmd === 'platform') {
           this.showNewServiceInput = true
@@ -1063,7 +1063,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'signupStatus', 'productList'
+      'productList'
     ]),
     envNameList () {
       const envNameList = []

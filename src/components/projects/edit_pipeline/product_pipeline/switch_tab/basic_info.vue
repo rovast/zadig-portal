@@ -101,6 +101,7 @@ export default {
     return {
       projects: [],
       productList: [],
+      filteredEnvs: [],
       rules: {
         name: [
           {
@@ -132,7 +133,7 @@ export default {
     },
     getEnvServices (projectName) {
       listProductAPI('', projectName).then(res => {
-        this.productList = res
+        this.filteredEnvs = res
       })
     }
   },
@@ -146,40 +147,30 @@ export default {
       type: Boolean
     }
   },
-  computed: {
-    currentOrganizationId () {
-      return this.$store.state.login.userinfo.organization.id
-    },
-    filteredEnvs () {
-      const currentProject = this.pipelineInfo.product_tmpl_name
-      if (currentProject !== '') {
-        return this.productList.filter(element => {
-          return element.product_name === currentProject
+  watch: {
+    pipelineInfo: {
+      immediate: true,
+      handler: function () {
+        if (this.$route.query.projectName) {
+          this.pipelineInfo.product_tmpl_name = this.$route.query.projectName
+        }
+
+        if (!this.$route.query.projectName && !this.editMode) {
+          templatesAPI().then(res => {
+            this.projects = res
+          })
+        }
+        const projectName = this.pipelineInfo.product_tmpl_name
+        bus.$on('check-tab:basicInfo', () => {
+          this.$refs.pipelineInfo.validate(valid => {
+            bus.$emit('receive-tab-check:basicInfo', valid)
+          })
         })
-      } else {
-        return []
+        if (projectName) {
+          this.getEnvServices(projectName)
+        }
       }
     }
-  },
-  created () {
-    if (this.$route.query.projectName) {
-      this.pipelineInfo.product_tmpl_name = this.$route.query.projectName
-    }
-
-    if (!this.$route.query.projectName && !this.editMode) {
-      templatesAPI().then(res => {
-        this.projects = res
-      })
-    }
-    const projectName = this.pipelineInfo.product_tmpl_name
-    bus.$on('check-tab:basicInfo', () => {
-      this.$refs.pipelineInfo.validate(valid => {
-        bus.$emit('receive-tab-check:basicInfo', valid)
-      })
-    })
-    listProductAPI('', projectName).then(res => {
-      this.productList = res
-    })
   },
   beforeDestroy () {
     bus.$off('check-tab:basicInfo')

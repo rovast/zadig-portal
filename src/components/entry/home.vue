@@ -23,8 +23,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { getAnnouncementsAPI, getCurrentUserInfoAPI } from '@api'
+import { getAnnouncementsAPI } from '@api'
 import sidebar from './home/sidebar.vue'
 import subSidebar from './home/sub_sidebar.vue'
 import topbar from './home/topbar.vue'
@@ -42,24 +41,7 @@ export default {
       getAnnouncementsAPI().then((res) => {
         this.announcements = res
       })
-    },
-    checkLogin () {
-      return new Promise((resolve, reject) => {
-        getCurrentUserInfoAPI().then(
-          response => {
-            resolve(true)
-          },
-          response => {
-            reject(false)
-          }
-        )
-      })
     }
-  },
-  computed: {
-    ...mapGetters([
-      'signupStatus'
-    ])
   },
   components: {
     sidebar,
@@ -69,16 +51,9 @@ export default {
     FloatLink
   },
   created () {
-    this.$store.dispatch('getSignupStatus').then(() => {
-      this.checkLogin().then((result) => {
-        if (result) {
-          this.getAnnouncements()
-          if (this.$utils.roleCheck() != null) {
-            this.$store.dispatch('getProjectTemplates')
-          }
-        }
-      })
-    })
+    this.$store.dispatch('GETUSERINFO')
+    this.$store.dispatch('getProjectList')
+    this.getAnnouncements()
   }
 }
 </script>

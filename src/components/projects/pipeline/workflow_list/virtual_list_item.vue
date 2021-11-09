@@ -44,7 +44,7 @@
             <i class="el-icon-s-operation more-operation"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="changeSchedule">
+            <el-dropdown-item @click.native="changeSchedule(workflow.product_tmpl_name)">
               <span>{{workflow.schedule_enabled ? '关闭': '打开'}}定时器</span>
             </el-dropdown-item>
             <el-dropdown-item @click.native="copyWorkflow(workflow.name)">
@@ -111,14 +111,14 @@ export default {
     },
     async fnShowTimer (status, index, workflow) {
       if (status && !workflow.showTimer) {
-        this.pipelineInfo = await workflowAPI(workflow.name).catch(error => console.log(error))
+        this.pipelineInfo = await workflowAPI(workflow.product_tmpl_name, workflow.name).catch(error => console.log(error))
         if (_.get(this.pipelineInfo, 'schedules.items', '[]').length) {
           this.$set(this.source, 'showTimer', true)
           this.$forceUpdate()
         }
       }
     },
-    async changeSchedule () {
+    async changeSchedule (product_tmpl_name) {
       const pipelineInfo = this.pipelineInfo
       pipelineInfo.schedule_enabled = !pipelineInfo.schedule_enabled
       const res = await updateWorkflowAPI(this.pipelineInfo).catch(error => console.log(error))
@@ -128,7 +128,7 @@ export default {
         } else {
           this.$message.success('定时器关闭成功')
         }
-        this.$store.dispatch('refreshWorkflowList')
+        this.$store.dispatch('refreshWorkflowList', product_tmpl_name)
       }
     }
   },

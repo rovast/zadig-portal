@@ -114,7 +114,7 @@
 import bus from '@utils/event_bus'
 import step from '../common/step.vue'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
-import { getProjectIngressAPI, generatePipeAPI, listWorkflowAPI } from '@api'
+import { getProjectIngressAPI, generatePipeAPI } from '@api'
 export default {
   data () {
     return {
@@ -133,8 +133,8 @@ export default {
       })
     },
     getWorkflows () {
-      this.$store.dispatch('refreshWorkflowList')
-      listWorkflowAPI(this.projectName).then(res => {
+      this.loading = true
+      this.$store.dispatch('refreshWorkflowList', this.projectName).then(() => {
         this.loading = false
         const projectName = this.projectName
         const currentWorkflows = res.map(ele => {

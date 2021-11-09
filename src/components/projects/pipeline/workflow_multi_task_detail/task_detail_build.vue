@@ -299,7 +299,7 @@ export default {
     openBuildLog (buildType) {
       let url = `/api/aslan/logs/sse/workflow/build/${this.pipelineName}/${this.taskID}/999999/${this.serviceName}?subTask=${buildType}`
       if (this.serviceType === 'pm') {
-        url = `/api/aslan/logs/sse/workflow/build/${this.pipelineName}/${this.taskID}/999999/${this.serviceName}?subTask=buildv2&envName=${this.envName}&productName=${this.projectName}`
+        url = `/api/aslan/logs/sse/workflow/build/${this.pipelineName}/${this.taskID}/999999/${this.serviceName}?subTask=buildv2&envName=${this.envName}&projectName=${this.projectName}`
       }
       if (typeof window.msgServer === 'undefined') {
         window.msgServer = {}
@@ -337,7 +337,7 @@ export default {
       if (this.buildv2.type === 'jenkins_build') {
         type = 'jenkins_build'
       }
-      return getWorkflowHistoryBuildLogAPI(this.pipelineName, this.taskID, this.serviceName, type).then(
+      return getWorkflowHistoryBuildLogAPI(this.projectName, this.pipelineName, this.taskID, this.serviceName, type).then(
         response => {
           this.buildv2AnyLog = (response.split('\n')).map(element => {
             return element + '\n'

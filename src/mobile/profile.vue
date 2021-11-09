@@ -21,7 +21,7 @@
                  :desc="from">
       </van-panel>
       <van-panel title="最近登录"
-                 :desc="$utils.convertTimestamp(currentEditUserInfo.info.lastLogin)">
+                 :desc="$utils.convertTimestamp(currentEditUserInfo.info.lastLoginTime)">
       </van-panel>
       <van-panel v-if="jwtToken"
                  title="API Token"
@@ -40,9 +40,8 @@
 
 </template>
 <script>
-import storejs from '@node_modules/store/dist/store.legacy.js'
 import { NavBar, Tag, Panel, Loading, Button, Notify } from 'vant'
-import { getCurrentUserInfoAPI, getJwtTokenAPI, userLogoutAPI } from '@api'
+import store from 'storejs'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -54,7 +53,7 @@ export default {
   },
   data () {
     return {
-      loading: true,
+      loading: false,
       jwtToken: null,
       currentEditUserInfo: {
         info: {
@@ -65,7 +64,6 @@ export default {
           phone: '',
           isAdmin: true,
           isSuperUser: false,
-          isTeamLeader: false,
           organization_id: 0,
           directory: 'system',
           teams: []
@@ -82,25 +80,14 @@ export default {
     }
   },
   methods: {
-    getUserInfo () {
-      this.loading = true
-      getCurrentUserInfoAPI().then((res) => {
-        this.loading = false
-        this.currentEditUserInfo = res
-      })
-    },
     getJwtToken () {
-      getJwtTokenAPI().then((res) => {
-        this.jwtToken = res.token
-      })
+      this.jwtToken = store.get('userInfo').token
     },
     logout () {
-      userLogoutAPI().then((res) => {
-        storejs.remove('ZADIG_LOGIN_INFO')
-        this.$store.dispatch('clearProjectTemplates')
-        this.$router.push('/signin')
-        Notify({ type: 'success', message: '账号退出成功' })
-      })
+      store.remove('token')
+      this.$store.dispatch('clearProjectTemplates')
+      this.$router.push('/signin')
+      Notify({ type: 'success', message: '账号退出成功' })
     }
   },
   computed: {
@@ -108,7 +95,7 @@ export default {
       return this.$route.meta.title
     },
     username () {
-      return this.$store.state.login.userinfo.info.name
+      return this.$store.state.login.userinfo.name
     },
     userRole () {
       if (this.currentEditUserInfo.info.isSuperUser) {
@@ -122,8 +109,6 @@ export default {
     }
   },
   mounted () {
-    this.$store.commit('INJECT_PROFILE', storejs.get('ZADIG_LOGIN_INFO'))
-    this.getUserInfo()
     this.getJwtToken()
   }
 }

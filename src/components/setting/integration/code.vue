@@ -393,7 +393,7 @@
           <el-table-column label="授权信息">
             <template slot-scope="scope">
               <span
-                    :class="scope.row.ready?'text-success':'text-failed'">{{scope.row.ready?'授权成功':'授权失败'}}</span>
+                    :class="scope.row.ready?'text-success':'text-failed'">{{scope.row.ready === '2'?'授权成功':'授权失败'}}</span>
             </template>
           </el-table-column>
           <el-table-column label="最后更新">
@@ -421,7 +421,7 @@
 </template>
 <script>
 import {
-  getCodeSourceByAdminAPI, deleteCodeSourceAPI, updateCodeSourceAPI, createCodeSourceAPI, getProxyConfigAPI, updateProxyConfigAPI
+  getCodeProviderAPI, deleteCodeSourceAPI, updateCodeSourceAPI, createCodeSourceAPI, getProxyConfigAPI, updateProxyConfigAPI
 } from '@api'
 const validateGitURL = (rule, value, callback) => {
   if (value === '') {
@@ -441,7 +441,7 @@ export default {
         id: '',
         type: '',
         address: '',
-        port: undefined,
+        port: null,
         username: '',
         password: '',
         enable_repo_proxy: false,
@@ -564,6 +564,9 @@ export default {
           const payload = this.codeAdd
           const redirect_url = window.location.href.split('?')[0]
           const provider = this.codeAdd.type
+          if (provider === 'github') {
+            payload.address = 'https://github.com'
+          }
           createCodeSourceAPI(payload).then((res) => {
             const code_source_id = res.id
             this.getCodeConfig()
@@ -588,6 +591,9 @@ export default {
           const code_source_id = this.codeEdit.id
           const redirect_url = window.location.href.split('?')[0]
           const provider = this.codeEdit.type
+          if (provider === 'github') {
+            payload.address = 'https://github.com'
+          }
           updateCodeSourceAPI(code_source_id, payload).then((res) => {
             this.getCodeConfig()
             if (payload.type === 'gitlab' || payload.type === 'github') {
@@ -610,12 +616,12 @@ export default {
       })
     },
     getCodeConfig () {
-      getCodeSourceByAdminAPI().then((res) => {
+      getCodeProviderAPI().then((res) => {
         this.code = res
       })
     },
     goToCodeHostAuth (code_source_id, redirect_url, provider) {
-      window.location.href = `/api/directory/codehostss/${code_source_id}/auth?redirect=${redirect_url}&provider=${provider}`
+      window.location.href = `/api/v1/codehosts/${code_source_id}/auth?redirect=${redirect_url}&provider=${provider}`
     },
     copyCommandSuccess (event) {
       this.$message({

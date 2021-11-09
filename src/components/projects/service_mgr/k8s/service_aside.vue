@@ -262,7 +262,7 @@
 </template>
 <script>
 import bus from '@utils/event_bus'
-import { serviceTemplateWithConfigAPI, getSingleProjectAPI, updateEnvTemplateAPI, getRegistryWhenBuildAPI, getCodeSourceByAdminAPI } from '@api'
+import { serviceTemplateWithConfigAPI, getSingleProjectAPI, updateEnvTemplateAPI, getRegistryWhenBuildAPI, getCodeProviderAPI } from '@api'
 import build from '../common/build.vue'
 import help from './container/help.vue'
 import addCode from '../common/add_code.vue'
@@ -319,7 +319,7 @@ export default {
   },
   methods: {
     async addBuild (item) {
-      const res = await getCodeSourceByAdminAPI(0)
+      const res = await getCodeProviderAPI(0)
       if (res && res.length > 0) {
         this.$router.push(`${this.buildBaseUrl}?rightbar=build&service_name=${item.name}&build_add=true`)
       } else {

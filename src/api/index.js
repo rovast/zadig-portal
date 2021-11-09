@@ -630,24 +630,24 @@ export function deleteUserAPI (uid) {
 // ----- Syetem Setting-Integration -----
 
 // Code
-export function getCodeSourceAPI (page_size = 0, page_index = 0) {
+export function getCodeSourceAPI () {
   return http.get(`/api/aslan/code/codehost`)
 }
 
-export function getCodeSourceByAdminAPI (page_size = 0, page_index = 0) {
-  return http.get(`/api/directory/codehostss/search?per_page=${page_size}&page=${page_index}`)
+export function getCodeProviderAPI () {
+  return http.get(`/api/v1/codehosts`)
 }
 
 export function createCodeSourceAPI (payload) {
-  return http.post(`/api/directory/codehosts`, payload)
+  return http.post(`/api/v1/codehosts`, payload)
 }
 
 export function deleteCodeSourceAPI (code_source_id) {
-  return http.delete(`/api/directory/codehosts/${code_source_id}`)
+  return http.delete(`/api/v1/codehosts/${code_source_id}`)
 }
 
 export function updateCodeSourceAPI (code_source_id, payload) {
-  return http.put(`/api/directory/codehosts/${code_source_id}`, payload)
+  return http.patch(`/api/v1/codehosts/${code_source_id}`, payload)
 }
 
 export function getRepoOwnerByIdAPI (id, key = '') {

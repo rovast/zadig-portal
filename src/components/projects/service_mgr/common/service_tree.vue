@@ -402,7 +402,7 @@
 
 <script>
 import gitfileTree from '@/components/common/gitfile_tree.vue'
-import { deleteServiceTemplateAPI, autoUpgradeEnvAPI, getSingleProjectAPI, updateEnvTemplateAPI, getCodeSourceAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI, loadRepoServiceAPI, validPreloadService, getCodeSourceByAdminAPI, updateServicesOrchestrationAPI } from '@api'
+import { deleteServiceTemplateAPI, autoUpgradeEnvAPI, getSingleProjectAPI, updateEnvTemplateAPI, getCodeSourceAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI, loadRepoServiceAPI, validPreloadService, getCodeProviderAPI, updateServicesOrchestrationAPI } from '@api'
 import { mapGetters } from 'vuex'
 export default {
   props: {
@@ -739,7 +739,7 @@ export default {
         this.askSaveYamlConfig()
         return
       }
-      const res = await getCodeSourceByAdminAPI(0)
+      const res = await getCodeProviderAPI(0)
       if (cmd && this.deployType === 'k8s') {
         if (cmd === 'platform') {
           this.showNewServiceInput = true

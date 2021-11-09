@@ -7,7 +7,7 @@
           <el-step title="检查配置"></el-step>
           <el-step title="推送仓库"></el-step>
         </el-steps>
-        <keep-alive>
+        <keep-alive v-if="dialogVisible">
           <component ref="versionComp" class="step-content" :is="isComp"></component>
         </keep-alive>
       </div>
@@ -70,6 +70,13 @@ export default {
         } else {
           this.activeStep += 1
         }
+      }
+    }
+  },
+  watch: {
+    dialogVisible (val) {
+      if (!val) {
+        this.activeStep = 2 // 0 初始化
       }
     }
   }

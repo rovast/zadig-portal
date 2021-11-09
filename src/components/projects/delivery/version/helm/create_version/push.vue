@@ -44,22 +44,31 @@ export default {
   data () {
     this.rules = {
       chart: {
-        required: true, message: '请选择 Chart 仓库', trigger: ['change', 'blur']
+        required: true,
+        message: '请选择 Chart 仓库',
+        trigger: ['change', 'blur']
       },
       imageName: {
-        required: true, message: '请输入镜像包名称', trigger: ['change', 'blur']
+        required: true,
+        message: '请输入镜像包名称',
+        trigger: ['change', 'blur']
       },
       outlineName: {
-        required: true, message: '请输入离线包名称', trigger: ['change', 'blur']
+        required: true,
+        message: '请输入离线包名称',
+        trigger: ['change', 'blur']
       },
       objectStore: {
-        required: true, message: '请选择对象存储', trigger: ['change', 'blur']
+        required: true,
+        message: '请选择对象存储',
+        trigger: ['change', 'blur']
       }
     }
     return {
       showEnhanced: false,
       versionRepo: {
         chart: '',
+        versions: [],
         outlineFlag: false,
         imageName: '',
         outlineName: '',

@@ -547,7 +547,7 @@ const routes = [
           },
           {
             path: ':project_name/:id',
-            component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/version/detail.vue'),
+            component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/version/helm/detail.vue'),
             meta: {
               requiresAuth: true,
               requiresSuperAdmin: false,

@@ -10,44 +10,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { getCurrentUserInfoAPI } from '@api'
 export default {
   methods: {
-    checkLogin () {
-      return new Promise((resolve, reject) => {
-        getCurrentUserInfoAPI().then(
-          response => {
-            resolve(true)
-          },
-          response => {
-            reject(false)
-          }
-        )
-      })
-    }
   },
   computed: {
-    ...mapGetters([
-      'signupStatus'
-    ])
-  },
-  created () {
-    this.$store.dispatch('getSignupStatus').then(() => {
-      if (this.signupStatus.inited) {
-        this.checkLogin().then((result) => {
-          if (result) {
-            if (this.$utils.roleCheck() != null) {
-              this.$store.dispatch('getProjectTemplates')
-            }
-          }
-        })
-      } else {
-        this.$router.push('/setup')
-      }
-    }).catch(() => {
-      this.$router.push('/loading')
-    })
+
   }
 }
 </script>

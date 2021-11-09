@@ -52,7 +52,8 @@
 </template>
 
 <script>
-import { createOrganizationInfoAPI, installationAnalysisRequestAPI, userLoginAPI, getCurrentUserInfoAPI } from '@api'
+import store from 'storejs'
+import { installationAnalysisRequestAPI, userLoginAPI } from '@api'
 export default {
   data () {
     const validatePass = (rule, value, callback) => {
@@ -121,9 +122,8 @@ export default {
               type: 'success'
             })
           }).then(() => {
-            const orgId = 1
-            userLoginAPI(orgId, loginPayload).then((res) => {
-              this.$store.commit('INJECT_PROFILE', res)
+            userLoginAPI(loginPayload).then((res) => {
+              store.set('token', res.token)
               this.$router.push('/v1/projects/create')
             })
             if (this.allowUpload) {
@@ -134,13 +134,6 @@ export default {
           return false
         }
       })
-    },
-    checkInstalled () {
-      getCurrentUserInfoAPI().then(
-        response => {
-          this.$router.push('/v1/status')
-        }
-      )
     },
     uploadInfo () {
       const orgPayload = this.organizationInfos

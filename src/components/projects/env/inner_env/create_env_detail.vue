@@ -282,7 +282,6 @@ import {
   createHelmProductEnvAPI
 } from '@api'
 import bus from '@utils/event_bus'
-import { mapGetters } from 'vuex'
 import { uniq, cloneDeep } from 'lodash'
 import { serviceTypeMap } from '@utils/word_translate'
 import HelmEnvTemplate from '../env_detail/components/updateHelmEnvTemp.vue'
@@ -395,7 +394,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['signupStatus']),
     projectName () {
       return this.$route.params.project_name
     },
@@ -403,9 +401,6 @@ export default {
       return this.projectInfo.product_feature
         ? this.projectInfo.product_feature.deploy_type
         : 'k8s'
-    },
-    currentOrganizationId () {
-      return this.$store.state.login.userinfo.organization.id
     },
     rollbackId () {
       return this.$route.query.rollbackId
@@ -501,9 +496,8 @@ export default {
       this.containerMap = map
     },
     getVersionList () {
-      const orgId = this.currentOrganizationId
       const projectName = this.projectName
-      getVersionListAPI(orgId, '', projectName).then(res => {
+      getVersionListAPI('', projectName).then(res => {
         this.currentProductDeliveryVersions = res
       })
     },

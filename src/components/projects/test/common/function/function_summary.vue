@@ -172,7 +172,7 @@ export default {
   },
   methods: {
     getLatestTest () {
-      getLatestTestReportAPI(this.serviceName).then(res => {
+      getLatestTestReportAPI(this.projectName, this.serviceName).then(res => {
         this.latestTestSummary = res
         this.testCases = res.testcase
         this.testCases.forEach(testCase => {
@@ -197,7 +197,7 @@ export default {
       })
     },
     fetchHistory (start, max) {
-      workflowTaskListAPI(this.workflowName, start, max, 'test').then(res => {
+      workflowTaskListAPI(this.projectName, this.workflowName, start, max, 'test').then(res => {
         res.data.forEach(element => {
           if (element.test_reports) {
             const testArray = []

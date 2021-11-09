@@ -146,7 +146,7 @@ export default {
       el.overflow = 'auto'
     },
     openArtifactDeployLog (buildType) {
-      const url = `/api/aslan/logs/sse/workflow/build/${this.workflowName}/${this.taskID}/999999/${this.serviceName}?subTask=artifact_deploy&envName=${this.envName}&productName=${this.projectName}`
+      const url = `/api/aslan/logs/sse/workflow/build/${this.workflowName}/${this.taskID}/999999/${this.serviceName}?subTask=artifact_deploy&envName=${this.envName}&projectName=${this.projectName}`
       if (typeof window.msgServer === 'undefined') {
         window.msgServer = {}
         window.msgServer[this.serviceName] = {}
@@ -179,7 +179,7 @@ export default {
         })
     },
     getHistoryArtifactDeployLog () {
-      return getWorkflowHistoryBuildLogAPI(this.workflowName, this.taskID, this.serviceName, 'artifact_deploy').then(
+      return getWorkflowHistoryBuildLogAPI(this.projectName, this.workflowName, this.taskID, this.serviceName, 'artifact_deploy').then(
         response => {
           this.artifactDeployLog = (response.split('\n')).map(element => {
             return element + '\n'

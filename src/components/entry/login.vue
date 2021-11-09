@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-7 col-md-12 col-pad-0 form-section">
-          <div class="login-inner-form"  v-show="isLogin">
+          <div class="login-inner-form"  v-show="!forgotPassword">
             <div class="details">
               <header>
                 <span class="name">Zadig</span>
@@ -15,9 +15,9 @@
                          :rules="rules"
                          ref="loginForm">
                   <el-form-item label=""
-                                prop="username">
-                    <el-input v-model="loginForm.username"
-                              placeholder="邮箱"
+                                prop="account">
+                    <el-input v-model="loginForm.account"
+                              placeholder="用户名"
                               autocomplete="off"></el-input>
                   </el-form-item>
                   <el-form-item label=""
@@ -37,21 +37,15 @@
                            class="btn-md btn-theme btn-block login-btn">
                   登录
                 </el-button>
-                <a :href="redirectUrl">
-                  <el-button v-if="showSSOBtn"
-                             class="btn-md btn-theme btn-block login-btn">
-
-                    SSO 登录
-                  </el-button>
-                </a>
               </section>
               <div class="bottom">
-                  <a  @click="isLogin=false">找回密码</a>
+                  <a  href="/api/v1/login">第三方登录</a>
+                  <a  @click="forgotPassword = true">找回密码</a>
               </div>
             </div>
           </div>
-          <div class="login-inner-form" v-show="!isLogin">
-            <ForgetPassword :openLogin="()=> isLogin=true" />
+          <div class="login-inner-form" v-show="forgotPassword">
+            <ForgetPassword :openLogin="()=> forgotPassword=false"  :retrieveToken="retrieveToken"/>
           </div>
         </div>
         <div class="col-lg-5 col-md-12 col-pad-0 bg-img none-992">
@@ -79,11 +73,10 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import { userLoginAPI, getCurrentUserInfoAPI } from '@api'
 import moment from 'moment'
 import { isMobile } from 'mobile-device-detect'
 import ForgetPassword from './components/forgetPassword.vue'
+import store from 'storejs'
 
 export default {
   components: {
@@ -91,19 +84,16 @@ export default {
   },
   data () {
     return {
-      isLogin: true,
-      username: '',
-      password: '',
-      redirectUrl: '',
+      forgotPassword: false,
+      retrieveToken: '',
       loading: false,
-      showSSOBtn: false,
       loginForm: {
-        username: '',
+        account: '',
         password: ''
       },
       rules: {
-        username: [
-          { required: true, message: '请输入邮箱', trigger: 'change' }
+        account: [
+          { required: true, message: '请输入用户名', trigger: 'change' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'change' }
@@ -120,36 +110,27 @@ export default {
   },
   methods: {
     login () {
-      this.$refs.loginForm.validate((valid) => {
+      this.$refs.loginForm.validate(async (valid) => {
         if (valid) {
           this.loading = true
-          const payload = {
-            email: this.loginForm.username,
-            password: this.loginForm.password
-          }
-          const org_id = 1
-          userLoginAPI(org_id, payload).then((res) => {
-            this.$store.commit('INJECT_PROFILE', res)
-            this.$message({
-              message: '登录成功，欢迎 ' + this.$store.state.login.userinfo.info.name,
-              type: 'success'
-            })
-            this.redirectByDevice()
-          }, () => {
+          const payload = this.loginForm
+          const res = await this.$store.dispatch('LOGIN', payload)
+          if (res) {
             this.loading = false
-          })
+            this.redirectByDevice()
+          } else {
+            this.loading = false
+          }
         } else {
           return false
         }
       })
     },
     checkLogin () {
-      getCurrentUserInfoAPI().then(
-        response => {
-          this.$store.commit('INJECT_PROFILE', response)
-          this.redirectByDevice()
-        }
-      )
+      const userInfo = store.get('userInfo')
+      if (userInfo) {
+        this.redirectByDevice()
+      }
     },
     redirectByDevice () {
       if (isMobile) {
@@ -164,9 +145,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'signupStatus'
-    ]),
     processEnv () {
       return process.env
     },
@@ -174,23 +152,20 @@ export default {
       return this.copywriting.common
     }
   },
-  watch: {
-    signupStatus (val, oldval) {
-      if (val.ssoInfo) {
-        this.showSSOBtn = true
-        this.redirectUrl = val.ssoInfo.signIn
-      } else {
-        this.showSSOBtn = false
-      }
+  async mounted () {
+    const token = this.$route.query.token
+    const retrieveToken = this.$route.query.idToken
+    if (retrieveToken) {
+      this.retrieveToken = retrieveToken
+      this.forgotPassword = true
     }
-  },
-  mounted () {
-    this.checkLogin()
-    if (this.signupStatus) {
-      if (this.signupStatus.ssoInfo) {
-        this.showSSOBtn = true
-        this.redirectUrl = this.signupStatus.ssoInfo.signIn
+    if (token) {
+      const res = await this.$store.dispatch('OTHERLOGIN', token).catch(error => console.log(error))
+      if (res) {
+        this.redirectByDevice()
       }
+    } else {
+      this.checkLogin()
     }
   }
 }
@@ -207,11 +182,13 @@ export default {
   a {
     padding-right: 10px;
     padding-left: 10px;
+    color: #717171;
     font-size: 14px;
     cursor: pointer !important;
 
     &:hover {
       color: #007bff !important;
+      text-decoration-line: none;
     }
   }
 }

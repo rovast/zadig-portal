@@ -141,9 +141,6 @@ export default {
     workflowName () {
       return this.$route.params.test_name
     },
-    currentOrganizationId () {
-      return this.$store.state.login.userinfo.organization.id
-    },
     taskID () {
       return this.$route.params.task_id
     },
@@ -213,14 +210,14 @@ export default {
     },
 
     fetchTaskDetail () {
-      return workflowTaskDetailSSEAPI(this.workflowName, this.taskID, 'test').then(res => {
+      return workflowTaskDetailSSEAPI(this.projectName, this.workflowName, this.taskID, 'test').then(res => {
         this.adaptTaskDetail(res.data)
         this.taskDetail = res.data
         this.workflow = res.data.workflow_args
       }).closeWhenDestroy(this)
     },
     fetchOldTaskDetail () {
-      workflowTaskDetailAPI(this.workflowName, this.taskID, 'test').then(res => {
+      workflowTaskDetailAPI(this.projectName, this.workflowName, this.taskID, 'test').then(res => {
         this.adaptTaskDetail(res)
         this.taskDetail = res
         this.workflow = res.workflow_args

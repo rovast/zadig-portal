@@ -1,6 +1,5 @@
 // Polyfill EventSource if browser does not support it
-import 'eventsource-polyfill'
-
+import store from 'storejs'
 const formatters = {
   plain: e => e.data,
   json: e => JSON.parse(e.data)
@@ -19,7 +18,10 @@ export default {
       )
 
       const source = new EventSource(url, {
-        withCredentials: config.withCredentials
+        withCredentials: config.withCredentials,
+        headers: {
+          Authorization: 'Bearer ' + store.get('userInfo').token
+        }
       })
 
       return new Promise((resolve, reject) => {

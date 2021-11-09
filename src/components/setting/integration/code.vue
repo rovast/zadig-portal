@@ -67,24 +67,24 @@
                        value="gerrit"></el-option>
           </el-select>
         </el-form-item>
-        <template v-if="codeAdd.type==='gitlab'||codeEdit.type==='github'">
-          <el-form-item v-if="codeAdd.type==='gitlab'"
+        <template v-if="codeEdit.type==='gitlab'||codeEdit.type==='github'">
+          <el-form-item v-if="codeEdit.type==='gitlab'"
                         label="GitLab 服务 URL"
                         prop="address">
             <el-input v-model="codeEdit.address"
                       placeholder="GitLab 服务 URL"
                       auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item :label="codeAdd.type==='gitlab'?'Application ID':'Client ID'"
+          <el-form-item :label="codeEdit.type==='gitlab'?'Application ID':'Client ID'"
                         prop="applicationId">
             <el-input v-model="codeEdit.applicationId"
-                      :placeholder="codeAdd.type==='gitlab'?'Application ID':'Client ID'"
+                      :placeholder="codeEdit.type==='gitlab'?'Application ID':'Client ID'"
                       auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item :label="codeAdd.type==='gitlab'?'Secret':'Client Secret'"
+          <el-form-item :label="codeEdit.type==='gitlab'?'Secret':'Client Secret'"
                         prop="clientSecret">
             <el-input v-model="codeEdit.clientSecret"
-                      :placeholder="codeAdd.type==='gitlab'?'Secret':'Client Secret'"
+                      :placeholder="codeEdit.type==='gitlab'?'Secret':'Client Secret'"
                       auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item v-if="codeEdit.type==='github'"

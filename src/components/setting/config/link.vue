@@ -42,14 +42,7 @@ import {
 export default {
   data () {
     return {
-      links: [
-        {
-          id: 'xx',
-          name: 'name',
-          url: 'url',
-          edit: false
-        }
-      ]
+      links: []
     }
   },
   methods: {

@@ -75,7 +75,6 @@ export default {
       default: false,
       required: true
     },
-    closeFileTree: Function,
     changeSelectPath: Function,
     type: String,
     url: String,

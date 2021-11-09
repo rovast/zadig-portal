@@ -19,21 +19,37 @@
           status-icon
           ref="userAccountGitHubForm"
         >
-          <el-form-item label="clientID" prop="clientID">
-            <el-input v-model="userAccountGitHub.config.clientID" placeholder="clientID" autofocus clearable auto-complete="off"></el-input>
+          <el-alert type="info" :closable="false">
+            <slot>
+              <span class="tips">{{`Authorization Callback URL 请填写`}}</span>
+              <span class="tips code-line">
+                {{`${$utils.getOrigin()}/dex/callback`}}
+                <span
+                  v-clipboard:copy="`${$utils.getOrigin()}/dex/callback`"
+                  v-clipboard:success="copyCommandSuccess"
+                  v-clipboard:error="copyCommandError"
+                  class="el-icon-copy-document copy"
+                ></span>
+              </span>
+            </slot>
+          </el-alert>
+          <el-form-item label="Client ID" prop="clientID">
+            <el-input
+              v-model="userAccountGitHub.config.clientID"
+              placeholder="输入 OAuth App Client ID"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
           </el-form-item>
-          <el-form-item label="clientSecret" prop="clientSecret">
-            <el-input v-model="userAccountGitHub.config.clientSecret" placeholder="clientSecret" autofocus clearable auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="redirectURI" prop="redirectURI">
-            <el-input v-model="userAccountGitHub.config.redirectURI" placeholder="redirectURI" autofocus clearable auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="teamNameField" prop="teamNameField">
-            <el-input v-model="userAccountGitHub.config.teamNameField" placeholder="teamNameField" autofocus clearable auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="其它">
-            <el-checkbox v-model="userAccountGitHub.config.loadAllGroups">loadAllGroups</el-checkbox>
-            <el-checkbox v-model="userAccountGitHub.config.useLoginAsID">useLoginAsID</el-checkbox>
+          <el-form-item label="Client Secret" prop="clientSecret">
+            <el-input
+              v-model="userAccountGitHub.config.clientSecret"
+              placeholder="输入 OAuth App Client Secret"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
           </el-form-item>
         </el-form>
       </template>
@@ -241,7 +257,18 @@ export default {
       },
       userAccountRules: {},
       userAccountLDAPRules: {},
-      userAccountGitHubRules: {}
+      userAccountGitHubRules: {
+        clientID: {
+          required: true,
+          message: '请填写 Client ID',
+          trigger: ['blur', 'change']
+        },
+        clientSecret: {
+          required: true,
+          message: '请填写 Client Secret',
+          trigger: ['blur', 'change']
+        }
+      }
     }
   },
   computed: {
@@ -250,6 +277,18 @@ export default {
     }
   },
   methods: {
+    copyCommandSuccess (event) {
+      this.$message({
+        message: '地址已成功复制到剪贴板',
+        type: 'success'
+      })
+    },
+    copyCommandError (event) {
+      this.$message({
+        message: '地址复制失败',
+        type: 'error'
+      })
+    },
     clearValidate (ref) {
       this.$refs[ref].clearValidate()
     },
@@ -275,8 +314,6 @@ export default {
     },
     handleUserAccountCancel () {
       if (this.$refs.userAccountGitHubForm) {
-        console.log(this.$refs.userAccountGitHubForm)
-        // this.$refs.userAccountGitHubForm.resetFields()
         this.userAccountGitHub = {
           type: 'github',
           id: 'github',
@@ -292,8 +329,6 @@ export default {
         }
       }
       if (this.$refs.userAccountLDAPForm) {
-        console.log(this.$refs.userAccountLDAPForm)
-        // this.$refs.userAccountLDAPForm.resetFields()
         this.userAccountLDAP = {
           type: 'ldap',
           id: 'ldap',
@@ -347,15 +382,18 @@ export default {
     syncAccountUser (row) {
       const id = row.id
       this.syncAccountUserLoading = true
-      syncLDAPAPI(id).then(res => {
-        this.syncAccountUserLoading = false
-        this.$message({
-          message: '同步 LDAP 数据成功',
-          type: 'success'
-        })
-      }, () => {
-        this.syncAccountUserLoading = false
-      })
+      syncLDAPAPI(id).then(
+        res => {
+          this.syncAccountUserLoading = false
+          this.$message({
+            message: '同步 LDAP 数据成功',
+            type: 'success'
+          })
+        },
+        () => {
+          this.syncAccountUserLoading = false
+        }
+      )
     },
     createAccountUser () {
       if (this.type === 'ldap') {
@@ -378,6 +416,7 @@ export default {
         this.$refs.userAccountGitHubForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountGitHub
+            payload.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()
@@ -413,6 +452,7 @@ export default {
         this.$refs.userAccountGitHubForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountGitHub
+            payload.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
             updateConnectorAPI(payload.id, payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()
@@ -447,34 +487,22 @@ export default {
     font-size: 2rem;
   }
 
-  .breadcrumb {
-    margin-bottom: 25px;
+  .tips {
+    display: block;
 
-    .el-breadcrumb {
-      font-size: 16px;
-      line-height: 1.35;
+    &.code-line {
+      display: inline-block;
+      font-size: 14px;
+      word-wrap: break-word;
+      word-break: break-all;
+      border-radius: 2px;
 
-      .el-breadcrumb__item__inner a:hover,
-      .el-breadcrumb__item__inner:hover {
+      .copy {
         color: #1989fa;
+        font-size: 16px;
         cursor: pointer;
       }
     }
-  }
-
-  .tab-container {
-    .sync-container {
-      padding-top: 15px;
-      padding-bottom: 15px;
-    }
-  }
-
-  .text-success {
-    color: rgb(82, 196, 26);
-  }
-
-  .text-failed {
-    color: #ff1949;
   }
 
   .edit-form-dialog {

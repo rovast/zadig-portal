@@ -6,7 +6,7 @@
       </div>
       <div class="link-title">快捷链接</div>
       <div class="link-outer" v-for="(link, index) in links" :key="index">
-        <el-link :href="link.url" target="_blank">{{link.name}}</el-link>
+        <el-link :href="link.url" target="_blank" rel="noopener noreferrer">{{link.name}}</el-link>
       </div>
       <div class="link-outer" v-if="links.length === 0">暂无链接</div>
     </el-popover>
@@ -47,13 +47,14 @@ export default {
 
 .link-title {
   min-width: 150px;
-  margin-bottom: 8px;
-  font-weight: 500;
+  margin-bottom: 6px;
+  font-weight: 600;
   font-size: 14px;
 }
 
 .link-outer {
   margin-left: 10px;
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1.8;
 }
 </style>

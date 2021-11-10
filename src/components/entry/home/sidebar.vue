@@ -216,9 +216,9 @@ export default {
           category_name: '设置',
           items: [
             {
-              name: '账号设置',
-              icon: 'iconfont iconfenzucopy',
-              url: 'profile'
+              name: '用户管理',
+              icon: 'iconfont icongeren',
+              url: 'users/account/manage'
             },
             {
               name: '系统设置',

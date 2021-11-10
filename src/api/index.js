@@ -1414,3 +1414,20 @@ export function queryUserBindings (uid, projectName = '') { // 查询用户所�
 export function getArtifactFileAPI (payload, id) {
   return http.post(`/api/aslan/system/s3storage/${id}/releases/search?kind=file`, payload)
 }
+
+// external link
+export function createExternalLinkAPI (payload) {
+  return http.post(`/api/aslan/system/externalLink`, payload)
+}
+
+export function updateExternalLinkAPI (id, payload) {
+  return http.put(`/api/aslan/system/externalLink/${id}`, payload)
+}
+
+export function getExternalLinksAPI () {
+  return http.get(`/api/aslan/system/externalLink`)
+}
+
+export function deleteExternalLinkAPI (id) {
+  return http.delete(`/api/aslan/system/externalLink/${id}`)
+}

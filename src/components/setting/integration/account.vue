@@ -7,7 +7,7 @@
             <!-- <el-option label="Microsoft Active Directory" value="ad"></el-option> -->
             <el-option label="OpenLDAP" value="ldap"></el-option>
             <el-option label="GitHub" value="github"></el-option>
-            <!-- <el-option label="SSO" value="sso"></el-option> -->
+            <!-- <el-option label="SSO" value="oauth"></el-option> -->
           </el-select>
         </el-form-item>
       </el-form>
@@ -16,10 +16,11 @@
           :model="userAccountGitHub.config"
           @submit.native.prevent
           :rules="userAccountGitHubRules"
-          status-icon
           ref="userAccountGitHubForm"
+          label-position="left"
+          label-width="105px"
         >
-          <el-alert type="info" :closable="false">
+          <el-alert type="info" :closable="false" style="margin-bottom: 15px;">
             <slot>
               <span class="tips">{{`Authorization Callback URL 请填写`}}</span>
               <span class="tips code-line">
@@ -54,50 +55,78 @@
         </el-form>
       </template>
       <template v-if="userAccount.type ==='ldap'">
-        <el-form :model="userAccountLDAP" @submit.native.prevent :rules="userAccountLDAPRules" status-icon ref="userAccountLDAPForm">
-          <el-form-item label="主机名:端口" prop="config.host">
-            <el-input v-model="userAccountLDAP.config.host" placeholder="主机名:端口" autofocus clearable auto-complete="off"></el-input>
+        <el-form
+          :model="userAccountLDAP.config"
+          @submit.native.prevent
+          :rules="userAccountLDAPRules"
+          ref="userAccountLDAPForm"
+          label-width="100px"
+          label-position="left"
+        >
+          <h4>基本配置</h4>
+          <el-form-item label="主机地址">
+            <el-col :span="14">
+              <el-form-item prop="addr">
+                <el-input v-model="userAccountLDAP.config.addr" placeholder="LDAP 地址" autofocus clearable auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col style="text-align: center;" :span="1">:</el-col>
+            <el-col :span="5">
+              <el-form-item prop="port">
+                <el-input v-model="userAccountLDAP.config.port" placeholder="端口" autofocus clearable auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
           </el-form-item>
-          <el-form-item label="bindDN" prop="config.bindDN">
-            <el-input v-model="userAccountLDAP.config.bindDN" autofocus clearable auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="bindPW" prop="config.bindPW">
-            <el-input v-model="userAccountLDAP.config.bindPW" autofocus clearable auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="usernamePrompt" prop="config.usernamePrompt">
-            <el-input v-model="userAccountLDAP.config.usernamePrompt" autofocus clearable auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="userSearch.baseDN" prop="config.userSearch.baseDN">
-            <el-input v-model="userAccountLDAP.config.userSearch.baseDN" placeholder="userSearch.baseDN" autofocus auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="userSearch.filter" prop="config.userSearch.filter">
-            <el-input v-model="userAccountLDAP.config.userSearch.filter" placeholder="userSearch.filter" autofocus auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="userSearch.username" prop="config.userSearch.username">
-            <el-input v-model="userAccountLDAP.config.userSearch.username" placeholder="userSearch.username" autofocus auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="userSearch.idAttr" prop="config.userSearch.idAttr">
-            <el-input v-model="userAccountLDAP.config.userSearch.idAttr" placeholder="userSearch.idAttr" autofocus auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="userSearch.emailAttr" prop="config.userSearch.emailAttr">
+          <el-form-item label="管理员账号" prop="bindDN">
             <el-input
-              v-model="userAccountLDAP.config.userSearch.emailAttr"
-              placeholder="userSearch.emailAttr"
+              v-model="userAccountLDAP.config.bindDN"
+              placeholder="LDAP 管理员，示例：cn=user,dc=domain,dc=name"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="管理员密码" prop="bindPW">
+            <el-input v-model="userAccountLDAP.config.bindPW" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item prop="startTLS" label="使用 SSL">
+            <el-checkbox v-model="userAccountLDAP.config.startTLS"></el-checkbox>
+          </el-form-item>
+          <h4>用户规则</h4>
+          <el-form-item label="基础 DN" prop="baseDN">
+            <el-input
+              v-model="userAccountLDAP.config.userSearch.baseDN"
+              placeholder="从根节点搜索用户，例如：cn=users,dc=example.com,dc=com"
               autofocus
               auto-complete="off"
             ></el-input>
           </el-form-item>
-          <el-form-item label="userSearch.nameAttr" prop="config.userSearch.nameAttr">
-            <el-input v-model="userAccountLDAP.config.userSearch.nameAttr" placeholder="userSearch.nameAttr" autofocus auto-complete="off"></el-input>
+          <el-form-item label="用户过滤器" prop="userSearch.filter">
+            <el-input v-model="userAccountLDAP.config.userSearch.filter" placeholder="userSearch.filter" autofocus auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="groupSearch.baseDN" prop="config.groupSearch.baseDN">
-            <el-input v-model="userAccountLDAP.config.groupSearch.baseDN" placeholder="groupSearch.baseDN" autofocus auto-complete="off"></el-input>
+          <el-form-item label="唯一 ID 属性" prop="userSearch.idAttr">
+            <el-input v-model="userAccountLDAP.config.userSearch.idAttr" placeholder="cn" autofocus auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="groupSearch.filter" prop="config.groupSearch.filter">
+          <el-form-item label="用户姓名属性" prop="userSearch.username">
+            <el-input v-model="userAccountLDAP.config.userSearch.username" placeholder="cn" autofocus auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="用户邮箱属性" prop="userSearch.emailAttr">
+            <el-input v-model="userAccountLDAP.config.userSearch.emailAttr" label="用户邮箱" autofocus auto-complete="off"></el-input>
+          </el-form-item>
+          <h4>组规则</h4>
+          <el-form-item label="组基础 DN" prop="groupSearch.baseDN">
+            <el-input
+              v-model="userAccountLDAP.config.groupSearch.baseDN"
+              placeholder="从根节点搜索用户组，例如：cn=group,dc=example.com,dc=com"
+              autofocus
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="组过滤器" prop="groupSearch.filter">
             <el-input v-model="userAccountLDAP.config.groupSearch.filter" placeholder="groupSearch.filter" autofocus auto-complete="off"></el-input>
           </el-form-item>
           <!-- todo userMatchers: -->
-          <el-form-item label="groupSearch.nameAttr" prop="config.groupSearch.nameAttr">
+          <el-form-item label="组名称属性" prop="groupSearch.nameAttr">
             <el-input
               v-model="userAccountLDAP.config.groupSearch.nameAttr"
               placeholder="groupSearch.nameAttr"
@@ -105,14 +134,8 @@
               auto-complete="off"
             ></el-input>
           </el-form-item>
-          <el-form-item label="其它">
-            <el-checkbox v-model="userAccountLDAP.config.startTLS">startTLS</el-checkbox>
-            <el-checkbox v-model="userAccountLDAP.config.insecureNoSSL">insecureNoSSL</el-checkbox>
-            <el-checkbox v-model="userAccountLDAP.config.insecureSkipVerify">insecureSkipVerify</el-checkbox>
-          </el-form-item>
         </el-form>
       </template>
-
       <div slot="footer" class="dialog-footer">
         <el-button
           v-if="userAccount.mode==='add'"
@@ -136,6 +159,7 @@
       </div>
     </el-dialog>
     <!--end of add account dialog-->
+
     <div class="tab-container">
       <template>
         <el-alert type="info" :closable="false">
@@ -187,7 +211,7 @@ import {
   createConnectorAPI,
   syncLDAPAPI
 } from '@api'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, omit } from 'lodash'
 export default {
   data () {
     return {
@@ -204,32 +228,34 @@ export default {
         name: 'LDAP',
         config: {
           host: '',
+          addr: '',
+          port: '',
           insecureNoSSL: false,
           insecureSkipVerify: false,
-          startTLS: true,
+          startTLS: false,
           // rootCA: '/etc/dex/ldap.ca',
           // rootCAData:'',
           bindDN: '',
           bindPW: '',
-          usernamePrompt: 'SSO Username',
+          usernamePrompt: 'LDAP 用户名',
           userSearch: {
             baseDN: '',
-            filter: '(objectClass=person)',
-            username: '',
+            filter: '(cn=*)',
+            username: 'cn',
             idAttr: '',
             emailAttr: '',
             nameAttr: ''
           },
           groupSearch: {
             baseDN: '',
-            filter: '',
+            filter: '(objectClass=group)',
             // userMatchers: [
             //   {
             //     userAttr: 'uid',
             //     groupAttr: 'member'
             //   }
             // ],
-            nameAttr: 'name'
+            nameAttr: 'ou'
           }
         }
       },
@@ -256,7 +282,28 @@ export default {
         }
       },
       userAccountRules: {},
-      userAccountLDAPRules: {},
+      userAccountLDAPRules: {
+        addr: {
+          required: true,
+          message: '请输入 LDAP 地址',
+          trigger: ['blur', 'change']
+        },
+        port: {
+          required: true,
+          message: '请输入 LDAP 端口',
+          trigger: ['blur', 'change']
+        },
+        bindDN: {
+          required: true,
+          message: '请输入管理员账号',
+          trigger: ['blur', 'change']
+        },
+        bindPW: {
+          required: true,
+          message: '请输入管理员密码',
+          trigger: ['blur', 'change']
+        }
+      },
       userAccountGitHubRules: {
         clientID: {
           required: true,
@@ -307,6 +354,8 @@ export default {
       }
       this.dialogUserAccountFormVisible = true
       if (type === 'ldap') {
+        row.config.addr = row.config.host.split(':')[0]
+        row.config.port = row.config.host.split(':')[1]
         this.userAccountLDAP = cloneDeep(row)
       } else if (type === 'github') {
         this.userAccountGitHub = cloneDeep(row)
@@ -335,6 +384,8 @@ export default {
           name: 'LDAP',
           config: {
             host: '',
+            addr: '',
+            port: '',
             insecureNoSSL: false,
             insecureSkipVerify: false,
             startTLS: true,
@@ -400,6 +451,8 @@ export default {
         this.$refs.userAccountLDAPForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountLDAP
+            payload.config.host = `${payload.config.addr}:${payload.config.port}`
+            omit(payload.config, ['addr', 'port'])
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()
@@ -436,6 +489,8 @@ export default {
         this.$refs.userAccountLDAPForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountLDAP
+            payload.host = `${payload.config.addr}:${payload.config.port}`
+            omit(payload, ['addr', 'port'])
             updateConnectorAPI(payload.id, payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()
@@ -506,7 +561,7 @@ export default {
   }
 
   .edit-form-dialog {
-    width: 550px;
+    width: 600px;
 
     .el-dialog__header {
       padding: 15px;
@@ -523,10 +578,6 @@ export default {
       padding-bottom: 0;
       color: #606266;
       font-size: 14px;
-
-      .el-form-item {
-        margin-bottom: 15px;
-      }
     }
 
     .el-select {

@@ -1,13 +1,13 @@
 <template>
   <div class="version-config">
-    <el-form ref="configRef" :rules="rules" :model="versionInfo" label-width="100px" inline>
-      <el-form-item label="集成环境" prop="envs">
-        <el-select v-model="versionInfo.envs" placeholder="请选择集成环境" size="small">
-          <el-option label="label" value="value"></el-option>
+    <el-form ref="configRef" :rules="rules" :model="releaseInfo" label-width="100px" inline>
+      <el-form-item label="集成环境" prop="envName">
+        <el-select v-model="releaseInfo.envName" placeholder="请选择集成环境" size="small">
+          <el-option :label="name" :value="name" v-for="name in envNames" :key="name"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="服务" prop="services">
-        <el-select v-model="versionInfo.services" placeholder="请选择服务" multiple size="small">
+      <el-form-item label="服务" prop="chartDatas">
+        <el-select v-model="releaseInfo.chartDatas" placeholder="请选择服务" multiple size="small">
           <el-option label="label" value="value"></el-option>
         </el-select>
         <el-button type="text" size="small">全选</el-button>
@@ -32,17 +32,30 @@
 
 <script>
 import Codemirror from '@/components/projects/common/codemirror.vue'
+
+import {
+  listProductAPI,
+  getHelmReleaseListAPI,
+  getChartInfoAPI,
+  createHelmVersionAPI,
+  getHelmChartServiceFilePath,
+  getHelmChartServiceFileContent
+} from '@api'
+
 export default {
+  props: {
+    releaseInfo: Object
+  },
   data () {
     this.defaultProps = { children: 'children', label: 'label' }
 
     this.rules = {
-      envs: {
+      envName: {
         required: true,
         message: '请选择环境',
         trigger: ['change', 'blur']
       },
-      services: {
+      chartDatas: {
         required: true,
         message: '请选择服务',
         trigger: ['change', 'blur']
@@ -52,11 +65,9 @@ export default {
       fileData: [],
       yaml: '',
 
-      versionInfo: {
-        envs: '',
-        services: []
-      },
-      checkAll: false
+      checkAll: false,
+
+      envNames: []
     }
   },
   methods: {
@@ -65,7 +76,18 @@ export default {
     },
     validate () {
       return this.$refs.configRef.validate()
+    },
+    getEnvNames () {
+      listProductAPI(this.releaseInfo.productName).then(res => {
+        this.envNames = res.map(re => re.env_name)
+      })
+    },
+    getServicesNameByEnv () {
+      getHelmReleaseListAPI()
     }
+  },
+  created () {
+    this.getEnvNames()
   },
   components: {
     Codemirror

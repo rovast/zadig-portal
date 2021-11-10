@@ -132,7 +132,7 @@ export default {
       }
     },
     getEnvServices (projectName) {
-      listProductAPI('', projectName).then(res => {
+      listProductAPI(projectName).then(res => {
         this.filteredEnvs = res
       })
     }

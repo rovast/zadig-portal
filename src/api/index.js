@@ -225,7 +225,7 @@ export function taskPendingSSEAPI () {
 }
 
 // Env
-export function listProductAPI (envType = '', projectName = '') {
+export function listProductAPI (projectName = '', envType = '') {
   if (envType) {
     return http.get(`/api/aslan/environment/environments?projectName=${projectName}&envType=${envType}`)
   } else {
@@ -331,12 +331,12 @@ export function updateServicesOrchestrationAPI (projectName, payload) {
   return http.patch(`/api/aslan/project/products/${projectName}`, payload)
 }
 
-export function getHelmChartServiceFilePath (projectName, serviceName, path) {
-  return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/filePath?dir=${path}&projectName=${projectName}`)
+export function getHelmChartServiceFilePath (projectName, serviceName, path, revision = '', deliveryVersion = false) {
+  return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/filePath?dir=${path}&revision=${revision}&deliveryVersion=${deliveryVersion}`)
 }
 
-export function getHelmChartServiceFileContent (projectName, serviceName, path, fileName) {
-  return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/fileContent?projectName=${projectName}&filePath=${path}&fileName=${fileName}`)
+export function getHelmChartServiceFileContent (projectName, serviceName, path, fileName, revision = '', deliveryVersion = false) {
+  return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/fileContent?filePath=${path}&fileName=${fileName}&revision=${revision}&deliveryVersion=${deliveryVersion}`)
 }
 
 export function getHelmChartServiceModule (projectName, serviceName) {
@@ -1159,6 +1159,18 @@ export function getVersionProductListAPI () {
 
 export function productHostingNamespaceAPI (clusterId) {
   return http.get(`/api/aslan/environment/kube/available_namespaces?clusterId=${clusterId}`)
+}
+
+export function getHelmReleaseListAPI (productName, envName) {
+  return http.get(`/api/aslan/environment/environments/${productName}/helm/releases?envName=${envName}`)
+}
+
+export function getChartInfoAPI (productName, envName, servicesName) {
+  return http.get(`/api/aslan/environment/environments/${productName}/helm/charts?envName=${envName}&servicesName=${servicesName.join(',')}`)
+}
+
+export function createHelmVersionAPI (payload) {
+  return http.post(`/api/aslan/delivery/releases/helm`, payload)
 }
 
 // Forgot password

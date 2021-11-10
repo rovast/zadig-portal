@@ -668,7 +668,7 @@ export default {
         this.buildTargets = res
       })
     }
-    listProductAPI('', projectName).then(res => {
+    listProductAPI(projectName).then(res => {
       // 生产环境升序，名称升序
       this.currentProjectEnvs = orderBy(res, ['is_prod', 'env_name'], ['asc', 'asc'])
       // 指定环境运行，匹配到则显示数据，匹配不到则由放开由用户选择

@@ -33,6 +33,9 @@
 
 <script>
 export default {
+  props: {
+    releaseInfo: Object
+  },
   data () {
     this.rules = {
       chart: {

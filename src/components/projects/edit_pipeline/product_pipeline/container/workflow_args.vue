@@ -353,7 +353,7 @@ export default {
   },
   created () {
     this.runner.tests = this.testInfos
-    listProductAPI('', this.targetProduct).then(res => {
+    listProductAPI(this.targetProduct).then(res => {
       this.products = res
       const product = this.forcedUserInput.product_tmpl_name
       const namespace = this.forcedUserInput.namespace

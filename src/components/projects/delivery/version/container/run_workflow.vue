@@ -174,7 +174,7 @@ export default {
   created () {
     const projectName = this.projectName
     this.runner.workflow_name = this.workflowName
-    listProductAPI('', projectName).then(res => {
+    listProductAPI(projectName).then(res => {
       this.filterProducts(res)
     })
   },

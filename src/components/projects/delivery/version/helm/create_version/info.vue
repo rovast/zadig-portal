@@ -1,14 +1,14 @@
 <template>
   <div class="version-info">
-    <el-form ref="infoRef" :rules="rules" :model="versionInfo" label-width="100px">
+    <el-form ref="infoRef" :rules="rules" :model="releaseInfo" label-width="100px">
       <el-form-item label="版本名称" prop="version">
-        <el-input v-model="versionInfo.version" placeholder="输入版本名称" size="small"></el-input>
+        <el-input v-model="releaseInfo.version" placeholder="输入版本名称" size="small"></el-input>
       </el-form-item>
-      <el-form-item label="版本标签" prop="tag">
-        <el-input v-model="versionInfo.tag" placeholder="输入版本名称" size="small"></el-input>
+      <el-form-item label="版本标签" prop="labels">
+        <el-input v-model="releaseInfo.labels" placeholder="输入版本标签，使用 ',' 分割" size="small"></el-input>
       </el-form-item>
       <el-form-item label="版本描述">
-        <el-input type="textarea" v-model="versionInfo.desc" placeholder="输入版本描述" :rows="4" size="small"></el-input>
+        <el-input type="textarea" v-model="releaseInfo.desc" placeholder="输入版本描述" :rows="4" size="small"></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -16,6 +16,9 @@
 
 <script>
 export default {
+  props: {
+    releaseInfo: Object
+  },
   data () {
     this.rules = {
       version: {
@@ -24,13 +27,7 @@ export default {
         trigger: ['change', 'blur']
       }
     }
-    return {
-      versionInfo: {
-        version: '',
-        tag: '',
-        desc: ''
-      }
-    }
+    return {}
   },
   methods: {
     validate () {

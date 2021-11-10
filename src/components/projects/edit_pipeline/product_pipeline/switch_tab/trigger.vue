@@ -789,7 +789,7 @@ export default {
       }
     },
     getProducts () {
-      listProductAPI('test', this.productTmlName).then(res => {
+      listProductAPI(this.productTmlName, 'test').then(res => {
         this.products = res
       })
     },

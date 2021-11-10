@@ -302,7 +302,7 @@ export default {
     },
     getEnvList () {
       const projectName = this.projectName
-      listProductAPI('', projectName).then((res) => {
+      listProductAPI(projectName).then((res) => {
         this.envList = res.map(element => {
           getProductInfo(projectName, element.env_name).then((res) => {
             element.status = res.status

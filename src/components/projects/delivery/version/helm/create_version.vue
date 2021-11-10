@@ -9,7 +9,7 @@
     </el-steps>
 
     <keep-alive>
-      <component ref="versionComp" class="step-content" :is="isComp"></component>
+      <component ref="versionComp" class="step-content" :is="isComp" :releaseInfo="deliveryRelease"></component>
     </keep-alive>
 
     <footer class="footer">
@@ -27,7 +27,17 @@ import Push from './create_version/push.vue'
 export default {
   data () {
     return {
-      activeStep: 2 // 0
+      activeStep: 0,
+      deliveryRelease: {
+        productName: '',
+        version: '',
+        labels: '', // []string
+        desc: '',
+        envName: '',
+        chartDatas: [], // {serviceName, version, valuesYamlContent} and lastVersion but not post
+        chartRepoID: '',
+        options: {} // enableOfflineDist, s3Id
+      }
     }
   },
   computed: {
@@ -67,12 +77,16 @@ export default {
         params: this.$route.params
       })
     }
+  },
+  mounted () {
+    this.deliveryRelease.productName = this.$route.params.project_name
   }
 }
 </script>
 
 <style lang="less" scoped>
 .create-helm-version {
+  min-width: 820px;
   height: calc(~'100% - 60px');
   padding: 20px 30px;
 

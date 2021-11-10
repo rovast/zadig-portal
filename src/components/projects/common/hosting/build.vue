@@ -861,7 +861,7 @@ import {
   getDockerfileTemplatesAPI,
   getDockerfileAPI,
   getImgListAPI,
-  getCodeSourceAPI,
+  getCodeSourceMaskedAPI,
   createBuildConfigAPI,
   updateBuildConfigAPI,
   getServiceTargetsAPI,
@@ -1345,7 +1345,7 @@ export default {
       getDockerfileTemplatesAPI().then((res) => {
         this.dockerfileTemplates = res.dockerfile_template
       })
-      getCodeSourceAPI(orgId).then((response) => {
+      getCodeSourceMaskedAPI(orgId).then((response) => {
         this.allCodeHosts = response
       })
       getImgListAPI().then((response) => {

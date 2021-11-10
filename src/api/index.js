@@ -630,10 +630,11 @@ export function deleteUserAPI (uid) {
 // ----- Syetem Setting-Integration -----
 
 // Code
-export function getCodeSourceAPI () {
-  return http.get(`/api/aslan/code/codehost`)
+// Information is masked no detail
+export function getCodeSourceMaskedAPI () {
+  return http.get(`/api/v1/picket/codehosts`)
 }
-
+// Return details and only for admin
 export function getCodeProviderAPI () {
   return http.get(`/api/v1/codehosts`)
 }

@@ -1080,6 +1080,10 @@ export function userLoginAPI (payload) {
   return http.post(`/api/v1/login`, payload)
 }
 
+export function checkConnectorsAPI () {
+  return http.get(`/api/v1/login-enabled`)
+}
+
 // Profile
 
 export function getCurrentUserInfoAPI (uid) {

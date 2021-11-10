@@ -64,7 +64,7 @@
           label-position="left"
         >
           <h4>基本配置</h4>
-          <el-form-item label="主机地址">
+          <el-form-item label="主机地址" prop="addr">
             <el-col :span="14">
               <el-form-item prop="addr">
                 <el-input v-model="userAccountAD.config.addr" placeholder="AD 地址" autofocus clearable auto-complete="off"></el-input>
@@ -146,7 +146,7 @@
           label-position="left"
         >
           <h4>基本配置</h4>
-          <el-form-item label="主机地址">
+          <el-form-item label="主机地址" prop="addr">
             <el-col :span="14">
               <el-form-item prop="addr">
                 <el-input v-model="userAccountLDAP.config.addr" placeholder="LDAP 地址" autofocus clearable auto-complete="off"></el-input>
@@ -246,7 +246,7 @@
       <template>
         <el-alert type="info" :closable="false">
           <template>
-            为系统定义用户来源，默认支持 LDAP、AD、以及 SSO 集成，详情可参考
+            为系统定义用户来源，默认支持 OpenLDAP、Microsoft Active Directory、以及 OAuth 集成，详情可参考
             <el-link
               style="font-size: 14px; vertical-align: baseline;"
               type="primary"
@@ -261,7 +261,7 @@
         <el-button size="small" type="primary" plain @click="addAccount()">添加</el-button>
       </div>
       <el-table v-if="accounts.length>0" :data="accounts" style="width: 100%;">
-        <el-table-column label="名称">
+        <el-table-column label="账户类型">
           <template slot-scope="scope">{{scope.row.name}}</template>
         </el-table-column>
         <el-table-column label="操作" width="300">

@@ -6,8 +6,10 @@
           <el-option label="label" value="value"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item v-for="chart in  chartVersions" :key="chart.name" :label="`${chart.name} Chart 版本号`">
+      <el-form-item label="填写 Chart 版本号"></el-form-item>
+      <el-form-item v-for="chart in  chartVersions" :key="chart.name" :label="chart.name">
         <el-input v-model="chart.version" placeholder="请输入 Chart 版本号" size="small"></el-input>
+        <span class="last-version">上个版本：{{chart.lastVersion}}</span>
       </el-form-item>
       <div>
         <el-button type="text" @click="showEnhanced = !showEnhanced">
@@ -18,16 +20,6 @@
       <div v-if="showEnhanced">
         <el-form-item label="离线包分发">
           <el-switch v-model="versionRepo.outlineFlag"></el-switch>
-        </el-form-item>
-        <el-form-item label="镜像包名称" prop="imageName">
-          <el-input v-model="versionRepo.imageName" placeholder="请输入镜像包名称" size="small">
-            <template slot="append">{{versionTar}}</template>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="离线包名称" prop="outlineName">
-          <el-input v-model="versionRepo.outlineName" placeholder="请输入离线包名称" size="small">
-            <template slot="append">{{versionTar}}</template>
-          </el-input>
         </el-form-item>
         <el-form-item label="对象存储" prop="objectStore">
           <el-select v-model="versionRepo.objectStore" placeholder="请选择对象存储" size="small">
@@ -48,16 +40,6 @@ export default {
         message: '请选择 Chart 仓库',
         trigger: ['change', 'blur']
       },
-      imageName: {
-        required: true,
-        message: '请输入镜像包名称',
-        trigger: ['change', 'blur']
-      },
-      outlineName: {
-        required: true,
-        message: '请输入离线包名称',
-        trigger: ['change', 'blur']
-      },
       objectStore: {
         required: true,
         message: '请选择对象存储',
@@ -70,18 +52,18 @@ export default {
         chart: '',
         versions: [],
         outlineFlag: false,
-        imageName: '',
-        outlineName: '',
         objectStore: ''
       },
       chartVersions: [
         {
           name: 'Zadig',
-          version: ''
+          version: '',
+          lastVersion: '1.3.0'
         },
         {
           name: 'plutus',
-          version: ''
+          version: '',
+          lastVersion: '1.3.0'
         }
       ],
       versionTar: '-v1.3.0.tar.gz'
@@ -97,10 +79,17 @@ export default {
 
 <style lang="less" scoped>
 .version-push {
+  .last-version {
+    display: inline-block;
+    margin-left: 8px;
+    color: #606266;
+    font-size: 12px;
+  }
+
   /deep/.el-input,
   .el-textarea,
   .el-select {
-    width: calc(~'100% - 50px');
+    width: calc(~'100% - 150px');
   }
 
   /deep/.el-select > .el-input {

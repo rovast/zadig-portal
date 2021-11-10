@@ -553,6 +553,15 @@ const routes = [
             }
           },
           {
+            path: ':project_name/create',
+            component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/version/helm/create_version.vue'),
+            meta: {
+              requiresAuth: true,
+              requiresSuperAdmin: false,
+              title: '创建版本'
+            }
+          },
+          {
             path: ':project_name/:id',
             component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/version/helm/detail.vue'),
             meta: {

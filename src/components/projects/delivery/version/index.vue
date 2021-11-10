@@ -20,7 +20,7 @@
                  size="small"
                  icon="el-icon-search">搜索</el-button>
       <el-button type="primary"
-                 @click="createHelmVersion"
+                 @click="$router.push(`${$route.path}/create`)"
                  size="small"
                  v-if="isHelm">
         创建版本
@@ -77,7 +77,6 @@
       <img src="@assets/icons/illustration/version_manage.svg"
            alt="" />
     </div>
-    <component :is="createHelmVersionComp" v-if="isHelm" :value.sync="dialogVisible"></component>
   </div>
 </template>
 
@@ -92,8 +91,7 @@ export default {
       productList: [],
       serviceList: [],
       selectedService: '',
-      isHelm: true, // 数据应该来自项目类型
-      dialogVisible: true
+      isHelm: true // 数据应该来自项目类型
     }
   },
   methods: {
@@ -132,20 +130,11 @@ export default {
       getVersionServiceListAPI(this.productName).then((res) => {
         this.serviceList = res
       })
-    },
-    createHelmVersion () {
-      this.dialogVisible = true
-      console.log('创建版本')
     }
   },
   computed: {
     productName () {
       return this.$route.params.project_name
-    },
-    createHelmVersionComp () {
-      return this.isHelm
-        ? () => import('./helm/create_version.vue')
-        : null
     }
   },
   watch: {

@@ -4,19 +4,11 @@
       <el-form-item label="版本名称" prop="version">
         <el-input v-model="versionInfo.version" placeholder="输入版本名称" size="small"></el-input>
       </el-form-item>
+      <el-form-item label="版本标签" prop="tag">
+        <el-input v-model="versionInfo.tag" placeholder="输入版本名称" size="small"></el-input>
+      </el-form-item>
       <el-form-item label="版本描述">
-        <el-input type="textarea" v-model="versionInfo.desc" placeholder="输入版本描述" :rows="2" size="small"></el-input>
-      </el-form-item>
-      <el-form-item label="集成环境" prop="envs">
-        <el-select v-model="versionInfo.envs" placeholder="请选择集成环境" size="small">
-          <el-option label="label" value="value"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="服务" prop="services">
-        <el-select v-model="versionInfo.services" placeholder="请选择服务" multiple size="small">
-          <el-option label="label" value="value"></el-option>
-        </el-select>
-        <el-button type="text" size="small">全选</el-button>
+        <el-input type="textarea" v-model="versionInfo.desc" placeholder="输入版本描述" :rows="4" size="small"></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -30,26 +22,14 @@ export default {
         required: true,
         message: '请填写版本名称',
         trigger: ['change', 'blur']
-      },
-      envs: {
-        required: true,
-        message: '请选择环境',
-        trigger: ['change', 'blur']
-      },
-      services: {
-        required: true,
-        message: '请选择服务',
-        trigger: ['change', 'blur']
       }
     }
     return {
       versionInfo: {
         version: '',
-        desc: '',
-        envs: '',
-        services: []
-      },
-      checkAll: false
+        tag: '',
+        desc: ''
+      }
     }
   },
   methods: {

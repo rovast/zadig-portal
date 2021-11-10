@@ -3,49 +3,38 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-7 col-md-12 col-pad-0 form-section">
-          <div class="login-inner-form"  v-show="!forgotPassword">
+          <div class="login-inner-form" v-show="!forgotPassword">
             <div class="details">
               <header>
                 <span class="name">Zadig</span>
                 <h3>登入账户</h3>
               </header>
               <section>
-                <el-form :model="loginForm"
-                         status-icon
-                         :rules="rules"
-                         ref="loginForm">
-                  <el-form-item label=""
-                                prop="account">
-                    <el-input v-model="loginForm.account"
-                              placeholder="用户名"
-                              autocomplete="off"></el-input>
+                <el-form :model="loginForm" status-icon :rules="rules" ref="loginForm">
+                  <el-form-item label prop="account">
+                    <el-input v-model="loginForm.account" placeholder="用户名" autocomplete="off"></el-input>
                   </el-form-item>
-                  <el-form-item label=""
-                                prop="password">
-                    <el-input type="password"
-                              @keyup.enter.native="login"
-                              v-model="loginForm.password"
-                              autocomplete="off"
-                              placeholder="密码"
-                              show-password></el-input>
+                  <el-form-item label prop="password">
+                    <el-input
+                      type="password"
+                      @keyup.enter.native="login"
+                      v-model="loginForm.password"
+                      autocomplete="off"
+                      placeholder="密码"
+                      show-password
+                    ></el-input>
                   </el-form-item>
-
                 </el-form>
-                <el-button type="submit"
-                           @click="login"
-                            v-loading="loading"
-                           class="btn-md btn-theme btn-block login-btn">
-                  登录
-                </el-button>
+                <el-button type="submit" @click="login" v-loading="loading" class="btn-md btn-theme btn-block login-btn">登录</el-button>
               </section>
               <div class="bottom">
-                  <a  href="/api/v1/login">第三方登录</a>
-                  <a  @click="forgotPassword = true">找回密码</a>
+                <a v-if="showConnectors" href="/api/v1/login">第三方登录</a>
+                <a @click="forgotPassword = true">找回密码</a>
               </div>
             </div>
           </div>
           <div class="login-inner-form" v-show="forgotPassword">
-            <ForgetPassword :openLogin="()=> forgotPassword=false"  :retrieveToken="retrieveToken"/>
+            <ForgetPassword :openLogin="()=> forgotPassword=false" :retrieveToken="retrieveToken" />
           </div>
         </div>
         <div class="col-lg-5 col-md-12 col-pad-0 bg-img none-992">
@@ -61,12 +50,13 @@
         筑栈（上海）信息技术有限公司 KodeRover ©{{moment().format('YYYY')}}
         <el-tooltip>
           <div slot="content">
-            <span v-if="processEnv.VERSION">Version: {{processEnv.VERSION}}</span><br>
-            <span v-if="processEnv.BUILD_TIME">Build Time: {{moment.unix(processEnv.BUILD_TIME).format('YYYYMMDDHHmm')}}</span><br>
+            <span v-if="processEnv.VERSION">Version: {{processEnv.VERSION}}</span>
+            <br />
+            <span v-if="processEnv.BUILD_TIME">Build Time: {{moment.unix(processEnv.BUILD_TIME).format('YYYYMMDDHHmm')}}</span>
+            <br />
             <span v-if="processEnv.TAG">Tag: {{processEnv.TAG}}</span>
           </div>
-          <span v-if="processEnv && processEnv.BUILD_TIME"
-                class="el-icon-info"></span>
+          <span v-if="processEnv && processEnv.BUILD_TIME" class="el-icon-info"></span>
         </el-tooltip>
       </div>
     </footer>
@@ -77,6 +67,7 @@ import moment from 'moment'
 import { isMobile } from 'mobile-device-detect'
 import ForgetPassword from './components/forgetPassword.vue'
 import store from 'storejs'
+import { checkConnectorsAPI } from '@api'
 
 export default {
   components: {
@@ -85,6 +76,7 @@ export default {
   data () {
     return {
       forgotPassword: false,
+      showConnectors: false,
       retrieveToken: '',
       loading: false,
       loginForm: {
@@ -95,22 +87,21 @@ export default {
         account: [
           { required: true, message: '请输入用户名', trigger: 'change' }
         ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'change' }
-        ]
+        password: [{ required: true, message: '请输入密码', trigger: 'change' }]
       },
       moment,
       copywriting: {
         common: {
           title: '高效研发从现在开始',
-          content: '面向开发者设计的高可用 CI/CD：Zadig 强大的云原生多环境能力，轻松实现本地联调、微服务并行构建、集成测试和持续部署。'
+          content:
+            '面向开发者设计的高可用 CI/CD：Zadig 强大的云原生多环境能力，轻松实现本地联调、微服务并行构建、集成测试和持续部署。'
         }
       }
     }
   },
   methods: {
     login () {
-      this.$refs.loginForm.validate(async (valid) => {
+      this.$refs.loginForm.validate(async valid => {
         if (valid) {
           this.loading = true
           const payload = this.loginForm
@@ -136,7 +127,10 @@ export default {
       if (isMobile) {
         this.$router.push('/mobile')
       } else {
-        if (typeof this.$route.query.redirect !== 'undefined' && this.$route.query.redirect !== '/') {
+        if (
+          typeof this.$route.query.redirect !== 'undefined' &&
+          this.$route.query.redirect !== '/'
+        ) {
           this.$router.push(this.$route.query.redirect)
         } else {
           this.$router.push('/v1/projects')
@@ -159,8 +153,16 @@ export default {
       this.retrieveToken = retrieveToken
       this.forgotPassword = true
     }
+    const connectorsCheck = await checkConnectorsAPI()
+    if (connectorsCheck && connectorsCheck.enabled) {
+      this.showConnectors = true
+    } else {
+      this.showConnectors = false
+    }
     if (token) {
-      const res = await this.$store.dispatch('OTHERLOGIN', token).catch(error => console.log(error))
+      const res = await this.$store
+        .dispatch('OTHERLOGIN', token)
+        .catch(error => console.log(error))
       if (res) {
         this.redirectByDevice()
       }
@@ -351,8 +353,8 @@ export default {
     padding: 30px 30px;
     text-align: left;
     background:
-      rgba(0, 0, 0, 0.04) url('~@assets/background/login.jpg') top left
-      repeat;
+      rgba(0, 0, 0, 0.04) url('~@assets/background/login.jpg') top
+      left repeat;
     background-size: cover;
     border-radius: 100% 0 0 100%;
     opacity: 1;

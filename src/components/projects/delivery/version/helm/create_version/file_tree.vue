@@ -23,7 +23,8 @@ export default {
   data () {
     this.defaultProps = { children: 'children', label: 'name' }
     return {
-      treeDate: []
+      treeDate: [],
+      chartVersions: []
     }
   },
   methods: {
@@ -59,7 +60,17 @@ export default {
       fileName,
       revision,
       deliveryVersion = true
-    }) {}
+    }) {},
+    getChartInfo () {
+      const info = this.releaseInfo
+      getChartInfoAPI(
+        info.productName,
+        info.envName,
+        info.chartDatas.map(chart => chart.serviceName)
+      ).then(res => {
+        this.chartVersions = res.chartInfos
+      })
+    }
   },
   watch: {
     fileData: {

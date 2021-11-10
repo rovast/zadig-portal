@@ -891,6 +891,23 @@ export function deleteStorageAPI (id) {
   return http.delete(`/api/aslan/system/s3storage/${id}`)
 }
 
+// 系统设置-HELM
+export function getHelmRepoAPI () {
+  return http.get(`/api/aslan/system/helm`)
+}
+
+export function createHelmAPI (payload) {
+  return http.post(`/api/aslan/system/helm`, payload)
+}
+
+export function updateHelmAPI (id, payload) {
+  return http.put(`/api/aslan/system/helm/${id}`, payload)
+}
+
+export function deleteHelmAPI (id) {
+  return http.delete(`/api/aslan/system/helm/${id}`)
+}
+
 // Cluster
 export function getClusterListAPI () {
   return http.get(`/api/aslan/cluster/clusters`)

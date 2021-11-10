@@ -719,6 +719,15 @@ const routes = [
         }
       },
       {
+        path: 'helm',
+        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/helm/manage.vue'),
+        meta: {
+          requiresAuth: true,
+          requiresSuperAdmin: true,
+          title: 'HELM 仓库'
+        }
+      },
+      {
         path: 'cluster',
         component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/cluster/manage.vue'),
         meta: {

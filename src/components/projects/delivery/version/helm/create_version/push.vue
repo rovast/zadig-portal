@@ -1,9 +1,9 @@
 <template>
   <div class="version-push">
-    <el-form ref="pushRef" :rules="rules" :model="versionRepo" label-width="160px">
-      <el-form-item label="选择 Chart 仓库" prop="chart">
-        <el-select v-model="versionRepo.chart" placeholder="请选择 Chart 仓库" size="small">
-          <el-option label="label" value="value"></el-option>
+    <el-form ref="pushRef" :rules="rules" :model="releaseInfo" label-width="160px">
+      <el-form-item label="选择 Chart 仓库" prop="chartRepoID">
+        <el-select v-model="releaseInfo.chartRepoID" placeholder="请选择 Chart 仓库" size="small">
+          <el-option :label="repo.url" :value="repo.id" v-for="repo in helmRepoList" :key="repo.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="填写 Chart 版本号"></el-form-item>
@@ -19,11 +19,11 @@
       </div>
       <div v-if="showEnhanced">
         <el-form-item label="离线包分发">
-          <el-switch v-model="versionRepo.outlineFlag"></el-switch>
+          <el-switch v-model="releaseInfo.options.enableOfflineDist"></el-switch>
         </el-form-item>
-        <el-form-item label="对象存储" prop="objectStore">
-          <el-select v-model="versionRepo.objectStore" placeholder="请选择对象存储" size="small">
-            <el-option label="label" value="value"></el-option>
+        <el-form-item label="对象存储" prop="options.s3Id">
+          <el-select v-model="releaseInfo.options.s3Id" placeholder="请选择对象存储" size="small">
+            <el-option :label="storage.endpoint" :value="storage.id" v-for="storage in storageList" :key="storage.id"></el-option>
           </el-select>
         </el-form-item>
       </div>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { getChartInfoAPI } from '@api'
+import { getStorageListAPI, getHelmRepoAPI } from '@api'
 
 export default {
   props: {
@@ -40,12 +40,12 @@ export default {
   },
   data () {
     this.rules = {
-      chart: {
+      chartRepoID: {
         required: true,
         message: '请选择 Chart 仓库',
         trigger: ['change', 'blur']
       },
-      objectStore: {
+      'options.s3Id': {
         required: true,
         message: '请选择对象存储',
         trigger: ['change', 'blur']
@@ -53,12 +53,8 @@ export default {
     }
     return {
       showEnhanced: false,
-      versionRepo: {
-        chart: '',
-        versions: [],
-        outlineFlag: false,
-        objectStore: ''
-      },
+      helmRepoList: [],
+      storageList: [],
       chartVersions: [
         {
           serviceName: 'Zadig',
@@ -77,19 +73,20 @@ export default {
     validate () {
       return this.$refs.pushRef.validate()
     },
-    getChartInfo () {
-      const info = this.releaseInfo
-      getChartInfoAPI(
-        info.productName,
-        info.envName,
-        info.chartDatas.map(chart => chart.serviceName)
-      ).then(res => {
-        this.chartVersions = res.chartInfos
+    getStorageList () {
+      getStorageListAPI().then(res => {
+        this.storageList = res
+      })
+    },
+    getHelmRepo () {
+      getHelmRepoAPI().then(res => {
+        this.helmRepoList = res
       })
     }
   },
-  activated () {
-    this.getChartInfo()
+  created () {
+    this.getHelmRepo()
+    this.getStorageList()
   }
 }
 </script>

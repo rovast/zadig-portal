@@ -7,9 +7,9 @@
         </el-select>
       </el-form-item>
       <el-form-item label="填写 Chart 版本号"></el-form-item>
-      <el-form-item v-for="chart in  chartVersions" :key="chart.name" :label="chart.name">
+      <el-form-item v-for="chart in  chartVersions" :key="chart.serviceName" :label="chart.serviceName">
         <el-input v-model="chart.version" placeholder="请输入 Chart 版本号" size="small"></el-input>
-        <span class="last-version">上个版本：{{chart.lastVersion}}</span>
+        <span class="last-version">上个版本：{{chart.revision}}</span>
       </el-form-item>
       <div>
         <el-button type="text" @click="showEnhanced = !showEnhanced">
@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { getChartInfoAPI } from '@api'
+
 export default {
   props: {
     releaseInfo: Object
@@ -59,23 +61,35 @@ export default {
       },
       chartVersions: [
         {
-          name: 'Zadig',
+          serviceName: 'Zadig',
           version: '',
-          lastVersion: '1.3.0'
+          revision: '1.3.0'
         },
         {
-          name: 'plutus',
+          serviceName: 'plutus',
           version: '',
-          lastVersion: '1.3.0'
+          revision: '1.3.0'
         }
-      ],
-      versionTar: '-v1.3.0.tar.gz'
+      ]
     }
   },
   methods: {
     validate () {
       return this.$refs.pushRef.validate()
+    },
+    getChartInfo () {
+      const info = this.releaseInfo
+      getChartInfoAPI(
+        info.productName,
+        info.envName,
+        info.chartDatas.map(chart => chart.serviceName)
+      ).then(res => {
+        this.chartVersions = res.chartInfos
+      })
     }
+  },
+  activated () {
+    this.getChartInfo()
   }
 }
 </script>

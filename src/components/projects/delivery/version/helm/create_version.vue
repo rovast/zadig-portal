@@ -24,6 +24,9 @@
 import Info from './create_version/info.vue'
 import Config from './create_version/config.vue'
 import Push from './create_version/push.vue'
+
+import { createHelmVersionAPI } from '@api'
+
 export default {
   data () {
     return {

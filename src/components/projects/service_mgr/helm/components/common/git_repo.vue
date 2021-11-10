@@ -156,7 +156,7 @@
 </template>
 <script>
 import {
-  getCodeSourceAPI,
+  getCodeSourceMaskedAPI,
   getRepoNameByIdAPI,
   getRepoOwnerByIdAPI,
   getBranchInfoByIdAPI,
@@ -238,7 +238,7 @@ export default {
       this.$refs.sourceForm.resetFields()
     },
     async queryCodeSource () {
-      const res = await getCodeSourceAPI().catch(error => console.log(error))
+      const res = await getCodeSourceMaskedAPI().catch(error => console.log(error))
       if (res) {
         this.allCodeHosts = res
       }

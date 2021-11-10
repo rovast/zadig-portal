@@ -637,7 +637,7 @@
   </div>
 </template>
 <script>
-import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getImgListAPI, getCodeSourceAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkinsJob, queryJenkinsParams } from '@api'
+import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getImgListAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkinsJob, queryJenkinsParams } from '@api'
 import Editor from 'vue2-ace-bind'
 import bus from '@utils/event_bus'
 import Codemirror from '@/components/projects/common/codemirror.vue'
@@ -1044,7 +1044,7 @@ export default {
       getDockerfileTemplatesAPI().then((res) => {
         this.dockerfileTemplates = res.dockerfile_template
       })
-      getCodeSourceAPI().then((response) => {
+      getCodeSourceMaskedAPI().then((response) => {
         this.allCodeHosts = response
       })
       getServiceTargetsAPI(projectName).then((response) => {

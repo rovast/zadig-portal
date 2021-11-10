@@ -397,7 +397,7 @@ import bus from '@utils/event_bus'
 import ValidateSubmit from '@utils/validate_async'
 import Editor from 'vue2-ace-bind'
 import {
-  getAllAppsAPI, getImgListAPI, getCodeSourceAPI, createTestAPI, updateTestAPI, singleTestAPI
+  getAllAppsAPI, getImgListAPI, getCodeSourceMaskedAPI, createTestAPI, updateTestAPI, singleTestAPI
 } from '@api'
 const validateTestName = (rule, value, callback) => {
   if (value === '') {
@@ -700,7 +700,7 @@ export default {
     getAllAppsAPI().then(res => {
       this.allApps = this.makeMapOfArray(this.$utils.sortVersion(res, 'version', 'asc'), 'name')
     })
-    getCodeSourceAPI().then((response) => {
+    getCodeSourceMaskedAPI().then((response) => {
       this.allCodeHosts = response
     })
     getImgListAPI().then((response) => {

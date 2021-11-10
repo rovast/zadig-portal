@@ -70,8 +70,8 @@
         </el-form-item>
         <el-form-item label="显示名称"
                       label-width="80px"
-                      prop="displayName">
-          <el-input v-model="mailServiceEdit.displayName"
+                      prop="display_name">
+          <el-input v-model="mailServiceEdit.display_name"
                     placeholder="显示名称"
                     autofocus
                     auto-complete="off"></el-input>
@@ -171,8 +171,8 @@
         </el-form-item>
         <el-form-item label="显示名称"
                       label-width="80px"
-                      prop="displayName">
-          <el-input v-model="mailServiceAdd.displayName"
+                      prop="display_name">
+          <el-input v-model="mailServiceAdd.display_name"
                     placeholder="显示名称"
                     autofocus
                     auto-complete="off"></el-input>
@@ -253,7 +253,7 @@
      </div>
 </template>
 <script>
-import { getEmailHostAPI, deleteEmailHostAPI, createEmailHostAPI, getEmailServiceAPI, deleteEmailServiceAPI, createEmailServiceAPI } from '@api'
+import { getEmailHostAPI, deleteEmailHostAPI, createEmailHostAPI, updateEmailHostAPI, getEmailServiceAPI, deleteEmailServiceAPI, createEmailServiceAPI, updateeEmailServiceAPI } from '@api'
 export default {
   data () {
     return {
@@ -276,13 +276,13 @@ export default {
       mailServiceAdd: {
         name: '',
         address: '',
-        displayName: '',
+        display_name: '',
         theme: ''
       },
       mailServiceEdit: {
         name: 'string',
         address: 'string',
-        displayName: 'string',
+        display_name: 'string',
         theme: 'string'
       },
       mailRules: {
@@ -316,7 +316,7 @@ export default {
           message: '请填写主题',
           trigger: ['blur', 'change']
         },
-        displayName: {
+        display_name: {
           required: true,
           message: '请填写显示名称',
           trigger: ['blur', 'change']
@@ -345,13 +345,12 @@ export default {
       this.$refs.mailServiceForm.resetFields()
     },
     handleMailDelete () {
-      const id = this.currentOrganizationId
       this.$confirm('确定要删除这个邮件配置吗？', '确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        Promise.all([deleteEmailHostAPI(id), deleteEmailServiceAPI(id)]).then(
+        Promise.all([deleteEmailHostAPI(), deleteEmailServiceAPI()]).then(
           (res) => {
             this.mailService = {}
             this.mailHosts = []
@@ -366,8 +365,7 @@ export default {
       })
     },
     getMailHostConfig () {
-      const id = this.currentOrganizationId
-      getEmailHostAPI(id).then((res) => {
+      getEmailHostAPI().then((res) => {
         if (!res.resultCode) {
           this.$set(this.mailHosts, [0], res)
         } else {
@@ -376,8 +374,7 @@ export default {
       })
     },
     getMailServiceConfig () {
-      const id = this.currentOrganizationId
-      getEmailServiceAPI(id).then((res) => {
+      getEmailServiceAPI().then((res) => {
         this.mailService = res
       })
     },
@@ -385,9 +382,8 @@ export default {
       const refs = [this.$refs.mailHostForm, this.$refs.mailServiceForm]
       const payload1 = this.mailHostAdd
       const payload2 = this.mailServiceAdd
-      const id = this.currentOrganizationId
       Promise.all(refs.map(r => r.validate())).then(() => {
-        Promise.all([createEmailHostAPI(id, payload1), createEmailServiceAPI(id, payload2)]).then(
+        Promise.all([createEmailHostAPI(payload1), createEmailServiceAPI(payload2)]).then(
           (res) => {
             this.getMailHostConfig()
             this.getMailServiceConfig()
@@ -404,9 +400,8 @@ export default {
       const refs = [this.$refs.mailHostForm, this.$refs.mailServiceForm]
       const payload1 = this.mailHostEdit
       const payload2 = this.mailServiceEdit
-      const id = this.currentOrganizationId
       Promise.all(refs.map(r => r.validate())).then(() => {
-        Promise.all([createEmailHostAPI(id, payload1), createEmailServiceAPI(id, payload2)]).then(
+        Promise.all([updateEmailHostAPI(payload1), updateeEmailServiceAPI(payload2)]).then(
           (res) => {
             this.getMailHostConfig()
             this.getMailServiceConfig()
@@ -418,11 +413,6 @@ export default {
           }
         )
       })
-    }
-  },
-  computed: {
-    currentOrganizationId () {
-      return this.$store.state.login.userinfo.organization.id
     }
   },
   activated () {

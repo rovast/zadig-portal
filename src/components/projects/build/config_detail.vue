@@ -1003,7 +1003,6 @@ export default {
     },
     loadPage () {
       const projectName = this.projectName
-      const orgId = this.currentOrganizationId
       if (!this.isCreate) {
         getBuildConfigDetailAPI(this.buildConfigName, this.projectName).then((response) => {
           response.pre_build.installs.forEach(element => {
@@ -1045,7 +1044,7 @@ export default {
       getDockerfileTemplatesAPI().then((res) => {
         this.dockerfileTemplates = res.dockerfile_template
       })
-      getCodeSourceAPI(orgId).then((response) => {
+      getCodeSourceAPI().then((response) => {
         this.allCodeHosts = response
       })
       getServiceTargetsAPI(projectName).then((response) => {
@@ -1060,7 +1059,7 @@ export default {
           this.buildConfig.pre_build.image_id = this.systems[0].id
         }
       })
-      getRegistryWhenBuildAPI().then((res) => {
+      getRegistryWhenBuildAPI(projectName).then((res) => {
         this.allRegistry = res
       })
     }
@@ -1068,9 +1067,6 @@ export default {
   computed: {
     buildConfigName () {
       return this.$route.params.build_name
-    },
-    currentOrganizationId () {
-      return this.$store.state.login.userinfo.organization.id
     },
     projectName () {
       return this.$route.params.project_name

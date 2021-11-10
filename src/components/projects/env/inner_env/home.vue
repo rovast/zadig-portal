@@ -13,7 +13,7 @@
 </template>
 <script>
 import bus from '@utils/event_bus'
-import { getProductsAPI } from '@api'
+import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
@@ -23,14 +23,12 @@ export default {
   },
   methods: {
     async getProducts () {
-      const projectName = this.projectName
-      const availableProducts = await getProductsAPI(projectName)
+      const availableProducts = this.currentProjectProductList
       this.loading = false
-      if (availableProducts.length > 0) {
-        const firstProduct = availableProducts[0]
-        this.jumpPath = `/v1/projects/detail/${projectName}/envs/detail?envName=${firstProduct.name}`
-      } else if (availableProducts.length === 0) {
-        this.jumpPath = `/v1/projects/detail/${projectName}/envs/create`
+      if (availableProducts.envs.length > 0) {
+        this.jumpPath = `/v1/projects/detail/${this.projectName}/envs/detail?envName=${availableProducts.envs[0]}`
+      } else if (availableProducts.envs.length === 0) {
+        this.jumpPath = `/v1/projects/detail/${this.projectName}/envs/create`
       }
       if (this.$route.params.service_name || this.$route.query.envName) {
         return
@@ -41,7 +39,15 @@ export default {
   computed: {
     projectName () {
       return this.$route.params.project_name
-    }
+    },
+    currentProjectProductList () {
+      return this.productList.find(element => {
+        return element.name === this.projectName
+      })
+    },
+    ...mapGetters([
+      'productList'
+    ])
   },
   beforeRouteUpdate (to, from, next) {
     if (!this.jumpPath || to.meta.title === '创建环境') {

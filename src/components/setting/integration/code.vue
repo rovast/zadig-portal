@@ -67,24 +67,24 @@
                        value="gerrit"></el-option>
           </el-select>
         </el-form-item>
-        <template v-if="codeAdd.type==='gitlab'||codeEdit.type==='github'">
-          <el-form-item v-if="codeAdd.type==='gitlab'"
+        <template v-if="codeEdit.type==='gitlab'||codeEdit.type==='github'">
+          <el-form-item v-if="codeEdit.type==='gitlab'"
                         label="GitLab 服务 URL"
                         prop="address">
             <el-input v-model="codeEdit.address"
                       placeholder="GitLab 服务 URL"
                       auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item :label="codeAdd.type==='gitlab'?'Application ID':'Client ID'"
+          <el-form-item :label="codeEdit.type==='gitlab'?'Application ID':'Client ID'"
                         prop="applicationId">
             <el-input v-model="codeEdit.applicationId"
-                      :placeholder="codeAdd.type==='gitlab'?'Application ID':'Client ID'"
+                      :placeholder="codeEdit.type==='gitlab'?'Application ID':'Client ID'"
                       auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item :label="codeAdd.type==='gitlab'?'Secret':'Client Secret'"
+          <el-form-item :label="codeEdit.type==='gitlab'?'Secret':'Client Secret'"
                         prop="clientSecret">
             <el-input v-model="codeEdit.clientSecret"
-                      :placeholder="codeAdd.type==='gitlab'?'Secret':'Client Secret'"
+                      :placeholder="codeEdit.type==='gitlab'?'Secret':'Client Secret'"
                       auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item v-if="codeEdit.type==='github'"
@@ -393,7 +393,7 @@
           <el-table-column label="授权信息">
             <template slot-scope="scope">
               <span
-                    :class="scope.row.ready?'text-success':'text-failed'">{{scope.row.ready?'授权成功':'授权失败'}}</span>
+                    :class="scope.row.ready?'text-success':'text-failed'">{{scope.row.ready === '2'?'授权成功':'授权失败'}}</span>
             </template>
           </el-table-column>
           <el-table-column label="最后更新">
@@ -421,7 +421,7 @@
 </template>
 <script>
 import {
-  getCodeSourceByAdminAPI, deleteCodeSourceAPI, updateCodeSourceAPI, createCodeSourceAPI, getProxyConfigAPI, updateProxyConfigAPI
+  getCodeProviderAPI, deleteCodeSourceAPI, updateCodeSourceAPI, createCodeSourceAPI, getProxyConfigAPI, updateProxyConfigAPI
 } from '@api'
 const validateGitURL = (rule, value, callback) => {
   if (value === '') {
@@ -441,7 +441,7 @@ export default {
         id: '',
         type: '',
         address: '',
-        port: undefined,
+        port: null,
         username: '',
         password: '',
         enable_repo_proxy: false,
@@ -561,11 +561,13 @@ export default {
     createCodeConfig () {
       this.$refs.codeForm.validate((valid) => {
         if (valid) {
-          const id = this.currentOrganizationId
           const payload = this.codeAdd
           const redirect_url = window.location.href.split('?')[0]
           const provider = this.codeAdd.type
-          createCodeSourceAPI(id, payload).then((res) => {
+          if (provider === 'github') {
+            payload.address = 'https://github.com'
+          }
+          createCodeSourceAPI(payload).then((res) => {
             const code_source_id = res.id
             this.getCodeConfig()
             this.$message({
@@ -589,6 +591,9 @@ export default {
           const code_source_id = this.codeEdit.id
           const redirect_url = window.location.href.split('?')[0]
           const provider = this.codeEdit.type
+          if (provider === 'github') {
+            payload.address = 'https://github.com'
+          }
           updateCodeSourceAPI(code_source_id, payload).then((res) => {
             this.getCodeConfig()
             if (payload.type === 'gitlab' || payload.type === 'github') {
@@ -611,13 +616,12 @@ export default {
       })
     },
     getCodeConfig () {
-      const id = this.currentOrganizationId
-      getCodeSourceByAdminAPI(id).then((res) => {
+      getCodeProviderAPI().then((res) => {
         this.code = res
       })
     },
     goToCodeHostAuth (code_source_id, redirect_url, provider) {
-      window.location.href = `/api/directory/codehostss/${code_source_id}/auth?redirect=${redirect_url}&provider=${provider}`
+      window.location.href = `/api/v1/codehosts/${code_source_id}/auth?redirect=${redirect_url}&provider=${provider}`
     },
     copyCommandSuccess (event) {
       this.$message({
@@ -661,11 +665,6 @@ export default {
       }).catch(error => {
         this.$message.error(`获取代理配置失败：${error}`)
       })
-    }
-  },
-  computed: {
-    currentOrganizationId () {
-      return this.$store.state.login.userinfo.organization.id
     }
   },
   watch: {

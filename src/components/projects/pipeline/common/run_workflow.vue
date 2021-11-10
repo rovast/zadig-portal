@@ -353,7 +353,7 @@ export default {
     getPresetInfo (projectNameAndEnvName) {
       const [, namespace] = projectNameAndEnvName.split(' / ')
       this.precreateLoading = true
-      precreateWorkflowTaskAPI(this.workflowName, namespace).then(res => {
+      precreateWorkflowTaskAPI(this.workflowMeta.product_tmpl_name, this.workflowName, namespace).then(res => {
         // prepare targets for view
         for (let i = 0; i < res.targets.length; i++) {
           if (this.haveForcedInput) {
@@ -518,15 +518,14 @@ export default {
           }
         }
       }
-
-      runWorkflowAPI(payload, this.artifactDeployEnabled).then(res => {
-        const projectName = this.targetProduct
+      const projectName = this.targetProduct
+      runWorkflowAPI(projectName, payload, this.artifactDeployEnabled).then(res => {
         const taskId = res.task_id
         const pipelineName = res.pipeline_name
         this.$message.success('创建成功')
         this.$emit('success')
         this.$router.push(`/v1/projects/detail/${projectName}/pipelines/multi/${pipelineName}/${taskId}?status=running`)
-        this.$store.dispatch('refreshWorkflowList')
+        this.$store.dispatch('refreshWorkflowList', this.projectName)
       }).catch(error => {
         console.log(error)
         // handle error

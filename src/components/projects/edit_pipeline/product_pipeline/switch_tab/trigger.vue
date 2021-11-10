@@ -789,8 +789,7 @@ export default {
       }
     },
     getProducts () {
-      const projectName = this.productTmlName
-      listProductAPI('test', projectName).then(res => {
+      listProductAPI('test', this.productTmlName).then(res => {
         this.products = res
       })
     },
@@ -867,6 +866,9 @@ export default {
     }
   },
   watch: {
+    productTmlName () {
+      this.getProducts()
+    },
     'workflowToRun.test_stage.tests' (newVal) {
       if (this.workflowToRun.test_stage.enabled) {
         const test_names = newVal.map(t => {
@@ -898,7 +900,6 @@ export default {
     bus.$on('check-tab:trigger', () => {
       bus.$emit('receive-tab-check:trigger', true)
     })
-    this.getProducts()
   },
   beforeDestroy () {
     bus.$off('check-tab:trigger')

@@ -103,7 +103,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteVersionAPI(versionId).then((res) => {
+        deleteVersionAPI(this.productName, versionId).then((res) => {
           this.$message({
             type: 'success',
             message: '删除成功'
@@ -120,8 +120,7 @@ export default {
     },
     searchVersionByPOS () {
       this.loading = true
-      const orgId = this.currentOrganizationId
-      getVersionListAPI(orgId, '', this.productName, '', this.selectedService).then((res) => {
+      getVersionListAPI('', this.productName, '', this.selectedService).then((res) => {
         this.versionList = res
         this.loading = false
       }).catch((err) => {
@@ -130,8 +129,7 @@ export default {
       })
     },
     getVersionServiceList () {
-      const orgId = this.currentOrganizationId
-      getVersionServiceListAPI(orgId, this.productName).then((res) => {
+      getVersionServiceListAPI(this.productName).then((res) => {
         this.serviceList = res
       })
     },
@@ -141,9 +139,6 @@ export default {
     }
   },
   computed: {
-    currentOrganizationId () {
-      return this.$store.state.login.userinfo.organization.id
-    },
     productName () {
       return this.$route.params.project_name
     },

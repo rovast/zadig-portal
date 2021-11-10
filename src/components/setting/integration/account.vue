@@ -3,15 +3,15 @@
     <el-dialog title="用户账户管理-添加" :close-on-click-modal="false" custom-class="edit-form-dialog" :visible.sync="dialogUserAccountFormVisible">
       <el-form :model="userAccount" @submit.native.prevent :rules="userAccountRules" status-icon ref="userAccountForm">
         <el-form-item label="账户类型" prop="type">
-          <el-select v-model="userAccount.type" @change="clearValidate('userAccountForm')" :disabled="userAccount.mode ==='edit'">
-            <!-- <el-option label="Microsoft Active Directory" value="ad"></el-option> -->
-            <el-option label="OpenLDAP" value="ldap"></el-option>
-            <el-option label="GitHub" value="github"></el-option>
+          <el-select v-model="userAccount.name" @change="clearValidate('userAccountForm')" :disabled="userAccount.mode ==='edit'">
+            <el-option label="Microsoft Active Directory" value="Microsoft Active Directory"></el-option>
+            <el-option label="OpenLDAP" value="OpenLDAP"></el-option>
+            <el-option label="GitHub" value="GitHub"></el-option>
             <!-- <el-option label="SSO" value="oauth"></el-option> -->
           </el-select>
         </el-form-item>
       </el-form>
-      <template v-if="userAccount.type ==='github'">
+      <template v-if="userAccount.name ==='GitHub'">
         <el-form
           :model="userAccountGitHub.config"
           @submit.native.prevent
@@ -54,7 +54,89 @@
           </el-form-item>
         </el-form>
       </template>
-      <template v-if="userAccount.type ==='ldap'">
+      <template v-if="userAccount.name ==='Microsoft Active Directory'">
+        <el-form
+          :model="userAccountAD.config"
+          @submit.native.prevent
+          :rules="userAccountADRules"
+          ref="userAccountADForm"
+          label-width="100px"
+          label-position="left"
+        >
+          <h4>基本配置</h4>
+          <el-form-item label="主机地址">
+            <el-col :span="14">
+              <el-form-item prop="addr">
+                <el-input v-model="userAccountAD.config.addr" placeholder="AD 地址" autofocus clearable auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col style="text-align: center;" :span="1">:</el-col>
+            <el-col :span="5">
+              <el-form-item prop="port">
+                <el-input v-model="userAccountAD.config.port" placeholder="端口" autofocus clearable auto-complete="off"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="管理员账号" prop="bindDN">
+            <el-input
+              v-model="userAccountAD.config.bindDN"
+              placeholder="AD 管理员，示例：cn=user,dc=domain,dc=name"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="管理员密码" prop="bindPW">
+            <el-input v-model="userAccountAD.config.bindPW" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item prop="startTLS" label="使用 SSL">
+            <el-checkbox v-model="userAccountAD.config.startTLS"></el-checkbox>
+          </el-form-item>
+          <h4>用户规则</h4>
+          <el-form-item label="基础 DN" prop="baseDN">
+            <el-input
+              v-model="userAccountAD.config.userSearch.baseDN"
+              placeholder="从根节点搜索用户，例如：cn=users,dc=example.com,dc=com"
+              autofocus
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="用户过滤器" prop="userSearch.filter">
+            <el-input v-model="userAccountAD.config.userSearch.filter" placeholder="userSearch.filter" autofocus auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="唯一 ID 属性" prop="userSearch.idAttr">
+            <el-input v-model="userAccountAD.config.userSearch.idAttr" placeholder="cn" autofocus auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="用户姓名属性" prop="userSearch.username">
+            <el-input v-model="userAccountAD.config.userSearch.username" placeholder="cn" autofocus auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="用户邮箱属性" prop="userSearch.emailAttr">
+            <el-input v-model="userAccountAD.config.userSearch.emailAttr" label="用户邮箱" autofocus auto-complete="off"></el-input>
+          </el-form-item>
+          <h4>组规则</h4>
+          <el-form-item label="组基础 DN" prop="groupSearch.baseDN">
+            <el-input
+              v-model="userAccountAD.config.groupSearch.baseDN"
+              placeholder="从根节点搜索用户组，例如：cn=group,dc=example.com,dc=com"
+              autofocus
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="组过滤器" prop="groupSearch.filter">
+            <el-input v-model="userAccountAD.config.groupSearch.filter" placeholder="groupSearch.filter" autofocus auto-complete="off"></el-input>
+          </el-form-item>
+          <!-- todo userMatchers: -->
+          <el-form-item label="组名称属性" prop="groupSearch.nameAttr">
+            <el-input
+              v-model="userAccountAD.config.groupSearch.nameAttr"
+              placeholder="groupSearch.nameAttr"
+              autofocus
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+      </template>
+      <template v-if="userAccount.name ==='OpenLDAP'">
         <el-form
           :model="userAccountLDAP.config"
           @submit.native.prevent
@@ -139,7 +221,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button
           v-if="userAccount.mode==='add'"
-          :disabled="userAccount.type === ''"
+          :disabled="userAccount.name === ''"
           type="primary"
           native-type="submit"
           size="small"
@@ -148,7 +230,7 @@
         >保存</el-button>
         <el-button
           v-else-if="userAccount.mode==='edit'"
-          :disabled="userAccount.type === ''"
+          :disabled="userAccount.name === ''"
           type="primary"
           native-type="submit"
           size="small"
@@ -182,15 +264,12 @@
         <el-table-column label="名称">
           <template slot-scope="scope">{{scope.row.name}}</template>
         </el-table-column>
-        <el-table-column label="账户类型">
-          <template slot-scope="scope">{{scope.row.type}}</template>
-        </el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" plain @click="handleUserAccountEdit(scope.row)">编辑</el-button>
             <el-button type="danger" size="mini" @click="handleUserAccountDelete(scope.row)" plain>删除</el-button>
             <el-button
-              v-if="scope.row.type === 'ldap'"
+              v-if="scope.row.name === 'OpenLDAP' || scope.row.name === 'Microsoft Active Directory'"
               type="primary"
               size="mini"
               :loading="syncAccountUserLoading"
@@ -219,13 +298,50 @@ export default {
       dialogUserAccountFormVisible: false,
       syncAccountUserLoading: false,
       userAccount: {
-        type: '',
+        name: '',
         mode: 'add'
+      },
+      userAccountAD: {
+        type: 'ldap',
+        id: 'ad',
+        name: 'Microsoft Active Directory',
+        config: {
+          host: '',
+          addr: '',
+          port: '',
+          insecureNoSSL: false,
+          insecureSkipVerify: false,
+          startTLS: false,
+          // rootCA: '/etc/dex/ldap.ca',
+          // rootCAData:'',
+          bindDN: '',
+          bindPW: '',
+          usernamePrompt: 'AD 用户名',
+          userSearch: {
+            baseDN: '',
+            filter: '(cn=*)',
+            username: 'cn',
+            idAttr: '',
+            emailAttr: '',
+            nameAttr: ''
+          },
+          groupSearch: {
+            baseDN: '',
+            filter: '(objectClass=group)',
+            // userMatchers: [
+            //   {
+            //     userAttr: 'uid',
+            //     groupAttr: 'member'
+            //   }
+            // ],
+            nameAttr: 'ou'
+          }
+        }
       },
       userAccountLDAP: {
         type: 'ldap',
         id: 'ldap',
-        name: 'LDAP',
+        name: 'OpenLDAP',
         config: {
           host: '',
           addr: '',
@@ -282,6 +398,28 @@ export default {
         }
       },
       userAccountRules: {},
+      userAccountADRules: {
+        addr: {
+          required: true,
+          message: '请输入 AD 地址',
+          trigger: ['blur', 'change']
+        },
+        port: {
+          required: true,
+          message: '请输入 AD 端口',
+          trigger: ['blur', 'change']
+        },
+        bindDN: {
+          required: true,
+          message: '请输入管理员账号',
+          trigger: ['blur', 'change']
+        },
+        bindPW: {
+          required: true,
+          message: '请输入管理员密码',
+          trigger: ['blur', 'change']
+        }
+      },
       userAccountLDAPRules: {
         addr: {
           required: true,
@@ -319,8 +457,8 @@ export default {
     }
   },
   computed: {
-    type () {
-      return this.userAccount.type
+    name () {
+      return this.userAccount.name
     }
   },
   methods: {
@@ -342,22 +480,26 @@ export default {
     addAccount () {
       this.dialogUserAccountFormVisible = true
       this.userAccount = {
-        type: '',
+        name: '',
         mode: 'add'
       }
     },
     handleUserAccountEdit (row) {
-      const type = row.type
+      const name = row.name
       this.userAccount = {
-        type: type,
+        name: name,
         mode: 'edit'
       }
       this.dialogUserAccountFormVisible = true
-      if (type === 'ldap') {
+      if (name === 'OpenLDAP') {
         row.config.addr = row.config.host.split(':')[0]
         row.config.port = row.config.host.split(':')[1]
         this.userAccountLDAP = cloneDeep(row)
-      } else if (type === 'github') {
+      } else if (name === 'Microsoft Active Directory') {
+        row.config.addr = row.config.host.split(':')[0]
+        row.config.port = row.config.host.split(':')[1]
+        this.userAccountAD = cloneDeep(row)
+      } else if (name === 'GitHub') {
         this.userAccountGitHub = cloneDeep(row)
       }
     },
@@ -371,6 +513,15 @@ export default {
             clientID: '',
             clientSecret: '',
             redirectURI: '',
+            // orgs: [
+            //   {
+            //     name: 'my-organization'
+            //   },
+            //   {
+            //     name: 'my-organization-with-teams',
+            //     teams: ['red-team', 'blue-team']
+            //   }
+            // ],
             loadAllGroups: false,
             teamNameField: 'slug',
             useLoginAsID: false
@@ -381,29 +532,76 @@ export default {
         this.userAccountLDAP = {
           type: 'ldap',
           id: 'ldap',
-          name: 'LDAP',
+          name: 'OpenLDAP',
           config: {
             host: '',
             addr: '',
             port: '',
             insecureNoSSL: false,
             insecureSkipVerify: false,
-            startTLS: true,
+            startTLS: false,
+            // rootCA: '/etc/dex/ldap.ca',
+            // rootCAData:'',
             bindDN: '',
             bindPW: '',
-            usernamePrompt: 'SSO Username',
+            usernamePrompt: 'LDAP 用户名',
             userSearch: {
               baseDN: '',
-              filter: '(objectClass=person)',
-              username: '',
+              filter: '(cn=*)',
+              username: 'cn',
               idAttr: '',
               emailAttr: '',
               nameAttr: ''
             },
             groupSearch: {
               baseDN: '',
-              filter: '',
-              nameAttr: 'name'
+              filter: '(objectClass=group)',
+              // userMatchers: [
+              //   {
+              //     userAttr: 'uid',
+              //     groupAttr: 'member'
+              //   }
+              // ],
+              nameAttr: 'ou'
+            }
+          }
+        }
+      }
+      if (this.$refs.userAccountADForm) {
+        this.userAccountAD = {
+          type: 'ad',
+          id: 'ad',
+          name: 'Microsoft Active Directory',
+          config: {
+            host: '',
+            addr: '',
+            port: '',
+            insecureNoSSL: false,
+            insecureSkipVerify: false,
+            startTLS: false,
+            // rootCA: '/etc/dex/ldap.ca',
+            // rootCAData:'',
+            bindDN: '',
+            bindPW: '',
+            usernamePrompt: 'AD 用户名',
+            userSearch: {
+              baseDN: '',
+              filter: '(cn=*)',
+              username: 'cn',
+              idAttr: '',
+              emailAttr: '',
+              nameAttr: ''
+            },
+            groupSearch: {
+              baseDN: '',
+              filter: '(objectClass=group)',
+              // userMatchers: [
+              //   {
+              //     userAttr: 'uid',
+              //     groupAttr: 'member'
+              //   }
+              // ],
+              nameAttr: 'ou'
             }
           }
         }
@@ -447,7 +645,7 @@ export default {
       )
     },
     createAccountUser () {
-      if (this.type === 'ldap') {
+      if (this.name === 'OpenLDAP') {
         this.$refs.userAccountLDAPForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountLDAP
@@ -457,7 +655,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '用户数据添加成功',
+                message: '账户数据添加成功',
                 type: 'success'
               })
             })
@@ -465,7 +663,25 @@ export default {
             return false
           }
         })
-      } else if (this.type === 'github') {
+      } else if (this.name === 'Microsoft Active Directory') {
+        this.$refs.userAccountADForm.validate(valid => {
+          if (valid) {
+            const payload = this.userAccountAD
+            payload.config.host = `${payload.config.addr}:${payload.config.port}`
+            omit(payload.config, ['addr', 'port'])
+            createConnectorAPI(payload).then(res => {
+              this.getAccountConfig()
+              this.handleUserAccountCancel()
+              this.$message({
+                message: '账户数据添加成功',
+                type: 'success'
+              })
+            })
+          } else {
+            return false
+          }
+        })
+      } else if (this.name === 'GitHub') {
         this.$refs.userAccountGitHubForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountGitHub
@@ -474,7 +690,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '用户数据添加成功',
+                message: '账户数据添加成功',
                 type: 'success'
               })
             })
@@ -485,7 +701,7 @@ export default {
       }
     },
     updateAccountUser () {
-      if (this.type === 'ldap') {
+      if (this.name === 'OpenLDAP') {
         this.$refs.userAccountLDAPForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountLDAP
@@ -495,7 +711,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '用户数据修改成功',
+                message: '账户数据修改成功',
                 type: 'success'
               })
             })
@@ -503,7 +719,25 @@ export default {
             return false
           }
         })
-      } else if (this.type === 'github') {
+      } else if (this.name === 'Microsoft Active Directory') {
+        this.$refs.userAccountADForm.validate(valid => {
+          if (valid) {
+            const payload = this.userAccountAD
+            payload.host = `${payload.config.addr}:${payload.config.port}`
+            omit(payload, ['addr', 'port'])
+            updateConnectorAPI(payload.id, payload).then(res => {
+              this.getAccountConfig()
+              this.handleUserAccountCancel()
+              this.$message({
+                message: '账户数据修改成功',
+                type: 'success'
+              })
+            })
+          } else {
+            return false
+          }
+        })
+      } else if (this.name === 'GitHub') {
         this.$refs.userAccountGitHubForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountGitHub
@@ -512,7 +746,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '用户数据修改成功',
+                message: '账户数据修改成功',
                 type: 'success'
               })
             })

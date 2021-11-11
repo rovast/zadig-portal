@@ -1097,6 +1097,10 @@ export function userLoginAPI (payload) {
   return http.post(`/api/v1/login`, payload)
 }
 
+export function userSignUpAPI (payload) {
+  return http.post(`/api/v1/signup`, payload)
+}
+
 export function checkConnectorsAPI () {
   return http.get(`/api/v1/login-enabled`)
 }

@@ -99,7 +99,7 @@ export default {
       }
     },
     async deleteBindings (name) {
-      const res = await deleteSystemRoleBindingsAPI(name).catch(error =>
+      await deleteSystemRoleBindingsAPI(name).catch(error =>
         console.log(error)
       )
     },
@@ -109,7 +109,7 @@ export default {
         role: 'admin',
         uid: this.clonedUserInfo.uid
       }
-      const res = await addSystemRoleBindingsAPI(paload).catch(error =>
+      await addSystemRoleBindingsAPI(paload).catch(error =>
         console.log(error)
       )
     }

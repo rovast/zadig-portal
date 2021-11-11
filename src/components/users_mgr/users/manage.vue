@@ -105,7 +105,7 @@
 
         <el-table-column label="操作" width="280">
           <template slot-scope="scope">
-            <el-button @click="editUserRole(scope.row)" type="primary" size="mini" plain>更改角色</el-button>
+            <el-button @click="editUserInfo(scope.row)" type="primary" size="mini" plain>编辑</el-button>
             <el-button @click="deleteUser(scope.row)" type="danger" size="mini" plain>删除</el-button>
           </template>
         </el-table-column>
@@ -125,7 +125,7 @@
       </div>
       <!--page divide-->
     </div>
-    <EditUserRole ref="editUserRole" :editUser="editUser" @refreshUserList="getUsers(userPageSize, currentPageList, searchUser)" />
+    <EditUserRole ref="editUserInfo" :editUser="editUser" @refreshUserList="getUsers(userPageSize, currentPageList, searchUser)" />
   </div>
 </template>
 
@@ -138,7 +138,7 @@ import {
   addSystemRoleBindingsAPI
 } from '@api'
 import bus from '@utils/event_bus'
-import EditUserRole from './editUserRole.vue'
+import EditUserRole from './editUserInfo.vue'
 import { sortBy } from 'lodash'
 export default {
   components: {
@@ -214,15 +214,9 @@ export default {
     }
   },
   methods: {
-    async addBindings () {
-      if (res) {
-        this.$message.success('创建管理员权限成功')
-        this.dialogEditRoleVisible = false
-      }
-    },
-    editUserRole (user) {
+    editUserInfo (user) {
       this.editUser = user
-      this.$refs.editUserRole.dialogEditRoleVisible = true
+      this.$refs.editUserInfo.dialogEditRoleVisible = true
     },
     submit () {
       this.$refs.form.validate(valid => {
@@ -261,7 +255,7 @@ export default {
       this.loading = false
     },
     deleteUser (row) {
-      this.$confirm(`确定删除系统创建用户 ${row.account}`, '提示', {
+      this.$confirm(`确定删除 ${this.identityTypeMap[row.identity_type]} 用户 ${row.name ? row.name : row.account}`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -270,7 +264,7 @@ export default {
           deleteUserAPI(row.uid).then(res => {
             this.$message({
               type: 'success',
-              message: '删除用户成功'
+              message: '用户删除成功'
             })
             this.getUsers(
               this.userPageSize,

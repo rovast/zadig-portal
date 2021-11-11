@@ -611,6 +611,14 @@ export function addUserAPI (payload) {
   return http.post(`/api/v1/users`, payload)
 }
 
+export function deleteUserAPI (uid) {
+  return http.delete(`/api/v1/users/${uid}`)
+}
+
+export function updateUserAPI (uid, payload) {
+  return http.put(`/api/v1/users/${uid}`, payload)
+}
+
 export function getSystemRoleBindingsAPI () {
   return http.get(`/api/v1/system-rolebindings`)
 }
@@ -621,10 +629,6 @@ export function addSystemRoleBindingsAPI (payload) {
 
 export function deleteSystemRoleBindingsAPI (name) {
   return http.delete(`/api/v1/system-rolebindings/${name}`)
-}
-
-export function deleteUserAPI (uid) {
-  return http.delete(`/api/v1/users/${uid}`)
 }
 
 // ----- Syetem Setting-Integration -----

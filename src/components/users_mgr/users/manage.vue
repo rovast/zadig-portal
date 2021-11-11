@@ -169,7 +169,8 @@ export default {
       identityTypeMap: {
         github: 'GitHub',
         system: '系统创建',
-        ldap: 'OpenLDAP'
+        ldap: 'OpenLDAP',
+        oauth: 'OAuth'
       },
       addUserRule: {
         account: [

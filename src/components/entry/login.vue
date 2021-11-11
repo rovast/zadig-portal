@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-7 col-md-12 col-pad-0 form-section">
-          <div class="login-inner-form" v-show="!forgotPassword">
+          <div class="login-inner-form" v-show="!showForgotPassword && !showSignUp">
             <div class="details">
               <header>
                 <span class="name">Zadig</span>
@@ -29,12 +29,16 @@
               </section>
               <div class="bottom">
                 <a v-if="showConnectors" href="/api/v1/login">第三方登录</a>
-                <a @click="forgotPassword = true">找回密码</a>
+                <a @click="showForgotPassword = true">找回密码</a>
+                <a @click="showSignUp = true">注册</a>
               </div>
             </div>
           </div>
-          <div class="login-inner-form" v-show="forgotPassword">
-            <ForgetPassword :openLogin="()=> forgotPassword=false" :retrieveToken="retrieveToken" />
+          <div class="login-inner-form" v-show="showForgotPassword">
+            <ForgetPassword :openLogin="()=> showForgotPassword=false" :retrieveToken="retrieveToken" />
+          </div>
+          <div class="login-inner-form" v-show="showSignUp">
+            <SignUp :openLogin="()=> showSignUp=false"/>
           </div>
         </div>
         <div class="col-lg-5 col-md-12 col-pad-0 bg-img none-992">
@@ -66,16 +70,19 @@
 import moment from 'moment'
 import { isMobile } from 'mobile-device-detect'
 import ForgetPassword from './components/forgetPassword.vue'
+import SignUp from './components/signUp.vue'
 import store from 'storejs'
 import { checkConnectorsAPI } from '@api'
 
 export default {
   components: {
-    ForgetPassword
+    ForgetPassword,
+    SignUp
   },
   data () {
     return {
-      forgotPassword: false,
+      showForgotPassword: false,
+      showSignUp: false,
       showConnectors: false,
       retrieveToken: '',
       loading: false,
@@ -151,7 +158,7 @@ export default {
     const retrieveToken = this.$route.query.idToken
     if (retrieveToken) {
       this.retrieveToken = retrieveToken
-      this.forgotPassword = true
+      this.showForgotPassword = true
     }
     const connectorsCheck = await checkConnectorsAPI()
     if (connectorsCheck && connectorsCheck.enabled) {

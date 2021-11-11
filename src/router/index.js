@@ -433,17 +433,6 @@ const routes = [
     ]
   },
   {
-    path: '/setup',
-    component: () => import('@/components/setup/admin.vue'),
-    meta: {
-      title: '系统初始化'
-    }
-  },
-  {
-    path: '/loading',
-    component: () => import('@/components/entry/loading.vue')
-  },
-  {
     path: '/v1/tests',
     component: onboarding_home,
     meta: {

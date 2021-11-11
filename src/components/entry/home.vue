@@ -13,7 +13,7 @@
                       :title="ann.content.title"
                       :content="ann.content.content"></announcement>
         <topbar></topbar>
-        <router-view class="main-content">
+        <router-view>
         </router-view>
         <FloatLink class="main-float"></FloatLink>
       </div>
@@ -143,11 +143,6 @@ body {
         overflow: auto;
         -webkit-box-orient: vertical;
         -webkit-box-direction: normal;
-
-        .main-content {
-          position: relative;
-          z-index: 0;
-        }
 
         .main-float {
           position: fixed;

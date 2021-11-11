@@ -7,15 +7,15 @@
         </el-select>
       </el-form-item>
       <el-form-item label="服务" prop="chartDatas">
-        <el-select v-model="releaseInfo.chartDatas" placeholder="请选择服务" multiple size="small" clearable>
-          <el-option :label="name" :value="name" v-for="name in serviceNames" :key="name"></el-option>
+        <el-select v-model="releaseInfo.chartDatas" placeholder="请选择服务" multiple size="small" clearable value-key="serviceName">
+          <el-option :label="service.serviceName" :value="service" v-for="service in serviceNames" :key="service.serviceName"></el-option>
         </el-select>
         <el-button type="text" size="small" @click="releaseInfo.chartDatas = serviceNames">全选</el-button>
       </el-form-item>
     </el-form>
     <div class="config">
-      <FileTree class="left" :fileData="releaseInfo.chartDatas"></FileTree>
-      <Codemirror class="right" v-model="yaml"></Codemirror>
+      <FileTree class="left" ref="fileTreeRef" :envName="this.releaseInfo.envName" :fileData="releaseInfo.chartDatas" @clickFile="getFile"></FileTree>
+      <Codemirror class="right" v-model="yamlStorage[selectedPath]" :cmOption="cmOption"></Codemirror>
     </div>
   </div>
 </template>
@@ -24,7 +24,11 @@
 import Codemirror from '@/components/projects/common/codemirror.vue'
 import FileTree from './file_tree.vue'
 
-import { listProductAPI, getHelmReleaseListAPI } from '@api'
+import {
+  listProductAPI,
+  getHelmReleaseListAPI,
+  getHelmChartServiceFileContent
+} from '@api'
 
 export default {
   props: {
@@ -44,18 +48,35 @@ export default {
       }
     }
     return {
-      yaml: '',
+      yamlStorage: {},
       envNames: [],
-      serviceNames: []
+      serviceNames: [],
+      selectedPath: ''
     }
   },
   computed: {
     projectName () {
       return this.$route.params.project_name
+    },
+    cmOption () {
+      const path = this.selectedPath.split('/')
+      return { readOnly: !(path.length === 2 && path[1] === 'values.yaml') }
     }
   },
   methods: {
     validate () {
+      const info = this.releaseInfo
+      if (info.envName && info.chartDatas.length) {
+        const revision = this.$refs.fileTreeRef.getRevision()
+        this.releaseInfo.chartDatas = this.releaseInfo.chartDatas.map(chart => {
+          return {
+            serviceName: chart.serviceName,
+            version: info.version,
+            valuesYamlContent: this.yamlStorage[`${chart}/values.yaml`] || '',
+            lastVersion: revision[chart]
+          }
+        })
+      }
       return this.$refs.configRef.validate()
     },
     getEnvNames () {
@@ -64,12 +85,32 @@ export default {
       })
     },
     getServicesNameByEnv (envName) {
-      this.serviceNames = [1, 2, 3, 4]
+      console.log('update env')
+      this.serviceNames = ['1', '2', '3', '4'].map(re => {
+        return {
+          serviceName: re
+        }
+      })
       if (envName) {
         getHelmReleaseListAPI(this.projectName, envName).then(res => {
-          this.serviceNames = res.map(re => re.serviceName)
+          this.serviceNames = res.map(re => {
+            return {
+              serviceName: re.serviceName
+            }
+          })
         })
       }
+      this.releaseInfo.chartDatas = []
+      this.yamlStorage = {}
+    },
+    async getFile (data) {
+      // 两种情况  一种直接请求数据  另一种使用缓存
+      if (!this.yamlStorage[data.fullPath]) {
+        await getHelmChartServiceFileContent(params).then(res => {
+          this.$set(this.yamlStorage, data.fullPath, res)
+        })
+      }
+      this.selectedPath = data.fullPath
     }
   },
   created () {

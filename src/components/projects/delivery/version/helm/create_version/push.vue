@@ -7,9 +7,17 @@
         </el-select>
       </el-form-item>
       <el-form-item label="填写 Chart 版本号"></el-form-item>
-      <el-form-item v-for="chart in  chartVersions" :key="chart.serviceName" :label="chart.serviceName">
+      <el-form-item
+        v-for="(chart, index) in releaseInfo.chartDatas"
+        :key="chart.serviceName"
+        :label="chart.serviceName"
+        :prop="`chartDatas[${index}].version`"
+        :rules="[{
+          required: true, message: `请输入 Chart ${chart.serviceName} 版本号`, trigger: ['change', 'blur']
+        }]"
+      >
         <el-input v-model="chart.version" placeholder="请输入 Chart 版本号" size="small"></el-input>
-        <span class="last-version">上个版本：{{chart.revision}}</span>
+        <span class="last-version">上个版本：{{chart.lastVersion || '无'}}</span>
       </el-form-item>
       <div>
         <el-button type="text" @click="showEnhanced = !showEnhanced">
@@ -54,19 +62,7 @@ export default {
     return {
       showEnhanced: false,
       helmRepoList: [],
-      storageList: [],
-      chartVersions: [
-        {
-          serviceName: 'Zadig',
-          version: '',
-          revision: '1.3.0'
-        },
-        {
-          serviceName: 'plutus',
-          version: '',
-          revision: '1.3.0'
-        }
-      ]
+      storageList: []
     }
   },
   methods: {
@@ -92,7 +88,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import url('~@assets/css/common/scroll-bar.less');
+
 .version-push {
+  box-sizing: border-box;
+  height: calc(~'100% - 200px');
+  padding-bottom: 20px;
+  overflow: auto;
+  .scrollBar2();
+
   .last-version {
     display: inline-block;
     margin-left: 8px;

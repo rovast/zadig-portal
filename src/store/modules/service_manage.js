@@ -133,7 +133,7 @@ export default {
       }
     },
     async queryFilePath ({ dispatch }, payload) {
-      const res = await Api.getHelmChartServiceFilePath(payload.projectName, payload.serviceName, payload.path).catch(error => console.log(error))
+      const res = await Api.getHelmChartServiceFilePath(payload).catch(error => console.log(error))
       if (res) {
         res.map((child, index) => {
           child.id = child.name + index
@@ -150,7 +150,7 @@ export default {
       }
     },
     async queryFileContent ({ dispatch }, payload) {
-      const res = await Api.getHelmChartServiceFileContent(payload.projectName, payload.service, payload.path, payload.fileName).catch(error => console.log(error))
+      const res = await Api.getHelmChartServiceFileContent(payload).catch(error => console.log(error))
       if (res) {
         return Promise.resolve(res)
       }

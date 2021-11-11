@@ -13,8 +13,8 @@
     </keep-alive>
 
     <footer class="footer">
-      <el-button size="small" v-show="activeStep !== 0" @click="activeStep -= 1">上一步</el-button>
-      <el-button size="small" type="primary" @click="nextStep">{{activeStep - 2 ? '下一步' : '完成' }}</el-button>
+      <el-button size="small" v-show="activeStep !== 0" @click="activeStep -= 1" :disabled="createLoading">上一步</el-button>
+      <el-button size="small" type="primary" @click="nextStep" :loading="createLoading">{{activeStep - 2 ? '下一步' : '完成' }}</el-button>
       <el-button size="small" type="text" @click="cancel">取 消</el-button>
     </footer>
   </div>
@@ -26,6 +26,8 @@ import Config from './create_version/config.vue'
 import Push from './create_version/push.vue'
 
 import { createHelmVersionAPI } from '@api'
+
+import { cloneDeep } from 'lodash'
 
 export default {
   data () {
@@ -40,7 +42,8 @@ export default {
         chartDatas: [], // {serviceName, version, valuesYamlContent} and lastVersion but not post
         chartRepoID: '',
         options: {} // enableOfflineDist, s3Id
-      }
+      },
+      createLoading: false
     }
   },
   computed: {
@@ -67,11 +70,31 @@ export default {
         .catch(error => console.log(error))
       if (res) {
         if (this.activeStep === 2) {
-          this.activeStep = 0
-          this.cancel()
+          this.createHelmVersion()
         } else {
           this.activeStep += 1
         }
+      }
+    },
+    async createHelmVersion () {
+      const deliveryRelease = cloneDeep(this.deliveryRelease)
+      deliveryRelease.chartDatas.forEach(chart => {
+        delete chart.lastVersion
+      })
+      deliveryRelease.labels = deliveryRelease.labels
+        .split(',')
+        .map(label => label.trim())
+      this.createLoading = true
+      const res = await createHelmVersionAPI(deliveryRelease).catch(err =>
+        console.log(err)
+      )
+      this.createLoading = false
+      if (res) {
+        this.$message.success(
+          `${this.deliveryRelease.productName} 创建版本 ${this.deliveryRelease.version} 成功！`
+        )
+        this.activeStep = 0
+        this.cancel()
       }
     },
     cancel () {

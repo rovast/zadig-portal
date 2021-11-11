@@ -11,82 +11,128 @@
 </template>
 
 <script>
-import {
-  getChartInfoAPI,
-  getHelmChartServiceFilePath,
-  getHelmChartServiceFileContent
-} from '@api'
+import { getChartInfoAPI, getHelmChartServiceFilePath } from '@api'
+
+import { debounce } from 'lodash'
+
+const dataStructure = {
+  name: '',
+  parent: '',
+  fullPath: '',
+  children: null, // is_dir: true -> []
+  content: '',
+  is_dir: false
+}
 export default {
   props: {
-    fileData: Array
+    fileData: Array,
+    envName: String
   },
   data () {
     this.defaultProps = { children: 'children', label: 'name' }
+    this.addServices = [] // 记录新添加的服务项，用来请求版本信息
+    this.serviceRevision = {} // 保存服务的版本，用来请求目录、文件内容
+
     return {
       treeDate: [],
       chartVersions: []
     }
   },
+  computed: {
+    projectName () {
+      return this.$route.params.project_name
+    }
+  },
   methods: {
-    handleNodeClick (data) {
-      console.log(data)
+    async handleNodeClick (data) {
+      console.log('nodeDate: ', data)
+      const serviceName = data.fullPath.split('/')[0]
       const params = {
-        projectName,
-        serviceName: data,
-        path: data,
+        projectName: this.projectName,
+        serviceName,
+        path: data.parent,
         fileName: data.name,
-        revision
+        revision: this.serviceRevision[serviceName],
+        deliveryVersion: true
       }
       if (data.is_dir) {
         if (!data.children) {
           // 请求文件目录信息
+          await getHelmChartServiceFilePath(params).then(res => {
+            this.setChildren(data.children, serviceName, res)
+          })
         }
       } else {
         // 请求文件内容
-        // 两种情况  一种直接请求数据  另一种使用缓存
+        this.$emit('clickFile', {
+          params,
+          fullPath: data.fullPath
+        })
       }
     },
-    getPath ({
-      projectName,
-      serviceName,
-      path,
-      revision,
-      deliveryVersion = true
-    }) {},
-    getContent ({
-      projectName,
-      serviceName,
-      path,
-      fileName,
-      revision,
-      deliveryVersion = true
-    }) {},
-    getChartInfo () {
-      const info = this.releaseInfo
-      getChartInfoAPI(
-        info.productName,
-        info.envName,
-        info.chartDatas.map(chart => chart.serviceName)
-      ).then(res => {
-        this.chartVersions = res.chartInfos
+    setChildren (children, serviceName, fileInfos) {
+      fileInfos.forEach(info => {
+        children.push({
+          ...dataStructure,
+          name: info.name,
+          parent: info.parent,
+          fullPath: `${serviceName}${info.parent}/${info.name}`,
+          children: info.is_dir ? [] : null,
+          is_dir: info.is_dir
+        })
       })
+    },
+    getChartInfo () {
+      // 请求版本信息
+      getChartInfoAPI(this.projectName, this.envName, this.addServices).then(
+        res => {
+          res.chartInfos.forEach((chart, index) => {
+            this.serviceRevision[chart.serviceName] = chart.revision // 保存版本信息
+
+            if (index === 0) {
+              // 第一个数据有目录信息
+              this.setChildren(
+                this.treeData.find(data => data.name === chart.serviceName)
+                  .children,
+                chart.serviceName,
+                res.fileInfos
+              )
+            }
+          })
+        }
+      )
+    },
+    getRevision () {
+      return this.serviceRevision
     }
   },
   watch: {
     fileData: {
-      handler (newV, oldV) {
+      handler: debounce(function (newV, oldV) {
         const treeData = this.treeDate
+        this.addServices = []
+
         this.treeDate = newV.map(val => {
-          const data = treeData.find(data => data.name === val)
+          const serviceName = val.serviceName
+          const data = treeData.find(data => data.name === serviceName)
+          if (!data) {
+            this.addServices.push(serviceName)
+          }
           return (
             data || {
-              name: val,
-              is_dir: true,
-              children: []
+              ...dataStructure,
+              name: serviceName,
+              fullPath: serviceName,
+              children: [],
+              is_dir: true
             }
           )
         })
-      },
+
+        if (this.addServices.length) {
+          this.getChartInfo()
+        }
+      }, 500),
       deep: true
     }
   }
@@ -96,7 +142,9 @@ export default {
 <style lang="less" scoped>
 .file-tree {
   /deep/ .el-tree {
+    max-width: 100%;
     height: 100%;
+    overflow-x: auto;
 
     .el-tree-node__content {
       .icon {

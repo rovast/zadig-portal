@@ -331,11 +331,11 @@ export function updateServicesOrchestrationAPI (projectName, payload) {
   return http.patch(`/api/aslan/project/products/${projectName}`, payload)
 }
 
-export function getHelmChartServiceFilePath (projectName, serviceName, path, revision = '', deliveryVersion = false) {
+export function getHelmChartServiceFilePath ({ projectName, serviceName, path, revision = '', deliveryVersion = false }) {
   return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/filePath?dir=${path}&revision=${revision}&deliveryVersion=${deliveryVersion}`)
 }
 
-export function getHelmChartServiceFileContent (projectName, serviceName, path, fileName, revision = '', deliveryVersion = false) {
+export function getHelmChartServiceFileContent ({ projectName, serviceName, path, fileName, revision = '', deliveryVersion = false }) {
   return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/fileContent?filePath=${path}&fileName=${fileName}&revision=${revision}&deliveryVersion=${deliveryVersion}`)
 }
 

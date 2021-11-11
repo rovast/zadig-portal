@@ -170,7 +170,7 @@
             <el-checkbox v-model="userAccountLDAP.config.startTLS"></el-checkbox>
           </el-form-item>
           <h4>用户规则</h4>
-          <el-form-item label="基础 DN" prop="baseDN">
+          <el-form-item label="基础 DN" prop="userSearch.baseDN">
             <el-input
               v-model="userAccountLDAP.config.userSearch.baseDN"
               placeholder="从根节点搜索用户，例如：cn=users,dc=example.com,dc=com"
@@ -219,7 +219,7 @@
           @submit.native.prevent
           :rules="userAccountOAuthRules"
           ref="userAccountOAuthForm"
-          label-width="170px"
+          label-width="180px"
           label-position="left"
         >
           <el-alert type="info" :closable="false" style="margin-bottom: 15px;">
@@ -263,58 +263,26 @@
           <el-form-item label="用户信息 URL" prop="userInfoURL">
             <el-input v-model="userAccountOAuth.config.userInfoURL" placeholder="用户信息 URL" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="用户唯一 ID 字段" prop="userIDKey">
-            <el-input v-model="userAccountOAuth.config.userIDKey" placeholder="用户唯一 ID 字段" autofocus clearable auto-complete="off"></el-input>
+          <el-form-item label="用户名属性（用于登录）" prop="userIDKey">
+            <el-input v-model="userAccountOAuth.config.userIDKey" placeholder autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="邮箱字段" prop="claimMapping.emailKey">
-            <el-input
-              v-model="userAccountOAuth.config.claimMapping.emailKey"
-              placeholder="Email Key"
-              autofocus
-              clearable
-              auto-complete="off"
-            ></el-input>
-          </el-form-item>
-          <!-- <el-form-item label="Email Verified Key" prop="claimMapping.emailVerifiedKey">
-            <el-input
-              v-model="userAccountOAuth.config.claimMapping.emailVerifiedKey"
-              placeholder="Email Verified Key"
-              autofocus
-              clearable
-              auto-complete="off"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="Groups Key" prop="claimMapping.groupsKey">
-            <el-input
-              v-model="userAccountOAuth.config.claimMapping.groupsKey"
-              placeholder="Groups Key"
-              autofocus
-              clearable
-              auto-complete="off"
-            ></el-input>
-          </el-form-item>-->
-          <!-- <el-form-item label="Preferred UserName Key" prop="claimMapping.preferredUsernameKey">
-            <el-input
-              v-model="userAccountOAuth.config.claimMapping.preferredUsernameKey"
-              placeholder="Preferred UserName Key"
-              autofocus
-              clearable
-              auto-complete="off"
-            ></el-input>
-          </el-form-item> -->
-          <el-form-item label="用户姓名字段" prop="claimMapping.userNameKey">
+          <el-form-item label="用户昵称属性" prop="claimMapping.userNameKey">
             <el-input
               v-model="userAccountOAuth.config.claimMapping.userNameKey"
-              placeholder="UserName Key"
               autofocus
               clearable
               auto-complete="off"
             ></el-input>
           </el-form-item>
-          <!-- <el-form-item label="Scopes" prop="scopes">
-            <el-select v-model="userAccountOAuth.config.scopes" filterable multiple allow-create placeholder></el-select>
-          </el-form-item> -->
-          <el-form-item label="使用 SSL" prop="insecureSkipVerify">
+          <el-form-item label="用户邮箱属性" prop="claimMapping.emailKey">
+            <el-input
+              v-model="userAccountOAuth.config.claimMapping.emailKey"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="不验证证书" prop="insecureSkipVerify">
             <el-checkbox v-model="userAccountOAuth.config.insecureSkipVerify"></el-checkbox>
           </el-form-item>
         </el-form>
@@ -361,7 +329,7 @@
       <div class="sync-container">
         <el-button size="small" type="primary" plain @click="addAccount()">添加</el-button>
       </div>
-      <el-table v-if="accounts.length>0" :data="accounts" style="width: 100%;">
+      <el-table :data="accounts" style="width: 100%;">
         <el-table-column label="账户类型">
           <template slot-scope="scope">{{scope.row.name}}</template>
         </el-table-column>
@@ -410,8 +378,8 @@ export default {
           host: '',
           addr: '',
           port: '',
-          insecureNoSSL: false,
-          insecureSkipVerify: false,
+          insecureNoSSL: true,
+          insecureSkipVerify: true,
           startTLS: false,
           // rootCA: '/etc/dex/ldap.ca',
           // rootCAData:'',
@@ -447,8 +415,8 @@ export default {
           host: '',
           addr: '',
           port: '',
-          insecureNoSSL: false,
-          insecureSkipVerify: false,
+          insecureNoSSL: true,
+          insecureSkipVerify: true,
           startTLS: false,
           // rootCA: '/etc/dex/ldap.ca',
           // rootCAData:'',
@@ -461,7 +429,8 @@ export default {
             username: 'cn',
             idAttr: '',
             emailAttr: '',
-            nameAttr: ''
+            nameAttr: '',
+            preferredUsernameAttr: ''
           },
           groupSearch: {
             baseDN: '',
@@ -508,12 +477,12 @@ export default {
             emailKey: 'email',
             emailVerifiedKey: '',
             groupsKey: '',
-            preferredUsernameKey: '',
+            preferredUsernameKey: 'user_id',
             userNameKey: 'user_name'
           },
           clientID: '',
           clientSecret: '',
-          insecureSkipVerify: false,
+          insecureSkipVerify: true,
           redirectURI: '',
           scopes: [],
           tokenURL: '',
@@ -530,7 +499,7 @@ export default {
         },
         port: {
           required: true,
-          message: '请输入 AD 端口',
+          message: '请输入端口',
           trigger: ['blur', 'change']
         },
         bindDN: {
@@ -541,6 +510,36 @@ export default {
         bindPW: {
           required: true,
           message: '请输入管理员密码',
+          trigger: ['blur', 'change']
+        },
+        'userSearch.baseDN': {
+          required: true,
+          message: '请输入基础 DN',
+          trigger: ['blur', 'change']
+        },
+        'userSearch.filter': {
+          required: true,
+          message: '请输入用户过滤器',
+          trigger: ['blur', 'change']
+        },
+        'userSearch.username': {
+          required: true,
+          message: '请输入用户属性',
+          trigger: ['blur', 'change']
+        },
+        'userSearch.emailAttr': {
+          required: true,
+          message: '请输入用户邮箱属性',
+          trigger: ['blur', 'change']
+        },
+        'groupSearch.baseDN': {
+          required: true,
+          message: '请输入组基础 DN',
+          trigger: ['blur', 'change']
+        },
+        'groupSearch.nameAttr': {
+          required: true,
+          message: '请输入组名称属性',
           trigger: ['blur', 'change']
         }
       },
@@ -552,7 +551,7 @@ export default {
         },
         port: {
           required: true,
-          message: '请输入 LDAP 端口',
+          message: '请输入端口',
           trigger: ['blur', 'change']
         },
         bindDN: {
@@ -563,6 +562,36 @@ export default {
         bindPW: {
           required: true,
           message: '请输入管理员密码',
+          trigger: ['blur', 'change']
+        },
+        'userSearch.baseDN': {
+          required: true,
+          message: '请输入基础 DN',
+          trigger: ['blur', 'change']
+        },
+        'userSearch.filter': {
+          required: true,
+          message: '请输入用户过滤器',
+          trigger: ['blur', 'change']
+        },
+        'userSearch.username': {
+          required: true,
+          message: '请输入用户属性',
+          trigger: ['blur', 'change']
+        },
+        'userSearch.emailAttr': {
+          required: true,
+          message: '请输入用户邮箱属性',
+          trigger: ['blur', 'change']
+        },
+        'groupSearch.baseDN': {
+          required: true,
+          message: '请输入组基础 DN',
+          trigger: ['blur', 'change']
+        },
+        'groupSearch.nameAttr': {
+          required: true,
+          message: '请输入组名称属性',
           trigger: ['blur', 'change']
         }
       },
@@ -578,7 +607,48 @@ export default {
           trigger: ['blur', 'change']
         }
       },
-      userAccountOAuthRules: {}
+      userAccountOAuthRules: {
+        clientID: {
+          required: true,
+          message: '请填写 Client ID',
+          trigger: ['blur', 'change']
+        },
+        clientSecret: {
+          required: true,
+          message: '请填写 Client Secret',
+          trigger: ['blur', 'change']
+        },
+        authorizationURL: {
+          required: true,
+          message: '请填写 Authorization URL',
+          trigger: ['blur', 'change']
+        },
+        tokenURL: {
+          required: true,
+          message: '请填写 Token URL',
+          trigger: ['blur', 'change']
+        },
+        userInfoURL: {
+          required: true,
+          message: '请填写 User Info URL',
+          trigger: ['blur', 'change']
+        },
+        userIDKey: {
+          required: true,
+          message: '请填写用户名属性',
+          trigger: ['blur', 'change']
+        },
+        'claimMapping.userNameKey': {
+          required: true,
+          message: '请填写用户昵称属性',
+          trigger: ['blur', 'change']
+        },
+        'claimMapping.emailKey': {
+          required: true,
+          message: '请填写用户邮箱属性',
+          trigger: ['blur', 'change']
+        }
+      }
     }
   },
   computed: {
@@ -620,9 +690,11 @@ export default {
         row.config.addr = row.config.host.split(':')[0]
         row.config.port = row.config.host.split(':')[1]
         row.config.userSearch.idAttr = row.config.userSearch.username
+        row.config.userSearch.preferredUsernameAttr = row.config.userSearch.username
         this.userAccountLDAP = cloneDeep(row)
       } else if (name === 'Microsoft Active Directory') {
         row.config.userSearch.idAttr = row.config.userSearch.username
+        row.config.userSearch.preferredUsernameAttr = row.config.userSearch.username
         row.config.addr = row.config.host.split(':')[0]
         row.config.port = row.config.host.split(':')[1]
         this.userAccountAD = cloneDeep(row)
@@ -666,8 +738,8 @@ export default {
             host: '',
             addr: '',
             port: '',
-            insecureNoSSL: false,
-            insecureSkipVerify: false,
+            insecureNoSSL: true,
+            insecureSkipVerify: true,
             startTLS: false,
             // rootCA: '/etc/dex/ldap.ca',
             // rootCAData:'',
@@ -705,8 +777,8 @@ export default {
             host: '',
             addr: '',
             port: '',
-            insecureNoSSL: false,
-            insecureSkipVerify: false,
+            insecureNoSSL: true,
+            insecureSkipVerify: true,
             startTLS: false,
             // rootCA: '/etc/dex/ldap.ca',
             // rootCAData:'',
@@ -746,7 +818,7 @@ export default {
               emailKey: 'email',
               emailVerifiedKey: '',
               groupsKey: '',
-              preferredUsernameKey: '',
+              preferredUsernameKey: 'user_id',
               userNameKey: 'user_name'
             },
             clientID: '',
@@ -804,7 +876,8 @@ export default {
           if (valid) {
             const payload = this.userAccountLDAP
             payload.config.host = `${payload.config.addr}:${payload.config.port}`
-            payload.config.userSearch.idAttr = payload.config.userSearch.username
+            payload.config.userSearch.idAttr =
+              payload.config.userSearch.username
             omit(payload.config, ['addr', 'port'])
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()
@@ -823,7 +896,8 @@ export default {
           if (valid) {
             const payload = this.userAccountAD
             payload.config.host = `${payload.config.addr}:${payload.config.port}`
-            payload.config.userSearch.idAttr = payload.config.userSearch.username
+            payload.config.userSearch.idAttr =
+              payload.config.userSearch.username
             omit(payload.config, ['addr', 'port'])
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()
@@ -859,6 +933,12 @@ export default {
           if (valid) {
             const payload = this.userAccountOAuth
             payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
+            payload.config.claimMapping.preferredUsernameKey = payload.config.userIDKey
+            payload.config.scopes = [
+              payload.config.userIDKey,
+              payload.config.claimMapping.userNameKey,
+              payload.config.claimMapping.emailKey
+            ]
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()
@@ -878,8 +958,9 @@ export default {
         this.$refs.userAccountLDAPForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountLDAP
-            payload.host = `${payload.config.addr}:${payload.config.port}`
-            omit(payload, ['addr', 'port'])
+            payload.config.host = `${payload.config.addr}:${payload.config.port}`
+            payload.config.userSearch.idAttr = payload.config.userSearch.username
+            omit(payload.config, ['addr', 'port'])
             updateConnectorAPI(payload.id, payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()
@@ -932,6 +1013,12 @@ export default {
           if (valid) {
             const payload = this.userAccountOAuth
             payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
+            payload.config.claimMapping.preferredUsernameKey = payload.config.userIDKey
+            payload.config.scopes = [
+              payload.config.userIDKey,
+              payload.config.claimMapping.userNameKey,
+              payload.config.claimMapping.emailKey
+            ]
             updateConnectorAPI(payload.id, payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()

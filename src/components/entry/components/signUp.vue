@@ -14,7 +14,7 @@
           <el-input type="email" v-model="signUpForm.email" placeholder="邮箱"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="signUpForm.password" placeholder="新密码"></el-input>
+          <el-input v-model="signUpForm.password" placeholder="密码"></el-input>
         </el-form-item>
       </el-form>
       <el-button type="submit" @click="submit" class="btn-md btn-theme btn-block login-btn">注册</el-button>

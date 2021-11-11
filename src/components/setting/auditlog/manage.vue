@@ -168,7 +168,7 @@ export default {
       this.loading = true
       const payload = {
         username: this.searchType === 'username' ? this.keyword : '',
-        product_name: this.searchType === 'product_name' ? this.keyword : '',
+        projectName: this.searchType === 'product_name' ? this.keyword : '',
         status: this.searchType === 'status' ? Number(this.keyword) : 0,
         function: this.searchType === 'function' ? this.keyword : '',
         per_page: logPageSize,

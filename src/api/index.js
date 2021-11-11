@@ -8,7 +8,6 @@ const specialAPIs = ['/api/aslan/system/operation', '/api/aslan/delivery/artifac
 const ignoreErrReq = '/api/aslan/services/validateUpdate/'
 const reqExps = [/api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/workloads/, /api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/groups/]
 const analyticsReq = 'https://api.koderover.com/api/operation/upload'
-const installationAnalysisReq = 'https://api.koderover.com/api/operation/admin/user'
 const http = axios.create()
 const CancelToken = axios.CancelToken
 
@@ -116,7 +115,6 @@ http.interceptors.response.use(
     if (
       error.response &&
       error.response.config.url !== analyticsReq &&
-      error.response.config.url !== installationAnalysisReq &&
       !error.response.config.url.includes(ignoreErrReq)
     ) {
       // The request was made and the server responded with a status code
@@ -210,9 +208,6 @@ function makeEventSource (basePath, config) {
 // Analytics
 export function analyticsRequestAPI (payload) {
   return http.post(analyticsReq, payload)
-}
-export function installationAnalysisRequestAPI (payload) {
-  return http.post(installationAnalysisReq, payload)
 }
 
 // Status
@@ -638,6 +633,7 @@ export function deleteSystemRoleBindingsAPI (name) {
 export function getCodeSourceMaskedAPI () {
   return http.get(`/api/v1/picket/codehosts`)
 }
+
 // Return details and only for admin
 export function getCodeProviderAPI () {
   return http.get(`/api/v1/codehosts`)
@@ -860,6 +856,23 @@ export function cleanCacheAPI () {
 }
 export function getCleanCacheStatusAPI () {
   return http.get('/api/aslan/system/cleanCache/state')
+}
+
+// External link
+export function createExternalLinkAPI (payload) {
+  return http.post(`/api/aslan/system/externalLink`, payload)
+}
+
+export function updateExternalLinkAPI (id, payload) {
+  return http.put(`/api/aslan/system/externalLink/${id}`, payload)
+}
+
+export function getExternalLinksAPI () {
+  return http.get(`/api/aslan/system/externalLink`)
+}
+
+export function deleteExternalLinkAPI (id) {
+  return http.delete(`/api/aslan/system/externalLink/${id}`)
 }
 
 // Registry
@@ -1358,7 +1371,6 @@ export function editWorkloads (payload) {
 }
 
 // role
-
 export function queryPolicyDefinitions () {
   return http.get(`/api/v1/policy-definitions`)
 }
@@ -1421,21 +1433,4 @@ export function queryUserBindings (uid, projectName = '') { // 查询用户所�
 
 export function getArtifactFileAPI (payload, id) {
   return http.post(`/api/aslan/system/s3storage/${id}/releases/search?kind=file`, payload)
-}
-
-// external link
-export function createExternalLinkAPI (payload) {
-  return http.post(`/api/aslan/system/externalLink`, payload)
-}
-
-export function updateExternalLinkAPI (id, payload) {
-  return http.put(`/api/aslan/system/externalLink/${id}`, payload)
-}
-
-export function getExternalLinksAPI () {
-  return http.get(`/api/aslan/system/externalLink`)
-}
-
-export function deleteExternalLinkAPI (id) {
-  return http.delete(`/api/aslan/system/externalLink/${id}`)
 }

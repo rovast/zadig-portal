@@ -690,13 +690,11 @@ export default {
         row.config.addr = row.config.host.split(':')[0]
         row.config.port = row.config.host.split(':')[1]
         row.config.userSearch.idAttr = row.config.userSearch.username
-        row.config.userSearch.preferredUsernameAttr =
-          row.config.userSearch.username
+        row.config.userSearch.preferredUsernameAttr = row.config.userSearch.username
         this.userAccountLDAP = cloneDeep(row)
       } else if (name === 'Microsoft Active Directory') {
         row.config.userSearch.idAttr = row.config.userSearch.username
-        row.config.userSearch.preferredUsernameAttr =
-          row.config.userSearch.username
+        row.config.userSearch.preferredUsernameAttr = row.config.userSearch.username
         row.config.addr = row.config.host.split(':')[0]
         row.config.port = row.config.host.split(':')[1]
         this.userAccountAD = cloneDeep(row)
@@ -935,8 +933,7 @@ export default {
           if (valid) {
             const payload = this.userAccountOAuth
             payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
-            payload.config.claimMapping.PreferredUsernameKey =
-              payload.config.userIDKey
+            payload.config.claimMapping.preferredUsernameKey = payload.config.userIDKey
             payload.config.scopes = [
               payload.config.userIDKey,
               payload.config.claimMapping.userNameKey,
@@ -961,8 +958,9 @@ export default {
         this.$refs.userAccountLDAPForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountLDAP
-            payload.host = `${payload.config.addr}:${payload.config.port}`
-            omit(payload, ['addr', 'port'])
+            payload.config.host = `${payload.config.addr}:${payload.config.port}`
+            payload.config.userSearch.idAttr = payload.config.userSearch.username
+            omit(payload.config, ['addr', 'port'])
             updateConnectorAPI(payload.id, payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()
@@ -1015,6 +1013,12 @@ export default {
           if (valid) {
             const payload = this.userAccountOAuth
             payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
+            payload.config.claimMapping.preferredUsernameKey = payload.config.userIDKey
+            payload.config.scopes = [
+              payload.config.userIDKey,
+              payload.config.claimMapping.userNameKey,
+              payload.config.claimMapping.emailKey
+            ]
             updateConnectorAPI(payload.id, payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()

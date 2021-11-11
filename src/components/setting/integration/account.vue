@@ -7,7 +7,7 @@
             <el-option label="Microsoft Active Directory" value="Microsoft Active Directory"></el-option>
             <el-option label="OpenLDAP" value="OpenLDAP"></el-option>
             <el-option label="GitHub" value="GitHub"></el-option>
-            <!-- <el-option label="SSO" value="oauth"></el-option> -->
+            <el-option label="OAuth" value="OAuth"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -60,7 +60,7 @@
           @submit.native.prevent
           :rules="userAccountADRules"
           ref="userAccountADForm"
-          label-width="100px"
+          label-width="168px"
           label-position="left"
         >
           <h4>基本配置</h4>
@@ -104,11 +104,11 @@
           <el-form-item label="用户过滤器" prop="userSearch.filter">
             <el-input v-model="userAccountAD.config.userSearch.filter" placeholder="userSearch.filter" autofocus auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="唯一 ID 属性" prop="userSearch.idAttr">
-            <el-input v-model="userAccountAD.config.userSearch.idAttr" placeholder="cn" autofocus auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="用户姓名属性" prop="userSearch.username">
+          <el-form-item label="用户名属性（用于登录）" prop="userSearch.username">
             <el-input v-model="userAccountAD.config.userSearch.username" placeholder="cn" autofocus auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="用户昵称属性" prop="userSearch.nameAttr">
+            <el-input v-model="userAccountAD.config.userSearch.nameAttr" label="用户邮箱" autofocus auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="用户邮箱属性" prop="userSearch.emailAttr">
             <el-input v-model="userAccountAD.config.userSearch.emailAttr" label="用户邮箱" autofocus auto-complete="off"></el-input>
@@ -127,12 +127,7 @@
           </el-form-item>
           <!-- todo userMatchers: -->
           <el-form-item label="组名称属性" prop="groupSearch.nameAttr">
-            <el-input
-              v-model="userAccountAD.config.groupSearch.nameAttr"
-              placeholder="groupSearch.nameAttr"
-              autofocus
-              auto-complete="off"
-            ></el-input>
+            <el-input v-model="userAccountAD.config.groupSearch.nameAttr" placeholder="groupSearch.nameAttr" autofocus auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
       </template>
@@ -142,7 +137,7 @@
           @submit.native.prevent
           :rules="userAccountLDAPRules"
           ref="userAccountLDAPForm"
-          label-width="100px"
+          label-width="168px"
           label-position="left"
         >
           <h4>基本配置</h4>
@@ -186,14 +181,14 @@
           <el-form-item label="用户过滤器" prop="userSearch.filter">
             <el-input v-model="userAccountLDAP.config.userSearch.filter" placeholder="userSearch.filter" autofocus auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="唯一 ID 属性" prop="userSearch.idAttr">
-            <el-input v-model="userAccountLDAP.config.userSearch.idAttr" placeholder="cn" autofocus auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="用户姓名属性" prop="userSearch.username">
+          <el-form-item label="用户名属性（用于登录）" prop="userSearch.username">
             <el-input v-model="userAccountLDAP.config.userSearch.username" placeholder="cn" autofocus auto-complete="off"></el-input>
           </el-form-item>
+          <el-form-item label="用户昵称属性" prop="userSearch.nameAttr">
+            <el-input v-model="userAccountLDAP.config.userSearch.nameAttr" autofocus auto-complete="off"></el-input>
+          </el-form-item>
           <el-form-item label="用户邮箱属性" prop="userSearch.emailAttr">
-            <el-input v-model="userAccountLDAP.config.userSearch.emailAttr" label="用户邮箱" autofocus auto-complete="off"></el-input>
+            <el-input v-model="userAccountLDAP.config.userSearch.emailAttr" autofocus auto-complete="off"></el-input>
           </el-form-item>
           <h4>组规则</h4>
           <el-form-item label="组基础 DN" prop="groupSearch.baseDN">
@@ -215,6 +210,112 @@
               autofocus
               auto-complete="off"
             ></el-input>
+          </el-form-item>
+        </el-form>
+      </template>
+      <template v-if="userAccount.name ==='OAuth'">
+        <el-form
+          :model="userAccountOAuth.config"
+          @submit.native.prevent
+          :rules="userAccountOAuthRules"
+          ref="userAccountOAuthForm"
+          label-width="170px"
+          label-position="left"
+        >
+          <el-alert type="info" :closable="false" style="margin-bottom: 15px;">
+            <slot>
+              <span class="tips">{{`Authorization Callback URL 请填写`}}</span>
+              <span class="tips code-line">
+                {{`${$utils.getOrigin()}/dex/callback`}}
+                <span
+                  v-clipboard:copy="`${$utils.getOrigin()}/dex/callback`"
+                  v-clipboard:success="copyCommandSuccess"
+                  v-clipboard:error="copyCommandError"
+                  class="el-icon-copy-document copy"
+                ></span>
+              </span>
+            </slot>
+          </el-alert>
+          <el-form-item label="Client ID" prop="clientID">
+            <el-input v-model="userAccountOAuth.config.clientID" placeholder="输入 OAuth Client ID" autofocus clearable auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="Client Secret" prop="clientSecret">
+            <el-input
+              v-model="userAccountOAuth.config.clientSecret"
+              placeholder="输入 OAuth Client Secret"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="Authorization URL" prop="authorizationURL">
+            <el-input
+              v-model="userAccountOAuth.config.authorizationURL"
+              placeholder="输入 Authorization URL"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="Token URL" prop="tokenURL">
+            <el-input v-model="userAccountOAuth.config.tokenURL" placeholder="输入 Token URL" autofocus clearable auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="用户信息 URL" prop="userInfoURL">
+            <el-input v-model="userAccountOAuth.config.userInfoURL" placeholder="用户信息 URL" autofocus clearable auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="用户唯一 ID 字段" prop="userIDKey">
+            <el-input v-model="userAccountOAuth.config.userIDKey" placeholder="用户唯一 ID 字段" autofocus clearable auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱字段" prop="claimMapping.emailKey">
+            <el-input
+              v-model="userAccountOAuth.config.claimMapping.emailKey"
+              placeholder="Email Key"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+          <!-- <el-form-item label="Email Verified Key" prop="claimMapping.emailVerifiedKey">
+            <el-input
+              v-model="userAccountOAuth.config.claimMapping.emailVerifiedKey"
+              placeholder="Email Verified Key"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="Groups Key" prop="claimMapping.groupsKey">
+            <el-input
+              v-model="userAccountOAuth.config.claimMapping.groupsKey"
+              placeholder="Groups Key"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>-->
+          <!-- <el-form-item label="Preferred UserName Key" prop="claimMapping.preferredUsernameKey">
+            <el-input
+              v-model="userAccountOAuth.config.claimMapping.preferredUsernameKey"
+              placeholder="Preferred UserName Key"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
+          </el-form-item> -->
+          <el-form-item label="用户姓名字段" prop="claimMapping.userNameKey">
+            <el-input
+              v-model="userAccountOAuth.config.claimMapping.userNameKey"
+              placeholder="UserName Key"
+              autofocus
+              clearable
+              auto-complete="off"
+            ></el-input>
+          </el-form-item>
+          <!-- <el-form-item label="Scopes" prop="scopes">
+            <el-select v-model="userAccountOAuth.config.scopes" filterable multiple allow-create placeholder></el-select>
+          </el-form-item> -->
+          <el-form-item label="使用 SSL" prop="insecureSkipVerify">
+            <el-checkbox v-model="userAccountOAuth.config.insecureSkipVerify"></el-checkbox>
           </el-form-item>
         </el-form>
       </template>
@@ -323,7 +424,7 @@ export default {
             username: 'cn',
             idAttr: '',
             emailAttr: '',
-            nameAttr: ''
+            nameAttr: 'cn'
           },
           groupSearch: {
             baseDN: '',
@@ -397,6 +498,29 @@ export default {
           useLoginAsID: false
         }
       },
+      userAccountOAuth: {
+        type: 'oauth',
+        id: 'oauth',
+        name: 'OAuth',
+        config: {
+          authorizationURL: '',
+          claimMapping: {
+            emailKey: 'email',
+            emailVerifiedKey: '',
+            groupsKey: '',
+            preferredUsernameKey: '',
+            userNameKey: 'user_name'
+          },
+          clientID: '',
+          clientSecret: '',
+          insecureSkipVerify: false,
+          redirectURI: '',
+          scopes: [],
+          tokenURL: '',
+          userIDKey: 'user_id',
+          userInfoURL: ''
+        }
+      },
       userAccountRules: {},
       userAccountADRules: {
         addr: {
@@ -453,7 +577,8 @@ export default {
           message: '请填写 Client Secret',
           trigger: ['blur', 'change']
         }
-      }
+      },
+      userAccountOAuthRules: {}
     }
   },
   computed: {
@@ -494,13 +619,17 @@ export default {
       if (name === 'OpenLDAP') {
         row.config.addr = row.config.host.split(':')[0]
         row.config.port = row.config.host.split(':')[1]
+        row.config.userSearch.idAttr = row.config.userSearch.username
         this.userAccountLDAP = cloneDeep(row)
       } else if (name === 'Microsoft Active Directory') {
+        row.config.userSearch.idAttr = row.config.userSearch.username
         row.config.addr = row.config.host.split(':')[0]
         row.config.port = row.config.host.split(':')[1]
         this.userAccountAD = cloneDeep(row)
       } else if (name === 'GitHub') {
         this.userAccountGitHub = cloneDeep(row)
+      } else if (name === 'OAuth') {
+        this.userAccountOAuth = cloneDeep(row)
       }
     },
     handleUserAccountCancel () {
@@ -551,7 +680,7 @@ export default {
               username: 'cn',
               idAttr: '',
               emailAttr: '',
-              nameAttr: ''
+              nameAttr: 'cn'
             },
             groupSearch: {
               baseDN: '',
@@ -606,6 +735,31 @@ export default {
           }
         }
       }
+      if (this.$refs.userAccountOAuthForm) {
+        this.userAccountOAuth = {
+          type: 'oauth',
+          id: 'oauth',
+          name: 'OAuth',
+          config: {
+            authorizationURL: '',
+            claimMapping: {
+              emailKey: 'email',
+              emailVerifiedKey: '',
+              groupsKey: '',
+              preferredUsernameKey: '',
+              userNameKey: 'user_name'
+            },
+            clientID: '',
+            clientSecret: '',
+            insecureSkipVerify: true,
+            redirectURI: '',
+            scopes: [],
+            tokenURL: '',
+            userIDKey: 'user_id',
+            userInfoURL: ''
+          }
+        }
+      }
       this.dialogUserAccountFormVisible = false
     },
     handleUserAccountDelete (row) {
@@ -650,6 +804,7 @@ export default {
           if (valid) {
             const payload = this.userAccountLDAP
             payload.config.host = `${payload.config.addr}:${payload.config.port}`
+            payload.config.userSearch.idAttr = payload.config.userSearch.username
             omit(payload.config, ['addr', 'port'])
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()
@@ -668,6 +823,7 @@ export default {
           if (valid) {
             const payload = this.userAccountAD
             payload.config.host = `${payload.config.addr}:${payload.config.port}`
+            payload.config.userSearch.idAttr = payload.config.userSearch.username
             omit(payload.config, ['addr', 'port'])
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()
@@ -685,7 +841,24 @@ export default {
         this.$refs.userAccountGitHubForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountGitHub
-            payload.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
+            payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
+            createConnectorAPI(payload).then(res => {
+              this.getAccountConfig()
+              this.handleUserAccountCancel()
+              this.$message({
+                message: '账户数据添加成功',
+                type: 'success'
+              })
+            })
+          } else {
+            return false
+          }
+        })
+      } else if (this.name === 'OAuth') {
+        this.$refs.userAccountOAuthForm.validate(valid => {
+          if (valid) {
+            const payload = this.userAccountOAuth
+            payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()
@@ -741,7 +914,24 @@ export default {
         this.$refs.userAccountGitHubForm.validate(valid => {
           if (valid) {
             const payload = this.userAccountGitHub
-            payload.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
+            payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
+            updateConnectorAPI(payload.id, payload).then(res => {
+              this.getAccountConfig()
+              this.handleUserAccountCancel()
+              this.$message({
+                message: '账户数据修改成功',
+                type: 'success'
+              })
+            })
+          } else {
+            return false
+          }
+        })
+      } else if (this.name === 'OAuth') {
+        this.$refs.userAccountOAuthForm.validate(valid => {
+          if (valid) {
+            const payload = this.userAccountOAuth
+            payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
             updateConnectorAPI(payload.id, payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()

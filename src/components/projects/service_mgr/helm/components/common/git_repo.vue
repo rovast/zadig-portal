@@ -49,7 +49,7 @@
               message: '代码库拥有者不能为空',
               trigger: 'change',
             }"
-        >
+      >
         <el-select
           v-model="source.repoOwner"
           size="small"
@@ -104,7 +104,16 @@
                 trigger: 'change',
               }"
         >
-          <el-select v-model.trim="source.branchName" placeholder="请选择分支" style="width: 100%;" size="small" filterable allow-create clearable :disabled="isUpdate">
+          <el-select
+            v-model.trim="source.branchName"
+            placeholder="请选择分支"
+            style="width: 100%;"
+            size="small"
+            filterable
+            allow-create
+            clearable
+            :disabled="isUpdate"
+          >
             <el-option v-for="(branch, branch_index) in codeInfo['branches']" :key="branch_index" :label="branch.name" :value="branch.name"></el-option>
           </el-select>
         </el-form-item>
@@ -163,11 +172,15 @@ import {
   createTemplateServiceAPI
 } from '@api'
 import Gitfile from './gitfile_tree'
-import { mapState } from 'vuex'
+
 export default {
   name: 'GitRepo',
   props: {
-    currentSelect: String,
+    currentSelect: {
+      type: String,
+      default: 'git'
+    },
+    currentService: Object,
     controlParam: {
       type: Object,
       default: () => {
@@ -238,7 +251,9 @@ export default {
       this.$refs.sourceForm.resetFields()
     },
     async queryCodeSource () {
-      const res = await getCodeSourceMaskedAPI().catch(error => console.log(error))
+      const res = await getCodeSourceMaskedAPI().catch(error =>
+        console.log(error)
+      )
       if (res) {
         this.allCodeHosts = res
       }
@@ -373,15 +388,13 @@ export default {
         this.source.repoName !== '' &&
         this.source.branchName !== ''
       )
-    },
-    ...mapState({
-      currentService: state => state.service_manage.currentService
-    })
+    }
   },
   watch: {
     currentService: {
       handler (value) {
-        const update = value && (!value.source || value.source !== 'chartTemplate')
+        const update =
+          value && (!value.source || value.source !== 'chartTemplate')
         if (this.currentSelect === 'git' && value && update) {
           if (value.source) {
             const createFrom = value.create_from
@@ -397,7 +410,8 @@ export default {
               this.source.repoOwner = gitRepoConfig.owner
             }
             this.selectPath = [createFrom.load_path]
-          } else { // 老数据
+          } else {
+            // 老数据
             if (value.src_path) {
               this.gitName = 'public'
             } else {

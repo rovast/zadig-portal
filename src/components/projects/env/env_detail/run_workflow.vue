@@ -69,7 +69,7 @@
 import _ from 'lodash'
 import workflowBuildRows from '@/components/common/workflow_build_rows.vue'
 import deployIcons from '@/components/common/deploy_icons'
-import { precreateWorkflowTaskAPI, getAllBranchInfoAPI, runWorkflowAPI, workflowAPI } from '@api'
+import { precreateWorkflowTaskAPI, getAllBranchInfoAPI, runWorkflowAPI, getWorkflowDetailAPI } from '@api'
 
 export default {
   data () {
@@ -191,7 +191,7 @@ export default {
   methods: {
     getWorkflow () {
       if (this.workflowType === 'workflow') {
-        workflowAPI(this.projectName, this.workflowName).then(res => {
+        getWorkflowDetailAPI(this.projectName, this.workflowName).then(res => {
           this.workflowMeta = res
           const namespace = this.currentServiceMeta.envName
           const product = this.workflowMeta.product_tmpl_name
@@ -363,7 +363,6 @@ export default {
         this.$message.success('创建成功')
         this.$emit('success')
         this.$router.push(`/v1/projects/detail/${projectName}/pipelines/multi/${res.pipeline_name}/${res.task_id}?status=running`)
-        this.$store.dispatch('refreshWorkflowList', projectName)
       }).catch(error => {
         if (error.response && error.response.data.code === 6168) {
           const projectName = error.response.data.extra.productName
@@ -436,7 +435,7 @@ export default {
     if (this.workflows && this.workflows.length > 0) {
       this.workflowName = this.workflows[0].name
       if (this.workflowType === 'workflow') {
-        workflowAPI(this.projectName, this.workflowName).then(res => {
+        getWorkflowDetailAPI(this.projectName, this.workflowName).then(res => {
           this.workflowMeta = res
           const namespace = this.currentServiceMeta.envName
           const product = this.workflowMeta.product_tmpl_name

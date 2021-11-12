@@ -3,7 +3,7 @@
     <div class="dash-body"
          :class="latestTaskStatus">
       <div class="dash-main">
-        <span @click="setFavorite(productName,name,type)"
+        <span @click="setFavorite(projectName,name,type)"
               class="favorite el-icon-star-on"
               :class="{'liked':isFavorite}"></span>
         <header class="dash-header">
@@ -55,7 +55,7 @@ export default {
     }
   },
   props: {
-    productName: {
+    projectName: {
       type: String,
       required: true
     },
@@ -102,7 +102,6 @@ export default {
       type: String,
       required: true
     },
-
     updateBy: {
       type: String,
       required: true
@@ -121,16 +120,16 @@ export default {
     }
   },
   methods: {
-    setFavorite (productName, workflowName, type) {
+    setFavorite (projectName, workflowName, type) {
       const payload = {
-        product_name: productName,
+        product_name: projectName,
         name: workflowName,
         type: type
       }
       if (this.isFavorite) {
-        deleteFavoriteAPI(productName, workflowName, type).then((res) => {
+        deleteFavoriteAPI(projectName, workflowName, type).then((res) => {
           if (type === 'workflow') {
-            this.$store.dispatch('refreshWorkflowList', productName)
+            this.$emit('refreshWorkflow', projectName)
           }
           this.$message({
             type: 'success',
@@ -140,7 +139,7 @@ export default {
       } else {
         setFavoriteAPI(payload).then((res) => {
           if (type === 'workflow') {
-            this.$store.dispatch('refreshWorkflowList', productName)
+            this.$emit('refreshWorkflow', projectName)
           }
           this.$message({
             type: 'success',
@@ -149,8 +148,6 @@ export default {
         })
       }
     }
-  },
-  computed: {
   }
 }
 </script>

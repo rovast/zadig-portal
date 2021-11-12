@@ -1,5 +1,5 @@
 import * as types from '../mutations'
-import { listWorkflowAPI } from '@api'
+import { getWorkflowsAPI } from '@api'
 const workflow = { SET_WORKFLOW_LIST_LOADING: 'SET_WORKFLOW_LIST_LOADING' }
 
 const state = {
@@ -51,7 +51,7 @@ function doGet ({ commit, state }, projectName) {
     return resolveGet()
   }
   commit(workflow.SET_WORKFLOW_LIST_LOADING, true)
-  return listWorkflowAPI(projectName).then((res) => {
+  return getWorkflowsAPI(projectName).then((res) => {
     res.forEach((element) => {
       element.type = 'product'
     })

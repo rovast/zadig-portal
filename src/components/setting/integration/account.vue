@@ -541,6 +541,11 @@ export default {
           required: true,
           message: '请输入组名称属性',
           trigger: ['blur', 'change']
+        },
+        'groupSearch.filter': {
+          required: true,
+          message: '请输入组过滤器',
+          trigger: ['blur', 'change']
         }
       },
       userAccountLDAPRules: {
@@ -592,6 +597,11 @@ export default {
         'groupSearch.nameAttr': {
           required: true,
           message: '请输入组名称属性',
+          trigger: ['blur', 'change']
+        },
+        'groupSearch.filter': {
+          required: true,
+          message: '请输入组过滤器',
           trigger: ['blur', 'change']
         }
       },

@@ -257,6 +257,10 @@ export function getProductsAPI () {
   return http.get('/api/v1/picket/projects?verbosity=detailed')// verbosity=detailed<brief,minimal>
 }
 
+export function getTheProductAPI (projectName) {
+  return http.get(`/api/aslan/environment/environments?projectName=${projectName}`)
+}
+
 // Service
 export function templatesAPI () {
   return http.get('/api/aslan/project/templates/info')

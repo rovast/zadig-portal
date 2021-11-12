@@ -3,7 +3,7 @@
     <pipeline-row :name="workflow.name"
                   :isFavorite="workflow.is_favorite"
                   :type="'workflow'"
-                  :productName="workflow.product_tmpl_name"
+                  :projectName="workflow.product_tmpl_name"
                   :pipelineLink="`/v1/projects/detail/${workflow.product_tmpl_name}/pipelines/multi/${workflow.name}`"
                   :latestTaskStatus="workflow.lastest_task.status"
                   :recentSuccessID="workflow.last_task_success.task_id"
@@ -13,7 +13,8 @@
                   :recentFailID="workflow.last_task_failure.task_id"
                   :recentFailLink="makeProductTaskDetailLink(workflow.product_tmpl_name,workflow.last_task_failure)"
                   :updateBy="workflow.update_by"
-                  :updateTime="$utils.convertTimestamp(workflow.update_time)">
+                  :updateTime="$utils.convertTimestamp(workflow.update_time)"
+                  @refreshWorkflow="refreshWorkflow">
       <section slot="more"
                class="dash-process">
         <span>
@@ -62,9 +63,11 @@
 
 <script>
 import pipelineRow from './pipeline_row.vue'
-import { workflowAPI, updateWorkflowAPI } from '@api'
+import mixins from '@utils/virtual_scroll_list_mixin'
+import { getWorkflowDetailAPI, updateWorkflowAPI } from '@api'
 export default {
-  name: 'item-component',
+  name: 'workflow-list-item',
+  mixins: [mixins],
   data () {
     return {
       pipelineInfo: null
@@ -89,6 +92,9 @@ export default {
   computed: {
     workflow () {
       return this.source
+    },
+    projectName () {
+      return this.workflow.product_tmpl_name
     }
   },
   methods: {
@@ -106,19 +112,19 @@ export default {
         return '-'
       }
     },
-    makeProductTaskDetailLink (product_tmpl_name, taskInfo) {
-      return `/v1/projects/detail/${product_tmpl_name}/pipelines/multi/${taskInfo.pipeline_name}/${taskInfo.task_id}?status=${taskInfo.status}`
+    makeProductTaskDetailLink (projectName, taskInfo) {
+      return `/v1/projects/detail/${projectName}/pipelines/multi/${taskInfo.pipeline_name}/${taskInfo.task_id}?status=${taskInfo.status}`
     },
     async fnShowTimer (status, index, workflow) {
       if (status && !workflow.showTimer) {
-        this.pipelineInfo = await workflowAPI(workflow.product_tmpl_name, workflow.name).catch(error => console.log(error))
+        this.pipelineInfo = await getWorkflowDetailAPI(workflow.product_tmpl_name, workflow.name).catch(error => console.log(error))
         if (_.get(this.pipelineInfo, 'schedules.items', '[]').length) {
           this.$set(this.source, 'showTimer', true)
           this.$forceUpdate()
         }
       }
     },
-    async changeSchedule (product_tmpl_name) {
+    async changeSchedule (projectName) {
       const pipelineInfo = this.pipelineInfo
       pipelineInfo.schedule_enabled = !pipelineInfo.schedule_enabled
       const res = await updateWorkflowAPI(this.pipelineInfo).catch(error => console.log(error))
@@ -128,8 +134,11 @@ export default {
         } else {
           this.$message.success('定时器关闭成功')
         }
-        this.$store.dispatch('refreshWorkflowList', product_tmpl_name)
+        this.refreshWorkflow(projectName)
       }
+    },
+    refreshWorkflow (projectName) {
+      this.dispatch('workflow-list', 'refreshWorkflow', projectName)
     }
   },
   components: {

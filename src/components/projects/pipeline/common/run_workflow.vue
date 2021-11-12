@@ -525,7 +525,6 @@ export default {
         this.$message.success('创建成功')
         this.$emit('success')
         this.$router.push(`/v1/projects/detail/${projectName}/pipelines/multi/${pipelineName}/${taskId}?status=running`)
-        this.$store.dispatch('refreshWorkflowList', this.projectName)
       }).catch(error => {
         console.log(error)
         // handle error

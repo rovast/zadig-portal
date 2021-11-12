@@ -281,8 +281,7 @@
   </div>
 </template>
 <script>
-import { getProjectInfoAPI, getProductInfo, deleteProjectAPI, getClusterListAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
-import { mapGetters } from 'vuex'
+import { getProjectInfoAPI, getProductInfo, deleteProjectAPI, getClusterListAPI, getWorkflowsAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
 import { getProductStatus } from '@utils/word_translate'
 import { wordTranslate } from '@utils/word_translate.js'
 import { whetherOnboarding } from '@utils/onboarding_route'
@@ -292,6 +291,7 @@ export default {
     return {
       currentProject: {},
       envList: [],
+      workflows: [],
       allCluster: [],
       detailLoading: true
     }
@@ -299,6 +299,12 @@ export default {
   methods: {
     getProdStatus (status, updateble) {
       return getProductStatus(status, updateble)
+    },
+    async getWorkflows (projectName) {
+      const res = await getWorkflowsAPI(projectName)
+      if (res) {
+        this.workflows = res.filter(item => item.product_tmpl_name === projectName)
+      }
     },
     getEnvList () {
       const projectName = this.projectName
@@ -442,13 +448,6 @@ export default {
     projectName () {
       return this.$route.params.project_name
     },
-    workflows () {
-      const list = this.$utils.filterObjectArrayByKey('name', '', this.workflowList)
-      return list.filter(w => w.product_tmpl_name === this.projectName)
-    },
-    ...mapGetters([
-      'workflowList'
-    ]),
     isProjectAdmin () {
       if (this.$utils.roleCheck('admin')) {
         return true
@@ -456,13 +455,9 @@ export default {
       return this.currentProject.admins ? this.currentProject.admins.includes(this.$store.state.login.userinfo.uid) : false
     }
   },
-  components: {
-  },
-  created () {
-    this.getProject(this.projectName)
-  },
   mounted () {
-    this.$store.dispatch('getWorkflowList', this.projectName)
+    this.getProject(this.projectName)
+    this.getWorkflows(this.projectName)
     this.getEnvList()
     this.getCluster()
     bus.$emit('show-sidebar', true)

@@ -86,7 +86,7 @@ import distribute from './switch_tab/distribute.vue'
 import trigger from './switch_tab/trigger.vue'
 import notify from './switch_tab/notify.vue'
 
-import { workflowAPI, workflowPresetAPI, createWorkflowAPI, updateWorkflowAPI } from '@api'
+import { getWorkflowDetailAPI, workflowPresetAPI, createWorkflowAPI, updateWorkflowAPI } from '@api'
 
 export default {
   data () {
@@ -255,7 +255,6 @@ export default {
         }
         (this.editMode ? updateWorkflowAPI : createWorkflowAPI)(this.pipelineInfo).then(res => {
           this.$message.success('保存成功')
-          this.$store.dispatch('refreshWorkflowList', this.pipelineInfo.product_tmpl_name)
           if (this.$route.query.from) {
             this.$router.push(this.$route.query.from)
           } else {
@@ -282,7 +281,7 @@ export default {
   },
   created () {
     if (this.editMode) {
-      workflowAPI(this.pipelineInfo.product_tmpl_name, this.pipelineName).then(res => {
+      getWorkflowDetailAPI(this.pipelineInfo.product_tmpl_name, this.pipelineName).then(res => {
         this.pipelineInfo = res
         if (!this.pipelineInfo.schedules) {
           this.$set(this.pipelineInfo, 'schedules', {

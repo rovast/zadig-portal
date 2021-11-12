@@ -468,7 +468,7 @@ export function getWorkflowBindAPI (projectName, testName) {
   return http.get(`/api/v1/picket/workflows/testName/${testName}?projectName=${projectName}`)
 }
 
-export function listWorkflowAPI (projectName) {
+export function getWorkflowsAPI (projectName) {
   return http.get(`/api/aslan/workflow/workflow?projectName=${projectName || ''}`)
 }
 
@@ -479,7 +479,7 @@ export function setFavoriteAPI (payload) {
 export function deleteFavoriteAPI (projectName, workflowName, type) {
   return http.delete(`/api/aslan/workflow/favorite/${projectName}/${workflowName}/${type}?projectName=${projectName}`)
 }
-export function workflowAPI (projectName, name) {
+export function getWorkflowDetailAPI (projectName, name) {
   return http.get(`/api/aslan/workflow/workflow/find/${name}?projectName=${projectName}`)
 }
 
@@ -564,11 +564,11 @@ export function runTestsAPI (payload) {
 }
 
 export function restartTestTaskAPI (projectName, testName, taskID) {
-  return http.post(`/api/aslan/testing/testtask/projectName/${projectName}/id/${taskID}/pipelines/${testName}/restart?projectName=${projectName}`)
+  return http.post(`/api/aslan/testing/testtask/productName/${projectName}/id/${taskID}/pipelines/${testName}/restart?projectName=${projectName}`)
 }
 
 export function cancelTestTaskAPI (projectName, testName, taskID) {
-  return http.delete(`/api/aslan/testing/testtask/projectName/${projectName}/id/${taskID}/pipelines/${testName}?projectName=${projectName}`)
+  return http.delete(`/api/aslan/testing/testtask/productName/${projectName}/id/${taskID}/pipelines/${testName}?projectName=${projectName}`)
 }
 
 export function singleTestAPI (name, projectName = '') {
@@ -1131,8 +1131,8 @@ export function downloadPubKeyAPI () {
   return http.get('/api/aslan/setting/user/kube/config')
 }
 
-export function updateServiceImageAPI (payload, type, envType = '') {
-  return http.post(`/api/aslan/environment/image/${type}?envType=${envType}`, payload)
+export function updateServiceImageAPI (payload, type, projectName, envType = '') {
+  return http.post(`/api/aslan/environment/image/${type}?projectName=${projectName}&envType=${envType}`, payload)
 }
 
 // Notification

@@ -623,6 +623,7 @@ export default {
     },
     saveImage (item, scaleName, typeUppercase) {
       const envType = this.isProd ? 'prod' : ''
+      const projectName = this.projectName
       const type = typeUppercase.toLowerCase()
       item.edit = false
       this.$message({
@@ -639,7 +640,7 @@ export default {
       if (this.envName) {
         payload.env_name = this.envName
       }
-      updateServiceImageAPI(payload, type, envType).then((res) => {
+      updateServiceImageAPI(payload, type, projectName, envType).then((res) => {
         this.fetchServiceData()
         this.$message({
           message: '镜像更新成功',

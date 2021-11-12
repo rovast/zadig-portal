@@ -1131,8 +1131,8 @@ export function downloadPubKeyAPI () {
   return http.get('/api/aslan/setting/user/kube/config')
 }
 
-export function updateServiceImageAPI (payload, type, envType = '') {
-  return http.post(`/api/aslan/environment/image/${type}?envType=${envType}`, payload)
+export function updateServiceImageAPI (payload, type, projectName, envType = '') {
+  return http.post(`/api/aslan/environment/image/${type}?projectName=${projectName}&envType=${envType}`, payload)
 }
 
 // Notification

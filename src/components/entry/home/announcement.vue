@@ -1,8 +1,8 @@
 <template>
   <div v-show="visible" class="notify-banner">
     <div class="layout-container">
-      <span> {{title +' : '}}{{content}}
-      </span>
+      <span v-if="isHtml" v-html="`${title} : ${content}`"></span>
+      <span v-else> {{title +' : '}}{{content}}</span>
       <span class="close-btn">
         <i @click="close()" class="el-icon-circle-close"></i>
       </span>
@@ -19,6 +19,10 @@ export default {
     content: {
       type: String,
       default: ''
+    },
+    isHtml: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {

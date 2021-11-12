@@ -48,7 +48,7 @@ Vue.mixin({
 })
 
 const isSuperAdmin = () => {
-  return utils.roleCheck().superAdmin
+  return utils.roleCheck('admin')
 }
 const userName = () => {
   return utils.getUserName()

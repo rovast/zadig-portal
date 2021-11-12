@@ -329,11 +329,13 @@ const utils = {
   /**
    *
    *角色检查
-   * @returns {superAdmin:boolean}
+   * @returns {boolean}
    */
-  roleCheck () {
-    return {
-      superAdmin: store.get('role').includes('admin')
+  roleCheck (role) {
+    if (store.get('role')) {
+      return store.get('role').includes(role)
+    } else {
+      return false
     }
   },
   getUserName () {

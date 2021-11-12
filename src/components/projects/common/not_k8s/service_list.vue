@@ -140,7 +140,6 @@ export default {
           this.projectName,
           obj.visibility
         ).then(() => {
-          console.log('??', this.envNameList)
           if (this.envNameList.length) {
             this.$refs.updateEnv.openDialog()
           }

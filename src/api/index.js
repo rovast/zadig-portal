@@ -257,6 +257,10 @@ export function getProductsAPI () {
   return http.get('/api/v1/picket/projects?verbosity=detailed')// verbosity=detailed<brief,minimal>
 }
 
+export function getEnvironmentsAPI (projectName) {
+  return http.get(`/api/aslan/environment/environments?projectName=${projectName}`)
+}
+
 // Service
 export function templatesAPI () {
   return http.get('/api/aslan/project/templates/info')
@@ -1342,7 +1346,7 @@ export function getCreateHelmEnvStatusAPI (projectName) {
 }
 
 export function getCalculatedValuesYamlAPI ({ projectName, serviceName, envName, format, scene }, payload) { // defaultValues, overrideYaml, overrideValues
-  return http.post(`/api/aslan/environment/environments/${projectName}/estimated-values??projectName=${projectName}&format=${format}&envName=${envName}&serviceName=${serviceName}&scene=${scene}`, payload)
+  return http.post(`/api/aslan/environment/environments/${projectName}/estimated-values?projectName=${projectName}&format=${format}&envName=${envName}&serviceName=${serviceName}&scene=${scene}`, payload)
 }
 
 export function getValuesYamlFromGitAPI ({ codehostID, owner, repo, branch, valuesPaths }) {

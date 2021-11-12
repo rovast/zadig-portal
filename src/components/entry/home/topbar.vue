@@ -107,7 +107,7 @@
                     </div>
                     <ul class="content profile-list">
                       <li class="profile-list__item active">
-                        <span>{{userInfo.name?`${userInfo.name}(${userInfo.account})`:userInfo.account}}</span>
+                        <span>{{userName}}</span>
                         <el-tag v-if="role.includes('admin')"
                                 size="mini"
                                 type="primary"
@@ -157,7 +157,7 @@
                    class="menu-avatar"
                    alt="">
               <span class="username">
-                <span>{{userInfo.name?`${userInfo.name}(${userInfo.account})`:userInfo.account}}</span>
+                <span>{{userName}}</span>
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </span>
             </div>
@@ -186,16 +186,26 @@ export default {
     ...mapState({
       role: (state) => state.login.role,
       userInfo: (state) => state.login.userinfo
-    })
+    }),
+    userName () {
+      // 系统用户
+      if (this.userInfo.identityType === 'system') {
+        if (this.userInfo.name) {
+          return `${this.userInfo.name}(${this.userInfo.account})`
+        } else {
+          return this.userInfo.account
+        }// 第三方登录
+      } else if (this.userInfo.preferred_username) {
+        return `${this.userInfo.name}(${this.userInfo.preferred_username})`
+      } else {
+        return this.userInfo.name
+      }
+    }
   },
   methods: {
     async logOut () {
       await this.$store.dispatch('LOGINOUT')
-      if (this.showSSOBtn) {
-        window.location.href = this.redirectUrl
-      } else {
-        this.$router.push('/signin')
-      }
+      this.$router.push('/signin')
     },
     handleCommand (command) {
       if (command === 'logOut') {

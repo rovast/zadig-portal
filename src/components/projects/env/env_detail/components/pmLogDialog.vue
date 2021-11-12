@@ -103,14 +103,6 @@ export default {
       this.envName = envName
       this.serviceName = serviceName
     },
-    getLogWSUrl () {
-      const hostname = window.location.hostname
-      if (this.$utils.protocolCheck() === 'https') {
-        return 'wss://' + hostname
-      } else if (this.$utils.protocolCheck() === 'http') {
-        return 'ws://' + hostname
-      }
-    },
     showRealTimeLog (envName, serviceName, operation) {
       const projectName = this.projectName
       if (operation === 'open') {

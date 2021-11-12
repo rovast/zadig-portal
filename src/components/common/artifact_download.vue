@@ -12,7 +12,7 @@
     </el-table>
     <div>
       <span class="download">
-        <a :href="`/api/aslan/workflow/v2/tasks/workflow/${workflowName}/taskId/${taskId}`"
+        <a :href="downloadUrl"
            download>
           <el-button size="small"
                      type="primary"
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import store from 'storejs'
 import { getArtifactWorkspaceAPI } from '@api'
 export default {
   props: {
@@ -70,7 +71,12 @@ export default {
       })
     }
   },
-  computed: {},
+  computed: {
+    downloadUrl () {
+      const token = store.get('userInfo').token
+      return `/api/aslan/workflow/v2/tasks/workflow/${this.workflowName}/taskId/${this.taskId}?&token=${token}`
+    }
+  },
   mounted () {
     this.getArtifactWorkspace()
   },

@@ -996,7 +996,7 @@ export function createProjectAPI (payload) {
 }
 
 export function deleteProjectAPI (projectName) {
-  return http.delete(`/api/aslan/project/products/${projectName}?projectName=${projectName}`)
+  return http.delete(`/api/v1/picket/projects/${projectName}?projectName=${projectName}`)
 }
 
 export function downloadDevelopCLIAPI (os) {

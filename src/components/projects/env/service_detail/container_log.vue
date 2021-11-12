@@ -81,14 +81,6 @@ export default {
     wordTranslation (word, category) {
       return wordTranslate(word, category)
     },
-    getLogWSUrl () {
-      const hostname = window.location.hostname
-      if (this.$utils.protocolCheck() === 'https') {
-        return 'wss://' + hostname
-      } else if (this.$utils.protocolCheck() === 'http') {
-        return 'ws://' + hostname
-      }
-    },
     showRealTimeLog (pod_name, container_name, operation) {
       if (operation === 'open') {
         if (typeof window.msgServer === 'undefined') {

@@ -257,7 +257,7 @@ export function getProductsAPI () {
   return http.get('/api/v1/picket/projects?verbosity=detailed')// verbosity=detailed<brief,minimal>
 }
 
-export function getTheProductAPI (projectName) {
+export function getEnvironmentsAPI (projectName) {
   return http.get(`/api/aslan/environment/environments?projectName=${projectName}`)
 }
 

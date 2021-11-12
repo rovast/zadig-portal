@@ -66,7 +66,7 @@ import step from '../common/step.vue'
 import {
   createHelmProductEnvAPI,
   getCreateHelmEnvStatusAPI,
-  getTheProductAPI
+  getEnvironmentsAPI
 } from '@api'
 export default {
   data () {
@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     async getProducts () {
-      const res = await getTheProductAPI(this.projectName).catch(err => {
+      const res = await getEnvironmentsAPI(this.projectName).catch(err => {
         console.log(err)
       })
       if (res && res.length > 0) {

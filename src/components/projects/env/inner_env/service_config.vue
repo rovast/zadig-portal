@@ -241,7 +241,7 @@ export default {
     },
     async getConfigmap () {
       const query = {
-        productName: this.projectName,
+        projectName: this.projectName,
         serviceName: this.serviceName,
         envType: this.envType
       }

@@ -137,9 +137,13 @@ export default {
       this.$store.dispatch('refreshWorkflowList', this.projectName).then(() => {
         this.loading = false
         const projectName = this.projectName
-        const currentWorkflows = res.map(ele => {
-          if (ele.name === `${projectName}-ops-workflow`) ele.env_name = ''
-          return ele
+        const currentWorkflows = this.$store.getters.workflowList.map(ele => {
+          let envName = ele.env_name
+          if (
+            ele.name === `${projectName}-ops-workflow` ||
+            ele.name === `${projectName}-workflow`
+          ) { envName = '' }
+          return { ...ele, env_name: envName }
         })
         getProjectIngressAPI(projectName).then(res => {
           currentWorkflows.forEach(workflow => {

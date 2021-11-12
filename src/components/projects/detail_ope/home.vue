@@ -148,11 +148,11 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="total_service_num"
-                         label="服务数量">
-        </el-table-column>
-        <el-table-column prop="total_env_num"
+        <el-table-column prop="envs"
                          label="集成环境">
+          <template slot-scope="scope">
+            {{scope.row.envs.length}}
+          </template>
         </el-table-column>
         <el-table-column label="更新信息">
           <template slot-scope="scope">

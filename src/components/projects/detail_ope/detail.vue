@@ -450,7 +450,7 @@ export default {
       'workflowList'
     ]),
     isProjectAdmin () {
-      if (this.$utils.roleCheck().superAdmin) {
+      if (this.$utils.roleCheck('admin')) {
         return true
       }
       return this.currentProject.admins ? this.currentProject.admins.includes(this.$store.state.login.userinfo.uid) : false

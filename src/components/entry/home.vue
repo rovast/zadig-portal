@@ -12,6 +12,10 @@
                       :key="index"
                       :title="ann.content.title"
                       :content="ann.content.content"></announcement>
+        <announcement title="系统提示"
+                      isHtml
+                      v-if="isAdmin && SMTPDisabled"
+                      :content="htmlTemplate"></announcement>
         <topbar></topbar>
         <router-view>
         </router-view>
@@ -23,7 +27,7 @@
 </template>
 
 <script>
-import { getAnnouncementsAPI } from '@api'
+import { getAnnouncementsAPI, getEmailHostAPI } from '@api'
 import sidebar from './home/sidebar.vue'
 import subSidebar from './home/sub_sidebar.vue'
 import topbar from './home/topbar.vue'
@@ -33,7 +37,9 @@ export default {
   data () {
     return {
       announcements: [],
-      sideWide: true
+      sideWide: true,
+      SMTPDisabled: true,
+      htmlTemplate: '管理员请及时配置 <a href="/v1/system/integration?currentTab=mail">SMTP 邮箱服务器</a> 以便于用户密码丢失找回'
     }
   },
   methods: {
@@ -41,6 +47,34 @@ export default {
       getAnnouncementsAPI().then((res) => {
         this.announcements = res
       })
+    },
+    async checkSMTP () {
+      const res = await getEmailHostAPI()
+      if (res) {
+        this.SMTPDisabled = false
+      } else {
+        this.SMTPDisabled = true
+      }
+    }
+  },
+  computed: {
+    isAdmin () {
+      if (this.$store.state.login.role.includes('admin')) {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
+  watch: {
+    isAdmin: {
+      handler (val, oldVal) {
+        if (val) {
+        // 检查 SMTP 配置
+          this.checkSMTP()
+        }
+      },
+      immediate: true
     }
   },
   components: {

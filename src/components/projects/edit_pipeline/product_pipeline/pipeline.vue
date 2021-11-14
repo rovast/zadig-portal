@@ -156,6 +156,9 @@ export default {
     pipelineName () {
       return this.$route.params.name
     },
+    projectName () {
+      return this.$route.query.projectName
+    },
     editMode () {
       return Boolean(this.pipelineName)
     },
@@ -281,7 +284,7 @@ export default {
   },
   created () {
     if (this.editMode) {
-      getWorkflowDetailAPI(this.pipelineInfo.product_tmpl_name, this.pipelineName).then(res => {
+      getWorkflowDetailAPI(this.projectName, this.pipelineName).then(res => {
         this.pipelineInfo = res
         if (!this.pipelineInfo.schedules) {
           this.$set(this.pipelineInfo, 'schedules', {

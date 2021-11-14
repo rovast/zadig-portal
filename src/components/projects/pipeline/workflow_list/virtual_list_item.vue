@@ -37,7 +37,7 @@
                    @click="startProductBuild(workflow)">
           <span class="el-icon-video-play">&nbsp;执行</span>
         </el-button>
-        <router-link :to="`/productpipelines/edit/${workflow.name}`">
+        <router-link :to="`/workflows/edit/${workflow.name}?projectName=${workflow.product_tmpl_name}`">
           <span class="menu-item el-icon-setting start-build"></span>
         </router-link>
         <el-dropdown @visible-change="(status) => fnShowTimer(status, index, workflow)">

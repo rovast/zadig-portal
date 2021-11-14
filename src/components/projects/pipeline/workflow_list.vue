@@ -27,7 +27,7 @@
             </div>
           </div>
           <div class="header-end">
-            <router-link :to="`/productpipelines/create?projectName=${this.projectName ? this.projectName : ''}`">
+            <router-link :to="`/workflows/create?projectName=${this.projectName ? this.projectName : ''}`">
               <button type="button" class="add-project-btn">
                 <i class="el-icon-plus"></i>
                 新建工作流
@@ -290,7 +290,7 @@ export default {
           type: 'success'
         })
         this.getWorkflows(this.projectName)
-        this.$router.push(`/productpipelines/edit/${newName}`)
+        this.$router.push(`/workflows/edit/${newName}`)
       })
     },
     sortWorkflow (cm) {

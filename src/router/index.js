@@ -573,7 +573,7 @@ const routes = [
     ]
   },
   {
-    path: '/productpipelines',
+    path: '/workflows',
     component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/view.vue'),
     meta: {
       requiresAuth: true,

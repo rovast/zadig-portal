@@ -225,22 +225,24 @@ export default {
         this.workflowsList = res
       }
     },
-    deleteWorkflow (name) {
+    deleteWorkflow (workflow) {
+      const name = workflow.name
+      const projectName = workflow.product_tmpl_name
       this.$prompt('输入工作流名称确认', '删除工作流 ' + name, {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         confirmButtonClass: 'el-button el-button--danger',
-        inputValidator: pipe_name => {
-          if (pipe_name === name) {
+        inputValidator: workflowName => {
+          if (workflowName === name) {
             return true
-          } else if (pipe_name === '') {
+          } else if (workflowName === '') {
             return '请输入工作流名称'
           } else {
             return '名称不相符'
           }
         }
       }).then(({ value }) => {
-        deleteWorkflowAPI(this.projectName, name).then(() => {
+        deleteWorkflowAPI(projectName, name).then(() => {
           this.getWorkflows(this.projectName)
           this.$message.success('删除成功')
         })
@@ -253,20 +255,22 @@ export default {
     hideProductTaskDialog () {
       this.showStartProductBuild = false
     },
-    copyWorkflow (pipeline_name) {
+    copyWorkflow (workflow) {
+      const oldName = workflow.name
+      const projectName = workflow.product_tmpl_name
       this.$prompt('请输入新的产品工作流名称', '复制工作流', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        inputValidator: new_name => {
+        inputValidator: newName => {
           const pipeNames = []
           this.workflows.forEach(element => {
             pipeNames.push(element.name)
           })
-          if (new_name === '') {
+          if (newName === '') {
             return '请输入工作流名称'
-          } else if (pipeNames.includes(new_name)) {
+          } else if (pipeNames.includes(newName)) {
             return '工作流名称重复'
-          } else if (!/^[a-zA-Z0-9-]+$/.test(new_name)) {
+          } else if (!/^[a-zA-Z0-9-]+$/.test(newName)) {
             return '名称只支持字母大小写和数字，特殊字符只支持中划线'
           } else {
             return true
@@ -274,7 +278,7 @@ export default {
         }
       })
         .then(({ value }) => {
-          this.copyWorkflowReq(pipeline_name, value)
+          this.copyWorkflowReq(projectName, oldName, value)
         })
         .catch(() => {
           this.$message({
@@ -283,14 +287,14 @@ export default {
           })
         })
     },
-    copyWorkflowReq (oldName, newName) {
-      copyWorkflowAPI(this.projectName, oldName, newName).then(() => {
+    copyWorkflowReq (projectName, oldName, newName) {
+      copyWorkflowAPI(projectName, oldName, newName).then(() => {
         this.$message({
           message: '复制流水线成功',
           type: 'success'
         })
         this.getWorkflows(this.projectName)
-        this.$router.push(`/workflows/edit/${newName}`)
+        this.$router.push(`/workflows/edit/${newName}?projectName=${projectName}`)
       })
     },
     sortWorkflow (cm) {

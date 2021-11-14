@@ -48,10 +48,10 @@
             <el-dropdown-item @click.native="changeSchedule(workflow.product_tmpl_name)">
               <span>{{workflow.schedule_enabled ? '关闭': '打开'}}定时器</span>
             </el-dropdown-item>
-            <el-dropdown-item @click.native="copyWorkflow(workflow.name)">
+            <el-dropdown-item @click.native="copyWorkflow(workflow)">
               <span>复制</span>
             </el-dropdown-item>
-            <el-dropdown-item @click.native="deleteWorkflow(workflow.name)">
+            <el-dropdown-item @click.native="deleteWorkflow(workflow)">
               <span>删除</span>
             </el-dropdown-item>
           </el-dropdown-menu>

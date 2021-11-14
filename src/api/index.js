@@ -253,8 +253,8 @@ export function productEnvInfoAPI (projectName, envName) {
 }
 
 // Project
-export function getProductsAPI () {
-  return http.get('/api/v1/picket/projects?verbosity=detailed')// verbosity=detailed<brief,minimal>
+export function getProjectsAPI () {
+  return http.get('/api/v1/picket/projects?verbosity=detailed')// verbosity=detailed<brief,minimal>,IgnoreNoVersions,IgnoreNoEnvs
 }
 
 export function getEnvironmentsAPI (projectName) {
@@ -1184,7 +1184,7 @@ export function deleteVersionAPI (projectName, versionId) {
 }
 
 export function getVersionProductListAPI () {
-  return http.get(`/api/aslan/delivery/products`)
+  return http.get(`/api/v1/picket/projects?ignoreNoVersions=true`)
 }
 
 export function productHostingNamespaceAPI (clusterId) {

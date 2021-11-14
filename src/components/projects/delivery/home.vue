@@ -26,14 +26,14 @@ export default {
     getVersionProductList () {
       getVersionProductListAPI().then((res) => {
         this.loading = false
-        this.productNames = res
-        if (res.length === 0) {
+        this.productNames = res.map(item => item.name)
+        if (this.productNames.length === 0) {
           return
         } else {
-          const routerList = res.map(re => {
+          const routerList = this.productNames.map(item => {
             return {
-              name: re,
-              url: `/v1/delivery/version/${re}`
+              name: item,
+              url: `/v1/delivery/version/${item}`
             }
           })
           bus.$emit(`set-sub-sidebar-title`, {
@@ -42,7 +42,7 @@ export default {
           })
         }
         if (!this.$route.params.project_name) {
-          this.$router.replace(`/v1/delivery/version/${res[0]}`)
+          this.$router.replace(`/v1/delivery/version/${this.productNames[0]}`)
         }
       }).catch(() => {
         this.$message.error('获取项目信息出错！')

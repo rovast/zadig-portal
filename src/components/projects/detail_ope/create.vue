@@ -49,7 +49,12 @@
                       :key="index"
                       :label="user.name ? `${user.account}(${user.name})` : user.account"
                       :value="user.uid"
-                    ></el-option>
+                    >
+                    <span v-if="user.identity_type">
+                      <i class="iconfont" :class="'icon'+user.identity_type"></i>
+                      <span>{{user.name ? `${user.account}(${user.name})` : user.account}}</span>
+                    </span>
+                    </el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="项目权限" v-show="activeName !=='advance'" prop="public">

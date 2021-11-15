@@ -88,9 +88,9 @@ export default {
       if (userRes) {
         if (this.editUser.role !== payload.role) {
           if (this.editUser.role === 'admin' && payload.role === '') {
-            this.deleteBindings(payload.name)
+            this.deleteBindings(payload.roleBindingName)
           } else if (this.editUser.role === '' && payload.role === 'admin') {
-            this.addBindings(payload.name)
+            this.addBindings()
           }
         }
         this.$message.success('用户信息修改成功')
@@ -104,12 +104,12 @@ export default {
       )
     },
     async addBindings () {
-      const paload = {
-        name: this.editUser.account + '-' + this.editUser.identity_type,
-        role: 'admin',
+      const payload = {
+        name: `user:${this.clonedUserInfo.uid},role:${this.clonedUserInfo.role}`,
+        role: this.clonedUserInfo.role,
         uid: this.clonedUserInfo.uid
       }
-      await addSystemRoleBindingsAPI(paload).catch(error =>
+      await addSystemRoleBindingsAPI(payload).catch(error =>
         console.log(error)
       )
     }

@@ -1378,56 +1378,56 @@ export function editWorkloads (payload) {
   return http.put(`/api/aslan/service/workloads?projectName=${payload.product_name}&env=${payload.env_name}`, payload)
 }
 
-// role
-export function queryPolicyDefinitions () {
-  return http.get(`/api/v1/policy-definitions`)
+// RBAC APIs
+export function queryPolicyDefinitionsAPI (projectName) {
+  return http.get(`/api/v1/policy-definitions?projectName=${projectName}`)
 }
 
-export function addrole (payload) { // 项目下添加角色
+export function addRoleAPI (payload) { // 项目下添加角色
   return http.post(`/api/v1/roles?projectName=${payload.projectName}`, payload)
 }
 
-export function updaterole (payload) { // 项目下添加角色
+export function updateRoleAPI (payload) { // 项目下添加角色
   return http.put(`/api/v1/roles/${payload.name}?projectName=${payload.projectName}`, payload)
 }
 
-export function queryrole (projectName) { // 查询项目中的角色
+export function queryRoleAPI (projectName) { // 查询项目中的角色
   return http.get(`/api/v1/roles?projectName=${projectName}`)
 }
 
-export function queryroleDetail (name, projectName) { // 查询项目中的某个角色详情
+export function queryRoleDetailAPI (name, projectName) { // 查询项目中的某个角色详情
   return http.get(`/api/v1/roles/${name}?projectName=${projectName}`)
 }
 
-export function addPublicRole (payload) { // 添加公共角色
-  return http.post(`/api/v1/public-roles`, payload)
+export function addPublicRoleAPI (payload, projectName) { // 添加公共角色
+  return http.post(`/api/v1/public-roles?projectName=${projectName}`, payload)
 }
 
-export function deletePublicRole (name) { // 删除公共角色
-  return http.delete(`/api/v1/public-roles/${name}`)
+export function deletePublicRoleAPI (name, projectName) { // 删除公共角色
+  return http.delete(`/api/v1/public-roles/${name}?projectName=${projectName}`)
 }
 
-export function queryPublicRole () { // 查询公共的角色
-  return http.get(`/api/v1/public-roles`)
+export function queryPublicRoleAPI (projectName) { // 查询公共的角色
+  return http.get(`/api/v1/public-roles?projectName=${projectName}`)
 }
 
-export function queryPublicRoleDetail (name) { // 查询某个公共的角色
-  return http.get(`/api/v1/public-roles/${name}`)
+export function queryPublicRoleDetailAPI (name, projectName) { // 查询某个公共的角色
+  return http.get(`/api/v1/public-roles/${name}?projectName=${projectName}`)
 }
 
-export function updatePublicRole (paload) { // 修改某个公共的角色
-  return http.put(`/api/v1/public-roles/${paload.name}`, paload)
+export function updatePublicRoleAPI (payload, projectName) { // 修改某个公共的角色
+  return http.put(`/api/v1/public-roles/${payload.name}?projectName=${projectName}`, payload)
 }
 
-export function deleterole (name, projectName) { // 删除项目中的角色
+export function deleteRoleAPI (name, projectName) { // 删除项目中的角色
   return http.delete(`/api/v1/roles/${name}?projectName=${projectName}`)
 }
 
-export function addRoleBindings (payload, projectName) { // 项目中用户添加角色
+export function addRoleBindingsAPI (payload, projectName) { // 项目中用户添加角色
   return http.post(`/api/v1/rolebindings?projectName=${projectName}&bulk=true`, payload)
 }
 
-export function deleteroleBindings (name, projectName) { // 删除项目中的角色绑带
+export function deleteRoleBindingsAPI (name, projectName) { // 删除项目中的角色绑带
   return http.delete(`/api/v1/rolebindings/${name}?projectName=${projectName}`)
 }
 
@@ -1435,7 +1435,7 @@ export function queryRoleBindingsAPI (projectName) { // 查询项目中的角色
   return http.get(`/api/v1/picket/rolebindings?projectName=${projectName}`)
 }
 
-export function queryUserBindings (uid, projectName = '') { // 查询用户所有绑定的角色 传projectName是项目绑定，不传是系统绑定
+export function queryUserBindingsAPI (uid, projectName = '') { // 查询用户所有绑定的角色，传 projectName 是项目绑定，不传是系统绑定
   return http.get(`/api/v1/userbindings?uid=${uid}&projectName=${projectName}`)
 }
 

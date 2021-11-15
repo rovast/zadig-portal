@@ -29,7 +29,6 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
-            v-if="$utils.roleCheck('admin')"
             size="mini"
             type="danger"
             @click="handleDelete(scope.row.name)"
@@ -42,8 +41,8 @@
 </template>
 <script>
 import bus from '@utils/event_bus'
-import AddRoleBind from './addroleBind.vue'
-import { queryRoleBindingsAPI, queryrole, queryPublicRole, deleteroleBindings } from '@/api'
+import AddRoleBind from './addRoleBind.vue'
+import { queryRoleBindingsAPI, queryRoleAPI, queryPublicRoleAPI, deleteRoleBindingsAPI } from '@/api'
 
 export default {
   name: 'member',
@@ -67,7 +66,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteroleBindings(name, this.projectName).then(() => {
+        deleteRoleBindingsAPI(name, this.projectName).then(() => {
           this.$message({
             message: '删除成功',
             type: 'success'
@@ -84,14 +83,14 @@ export default {
         this.members = res
       }
     },
-    async getrole () {
-      const res = await queryrole(this.projectName).catch(error =>
+    async getRole () {
+      const roles = await queryRoleAPI(this.projectName).catch(error =>
         console.log(error)
       )
-      const res1 = await queryPublicRole().catch(error => console.log(error))
-      if (res && res1) {
-        this.rolesFiltered = res
-        res1.forEach(item => {
+      const publicRoles = await queryPublicRoleAPI(this.projectName).catch(error => console.log(error))
+      if (roles && publicRoles) {
+        this.rolesFiltered = roles
+        publicRoles.forEach(item => {
           this.rolesFiltered.push({ name: item.name, isPublic: true })
         })
       }
@@ -99,7 +98,7 @@ export default {
   },
   created () {
     this.getRoleBindings()
-    this.getrole()
+    this.getRole()
     bus.$emit(`set-topbar-title`, {
       title: '',
       breadcrumb: [

@@ -279,18 +279,18 @@ export default {
   },
   methods: {
     getUsers () {
-      const paload = {}
-      usersAPI(paload).then(res => {
+      const payload = {}
+      usersAPI(payload).then(res => {
         this.users = this.$utils.deepSortOn(res.users, 'name')
       })
     },
     remoteMethod (query) {
       if (query !== '') {
         this.loading = true
-        const paload = {
+        const payload = {
           name: query
         }
-        usersAPI(paload).then(res => {
+        usersAPI(payload).then(res => {
           this.loading = false
           this.users = this.$utils.deepSortOn(res.users, 'name')
         })

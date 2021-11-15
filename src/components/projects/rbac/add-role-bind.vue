@@ -92,12 +92,13 @@ export default {
       })
     },
     remoteMethod (query) {
+      const projectName = this.projectName
       if (query !== '') {
         this.loading = true
         const payload = {
           name: query
         }
-        usersAPI(payload).then(res => {
+        usersAPI(payload, projectName).then(res => {
           this.loading = false
           this.users = _.uniqBy(res.users, 'uid')
         })

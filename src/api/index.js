@@ -598,8 +598,8 @@ export function getTestReportAPI (projectName, workflowName, taskID, testJobName
 
 // User Management
 
-export function usersAPI (payload) {
-  return http.post(`/api/v1/users/search`, payload)
+export function usersAPI (payload, projectName = '') {
+  return http.post(`/api/v1/users/search?projectName=${projectName}`, payload)
 }
 
 export function queryUserAPI (uid) {

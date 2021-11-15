@@ -2,17 +2,10 @@
   <el-dialog class="form" title="添加成员" width="550px" :visible.sync="addUserFormVisible">
     <el-form :model="form" ref="form" :rules="formRules" label-width="100px">
       <el-form-item label="用户名称" prop="uids">
-        <el-select
-          class="select"
-          v-model="form.uids"
-          filterable
-          remote
-          multiple
-          :remote-method="remoteMethod"
-          :loading="getUsersLoading"
-          size="small"
-          placeholder="请输入用户名称进行搜索"
-        >
+        <el-select class="select" v-model="form.uids" filterable multiple size="small" placeholder="请输入用户名称进行搜索">
+          <el-option label="所有用户" value="*">
+            <span>所有用户</span>
+          </el-option>
           <el-option
             v-for="user in users"
             :key="user.uid"
@@ -21,7 +14,7 @@
           >
             <span v-if="user.identity_type">
               <i class="iconfont" :class="'icon'+user.identity_type"></i>
-              <span>{{user.name ? `${user.account}(${user.name})` : user.account}}</span>
+              <span>{{user.name ? `${user.name}(${user.account})` : user.account}}</span>
             </span>
           </el-option>
         </el-select>
@@ -57,11 +50,9 @@ export default {
     return {
       addUserFormVisible: false,
       users: [],
-      getUsersLoading: false,
-
       form: {
         uids: '',
-        name: undefined
+        name: ''
       },
       formRules: {
         uids: [
@@ -91,20 +82,16 @@ export default {
         }
       })
     },
-    remoteMethod (query) {
+    getUsers () {
       const projectName = this.projectName
-      if (query !== '') {
-        this.loading = true
-        const payload = {
-          name: query
-        }
-        usersAPI(payload, projectName).then(res => {
-          this.loading = false
-          this.users = _.uniqBy(res.users, 'uid')
-        })
-      } else {
-        this.users = []
+      const payload = {
+        name: '',
+        page: 1,
+        per_page: 1000000
       }
+      usersAPI(payload, projectName).then(res => {
+        this.users = _.uniqBy(res.users, 'uid')
+      })
     },
     async addMember () {
       const { uids, name } = this.form
@@ -129,10 +116,12 @@ export default {
         })
 
         await this.getMembers()
-
         this.addUserFormVisible = false
       }
     }
+  },
+  created () {
+    this.getUsers()
   }
 }
 </script>

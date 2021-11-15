@@ -29,10 +29,10 @@
                     <el-tooltip effect="dark" content="项目主键是该项目资源的全局唯一标识符，用于该项目下所有资源的引用与更新，默认自动生成，同时支持手动指定，创建后不可更改" placement="top">
                       <i class="el-icon-question"></i>
                     </el-tooltip>
-                    <el-button v-if="!isEdit&&!editProductName" @click="editProductName=true" type="text">编辑</el-button>
-                    <el-button v-if="!isEdit&&editProductName" @click="editProductName=false" type="text">完成</el-button>
+                    <el-button v-if="!isEdit&&!editProjectName" @click="editProjectName=true" type="text">编辑</el-button>
+                    <el-button v-if="!isEdit&&editProjectName" @click="editProjectName=false" type="text">完成</el-button>
                   </span>
-                  <el-input :disabled="!showProductName" v-model="projectForm.product_name"></el-input>
+                  <el-input :disabled="!showProjectName" v-model="projectForm.product_name"></el-input>
                 </el-form-item>
                 <el-form-item label="项目管理员" v-if="!isEdit" prop="admins">
                   <el-select
@@ -49,7 +49,12 @@
                       :key="index"
                       :label="user.name ? `${user.account}(${user.name})` : user.account"
                       :value="user.uid"
-                    ></el-option>
+                    >
+                    <span v-if="user.identity_type">
+                      <i class="iconfont" :class="'icon'+user.identity_type"></i>
+                      <span>{{user.name ? `${user.account}(${user.name})` : user.account}}</span>
+                    </span>
+                    </el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="项目权限" v-show="activeName !=='advance'" prop="public">
@@ -220,7 +225,7 @@ export default {
       dialogVisible: true,
       users: [],
       loading: false,
-      editProductName: false,
+      editProjectName: false,
       radio: true,
       projectForm: {
         project_name: '',
@@ -274,18 +279,18 @@ export default {
   },
   methods: {
     getUsers () {
-      const paload = {}
-      usersAPI(paload).then(res => {
+      const payload = {}
+      usersAPI(payload).then(res => {
         this.users = this.$utils.deepSortOn(res.users, 'name')
       })
     },
     remoteMethod (query) {
       if (query !== '') {
         this.loading = true
-        const paload = {
+        const payload = {
           name: query
         }
-        usersAPI(paload).then(res => {
+        usersAPI(payload).then(res => {
           this.loading = false
           this.users = this.$utils.deepSortOn(res.users, 'name')
         })
@@ -400,8 +405,8 @@ export default {
     isEdit () {
       return this.$route.path.includes('/projects/edit')
     },
-    showProductName () {
-      return !this.isEdit && this.editProductName
+    showProjectName () {
+      return !this.isEdit && this.editProjectName
     },
     projectName () {
       if (this.isEdit) {
@@ -416,6 +421,7 @@ export default {
       this.getProject(this.projectName)
     } else {
       this.getUsers()
+      this.projectForm.admins.push(this.currentUserId)
     }
   }
 }

@@ -164,6 +164,9 @@ export default {
   methods: {
     addTestConfig () {
       if (this.testToAdd) {
+        if (!this.test_stage.tests) {
+          this.$set(this.test_stage, 'tests', [])
+        }
         this.test_stage.tests.push({
           test_name: this.testToAdd,
           envs: this.testMap[this.testToAdd].envs

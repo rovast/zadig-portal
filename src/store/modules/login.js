@@ -1,5 +1,5 @@
 import * as types from '../mutations'
-import { userLoginAPI, queryUserBindings } from '@api'
+import { userLoginAPI, queryUserBindingsAPI } from '@api'
 import { Message } from 'element-ui'
 import { parseJwt } from '@/utilities/jwt'
 import store from 'storejs'
@@ -49,7 +49,7 @@ const actions = {
   async GETUSERROLE (context) {
     const userInfo = store.get('userInfo')
     if (userInfo) {
-      const roleBinding = await queryUserBindings(userInfo.uid).catch(error => console.log(error))
+      const roleBinding = await queryUserBindingsAPI(userInfo.uid).catch(error => console.log(error))
       if (roleBinding) {
         const role = roleBinding.map(item => (item.role))
         store.set('role', role)

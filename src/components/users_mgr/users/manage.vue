@@ -246,6 +246,7 @@ export default {
           })
           if (roleInfo) {
             user.role = roleInfo.role
+            user.roleBindingName = roleInfo.name
           } else {
             user.role = ''
           }
@@ -288,12 +289,12 @@ export default {
           addUserAPI(payload).then(async res => {
             this.dialogAddUserVisible = false
             if (payload.isAdmin) {
-              const paload = {
-                name: res.uid + '-' + 'admin',
+              const payload = {
+                name: `user:${res.uid},role:admin`,
                 role: 'admin',
                 uid: res.uid
               }
-              await addSystemRoleBindingsAPI(paload).catch(error =>
+              await addSystemRoleBindingsAPI(payload).catch(error =>
                 console.log(error)
               )
             }

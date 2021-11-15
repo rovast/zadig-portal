@@ -581,7 +581,7 @@ const routes = [
     },
     children: [
       {
-        path: 'create',
+        path: 'product/create',
         component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/product_pipeline/pipeline.vue'),
         meta: {
           requiresAuth: true,
@@ -589,8 +589,24 @@ const routes = [
         }
       },
       {
-        path: 'edit/:name',
+        path: 'product/edit/:name',
         component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/product_pipeline/pipeline.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '编辑工作流'
+        }
+      },
+      {
+        path: 'common/create',
+        component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/common_pipeline/pipeline.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '新建工作流'
+        }
+      },
+      {
+        path: 'common/edit/:name',
+        component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/common_pipeline/pipeline.vue'),
         meta: {
           requiresAuth: true,
           title: '编辑工作流'

@@ -27,12 +27,10 @@
             </div>
           </div>
           <div class="header-end">
-            <router-link :to="`/workflows/create?projectName=${this.projectName ? this.projectName : ''}`">
-              <button type="button" class="add-project-btn">
-                <i class="el-icon-plus"></i>
-                新建工作流
-              </button>
-            </router-link>
+            <button type="button" class="add-project-btn" @click="showSelectWorkflowType = true">
+              <i class="el-icon-plus"></i>
+              新建工作流
+            </button>
           </div>
         </div>
         <div
@@ -49,8 +47,7 @@
             :keeps="20"
             :estimate-size="72"
             :data-component="itemComponent"
-          >
-          </VirtualList>
+          ></VirtualList>
           <div v-if="availableWorkflows.length === 0" class="no-product">
             <img src="@assets/icons/illustration/pipeline.svg" alt />
             <p>暂无可展示的工作流，请手动添加工作流</p>
@@ -58,6 +55,19 @@
         </div>
       </ul>
     </div>
+
+    <el-dialog title="选择工作流类型" :visible.sync="showSelectWorkflowType" width="450px">
+      <div class="type-content">
+        <el-radio v-model="selectWorkflowType" label="product">产品-工作流</el-radio>
+        <div class="type-desc">具有对项目环境构建、部署、测试和服务版本交付的能力</div>
+        <el-radio v-model="selectWorkflowType" label="common">通用-工作流</el-radio>
+        <div class="type-desc">可自定义工作流程，内置构建、K8s 部署、小程序发版等步骤</div>
+      </div>
+      <div slot="footer">
+        <el-button size="small" @click="showSelectWorkflowType = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="createWorkflow">确 定</el-button>
+      </div>
+    </el-dialog>
 
     <el-dialog title="运行 产品-工作流" :visible.sync="showStartProductBuild" custom-class="run-workflow" width="60%">
       <run-workflow
@@ -92,7 +102,9 @@ export default {
       remain: 10,
       keyword: '',
       sortBy: 'name-asc',
-      workflowsList: []
+      workflowsList: [],
+      showSelectWorkflowType: false,
+      selectWorkflowType: 'product'
     }
   },
   provide () {
@@ -219,6 +231,18 @@ export default {
     }
   },
   methods: {
+    createWorkflow () {
+      const type = this.selectWorkflowType
+      let path = ''
+      if (type === 'product') {
+        path = '/workflows/product/create'
+      } else if (type === 'common') {
+        path = '/workflows/common/create'
+      }
+      this.$router.push(
+        `${path}?projectName=${this.projectName ? this.projectName : ''}`
+      )
+    },
     async getWorkflows (projectName) {
       const res = await getWorkflowsAPI(projectName)
       if (res) {
@@ -294,7 +318,9 @@ export default {
           type: 'success'
         })
         this.getWorkflows(this.projectName)
-        this.$router.push(`/workflows/edit/${newName}?projectName=${projectName}`)
+        this.$router.push(
+          `/workflows/edit/${newName}?projectName=${projectName}`
+        )
       })
     },
     sortWorkflow (cm) {
@@ -303,7 +329,7 @@ export default {
   },
   created () {
     // Detecting change from VirtualListItem component event.
-    this.$on('refreshWorkflow', (projectName) => {
+    this.$on('refreshWorkflow', projectName => {
       this.getWorkflows(projectName)
     })
     this.keyword = this.$route.query.name ? this.$route.query.name : ''
@@ -554,6 +580,15 @@ export default {
       padding: 8px 10px;
       color: #606266;
       font-size: 14px;
+    }
+  }
+
+  .type-content {
+    line-height: 32px;
+    .type-desc {
+      margin-left: 25px;
+      margin-bottom: 22px;
+      color: #999;
     }
   }
 }

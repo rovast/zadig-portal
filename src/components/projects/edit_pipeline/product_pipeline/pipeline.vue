@@ -41,7 +41,7 @@
               :notify="pipelineInfo.notify_ctl"></notify>
       <trigger v-show="currentTab==='trigger'"
                :editMode="editMode"
-               :productTmlName="pipelineInfo.product_tmpl_name"
+               :projectName="pipelineInfo.product_tmpl_name"
                :presets="presets"
                :workflowToRun="pipelineInfo"
                :schedules="pipelineInfo.schedules"

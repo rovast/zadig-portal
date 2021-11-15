@@ -21,24 +21,24 @@
         v-show="!build.showModal"
         :serviceModules="serviceModules"
       />
-      <Build
-        ref="build"
-        :handlerSubmit="handlerSubmit"
-        v-show="build.showModal"
-        :name="build.name"
-        :isEdit="build.isEdit"
-        :buildName="build.buildName"
-      />
-      <div class="bottom">
-        <el-button
-         v-show="build.showModal"
-          type="primary"
-          size="small"
-          class="save-btn"
-          @click="saveBuild"
-          plain
-          >保存构建
-        </el-button>
+      <div v-show="build.showModal" class="right-build">
+        <Build
+          ref="build"
+          :handlerSubmit="handlerSubmit"
+          :name="build.name"
+          :isEdit="build.isEdit"
+          :buildName="build.buildName"
+        />
+        <div class="bottom">
+          <el-button
+            type="primary"
+            size="small"
+            class="save-btn"
+            @click="saveBuild"
+            plain
+            >保存构建
+          </el-button>
+        </div>
       </div>
     </div>
   </div>
@@ -179,24 +179,31 @@ export default {
   }
 
   .right {
+    position: relative;
     width: calc(~'100% - 340px');
     height: 100%;
-    overflow: scroll;
+    overflow: auto;
     background-color: #fff;
 
-    .bottom {
-      position: absolute;
-      bottom: 61px;
-      z-index: 999;
-      width: calc(~'100% - 340px');
-      height: 50px;
-      background-color: #fff;
+    .right-build {
+      max-height: calc(~'100% - 50px');
+      padding-bottom: 50px;
+      overflow: auto;
 
-      .save-btn {
-        margin-top: 10px;
-        margin-left: 20px;
-        color: #fff;
-        background-color: #409eff;
+      .bottom {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 50px;
+        background-color: #fff;
+
+        .save-btn {
+          margin-top: 10px;
+          margin-left: 20px;
+          color: #fff;
+          background-color: #409eff;
+        }
       }
     }
   }

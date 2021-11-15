@@ -31,7 +31,7 @@
         </div>
       </div>
       <div class="header-end">
-        <router-link to="/v1/projects/create">
+        <router-link v-if="$utils.roleCheck('admin')" to="/v1/projects/create">
           <button type="button"
                   class="add-project-btn">
             <i class="el-icon-plus"></i>

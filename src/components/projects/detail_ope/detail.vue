@@ -458,7 +458,7 @@ export default {
       if (this.$utils.roleCheck('admin')) {
         return true
       } else if (this.userBindings.length > 0) {
-        return this.userBindings.some(item => item.role === 'admin')
+        return this.userBindings.some(item => item.role === 'project-admin')
       } else {
         return false
       }

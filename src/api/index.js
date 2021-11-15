@@ -1170,9 +1170,9 @@ export function getProjectIngressAPI (projectName) {
   return http.get(`/api/aslan/environment/environments/${projectName}/ingressInfo?projectName=${projectName}`)
 }
 
-// delivery
-export function getVersionListAPI (workflow_name = '', product_name = '', task_id = '', service_name = '') {
-  return http.get(`/api/aslan/delivery/releases?workflowName=${workflow_name}&projectName=${product_name}&taskId=${task_id}&serviceName=${service_name}`)
+// Delivery
+export function getVersionListAPI (workflowName = '', projectName = '', taskId = '', serviceName = '') {
+  return http.get(`/api/aslan/delivery/releases?workflowName=${workflowName}&projectName=${projectName}&taskId=${taskId}&serviceName=${serviceName}`)
 }
 
 export function getVersionServiceListAPI (projectName) {

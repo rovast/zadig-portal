@@ -7,12 +7,6 @@
 
     <el-table v-loading="loading" row-key="id" :data="members" style="width: 100%;" class="users-container">
       <el-table-column label="项目成员">
-        <!-- <template slot-scope="scope">
-          <span>
-            <i class="iconfont" :class="'icon'+scope.row.identity_type"></i>
-            <span>{{scope.row.username ? `${scope.row.username}(${scope.row.account})` : scope.row.account}}</span>
-          </span>
-        </template>-->
         <template slot-scope="scope">
           <div class="name-listing-details">
             <!-- Logo -->
@@ -21,7 +15,10 @@
             </div>
             <!-- Details -->
             <div class="name-listing-description">
-              <h3 class="name-listing-title">
+              <h3 v-if="scope.row.uid === '*'" class="name-listing-title">
+                所有用户
+              </h3>
+              <h3 v-else class="name-listing-title">
                 {{ scope.row.username ? `${scope.row.username}(${scope.row.account})`: scope.row.account }}
               </h3>
               <!-- Name Listing Footer -->

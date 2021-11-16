@@ -155,7 +155,7 @@ export default {
   },
   async mounted () {
     const token = this.$route.query.token
-    const retrieveToken = this.$route.query.idToken
+    const retrieveToken = this.$route.query.idtoken
     if (retrieveToken) {
       this.retrieveToken = retrieveToken
       this.showForgotPassword = true

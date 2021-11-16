@@ -45,22 +45,22 @@
       <article>
         <el-row :gutter="10">
           <el-col :span="6">
-            <i class></i>创建状态
+            <i class="iconfont iconzhuangtai"></i>创建状态
           </el-col>
           <el-col :span="6">{{}}</el-col>
           <el-col :span="6">
-            <i class></i>持续时间
+            <i class="iconfont iconshijian"></i>持续时间
           </el-col>
           <el-col :span="6">{{}}</el-col>
         </el-row>
         <el-row :gutter="10">
           <el-col :span="6">
-            <i class></i>
+            <i class="iconfont icondaima"></i>
             代码库{{}}
           </el-col>
           <el-col :span="6">{{}}</el-col>
           <el-col :span="6">
-            <i class></i>构建信息
+            <i class="iconfont iconinfo"></i>构建信息
           </el-col>
           <el-col :span="6">{{}}</el-col>
         </el-row>

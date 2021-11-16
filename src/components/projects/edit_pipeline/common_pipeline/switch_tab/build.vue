@@ -4,8 +4,8 @@
       <el-form ref="addConfigForm" :model="buildConfig" :rules="createRules" label-position="left" label-width="80px">
         <el-row :gutter="20">
           <el-col :span="10">
-            <el-form-item label="构建名称" prop="name">
-              <el-input v-model="buildConfig.name" placeholder="构建名称" autofocus size="mini" :disabled="isEdit" auto-complete="off"></el-input>
+            <el-form-item label="服务名称" prop="name">
+              <el-input v-model="buildConfig.name" placeholder="服务名称" autofocus size="mini" :disabled="isEdit" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="10">

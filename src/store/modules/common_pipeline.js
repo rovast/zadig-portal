@@ -15,10 +15,6 @@ const state = {
     tab: '扩展',
     selected: false,
     isCurrent: false
-  }, {
-    tab: '触发器',
-    selected: false,
-    isCurrent: false
   }],
   commonInfo: {
     pipelineName: '',

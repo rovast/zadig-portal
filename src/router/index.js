@@ -367,6 +367,22 @@ const routes = [
         }
       },
       {
+        path: 'projects/detail/:project_name/pipelines/common/:workflow_name',
+        component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_common_detail.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '工作流详情'
+        }
+      },
+      {
+        path: 'projects/detail/:project_name/pipelines/common/:workflow_name/:task_id',
+        component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_common_task_detail.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '任务详情'
+        }
+      },
+      {
         path: 'projects/detail/:project_name/test',
         component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function.vue'),
         meta: {

@@ -249,3 +249,10 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+.pagination {
+  display: flex;
+  justify-content: center;
+}
+</style>

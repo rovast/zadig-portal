@@ -47,6 +47,7 @@
                    filterable
                    clearable
                    multiple
+                   reserve-keyword
                    value-key="name"
                    @change="pickBuildConfig"
                    size="medium"
@@ -63,6 +64,7 @@
                    filterable
                    multiple
                    clearable
+                   reserve-keyword
                    value-key="key"
                    size="medium"
                    class="full-width">

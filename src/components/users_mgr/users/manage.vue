@@ -78,10 +78,6 @@
                 <!-- Name Listing Footer -->
                 <div class="name-listing-footer">
                   <ul>
-                    <li v-if="scope.row.identity_type">
-                      <i class="iconfont" :class="'icon'+scope.row.identity_type"></i>
-                      {{identityTypeMap[scope.row.identity_type]}}
-                    </li>
                     <li v-if="scope.row.email">
                       <i class="el-icon-message"></i>
                       <a :href="`mailto:${scope.row.email}`">{{scope.row.email}}</a>
@@ -102,7 +98,14 @@
             <span v-else>{{'尚未登录'}}</span>
           </template>
         </el-table-column>
-
+        <el-table-column label="来源">
+          <template slot-scope="scope">
+            <span v-if="scope.row.identity_type" class="origin">
+              <i class="iconfont type" :class="'icon'+scope.row.identity_type"></i>
+              {{identityTypeMap[scope.row.identity_type]}}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="280">
           <template slot-scope="scope">
             <el-button @click="editUserInfo(scope.row)" type="primary" size="mini" plain>编辑</el-button>
@@ -384,6 +387,12 @@ export default {
   }
 
   .users-container {
+    .origin {
+      .type {
+        font-size: 20px;
+      }
+    }
+
     .name-listing-details {
       top: 0;
       display: flex;

@@ -19,7 +19,7 @@
         <el-input type="textarea" v-model="commonInfoUse.desc" rows="4" size="small"></el-input>
       </el-form-item>
       <el-form-item label="变量设置">
-        <el-table v-if="commonInfoUse.vars" :data="commonInfoUse.vars" style="width: 100%">
+        <el-table v-if="commonInfoUse.vars" :data="commonInfoUse.vars" style="width: 100%;">
           <el-table-column label="变量/变量组">
             <template slot-scope="{row}">
               <el-input v-model="row.key" placeholder="请输入变量" size="small"></el-input>
@@ -27,12 +27,12 @@
           </el-table-column>
           <el-table-column label="类型">
             <template slot-scope="{row}">
-              <el-select v-model="row.type" placeholder="请选择类型" size="small" style="width: 100px;margin-right: 10px;">
+              <el-select v-model="row.type" placeholder="请选择类型" size="small" style="width: 100px; margin-right: 10px;">
                 <el-option label="字符串" value="string"></el-option>
                 <el-option label="枚举" value="enum"></el-option>
                 <el-option label="动态" value="async"></el-option>
               </el-select>
-              <i v-show="row.type !== 'string'" class="el-icon-edit" style="cursor: pointer" @click="editVars(row)"></i>
+              <i v-show="row.type !== 'string'" class="el-icon-edit" style="cursor: pointer;" @click="varData = row"></i>
             </template>
           </el-table-column>
           <el-table-column prop="value" label="默认值">
@@ -60,7 +60,7 @@
         <el-button type="text" icon="el-icon-plus" @click="handleVars('add')">添加变量</el-button>
       </el-form-item>
     </el-form>
-    <BasicDialog :dialog="dialogShow" :value="rowData"></BasicDialog>
+    <BasicDialog :value.sync="varData"></BasicDialog>
   </div>
 </template>
 
@@ -72,8 +72,7 @@ export default {
   data () {
     return {
       commonInfoUse: null,
-      dialogShow: '',
-      rowData: null
+      varData: null
     }
   },
   computed: {
@@ -84,7 +83,8 @@ export default {
   watch: {
     commonInfo: {
       handler (newV, oldV) {
-        this.commonInfoUse = cloneDeep(newV)
+        const { pipelineName, projectName, desc, vars } = cloneDeep(newV)
+        this.commonInfoUse = { pipelineName, projectName, desc, vars }
       },
       deep: true,
       immediate: true
@@ -103,14 +103,6 @@ export default {
         })
       }
     },
-    editVars (row) {
-      if (row.type === 'enum') {
-        this.dialogShow = 'enum'
-      } else if (row.type === 'async') {
-        this.dialogShow = 'async'
-      }
-      this.rowData = row
-    },
     storeInfo () {
       this.$store.commit('UPDATE_COMMON_INFO', this.commonInfoUse)
     }
@@ -128,20 +120,24 @@ export default {
 <style lang="less" scoped>
 .common-basic-info {
   /deep/.el-form {
-    .el-form-item__label {
-      padding: 0;
+    &.el-form--label-top {
+      .el-form-item__label {
+        padding: 0;
+      }
     }
+
     .el-form-item {
       margin-bottom: 10px;
     }
-    .el-input,
-    .el-select {
-      width: 80%;
-    }
+  }
 
-    .el-select > .el-input {
-      width: 100%;
-    }
+  .el-input,
+  .el-select {
+    width: 80%;
+  }
+
+  .el-select > .el-input {
+    width: 100%;
   }
 }
 </style>

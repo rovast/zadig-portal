@@ -78,10 +78,6 @@
                 <!-- Name Listing Footer -->
                 <div class="name-listing-footer">
                   <ul>
-                    <li v-if="scope.row.identity_type">
-                      <i class="iconfont" :class="'icon'+scope.row.identity_type"></i>
-                      {{identityTypeMap[scope.row.identity_type]}}
-                    </li>
                     <li v-if="scope.row.email">
                       <i class="el-icon-message"></i>
                       <a :href="`mailto:${scope.row.email}`">{{scope.row.email}}</a>
@@ -102,7 +98,14 @@
             <span v-else>{{'尚未登录'}}</span>
           </template>
         </el-table-column>
-
+        <el-table-column label="来源">
+          <template slot-scope="scope">
+            <span v-if="scope.row.identity_type" class="origin">
+              <i class="iconfont type" :class="'icon'+scope.row.identity_type"></i>
+              {{identityTypeMap[scope.row.identity_type]}}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="280">
           <template slot-scope="scope">
             <el-button @click="editUserInfo(scope.row)" type="primary" size="mini" plain>编辑</el-button>
@@ -246,6 +249,7 @@ export default {
           })
           if (roleInfo) {
             user.role = roleInfo.role
+            user.roleBindingName = roleInfo.name
           } else {
             user.role = ''
           }
@@ -288,12 +292,12 @@ export default {
           addUserAPI(payload).then(async res => {
             this.dialogAddUserVisible = false
             if (payload.isAdmin) {
-              const paload = {
-                name: res.uid + '-' + 'admin',
+              const payload = {
+                name: `user:${res.uid},role:admin`,
                 role: 'admin',
                 uid: res.uid
               }
-              await addSystemRoleBindingsAPI(paload).catch(error =>
+              await addSystemRoleBindingsAPI(payload).catch(error =>
                 console.log(error)
               )
             }
@@ -383,6 +387,12 @@ export default {
   }
 
   .users-container {
+    .origin {
+      .type {
+        font-size: 20px;
+      }
+    }
+
     .name-listing-details {
       top: 0;
       display: flex;

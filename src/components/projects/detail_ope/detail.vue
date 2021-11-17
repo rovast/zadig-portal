@@ -281,11 +281,12 @@
   </div>
 </template>
 <script>
-import { getProjectInfoAPI, getProductInfo, deleteProjectAPI, getClusterListAPI, getWorkflowsAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
+import { getProjectInfoAPI, getProductInfo, queryUserBindingsAPI, deleteProjectAPI, getClusterListAPI, getWorkflowsAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
 import { getProductStatus } from '@utils/word_translate'
 import { wordTranslate } from '@utils/word_translate.js'
 import { whetherOnboarding } from '@utils/onboarding_route'
 import bus from '@utils/event_bus'
+import store from 'storejs'
 export default {
   data () {
     return {
@@ -293,6 +294,7 @@ export default {
       envList: [],
       workflows: [],
       allCluster: [],
+      userBindings: [],
       detailLoading: true
     }
   },
@@ -411,11 +413,15 @@ export default {
     wordTranslation (word, category, subitem) {
       return wordTranslate(word, category, subitem)
     },
-    getProject (projectName) {
-      getProjectInfoAPI(projectName).then((res) => {
-        this.currentProject = res
-        if (res.onboarding_status) {
-          this.$router.push(whetherOnboarding(res))
+    async getProject (projectName) {
+      const userInfo = store.get('userInfo')
+      const projectInfo = await getProjectInfoAPI(projectName).catch(error => console.log(error))
+      const userBindings = await queryUserBindingsAPI(userInfo.uid, projectName).catch(error => console.log(error))
+      if (projectInfo && userBindings) {
+        this.currentProject = projectInfo
+        this.userBindings = userBindings
+        if (projectInfo.onboarding_status) {
+          this.$router.push(whetherOnboarding(projectInfo))
         }
         bus.$emit('set-sub-sidebar-title', {
           title: this.projectName,
@@ -429,7 +435,7 @@ export default {
           ]
         })
         this.detailLoading = false
-      })
+      }
     },
     selectSystemToDownloadCLI (check) {
       downloadDevelopCLIAPI(check).then(res => {
@@ -451,8 +457,11 @@ export default {
     isProjectAdmin () {
       if (this.$utils.roleCheck('admin')) {
         return true
+      } else if (this.userBindings.length > 0) {
+        return this.userBindings.some(item => item.role === 'project-admin')
+      } else {
+        return false
       }
-      return this.currentProject.admins ? this.currentProject.admins.includes(this.$store.state.login.userinfo.uid) : false
     }
   },
   mounted () {

@@ -282,9 +282,6 @@
               auto-complete="off"
             ></el-input>
           </el-form-item>
-          <el-form-item label="不验证证书" prop="insecureSkipVerify">
-            <el-checkbox v-model="userAccountOAuth.config.insecureSkipVerify"></el-checkbox>
-          </el-form-item>
         </el-form>
       </template>
       <div slot="footer" class="dialog-footer">

@@ -29,8 +29,8 @@
         </el-form-item>
         <el-form-item label="密码"
                       label-width="180px"
-                      prop="accessToken">
-          <el-input v-model="jiraEdit.accessToken"
+                      prop="access_token">
+          <el-input v-model="jiraEdit.access_token"
                     placeholder="用户密码"
                     autofocus
                     auto-complete="off"></el-input>
@@ -78,8 +78,8 @@
                     auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码"
-                      prop="accessToken">
-          <el-input v-model="jiraAdd.accessToken"
+                      prop="access_token">
+          <el-input v-model="jiraAdd.access_token"
                     placeholder="用户密码"
                     autofocus
                     auto-complete="off"></el-input>
@@ -178,12 +178,12 @@ export default {
       jiraAdd: {
         host: '',
         user: '',
-        accessToken: ''
+        access_token: ''
       },
       jiraEdit: {
         host: '',
         user: '',
-        accessToken: ''
+        access_token: ''
       },
       jiraRules: {
         user: {
@@ -205,7 +205,7 @@ export default {
           trigger: 'change',
           validator: validateJiraURL
         }],
-        accessToken: {
+        access_token: {
           required: true,
           message: '请输入密码',
           trigger: ['blur', 'change']

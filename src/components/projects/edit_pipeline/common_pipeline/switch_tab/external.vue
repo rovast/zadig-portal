@@ -35,6 +35,20 @@ export default {
         overtime: 10
       }
     }
+  },
+  props: {
+    validObj: Object
+  },
+  methods: {
+    validate () {
+      return Promise.resolve(true)
+    }
+  },
+  activated () {
+    this.validObj.addValidate({
+      name: '扩展',
+      valid: this.validate
+    })
   }
 }
 </script>

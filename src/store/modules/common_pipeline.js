@@ -1,33 +1,38 @@
 import * as types from '../mutations'
 import { } from '@api'
 
+import { cloneDeep } from 'lodash'
+
+const tabInfo = [{
+  tab: '基本信息',
+  selected: true,
+  isCurrent: true
+},
+{
+  tab: '构建',
+  selected: false,
+  isCurrent: false
+}, {
+  tab: '扩展',
+  selected: false,
+  isCurrent: false
+}]
+
+const commonInfo = {
+  pipelineName: '',
+  projectName: '',
+  desc: '',
+  vars: [{
+    key: 'key',
+    type: 'string',
+    value: 'value',
+    is_credential: false
+  }]
+}
+
 const state = {
-  tabs: [{
-    tab: '基本信息',
-    selected: true,
-    isCurrent: true
-  },
-  {
-    tab: '构建',
-    selected: false,
-    isCurrent: false
-  }, {
-    tab: '扩展',
-    selected: false,
-    isCurrent: false
-  }],
-  commonInfo: {
-    pipelineName: '',
-    projectName: '',
-    desc: '',
-    vars: [{
-      key: 'key',
-      type: 'string',
-      value: 'value',
-      is_credential: false
-    }]
-  },
-  validObj: null
+  tabs: cloneDeep(tabInfo),
+  commonInfo: cloneDeep(commonInfo)
 
 }
 
@@ -62,6 +67,10 @@ const mutations = {
   },
   [types.UPDATE_COMMON_INFO] (state, payload) {
     Object.assign(state.commonInfo, payload)
+  },
+  [types.RESET_COMMON_PIPELINE] (state) {
+    state.tabs = cloneDeep(tabInfo)
+    state.commonInfo = cloneDeep(commonInfo)
   }
 }
 

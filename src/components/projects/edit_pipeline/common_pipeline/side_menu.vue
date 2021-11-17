@@ -15,6 +15,9 @@ export default {
   data () {
     return {}
   },
+  props: {
+    validObj: Object
+  },
   computed: {
     ...mapState({
       lists: state => state.common_pipeline.tabs
@@ -22,7 +25,11 @@ export default {
   },
   methods: {
     addTab (list) {
-      this.$store.commit('UPDATE_TABS', { type: 'add', tab: list.tab })
+      this.validObj.validateAll().then(res => {
+        if (res[1]) {
+          this.$store.commit('UPDATE_TABS', { type: 'add', tab: list.tab })
+        }
+      })
     }
   }
 }

@@ -113,7 +113,7 @@
       </el-form>
     </div>
     <div class="section">
-      <repo-select ref="repoSelect" :config="buildConfig" showDivider addBtnMini shortDescription showFirstLine></repo-select>
+      <repo-select ref="repoSelect" :validObj="validRepoObj" :config="buildConfig" showDivider addBtnMini shortDescription showFirstLine></repo-select>
     </div>
     <div class="section">
       <el-form ref="buildEnv" :inline="true" :model="buildConfig" class="form-style1" label-position="top" label-width="120px">
@@ -388,6 +388,7 @@ import {
 import Editor from 'vue2-ace-bind'
 import Resize from '@/components/common/resize.vue'
 import Codemirror from '@/components/projects/common/codemirror.vue'
+import ValidateSubmit from '@utils/validate_async'
 const validateBuildConfigName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入构建名称'))
@@ -404,7 +405,8 @@ export default {
     name: String,
     buildName: String,
     isEdit: Boolean,
-    handlerSubmit: Function
+    handlerSubmit: Function,
+    validObj: Object
   },
   data () {
     return {
@@ -494,10 +496,31 @@ export default {
           }
         ]
       },
-      systems: []
+      systems: [],
+      validRepoObj: new ValidateSubmit()
     }
   },
   methods: {
+    async validate () {
+      const res = await this.validRepoObj.validateAll()
+      if (!res[1]) {
+        return Promise.reject(false)
+      }
+      const validList = [this.$refs.addConfigForm.validate()]
+      if (this.$refs.buildApp) {
+        validList.push(this.$refs.buildApp.validate())
+      }
+      if (this.$refs.buildEnv) {
+        validList.push(this.$refs.buildEnv.validate())
+      }
+      if (this.$refs.cacheDir) {
+        validList.push(this.$refs.cacheDir.validate())
+      }
+      if (this.$refs.file_archive) {
+        validList.push(this.$refs.file_archive.validate())
+      }
+      return Promise.all(validList)
+    },
     addFirstCacheDir () {
       if (!this.buildConfig.caches || this.buildConfig.caches.length === 0) {
         this.$set(this.buildConfig, 'caches', [])
@@ -716,6 +739,16 @@ export default {
     Editor,
     Resize,
     Codemirror
+  },
+  activated () {
+    this.validObj.addValidate({
+      name: '构建',
+      valid: this.validate
+    })
+  },
+  deactivated () {
+    this.$store.commit('UPDATE_COMMON_INFO', {})
+    console.log('deactivated')
   }
 }
 </script>

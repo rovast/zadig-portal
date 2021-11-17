@@ -1,11 +1,11 @@
 <template>
   <div class="common-pipeline">
-    <SideMenu class="side"></SideMenu>
+    <SideMenu class="side" :validObj="validObj"></SideMenu>
     <div class="middle">
-      <TabMenu class="top"></TabMenu>
+      <TabMenu class="top" :validObj="validObj"></TabMenu>
       <el-card class="content">
         <keep-alive>
-          <component :is="isComp"></component>
+          <component :is="isComp" :validObj="validObj"></component>
         </keep-alive>
       </el-card>
     </div>
@@ -23,12 +23,15 @@ import TabMenu from './tab_menu.vue'
 import BasicInfo from './switch_tab/basic_info.vue'
 import Build from './switch_tab/build.vue'
 import External from './switch_tab/external.vue'
+import ValidateSubmit from '@utils/validate_async'
 
 import { mapGetters } from 'vuex'
 
 export default {
   data () {
-    return {}
+    return {
+      validObj: new ValidateSubmit()
+    }
   },
   computed: {
     ...mapGetters(['currentTab']),
@@ -52,6 +55,9 @@ export default {
   components: {
     SideMenu,
     TabMenu
+  },
+  destroyed () {
+    this.$store.commit('RESET_COMMON_PIPELINE')
   }
 }
 </script>

@@ -77,6 +77,9 @@ export default {
       varData: null
     }
   },
+  props: {
+    validObj: Object
+  },
   computed: {
     ...mapState({
       commonInfo: state => state.common_pipeline.commonInfo
@@ -93,6 +96,9 @@ export default {
     }
   },
   methods: {
+    validate () {
+      return Promise.resolve()
+    },
     handleVars (type, index) {
       if (type === 'delete') {
         this.commonInfoUse.vars.splice(index, 1)
@@ -104,9 +110,6 @@ export default {
           is_credential: false
         })
       }
-    },
-    storeInfo () {
-      this.$store.commit('UPDATE_COMMON_INFO', this.commonInfoUse)
     },
     getProjectlist () {
       templatesAPI().then(res => {
@@ -122,8 +125,14 @@ export default {
       this.getProjectlist()
     }
   },
+  activated () {
+    this.validObj.addValidate({
+      name: '基本信息',
+      valid: this.validate
+    })
+  },
   deactivated () {
-    this.storeInfo()
+    this.$store.commit('UPDATE_COMMON_INFO', this.commonInfoUse)
     console.log('deactivated')
   }
 }

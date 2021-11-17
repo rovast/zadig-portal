@@ -52,14 +52,14 @@
       <el-form :model="mailServiceEdit"
                :rules="mailRules"
                ref="mailServiceForm">
-        <el-form-item label="名称"
+        <!-- <el-form-item label="名称"
                       label-width="80px"
                       prop="name">
           <el-input v-model="mailServiceEdit.name"
                     placeholder="名称"
                     autofocus
                     auto-complete="off"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="发信地址"
                       label-width="80px"
                       prop="address">
@@ -76,14 +76,14 @@
                     autofocus
                     auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="主题前缀"
+        <!-- <el-form-item label="主题前缀"
                       label-width="80px"
                       prop="theme">
           <el-input v-model="mailServiceEdit.theme"
                     placeholder="主题前缀"
                     autofocus
                     auto-complete="off"></el-input>
-        </el-form-item>
+        </el-form-item> -->
 
       </el-form>
       <div slot="footer"
@@ -153,14 +153,14 @@
       <el-form :model="mailServiceAdd"
                :rules="mailRules"
                ref="mailServiceForm">
-        <el-form-item label="名称"
+        <!-- <el-form-item label="名称"
                       label-width="80px"
                       prop="name">
           <el-input v-model="mailServiceAdd.name"
                     placeholder="名称"
                     autofocus
                     auto-complete="off"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="发信地址"
                       label-width="80px"
                       prop="address">
@@ -177,14 +177,14 @@
                     autofocus
                     auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="主题前缀"
+        <!-- <el-form-item label="主题前缀"
                       label-width="80px"
                       prop="theme">
           <el-input v-model="mailServiceAdd.theme"
                     placeholder="主题前缀"
                     autofocus
                     auto-complete="off"></el-input>
-        </el-form-item>
+        </el-form-item> -->
 
       </el-form>
       <div slot="footer"

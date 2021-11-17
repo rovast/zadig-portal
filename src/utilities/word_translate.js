@@ -48,6 +48,12 @@ export function wordTranslate (word, category, subitem = '') {
         abnormal: '异常',
         disconnected: '主动断开'
       }
+    },
+    workflowStage: {
+      build: '构建部署',
+      artifact: '交付物部署',
+      test: '测试',
+      distribute: '分发'
     }
   }
   if (subitem === '') {

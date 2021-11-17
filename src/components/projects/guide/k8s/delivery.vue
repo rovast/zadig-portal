@@ -127,7 +127,7 @@
 import bus from '@utils/event_bus'
 import step from '../common/step.vue'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
-import { getProjectIngressAPI } from '@api'
+import { getWorkflowsAPI, getProjectIngressAPI } from '@api'
 export default {
   data () {
     return {
@@ -138,17 +138,18 @@ export default {
     }
   },
   methods: {
-    getWorkflows () {
+    async getWorkflows () {
       this.loading = true
-      this.$store.dispatch('refreshWorkflowList', this.projectName).then(() => {
+      const projectName = this.projectName
+      const workflows = await getWorkflowsAPI(projectName)
+      const ingresses = await getProjectIngressAPI(projectName)
+      if (workflows && ingresses) {
         this.loading = false
-      }).then(() => {
-        const projectName = this.projectName
         const w1 = 'workflow-qa'
         const w2 = 'workflow-dev'
         const w3 = 'ops-workflow'
-        const currentWorkflows = this.$store.getters.workflowList.filter(element => {
-          return (element.name.includes(w1) && element.product_tmpl_name === this.projectName) || (element.name.includes(w2) && element.product_tmpl_name === this.projectName) || (element.name.includes(w3) && element.product_tmpl_name === this.projectName)
+        const currentWorkflows = workflows.filter(element => {
+          return element.name.includes(w1) || element.name.includes(w2) || (element.name.includes(w3))
         }).map((ele) => {
           const element = Object.assign({}, ele)
           if (element.name.includes(w1)) element.env_name = 'qa'
@@ -156,17 +157,15 @@ export default {
           if (element.name.includes(w3)) element.env_name = ''
           return element
         })
-        getProjectIngressAPI(projectName).then((res) => {
-          currentWorkflows.forEach(workflow => {
-            res.forEach(ingress => {
-              if (ingress.env_name === workflow.env_name) {
-                workflow.ingress_infos = ingress.ingress_infos
-              }
-            })
+        currentWorkflows.forEach(workflow => {
+          ingresses.forEach(ingress => {
+            if (ingress.env_name === workflow.env_name) {
+              workflow.ingress_infos = ingress.ingress_infos
+            }
           })
-          this.mapWorkflows = currentWorkflows
         })
-      })
+        this.mapWorkflows = currentWorkflows
+      }
     },
     runCurrentTask (scope) {
       this.workflow = scope

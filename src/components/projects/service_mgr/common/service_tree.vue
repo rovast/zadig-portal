@@ -402,7 +402,7 @@
 
 <script>
 import gitfileTree from '@/components/common/gitfile_tree.vue'
-import { deleteServiceTemplateAPI, autoUpgradeEnvAPI, getSingleProjectAPI, updateEnvTemplateAPI, getCodeSourceAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI, loadRepoServiceAPI, validPreloadService, getCodeProviderAPI, updateServicesOrchestrationAPI } from '@api'
+import { deleteServiceTemplateAPI, autoUpgradeEnvAPI, getSingleProjectAPI, updateEnvTemplateAPI, getCodeSourceMaskedAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI, loadRepoServiceAPI, validPreloadService, getCodeProviderAPI, updateServicesOrchestrationAPI } from '@api'
 import { mapGetters } from 'vuex'
 export default {
   props: {
@@ -754,7 +754,7 @@ export default {
             this.mode = 'edit'
             this.showSelectPath = true
             this.disabledReload = false
-            getCodeSourceAPI().then((res) => {
+            getCodeSourceMaskedAPI().then((res) => {
               this.allCodeHosts = res.filter(element => {
                 return element
               })
@@ -811,7 +811,7 @@ export default {
         repos: [],
         branches: []
       })
-      getCodeSourceAPI().then((res) => {
+      getCodeSourceMaskedAPI().then((res) => {
         this.allCodeHosts = res.filter(element => {
           return element
         })
@@ -1068,9 +1068,11 @@ export default {
     envNameList () {
       const envNameList = []
       this.productList.forEach(element => {
-        if (element.product_name === this.projectName && element.source !== 'external') {
-          envNameList.push({
-            envName: element.env_name
+        if (element.name === this.projectName) {
+          element.envs.forEach(envName => {
+            envNameList.push({
+              envName
+            })
           })
         }
       })

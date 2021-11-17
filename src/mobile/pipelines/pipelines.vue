@@ -119,7 +119,7 @@ export default {
         this.taskDialogVisible = true
       }
     },
-    fetchWorkflows () {
+    getWorkflows () {
       this.loading = true
       this.$store.dispatch('getWorkflowList').then(() => {
         this.loading = false
@@ -135,7 +135,7 @@ export default {
     }
   },
   mounted () {
-    this.fetchWorkflows()
+    this.getWorkflows()
   }
 }
 </script>

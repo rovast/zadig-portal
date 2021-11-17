@@ -213,7 +213,7 @@
 </template>
 
 <script type="text/javascript">
-import { getCodeSourceAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI } from '@api'
+import { getCodeSourceMaskedAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI } from '@api'
 import { orderBy } from 'lodash'
 export default {
   data () {
@@ -481,7 +481,7 @@ export default {
     }
   },
   mounted () {
-    getCodeSourceAPI().then((response) => {
+    getCodeSourceMaskedAPI().then((response) => {
       this.allCodeHosts = response
     });
     (this.showFirstLine && this.config.repos.length === 0) && this.addFirstBuildRepo()

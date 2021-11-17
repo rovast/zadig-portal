@@ -166,9 +166,11 @@ export default {
     envNameList () {
       const envNameList = []
       this.productList.forEach((element) => {
-        if (element.product_name === this.projectName) {
-          envNameList.push({
-            envName: element.env_name
+        if (element.name === this.projectName) {
+          element.envs.forEach(envName => {
+            envNameList.push({
+              envName
+            })
           })
         }
       })

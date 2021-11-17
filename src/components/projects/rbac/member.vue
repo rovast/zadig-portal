@@ -1,24 +1,45 @@
 <template>
   <div>
     <el-alert type="info" :closable="false" description="项目成员管理，主要用于定义项目成员的角色"></el-alert>
-    <div class="sync-container">
+    <div class="btn-container">
       <el-button plain size="small" type="primary" @click="$refs.addRoleBind.addUserFormVisible = true">添加成员</el-button>
     </div>
 
-    <el-table v-loading="loading" row-key="id" :data="members" style="width: 100%;">
-      <el-table-column label="用户名">
+    <el-table v-loading="loading" row-key="id" :data="members" style="width: 100%;" class="users-container">
+      <el-table-column label="项目成员">
         <template slot-scope="scope">
-          <span>{{scope.row.account}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="昵称">
-        <template slot-scope="scope">
-          <span>{{scope.row.username}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="邮件">
-        <template slot-scope="scope">
-          <span>{{scope.row.email}}</span>
+          <div class="name-listing-details">
+            <!-- Logo -->
+            <div class="avator">
+              <img src="@assets/icons/others/profile.png" alt />
+            </div>
+            <!-- Details -->
+            <div class="name-listing-description">
+              <h3 v-if="scope.row.uid === '*'" class="name-listing-title">
+                所有用户
+              </h3>
+              <h3 v-else class="name-listing-title">
+                {{ scope.row.username ? `${scope.row.username}(${scope.row.account})`: scope.row.account }}
+              </h3>
+              <!-- Name Listing Footer -->
+              <div class="name-listing-footer">
+                <ul>
+                  <li v-if="scope.row.identity_type">
+                    <i class="iconfont" :class="'icon'+scope.row.identity_type"></i>
+                    {{identityTypeMap[scope.row.identity_type]}}
+                  </li>
+                  <li v-if="scope.row.email">
+                    <i class="el-icon-message"></i>
+                    <a :href="`mailto:${scope.row.email}`">{{scope.row.email}}</a>
+                  </li>
+                  <li v-if="scope.row.phone">
+                    <i class="el-icon-mobile"></i>
+                    <a :href="`tel:${scope.row.phone}`">{{scope.row.phone}}</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="角色">
@@ -28,12 +49,7 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button
-            v-if="$utils.roleCheck().superAdmin"
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.row.name)"
-          >删除</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row.name)" plain>删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -42,8 +58,13 @@
 </template>
 <script>
 import bus from '@utils/event_bus'
-import AddRoleBind from './addroleBind.vue'
-import { queryRoleBindingsAPI, queryrole, queryPublicRole, deleteroleBindings } from '@/api'
+import AddRoleBind from './add-role-bind.vue'
+import {
+  queryRoleBindingsAPI,
+  queryRoleAPI,
+  queryPublicRoleAPI,
+  deleteRoleBindingsAPI
+} from '@/api'
 
 export default {
   name: 'member',
@@ -57,17 +78,23 @@ export default {
     return {
       members: [],
       rolesFiltered: [],
-      loading: false
+      loading: false,
+      identityTypeMap: {
+        github: 'GitHub',
+        system: '系统创建',
+        ldap: 'OpenLDAP',
+        oauth: 'OAuth'
+      }
     }
   },
   methods: {
     async handleDelete (name) {
-      this.$confirm('确定要删除这个绑定吗？', '确认', {
+      this.$confirm('确定要删除这个成员吗？', '确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteroleBindings(name, this.projectName).then(() => {
+        deleteRoleBindingsAPI(name, this.projectName).then(() => {
           this.$message({
             message: '删除成功',
             type: 'success'
@@ -84,14 +111,16 @@ export default {
         this.members = res
       }
     },
-    async getrole () {
-      const res = await queryrole(this.projectName).catch(error =>
+    async getRole () {
+      const roles = await queryRoleAPI(this.projectName).catch(error =>
         console.log(error)
       )
-      const res1 = await queryPublicRole().catch(error => console.log(error))
-      if (res && res1) {
-        this.rolesFiltered = res
-        res1.forEach(item => {
+      const publicRoles = await queryPublicRoleAPI(
+        this.projectName
+      ).catch(error => console.log(error))
+      if (roles && publicRoles) {
+        this.rolesFiltered = roles
+        publicRoles.forEach(item => {
           this.rolesFiltered.push({ name: item.name, isPublic: true })
         })
       }
@@ -99,7 +128,7 @@ export default {
   },
   created () {
     this.getRoleBindings()
-    this.getrole()
+    this.getRole()
     bus.$emit(`set-topbar-title`, {
       title: '',
       breadcrumb: [
@@ -115,8 +144,62 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.sync-container {
+.btn-container {
   margin-top: 15px;
   margin-bottom: 15px;
+}
+
+.users-container {
+  .name-listing-details {
+    top: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0;
+
+    .avator img {
+      position: relative;
+      top: 0;
+      flex: 1;
+      max-width: 30px;
+      margin-right: 25px;
+      margin-right: 10px;
+    }
+
+    .name-listing-description {
+      .name-listing-title {
+        margin: 0;
+        color: #333;
+        font-weight: 300;
+        font-size: 16px;
+        line-height: 1;
+      }
+    }
+
+    .name-listing-footer {
+      position: relative;
+      margin-top: 3px;
+      padding: 0;
+      background-color: transparent;
+      border-radius: 0 0 4px 4px;
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+          display: inline-block;
+          margin-right: 8px;
+          color: #777;
+          font-size: 13px;
+
+          .iconfont {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

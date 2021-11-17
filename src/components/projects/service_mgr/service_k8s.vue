@@ -137,7 +137,7 @@ export default {
   },
   methods: {
     addCodeSource () {
-      if (!this.$utils.roleCheck().superAdmin) {
+      if (!this.$utils.roleCheck('admin')) {
         this.$message('私有镜像仓库未集成，请联系系统管理员前往「系统设置 -> 镜像仓库」进行集成！')
       } else {
         this.addCodeDrawer = true

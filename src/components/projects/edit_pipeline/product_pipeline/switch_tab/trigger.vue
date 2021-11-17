@@ -216,7 +216,7 @@
               dialogWidth="65%"
               dialogLeft
               whichSave="outside"
-              :projectName="productTmlName"
+              :projectName="projectName"
               :schedules="schedules"
             >
               <!-- 添加参数 确定是产品工作流 -->
@@ -412,7 +412,7 @@ export default {
       required: true,
       type: Boolean
     },
-    productTmlName: {
+    projectName: {
       required: true,
       type: String
     },
@@ -534,7 +534,7 @@ export default {
       test_names.forEach(test_name => {
         allPro.push(
           new Promise((resolve, reject) => {
-            singleTestAPI(test_name, this.product_name)
+            singleTestAPI(test_name, this.projectName)
               .then(res => {
                 const test = {}
                 test.namespace = this.workflowToRun.env_name
@@ -698,7 +698,7 @@ export default {
       webhookSwap.repo.name = webhookSwap.name
       webhookSwap.repo.description = webhookSwap.description
       webhookSwap.targets.map(item => {
-        item.product_name = this.productTmlName
+        item.product_name = this.projectName
         return item
       })
       this.webhook.items.push({
@@ -740,7 +740,7 @@ export default {
       webhookSwap.repo.name = webhookSwap.name
       webhookSwap.repo.description = webhookSwap.description
       webhookSwap.targets.map(item => {
-        item.product_name = this.productTmlName
+        item.product_name = this.projectName
         return item
       })
       this.$set(this.webhook.items, index, {
@@ -789,7 +789,7 @@ export default {
       }
     },
     getProducts () {
-      listProductAPI(this.productTmlName, 'test').then(res => {
+      listProductAPI(this.projectName, 'test').then(res => {
         this.products = res
       })
     },
@@ -851,7 +851,7 @@ export default {
       }
     },
     matchedProducts () {
-      return this.products.filter(p => p.product_name === this.productTmlName)
+      return this.products.filter(p => p.product_name === this.projectName)
     },
     isK8sEnv () {
       return (
@@ -866,7 +866,7 @@ export default {
     }
   },
   watch: {
-    productTmlName () {
+    projectName () {
       this.getProducts()
     },
     'workflowToRun.test_stage.tests' (newVal) {

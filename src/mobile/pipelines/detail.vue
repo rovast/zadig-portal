@@ -120,7 +120,7 @@
 </template>
 <script>
 import { Col, Collapse, CollapseItem, Row, NavBar, Tag, Panel, Loading, Button, Notify, Tab, Tabs, Cell, CellGroup, Icon, Divider, ActionSheet, List, Pagination } from 'vant'
-import { workflowAPI, workflowTaskListAPI } from '@api'
+import { getWorkflowDetailAPI, workflowTaskListAPI } from '@api'
 import { wordTranslate } from '@utils/word_translate.js'
 import runWorkflow from './run_workflow.vue'
 import moment from 'moment'
@@ -246,7 +246,7 @@ export default {
     }
   },
   mounted () {
-    workflowAPI(this.projectName, this.workflowName).then(res => {
+    getWorkflowDetailAPI(this.projectName, this.workflowName).then(res => {
       this.workflow = res
     })
     this.fetchHistory(0, this.pageSize)

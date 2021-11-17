@@ -13,6 +13,7 @@
       v-show="tabName === 'git'"
       @triggleAction="$emit('triggleAction')"
       :currentSelect="tabName"
+      :currentService="currentService"
       ref="gitRepo"
     ></GitRepo>
 

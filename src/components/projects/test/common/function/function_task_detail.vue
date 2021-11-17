@@ -173,8 +173,10 @@ export default {
       }
     },
     rerun () {
+      const taskUrl = `/v1/projects/detail/${this.projectName}/test/detail/function/${this.workflowName}/${this.taskID}`
       restartTestTaskAPI(this.projectName, this.workflowName, this.taskID).then(res => {
         this.$message.success('任务已重新启动')
+        this.$router.push(taskUrl)
       })
     },
     cancel () {

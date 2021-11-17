@@ -620,7 +620,7 @@
     </div>
 </template>
 <script>
-import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getImgListAPI, getCodeSourceAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkinsJob, queryJenkinsParams } from '@api'
+import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getImgListAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkinsJob, queryJenkinsParams } from '@api'
 import qs from 'qs'
 import Editor from 'vue2-ace-bind'
 import Resize from '@/components/common/resize.vue'
@@ -1051,7 +1051,7 @@ export default {
       getDockerfileTemplatesAPI().then((res) => {
         this.dockerfileTemplates = res.dockerfile_template
       })
-      getCodeSourceAPI().then((response) => {
+      getCodeSourceMaskedAPI().then((response) => {
         this.allCodeHosts = response
       })
       getServiceTargetsAPI(projectName).then((response) => {

@@ -1,6 +1,5 @@
 <template>
-  <div class="workflow-list"
-       ref="workflow-list">
+  <div class="workflow-list" ref="workflow-list">
     <div>
       <ul class="workflow-ul">
         <div class="project-header">
@@ -19,89 +18,81 @@
                       <el-dropdown-item command="time-desc">按创建时间降序</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-                  <button type="button"
-                          :class="{'active':showFavorite}"
-                          @click="showFavorite=!showFavorite"
-                          class="display-btn">
+                  <button type="button" :class="{'active':showFavorite}" @click="showFavorite=!showFavorite" class="display-btn">
                     <i class="el-icon-star-off favorite"></i>
                   </button>
-                  <el-input v-model="keyword"
-                            placeholder="搜索工作流"
-                            class="search-workflow"
-                            prefix-icon="el-icon-search"
-                            clearable></el-input>
+                  <el-input v-model="keyword" placeholder="搜索工作流" class="search-workflow" prefix-icon="el-icon-search" clearable></el-input>
                 </div>
               </div>
             </div>
           </div>
           <div class="header-end">
-            <router-link
-                         :to="`/productpipelines/create?projectName=${this.projectName ? this.projectName : ''}`">
-              <button type="button"
-                      class="add-project-btn">
+            <router-link :to="`/workflows/create?projectName=${this.projectName ? this.projectName : ''}`">
+              <button type="button" class="add-project-btn">
                 <i class="el-icon-plus"></i>
                 新建工作流
               </button>
             </router-link>
           </div>
         </div>
-        <div v-loading="workflowListLoading"
-             class="pipeline-loading"
-             element-loading-text="加载中..."
-             element-loading-spinner="iconfont iconfont-loading icongongzuoliucheng">
-          <virtual-list v-if="availableWorkflows.length > 0"
-                        class="virtual-list-container"
-                        :data-key="'name'"
-                        :data-sources="availableWorkflows"
-                        :data-component="itemComponent"
-                        :keeps="20"
-                        :estimate-size="72">
-          </virtual-list>
-          <div v-if="availableWorkflows.length === 0"
-               class="no-product">
-            <img src="@assets/icons/illustration/pipeline.svg"
-                 alt="">
+        <div
+          v-loading="workflowListLoading"
+          class="pipeline-loading"
+          element-loading-text="加载中..."
+          element-loading-spinner="iconfont iconfont-loading icongongzuoliucheng"
+        >
+          <VirtualList
+            v-if="availableWorkflows.length > 0"
+            class="virtual-list-container"
+            :data-key="'name'"
+            :data-sources="availableWorkflows"
+            :keeps="20"
+            :estimate-size="72"
+            :data-component="itemComponent"
+          >
+          </VirtualList>
+          <div v-if="availableWorkflows.length === 0" class="no-product">
+            <img src="@assets/icons/illustration/pipeline.svg" alt />
             <p>暂无可展示的工作流，请手动添加工作流</p>
           </div>
         </div>
       </ul>
-
     </div>
 
-    <el-dialog title="运行 产品-工作流"
-               :visible.sync="showStartProductBuild"
-               custom-class="run-workflow"
-               width="60%">
-      <run-workflow v-if="showStartProductBuild"
-                    :workflowName="workflowToRun.name"
-                    :workflowMeta="workflowToRun"
-                    :targetProduct="workflowToRun.product_tmpl_name"
-                    @success="hideProductTaskDialog"></run-workflow>
+    <el-dialog title="运行 产品-工作流" :visible.sync="showStartProductBuild" custom-class="run-workflow" width="60%">
+      <run-workflow
+        v-if="showStartProductBuild"
+        :workflowName="workflowToRun.name"
+        :workflowMeta="workflowToRun"
+        :targetProduct="workflowToRun.product_tmpl_name"
+        @success="hideProductTaskDialog"
+      ></run-workflow>
     </el-dialog>
-
   </div>
 </template>
 
 <script>
-import virtualListItem from './workflow_list/virtual_list_item'
+import VirtualListItem from './workflow_list/virtual_list_item'
 import runWorkflow from './common/run_workflow.vue'
-import virtualList from 'vue-virtual-scroll-list'
+import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
-import { deleteWorkflowAPI, copyWorkflowAPI } from '@api'
+import { getWorkflowsAPI, deleteWorkflowAPI, copyWorkflowAPI } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
 
 export default {
+  name: 'workflow-list',
   data () {
     return {
-      itemComponent: virtualListItem,
+      itemComponent: VirtualListItem,
       showStartProductBuild: false,
       showFavorite: false,
       workflowToRun: {},
       remain: 10,
       keyword: '',
-      sortBy: 'name-asc'
+      sortBy: 'name-asc',
+      workflowsList: []
     }
   },
   provide () {
@@ -113,14 +104,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'getOnboardingTemplates', 'workflowListLoading'
-    ]),
+    ...mapGetters(['getOnboardingTemplates', 'workflowListLoading']),
     projectName () {
       return this.$route.params.project_name
     },
     workflows () {
-      return this.$store.getters.workflowList
+      return this.workflowsList
     },
     availableWorkflows () {
       const filteredWorkflows = this.filteredWorkflows
@@ -137,24 +126,29 @@ export default {
         sortedWorkflows = orderBy(filteredWorkflows, timeSorter, 'desc')
       }
       if (this.showFavorite) {
-        const favoriteWorkflows = this.$utils.cloneObj(sortedWorkflows).filter((x) => {
-          return x.is_favorite
-        })
+        const favoriteWorkflows = this.$utils
+          .cloneObj(sortedWorkflows)
+          .filter(x => {
+            return x.is_favorite
+          })
         return favoriteWorkflows
       } else {
-        const sortedByFavorite = this.$utils.cloneObj(sortedWorkflows).sort((x) => {
-          return x.is_favorite ? -1 : 1
-        })
+        const sortedByFavorite = this.$utils
+          .cloneObj(sortedWorkflows)
+          .sort(x => {
+            return x.is_favorite ? -1 : 1
+          })
         return sortedByFavorite
       }
     },
     filteredWorkflows () {
-      let list = this.$utils.filterObjectArrayByKey('name', this.keyword, this.workflows).filter(pipeline => {
-        return !this.getOnboardingTemplates.includes(pipeline.product_tmpl_name)
-      })
-      if (this.projectName) {
-        list = (list.filter(w => w.product_tmpl_name === this.projectName))
-      }
+      const list = this.$utils
+        .filterObjectArrayByKey('name', this.keyword, this.workflows)
+        .filter(pipeline => {
+          return !this.getOnboardingTemplates.includes(
+            pipeline.product_tmpl_name
+          )
+        })
       return list
     }
   },
@@ -166,21 +160,48 @@ export default {
           qs.parse(window.location.search, { ignoreQueryPrefix: true }),
           {
             name: val
-          })
+          }
+        )
       })
     },
     projectName (val) {
       if (val) {
-        bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: `/v1/projects/detail/${this.projectName}` }, { title: '工作流', url: '' }] })
+        bus.$emit('set-topbar-title', {
+          title: '',
+          breadcrumb: [
+            { title: '项目', url: '/v1/projects' },
+            {
+              title: this.projectName,
+              url: `/v1/projects/detail/${this.projectName}`
+            },
+            { title: '工作流', url: '' }
+          ]
+        })
         bus.$emit('set-sub-sidebar-title', {
           title: this.projectName,
           url: `/v1/projects/detail/${this.projectName}`,
           routerList: [
-            { name: '工作流', url: `/v1/projects/detail/${this.projectName}/pipelines` },
-            { name: '集成环境', url: `/v1/projects/detail/${this.projectName}/envs` },
-            { name: '服务', url: `/v1/projects/detail/${this.projectName}/services` },
-            { name: '构建', url: `/v1/projects/detail/${this.projectName}/builds` },
-            { name: '测试', url: `/v1/projects/detail/${this.projectName}/test` }]
+            {
+              name: '工作流',
+              url: `/v1/projects/detail/${this.projectName}/pipelines`
+            },
+            {
+              name: '集成环境',
+              url: `/v1/projects/detail/${this.projectName}/envs`
+            },
+            {
+              name: '服务',
+              url: `/v1/projects/detail/${this.projectName}/services`
+            },
+            {
+              name: '构建',
+              url: `/v1/projects/detail/${this.projectName}/builds`
+            },
+            {
+              name: '测试',
+              url: `/v1/projects/detail/${this.projectName}/test`
+            }
+          ]
         })
       } else {
         bus.$emit('show-sidebar', true)
@@ -190,30 +211,40 @@ export default {
           routerList: []
         })
       }
+    },
+    $route (val) {
+      if (val && !this.projectName) {
+        this.getWorkflows()
+      }
     }
   },
   methods: {
-    fetchWorkflows () {
-      this.$store.dispatch('getWorkflowList', this.projectName)
+    async getWorkflows (projectName) {
+      const res = await getWorkflowsAPI(projectName)
+      if (res) {
+        this.workflowsList = res
+      }
     },
-    deleteWorkflow (name) {
+    deleteWorkflow (workflow) {
+      const name = workflow.name
+      const projectName = workflow.product_tmpl_name
       this.$prompt('输入工作流名称确认', '删除工作流 ' + name, {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         confirmButtonClass: 'el-button el-button--danger',
-        inputValidator: pipe_name => {
-          if (pipe_name === name) {
+        inputValidator: workflowName => {
+          if (workflowName === name) {
             return true
-          } else if (pipe_name === '') {
+          } else if (workflowName === '') {
             return '请输入工作流名称'
           } else {
             return '名称不相符'
           }
         }
       }).then(({ value }) => {
-        deleteWorkflowAPI(this.projectName, name).then(() => {
+        deleteWorkflowAPI(projectName, name).then(() => {
+          this.getWorkflows(this.projectName)
           this.$message.success('删除成功')
-          this.$store.dispatch('refreshWorkflowList', this.projectName)
         })
       })
     },
@@ -224,42 +255,46 @@ export default {
     hideProductTaskDialog () {
       this.showStartProductBuild = false
     },
-    copyWorkflow (pipeline_name) {
+    copyWorkflow (workflow) {
+      const oldName = workflow.name
+      const projectName = workflow.product_tmpl_name
       this.$prompt('请输入新的产品工作流名称', '复制工作流', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        inputValidator: new_name => {
+        inputValidator: newName => {
           const pipeNames = []
           this.workflows.forEach(element => {
             pipeNames.push(element.name)
           })
-          if (new_name === '') {
+          if (newName === '') {
             return '请输入工作流名称'
-          } else if (pipeNames.includes(new_name)) {
+          } else if (pipeNames.includes(newName)) {
             return '工作流名称重复'
-          } else if (!/^[a-zA-Z0-9-]+$/.test(new_name)) {
+          } else if (!/^[a-zA-Z0-9-]+$/.test(newName)) {
             return '名称只支持字母大小写和数字，特殊字符只支持中划线'
           } else {
             return true
           }
         }
-      }).then(({ value }) => {
-        this.copyWorkflowReq(pipeline_name, value)
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消复制'
-        })
       })
+        .then(({ value }) => {
+          this.copyWorkflowReq(projectName, oldName, value)
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消复制'
+          })
+        })
     },
-    copyWorkflowReq (oldName, newName) {
-      copyWorkflowAPI(this.projectName, oldName, newName).then(() => {
+    copyWorkflowReq (projectName, oldName, newName) {
+      copyWorkflowAPI(projectName, oldName, newName).then(() => {
         this.$message({
           message: '复制流水线成功',
           type: 'success'
         })
-        this.$store.dispatch('refreshWorkflowList', this.projectName)
-        this.$router.push(`/productpipelines/edit/${newName}`)
+        this.getWorkflows(this.projectName)
+        this.$router.push(`/workflows/edit/${newName}?projectName=${projectName}`)
       })
     },
     sortWorkflow (cm) {
@@ -267,21 +302,49 @@ export default {
     }
   },
   created () {
+    // Detecting change from VirtualListItem component event.
+    this.$on('refreshWorkflow', (projectName) => {
+      this.getWorkflows(projectName)
+    })
     this.keyword = this.$route.query.name ? this.$route.query.name : ''
-    this.fetchWorkflows()
     if (this.projectName) {
-      bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: `/v1/projects/detail/${this.projectName}` }, { title: '工作流', url: '' }] })
+      this.getWorkflows(this.projectName)
+      bus.$emit('set-topbar-title', {
+        title: '',
+        breadcrumb: [
+          { title: '项目', url: '/v1/projects' },
+          {
+            title: this.projectName,
+            url: `/v1/projects/detail/${this.projectName}`
+          },
+          { title: '工作流', url: '' }
+        ]
+      })
       bus.$emit('set-sub-sidebar-title', {
         title: this.projectName,
         url: `/v1/projects/detail/${this.projectName}`,
         routerList: [
-          { name: '工作流', url: `/v1/projects/detail/${this.projectName}/pipelines` },
-          { name: '集成环境', url: `/v1/projects/detail/${this.projectName}/envs` },
-          { name: '服务', url: `/v1/projects/detail/${this.projectName}/services` },
-          { name: '构建', url: `/v1/projects/detail/${this.projectName}/builds` },
-          { name: '测试', url: `/v1/projects/detail/${this.projectName}/test` }]
+          {
+            name: '工作流',
+            url: `/v1/projects/detail/${this.projectName}/pipelines`
+          },
+          {
+            name: '集成环境',
+            url: `/v1/projects/detail/${this.projectName}/envs`
+          },
+          {
+            name: '服务',
+            url: `/v1/projects/detail/${this.projectName}/services`
+          },
+          {
+            name: '构建',
+            url: `/v1/projects/detail/${this.projectName}/builds`
+          },
+          { name: '测试', url: `/v1/projects/detail/${this.projectName}/test` }
+        ]
       })
     } else {
+      this.getWorkflows()
       bus.$emit(`show-sidebar`, true)
       bus.$emit(`set-topbar-title`, { title: '工作流', breadcrumb: [] })
       bus.$emit(`set-sub-sidebar-title`, {
@@ -292,7 +355,8 @@ export default {
   },
   components: {
     runWorkflow,
-    'virtual-list': virtualList
+    VirtualListItem,
+    VirtualList
   }
 }
 </script>
@@ -431,7 +495,7 @@ export default {
   }
 
   .pipeline-loading {
-    height: calc(~"100vh - 150px");
+    height: calc(~'100vh - 150px');
 
     .virtual-list-container {
       height: 100%;

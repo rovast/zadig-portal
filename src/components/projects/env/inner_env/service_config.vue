@@ -241,7 +241,7 @@ export default {
     },
     async getConfigmap () {
       const query = {
-        productName: this.projectName,
+        projectName: this.projectName,
         serviceName: this.serviceName,
         envType: this.envType
       }
@@ -604,10 +604,6 @@ export default {
       color: #000;
       font-size: 18px;
       border-bottom: 1px solid transparent;
-
-      &:hover {
-        /* border-bottom-color: #5e6166; */
-      }
     }
 
     .tip {

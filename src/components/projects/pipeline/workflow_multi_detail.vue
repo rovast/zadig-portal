@@ -81,7 +81,7 @@
                 <el-tooltip effect="dark"
                             content="编辑工作流"
                             placement="top">
-                  <router-link :to="`/productpipelines/edit/${workflowName}`"
+                  <router-link :to="`/workflows/edit/${workflowName}?projectName=${projectName}`"
                                class="not-anchor">
                     <i class="el-icon-edit-outline edit-pipeline"></i>
                   </router-link>
@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import { workflowAPI, deleteWorkflowAPI, workflowTaskListAPI } from '@api'
+import { getWorkflowDetailAPI, deleteWorkflowAPI, workflowTaskListAPI } from '@api'
 import runWorkflow from './common/run_workflow.vue'
 import bus from '@utils/event_bus'
 export default {
@@ -254,7 +254,6 @@ export default {
         deleteWorkflowAPI(this.$route.params.project_name, name).then(() => {
           this.$message.success('删除成功')
           this.$router.push(`/v1/projects/detail/${this.projectName}/pipelines`)
-          this.$store.dispatch('refreshWorkflowList', this.projectName)
         })
       })
     },
@@ -269,7 +268,7 @@ export default {
   },
   mounted () {
     this.projectName = this.$route.params.project_name
-    workflowAPI(this.projectName, this.workflowName).then(res => {
+    getWorkflowDetailAPI(this.projectName, this.workflowName).then(res => {
       this.workflow = res
     })
     this.refreshHistoryTask()

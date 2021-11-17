@@ -195,7 +195,7 @@ export default {
       }
       const res = await getCalculatedValuesYamlAPI(
         {
-          productName: this.projectName,
+          projectName: this.projectName,
           serviceName: this.selectedChart,
           envName: envName === 'DEFAULT' ? '' : envName,
           format: kvFlag ? 'flatMap' : 'yaml',

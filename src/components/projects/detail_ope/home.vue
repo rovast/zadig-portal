@@ -31,7 +31,7 @@
         </div>
       </div>
       <div class="header-end">
-        <router-link to="/v1/projects/create">
+        <router-link v-if="$utils.roleCheck('admin')" to="/v1/projects/create">
           <button type="button"
                   class="add-project-btn">
             <i class="el-icon-plus"></i>
@@ -148,11 +148,11 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="total_service_num"
-                         label="服务数量">
-        </el-table-column>
-        <el-table-column prop="total_env_num"
+        <el-table-column prop="envs"
                          label="集成环境">
+          <template slot-scope="scope">
+            {{scope.row.envs.length}}
+          </template>
         </el-table-column>
         <el-table-column label="更新信息">
           <template slot-scope="scope">
@@ -184,7 +184,7 @@
 </template>
 <script>
 import bus from '@utils/event_bus'
-import { listWorkflowAPI, getBuildConfigsAPI, getSingleProjectAPI, getServiceTemplatesAPI, deleteProjectAPI } from '@api'
+import { getWorkflowsAPI, getBuildConfigsAPI, getSingleProjectAPI, getServiceTemplatesAPI, deleteProjectAPI } from '@api'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -206,7 +206,7 @@ export default {
       }
     },
     async deleteProject (projectName) {
-      const result = await Promise.all([getSingleProjectAPI(projectName), listWorkflowAPI(projectName), getServiceTemplatesAPI(projectName), getBuildConfigsAPI(projectName)])
+      const result = await Promise.all([getSingleProjectAPI(projectName), getWorkflowsAPI(projectName), getServiceTemplatesAPI(projectName), getBuildConfigsAPI(projectName)])
       const externalFlag = result[0].product_feature.create_env_type
       const workflows = result[1].filter(w => w.product_tmpl_name === projectName).map((element) => { return element.name })
       const services = result[2].data.filter(element => element.product_name === projectName).map((element) => { return element.service_name })

@@ -33,7 +33,7 @@
         <template slot-scope="scope">
           <span class="version-link">
             <router-link
-                         :to="`/v1/delivery/version/${productName}/${scope.row.versionInfo.id}?version=${scope.row.versionInfo.version}`">{{
+                         :to="`/v1/delivery/version/${projectName}/${scope.row.versionInfo.id}?version=${scope.row.versionInfo.version}`">{{
               scope.row.versionInfo.version }}</router-link>
           </span>
         </template>
@@ -101,7 +101,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteVersionAPI(this.productName, versionId).then((res) => {
+        deleteVersionAPI(this.projectName, versionId).then((res) => {
           this.$message({
             type: 'success',
             message: '删除成功'
@@ -118,32 +118,34 @@ export default {
     },
     searchVersionByPOS () {
       this.loading = true
-      getVersionListAPI('', this.productName, '', this.selectedService).then((res) => {
+      const projectName = this.projectName
+      const selectedService = this.selectedService
+      getVersionListAPI('', projectName, '', selectedService).then((res) => {
         this.versionList = res
         this.loading = false
       }).catch((err) => {
-        this.$message.error(`获取${this.selectedService || this.productName}版本信息出错：${err}`)
+        this.$message.error(`获取${this.selectedService || this.projectName}版本信息出错：${err}`)
         this.loading = false
       })
     },
     getVersionServiceList () {
-      getVersionServiceListAPI(this.productName).then((res) => {
+      getVersionServiceListAPI(this.projectName).then((res) => {
         this.serviceList = res
       })
     }
   },
   computed: {
-    productName () {
+    projectName () {
       return this.$route.params.project_name
     }
   },
   watch: {
     $route (to, from) {
-      if (this.productName) {
+      if (this.projectName) {
         bus.$emit(`set-topbar-title`, {
           title: '',
           breadcrumb: [{ title: '版本管理', url: `` },
-            { title: this.productName, url: `` }]
+            { title: this.projectName, url: `` }]
         })
         this.selectedService = ''
         this.getVersionServiceList()
@@ -155,7 +157,7 @@ export default {
     bus.$emit(`set-topbar-title`, {
       title: '',
       breadcrumb: [{ title: '版本管理', url: `` },
-        { title: this.productName, url: `` }]
+        { title: this.projectName, url: `` }]
     })
     this.getVersionServiceList()
     this.searchVersionByPOS()

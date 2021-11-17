@@ -74,7 +74,7 @@
                 </div>
                 <div class="el-col el-col-6">
                   <div class=" item-desc">
-                    <span>{{currentVersionDetail.versionInfo.productName}}</span>
+                    <span>{{currentVersionDetail.versionInfo.projectName}}</span>
                   </div>
                 </div>
               </div>
@@ -87,7 +87,7 @@
                     <span v-if="currentVersionDetail.versionInfo.taskId"
                           class="link">
                       <router-link
-                                   :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.productName}/pipelines/multi/${currentVersionDetail.versionInfo.workflowName}/${currentVersionDetail.versionInfo.taskId}`">
+                                   :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.projectName}/pipelines/multi/${currentVersionDetail.versionInfo.workflowName}/${currentVersionDetail.versionInfo.taskId}`">
                         {{currentVersionDetail.versionInfo.workflowName + '#'
                         +currentVersionDetail.versionInfo.taskId}}</router-link>
                     </span>
@@ -314,7 +314,7 @@
                 <template slot-scope="scope">
                   <span class="test-report-link">
                     <router-link
-                                 :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.productName}/pipelines/multi/testcase/${scope.row.workflowName}/${scope.row.taskId}/test/${scope.row.workflowName}-${scope.row.taskId}-test?is_workflow=1&service_name=${scope.row.testName}&test_type=function`">
+                                 :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.projectName}/pipelines/multi/testcase/${scope.row.workflowName}/${scope.row.taskId}/test/${scope.row.workflowName}-${scope.row.taskId}-test?is_workflow=1&service_name=${scope.row.testName}&test_type=function`">
                       查看</router-link>
                   </span>
 
@@ -342,7 +342,7 @@
                 <template slot-scope="scope">
                   <span class="test-report-link">
                     <router-link
-                                 :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.productName}/pipelines/multi/testcase/${scope.row.workflowName}/${scope.row.taskId}/test/${scope.row.workflowName}-${scope.row.taskId}-test?is_workflow=1&service_name=${scope.row.testName}&test_type=performance`">
+                                 :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.projectName}/pipelines/multi/testcase/${scope.row.workflowName}/${scope.row.taskId}/test/${scope.row.workflowName}-${scope.row.taskId}-test?is_workflow=1&service_name=${scope.row.testName}&test_type=performance`">
                       查看</router-link>
                   </span>
 
@@ -374,7 +374,7 @@
                 <template slot-scope="scope">
                   <span class="test-report-link">
                     <router-link
-                                 :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.productName}/pipelines/security/${currentVersionDetail.versionInfo.workflowName}/${currentVersionDetail.versionInfo.taskId}?imageId=${scope.row.imageId}`">
+                                 :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.projectName}/pipelines/security/${currentVersionDetail.versionInfo.workflowName}/${currentVersionDetail.versionInfo.taskId}?imageId=${scope.row.imageId}`">
                       查看</router-link>
                   </span>
 
@@ -446,13 +446,14 @@ export default {
   methods: {
     runWorkflowFromVersion () {
       this.runWorkflowFromVersionDialogVisible = true
-      this.workflowToRun.projectName = this.currentVersionDetail.versionInfo.productName
+      this.workflowToRun.projectName = this.currentVersionDetail.versionInfo.projectName
       this.workflowToRun.version = this.currentVersionDetail.versionInfo.version
       this.workflowToRun.workflowName = this.currentVersionDetail.versionInfo.workflowName
     },
     getVersionDetail () {
       const versionId = this.versionId
-      getVersionListAPI().then((res) => {
+      const projectName = this.projectName
+      getVersionListAPI('', projectName, '').then((res) => {
         const currentVersionDetail = res.find(item => item.versionInfo.id === versionId)
         this.transformData(currentVersionDetail)
         this.$set(this, 'currentVersionDetail', currentVersionDetail)
@@ -588,7 +589,7 @@ export default {
         return false
       }
     },
-    productName () {
+    projectName () {
       return this.$route.params.project_name
     },
     versionTag () {
@@ -599,7 +600,7 @@ export default {
     bus.$emit(`set-topbar-title`, {
       title: '',
       breadcrumb: [{ title: '版本管理', url: `` },
-        { title: this.productName, url: `/v1/delivery/version/${this.productName}` },
+        { title: this.projectName, url: `/v1/delivery/version/${this.projectName}` },
         { title: this.versionTag, url: `` }]
     })
     this.getVersionDetail()

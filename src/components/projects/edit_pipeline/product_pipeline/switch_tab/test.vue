@@ -94,7 +94,7 @@ export default {
     testNames () {
       return (this.test_stage && this.test_stage.tests && this.test_stage.tests.map(t => { return t.test_name })) || []
     },
-    // NOTE: testConfigs只用于显示，要修改，修改testNames
+    // NOTE: testConfigs 只用于显示，要修改，修改 testNames
     testConfigs () {
       const test = []
       this.testNames.forEach(name => {
@@ -107,8 +107,8 @@ export default {
   },
   watch: {
     product_tmpl_name (newVal, oldVal) {
-      // product template变动时，更新test list，清空配置，重置testToAdd
-      testDetailAPI().then(res => {
+      // 项目变动时，更新测试列表、清空配置、重置 testToAdd 属性
+      testDetailAPI(newVal).then(res => {
         if (this.test_stage && this.test_stage.tests && this.test_stage.tests.length > 0) {
           const resTests = this.$utils.arrayToMap(res, 'name')
           const testsHad = []
@@ -117,8 +117,8 @@ export default {
               return
             }
             if (t.envs.length > 0) {
-              // 如果有envs内容 修改res的envs内容 和 envs的内容
-              // 这里会因为增删key需要作出改变
+              // 如果有 Envs 内容，修改返回值的内容
+              // 这里会因为增删 Key需要作出改变
               const envObjs = this.$utils.arrayToMap(t.envs, 'key')
               resTests[t.test_name].envs.forEach(env => {
                 env.value = (envObjs[env.key] && envObjs[env.key].value) || env.value
@@ -135,7 +135,7 @@ export default {
         this.unConfiguredTest = this.testList.filter(item => { return !this.testNames.includes(item.name) })
         this.testToAdd = ''
       })
-      // 修改前是空就不清，否则edit时load出来的数据会被错误地清空
+      // 修改前是空就不清，否则编辑时加载出来的数据会被错误地清空
       if (oldVal) {
         this.$set(this.test_stage, 'tests', [])
       }
@@ -164,6 +164,9 @@ export default {
   methods: {
     addTestConfig () {
       if (this.testToAdd) {
+        if (!this.test_stage.tests) {
+          this.$set(this.test_stage, 'tests', [])
+        }
         this.test_stage.tests.push({
           test_name: this.testToAdd,
           envs: this.testMap[this.testToAdd].envs

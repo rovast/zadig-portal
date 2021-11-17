@@ -735,7 +735,7 @@
   </div>
 </template>
 <script>
-import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getAllAppsAPI, getImgListAPI, getCodeSourceAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
+import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getAllAppsAPI, getImgListAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
 import Editor from 'vue2-ace-bind'
 import ValidateSubmit from '@utils/validate_async'
 import Resize from '@/components/common/resize.vue'
@@ -1486,7 +1486,7 @@ export default {
           return { name: app.name, version: app.version, id: app.name + app.version }
         })
       })
-      getCodeSourceAPI().then((response) => {
+      getCodeSourceMaskedAPI().then((response) => {
         this.allCodeHosts = response
       })
       getImgListAPI().then((response) => {

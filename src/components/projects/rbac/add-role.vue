@@ -4,13 +4,6 @@
       <el-form-item label="角色名称" prop="name" label-width="100px">
         <el-input size="small" :disabled="isEdit" v-model="form.name"  placeholder="请输入角色名称"></el-input>
       </el-form-item>
-      <!-- <el-form-item label="角色类型" label-width="100px"
-                      prop="isPublic">
-          <el-radio-group v-model="form.isPublic">
-            <el-radio :label="true">公共角色</el-radio>
-            <el-radio :label="false">私有角色</el-radio>
-          </el-radio-group>
-       </el-form-item> -->
       <el-form-item label="权限列表" prop="permissions" label-width="100px">
         <div class="permissions-group" v-for="(group,group_index) in permissionGroups" :key="group_index">
           <el-checkbox
@@ -42,7 +35,7 @@
   </el-dialog>
 </template>
 <script>
-import { queryPolicyDefinitions, addrole, queryroleDetail, queryPublicRoleDetail, updaterole, updatePublicRole, addPublicRole } from '@/api'
+import { queryPolicyDefinitionsAPI, addRoleAPI, queryRoleDetailAPI, queryPublicRoleDetailAPI, updateRoleAPI, updatePublicRoleAPI, addPublicRoleAPI } from '@/api'
 import * as permissionMap from '@/consts/permissionMap'
 import _ from 'lodash'
 
@@ -62,11 +55,11 @@ const resources = {
 }
 
 export default {
-  name: 'addrole',
+  name: 'addRole',
   props: {
     projectName: String,
     currentRole: Object,
-    getrole: Function
+    getRoles: Function
   },
   data () {
     return {
@@ -96,12 +89,13 @@ export default {
     initNewForm () {
       this.form = _.cloneDeep(initFormData)
     },
-    async getroleDetail (role) {
+    async getRoleDetail (role) {
       let res = null
+      const projectName = this.projectName
       if (role.isPublic) {
-        res = await queryPublicRoleDetail(role.name, this.projectName).catch(error => console.log(error))
+        res = await queryPublicRoleDetailAPI(role.name, projectName).catch(error => console.log(error))
       } else {
-        res = await queryroleDetail(role.name, this.projectName).catch(error => console.log(error))
+        res = await queryRoleDetailAPI(role.name, projectName).catch(error => console.log(error))
       }
       res.rules.forEach(item => {
         if (item.kind === 'resource') {
@@ -141,7 +135,8 @@ export default {
       return false
     },
     async getPolicyDefinitions () {
-      const res = await queryPolicyDefinitions().catch(error => console.log(error))
+      const projectName = this.projectName
+      const res = await queryPolicyDefinitionsAPI(projectName).catch(error => console.log(error))
       if (res) {
         this.permissionGroups = res
       }
@@ -149,7 +144,7 @@ export default {
     async submit () {
       const res = await this.$refs.form.validate()
       const resource = []
-
+      const projectName = this.projectName
       Object.keys(resources).forEach(i => {
         if (resources[i]) {
           resource.push(i)
@@ -166,26 +161,26 @@ export default {
         if (this.isEdit) {
           let result = null
           if (this.form.isPublic) {
-            result = await updatePublicRole({ name: this.form.name, rules: rules }).catch(error => console.log(error))
+            result = await updatePublicRoleAPI({ name: this.form.name, rules: rules }, projectName).catch(error => console.log(error))
           } else {
-            result = await updaterole({ name: this.form.name, rules: rules, projectName: this.projectName }).catch(error => console.log(error))
+            result = await updateRoleAPI({ name: this.form.name, rules: rules, projectName: projectName }, projectName).catch(error => console.log(error))
           }
           if (result) {
             this.$message.success('修改成功')
             this.dialogRoleAddFormVisible = false
-            this.getrole()
+            this.getRoles()
           }
         } else {
           let result = null
           if (this.form.isPublic) {
-            result = await addPublicRole({ name: this.form.name, rules: rules }).catch(error => console.log(error))
+            result = await addPublicRoleAPI({ name: this.form.name, rules: rules }, projectName).catch(error => console.log(error))
           } else {
-            result = await addrole({ name: this.form.name, rules: rules, projectName: this.projectName }).catch(error => console.log(error))
+            result = await addRoleAPI({ name: this.form.name, rules: rules, projectName: projectName }, projectName).catch(error => console.log(error))
           }
           if (result) {
             this.$message.success('添加成功')
             this.dialogRoleAddFormVisible = false
-            this.getrole()
+            this.getRoles()
           }
         }
       }
@@ -195,12 +190,11 @@ export default {
     dialogRoleAddFormVisible (value) {
       if (value && this.currentRole) {
         this.isEdit = true
-        this.getroleDetail(this.currentRole)
+        this.getRoleDetail(this.currentRole)
         this.form.name = this.currentRole.name
         this.form.isPublic = !!this.currentRole.isPublic
       } else {
         this.isEdit = false
-
         this.initNewForm()
       }
     }

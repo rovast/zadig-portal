@@ -8,7 +8,6 @@ const specialAPIs = ['/api/aslan/system/operation', '/api/aslan/delivery/artifac
 const ignoreErrReq = '/api/aslan/services/validateUpdate/'
 const reqExps = [/api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/workloads/, /api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/groups/]
 const analyticsReq = 'https://api.koderover.com/api/operation/upload'
-const installationAnalysisReq = 'https://api.koderover.com/api/operation/admin/user'
 const http = axios.create()
 const CancelToken = axios.CancelToken
 
@@ -116,7 +115,6 @@ http.interceptors.response.use(
     if (
       error.response &&
       error.response.config.url !== analyticsReq &&
-      error.response.config.url !== installationAnalysisReq &&
       !error.response.config.url.includes(ignoreErrReq)
     ) {
       // The request was made and the server responded with a status code
@@ -211,9 +209,6 @@ function makeEventSource (basePath, config) {
 export function analyticsRequestAPI (payload) {
   return http.post(analyticsReq, payload)
 }
-export function installationAnalysisRequestAPI (payload) {
-  return http.post(installationAnalysisReq, payload)
-}
 
 // Status
 export function taskRunningSSEAPI () {
@@ -258,8 +253,12 @@ export function productEnvInfoAPI (projectName, envName) {
 }
 
 // Project
-export function getProductsAPI () {
-  return http.get('/api/v1/picket/projects?verbosity=detailed')// verbosity=detailed<brief,minimal>
+export function getProjectsAPI () {
+  return http.get('/api/v1/picket/projects?verbosity=detailed')// verbosity=detailed<brief,minimal>,IgnoreNoVersions,IgnoreNoEnvs
+}
+
+export function getEnvironmentsAPI (projectName) {
+  return http.get(`/api/aslan/environment/environments?projectName=${projectName}`)
 }
 
 // Service
@@ -469,7 +468,7 @@ export function getWorkflowBindAPI (projectName, testName) {
   return http.get(`/api/v1/picket/workflows/testName/${testName}?projectName=${projectName}`)
 }
 
-export function listWorkflowAPI (projectName) {
+export function getWorkflowsAPI (projectName) {
   return http.get(`/api/aslan/workflow/workflow?projectName=${projectName || ''}`)
 }
 
@@ -480,7 +479,7 @@ export function setFavoriteAPI (payload) {
 export function deleteFavoriteAPI (projectName, workflowName, type) {
   return http.delete(`/api/aslan/workflow/favorite/${projectName}/${workflowName}/${type}?projectName=${projectName}`)
 }
-export function workflowAPI (projectName, name) {
+export function getWorkflowDetailAPI (projectName, name) {
   return http.get(`/api/aslan/workflow/workflow/find/${name}?projectName=${projectName}`)
 }
 
@@ -565,11 +564,11 @@ export function runTestsAPI (payload) {
 }
 
 export function restartTestTaskAPI (projectName, testName, taskID) {
-  return http.post(`/api/aslan/testing/testtask/projectName/${projectName}/id/${taskID}/pipelines/${testName}/restart?projectName=${projectName}`)
+  return http.post(`/api/aslan/testing/testtask/productName/${projectName}/id/${taskID}/pipelines/${testName}/restart?projectName=${projectName}`)
 }
 
 export function cancelTestTaskAPI (projectName, testName, taskID) {
-  return http.delete(`/api/aslan/testing/testtask/projectName/${projectName}/id/${taskID}/pipelines/${testName}?projectName=${projectName}`)
+  return http.delete(`/api/aslan/testing/testtask/productName/${projectName}/id/${taskID}/pipelines/${testName}?projectName=${projectName}`)
 }
 
 export function singleTestAPI (name, projectName = '') {
@@ -599,8 +598,8 @@ export function getTestReportAPI (projectName, workflowName, taskID, testJobName
 
 // User Management
 
-export function usersAPI (payload) {
-  return http.post(`/api/v1/users/search`, payload)
+export function usersAPI (payload, projectName = '') {
+  return http.post(`/api/v1/users/search?projectName=${projectName}`, payload)
 }
 
 export function queryUserAPI (uid) {
@@ -609,6 +608,14 @@ export function queryUserAPI (uid) {
 
 export function addUserAPI (payload) {
   return http.post(`/api/v1/users`, payload)
+}
+
+export function deleteUserAPI (uid) {
+  return http.delete(`/api/v1/users/${uid}`)
+}
+
+export function updateUserAPI (uid, payload) {
+  return http.put(`/api/v1/users/${uid}`, payload)
 }
 
 export function getSystemRoleBindingsAPI () {
@@ -623,17 +630,15 @@ export function deleteSystemRoleBindingsAPI (name) {
   return http.delete(`/api/v1/system-rolebindings/${name}`)
 }
 
-export function deleteUserAPI (uid) {
-  return http.delete(`/api/v1/users/${uid}`)
-}
-
 // ----- Syetem Setting-Integration -----
 
 // Code
-export function getCodeSourceAPI () {
-  return http.get(`/api/aslan/code/codehost`)
+// Information is masked no detail
+export function getCodeSourceMaskedAPI () {
+  return http.get(`/api/v1/picket/codehosts`)
 }
 
+// Return details and only for admin
 export function getCodeProviderAPI () {
   return http.get(`/api/v1/codehosts`)
 }
@@ -857,6 +862,23 @@ export function getCleanCacheStatusAPI () {
   return http.get('/api/aslan/system/cleanCache/state')
 }
 
+// External link
+export function createExternalLinkAPI (payload) {
+  return http.post(`/api/aslan/system/externalLink`, payload)
+}
+
+export function updateExternalLinkAPI (id, payload) {
+  return http.put(`/api/aslan/system/externalLink/${id}`, payload)
+}
+
+export function getExternalLinksAPI () {
+  return http.get(`/api/aslan/system/externalLink`)
+}
+
+export function deleteExternalLinkAPI (id) {
+  return http.delete(`/api/aslan/system/externalLink/${id}`)
+}
+
 // Registry
 export function getRegistryListAPI () {
   return http.get('/api/aslan/system/registry/namespaces')
@@ -991,7 +1013,7 @@ export function createProjectAPI (payload) {
 }
 
 export function deleteProjectAPI (projectName) {
-  return http.delete(`/api/aslan/project/products/${projectName}?projectName=${projectName}`)
+  return http.delete(`/api/v1/picket/projects/${projectName}?projectName=${projectName}`)
 }
 
 export function downloadDevelopCLIAPI (os) {
@@ -1096,6 +1118,14 @@ export function userLoginAPI (payload) {
   return http.post(`/api/v1/login`, payload)
 }
 
+export function userSignUpAPI (payload) {
+  return http.post(`/api/v1/signup`, payload)
+}
+
+export function checkConnectorsAPI () {
+  return http.get(`/api/v1/login-enabled`)
+}
+
 // Profile
 
 export function getCurrentUserInfoAPI (uid) {
@@ -1118,8 +1148,8 @@ export function downloadPubKeyAPI () {
   return http.get('/api/aslan/setting/user/kube/config')
 }
 
-export function updateServiceImageAPI (payload, type, envType = '') {
-  return http.post(`/api/aslan/environment/image/${type}?envType=${envType}`, payload)
+export function updateServiceImageAPI (payload, type, projectName, envType = '') {
+  return http.post(`/api/aslan/environment/image/${type}?projectName=${projectName}&envType=${envType}`, payload)
 }
 
 // Notification
@@ -1157,9 +1187,9 @@ export function getProjectIngressAPI (projectName) {
   return http.get(`/api/aslan/environment/environments/${projectName}/ingressInfo?projectName=${projectName}`)
 }
 
-// delivery
-export function getVersionListAPI (workflow_name = '', product_name = '', task_id = '', service_name = '') {
-  return http.get(`/api/aslan/delivery/releases?workflowName=${workflow_name}&projectName=${product_name}&taskId=${task_id}&serviceName=${service_name}`)
+// Delivery
+export function getVersionListAPI (workflowName = '', projectName = '', taskId = '', serviceName = '') {
+  return http.get(`/api/aslan/delivery/releases?workflowName=${workflowName}&projectName=${projectName}&taskId=${taskId}&serviceName=${serviceName}`)
 }
 
 export function getVersionServiceListAPI (projectName) {
@@ -1171,7 +1201,7 @@ export function deleteVersionAPI (projectName, versionId) {
 }
 
 export function getVersionProductListAPI () {
-  return http.get(`/api/aslan/delivery/products`)
+  return http.get(`/api/v1/picket/projects?ignoreNoVersions=true`)
 }
 
 export function productHostingNamespaceAPI (clusterId) {
@@ -1345,7 +1375,7 @@ export function getCreateHelmEnvStatusAPI (projectName) {
 }
 
 export function getCalculatedValuesYamlAPI ({ projectName, serviceName, envName, format, scene }, payload) { // defaultValues, overrideYaml, overrideValues
-  return http.post(`/api/aslan/environment/environments/${projectName}/estimated-values??projectName=${projectName}&format=${format}&envName=${envName}&serviceName=${serviceName}&scene=${scene}`, payload)
+  return http.post(`/api/aslan/environment/environments/${projectName}/estimated-values?projectName=${projectName}&format=${format}&envName=${envName}&serviceName=${serviceName}&scene=${scene}`, payload)
 }
 
 export function getValuesYamlFromGitAPI ({ codehostID, owner, repo, branch, valuesPaths }) {
@@ -1377,57 +1407,56 @@ export function editWorkloads (payload) {
   return http.put(`/api/aslan/service/workloads?projectName=${payload.product_name}&env=${payload.env_name}`, payload)
 }
 
-// role
-
-export function queryPolicyDefinitions () {
-  return http.get(`/api/v1/policy-definitions`)
+// RBAC APIs
+export function queryPolicyDefinitionsAPI (projectName) {
+  return http.get(`/api/v1/policy-definitions?projectName=${projectName}`)
 }
 
-export function addrole (payload) { // 项目下添加角色
+export function addRoleAPI (payload) { // 项目下添加角色
   return http.post(`/api/v1/roles?projectName=${payload.projectName}`, payload)
 }
 
-export function updaterole (payload) { // 项目下添加角色
+export function updateRoleAPI (payload) { // 项目下添加角色
   return http.put(`/api/v1/roles/${payload.name}?projectName=${payload.projectName}`, payload)
 }
 
-export function queryrole (projectName) { // 查询项目中的角色
+export function queryRoleAPI (projectName) { // 查询项目中的角色
   return http.get(`/api/v1/roles?projectName=${projectName}`)
 }
 
-export function queryroleDetail (name, projectName) { // 查询项目中的某个角色详情
+export function queryRoleDetailAPI (name, projectName) { // 查询项目中的某个角色详情
   return http.get(`/api/v1/roles/${name}?projectName=${projectName}`)
 }
 
-export function addPublicRole (payload) { // 添加公共角色
-  return http.post(`/api/v1/public-roles`, payload)
+export function addPublicRoleAPI (payload, projectName) { // 添加公共角色
+  return http.post(`/api/v1/public-roles?projectName=${projectName}`, payload)
 }
 
-export function deletePublicRole (name) { // 删除公共角色
-  return http.delete(`/api/v1/public-roles/${name}`)
+export function deletePublicRoleAPI (name, projectName) { // 删除公共角色
+  return http.delete(`/api/v1/public-roles/${name}?projectName=${projectName}`)
 }
 
-export function queryPublicRole () { // 查询公共的角色
-  return http.get(`/api/v1/public-roles`)
+export function queryPublicRoleAPI (projectName) { // 查询公共的角色
+  return http.get(`/api/v1/public-roles?projectName=${projectName}`)
 }
 
-export function queryPublicRoleDetail (name) { // 查询某个公共的角色
-  return http.get(`/api/v1/public-roles/${name}`)
+export function queryPublicRoleDetailAPI (name, projectName) { // 查询某个公共的角色
+  return http.get(`/api/v1/public-roles/${name}?projectName=${projectName}`)
 }
 
-export function updatePublicRole (paload) { // 修改某个公共的角色
-  return http.put(`/api/v1/public-roles/${paload.name}`, paload)
+export function updatePublicRoleAPI (payload, projectName) { // 修改某个公共的角色
+  return http.put(`/api/v1/public-roles/${payload.name}?projectName=${projectName}`, payload)
 }
 
-export function deleterole (name, projectName) { // 删除项目中的角色
+export function deleteRoleAPI (name, projectName) { // 删除项目中的角色
   return http.delete(`/api/v1/roles/${name}?projectName=${projectName}`)
 }
 
-export function addRoleBindings (payload, projectName) { // 项目中用户添加角色
+export function addRoleBindingsAPI (payload, projectName) { // 项目中用户添加角色
   return http.post(`/api/v1/rolebindings?projectName=${projectName}&bulk=true`, payload)
 }
 
-export function deleteroleBindings (name, projectName) { // 删除项目中的角色绑带
+export function deleteRoleBindingsAPI (name, projectName) { // 删除项目中的角色绑带
   return http.delete(`/api/v1/rolebindings/${name}?projectName=${projectName}`)
 }
 
@@ -1435,7 +1464,7 @@ export function queryRoleBindingsAPI (projectName) { // 查询项目中的角色
   return http.get(`/api/v1/picket/rolebindings?projectName=${projectName}`)
 }
 
-export function queryUserBindings (uid, projectName = '') { // 查询用户所有绑定的角色 传projectName是项目绑定，不传是系统绑定
+export function queryUserBindingsAPI (uid, projectName = '') { // 查询用户所有绑定的角色，传 projectName 是项目绑定，不传是系统绑定
   return http.get(`/api/v1/userbindings?uid=${uid}&projectName=${projectName}`)
 }
 

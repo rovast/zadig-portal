@@ -37,7 +37,7 @@
                    @click="startProductBuild(workflow)">
           <span class="el-icon-video-play">&nbsp;执行</span>
         </el-button>
-        <router-link :to="`/workflows/edit/${workflow.name}?projectName=${workflow.product_tmpl_name}`">
+        <router-link :to="`/workflows/product/edit/${workflow.name}?projectName=${workflow.product_tmpl_name}`">
           <span class="menu-item el-icon-setting start-build"></span>
         </router-link>
         <el-dropdown @visible-change="(status) => fnShowTimer(status, index, workflow)">
@@ -58,11 +58,13 @@
         </el-dropdown>
       </template>
     </pipeline-row>
+    <CommonRow :workflow="source"></CommonRow>
   </div>
 </template>
 
 <script>
 import pipelineRow from './pipeline_row.vue'
+import CommonRow from './common_row.vue'
 import mixins from '@utils/virtual_scroll_list_mixin'
 import { getWorkflowDetailAPI, updateWorkflowAPI } from '@api'
 export default {
@@ -142,7 +144,8 @@ export default {
     }
   },
   components: {
-    pipelineRow
+    pipelineRow,
+    CommonRow
   }
 }
 </script>

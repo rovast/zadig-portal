@@ -10,7 +10,7 @@
         <el-col :span="12">
           <el-form-item label="选择项目">
             <el-select v-model="commonInfoUse.projectName" placeholder="请选择项目" size="small">
-              <el-option label="label" value="value"></el-option>
+              <el-option v-for="project in projectList" :key="project.value" :label="project.value" :value="project.value"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -68,9 +68,11 @@
 import BasicDialog from './basic_dialog.vue'
 import { mapState } from 'vuex'
 import { cloneDeep } from 'lodash'
+import { templatesAPI } from '@api'
 export default {
   data () {
     return {
+      projectList: [],
       commonInfoUse: null,
       varData: null
     }
@@ -105,10 +107,20 @@ export default {
     },
     storeInfo () {
       this.$store.commit('UPDATE_COMMON_INFO', this.commonInfoUse)
+    },
+    getProjectlist () {
+      templatesAPI().then(res => {
+        this.projectList = res
+      })
     }
   },
   components: {
     BasicDialog
+  },
+  created () {
+    if (!this.$route.query.projectName) {
+      this.getProjectlist()
+    }
   },
   deactivated () {
     this.storeInfo()

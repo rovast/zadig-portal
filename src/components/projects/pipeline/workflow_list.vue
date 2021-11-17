@@ -39,7 +39,6 @@
           element-loading-text="加载中..."
           element-loading-spinner="iconfont iconfont-loading icongongzuoliucheng"
         >
-          <CommonRow></CommonRow>
           <VirtualList
             v-if="availableWorkflows.length > 0"
             class="virtual-list-container"
@@ -87,7 +86,6 @@
 </template>
 
 <script>
-import CommonRow from './workflow_list/common_row.vue'
 import VirtualListItem from './workflow_list/virtual_list_item'
 import runWorkflow from './common/run_workflow.vue'
 import RunCommonWorkflow from './common/run_common_workflow.vue'
@@ -121,7 +119,8 @@ export default {
       startProductBuild: this.startProductBuild,
       copyWorkflow: this.copyWorkflow,
       deleteWorkflow: this.deleteWorkflow,
-      renamePipeline: this.renamePipeline
+      renamePipeline: this.renamePipeline,
+      startCommonBuild: this.startCommonBuild
     }
   },
   computed: {
@@ -328,12 +327,16 @@ export default {
         })
         this.getWorkflows(this.projectName)
         this.$router.push(
-          `/workflows/edit/${newName}?projectName=${projectName}`
+          `/workflows/product/edit/${newName}?projectName=${projectName}`
         )
       })
     },
     sortWorkflow (cm) {
       this.sortBy = cm
+    },
+    startCommonBuild (worflow) {
+      this.commonToRun = worflow
+      this.showStartCommonBuild = true
     }
   },
   created () {
@@ -392,7 +395,6 @@ export default {
     runWorkflow,
     VirtualListItem,
     VirtualList,
-    CommonRow,
     RunCommonWorkflow
   }
 }

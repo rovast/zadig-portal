@@ -58,7 +58,9 @@
         </el-row>
         <el-collapse>
           <el-collapse-item title="查看构建日志">
-            <div>xterm</div>
+            <div v-if="commonLog.length">
+              <xterm-log :id="logId" @mouseleave.native="leaveLog" :logs="commonLog"></xterm-log>
+            </div>
           </el-collapse-item>
         </el-collapse>
       </article>
@@ -98,7 +100,15 @@ export default {
           value: 'value-test'
         }
       ],
-      external: {}
+      external: {},
+      logId: 'testLogId',
+      commonLog: []
+    }
+  },
+  methods: {
+    leaveLog () {
+      const el = document.querySelector('.common-task-detail').style
+      el.overflow = 'auto'
     }
   },
   mounted () {

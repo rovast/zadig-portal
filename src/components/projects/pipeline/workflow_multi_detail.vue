@@ -81,7 +81,7 @@
                 <el-tooltip effect="dark"
                             content="编辑工作流"
                             placement="top">
-                  <router-link :to="`/workflows/edit/${workflowName}?projectName=${projectName}`"
+                  <router-link :to="`/workflows/product/edit/${workflowName}?projectName=${projectName}`"
                                class="not-anchor">
                     <i class="el-icon-edit-outline edit-pipeline"></i>
                   </router-link>

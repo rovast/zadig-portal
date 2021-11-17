@@ -40,7 +40,7 @@
         <div>-</div>
       </div>
       <div class="operate">
-        <el-button type="success" icon="el-icon-video-play" @click="runCommonWorkflow">执行</el-button>
+        <el-button type="success" icon="el-icon-video-play" @click="startCommonBuild">执行</el-button>
         <i class="icon el-icon-setting" @click="$router.push(`/workflows/common/edit/${testPipeline}?projectName=${testProject}`)"></i>
         <i class="icon el-icon-s-operation disabled"></i>
       </div>
@@ -49,7 +49,6 @@
 </template>
 
 <script>
-
 export default {
   data () {
     return {
@@ -60,11 +59,11 @@ export default {
       testId: '1'
     }
   },
-  methods: {
-    runCommonWorkflow () {
-      console.log('执行')
-    }
-  }
+  props: {
+    workflow: Object
+  },
+  inject: ['startCommonBuild'],
+  methods: {}
 }
 </script>
 

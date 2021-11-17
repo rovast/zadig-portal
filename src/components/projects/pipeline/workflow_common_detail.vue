@@ -33,7 +33,7 @@
           <i class="el-icon-s-operation"></i> 操作
         </span>
         <span class="detail">
-          <i class="icon el-icon-video-play"></i>
+          <i class="icon el-icon-video-play" @click="showRunCommonPipeline = true"></i>
           <i class="icon el-icon-edit-outline"></i>
           <i class="icon el-icon-delete"></i>
         </span>
@@ -58,7 +58,7 @@
       ></task-list>
     </section>
 
-    <el-dialog :visible.sync="taskDialogVisible" title="运行 通用-工作流" width="60%" class="dialog">
+    <el-dialog :visible.sync="showRunCommonPipeline" title="运行 通用-工作流" width="60%">
       <RunCommonWorkflow></RunCommonWorkflow>
     </el-dialog>
   </div>
@@ -70,6 +70,11 @@ import bus from '@utils/event_bus'
 export default {
   components: {
     RunCommonWorkflow
+  },
+  data () {
+    return {
+      showRunCommonPipeline: false
+    }
   },
   mounted () {
     this.projectName = this.$route.params.project_name

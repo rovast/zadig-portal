@@ -39,6 +39,7 @@
           element-loading-text="加载中..."
           element-loading-spinner="iconfont iconfont-loading icongongzuoliucheng"
         >
+          <CommonRow></CommonRow>
           <VirtualList
             v-if="availableWorkflows.length > 0"
             class="virtual-list-container"
@@ -78,12 +79,18 @@
         @success="hideProductTaskDialog"
       ></run-workflow>
     </el-dialog>
+
+    <el-dialog title="运行 通用-工作流" :visible.sync="showStartCommonBuild" :close-on-click-modal="false">
+      <RunCommonWorkflow></RunCommonWorkflow>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import CommonRow from './workflow_list/common_row.vue'
 import VirtualListItem from './workflow_list/virtual_list_item'
 import runWorkflow from './common/run_workflow.vue'
+import RunCommonWorkflow from './common/run_common_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
 import { getWorkflowsAPI, deleteWorkflowAPI, copyWorkflowAPI } from '@api'
@@ -104,7 +111,9 @@ export default {
       sortBy: 'name-asc',
       workflowsList: [],
       showSelectWorkflowType: false,
-      selectWorkflowType: 'product'
+      selectWorkflowType: 'product',
+
+      showStartCommonBuild: false
     }
   },
   provide () {
@@ -382,7 +391,9 @@ export default {
   components: {
     runWorkflow,
     VirtualListItem,
-    VirtualList
+    VirtualList,
+    CommonRow,
+    RunCommonWorkflow
   }
 }
 </script>
@@ -585,9 +596,10 @@ export default {
 
   .type-content {
     line-height: 32px;
+
     .type-desc {
-      margin-left: 25px;
       margin-bottom: 22px;
+      margin-left: 25px;
       color: #999;
     }
   }

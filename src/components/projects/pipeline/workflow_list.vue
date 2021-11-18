@@ -91,7 +91,12 @@ import runWorkflow from './common/run_workflow.vue'
 import RunCommonWorkflow from './common/run_common_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
-import { getWorkflowsAPI, deleteWorkflowAPI, copyWorkflowAPI, getCommonPipelineListAPI } from '@api'
+import {
+  getWorkflowsAPI,
+  deleteWorkflowAPI,
+  copyWorkflowAPI,
+  getCommonPipelineListAPI
+} from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
@@ -260,7 +265,10 @@ export default {
         console.log(err)
         return []
       })
-      this.workflowsList = [...res, ...res2]
+      res2.workflow_list.forEach(list => {
+        list.type = 'common'
+      })
+      this.workflowsList = [...res, ...res2.workflow_list]
     },
     deleteWorkflow (workflow) {
       const name = workflow.name

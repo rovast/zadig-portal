@@ -1,35 +1,35 @@
 <template>
   <div class="common-row">
     <div class="row-content">
-      <div class="favorite" @click="favorite = !favorite">
+      <div class="favorite">
         <i class="el-icon-star-on" :style="{color: favorite ? '#f4e118' : 'inherit'}"></i>
       </div>
       <div class="info">
         <div class="top">
-          <router-link :to="`/v1/projects/detail/${testProject}/pipelines/common/${testPipeline}`">{{}}</router-link>
+          <router-link :to="`/v1/projects/detail/${workflow.project_name}/pipelines/common/${workflow.name}`">{{}}</router-link>
           <el-tag size="mini">通用</el-tag>
         </div>
         <div class="bottom">
           <span>
             <i class="success-color el-icon-success"></i>
-            最近成功
-            <router-link
+            最近成功 *
+            <!-- <router-link
               class="success-color"
-              :to="`/v1/projects/detail/${testProject}/pipelines/common/${testPipeline}/${testId}?status=`"
-            >{{}}</router-link>
+              :to="`/v1/projects/detail/${workflow.project_name}/pipelines/common/${workflow.name}/${testId}?status=`"
+            >{{}}</router-link> -->
           </span>
           <span>
             <i class="fail-color el-icon-error"></i>
-            最近失败
-            <router-link
+            最近失败 *
+            <!-- <router-link
               class="fail-color"
-              :to="`/v1/projects/detail/${testProject}/pipelines/common/${testPipeline}/${testId}?status=`"
-            >{{}}</router-link>
+              :to="`/v1/projects/detail/${workflow.project_name}/pipelines/common/${workflow.name}/${testId}?status=`"
+            >{{}}</router-link> -->
           </span>
         </div>
       </div>
       <div class="step">
-        <el-tag size="mini">{{}}</el-tag>
+        <!-- <el-tag size="mini">{{}}</el-tag> -->
       </div>
       <div class="average font">
         <div>平均执行时间</div>
@@ -41,7 +41,7 @@
       </div>
       <div class="operate">
         <el-button type="success" icon="el-icon-video-play" @click="startCommonBuild">执行</el-button>
-        <i class="icon el-icon-setting" @click="$router.push(`/workflows/common/edit/${testPipeline}?projectName=${testProject}`)"></i>
+        <i class="icon el-icon-setting" @click="$router.push(`/workflows/common/edit/${workflow.name}?projectName=${workflow.project_name}`)"></i>
         <i class="icon el-icon-s-operation disabled"></i>
       </div>
     </div>
@@ -53,9 +53,6 @@ export default {
   data () {
     return {
       favorite: false,
-
-      testProject: 'test-github-import',
-      testPipeline: 'aslan',
       testId: '1'
     }
   },

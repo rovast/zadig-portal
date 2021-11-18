@@ -1,6 +1,7 @@
 <template>
   <div>
-    <pipeline-row :name="workflow.name"
+    <CommonRow v-if="source.type === 'common'" :workflow="source"></CommonRow>
+    <pipeline-row v-else :name="workflow.name"
                   :isFavorite="workflow.is_favorite"
                   :type="'workflow'"
                   :projectName="workflow.product_tmpl_name"
@@ -58,7 +59,6 @@
         </el-dropdown>
       </template>
     </pipeline-row>
-    <CommonRow :workflow="source"></CommonRow>
   </div>
 </template>
 

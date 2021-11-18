@@ -550,6 +550,27 @@ export function workflowTaskDetailSSEAPI (projectName, workflowName, taskID, wor
   return makeEventSource(`/api/aslan/workflow/sse/workflows/id/${taskID}/pipelines/${workflowName}?projectName=${projectName}&workflowType=${workflowType}`)
 }
 
+// common pipeline
+export function createCommonPipelineAPI (payload) {
+  return http.post(`/api/aslan/workflow/v3`, payload)
+}
+
+export function deleteCommonPipelineAPI (id) {
+  return http.delete(`/api/aslan/workflow/v3/${id}`)
+}
+
+export function getCommonPipelineAPI (id) {
+  return http.get(`/api/aslan/workflow/v3/${id}`)
+}
+
+export function updateCommonPipelineAPI (id, payload) {
+  return http.put(`/api/aslan/workflow/v3/${id}`, payload)
+}
+
+export function getCommonPipelineListAPI (project_name = '', page_num = 1, page_size = 999) {
+  return http.get(`/api/aslan/workflow/v3?project_name=${project_name}&page_num=${page_num}&page_size=${page_size}`)
+}
+
 // Test
 
 export function testsAPI (projectName = '', testType = '') {

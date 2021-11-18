@@ -5,14 +5,14 @@
       <TabMenu class="top" :validObj="validObj"></TabMenu>
       <el-card class="content">
         <keep-alive>
-          <component :is="isComp" :validObj="validObj"></component>
+          <component :is="isComp" :validObj="validObj" ref="commonStep"></component>
         </keep-alive>
       </el-card>
     </div>
     <footer class="footer">
       <el-tag>填写相关信息，然后点击保存</el-tag>
       <el-button type="primary" plain @click="$router.go(-1)">取消</el-button>
-      <el-button type="primary" plain>保存</el-button>
+      <el-button type="primary" plain @click="saveCommonPipeline">保存</el-button>
     </footer>
   </div>
 </template>
@@ -25,8 +25,9 @@ import Build from './switch_tab/build.vue'
 import External from './switch_tab/external.vue'
 import ValidateSubmit from '@utils/validate_async'
 
-import { mapGetters } from 'vuex'
-
+import { mapGetters, mapState } from 'vuex'
+import { cloneDeep } from 'lodash'
+import { createCommonPipelineAPI } from '@api'
 export default {
   data () {
     return {
@@ -35,6 +36,9 @@ export default {
   },
   computed: {
     ...mapGetters(['currentTab']),
+    ...mapState({
+      commonInfo: state => state.common_pipeline.commonInfo
+    }),
     isComp () {
       let res = BasicInfo
       const currentTab = this.currentTab
@@ -50,6 +54,47 @@ export default {
           break
       }
       return res
+    }
+  },
+  methods: {
+    saveCommonPipeline () {
+      this.validObj.validateAll().then(res => {
+        if (res[1]) {
+          this.$refs.commonStep.updateCommonInfo()
+
+          const commonInfo = cloneDeep(this.commonInfo)
+
+          commonInfo.parameters.forEach(param => {
+            if (param.type === 'string') {
+              delete param.choice_option
+              delete param.external_setting
+            } else if (param.type === 'choice') {
+              delete param.external_setting
+            } else if (param.type === 'external') {
+              delete param.choice_option
+            }
+          })
+
+          if (
+            commonInfo.buildv3.job_ctx &&
+            commonInfo.buildv3.job_ctx.clean_workspace
+          ) {
+            commonInfo.buildv3.job_ctx.clean_workspace = !commonInfo.buildv3
+              .job_ctx.clean_workspace
+          }
+
+          commonInfo.sub_tasks.push(commonInfo.buildv3)
+          commonInfo.sub_tasks.push(commonInfo.trigger)
+
+          delete commonInfo.buildv3
+          delete commonInfo.trigger
+
+          console.log('保存', commonInfo)
+          createCommonPipelineAPI(commonInfo).then(res => {
+            this.$message.success(`${commonInfo.project_name}创建成功`)
+          })
+        }
+      })
     }
   },
   components: {

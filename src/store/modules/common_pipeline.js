@@ -19,15 +19,13 @@ const tabInfo = [{
 }]
 
 const commonInfo = {
-  pipelineName: '',
-  projectName: '',
-  desc: '',
-  vars: [{
-    key: 'key',
-    type: 'string',
-    value: 'value',
-    is_credential: false
-  }]
+  name: '',
+  project_name: '',
+  description: '',
+  parameters: [],
+  sub_tasks: [],
+  buildv3: {},
+  trigger: {}
 }
 
 const state = {

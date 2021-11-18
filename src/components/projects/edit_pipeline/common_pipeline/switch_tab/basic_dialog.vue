@@ -1,142 +1,191 @@
 <template>
   <div class="basic-dialog">
-    <el-dialog :visible.sync="dialogVisible" width="600px">
-      <div slot="title">{{title}}</div>
+    <section v-if="param">
+      <el-form ref="form" v-if="param.type === 'choice'" :model="paramData" label-width="90px">
+        <el-form-item label="变量名称">
+          <el-input v-model="param.key" disabled size="small"></el-input>
+        </el-form-item>
+        <el-form-item label="可选值">
+          <el-input type="textarea" v-model="paramData.choice_option" placeholder="可选值之间用英文 “,” 隔开" size="small" rows="4"></el-input>
+        </el-form-item>
+      </el-form>
 
-      <section v-if="value">
-        <el-form ref="form" v-if="value.type === 'enum'" :model="formData" label-width="90px">
-          <el-form-item label="变量名称">
-            <el-input v-model="value.key" disabled size="small"></el-input>
-          </el-form-item>
-          <el-form-item label="可选值">
-            <el-input type="textarea" v-model="formData.enumData" placeholder="可选值之间用英文 “,” 隔开" size="small" rows="4"></el-input>
-          </el-form-item>
-        </el-form>
-
-        <el-form ref="form" v-else-if="value.type === 'async'" :model="formData" label-width="90px">
-          <el-form-item label="API 地址">
-            <el-row :gutter="10">
-              <el-col :span="10">
-                <el-select v-model="formData.external" placeholder="请选择外部系统" size="small">
-                  <el-option v-for="external in externalList" :key="external.id" :label="external.server" :value="external.id"></el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="10">
-                <el-input v-model="value.path" size="small" placeholder="输入访问路径"></el-input>
-              </el-col>
-            </el-row>
-            <div>
-              <el-radio-group v-model="check" size="mini">
-                <el-radio-button label="header">Headers</el-radio-button>
-                <el-radio-button label="body">Body</el-radio-button>
-              </el-radio-group>
-            </div>
-            <el-table :data="formData[check]" style="width: 100%;">
-              <el-table-column label="Header Name">
-                <template slot-scope="{row}">
-                  <el-input v-model="row.name" placeholder="Header Name" size="small"></el-input>
-                </template>
-              </el-table-column>
-              <el-table-column label="Header Value">
-                <template slot-scope="{row}">
-                  <el-input v-model="row.value" placeholder="Header Value" size="small"></el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="value" label="操作">
-                <template slot-scope="{}">
-                  <el-button type="text" icon="el-icon-remove-outline"></el-button>
-                  <el-button type="text" icon="el-icon-circle-plus-outline"></el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-form-item>
-          <el-form-item label="变量名称">
-            <el-row :gutter="10" v-for="vars in formData.vars" :key="vars.name">
-              <el-col :span="8">
-                <el-input v-model="vars.name" placeholder="变量名" size="small"></el-input>
-              </el-col>
-              <el-col :span="2">
-                <span>-&gt;</span>
-              </el-col>
-              <el-col :span="8">
-                <el-input v-model="vars.returnName" placeholder="接口返回字段" size="small"></el-input>
-              </el-col>
-              <el-col :span="5">
-                <el-button type="text" icon="el-icon-remove-outline"></el-button>
-                <el-button type="text" icon="el-icon-circle-plus-outline"></el-button>
-              </el-col>
-            </el-row>
-          </el-form-item>
-        </el-form>
-      </section>
-
-      <div slot="footer">
-        <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-        <el-button type="primary" @click="summit" size="small">确 定</el-button>
-      </div>
-    </el-dialog>
+      <el-form ref="form" v-else-if="param.type === 'external'" :model="paramData.external_setting" label-width="90px">
+        <el-form-item label="API 地址">
+          <el-row :gutter="10">
+            <el-col :span="8">
+              <el-select v-model="paramData.external_setting.system_id" placeholder="请选择外部系统" size="small">
+                <el-option v-for="external in externalList" :key="external.id" :label="external.server" :value="external.id"></el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="8">
+              <el-input v-model="paramData.external_setting.endpoint" size="small" placeholder="输入访问路径"></el-input>
+            </el-col>
+            <el-col :span="6">
+              <el-input v-model="paramData.external_setting.method" size="small" placeholder="输入访问方法"></el-input>
+            </el-col>
+          </el-row>
+          <div>
+            <el-radio-group v-model="check" size="mini">
+              <el-radio-button label="header">Headers</el-radio-button>
+              <el-radio-button label="body">Body</el-radio-button>
+            </el-radio-group>
+          </div>
+          <el-table v-show="check === 'header'" :data="paramData.external_setting.headers" style="width: 100%;">
+            <el-table-column label="Header Name">
+              <template slot-scope="{row}">
+                <el-input v-model="row.key" placeholder="Header Name" size="small"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="Header Value">
+              <template slot-scope="{row}">
+                <el-input v-model="row.value" placeholder="Header Value" size="small"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column prop="value" label="操作" width="100px">
+              <template slot-scope="{$index}">
+                <el-button
+                  v-show="paramData.external_setting.headers.length > 1"
+                  style="font-size: 20px;"
+                  type="text"
+                  icon="el-icon-remove-outline"
+                  @click="deleteHeader($index)"
+                ></el-button>
+                <el-button style="font-size: 20px;" type="text" icon="el-icon-circle-plus-outline" @click="addHeader"></el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-input v-show="check === 'body'" type="textarea" v-model="paramData.external_setting.body" placeholder="请输入请求头" rows="4"></el-input>
+        </el-form-item>
+        <el-form-item label="变量名称">
+          <el-row :gutter="10" v-for="(param, index) in paramData.external_setting.params" :key="param.param_key">
+            <el-col :span="7">
+              <el-input v-model="param.param_key" placeholder="变量名" size="small"></el-input>
+            </el-col>
+            <el-col :span="2">
+              <span>-&gt;</span>
+            </el-col>
+            <el-col :span="7">
+              <el-input v-model="param.response_key" placeholder="接口返回字段" size="small"></el-input>
+            </el-col>
+            <el-col :span="7">
+              <el-radio v-model="display" :label="param.param_key">显示</el-radio>
+              <el-button
+                v-if="paramData.external_setting.params.length > 1 && paramData.external_setting.params.length -1 > index"
+                style="font-size: 20px;"
+                type="text"
+                icon="el-icon-remove-outline"
+                @click="deleteParam(index)"
+              ></el-button>
+              <el-button v-else style="font-size: 20px;" type="text" icon="el-icon-circle-plus-outline" @click="addParam"></el-button>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
+    </section>
   </div>
 </template>
 
 <script>
 import { getExternalsAPI } from '@api'
+import { cloneDeep } from 'lodash'
+
+const paramInfo = {
+  key: '',
+  type: '',
+  default_value: '',
+  choice_option: '',
+  external_setting: {
+    system_id: '',
+    // Endpoint路径
+    endpoint: '',
+    // 请求方法
+    method: 'GET',
+    // 请求头
+    headers: [
+      {
+        key: '',
+        value: ''
+      }
+    ],
+    // 请求体
+    body: '',
+    // 变量设置
+    params: [
+      {
+        param_key: '',
+        response_key: '',
+        display: false
+      }
+    ]
+  }
+}
 export default {
   props: {
-    value: Object
+    param: Object,
+    value: Boolean
   },
   data () {
     return {
-      formData: {
-        enumData: '',
-        external: '',
-        path: '',
-        header: [
-          {
-            name: '',
-            value: ''
-          }
-        ],
-        body: [
-          {
-            name: '',
-            value: ''
-          }
-        ],
-        vars: [
-          {
-            name: '',
-            returnName: ''
-          }
-        ]
-      },
+      paramData: cloneDeep(paramInfo),
       check: 'header', // body
-      externalList: []
+      externalList: [],
+      display: ''
     }
   },
-  computed: {
-    title () {
-      if (this.value) {
-        if (this.value.type === 'enum') {
-          return '枚举'
-        } else if (this.value.type === 'async') {
-          return '动态变量'
+  watch: {
+    value: {
+      handler (newV) {
+        if (newV) {
+          const choice_option = Array.isArray(this.param.choice_option)
+            ? this.param.choice_option.join(',')
+            : ''
+          this.paramData = {
+            ...cloneDeep(paramInfo),
+            ...cloneDeep(this.param),
+            ...{ choice_option }
+          }
+          if (this.paramData.external_setting.params) {
+            const res = this.paramData.external_setting.params.filter(
+              param => param.display
+            )
+            if (res.length) {
+              this.display = res[0].param_key
+            } else {
+              this.display = ''
+            }
+          }
         }
-      }
-      return ''
-    },
-    dialogVisible: {
-      get () {
-        return !!this.value
       },
-      set (val) {
-        this.$emit('update:value', null)
-      }
+      immediate: true
     }
   },
   methods: {
-    summit () {
-      console.log('确定')
-      this.dialogVisible = false
+    deleteHeader (index) {
+      this.paramData.external_setting.headers.splice(index, 1)
+    },
+    addHeader () {
+      this.paramData.external_setting.headers.push({ key: '', value: '' })
+    },
+    getParamData () {
+      if (this.paramData.external_setting.params) {
+        this.paramData.external_setting.params.forEach(param => {
+          if (param.param_key === this.display) {
+            param.display = true
+          }
+        })
+      }
+      return cloneDeep(this.paramData)
+    },
+    deleteParam (index) {
+      this.paramData.external_setting.params.splice(index, 1)
+    },
+    addParam () {
+      this.paramData.external_setting.params.push({
+        param_key: '',
+        response_key: '',
+        display: false
+      })
     }
   },
   created () {

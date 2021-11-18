@@ -91,7 +91,7 @@ import runWorkflow from './common/run_workflow.vue'
 import RunCommonWorkflow from './common/run_common_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
-import { getWorkflowsAPI, deleteWorkflowAPI, copyWorkflowAPI } from '@api'
+import { getWorkflowsAPI, deleteWorkflowAPI, copyWorkflowAPI, getCommonPipelineListAPI } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
@@ -252,10 +252,15 @@ export default {
       )
     },
     async getWorkflows (projectName) {
-      const res = await getWorkflowsAPI(projectName)
-      if (res) {
-        this.workflowsList = res
-      }
+      const res = await getWorkflowsAPI(projectName).catch(err => {
+        console.log(err)
+        return []
+      })
+      const res2 = await getCommonPipelineListAPI(projectName).catch(err => {
+        console.log(err)
+        return []
+      })
+      this.workflowsList = [...res, ...res2]
     },
     deleteWorkflow (workflow) {
       const name = workflow.name

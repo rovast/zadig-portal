@@ -630,7 +630,7 @@ export function deleteSystemRoleBindingsAPI (name) {
   return http.delete(`/api/v1/system-rolebindings/${name}`)
 }
 
-// ----- Syetem Setting-Integration -----
+// ----- System Setting-Integration -----
 
 // Code
 // Information is masked no detail
@@ -754,6 +754,28 @@ export function queryJenkinsJob () {
 
 export function queryJenkinsParams (jobName) {
   return http.get(`/api/aslan/system/jenkins/buildArgs/${jobName}`)
+}
+
+// other
+
+export function createExternalAPI (payload) {
+  return http.post(`/api/aslan/system/external`, payload)
+}
+
+export function getExternalsAPI (page_num = 1, page_size = 100) {
+  return http.get(`/api/aslan/system/external?page_num=${page_num}&page_size=${page_size}`)
+}
+
+export function getExternalByIdAPI (id) {
+  return http.get(`/api/aslan/system/external/${id}`)
+}
+
+export function updateExternalAPI (id, payload) {
+  return http.put(`/api/aslan/system/external/${id}`, payload)
+}
+
+export function deleteExternalAPI (id) {
+  return http.delete(`/api/aslan/system/external/${id}`)
 }
 
 // Mail

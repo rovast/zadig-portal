@@ -5,7 +5,7 @@
         <el-row :gutter="10">
           <el-col :span="8">
             <el-select v-model="externalData.external" placeholder="placeholder" size="small">
-              <el-option label="label" value="value"></el-option>
+              <el-option v-for="external in externalList" :key="external.id" :label="external.server" :value="external.server"></el-option>
             </el-select>
           </el-col>
           <el-col :span="8">
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { getExternalsAPI } from '@api'
 export default {
   data () {
     return {
@@ -33,7 +34,8 @@ export default {
         path: '',
         callback: false,
         overtime: 10
-      }
+      },
+      externalList: []
     }
   },
   props: {
@@ -48,6 +50,11 @@ export default {
     this.validObj.addValidate({
       name: '扩展',
       valid: this.validate
+    })
+  },
+  created () {
+    getExternalsAPI().then(res => {
+      this.externalList = res.external_system
     })
   }
 }

@@ -18,8 +18,7 @@
             <el-row :gutter="10">
               <el-col :span="10">
                 <el-select v-model="formData.external" placeholder="请选择外部系统" size="small">
-                  <el-option label="item1" value="item1"></el-option>
-                  <el-option label="item2" value="item2"></el-option>
+                  <el-option v-for="external in externalList" :key="external.id" :label="external.server" :value="external.id"></el-option>
                 </el-select>
               </el-col>
               <el-col :span="10">
@@ -54,17 +53,17 @@
           <el-form-item label="变量名称">
             <el-row :gutter="10" v-for="vars in formData.vars" :key="vars.name">
               <el-col :span="8">
-                  <el-input v-model="vars.name" placeholder="变量名" size="small"></el-input>
+                <el-input v-model="vars.name" placeholder="变量名" size="small"></el-input>
               </el-col>
               <el-col :span="2">
-                  <span> -&gt; </span>
+                <span>-&gt;</span>
               </el-col>
               <el-col :span="8">
-                  <el-input v-model="vars.returnName" placeholder="接口返回字段" size="small"></el-input>
+                <el-input v-model="vars.returnName" placeholder="接口返回字段" size="small"></el-input>
               </el-col>
               <el-col :span="5">
-                  <el-button type="text" icon="el-icon-remove-outline"></el-button>
-                  <el-button type="text" icon="el-icon-circle-plus-outline"></el-button>
+                <el-button type="text" icon="el-icon-remove-outline"></el-button>
+                <el-button type="text" icon="el-icon-circle-plus-outline"></el-button>
               </el-col>
             </el-row>
           </el-form-item>
@@ -80,6 +79,7 @@
 </template>
 
 <script>
+import { getExternalsAPI } from '@api'
 export default {
   props: {
     value: Object
@@ -109,7 +109,8 @@ export default {
           }
         ]
       },
-      check: 'header' // body
+      check: 'header', // body
+      externalList: []
     }
   },
   computed: {
@@ -137,6 +138,11 @@ export default {
       console.log('确定')
       this.dialogVisible = false
     }
+  },
+  created () {
+    getExternalsAPI().then(res => {
+      this.externalList = res.external_system
+    })
   }
 }
 </script>

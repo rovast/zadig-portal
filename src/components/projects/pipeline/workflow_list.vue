@@ -87,6 +87,7 @@ export default {
     return {
       itemComponent: VirtualListItem,
       showStartProductBuild: false,
+      workflowListLoading: false,
       showFavorite: false,
       workflowToRun: {},
       remain: 10,
@@ -104,7 +105,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getOnboardingTemplates', 'workflowListLoading']),
+    ...mapGetters(['getOnboardingTemplates']),
     projectName () {
       return this.$route.params.project_name
     },
@@ -220,9 +221,11 @@ export default {
   },
   methods: {
     async getWorkflows (projectName) {
+      this.workflowListLoading = true
       const res = await getWorkflowsAPI(projectName)
       if (res) {
         this.workflowsList = res
+        this.workflowListLoading = false
       }
     },
     deleteWorkflow (workflow) {

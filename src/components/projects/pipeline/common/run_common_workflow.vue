@@ -7,14 +7,19 @@
         <el-table-column prop="branch" label="分支">
           <template slot-scope="{row}">
             <el-select v-model="row.branch" placeholder="请选择分支" size="small">
-              <el-option v-for="branch in row.branches" :key="branch" :label="branch" :value="branch"></el-option>
+              <el-option v-for="branch in row.branches" :key="branch.key" :label="branch.name" :value="branch.name"></el-option>
             </el-select>
           </template>
         </el-table-column>
         <el-table-column prop="pr" label="PR">
           <template slot-scope="{row}">
             <el-select v-model="row.pr" placeholder="请选择分支" size="small">
-              <el-option v-for="pr in row.prs.filter(pr=>pr.targetBranch === row.branch)" :key="pr" :label="pr" :value="pr"></el-option>
+              <el-option
+                v-for="pr in row.prs.filter(pr=>pr.targetBranch === row.branch)"
+                :key="pr.id"
+                :label="`#${pr.id} ${pr.title}`"
+                :value="pr.id"
+              ></el-option>
             </el-select>
           </template>
         </el-table-column>
@@ -26,7 +31,7 @@
         <el-table-column prop="key" label="变量"></el-table-column>
         <el-table-column label="值">
           <template slot-scope="{row}">
-            <span v-if="row.type === 'string'">{{row.value}}</span>
+            <el-input v-if="row.type === 'string'" v-model="row.value" placeholder="请输入默认值" size="small"></el-input>
             <el-select v-else v-model="row.value" placeholder="请选择值" size="small">
               <el-option v-for="val in row.choice_option" :key="val" :label="val" :value="val"></el-option>
             </el-select>
@@ -35,7 +40,7 @@
       </el-table>
     </section>
     <footer>
-      <el-button type="primary" plain size="small" :disabled="cantRun">启动任务</el-button>
+      <el-button :loading="loading" type="primary" plain size="small" :disabled="cantRun" @click="runCommonPipeline">启动任务</el-button>
     </footer>
   </div>
 </template>
@@ -44,8 +49,10 @@
 import {
   getAllBranchInfoAPI,
   runCommonPipelineAPI,
-  getCommonPipelineAPI
+  getCommonPipelineAPI,
+  getParamsInfoAPI
 } from '@api'
+import { cloneDeep } from 'lodash'
 
 export default {
   props: {
@@ -61,7 +68,8 @@ export default {
         builds: [],
         build_args: []
       },
-      cantRun: false
+      cantRun: false,
+      loading: false
     }
   },
   methods: {
@@ -103,13 +111,13 @@ export default {
             })
 
             builds.push({
-              key: `${build.codehost_id}/${build.repo_owner}/${build.repo_name}`,
+              key: `${build.codehost_id}/${build.repo_owner}/${build.repo_name}`, // useless
               repo_name: build.repo_name,
               repo_owner: build.repo_owner,
               pr: '',
               branch: build.branch,
-              branches: [],
-              prs: []
+              branches: [], // useless
+              prs: [] // useless
             })
           })
         }
@@ -126,6 +134,25 @@ export default {
           this.getAllBranchInfo({ infos })
         }
       })
+    },
+    runCommonPipeline () {
+      const payload = cloneDeep(this.runCommonInfo)
+
+      payload.builds.forEach(build => {
+        delete build.key
+        delete build.branches
+        delete build.prs
+      })
+
+      console.log('payload:', payload)
+      // this.loading = true
+      // runCommonPipelineAPI(payload).then(res => {
+      //   this.loading = false
+      //   this.$message.success('创建成功')
+      // this.$router.push(``)
+      // }).catch(err=>{
+      //   this.loading = false
+      // })
     }
   },
   watch: {
@@ -133,6 +160,8 @@ export default {
       handler (val) {
         if (val) {
           this.getCommonPipelineInfo()
+        } else {
+          this.loading = false
         }
       },
       immediate: true
@@ -155,6 +184,11 @@ export default {
     width: 80%;
     margin: auto;
     margin-bottom: 10px;
+
+    /deep/.el-select,
+    .el-input {
+      width: 200px;
+    }
   }
 
   footer {

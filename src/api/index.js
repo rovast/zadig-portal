@@ -575,6 +575,10 @@ export function runCommonPipelineAPI (payload) {
   return http.post(`/api/aslan/workflow/v3/workflowtask`, payload)
 }
 
+export function getParamsInfoAPI (id) {
+  return http.get(`api/aslan/workflow/v3/${id}/args`)
+}
+
 // Test
 
 export function testsAPI (projectName = '', testType = '') {

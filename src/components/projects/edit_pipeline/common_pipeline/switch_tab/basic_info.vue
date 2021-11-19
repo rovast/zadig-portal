@@ -4,12 +4,18 @@
       <el-row :gutter="10">
         <el-col :span="12">
           <el-form-item label="工作流名称" prop="name">
-            <el-input v-model="commonInfoUse.name" placeholder="请输入工作流名称" size="small"></el-input>
+            <el-input v-model="commonInfoUse.name" placeholder="请输入工作流名称" size="small" :disabled="!!$route.query.id"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="选择项目" prop="project_name">
-            <el-select v-model="commonInfoUse.project_name" placeholder="请选择项目" size="small" clearable :disabled="!!$route.query.projectName">
+            <el-select
+              v-model="commonInfoUse.project_name"
+              placeholder="请选择项目"
+              size="small"
+              clearable
+              :disabled="!!$route.query.projectName"
+            >
               <el-option v-for="project in projectList" :key="project.value" :label="project.value" :value="project.value"></el-option>
             </el-select>
           </el-form-item>
@@ -161,8 +167,11 @@ export default {
     BasicDialog
   },
   created () {
-    if (!this.$route.query.projectName) {
+    const projectName = this.$route.query.projectName
+    if (!projectName) {
       this.getProjectlist()
+    } else {
+      this.commonInfoUse.project_name = projectName
     }
   },
   activated () {

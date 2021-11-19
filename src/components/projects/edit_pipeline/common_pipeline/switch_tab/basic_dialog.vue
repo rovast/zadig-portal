@@ -58,7 +58,7 @@
           <el-input v-show="check === 'body'" type="textarea" v-model="paramData.external_setting.body" placeholder="请输入请求头" rows="4"></el-input>
         </el-form-item>
         <el-form-item label="变量名称">
-          <el-row :gutter="10" v-for="(param, index) in paramData.external_setting.params" :key="param.param_key">
+          <el-row :gutter="10" v-for="(param, index) in paramData.external_setting.params" :key="index">
             <el-col :span="7">
               <el-input v-model="param.param_key" placeholder="变量名" size="small"></el-input>
             </el-col>
@@ -71,13 +71,19 @@
             <el-col :span="7">
               <el-radio v-model="display" :label="param.param_key">显示</el-radio>
               <el-button
-                v-if="paramData.external_setting.params.length > 1 && paramData.external_setting.params.length -1 > index"
+                v-if="paramData.external_setting.params.length > 1 "
                 style="font-size: 20px;"
                 type="text"
                 icon="el-icon-remove-outline"
                 @click="deleteParam(index)"
               ></el-button>
-              <el-button v-else style="font-size: 20px;" type="text" icon="el-icon-circle-plus-outline" @click="addParam"></el-button>
+              <el-button
+                v-if="paramData.external_setting.params.length -1 === index"
+                style="font-size: 20px;"
+                type="text"
+                icon="el-icon-circle-plus-outline"
+                @click="addParam"
+              ></el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -168,7 +174,10 @@ export default {
       this.paramData.external_setting.headers.push({ key: '', value: '' })
     },
     getParamData () {
-      if (this.paramData.external_setting && this.paramData.external_setting.params) {
+      if (
+        this.paramData.external_setting &&
+        this.paramData.external_setting.params
+      ) {
         this.paramData.external_setting.params.forEach(param => {
           if (param.param_key === this.display) {
             param.display = true
@@ -200,6 +209,14 @@ export default {
 .basic-dialog {
   /deep/.el-input {
     width: 100%;
+  }
+
+  /deep/.el-button--text {
+    padding: 6px 0;
+  }
+
+  /deep/.el-radio {
+    margin-right: 15px;
   }
 }
 </style>

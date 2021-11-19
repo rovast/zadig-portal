@@ -550,33 +550,49 @@ export function workflowTaskDetailSSEAPI (projectName, workflowName, taskID, wor
   return makeEventSource(`/api/aslan/workflow/sse/workflows/id/${taskID}/pipelines/${workflowName}?projectName=${projectName}&workflowType=${workflowType}`)
 }
 
-// common pipeline
-export function createCommonPipelineAPI (payload) {
-  return http.post(`/api/aslan/workflow/v3`, payload)
+// Common Workflow
+export function createCommonPipelineAPI (projectName = '', payload) {
+  return http.post(`/api/aslan/workflow/v3?projectName = ${projectName}`, payload)
 }
 
-export function deleteCommonPipelineAPI (id) {
-  return http.delete(`/api/aslan/workflow/v3/${id}`)
+export function deleteCommonPipelineAPI (projectName = '', id) {
+  return http.delete(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`)
 }
 
-export function getCommonPipelineAPI (id) {
-  return http.get(`/api/aslan/workflow/v3/${id}`)
+export function getCommonPipelineAPI (projectName = '', id) {
+  return http.get(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`)
 }
 
-export function updateCommonPipelineAPI (id, payload) {
-  return http.put(`/api/aslan/workflow/v3/${id}`, payload)
+export function updateCommonPipelineAPI (projectName = '', id, payload) {
+  return http.put(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`, payload)
 }
 
-export function getCommonPipelineListAPI (project_name = '', page_num = 1, page_size = 999) {
-  return http.get(`/api/aslan/workflow/v3?project_name=${project_name}&page_num=${page_num}&page_size=${page_size}`)
+export function getCommonPipelineListAPI (projectName = '', pageNum = 1, pageSize = 999) {
+  return http.get(`/api/aslan/workflow/v3?project_name=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
 }
 
-export function runCommonPipelineAPI (payload) {
-  return http.post(`/api/aslan/workflow/v3/workflowtask`, payload)
+export function getCommonWorkflowTasksAPI (projectName = '', workflowName, start, max) {
+  return http.get(`/api/aslan/workflow/v3/workflowtask/max/${max}/start/${start}/name/${workflowName}?projectName=${projectName}`)
 }
 
-export function getParamsInfoAPI (id) {
-  return http.get(`api/aslan/workflow/v3/${id}/args`)
+export function getCommonWorkflowTaskDetailAPI (projectName = '', workflowName, taskID) {
+  return http.get(`/api/aslan/workflow/v3/workflowtask/id/${taskID}/name/${workflowName}?projectName=${projectName}`)
+}
+
+export function getCommonWorkflowTaskDetailSSEAPI (projectName = '', workflowName, taskID) {
+  return makeEventSource(`/api/aslan/workflow/sse/workflowtask/v3/id/${taskID}/name/${workflowName}?projectName=${projectName}`)
+}
+
+export function restartCommonWorkflowTaskAPI (projectName = '', workflowName, taskID) {
+  return http.post(`/api/aslan/workflow/v3/workflowtask/id/${taskID}/name/${workflowName}/restart?projectName=${projectName}`)
+}
+
+export function cancelCommonWorkflowTaskAPI (projectName = '', workflowName, taskID) {
+  return http.delete(`/api/aslan/workflow/v3/workflowtask/id/${taskID}/name/${workflowName}/restart?projectName=${projectName}`)
+}
+
+export function getCommonWorkflowHistoryLogAPI (projectName = '', workflowName, taskID) {
+  return http.get(`/api/aslan/logs/log/v3/workflow/${workflowName}/tasks/${taskID}?projectName=${projectName}&type=buildv3`)
 }
 
 // Test

@@ -33,7 +33,7 @@
             <div class="grid-content item-desc">{{ $utils.convertTimestamp(workflow.update_time) }}</div>
           </el-col>
         </el-row> -->
-        <el-row :gutter="0">
+        <!-- <el-row :gutter="0">
           <el-col :span="4">
             <div class="grid-content item-title process">
               <i class="el-icon-finished"></i> 流程
@@ -48,7 +48,7 @@
               </ul>
             </div>
           </el-col>
-        </el-row>
+        </el-row> -->
         <el-row :gutter="0">
           <el-col :span="4">
             <div class="grid-content item-title operation">
@@ -62,7 +62,7 @@
               </el-tooltip>
               <template>
                 <el-tooltip effect="dark" content="编辑工作流" placement="top">
-                  <router-link :to="`/workflows/product/edit/${workflowName}?projectName=${projectName}`" class="not-anchor">
+                  <router-link :to="`/workflows/common/edit/${workflowName}?projectName=${projectName}`" class="not-anchor">
                     <i class="el-icon-edit-outline edit-pipeline"></i>
                   </router-link>
                 </el-tooltip>
@@ -85,6 +85,7 @@
         :projectName="projectName"
         :baseUrl="`/v1/projects/detail/${projectName}/pipelines/common/${workflowName}`"
         :workflowName="workflowName"
+        :workflowID="workflowID"
         @currentChange="changeTaskPage"
       ></task-list>
     </el-card>

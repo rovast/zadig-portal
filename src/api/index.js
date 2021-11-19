@@ -588,7 +588,7 @@ export function restartCommonWorkflowTaskAPI (projectName = '', workflowName, ta
 }
 
 export function cancelCommonWorkflowTaskAPI (projectName = '', workflowName, taskID) {
-  return http.delete(`/api/aslan/workflow/v3/workflowtask/id/${taskID}/name/${workflowName}/restart?projectName=${projectName}`)
+  return http.delete(`/api/aslan/workflow/v3/workflowtask/id/${taskID}/name/${workflowName}?projectName=${projectName}`)
 }
 
 export function getCommonWorkflowHistoryLogAPI (projectName = '', workflowName, taskID) {

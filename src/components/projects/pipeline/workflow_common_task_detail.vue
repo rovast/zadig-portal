@@ -308,6 +308,9 @@ export default {
     workflowName () {
       return this.$route.params.workflow_name
     },
+    workflowID () {
+      return this.$route.query.id
+    },
     serviceName () {
       return this.buildStage && this.buildStage.service_name
     },
@@ -524,7 +527,7 @@ export default {
         },
         {
           title: this.workflowName,
-          url: `/v1/projects/detail/${this.projectName}/pipelines/common/${this.workflowName}`
+          url: `/v1/projects/detail/${this.projectName}/pipelines/common/${this.workflowName}?id=${this.workflowID}`
         },
         { title: `#${this.taskID}`, url: '' }
       ]

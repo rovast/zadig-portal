@@ -181,7 +181,7 @@
         <div class="dashed-container">
           <span class="title">交付物归档</span>
           <el-form-item label="存放路径：">
-            <el-input v-model="buildInfo.job_ctx.artifact_paths" size="mini">
+            <el-input v-model="buildInfo.job_ctx.artifact_path" size="mini">
               <template slot="prepend">$WORKSPACE/</template>
             </el-input>
           </el-form-item>
@@ -200,6 +200,7 @@ import { mapState } from 'vuex'
 import { cloneDeep } from 'lodash'
 
 const buildInfo = {
+  enabled: true,
   type: 'buildv3',
   build_os: 'xenial',
   image_from: 'koderover',
@@ -207,7 +208,7 @@ const buildInfo = {
   res_req: 'low',
   job_ctx: {
     clean_workspace: true,
-    artifact_paths: '',
+    artifact_path: '',
     caches: [],
     build_steps: [
       {

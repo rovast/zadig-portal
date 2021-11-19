@@ -80,7 +80,7 @@
     </el-dialog>
 
     <el-dialog title="运行 通用-工作流" :visible.sync="showStartCommonBuild" :close-on-click-modal="false">
-      <RunCommonWorkflow></RunCommonWorkflow>
+      <RunCommonWorkflow :value="showStartCommonBuild" :workflow="commonToRun"></RunCommonWorkflow>
     </el-dialog>
   </div>
 </template>
@@ -117,7 +117,8 @@ export default {
       showSelectWorkflowType: false,
       selectWorkflowType: 'product',
 
-      showStartCommonBuild: false
+      showStartCommonBuild: false,
+      commonToRun: {}
     }
   },
   provide () {

@@ -32,6 +32,7 @@
 import { getExternalsAPI } from '@api'
 import { mapState } from 'vuex'
 const externalInfo = {
+  enabled: true,
   type: 'trigger',
   url: '',
   path: '',

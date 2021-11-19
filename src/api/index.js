@@ -571,6 +571,10 @@ export function getCommonPipelineListAPI (project_name = '', page_num = 1, page_
   return http.get(`/api/aslan/workflow/v3?project_name=${project_name}&page_num=${page_num}&page_size=${page_size}`)
 }
 
+export function runCommonPipelineAPI (payload) {
+  return http.post(`/api/aslan/workflow/v3/workflowtask`, payload)
+}
+
 // Test
 
 export function testsAPI (projectName = '', testType = '') {

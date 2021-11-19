@@ -95,7 +95,8 @@ import {
   getWorkflowsAPI,
   deleteWorkflowAPI,
   copyWorkflowAPI,
-  getCommonPipelineListAPI
+  getCommonPipelineListAPI,
+  deleteCommonPipelineAPI
 } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
@@ -125,7 +126,8 @@ export default {
       copyWorkflow: this.copyWorkflow,
       deleteWorkflow: this.deleteWorkflow,
       renamePipeline: this.renamePipeline,
-      startCommonBuild: this.startCommonBuild
+      startCommonBuild: this.startCommonBuild,
+      deleteCommon: this.deleteCommon
     }
   },
   computed: {
@@ -292,6 +294,29 @@ export default {
           this.$message.success('删除成功')
         })
       })
+    },
+    deleteCommon (workflow) {
+      this.$prompt('输入工作流名称确认', `删除工作流 ${workflow.name}`, {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        confirmButtonClass: 'el-button--danger',
+        inputValidator: value => {
+          if (value === workflow.name) {
+            return true
+          } else {
+            return '输入名称不相符'
+          }
+        }
+      })
+        .then(({ value }) => {
+          deleteCommonPipelineAPI(workflow.id).then(res => {
+            this.getWorkflows(this.projectName)
+            this.$message.success(`${value}删除成功！`)
+          })
+        })
+        .catch(() => {
+          this.$message.info('取消删除')
+        })
     },
     startProductBuild (workflow) {
       this.workflowToRun = workflow

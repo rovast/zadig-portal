@@ -27,7 +27,11 @@ import ValidateSubmit from '@utils/validate_async'
 
 import { mapGetters, mapState } from 'vuex'
 import { cloneDeep } from 'lodash'
-import { createCommonPipelineAPI } from '@api'
+import {
+  createCommonPipelineAPI,
+  getCommonPipelineAPI,
+  updateCommonPipelineAPI
+} from '@api'
 export default {
   data () {
     return {
@@ -54,6 +58,9 @@ export default {
           break
       }
       return res
+    },
+    pipelineId () {
+      return this.$route.query.id
     }
   },
   methods: {
@@ -90,8 +97,20 @@ export default {
           delete commonInfo.trigger
 
           console.log('保存', commonInfo)
-          createCommonPipelineAPI(commonInfo).then(res => {
-            this.$message.success(`${commonInfo.project_name}创建成功`)
+
+          const fn = this.pipelineId
+            ? updateCommonPipelineAPI(this.pipelineId, commonInfo)
+            : createCommonPipelineAPI(commonInfo)
+
+          fn.then(res => {
+            this.$message.success(
+              `${commonInfo.project_name}${
+                this.pipelineId ? '修改' : '创建'
+              }成功！`
+            )
+            this.$router.push(
+              `/v1/projects/detail/${commonInfo.project_name}/pipelines/common/${commonInfo.name}`
+            )
           })
         }
       })
@@ -100,6 +119,27 @@ export default {
   components: {
     SideMenu,
     TabMenu
+  },
+  created () {
+    if (this.pipelineId) {
+      getCommonPipelineAPI(this.pipelineId).then(res => {
+        let length = res.sub_tasks.length
+        let task = {}
+        while (length--) {
+          task = res.sub_tasks.shift()
+          res[task.type] = task
+          this.$store.commit('UPDATE_TABS', { type: 'add', tabType: task.type })
+        }
+
+        this.$store.commit('UPDATE_TABS', { type: 'add', tab: '基本信息' })
+
+        if (res.buildv3 && res.buildv3.job_ctx) {
+          res.buildv3.job_ctx.clean_workspace = !res.buildv3.job_ctx
+            .clean_workspace
+        }
+        this.$store.commit('UPDATE_COMMON_INFO', res)
+      })
+    }
   },
   destroyed () {
     this.$store.commit('RESET_COMMON_PIPELINE')

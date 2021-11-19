@@ -168,7 +168,7 @@ export default {
       this.paramData.external_setting.headers.push({ key: '', value: '' })
     },
     getParamData () {
-      if (this.paramData.external_setting.params) {
+      if (this.paramData.external_setting && this.paramData.external_setting.params) {
         this.paramData.external_setting.params.forEach(param => {
           if (param.param_key === this.display) {
             param.display = true

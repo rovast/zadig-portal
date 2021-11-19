@@ -11,11 +11,13 @@ const tabInfo = [{
 {
   tab: '构建',
   selected: false,
-  isCurrent: false
+  isCurrent: false,
+  type: 'buildv3'
 }, {
   tab: '扩展',
   selected: false,
-  isCurrent: false
+  isCurrent: false,
+  type: 'trigger'
 }]
 
 const commonInfo = {
@@ -56,7 +58,7 @@ const mutations = {
     } else {
       state.tabs.forEach(tab => {
         tab.isCurrent = false
-        if (tab.tab === payload.tab) {
+        if ((payload.tab && tab.tab === payload.tab) || (payload.tabType && tab.type === payload.tabType)) {
           tab.selected = true
           tab.isCurrent = true
         }

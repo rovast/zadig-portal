@@ -6,7 +6,7 @@
       </div>
       <div class="info">
         <div class="top">
-          <router-link :to="`/v1/projects/detail/${workflow.project_name}/pipelines/common/${workflow.name}`">{{}}</router-link>
+          <router-link :to="`/v1/projects/detail/${workflow.project_name}/pipelines/common/${workflow.name}`">{{workflow.name}}</router-link>
           <el-tag size="mini">通用</el-tag>
         </div>
         <div class="bottom">
@@ -16,7 +16,7 @@
             <!-- <router-link
               class="success-color"
               :to="`/v1/projects/detail/${workflow.project_name}/pipelines/common/${workflow.name}/${testId}?status=`"
-            >{{}}</router-link> -->
+            >{{}}</router-link>-->
           </span>
           <span>
             <i class="fail-color el-icon-error"></i>
@@ -24,7 +24,7 @@
             <!-- <router-link
               class="fail-color"
               :to="`/v1/projects/detail/${workflow.project_name}/pipelines/common/${workflow.name}/${testId}?status=`"
-            >{{}}</router-link> -->
+            >{{}}</router-link>-->
           </span>
         </div>
       </div>
@@ -40,9 +40,17 @@
         <div>-</div>
       </div>
       <div class="operate">
-        <el-button type="success" icon="el-icon-video-play" @click="startCommonBuild">执行</el-button>
-        <i class="icon el-icon-setting" @click="$router.push(`/workflows/common/edit/${workflow.name}?projectName=${workflow.project_name}`)"></i>
-        <i class="icon el-icon-s-operation disabled"></i>
+        <el-button type="success" icon="el-icon-video-play" @click="startCommonBuild(workflow)">执行</el-button>
+        <i
+          class="icon el-icon-setting"
+          @click="$router.push(`/workflows/common/edit/${workflow.name}?projectName=${workflow.project_name}&id=${workflow.id}`)"
+        ></i>
+        <el-dropdown @command="deleteCommonPipeline">
+          <i class="icon el-icon-s-operation"></i>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="delete">删除</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
     </div>
   </div>
@@ -59,8 +67,14 @@ export default {
   props: {
     workflow: Object
   },
-  inject: ['startCommonBuild'],
-  methods: {}
+  inject: ['startCommonBuild', 'deleteCommon'],
+  methods: {
+    deleteCommonPipeline (command) {
+      if (command === 'delete') {
+        this.deleteCommon(this.workflow)
+      }
+    }
+  }
 }
 </script>
 

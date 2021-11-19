@@ -34,8 +34,11 @@
         </span>
         <span class="detail">
           <i class="icon el-icon-video-play" @click="showRunCommonPipeline = true"></i>
-          <i class="icon el-icon-edit-outline"></i>
-          <i class="icon el-icon-delete"></i>
+          <i
+            class="icon el-icon-edit-outline"
+            @click="$router.push(`/workflows/common/edit/${testPipelineName}?projectName=${testProjectName}&id=${testID}`)"
+          ></i>
+          <i class="icon el-icon-delete" @click="deleteCommonPipeline"></i>
         </span>
       </div>
     </section>
@@ -66,14 +69,44 @@
 
 <script>
 import RunCommonWorkflow from './common/run_common_workflow.vue'
+import { deleteCommonPipelineAPI } from '@api'
 import bus from '@utils/event_bus'
+
 export default {
   components: {
     RunCommonWorkflow
   },
   data () {
     return {
-      showRunCommonPipeline: false
+      showRunCommonPipeline: false,
+      testPipelineName: '',
+      testProjectName: '',
+      testID: ''
+    }
+  },
+  methods: {
+    deleteCommonPipeline (workflow) {
+      this.$prompt('输入工作流名称确认', `删除工作流 ${workflow.name}`, {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        confirmButtonClass: 'el-button--danger',
+        inputValidator: value => {
+          if (value === workflow.name) {
+            return true
+          } else {
+            return '输入名称不相符'
+          }
+        }
+      })
+        .then(({ value }) => {
+          deleteCommonPipelineAPI(workflow.id).then(res => {
+            this.getWorkflows(this.projectName)
+            this.$message.success(`${value}删除成功！`)
+          })
+        })
+        .catch(() => {
+          this.$message.info('取消删除')
+        })
     }
   },
   mounted () {

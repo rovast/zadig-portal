@@ -9,7 +9,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="选择项目" prop="project_name">
-            <el-select v-model="commonInfoUse.project_name" placeholder="请选择项目" size="small" clearable>
+            <el-select v-model="commonInfoUse.project_name" placeholder="请选择项目" size="small" clearable :disabled="!!$route.query.projectName">
               <el-option v-for="project in projectList" :key="project.value" :label="project.value" :value="project.value"></el-option>
             </el-select>
           </el-form-item>

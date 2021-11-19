@@ -14,7 +14,7 @@
         <el-table-column prop="pr" label="PR">
           <template slot-scope="{row}">
             <el-select v-model="row.pr" placeholder="请选择分支" size="small">
-              <el-option v-for="pr in row.prs" :key="pr" :label="pr" :value="pr"></el-option>
+              <el-option v-for="pr in row.prs.filter(pr=>pr.targetBranch === row.branch)" :key="pr" :label="pr" :value="pr"></el-option>
             </el-select>
           </template>
         </el-table-column>
@@ -41,6 +41,8 @@
 </template>
 
 <script>
+import { getAllBranchInfoAPI, runCommonPipelineAPI } from '@api'
+
 export default {
   data () {
     return {
@@ -60,7 +62,18 @@ export default {
           defaults: ['1', '2', '3'],
           type: 'string'
         }
-      ]
+      ],
+      branchPrs: []
+    }
+  },
+  methods: {
+    getAllBranchInfo () {
+      const payload = {
+        infos: []
+      }
+      getAllBranchInfoAPI(payload, 'bp').then(res => {
+        this.branchPrs = res
+      })
     }
   }
 }

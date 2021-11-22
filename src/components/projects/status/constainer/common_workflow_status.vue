@@ -61,7 +61,7 @@
               <label>工作流 {{`#${task.task_id}`}}</label>
               <br>
               <router-link
-                           :to="`/v1/projects/detail/${task.product_name}/pipelines/single/${task.pipeline_name}/${task.task_id}?status=${task.status}`">
+                           :to="`/v1/projects/detail/${task.product_name}/pipelines/common/${task.pipeline_name}/${task.task_id}?status=${task.status}`">
                 <span class="workflow-name"><i
                      class="el-icon-link"></i>{{$utils.tailCut(task.pipeline_name,25)}}</span>
               </router-link>

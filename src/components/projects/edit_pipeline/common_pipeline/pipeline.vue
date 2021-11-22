@@ -90,8 +90,13 @@ export default {
               .job_ctx.clean_workspace
           }
 
-          commonInfo.sub_tasks.push(commonInfo.buildv3)
-          commonInfo.sub_tasks.push(commonInfo.trigger)
+          if (commonInfo.buildv3.enabled) {
+            commonInfo.sub_tasks.push(commonInfo.buildv3)
+          }
+
+          if (commonInfo.trigger.enabled) {
+            commonInfo.sub_tasks.push(commonInfo.trigger)
+          }
 
           delete commonInfo.buildv3
           delete commonInfo.trigger

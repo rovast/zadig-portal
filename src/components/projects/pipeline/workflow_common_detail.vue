@@ -62,7 +62,7 @@
               </el-tooltip>
               <template>
                 <el-tooltip effect="dark" content="编辑工作流" placement="top">
-                  <router-link :to="`/workflows/common/edit/${workflowName}?projectName=${projectName}`" class="not-anchor">
+                  <router-link :to="`/workflows/common/edit/${workflowName}?projectName=${projectName}&id=${workflowID}`" class="not-anchor">
                     <i class="el-icon-edit-outline edit-pipeline"></i>
                   </router-link>
                 </el-tooltip>
@@ -90,15 +90,8 @@
       ></task-list>
     </el-card>
 
-    <el-dialog :visible.sync="taskDialogVisible" title="运行 产品-工作流" custom-class="run-workflow" width="60%" class="dialog">
-      <run-workflow
-        v-if="taskDialogVisible"
-        :workflowName="workflowName"
-        :workflowMeta="workflow"
-        :targetProduct="workflow.product_tmpl_name"
-        :forcedUserInput="forcedUserInput"
-        @success="hideAndgetCommonWorkflowTasks"
-      ></run-workflow>
+    <el-dialog :visible.sync="taskDialogVisible" title="运行 通用-工作流" custom-class="run-workflow" width="60%" class="dialog">
+      <RunCommonWorkflow></RunCommonWorkflow>
     </el-dialog>
   </div>
 </template>
@@ -109,7 +102,7 @@ import {
   deleteCommonPipelineAPI,
   getCommonWorkflowTasksAPI
 } from '@api'
-import runWorkflow from './common/run_workflow.vue'
+import RunCommonWorkflow from './common/run_common_workflow.vue'
 import bus from '@utils/event_bus'
 export default {
   data () {
@@ -258,7 +251,7 @@ export default {
     })
   },
   components: {
-    runWorkflow
+    RunCommonWorkflow
   }
 }
 </script>

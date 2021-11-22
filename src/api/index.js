@@ -571,6 +571,14 @@ export function getCommonPipelineListAPI (projectName = '', pageNum = 1, pageSiz
   return http.get(`/api/aslan/workflow/v3?project_name=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
 }
 
+export function getCommonBuildArgsAPI (id) {
+  return http.get(`/api/aslan/workflow/v3/${id}/args`)
+}
+
+export function runCommonPipelineAPI (projectName = '', payload) {
+  return http.post(`/api/aslan/workflow/v3/workflowtask?projectName=${projectName}`, payload)
+}
+
 export function getCommonWorkflowTasksAPI (projectName = '', workflowName, start, max) {
   return http.get(`/api/aslan/workflow/v3/workflowtask/max/${max}/start/${start}/name/${workflowName}?projectName=${projectName}`)
 }

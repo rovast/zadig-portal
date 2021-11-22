@@ -310,7 +310,7 @@ export default {
         }
       })
         .then(({ value }) => {
-          deleteCommonPipelineAPI(workflow.id).then(res => {
+          deleteCommonPipelineAPI(workflow.project_name, workflow.id).then(res => {
             this.getWorkflows(this.projectName)
             this.$message.success(`${value}删除成功！`)
           })

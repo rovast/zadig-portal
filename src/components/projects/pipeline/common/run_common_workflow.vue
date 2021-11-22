@@ -32,8 +32,11 @@
         <el-table-column label="值">
           <template slot-scope="{row}">
             <el-input v-if="row.type === 'string'" v-model="row.value" placeholder="请输入默认值" size="small"></el-input>
-            <el-select v-else v-model="row.value" placeholder="请选择值" size="small">
-              <el-option v-for="val in row.choice_option" :key="val" :label="val" :value="val"></el-option>
+            <el-select v-else-if="row.type === 'choice'" v-model="row.value" placeholder="请选择值" size="small">
+              <el-option v-for="val in row.choice" :key="val" :label="val" :value="val"></el-option>
+            </el-select>
+            <el-select v-else-if="row.type === 'external'" v-model="row.value" placeholder="请选择值" size="small">
+              <el-option v-for="val in row.options" :key="val[row.key]" :label="val[row.key]" :value="val"></el-option>
             </el-select>
           </template>
         </el-table-column>
@@ -50,7 +53,7 @@ import {
   getAllBranchInfoAPI,
   runCommonPipelineAPI,
   getCommonPipelineAPI,
-  getParamsInfoAPI
+  getCommonBuildArgsAPI
 } from '@api'
 import { cloneDeep } from 'lodash'
 
@@ -88,50 +91,64 @@ export default {
       })
     },
     getCommonPipelineInfo () {
-      getCommonPipelineAPI(this.workflow.id).then(res => {
-        console.log(res)
+      getCommonPipelineAPI(this.workflow.project_name, this.workflow.id).then(
+        res => {
+          console.log(res)
 
-        const buildStep = res.sub_tasks.find(task => task.type === 'buildv3')
-        // 没有构建不能运行工作流
-        if (!buildStep) {
-          this.cantRun = true
-          return
-        }
+          const buildStep = res.sub_tasks.find(task => task.type === 'buildv3')
+          // 没有构建不能运行工作流
+          if (!buildStep) {
+            this.cantRun = true
+            return
+          }
 
-        const infos = [] // 用来请求branch pr信息
-        const builds = [] // post 信息，页面使用信息
+          const infos = [] // 用来请求branch pr信息
+          const builds = [] // post 信息，页面使用信息
 
-        if (buildStep.job_ctx.builds && buildStep.job_ctx.builds.length) {
-          buildStep.job_ctx.builds.forEach(build => {
-            infos.push({
-              codehost_id: build.codehost_id,
-              default_branch: build.branch,
-              repo: build.repo_name,
-              repo_owner: build.repo_owner
+          if (buildStep.job_ctx.builds && buildStep.job_ctx.builds.length) {
+            buildStep.job_ctx.builds.forEach(build => {
+              infos.push({
+                codehost_id: build.codehost_id,
+                default_branch: build.branch,
+                repo: build.repo_name,
+                repo_owner: build.repo_owner
+              })
+
+              builds.push({
+                key: `${build.codehost_id}/${build.repo_owner}/${build.repo_name}`, // useless
+                repo_name: build.repo_name,
+                repo_owner: build.repo_owner,
+                pr: '',
+                branch: build.branch,
+                branches: [], // useless
+                prs: [] // useless
+              })
             })
+          }
 
-            builds.push({
-              key: `${build.codehost_id}/${build.repo_owner}/${build.repo_name}`, // useless
-              repo_name: build.repo_name,
-              repo_owner: build.repo_owner,
-              pr: '',
-              branch: build.branch,
-              branches: [], // useless
-              prs: [] // useless
-            })
-          })
+          this.runCommonInfo = {
+            ...this.runCommonInfo,
+            id: res.id,
+            name: res.name,
+            project_name: res.project_name,
+            builds
+          }
+
+          if (infos.length) {
+            this.getAllBranchInfo({ infos })
+          }
         }
+      )
 
+      getCommonBuildArgsAPI(this.workflow.id).then(res => {
+        res.forEach(re => {
+          if (re.type === 'external') {
+            re.value = {}
+          }
+        })
         this.runCommonInfo = {
-          id: res.id,
-          name: res.name,
-          project_name: res.project_name,
-          builds,
-          build_args: res.parameters
-        }
-
-        if (infos.length) {
-          this.getAllBranchInfo({ infos })
+          ...this.runCommonInfo,
+          build_args: res
         }
       })
     },
@@ -144,12 +161,39 @@ export default {
         delete build.prs
       })
 
+      const extarnalArgs = []
+      payload.build_args.forEach(arg => {
+        arg.is_credential = false
+        // external 选择的是一个对象，数据key1:value1->key:key1,value:value1
+        if (arg.type === 'external') {
+          const value = cloneDeep(arg.value)
+          for (const key in value) {
+            if (key === arg.key) {
+              arg.value = value[key]
+            } else {
+              extarnalArgs.push({
+                is_credential: false,
+                key,
+                value: value[key]
+              })
+            }
+          }
+        }
+
+        delete arg.choice
+        delete arg.options
+      })
+
+      payload.build_args = payload.build_args.concat(extarnalArgs)
+
       console.log('payload:', payload)
       // this.loading = true
-      // runCommonPipelineAPI(payload).then(res => {
+      // const projectName = payload.project_name
+      // runCommonPipelineAPI(projectName, payload).then(res => {
       //   this.loading = false
       //   this.$message.success('创建成功')
-      // this.$router.push(``)
+      // testId  是返回的
+      // this.$router.push(`/v1/projects/detail/${projectName}/pipelines/common/${workflowName}/${testID}?status=running&id=${id}`)
       // }).catch(err=>{
       //   this.loading = false
       // })

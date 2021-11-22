@@ -33,7 +33,7 @@
             <div class="grid-content item-desc">{{ $utils.convertTimestamp(workflow.update_time) }}</div>
           </el-col>
         </el-row> -->
-        <!-- <el-row :gutter="0">
+        <el-row :gutter="0">
           <el-col :span="4">
             <div class="grid-content item-title process">
               <i class="el-icon-finished"></i> 流程
@@ -42,13 +42,16 @@
           <el-col :span="20">
             <div class="grid-content process">
               <ul>
-                <span v-if="!$utils.isEmpty(workflow.build_stage)">
+                <span v-if="checkStage('buildv3')">
                   <el-tag size="small">构建</el-tag>
+                </span>
+                <span v-if="checkStage('trigger')">
+                  <el-tag size="small">扩展</el-tag>
                 </span>
               </ul>
             </div>
           </el-col>
-        </el-row> -->
+        </el-row>
         <el-row :gutter="0">
           <el-col :span="4">
             <div class="grid-content item-title operation">
@@ -169,7 +172,6 @@ export default {
       this.taskDialogVisible = false
       this.getCommonWorkflowTasks(0, this.pageSize)
     },
-
     startTask () {
       this.taskDialogVisible = true
       this.forcedUserInput = {}
@@ -205,6 +207,16 @@ export default {
     rerun (task) {
       this.taskDialogVisible = true
       this.forcedUserInput = task.workflow_args
+    },
+    checkStage (stage) {
+      const result = this.workflow.sub_tasks.find(item => {
+        return item.type === stage
+      })
+      if (stage && result) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   beforeDestroy () {

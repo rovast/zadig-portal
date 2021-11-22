@@ -39,7 +39,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentTab']),
+    ...mapGetters(['currentTab', 'selectedTabs']),
     ...mapState({
       commonInfo: state => state.common_pipeline.commonInfo
     }),
@@ -90,13 +90,19 @@ export default {
               .job_ctx.clean_workspace
           }
 
-          if (commonInfo.buildv3.enabled) {
-            commonInfo.sub_tasks.push(commonInfo.buildv3)
-          }
+          // if (commonInfo.buildv3.enabled) {
+          //   commonInfo.sub_tasks.push(commonInfo.buildv3)
+          // }
 
-          if (commonInfo.trigger.enabled) {
-            commonInfo.sub_tasks.push(commonInfo.trigger)
-          }
+          // if (commonInfo.trigger.enabled) {
+          //   commonInfo.sub_tasks.push(commonInfo.trigger)
+          // }
+
+          this.selectedTabs.forEach(tab => {
+            if (tab.type) {
+              commonInfo.sub_tasks.push(commonInfo[tab.type])
+            }
+          })
 
           delete commonInfo.buildv3
           delete commonInfo.trigger

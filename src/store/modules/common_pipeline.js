@@ -52,7 +52,7 @@ const actions = {
 const mutations = {
   [types.UPDATE_TABS] (state, payload) {
     if (payload.type === 'delete') {
-      const tab = state.tabs.filter(tab => tab.tab === payload.tab)[0]
+      const tab = state.tabs.find(tab => tab.tab === payload.tab)
       tab.selected = false
       if (tab.isCurrent) state.tabs[0].isCurrent = true
     } else {

@@ -30,7 +30,7 @@
               <div class="bottom">
                 <a v-if="showConnectors" href="/api/v1/login">第三方登录</a>
                 <a @click="showForgotPassword = true">找回密码</a>
-                <a @click="showSignUp = true">注册</a>
+                <a v-if="showRegistration" @click="showSignUp = true">注册</a>
               </div>
             </div>
           </div>
@@ -72,7 +72,7 @@ import { isMobile } from 'mobile-device-detect'
 import ForgetPassword from './components/forgetPassword.vue'
 import SignUp from './components/signUp.vue'
 import store from 'storejs'
-import { checkConnectorsAPI } from '@api'
+import { checkConnectorsAPI, checkRegistrationAPI } from '@api'
 
 export default {
   components: {
@@ -83,6 +83,7 @@ export default {
     return {
       showForgotPassword: false,
       showSignUp: false,
+      showRegistration: false,
       showConnectors: false,
       retrieveToken: '',
       loading: false,
@@ -165,6 +166,12 @@ export default {
       this.showConnectors = true
     } else {
       this.showConnectors = false
+    }
+    const registrationCheck = await checkRegistrationAPI()
+    if (registrationCheck && registrationCheck.enabled) {
+      this.showRegistration = true
+    } else {
+      this.showRegistration = false
     }
     if (token) {
       const res = await this.$store

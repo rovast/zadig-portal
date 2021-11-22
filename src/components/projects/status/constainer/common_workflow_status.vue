@@ -238,36 +238,36 @@ export default {
         }
       }
 
+      .operation-view {
+        display: flex;
+        align-content: center;
+        align-items: center;
+        justify-content: flex-end;
+
+        span {
+          margin-right: 25px;
+          font-size: 20px;
+        }
+
+        .icon {
+          cursor: pointer;
+
+          &.delete {
+            color: #ff1949;
+          }
+
+          &.view-detail {
+            color: #1989fa;
+          }
+        }
+      }
+
       .info-view {
         display: flex;
         flex: 1 1 auto;
         width: calc(100% - 600px);
         padding-right: 18px;
         padding-left: 20px;
-
-        .operation-view {
-          display: flex;
-          align-content: center;
-          align-items: center;
-          justify-content: flex-end;
-
-          span {
-            margin-right: 25px;
-            font-size: 20px;
-          }
-
-          .icon {
-            cursor: pointer;
-
-            &.delete {
-              color: #ff1949;
-            }
-
-            &.view-detail {
-              color: #1989fa;
-            }
-          }
-        }
 
         .spec {
           display: flex;

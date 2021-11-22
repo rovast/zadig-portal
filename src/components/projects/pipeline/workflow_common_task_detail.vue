@@ -385,7 +385,7 @@ export default {
     taskOperation (operation, taskID, workflowName) {
       const projectName = this.projectName
       if (operation === 'restart') {
-        const taskUrl = `/v1/projects/detail/${this.projectName}/pipelines/common/${this.workflowName}/${this.taskID}`
+        const taskUrl = `/v1/projects/detail/${this.projectName}/pipelines/common/${this.workflowName}/${this.taskID}?id=${this.workflowID}`
         restartCommonWorkflowTaskAPI(projectName, workflowName, taskID).then(res => {
           this.$message({
             message: '任务已重新启动',

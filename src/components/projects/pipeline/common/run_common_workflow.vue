@@ -36,7 +36,7 @@
               <el-option v-for="val in row.choice" :key="val" :label="val" :value="val"></el-option>
             </el-select>
             <el-select v-else-if="row.type === 'external'" v-model="row.value" placeholder="请选择值" size="small" :value-key="row.key">
-              <el-option v-for="val in row.options" :key="val[row.key]" :label="val[row.key]" :value="val"></el-option>
+              <el-option v-for="val in row.options" :key="val[row.key]" :label="stringFromData(val[row.key])" :value="val"></el-option>
             </el-select>
           </template>
         </el-table-column>
@@ -163,6 +163,7 @@ export default {
       })
 
       const extarnalArgs = []
+
       payload.build_args.forEach(arg => {
         arg.is_credential = false
         // external 选择的是一个对象，数据key1:value1->key:key1,value:value1
@@ -170,12 +171,12 @@ export default {
           const value = cloneDeep(arg.value)
           for (const key in value) {
             if (key === arg.key) {
-              arg.value = value[key]
+              arg.value = this.stringFromData(value[key])
             } else {
               extarnalArgs.push({
                 is_credential: false,
                 key,
-                value: String(value[key])
+                value: this.stringFromData(value[key])
               })
             }
           }
@@ -201,6 +202,9 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+    stringFromData (value) {
+      return typeof value === 'string' ? value : JSON.stringify(value)
     }
   },
   watch: {

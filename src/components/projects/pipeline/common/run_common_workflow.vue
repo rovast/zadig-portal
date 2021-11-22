@@ -175,7 +175,7 @@ export default {
               extarnalArgs.push({
                 is_credential: false,
                 key,
-                value: value[key]
+                value: String(value[key])
               })
             }
           }

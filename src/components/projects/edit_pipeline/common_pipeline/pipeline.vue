@@ -111,12 +111,13 @@ export default {
 
           fn.then(res => {
             this.$message.success(
-              `${commonInfo.project_name}${
-                this.pipelineId ? '修改' : '创建'
-              }成功！`
+              `${commonInfo.name} ${this.pipelineId ? '修改' : '创建'}成功！`
             )
             this.$router.push(
-              `/v1/projects/detail/${commonInfo.project_name}/pipelines/common/${commonInfo.name}?id=${this.pipelineId || res.id}`
+              `/v1/projects/detail/${
+                commonInfo.project_name
+              }/pipelines/common/${commonInfo.name}?id=${this.pipelineId ||
+                res.id}`
             )
           })
         }

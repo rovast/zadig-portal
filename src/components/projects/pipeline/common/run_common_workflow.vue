@@ -35,7 +35,7 @@
             <el-select v-else-if="row.type === 'choice'" v-model="row.value" placeholder="请选择值" size="small">
               <el-option v-for="val in row.choice" :key="val" :label="val" :value="val"></el-option>
             </el-select>
-            <el-select v-else-if="row.type === 'external'" v-model="row.value" placeholder="请选择值" size="small">
+            <el-select v-else-if="row.type === 'external'" v-model="row.value" placeholder="请选择值" size="small" :value-key="row.key">
               <el-option v-for="val in row.options" :key="val[row.key]" :label="val[row.key]" :value="val"></el-option>
             </el-select>
           </template>

@@ -30,6 +30,7 @@
               <el-radio-button label="header">Headers</el-radio-button>
               <el-radio-button label="body">Body</el-radio-button>
             </el-radio-group>
+            <el-button v-show="check === 'header'" type="text" @click="addHeader">添加</el-button>
           </div>
           <el-table v-show="check === 'header'" :data="paramData.external_setting.headers" style="width: 100%;">
             <el-table-column label="Header Name">
@@ -44,13 +45,7 @@
             </el-table-column>
             <el-table-column prop="value" label="操作" width="100px">
               <template slot-scope="{$index}">
-                <el-button
-                  v-show="paramData.external_setting.headers.length > 1"
-                  style="font-size: 20px;"
-                  type="text"
-                  icon="el-icon-remove-outline"
-                  @click="deleteHeader($index)"
-                ></el-button>
+                <el-button style="font-size: 20px;" type="text" icon="el-icon-remove-outline" @click="deleteHeader($index)"></el-button>
                 <el-button style="font-size: 20px;" type="text" icon="el-icon-circle-plus-outline" @click="addHeader"></el-button>
               </template>
             </el-table-column>
@@ -188,6 +183,10 @@ export default {
         if (!hasUsed) {
           this.paramData.external_setting.params[0].display = true
         }
+
+        this.paramData.external_setting.headers = this.paramData.external_setting.headers.filter(
+          header => header.key
+        )
       }
       return cloneDeep(this.paramData)
     },

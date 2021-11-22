@@ -8,7 +8,7 @@
                        width="80"
                        sortable>
         <template slot-scope="scope">
-          <router-link :to="`${baseUrl}/${scope.row.task_id}?status=${scope.row.status}`"
+          <router-link :to="`${baseUrl}/${scope.row.task_id}?status=${scope.row.status}&id=${workflowID}`"
                        class="task-id">
             {{ '#' +scope.row.task_id }}</router-link>
         </template>
@@ -221,6 +221,11 @@ export default {
       type: Boolean
     },
     workflowName: {
+      required: false,
+      default: '',
+      type: String
+    },
+    workflowID: {
       required: false,
       default: '',
       type: String

@@ -178,11 +178,16 @@ export default {
         this.paramData.external_setting &&
         this.paramData.external_setting.params
       ) {
+        let hasUsed = false
         this.paramData.external_setting.params.forEach(param => {
           if (param.param_key === this.display) {
             param.display = true
+            hasUsed = true
           }
         })
+        if (!hasUsed) {
+          this.paramData.external_setting.params[0].display = true
+        }
       }
       return cloneDeep(this.paramData)
     },

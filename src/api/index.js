@@ -1375,9 +1375,8 @@ export function getValuesYamlFromGitAPI ({ codehostID, owner, repo, branch, valu
 }
 
 // Exteranl
-
-export function queryWorkloads (clusterId, namespace, page) {
-  return http.get(`/api/aslan/environment/kube/workloads?namespace=${namespace}&clusterId=${clusterId}&perPage=1200&page=${page}`)
+export function queryWorkloads (projectName, clusterId, namespace, page) {
+  return http.get(`/api/aslan/environment/kube/workloads?projectName=${projectName}&namespace=${namespace}&clusterId=${clusterId}&perPage=1200&page=${page}`)
 }
 
 export function queryServiceWorkloads (projectName, envName) {

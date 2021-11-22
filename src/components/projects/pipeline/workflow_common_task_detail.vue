@@ -440,7 +440,7 @@ export default {
       el.overflow = 'auto'
     },
     openBuildLog (buildType) {
-      const url = `/api/aslan/logs/sse/build/${this.workflowName}/${this.taskID}/999999?subTask=${buildType}`
+      const url = `/api/aslan/logs/sse/v3/workflow/build/${this.workflowName}/${this.taskID}/999999?subTask=${buildType}`
       if (typeof window.msgServer === 'undefined') {
         this[`${buildType}IntervalHandle`] = setInterval(() => {
           if (this.hasNewMsg) {

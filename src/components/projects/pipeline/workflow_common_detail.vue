@@ -211,11 +211,15 @@ export default {
       this.forcedUserInput = task.workflow_args
     },
     checkStage (stage) {
-      const result = this.workflow.sub_tasks.find(item => {
-        return item.type === stage
-      })
-      if (stage && result) {
-        return true
+      if (stage && this.workflow.sub_tasks) {
+        const result = this.workflow.sub_tasks.find(item => {
+          return item.type === stage
+        })
+        if (result) {
+          return true
+        } else {
+          return false
+        }
       } else {
         return false
       }

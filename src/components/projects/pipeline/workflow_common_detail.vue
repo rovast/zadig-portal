@@ -91,7 +91,7 @@
     </el-card>
 
     <el-dialog :visible.sync="taskDialogVisible" title="运行 通用-工作流" custom-class="run-workflow" width="60%" class="dialog">
-      <RunCommonWorkflow></RunCommonWorkflow>
+      <RunCommonWorkflow :value="taskDialogVisible" :workflow="commonToRun"></RunCommonWorkflow>
     </el-dialog>
   </div>
 </template>
@@ -115,7 +115,8 @@ export default {
       durationSet: {},
       pageStart: 0,
       timerId: null,
-      timeTimeoutFinishFlag: false
+      timeTimeoutFinishFlag: false,
+      commonToRun: {}
     }
   },
   computed: {
@@ -172,6 +173,10 @@ export default {
     startTask () {
       this.taskDialogVisible = true
       this.forcedUserInput = {}
+      this.commonToRun = {
+        project_name: this.projectName,
+        id: this.workflowID
+      }
     },
     removeWorkflow () {
       const workflowName = this.workflowName

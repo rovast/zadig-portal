@@ -67,6 +67,19 @@ const externalInfo = {
   server: '',
   api_token: ''
 }
+
+const validateURL = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('请输入系统访问地址'))
+  } else {
+    if (value.endsWith('/')) {
+      callback(new Error('URL 末尾不能包含 /'))
+    } else {
+      callback()
+    }
+  }
+}
+
 export default {
   data () {
     this.externalRules = {
@@ -75,11 +88,18 @@ export default {
         message: '请输入系统名称',
         trigger: ['blur', 'change']
       },
-      server: {
-        required: true,
-        message: '请输入系统访问地址',
-        trigger: ['blur', 'change']
-      }
+      server: [
+        {
+          type: 'url',
+          message: '请输入正确的 URL，包含协议',
+          trigger: ['blur', 'change']
+        },
+        {
+          required: true,
+          trigger: ['blur', 'change'],
+          validator: validateURL
+        }
+      ]
     }
 
     return {

@@ -116,7 +116,7 @@ export default {
               }成功！`
             )
             this.$router.push(
-              `/v1/projects/detail/${commonInfo.project_name}/pipelines/common/${commonInfo.name}`
+              `/v1/projects/detail/${commonInfo.project_name}/pipelines/common/${commonInfo.name}?id=${this.pipelineId || res.id}`
             )
           })
         }

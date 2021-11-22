@@ -156,6 +156,7 @@ export default {
       const payload = cloneDeep(this.runCommonInfo)
 
       payload.builds.forEach(build => {
+        build.pr = build.pr || 0
         delete build.key
         delete build.branches
         delete build.prs
@@ -179,7 +180,7 @@ export default {
             }
           }
         }
-
+        delete arg.type
         delete arg.choice
         delete arg.options
       })
@@ -187,16 +188,19 @@ export default {
       payload.build_args = payload.build_args.concat(extarnalArgs)
 
       console.log('payload:', payload)
-      // this.loading = true
-      // const projectName = payload.project_name
-      // runCommonPipelineAPI(projectName, payload).then(res => {
-      //   this.loading = false
-      //   this.$message.success('创建成功')
-      // testId  是返回的
-      // this.$router.push(`/v1/projects/detail/${projectName}/pipelines/common/${workflowName}/${testID}?status=running&id=${id}`)
-      // }).catch(err=>{
-      //   this.loading = false
-      // })
+      this.loading = true
+      const projectName = payload.project_name
+      runCommonPipelineAPI(projectName, payload)
+        .then(res => {
+          this.loading = false
+          this.$message.success('创建成功')
+          this.$router.push(
+            `/v1/projects/detail/${projectName}/pipelines/common/${res.name}/${res.task_id}?status=running&id=${this.workflow.id}`
+          )
+        })
+        .catch(() => {
+          this.loading = false
+        })
     }
   },
   watch: {

@@ -169,6 +169,7 @@ export default {
         // external 选择的是一个对象，数据key1:value1->key:key1,value:value1
         if (arg.type === 'external') {
           const value = cloneDeep(arg.value)
+          arg.value = this.stringFromData(arg.value)
           for (const key in value) {
             if (key === arg.key) {
               arg.value = this.stringFromData(value[key])

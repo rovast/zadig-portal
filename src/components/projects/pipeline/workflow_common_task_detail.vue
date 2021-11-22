@@ -60,14 +60,14 @@
                 <el-col :span="10">
                   <div class="item-desc">
                     <el-tooltip
-                      v-if="taskDetail.status!=='running' && taskDetail.status!=='passed'"
+                      v-if="(taskDetail.status!=='running' && taskDetail.status !=='created') && taskDetail.status!=='passed'"
                       effect="dark"
                       content="失败重试"
                       placement="top"
                     >
                       <span @click="taskOperation('restart',taskDetail.task_id,taskDetail.pipeline_name)" class="start-build">失败重试</span>
                     </el-tooltip>
-                    <el-tooltip v-if="taskDetail.status==='running'" effect="dark" content="取消任务" placement="top">
+                    <el-tooltip v-if="taskDetail.status==='running' || taskDetail.status ==='created'" effect="dark" content="取消任务" placement="top">
                       <span @click="taskOperation('cancel',taskDetail.task_id,taskDetail.pipeline_name)" class="start-build">取消任务</span>
                     </el-tooltip>
                   </div>
@@ -214,14 +214,14 @@
 
     <!-- end of buildv3 -->
     <el-card
-      v-if="!$utils.isEmpty(deployStage) && deployStage.enabled"
+      v-if="!$utils.isEmpty(extensionStage)"
       class="box-card task-process"
       :body-style="{ padding: '0px', margin: '15px 0 0 0' }"
     >
-      <el-alert v-if="deployStage.error" title="错误信息" :description="deployStage.error" type="error" close-text="知道了"></el-alert>
+      <el-alert v-if="extensionStage.error" title="错误信息" :description="extensionStage.error" type="error" close-text="知道了"></el-alert>
       <div slot="header" class="clearfix">
         <span>扩展</span>
-        <div v-if="deployStage.status==='running'" class="loader">
+        <div v-if="extensionStage.status==='running'" class="loader">
           <div class="ball-scale-multiple">
             <div></div>
             <div></div>
@@ -239,18 +239,18 @@
           <el-col :span="6">
             <div
               class="item-desc"
-              :class="colorTranslation(deployStage.status,'pipeline','task')"
-            >{{deployStage.status?myTranslate(deployStage.status):"未运行"}}</div>
+              :class="colorTranslation(extensionStage.status,'pipeline','task')"
+            >{{extensionStage.status?myTranslate(extensionStage.status):"未运行"}}</div>
           </el-col>
-          <el-col v-if="deployStage.status!=='running'" :span="6">
+          <el-col v-if="extensionStage.status!=='running'" :span="6">
             <div class="item-title">
               <i class="iconfont iconshijian"></i> 持续时间
             </div>
           </el-col>
-          <el-col v-if="deployStage.status!=='running'" :span="6">
+          <el-col v-if="extensionStage.status!=='running'" :span="6">
             <span class="item-desc">
-              {{$utils.timeFormat(deployStage.end_time -
-              deployStage.start_time)}}
+              {{$utils.timeFormat(extensionStage.sub_tasks.end_time -
+              extensionStage.sub_tasks.start_time)}}
             </span>
           </el-col>
         </el-row>
@@ -261,7 +261,7 @@
             </div>
           </el-col>
           <el-col :span="6">
-            <div class="item-desc">{{}}</div>
+            <div class="item-desc">N/A</div>
           </el-col>
           <el-col :span="6">
             <div class="item-title">
@@ -269,7 +269,7 @@
             </div>
           </el-col>
           <el-col :span="6">
-            <div class="item-desc">{{  }}</div>
+            <div class="item-desc">N/A</div>
           </el-col>
         </el-row>
       </div>
@@ -292,7 +292,7 @@ export default {
     return {
       taskDetail: {},
       buildStage: {},
-      deployStage: {},
+      extensionStage: {},
       switchScroll: true,
       scrollTop: 0,
       buildv3AnyLog: [],
@@ -341,8 +341,12 @@ export default {
       return getCommonWorkflowTaskDetailSSEAPI(projectName, workflowName, id)
         .then(res => {
           this.taskDetail = res.data
-          this.buildStage = res.stages.find(stage => stage.name === 'buildv3')
-          this.buildStage.sub_tasks = this.buildStage.sub_tasks[`${workflowName}-job`]
+          if (this.taskDetail.stages) {
+            this.buildStage = this.taskDetail.stages.find(stage => stage.type === 'buildv3')
+            this.buildStage.sub_tasks = this.buildStage.sub_tasks[`${workflowName}-job`]
+            this.extensionStage = this.taskDetail.stages.find(stage => stage.type === 'trigger')
+            this.extensionStage.sub_tasks = this.extensionStage.sub_tasks[`${workflowName}-job`]
+          }
         })
         .closeWhenDestroy(this)
     },
@@ -350,8 +354,12 @@ export default {
       const projectName = this.projectName
       getCommonWorkflowTaskDetailAPI(projectName, workflowName, id).then(res => {
         this.taskDetail = res
-        this.buildStage = res.stages.find(stage => stage.type === 'buildv3')
-        this.buildStage.sub_tasks = this.buildStage.sub_tasks[`${workflowName}-job`]
+        if (this.taskDetail.stages) {
+          this.buildStage = this.taskDetail.stages.find(stage => stage.type === 'buildv3')
+          this.buildStage.sub_tasks = this.buildStage.sub_tasks[`${workflowName}-job`]
+          this.extensionStage = this.taskDetail.stages.find(stage => stage.type === 'trigger')
+          this.extensionStage.sub_tasks = this.extensionStage.sub_tasks[`${workflowName}-job`]
+        }
       })
     },
     showOperation () {
@@ -377,7 +385,7 @@ export default {
     taskOperation (operation, taskID, workflowName) {
       const projectName = this.projectName
       if (operation === 'restart') {
-        const taskUrl = `/v1/projects/detail/${this.projectName}/pipelines/common/${this.workflowName}/${this.taskID}`
+        const taskUrl = `/v1/projects/detail/${this.projectName}/pipelines/common/${this.workflowName}/${this.taskID}?id=${this.workflowID}`
         restartCommonWorkflowTaskAPI(projectName, workflowName, taskID).then(res => {
           this.$message({
             message: '任务已重新启动',

@@ -76,14 +76,14 @@
                       auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item :label="codeEdit.type==='gitlab'?'Application ID':'Client ID'"
-                        prop="applicationId">
-            <el-input v-model="codeEdit.applicationId"
+                        prop="application_id">
+            <el-input v-model="codeEdit.application_id"
                       :placeholder="codeEdit.type==='gitlab'?'Application ID':'Client ID'"
                       auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item :label="codeEdit.type==='gitlab'?'Secret':'Client Secret'"
-                        prop="clientSecret">
-            <el-input v-model="codeEdit.clientSecret"
+                        prop="client_secret">
+            <el-input v-model="codeEdit.client_secret"
                       :placeholder="codeEdit.type==='gitlab'?'Secret':'Client Secret'"
                       auto-complete="off"></el-input>
           </el-form-item>
@@ -130,15 +130,15 @@
           </el-form-item>
           <el-form-item :rules="{required: true,message: '请填写 Access Key',trigger: ['blur']}"
                         label="Access Key"
-                        prop="applicationId">
-            <el-input v-model="codeEdit.applicationId"
+                        prop="application_id">
+            <el-input v-model="codeEdit.application_id"
                       placeholder="Access Key"
                       auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item :rules="{required: true,message: '请填写 Secret Key',trigger: ['blur']}"
                         label="Secret Key"
-                        prop="clientSecret">
-            <el-input v-model="codeEdit.clientSecret"
+                        prop="client_secret">
+            <el-input v-model="codeEdit.client_secret"
                       placeholder="Secret Key"
                       auto-complete="off"></el-input>
           </el-form-item>
@@ -252,14 +252,14 @@
                       auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item :label="codeAdd.type==='gitlab'?'Application ID':'Client ID'"
-                        prop="applicationId">
-            <el-input v-model="codeAdd.applicationId"
+                        prop="application_id">
+            <el-input v-model="codeAdd.application_id"
                       :placeholder="codeAdd.type==='gitlab'?'Application ID':'Client ID'"
                       auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item :label="codeAdd.type==='gitlab'?'Secret':'Client Secret'"
-                        prop="clientSecret">
-            <el-input v-model="codeAdd.clientSecret"
+                        prop="client_secret">
+            <el-input v-model="codeAdd.client_secret"
                       :placeholder="codeAdd.type==='gitlab'?'Secret':'Client Secret'"
                       auto-complete="off"></el-input>
           </el-form-item>
@@ -306,15 +306,15 @@
           </el-form-item>
           <el-form-item :rules="{required: true,message: '请填写 Access Key',trigger: ['blur']}"
                         label="Access Key"
-                        prop="applicationId">
-            <el-input v-model="codeAdd.applicationId"
+                        prop="application_id">
+            <el-input v-model="codeAdd.application_id"
                       placeholder="Access Key"
                       auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item :rules="{required: true,message: '请填写 Secret Key',trigger: ['blur']}"
                         label="Secret Key"
-                        prop="clientSecret">
-            <el-input v-model="codeAdd.clientSecret"
+                        prop="client_secret">
+            <el-input v-model="codeAdd.client_secret"
                       placeholder="Secret Key"
                       auto-complete="off"></el-input>
           </el-form-item>
@@ -393,7 +393,7 @@
           <el-table-column label="授权信息">
             <template slot-scope="scope">
               <span
-                    :class="scope.row.ready?'text-success':'text-failed'">{{scope.row.ready === '2'?'授权成功':'授权失败'}}</span>
+                    :class="scope.row.is_ready?'text-success':'text-failed'">{{scope.row.is_ready === '2'?'授权成功':'授权失败'}}</span>
             </template>
           </el-table-column>
           <el-table-column label="最后更新">
@@ -456,9 +456,9 @@ export default {
         region: '',
         type: '',
         address: '',
-        accessToken: '',
-        applicationId: '',
-        clientSecret: ''
+        access_token: '',
+        application_id: '',
+        client_secret: ''
       },
       codeAdd: {
         name: '',
@@ -466,9 +466,9 @@ export default {
         region: '',
         type: 'gitlab',
         address: '',
-        accessToken: '',
-        applicationId: '',
-        clientSecret: ''
+        access_token: '',
+        application_id: '',
+        client_secret: ''
       },
       codeRules: {
         type: {
@@ -490,17 +490,17 @@ export default {
           message: '请填写区域',
           trigger: ['blur']
         },
-        accessToken: {
+        access_token: {
           required: true,
           message: '请填写 Access Token',
           trigger: ['blur']
         },
-        applicationId: {
+        application_id: {
           required: true,
           message: '请填写 Id',
           trigger: ['blur']
         },
-        clientSecret: {
+        client_secret: {
           required: true,
           message: '请填写 Secret',
           trigger: ['blur']

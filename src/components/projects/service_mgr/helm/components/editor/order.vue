@@ -35,10 +35,14 @@ export default {
   },
   methods: {
     handleDrop (draggingNode, dropNode, dropType, ev) {
-      const services = Object.values(this.nodeData)
-        .filter(node => {
-          return node.children.length
+      // 拖拽到尾节点，则新增一条记录
+      if (dropNode.data.label === this.nodeData[this.nodeData.length - 1].label) {
+        this.nodeData.push({
+          label: `启动顺序 ${this.nodeData.length}`,
+          children: []
         })
+      }
+      const services = Object.values(this.nodeData)
         .map(node => {
           return node.children.map(child => child.label)
         })
@@ -56,9 +60,15 @@ export default {
     },
     generateNodeData () {
       const nodeData = []
+      if (this.isCreate) {
+        nodeData.push({
+          label: `启动顺序 0`,
+          children: []
+        })
+      }
       this.services.forEach((service, index) => {
         nodeData.push({
-          label: `启动顺序 ${index}`,
+          label: `启动顺序 ${nodeData.length}`,
           children: service.map(se => {
             return {
               label: se
@@ -71,6 +81,12 @@ export default {
         children: []
       })
       this.nodeData = nodeData
+    }
+  },
+  props: {
+    isCreate: {
+      default: false,
+      type: Boolean
     }
   },
   watch: {

@@ -178,6 +178,8 @@ export default {
           if (param.param_key === this.display) {
             param.display = true
             hasUsed = true
+          } else {
+            param.display = false
           }
         })
         if (!hasUsed) {

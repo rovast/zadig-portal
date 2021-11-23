@@ -218,7 +218,7 @@
       class="box-card task-process"
       :body-style="{ padding: '0px', margin: '15px 0 0 0' }"
     >
-      <el-alert v-if="extensionStage.error" title="错误信息" :description="extensionStage.error" type="error" close-text="知道了"></el-alert>
+      <el-alert v-if="extensionStage.sub_tasks && extensionStage.sub_tasks.error" title="错误信息" :description="extensionStage.sub_tasks.error" type="error" close-text="知道了"></el-alert>
       <div slot="header" class="clearfix">
         <span>扩展</span>
         <div v-if="extensionStage.status==='running'" class="loader">
@@ -254,7 +254,7 @@
             </span>
           </el-col>
         </el-row>
-        <el-row :gutter="0">
+        <!-- <el-row :gutter="0">
           <el-col :span="6">
             <div class="item-title">
               <i class="iconfont iconSliceCopy"></i> APP ID
@@ -271,6 +271,17 @@
           <el-col :span="6">
             <div class="item-desc">N/A</div>
           </el-col>
+        </el-row> -->
+        <el-row :gutter="0">
+          <el-col :span="6">
+            <div class="item-title">
+              <i class="iconfont iconinfo"></i> 体验码
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <QrcodeVue v-if="codeURL" :value="codeURL" class="item-desc"></QrcodeVue>
+            <div v-else class="item-desc">N/A</div>
+          </el-col>
         </el-row>
       </div>
     </el-card>
@@ -278,6 +289,7 @@
 </template>
 
 <script>
+import QrcodeVue from 'qrcode.vue'
 import { wordTranslate, colorTranslate } from '@utils/word_translate.js'
 import {
   getCommonWorkflowTaskDetailSSEAPI,
@@ -333,6 +345,9 @@ export default {
     },
     buildOverallColor () {
       return this.colorTranslation(this.buildOverallStatus, 'pipeline', 'task')
+    },
+    codeURL () {
+      return this.extensionStage.sub_tasks && this.extensionStage.sub_tasks.callback_payload && this.extensionStage.sub_tasks.callback_payload.QR_code_URL
     }
   },
   methods: {
@@ -604,6 +619,9 @@ export default {
   },
   beforeDestroy () {
     this.killLog('buildv3')
+  },
+  components: {
+    QrcodeVue
   }
 }
 </script>

@@ -44,7 +44,7 @@ export default {
   },
   methods: {
     async getWorkloads (page) {
-      const res = await queryWorkloads(this.form.clusterId, this.form.namespace, page)
+      const res = await queryWorkloads(this.projectName, this.form.clusterId, this.form.namespace, page)
       this.serviceList = res.data.services.map((item, index) => {
         return {
           label: item.service_name,

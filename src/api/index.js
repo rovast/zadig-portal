@@ -469,7 +469,7 @@ export function getWorkflowBindAPI (projectName, testName) {
 }
 
 export function getWorkflowsAPI (projectName) {
-  return http.get(`/api/aslan/workflow/workflow?projectName=${projectName || ''}`)
+  return http.get(`/api/v1/picket/workflows?projectName=${projectName || ''}`)
 }
 
 export function setFavoriteAPI (payload) {
@@ -669,6 +669,10 @@ export function deleteUserAPI (uid) {
 
 export function updateUserAPI (uid, payload) {
   return http.put(`/api/v1/users/${uid}`, payload)
+}
+
+export function changeRegistrationAPI (payload) {
+  return http.put(`/api/v1/features/RegisterTrigger`, payload)
 }
 
 export function getSystemRoleBindingsAPI () {
@@ -1184,6 +1188,10 @@ export function checkConnectorsAPI () {
   return http.get(`/api/v1/login-enabled`)
 }
 
+export function checkRegistrationAPI () {
+  return http.get(`/api/v1/features/RegisterTrigger`)
+}
+
 // Profile
 
 export function getCurrentUserInfoAPI (uid) {
@@ -1211,6 +1219,7 @@ export function updateServiceImageAPI (payload, type, projectName, envType = '')
 }
 
 // Notification
+
 export function getNotificationAPI () {
   return http.get('/api/aslan/system/notification')
 }
@@ -1246,6 +1255,7 @@ export function getProjectIngressAPI (projectName) {
 }
 
 // Delivery
+
 export function getVersionListAPI (workflowName = '', projectName = '', taskId = '', serviceName = '') {
   return http.get(`/api/aslan/delivery/releases?workflowName=${workflowName}&projectName=${projectName}&taskId=${taskId}&serviceName=${serviceName}`)
 }
@@ -1267,6 +1277,7 @@ export function productHostingNamespaceAPI (clusterId) {
 }
 
 // Forgot password
+
 export function retrievePasswordAPI (account) {
   return http.get(`/api/v1/retrieve?account=${account}`)
 }
@@ -1276,6 +1287,7 @@ export function changePasswordAPI (payload) {
 }
 
 // Template Helm
+
 export function getChartTemplatesAPI () {
   return http.get(`/api/aslan/template/charts`)
 }
@@ -1317,6 +1329,7 @@ export function saveHelmTemplateVariableAPI (name, payload) {
 }
 
 // Template Dockerfile
+
 export function getDockerfileTemplatesAPI () {
   return http.get(`/api/aslan/template/dockerfile?page_num=1&page_size=9999`)
 }
@@ -1436,9 +1449,9 @@ export function getValuesYamlFromGitAPI ({ codehostID, owner, repo, branch, valu
   })
 }
 
-// exteranl
-export function queryWorkloads (clusterId, namespace, page) {
-  return http.get(`/api/aslan/environment/kube/workloads?namespace=${namespace}&clusterId=${clusterId}&perPage=1200&page=${page}`)
+// Exteranl
+export function queryWorkloads (projectName, clusterId, namespace, page) {
+  return http.get(`/api/aslan/environment/kube/workloads?projectName=${projectName}&namespace=${namespace}&clusterId=${clusterId}&perPage=1200&page=${page}`)
 }
 
 export function queryServiceWorkloads (projectName, envName) {

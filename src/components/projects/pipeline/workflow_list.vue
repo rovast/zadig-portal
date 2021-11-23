@@ -93,6 +93,7 @@ import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
 import {
   getWorkflowsAPI,
+  getWorkflowsInProjectAPI,
   deleteWorkflowAPI,
   copyWorkflowAPI,
   getCommonPipelineListAPI,
@@ -262,10 +263,19 @@ export default {
     },
     async getWorkflows (projectName) {
       this.workflowListLoading = true
-      const res = await getWorkflowsAPI(projectName).catch(err => {
-        console.log(err)
-        return []
-      })
+      let res = []
+      if (this.projectName) {
+        res = await getWorkflowsInProjectAPI(projectName).catch(err => {
+          console.log(err)
+          return []
+        })
+      } else {
+        res = await getWorkflowsAPI().catch(err => {
+          console.log(err)
+          return []
+        })
+      }
+
       const res2 = await getCommonPipelineListAPI(projectName).catch(err => {
         console.log(err)
         return []

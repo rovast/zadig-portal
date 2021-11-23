@@ -128,7 +128,7 @@
 import bus from '@utils/event_bus'
 import step from './container/step_not_k8s.vue'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
-import { getWorkflowsAPI } from '@api'
+import { getWorkflowsInProjectAPI } from '@api'
 export default {
   data () {
     return {
@@ -143,7 +143,7 @@ export default {
     async getWorkflows () {
       this.loading = true
       const projectName = this.projectName
-      const workflows = await getWorkflowsAPI(projectName)
+      const workflows = await getWorkflowsInProjectAPI(projectName)
       if (workflows) {
         this.loading = false
         const w1 = 'workflow-qa'

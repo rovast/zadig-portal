@@ -127,7 +127,7 @@
 import bus from '@utils/event_bus'
 import step from '../common/step.vue'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
-import { getWorkflowsAPI, getProjectIngressAPI } from '@api'
+import { getWorkflowsInProjectAPI, getProjectIngressAPI } from '@api'
 export default {
   data () {
     return {
@@ -141,7 +141,7 @@ export default {
     async getWorkflows () {
       this.loading = true
       const projectName = this.projectName
-      const workflows = await getWorkflowsAPI(projectName)
+      const workflows = await getWorkflowsInProjectAPI(projectName)
       const ingresses = await getProjectIngressAPI(projectName)
       if (workflows && ingresses) {
         this.loading = false

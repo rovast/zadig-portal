@@ -7,20 +7,41 @@
         </el-select>
       </el-form-item>
       <el-form-item label="服务" prop="chartDatas">
-        <el-select v-model="releaseInfo.chartDatas" placeholder="请选择服务" multiple size="small" clearable value-key="serviceName">
+        <el-select
+          v-model="releaseInfo.chartDatas"
+          placeholder="请选择服务"
+          multiple
+          size="small"
+          clearable
+          collapse-tags
+          value-key="serviceName"
+        >
           <el-option :label="service.serviceName" :value="service" v-for="service in serviceNames" :key="service.serviceName"></el-option>
         </el-select>
         <el-button type="text" size="small" @click="releaseInfo.chartDatas = serviceNames">全选</el-button>
       </el-form-item>
     </el-form>
-    <div class="config">
-      <FileTree class="left" ref="fileTreeRef" :envName="this.releaseInfo.envName" :fileData="releaseInfo.chartDatas" @clickFile="getFile"></FileTree>
-      <Codemirror class="right" v-model="yamlStorage[selectedPath]" :cmOption="cmOption"></Codemirror>
-    </div>
+    <multipane class="config">
+      <FileTree
+        :style="{width: '200px', minWidth: '100px', maxWidth: '400px'}"
+        class="left"
+        ref="fileTreeRef"
+        :envName="this.releaseInfo.envName"
+        :fileData="releaseInfo.chartDatas"
+        @clickFile="getFile"
+      ></FileTree>
+      <multipane-resizer></multipane-resizer>
+      <div :style="{minWidth: '200px', width: '500px'}" class="right">
+        <Codemirror v-model="yamlStorage[selectedPath]" :cmOption="cmOption"></Codemirror>
+      </div>
+      <multipane-resizer></multipane-resizer>
+      <div :style="{flexGrow: 1, minWidth: '100px'}"></div>
+    </multipane>
   </div>
 </template>
 
 <script>
+import { Multipane, MultipaneResizer } from 'vue-multipane'
 import Codemirror from '@/components/projects/common/codemirror.vue'
 import FileTree from './file_tree.vue'
 
@@ -118,7 +139,9 @@ export default {
   },
   components: {
     Codemirror,
-    FileTree
+    FileTree,
+    Multipane,
+    MultipaneResizer
   }
 }
 </script>
@@ -128,21 +151,18 @@ export default {
   height: calc(~'100% - 200px');
 
   .config {
-    display: flex;
-    box-sizing: border-box;
+    width: 100%;
     height: calc(~'100% - 60px');
     background-color: #f5f7f7;
     border: 3px solid transparent;
 
     .left {
-      width: 200px;
       height: 100%;
       max-height: 100%;
       overflow: auto;
     }
 
     .right {
-      flex: 1 1 auto;
       height: 100%;
       margin-left: 3px;
       overflow: hidden;

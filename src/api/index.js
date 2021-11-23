@@ -469,7 +469,7 @@ export function getWorkflowBindAPI (projectName, testName) {
 }
 
 export function getWorkflowsAPI (projectName) {
-  return http.get(`/api/aslan/workflow/workflow?projectName=${projectName || ''}`)
+  return http.get(`/api/v1/picket/workflows?projectName=${projectName || ''}`)
 }
 
 export function setFavoriteAPI (payload) {

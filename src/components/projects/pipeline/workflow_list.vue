@@ -64,7 +64,7 @@
         v-if="showStartProductBuild"
         :workflowName="workflowToRun.name"
         :workflowMeta="workflowToRun"
-        :targetProduct="workflowToRun.product_tmpl_name"
+        :targetProduct="workflowToRun.projectName"
         @success="hideProductTaskDialog"
       ></run-workflow>
     </el-dialog>
@@ -87,6 +87,7 @@ export default {
     return {
       itemComponent: VirtualListItem,
       showStartProductBuild: false,
+      workflowListLoading: false,
       showFavorite: false,
       workflowToRun: {},
       remain: 10,
@@ -104,7 +105,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getOnboardingTemplates', 'workflowListLoading']),
+    ...mapGetters(['getOnboardingTemplates']),
     projectName () {
       return this.$route.params.project_name
     },
@@ -115,7 +116,7 @@ export default {
       const filteredWorkflows = this.filteredWorkflows
       let sortedWorkflows = []
       const nameSorter = item => item.name.toLowerCase()
-      const timeSorter = item => item.update_time
+      const timeSorter = item => item.updateTime
       if (this.sortBy === 'name-asc') {
         sortedWorkflows = orderBy(filteredWorkflows, nameSorter, 'asc')
       } else if (this.sortBy === 'name-desc') {
@@ -129,14 +130,14 @@ export default {
         const favoriteWorkflows = this.$utils
           .cloneObj(sortedWorkflows)
           .filter(x => {
-            return x.is_favorite
+            return x.isFavorite
           })
         return favoriteWorkflows
       } else {
         const sortedByFavorite = this.$utils
           .cloneObj(sortedWorkflows)
           .sort(x => {
-            return x.is_favorite ? -1 : 1
+            return x.isFavorite ? -1 : 1
           })
         return sortedByFavorite
       }
@@ -146,7 +147,7 @@ export default {
         .filterObjectArrayByKey('name', this.keyword, this.workflows)
         .filter(pipeline => {
           return !this.getOnboardingTemplates.includes(
-            pipeline.product_tmpl_name
+            pipeline.projectName
           )
         })
       return list
@@ -220,14 +221,16 @@ export default {
   },
   methods: {
     async getWorkflows (projectName) {
+      this.workflowListLoading = true
       const res = await getWorkflowsAPI(projectName)
       if (res) {
         this.workflowsList = res
+        this.workflowListLoading = false
       }
     },
     deleteWorkflow (workflow) {
       const name = workflow.name
-      const projectName = workflow.product_tmpl_name
+      const projectName = workflow.projectName
       this.$prompt('输入工作流名称确认', '删除工作流 ' + name, {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -257,7 +260,7 @@ export default {
     },
     copyWorkflow (workflow) {
       const oldName = workflow.name
-      const projectName = workflow.product_tmpl_name
+      const projectName = workflow.projectName
       this.$prompt('请输入新的产品工作流名称', '复制工作流', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

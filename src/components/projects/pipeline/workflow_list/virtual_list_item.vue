@@ -1,34 +1,25 @@
 <template>
   <div>
     <pipeline-row :name="workflow.name"
-                  :isFavorite="workflow.is_favorite"
+                  :isFavorite="workflow.isFavorite"
                   :type="'workflow'"
-                  :projectName="workflow.product_tmpl_name"
-                  :pipelineLink="`/v1/projects/detail/${workflow.product_tmpl_name}/pipelines/multi/${workflow.name}`"
-                  :latestTaskStatus="workflow.lastest_task.status"
-                  :recentSuccessID="workflow.last_task_success.task_id"
-                  :avgRuntime="makeProductAvgRunTime(workflow.total_duration,workflow.total_num)"
-                  :avgSuccessRate="makeProductAvgSuccessRate(workflow.total_success,workflow.total_num)"
-                  :recentSuccessLink="makeProductTaskDetailLink(workflow.product_tmpl_name,workflow.last_task_success)"
-                  :recentFailID="workflow.last_task_failure.task_id"
-                  :recentFailLink="makeProductTaskDetailLink(workflow.product_tmpl_name,workflow.last_task_failure)"
-                  :updateBy="workflow.update_by"
+                  :projectName="workflow.projectName"
+                  :pipelineLink="`/v1/projects/detail/${workflow.projectName}/pipelines/multi/${workflow.name}`"
+                  :recentTaskStatus="workflow.recentTask?workflow.recentTask.status:'-'"
+                  :recentSuccessID="workflow.recentSuccessfulTask?`#${workflow.recentSuccessfulTask.taskID}`:'-'"
+                  :avgRuntime="makeAvgRunTime(workflow.averageExecutionTime)"
+                  :avgSuccessRate="makeAvgSuccessRate(workflow.successRate)"
+                  :recentSuccessLink="makeTaskDetailLink(workflow.projectName,workflow.recentSuccessfulTask)"
+                  :recentFailID="workflow.recentFailedTask?`#${workflow.recentFailedTask.taskID}`:'-'"
+                  :recentFailLink="makeTaskDetailLink(workflow.projectName,workflow.recentFailedTask)"
                   :updateTime="$utils.convertTimestamp(workflow.update_time)"
                   @refreshWorkflow="refreshWorkflow">
       <section slot="more"
-               class="dash-process">
+               class="stages">
         <span>
-          <span v-if="!$utils.isEmpty(workflow.build_stage) && workflow.build_stage.enabled">
-            <el-tag size="mini">构建部署</el-tag>
+          <span v-for="(stage,index) in workflow.enabledStages" :key="index" class="stage-tag">
+            <el-tag size="mini">{{wordTranslation(stage,'workflowStage')}}</el-tag>
           </span>
-          <span v-if="!$utils.isEmpty(workflow.artifact_stage) && workflow.artifact_stage.enabled">
-            <el-tag size="mini">交付物部署</el-tag>
-          </span>
-          <span v-if="(!$utils.isEmpty(workflow.test_stage) && workflow.test_stage.enabled)">
-            <el-tag size="mini">测试</el-tag>
-          </span>
-          <el-tag v-if="!$utils.isEmpty(workflow.distribute_stage) &&  workflow.distribute_stage.enabled"
-                  size="mini">分发</el-tag>
         </span>
       </section>
       <template slot="operations">
@@ -37,7 +28,7 @@
                    @click="startProductBuild(workflow)">
           <span class="el-icon-video-play">&nbsp;执行</span>
         </el-button>
-        <router-link :to="`/workflows/edit/${workflow.name}?projectName=${workflow.product_tmpl_name}`">
+        <router-link :to="`/workflows/edit/${workflow.name}?projectName=${workflow.projectName}`">
           <span class="menu-item el-icon-setting start-build"></span>
         </router-link>
         <el-dropdown @visible-change="(status) => fnShowTimer(status, index, workflow)">
@@ -45,8 +36,8 @@
             <i class="el-icon-s-operation more-operation"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="changeSchedule(workflow.product_tmpl_name)">
-              <span>{{workflow.schedule_enabled ? '关闭': '打开'}}定时器</span>
+            <el-dropdown-item @click.native="changeSchedule(workflow.projectName)">
+              <span>{{workflow.schedulerEnabled ? '关闭': '打开'}}定时器</span>
             </el-dropdown-item>
             <el-dropdown-item @click.native="copyWorkflow(workflow)">
               <span>复制</span>
@@ -64,13 +55,14 @@
 <script>
 import pipelineRow from './pipeline_row.vue'
 import mixins from '@utils/virtual_scroll_list_mixin'
+import { wordTranslate } from '@utils/word_translate.js'
 import { getWorkflowDetailAPI, updateWorkflowAPI } from '@api'
 export default {
   name: 'workflow-list-item',
   mixins: [mixins],
   data () {
     return {
-      pipelineInfo: null
+      workflowInfo: null
     }
   },
   props: {
@@ -94,42 +86,49 @@ export default {
       return this.source
     },
     projectName () {
-      return this.workflow.product_tmpl_name
+      return this.workflow.projectName
     }
   },
   methods: {
-    makeProductAvgRunTime (duration, total) {
-      if (total > 0) {
-        return (duration / total).toFixed(1) + 's'
+    makeAvgRunTime (number) {
+      if (number > 0) {
+        return number.toFixed(1) + 's'
       } else {
         return '-'
       }
     },
-    makeProductAvgSuccessRate (success, total) {
-      if (total > 0) {
-        return ((success / total) * 100).toFixed(2) + '%'
+    makeAvgSuccessRate (number) {
+      if (number) {
+        return (number * 100).toFixed(2) + '%'
       } else {
         return '-'
       }
     },
-    makeProductTaskDetailLink (projectName, taskInfo) {
-      return `/v1/projects/detail/${projectName}/pipelines/multi/${taskInfo.pipeline_name}/${taskInfo.task_id}?status=${taskInfo.status}`
+    makeTaskDetailLink (projectName, taskInfo) {
+      if (taskInfo) {
+        return `/v1/projects/detail/${projectName}/pipelines/multi/${taskInfo.pipelineName}/${taskInfo.taskID}?status=${taskInfo.status}`
+      } else {
+        return ''
+      }
+    },
+    wordTranslation (word, category, subitem) {
+      return wordTranslate(word, category, subitem)
     },
     async fnShowTimer (status, index, workflow) {
       if (status && !workflow.showTimer) {
-        this.pipelineInfo = await getWorkflowDetailAPI(workflow.product_tmpl_name, workflow.name).catch(error => console.log(error))
-        if (_.get(this.pipelineInfo, 'schedules.items', '[]').length) {
+        this.workflowInfo = await getWorkflowDetailAPI(workflow.projectName, workflow.name).catch(error => console.log(error))
+        if (_.get(this.workflowInfo, 'schedules.items', '[]').length) {
           this.$set(this.source, 'showTimer', true)
           this.$forceUpdate()
         }
       }
     },
     async changeSchedule (projectName) {
-      const pipelineInfo = this.pipelineInfo
-      pipelineInfo.schedule_enabled = !pipelineInfo.schedule_enabled
-      const res = await updateWorkflowAPI(this.pipelineInfo).catch(error => console.log(error))
+      const workflowInfo = this.workflowInfo
+      workflowInfo.schedulerEnabled = !workflowInfo.schedulerEnabled
+      const res = await updateWorkflowAPI(this.workflowInfo).catch(error => console.log(error))
       if (res) {
-        if (pipelineInfo.schedule_enabled) {
+        if (workflowInfo.schedulerEnabled) {
           this.$message.success('定时器开启成功')
         } else {
           this.$message.success('定时器关闭成功')

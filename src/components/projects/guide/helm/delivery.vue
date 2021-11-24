@@ -19,9 +19,8 @@
                 <a
                   v-if="scope.row.env_name"
                   class="env-name"
-                  :href="`/v1/projects/detail/${ scope.row.product_tmpl_name}/envs/detail?envName=${ scope.row.env_name}`"
-                  target="_blank"
-                >{{ `${scope.row.env_name}`}}</a>
+                  :href="`/v1/projects/detail/${ scope.row.projectName}/envs/detail?envName=${ scope.row.env_name}`"
+                  target="_blank">{{ `${scope.row.projectName}-env-${scope.row.env_name}` }}</a>
               </template>
             </el-table-column>
             <el-table-column label="服务入口">
@@ -36,38 +35,14 @@
             <el-table-column width="200px" label="包含步骤">
               <template slot-scope="scope">
                 <span>
-                  <span v-if="!$utils.isEmpty(scope.row.build_stage) && scope.row.build_stage.enabled">
-                    <el-tag size="small">构建部署</el-tag>
-                    <span
-                      v-if="scope.row.test_stage.enabled||(!$utils.isEmpty(scope.row.security_stage)&&scope.row.security_stage.enabled)||scope.row.distribute_stage.enabled"
-                      class="step-arrow"
-                    >
-                      <i class="el-icon-right"></i>
-                    </span>
+                  <span v-for="(stage,index) in scope.row.enabledStages" :key="index" class="stage-tag">
+                    <el-tag size="mini">{{wordTranslation(stage,'workflowStage')}}</el-tag>
                   </span>
-                  <span v-if="!$utils.isEmpty(scope.row.artifact_stage) && scope.row.artifact_stage.enabled">
-                    <el-tag size="small">交付物部署</el-tag>
-                    <span
-                      v-if="scope.row.test_stage.enabled||(!$utils.isEmpty(scope.row.security_stage)&&scope.row.security_stage.enabled)||scope.row.distribute_stage.enabled"
-                      class="step-arrow"
-                    >
-                      <i class="el-icon-right"></i>
-                    </span>
-                  </span>
-                  <span
-                    v-if="(!$utils.isEmpty(scope.row.test_stage) && scope.row.test_stage.enabled)||(!$utils.isEmpty(scope.row.security_stage)&&scope.row.security_stage.enabled)"
-                  >
-                    <el-tag size="small">测试</el-tag>
-                    <span v-if="scope.row.distribute_stage.enabled" class="step-arrow">
-                      <i class="el-icon-right"></i>
-                    </span>
-                  </span>
-                  <el-tag v-if="!$utils.isEmpty(scope.row.distribute_stage) &&  scope.row.distribute_stage.enabled" size="small">分发</el-tag>
                 </span>
               </template>
             </el-table-column>
             <el-table-column width="150px" label="更新信息（时间/操作人）">
-              <template slot-scope="scope">{{$utils.convertTimestamp(scope.row.update_time)}}</template>
+              <template slot-scope="scope">{{$utils.convertTimestamp(scope.row.updateTime)}}</template>
             </el-table-column>
             <el-table-column width="120px" label="操作">
               <template slot-scope="scope">
@@ -114,6 +89,7 @@
 import bus from '@utils/event_bus'
 import step from '../common/step.vue'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
+import { wordTranslate } from '@utils/word_translate.js'
 import { getProjectIngressAPI, getWorkflowsAPI, generatePipeAPI } from '@api'
 export default {
   data () {
@@ -160,6 +136,9 @@ export default {
         })
         this.mapWorkflows = currentWorkflows
       }
+    },
+    wordTranslation (word, category, subitem) {
+      return wordTranslate(word, category, subitem)
     },
     runCurrentTask (scope) {
       this.workflow = scope

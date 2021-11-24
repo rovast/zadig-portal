@@ -64,7 +64,7 @@
         v-if="showStartProductBuild"
         :workflowName="workflowToRun.name"
         :workflowMeta="workflowToRun"
-        :targetProduct="workflowToRun.projectName"
+        :targetProduct="workflowToRun.product_tmpl_name"
         @success="hideProductTaskDialog"
       ></run-workflow>
     </el-dialog>
@@ -76,7 +76,7 @@ import VirtualListItem from './workflow_list/virtual_list_item'
 import runWorkflow from './common/run_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
-import { getWorkflowsAPI, getWorkflowsInProjectAPI, deleteWorkflowAPI, copyWorkflowAPI } from '@api'
+import { getWorkflowsAPI, getWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteWorkflowAPI, copyWorkflowAPI } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
@@ -263,8 +263,13 @@ export default {
       })
     },
     startProductBuild (workflow) {
-      this.workflowToRun = workflow
-      this.showStartProductBuild = true
+      getWorkflowDetailAPI(workflow.projectName, workflow.name).then(res => {
+        this.showStartProductBuild = true
+        this.workflowToRun = res
+      }).catch(err => {
+        this.showStartProductBuild = false
+        console.log(err)
+      })
     },
     hideProductTaskDialog () {
       this.showStartProductBuild = false

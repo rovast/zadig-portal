@@ -115,6 +115,11 @@ export default {
       required: false
     }
   },
+  computed: {
+    workflowBelongToProject () {
+      return this.$route.params.project_name
+    }
+  },
   methods: {
     setFavorite (projectName, workflowName, type) {
       const payload = {
@@ -125,7 +130,8 @@ export default {
       if (this.isFavorite) {
         deleteFavoriteAPI(projectName, workflowName, type).then((res) => {
           if (type === 'workflow') {
-            this.$emit('refreshWorkflow', projectName)
+            // Refresh the workflow list
+            this.$emit('refreshWorkflow', this.workflowBelongToProject)
           }
           this.$message({
             type: 'success',
@@ -135,7 +141,8 @@ export default {
       } else {
         setFavoriteAPI(payload).then((res) => {
           if (type === 'workflow') {
-            this.$emit('refreshWorkflow', projectName)
+            // Refresh the workflow list
+            this.$emit('refreshWorkflow', this.workflowBelongToProject)
           }
           this.$message({
             type: 'success',

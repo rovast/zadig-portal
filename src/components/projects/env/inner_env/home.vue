@@ -41,12 +41,12 @@ export default {
       return this.$route.params.project_name
     },
     currentProjectProductList () {
-      return this.productList.find(element => {
+      return this.projectList.find(element => {
         return element.name === this.projectName
       })
     },
     ...mapGetters([
-      'productList'
+      'projectList'
     ])
   },
   beforeRouteUpdate (to, from, next) {

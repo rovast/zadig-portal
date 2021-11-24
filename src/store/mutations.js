@@ -4,14 +4,11 @@ export const INJECT_PROFILE = 'INJECT_PROFILE'
 // Role
 export const INJECT_ROLE = 'INJECT_ROLE'
 
-// Env List
+// Project List
 export const SET_PROJECT_LIST = 'SET_PROJECT_LIST'
 
 // Install Status
 export const SET_SIGNUP_STATUS = 'SET_SIGNUP_STATUS'
-
-// Project List
-export const SET_PROJECT_TEMPLATES = 'SET_PROJECT_TEMPLATES'
 
 // Sidebar
 export const SET_SIDEBAR_STATUS = 'SET_SIDEBAR_STATUS'

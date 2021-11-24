@@ -700,9 +700,6 @@ export default {
         },
         scripts: '#!/bin/bash\nset -e',
         post_build: {
-          docker_build: {
-            source: 'local'
-          }
         }
       },
       editorOption: {

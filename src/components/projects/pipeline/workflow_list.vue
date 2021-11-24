@@ -76,7 +76,7 @@ import VirtualListItem from './workflow_list/virtual_list_item'
 import runWorkflow from './common/run_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
-import { getWorkflowsAPI, deleteWorkflowAPI, copyWorkflowAPI } from '@api'
+import { getWorkflowsAPI, getWorkflowsInProjectAPI, deleteWorkflowAPI, copyWorkflowAPI } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
@@ -222,7 +222,18 @@ export default {
   methods: {
     async getWorkflows (projectName) {
       this.workflowListLoading = true
-      const res = await getWorkflowsAPI(projectName)
+      let res = []
+      if (this.projectName) {
+        res = await getWorkflowsInProjectAPI(projectName).catch(err => {
+          console.log(err)
+          return []
+        })
+      } else {
+        res = await getWorkflowsAPI().catch(err => {
+          console.log(err)
+          return []
+        })
+      }
       if (res) {
         this.workflowsList = res
         this.workflowListLoading = false

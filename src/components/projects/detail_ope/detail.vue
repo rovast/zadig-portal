@@ -265,7 +265,7 @@
   </div>
 </template>
 <script>
-import { getProjectInfoAPI, getProductInfo, queryUserBindingsAPI, deleteProjectAPI, getClusterListAPI, getWorkflowsAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
+import { getProjectInfoAPI, getProductInfo, queryUserBindingsAPI, deleteProjectAPI, getClusterListAPI, getWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
 import { getProductStatus } from '@utils/word_translate'
 import { wordTranslate } from '@utils/word_translate.js'
 import { whetherOnboarding } from '@utils/onboarding_route'
@@ -287,7 +287,7 @@ export default {
       return getProductStatus(status, updateble)
     },
     async getWorkflows (projectName) {
-      const res = await getWorkflowsAPI(projectName)
+      const res = await getWorkflowsInProjectAPI(projectName)
       if (res) {
         this.workflows = res.filter(item => item.projectName === projectName)
       }

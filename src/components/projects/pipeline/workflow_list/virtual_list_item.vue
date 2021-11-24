@@ -2,7 +2,7 @@
   <div>
     <CommonRow v-if="source.type === 'common'" :workflow="source"></CommonRow>
     <pipeline-row v-else :name="workflow.name"
-                  :isFavorite="workflow.is_favorite"
+                  :isFavorite="workflow.isFavorite"
                   :type="'workflow'"
                   :projectName="workflow.projectName"
                   :pipelineLink="`/v1/projects/detail/${workflow.projectName}/pipelines/multi/${workflow.name}`"

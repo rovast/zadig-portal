@@ -2,27 +2,53 @@
   <div class="helm-version-detail">
     <el-tabs type="border-card">
       <el-tab-pane label="版本信息">
-        <div>
+        <div v-loading="loading">
           <div class="version-title">基本信息</div>
           <div class="basic-info">
             <el-row :gutter="10">
               <el-col :span="10">
                 版本：
-                <span class="dark-color">{{version}}</span>
+                <span class="dark-color">{{versionInfo.version}}</span>
               </el-col>
               <el-col :span="10">
                 标签：
-                <el-tag size="small">{{tag}}</el-tag>
+                <el-tag size="mini" v-for="(label,index) in versionInfo.labels" :key="index" style="margin-right: 5px;">{{label}}</el-tag>
+              </el-col>
+            </el-row>
+            <el-row :gutter="10">
+              <el-col :span="10">
+                创建人：
+                <span class="dark-color">{{versionInfo.createdBy}}</span>
+              </el-col>
+              <el-col :span="10">
+                创建时间：
+                <span class="dark-color">{{$utils.convertTimestamp(versionInfo.created_at)}}</span>
               </el-col>
             </el-row>
             <el-row :gutter="10">
               <el-col :span="10">
                 描述：
-                <span class="dark-color">{{desc}}</span>
+                <span class="dark-color">{{versionInfo.desc}}</span>
               </el-col>
             </el-row>
           </div>
-          <div class="version-title">交付内容</div>
+          <div class="version-title">
+            交付内容
+            <el-popover placement="right" trigger="click">
+              <div>
+                <div>
+                  进度详情
+                  <el-button type="text" class="little-btn">重试</el-button>
+                </div>
+                <div style="width: 250px; padding: 0 5px;">
+                  <p>上传 Chart 和镜像：{{}}</p>
+                  <p>上传离线包：{{}}</p>
+                  <p>错误信息：{{}}</p>
+                </div>
+              </div>
+              <el-button slot="reference" type="text" class="little-btn">进度详情</el-button>
+            </el-popover>
+          </div>
           <div class="push-info">
             <div class="push-title">Chart 信息</div>
             <el-table :data="charts" style="width: 100%;">
@@ -30,7 +56,7 @@
               <el-table-column prop="repo" label="Chart 仓库"></el-table-column>
               <el-table-column prop="version" label="版本库"></el-table-column>
               <el-table-column label="操作">
-                <el-button type="text">预览</el-button>
+                <!-- <el-button type="text">预览</el-button> -->
                 <el-button type="text">下载</el-button>
               </el-table-column>
             </el-table>
@@ -43,11 +69,6 @@
             <el-table :data="tars" style="width: 100%;">
               <el-table-column prop="name" label="离线包名称"></el-table-column>
               <el-table-column prop="store" label="对象存储"></el-table-column>
-              <el-table-column prop="status" label="状态"></el-table-column>
-              <el-table-column label="操作">
-                <el-button type="text">重试</el-button>
-                <el-button type="text">下载</el-button>
-              </el-table-column>
             </el-table>
           </div>
         </div>
@@ -62,9 +83,12 @@
 </template>
 
 <script>
+import { getVersionListAPI } from '@api'
 export default {
   data () {
     return {
+      loading: false,
+      versionInfo: {},
       version: '1.3.0',
       tag: '开源版',
       desc: 'test',
@@ -90,10 +114,32 @@ export default {
       ]
     }
   },
+  computed: {
+    projectName () {
+      return this.$route.params.project_name
+    },
+    versionId () {
+      return this.$route.params.id
+    }
+  },
   methods: {
     upgradeVersion () {
       console.log('upgrade')
+    },
+    getVersionDetail () {
+      this.loading = true
+      const versionId = this.versionId
+      const projectName = this.projectName
+      getVersionListAPI('', projectName, '').then(res => {
+        this.loading = false
+        this.versionInfo = res.find(
+          item => item.versionInfo.id === versionId
+        ).versionInfo
+      })
     }
+  },
+  created () {
+    this.getVersionDetail()
   }
 }
 </script>
@@ -157,5 +203,10 @@ export default {
   .dark-color {
     color: #303133;
   }
+}
+
+.little-btn {
+  margin-left: 5px;
+  font-size: 12px;
 }
 </style>

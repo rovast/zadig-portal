@@ -22,7 +22,7 @@
       <el-button type="primary"
                  @click="$router.push(`${$route.path}/create`)"
                  size="small"
-                 v-if="isHelm">
+                 v-if="deployType === 'helm'">
         创建版本
       </el-button>
     </div>
@@ -33,7 +33,7 @@
         <template slot-scope="scope">
           <span class="version-link">
             <router-link
-                         :to="`/v1/delivery/version/${projectName}/${scope.row.versionInfo.id}?version=${scope.row.versionInfo.version}`">{{
+                         :to="`/v1/delivery/version/${projectName}/${scope.row.versionInfo.id}?deployType=${deployType}&version=${scope.row.versionInfo.version}`">{{
               scope.row.versionInfo.version }}</router-link>
           </span>
         </template>
@@ -90,8 +90,7 @@ export default {
       versionList: [],
       productList: [],
       serviceList: [],
-      selectedService: '',
-      isHelm: true // 数据应该来自项目类型
+      selectedService: ''
     }
   },
   methods: {
@@ -137,6 +136,9 @@ export default {
   computed: {
     projectName () {
       return this.$route.params.project_name
+    },
+    deployType () {
+      return this.$route.query.deployType
     }
   },
   watch: {

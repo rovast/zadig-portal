@@ -3,18 +3,18 @@
     <div>
       <h1 class="title">用户注册</h1>
       <h2 class="subtitle">请输入新用户信息</h2>
-      <el-form :model="signUpForm" ref="signUpForm" :rules="rules">
-        <el-form-item prop="account">
-          <el-input v-model="signUpForm.account" placeholder="用户名"></el-input>
+      <el-form :model="signUpForm" ref="signUpForm" :rules="rules" label-position="left" label-width="70px">
+        <el-form-item label="用户名" prop="account">
+          <el-input v-model="signUpForm.account" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item prop="name">
-          <el-input v-model="signUpForm.name" placeholder="昵称"></el-input>
+        <el-form-item label="昵称" prop="name">
+          <el-input v-model="signUpForm.name" placeholder="请输入昵称"></el-input>
         </el-form-item>
-        <el-form-item prop="email">
-          <el-input type="email" v-model="signUpForm.email" placeholder="邮箱"></el-input>
+        <el-form-item label="邮箱" prop="email">
+          <el-input type="email" v-model="signUpForm.email" placeholder="请输入邮箱"></el-input>
         </el-form-item>
-        <el-form-item prop="password">
-          <el-input v-model="signUpForm.password" placeholder="密码"></el-input>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="signUpForm.password" placeholder="请输入密码"></el-input>
         </el-form-item>
       </el-form>
       <el-button type="submit" @click="submit" class="btn-md btn-theme btn-block login-btn">注册</el-button>

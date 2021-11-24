@@ -74,7 +74,7 @@
         v-if="showStartProductBuild"
         :workflowName="workflowToRun.name"
         :workflowMeta="workflowToRun"
-        :targetProduct="workflowToRun.projectName"
+        :targetProduct="workflowToRun.product_tmpl_name"
         @success="hideProductTaskDialog"
       ></run-workflow>
     </el-dialog>
@@ -97,7 +97,8 @@ import {
   deleteWorkflowAPI,
   copyWorkflowAPI,
   getCommonPipelineListAPI,
-  deleteCommonPipelineAPI
+  deleteCommonPipelineAPI,
+  getWorkflowDetailAPI
 } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
@@ -333,8 +334,10 @@ export default {
         })
     },
     startProductBuild (workflow) {
-      this.workflowToRun = workflow
-      this.showStartProductBuild = true
+      getWorkflowDetailAPI(workflow.projectName, workflow.name).then(res => {
+        this.showStartProductBuild = true
+        this.workflowToRun = res
+      })
     },
     hideProductTaskDialog () {
       this.showStartProductBuild = false

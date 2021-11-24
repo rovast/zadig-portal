@@ -1,10 +1,19 @@
 <template>
   <div class="file-tree">
-    <el-tree ref="treeRef" :data="treeDate" :props="defaultProps" @node-click="handleNodeClick" node-key="fullPath" highlight-current>
+    <el-tree
+      ref="treeRef"
+      :data="treeData"
+      :props="defaultProps"
+      @node-click="handleNodeClick"
+      node-key="fullPath"
+      highlight-current
+      :default-expanded-keys="expandedKey"
+    >
       <span slot-scope="{data}">
         <i class="icon el-icon-document" v-if="!data.is_dir"></i>
         <i class="icon el-icon-folder" v-else></i>
         {{ data.name }}
+        <i v-if="data.fullPath === data.name" class="display-none icon el-icon-close" @click.stop="deleteNode(data)"></i>
       </span>
     </el-tree>
   </div>
@@ -34,8 +43,9 @@ export default {
     this.serviceRevision = {} // 保存服务的版本，用来请求目录、文件内容
 
     return {
-      treeDate: [],
-      chartVersions: []
+      treeData: [],
+      chartVersions: [],
+      expandedKey: []
     }
   },
   computed: {
@@ -47,30 +57,33 @@ export default {
     async handleNodeClick (data) {
       console.log('nodeDate: ', data)
       const serviceName = data.fullPath.split('/')[0]
+      const isService = data.fullPath === data.name
       const params = {
         projectName: this.projectName,
         serviceName,
-        path: data.parent,
+        path: isService ? '' : `${data.parent}/${data.name}`,
         fileName: data.name,
         revision: this.serviceRevision[serviceName],
         deliveryVersion: true
       }
       if (data.is_dir) {
-        if (!data.children) {
+        if (!data.children.length) {
           // 请求文件目录信息
           await getHelmChartServiceFilePath(params).then(res => {
-            this.setChildren(data.children, serviceName, res)
+            this.setChildren(data, serviceName, res)
           })
         }
       } else {
         // 请求文件内容
         this.$emit('clickFile', {
-          params,
+          ...params,
+          path: data.parent,
           fullPath: data.fullPath
         })
       }
     },
-    setChildren (children, serviceName, fileInfos) {
+    setChildren (data, serviceName, fileInfos) {
+      const children = data.children
       fileInfos.forEach(info => {
         children.push({
           ...dataStructure,
@@ -81,6 +94,7 @@ export default {
           is_dir: info.is_dir
         })
       })
+      this.expandedKey.splice(0, 1, data.fullPath)
     },
     getChartInfo () {
       // 请求版本信息
@@ -92,8 +106,7 @@ export default {
             if (index === 0) {
               // 第一个数据有目录信息
               this.setChildren(
-                this.treeData.find(data => data.name === chart.serviceName)
-                  .children,
+                this.treeData.find(data => data.name === chart.serviceName),
                 chart.serviceName,
                 res.fileInfos
               )
@@ -104,16 +117,21 @@ export default {
     },
     getRevision () {
       return this.serviceRevision
+    },
+    deleteNode ({ name }) {
+      this.$emit('deleteService', [name])
     }
   },
   watch: {
     fileData: {
       handler: debounce(function (newV, oldV) {
-        const treeData = this.treeDate
+        const treeData = this.treeData
         this.addServices = []
 
-        this.treeDate = newV.map(val => {
+        const newServices = []
+        this.treeData = newV.map(val => {
           const serviceName = val.serviceName
+          newServices.push(serviceName)
           const data = treeData.find(data => data.name === serviceName)
           if (!data) {
             this.addServices.push(serviceName)
@@ -128,12 +146,21 @@ export default {
             }
           )
         })
-
         if (this.addServices.length) {
           this.getChartInfo()
         }
+
+        const deletedServices = []
+        oldV &&
+          oldV.forEach(val => {
+            if (!newServices.includes(val.serviceName)) {
+              deletedServices.push(val.serviceName)
+            }
+          })
+        this.$emit('deleteService', deletedServices)
       }, 500),
-      deep: true
+      deep: true,
+      immediate: true
     }
   }
 }
@@ -156,12 +183,9 @@ export default {
       }
 
       &:hover {
-        .display-none.folder {
+        .display-none.icon {
           display: inline-block;
-
-          .icon {
-            padding-left: 10px;
-          }
+          padding-left: 5px;
         }
       }
     }

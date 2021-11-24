@@ -21,7 +21,7 @@
         <el-button type="text" size="small" @click="releaseInfo.chartDatas = serviceNames">全选</el-button>
       </el-form-item>
     </el-form>
-    <multipane class="config">
+    <Multipane class="config">
       <FileTree
         :style="{width: '200px', minWidth: '100px', maxWidth: '400px'}"
         class="left"
@@ -29,14 +29,15 @@
         :envName="this.releaseInfo.envName"
         :fileData="releaseInfo.chartDatas"
         @clickFile="getFile"
+        @deleteService="deleteService"
       ></FileTree>
-      <multipane-resizer></multipane-resizer>
+      <MultipaneResizer></MultipaneResizer>
       <div :style="{minWidth: '200px', width: '500px'}" class="right">
         <Codemirror v-model="yamlStorage[selectedPath]" :cmOption="cmOption"></Codemirror>
       </div>
-      <multipane-resizer></multipane-resizer>
+      <MultipaneResizer></MultipaneResizer>
       <div :style="{flexGrow: 1, minWidth: '100px'}"></div>
-    </multipane>
+    </Multipane>
   </div>
 </template>
 
@@ -127,11 +128,34 @@ export default {
     async getFile (data) {
       // 两种情况  一种直接请求数据  另一种使用缓存
       if (!this.yamlStorage[data.fullPath]) {
-        await getHelmChartServiceFileContent(params).then(res => {
+        await getHelmChartServiceFileContent(data).then(res => {
           this.$set(this.yamlStorage, data.fullPath, res)
         })
       }
       this.selectedPath = data.fullPath
+    },
+    deleteService (names) {
+      names.forEach(name => {
+        const index = this.releaseInfo.chartDatas.findIndex(
+          chart => chart.serviceName === name
+        )
+        if (index > -1) {
+          this.releaseInfo.chartDatas.splice(index, 1)
+        }
+
+        const storages = []
+        Object.keys(this.yamlStorage).forEach(storage => {
+          if (storage.startsWith(`${name}/`)) {
+            storages.push(storage)
+          }
+        })
+        storages.forEach(sto => {
+          this.$delete(this.yamlStorage, sto)
+        })
+        if (this.selectedPath.startsWith(`${name}/`)) {
+          this.selectedPath = ''
+        }
+      })
     }
   },
   created () {

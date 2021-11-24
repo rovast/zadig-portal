@@ -1211,7 +1211,7 @@ export function deleteVersionAPI (projectName, versionId) {
 }
 
 export function getVersionProductListAPI () {
-  return http.get(`/api/v1/picket/projects?ignoreNoVersions=true`)
+  return http.get(`/api/v1/picket/projects?ignoreNoVersions=false&verbosity=detailed`)
 }
 
 export function productHostingNamespaceAPI (clusterId) {
@@ -1222,12 +1222,20 @@ export function getHelmReleaseListAPI (productName, envName) {
   return http.get(`/api/aslan/environment/environments/${productName}/helm/releases?envName=${envName}`)
 }
 
-export function getChartInfoAPI (productName, envName, servicesName) {
-  return http.get(`/api/aslan/environment/environments/${productName}/helm/charts?envName=${envName}&servicesName=${servicesName.join(',')}`)
+export function getChartInfoAPI (productName, envName, serviceName) {
+  return http.get(`/api/aslan/environment/environments/${productName}/helm/charts?envName=${envName}&serviceName=${serviceName.join(',')}`)
 }
 
 export function createHelmVersionAPI (payload) {
   return http.post(`/api/aslan/delivery/releases/helm`, payload)
+}
+
+export function downloadChartInfoAPI (projectName, chartName, versionName) {
+  return http.get(`/api/aslan/delivery/releases/helm/charts?projectName=${projectName}&chartName=${chartName}&version=${versionName}`)
+}
+
+export function useGlobalVariablesAPI (payload) {
+  return http.post(`/api/aslan/delivery/release/helm/global-variables`, payload)
 }
 
 // Forgot password

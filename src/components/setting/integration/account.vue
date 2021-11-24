@@ -264,11 +264,12 @@
             <el-input v-model="userAccountOAuth.config.userInfoURL" placeholder="用户信息 URL" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="用户名属性（用于登录）" prop="userIDKey">
-            <el-input v-model="userAccountOAuth.config.userIDKey" placeholder autofocus clearable auto-complete="off"></el-input>
+            <el-input v-model="userAccountOAuth.config.userIDKey" placeholder="user_id" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="用户昵称属性" prop="claimMapping.userNameKey">
             <el-input
               v-model="userAccountOAuth.config.claimMapping.userNameKey"
+              placeholder="user_name"
               autofocus
               clearable
               auto-complete="off"
@@ -277,10 +278,20 @@
           <el-form-item label="用户邮箱属性" prop="claimMapping.emailKey">
             <el-input
               v-model="userAccountOAuth.config.claimMapping.emailKey"
+              placeholder="email"
               autofocus
               clearable
               auto-complete="off"
             ></el-input>
+          </el-form-item>
+          <el-form-item label="Scopes" prop="scopes">
+            <el-select v-model="userAccountOAuth.config.scopes"
+              multiple
+              filterable
+              allow-create
+              default-first-option
+              placeholder="请输入 Scopes">
+            </el-select>
           </el-form-item>
         </el-form>
       </template>
@@ -471,11 +482,11 @@ export default {
         config: {
           authorizationURL: '',
           claimMapping: {
-            emailKey: 'email',
+            emailKey: '',
             emailVerifiedKey: '',
             groupsKey: '',
-            preferredUsernameKey: 'user_id',
-            userNameKey: 'user_name'
+            preferredUsernameKey: '',
+            userNameKey: ''
           },
           clientID: '',
           clientSecret: '',
@@ -483,7 +494,7 @@ export default {
           redirectURI: '',
           scopes: [],
           tokenURL: '',
-          userIDKey: 'user_id',
+          userIDKey: '',
           userInfoURL: ''
         }
       },
@@ -941,11 +952,6 @@ export default {
             const payload = this.userAccountOAuth
             payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
             payload.config.claimMapping.preferredUsernameKey = payload.config.userIDKey
-            payload.config.scopes = [
-              payload.config.userIDKey,
-              payload.config.claimMapping.userNameKey,
-              payload.config.claimMapping.emailKey
-            ]
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()

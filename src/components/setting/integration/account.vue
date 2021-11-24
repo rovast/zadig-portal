@@ -393,7 +393,7 @@ export default {
           },
           groupSearch: {
             baseDN: '',
-            filter: '(objectClass=group)',
+            filter: '(cn=*)',
             // userMatchers: [
             //   {
             //     userAttr: 'uid',
@@ -431,7 +431,7 @@ export default {
           },
           groupSearch: {
             baseDN: '',
-            filter: '(objectClass=group)',
+            filter: '(cn=*)',
             // userMatchers: [
             //   {
             //     userAttr: 'uid',
@@ -763,7 +763,7 @@ export default {
             },
             groupSearch: {
               baseDN: '',
-              filter: '(objectClass=group)',
+              filter: '(cn=*)',
               // userMatchers: [
               //   {
               //     userAttr: 'uid',
@@ -802,7 +802,7 @@ export default {
             },
             groupSearch: {
               baseDN: '',
-              filter: '(objectClass=group)',
+              filter: '(cn=*)',
               // userMatchers: [
               //   {
               //     userAttr: 'uid',

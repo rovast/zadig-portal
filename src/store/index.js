@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 import login from './modules/login'
 
 // Env
-import product_list from './modules/product_list'
+import project_list from './modules/project_list'
 
 // Sidebar
 import sidebar_status from './modules/sidebar_status'
@@ -25,7 +25,7 @@ const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({
   modules: {
     login,
-    product_list,
+    project_list,
     sidebar_status,
     service_manage,
     external_link,

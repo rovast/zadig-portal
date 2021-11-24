@@ -71,7 +71,7 @@
 
     <el-dialog title="运行 产品-工作流" :visible.sync="showStartProductBuild" custom-class="run-workflow" width="60%">
       <run-workflow
-        v-if="showStartProductBuild"
+        v-if="workflowToRun.name"
         :workflowName="workflowToRun.name"
         :workflowMeta="workflowToRun"
         :targetProduct="workflowToRun.product_tmpl_name"
@@ -334,6 +334,7 @@ export default {
         })
     },
     startProductBuild (workflow) {
+      this.workflowToRun = {}
       getWorkflowDetailAPI(workflow.projectName, workflow.name).then(res => {
         this.showStartProductBuild = true
         this.workflowToRun = res

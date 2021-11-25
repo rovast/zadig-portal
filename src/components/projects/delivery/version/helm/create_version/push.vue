@@ -37,7 +37,7 @@
         </el-form-item>
         <el-form-item label="对象存储" prop="options.s3Id">
           <el-select v-model="releaseInfo.options.s3Id" placeholder="请选择对象存储" size="small">
-            <el-option :label="storage.endpoint" :value="storage.id" v-for="storage in storageList" :key="storage.id"></el-option>
+            <el-option :label="`${storage.bucket}(${storage.endpoint})`" :value="storage.id" v-for="storage in storageList" :key="storage.id"></el-option>
           </el-select>
         </el-form-item>
       </div>

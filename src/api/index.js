@@ -1198,8 +1198,8 @@ export function getProjectIngressAPI (projectName) {
 
 // Delivery
 
-export function getVersionListAPI (workflowName = '', projectName = '', taskId = '', serviceName = '') {
-  return http.get(`/api/aslan/delivery/releases?workflowName=${workflowName}&projectName=${projectName}&taskId=${taskId}&serviceName=${serviceName}`)
+export function getVersionListAPI (workflowName = '', projectName = '', taskId = '', serviceName = '', verbosity = 'detailed') {
+  return http.get(`/api/aslan/delivery/releases?workflowName=${workflowName}&projectName=${projectName}&taskId=${taskId}&serviceName=${serviceName}&verbosity=${verbosity}`)
 }
 
 export function getVersionServiceListAPI (projectName) {

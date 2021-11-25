@@ -119,7 +119,7 @@ export default {
       this.loading = true
       const projectName = this.projectName
       const selectedService = this.selectedService
-      getVersionListAPI('', projectName, '', selectedService).then((res) => {
+      getVersionListAPI('', projectName, '', selectedService, 'brief').then((res) => {
         this.versionList = res
         this.loading = false
       }).catch((err) => {

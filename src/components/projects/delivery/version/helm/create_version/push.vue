@@ -1,9 +1,14 @@
 <template>
   <div class="version-push">
     <el-form ref="pushRef" :rules="rules" :model="releaseInfo" label-width="160px">
+      <el-form-item label="选择镜像仓库" prop="imageRegistryID">
+        <el-select v-model="releaseInfo.imageRegistryID" placeholder="选择镜像仓库" size="small">
+          <el-option :label="`${image.reg_addr}/${image.namespace}`" :value="image.id" v-for="image in imageRegistryList" :key="image.id"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="选择 Chart 仓库" prop="chartRepoName">
         <el-select v-model="releaseInfo.chartRepoName" placeholder="请选择 Chart 仓库" size="small">
-          <el-option :label="repo.url" :value="repo.id" v-for="repo in helmRepoList" :key="repo.id"></el-option>
+          <el-option :label="repo.repo_name" :value="repo.repo_name" v-for="repo in helmRepoList" :key="repo.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="填写 Chart 版本号"></el-form-item>
@@ -28,6 +33,7 @@
       <div v-if="showEnhanced">
         <el-form-item label="离线包分发">
           <el-switch v-model="releaseInfo.options.enableOfflineDist"></el-switch>
+          <span class="desc">将所选服务的镜像和 Chart 打包并上传对象存储</span>
         </el-form-item>
         <el-form-item label="对象存储" prop="options.s3Id">
           <el-select v-model="releaseInfo.options.s3Id" placeholder="请选择对象存储" size="small">
@@ -40,7 +46,7 @@
 </template>
 
 <script>
-import { getStorageListAPI, getHelmRepoAPI } from '@api'
+import { getStorageListAPI, getHelmRepoAPI, getRegistryListAPI } from '@api'
 
 export default {
   props: {
@@ -48,6 +54,11 @@ export default {
   },
   data () {
     this.rules = {
+      imageRegistryID: {
+        required: true,
+        message: '请选择镜像仓库',
+        trigger: ['change', 'blur']
+      },
       chartRepoName: {
         required: true,
         message: '请选择 Chart 仓库',
@@ -62,7 +73,8 @@ export default {
     return {
       showEnhanced: false,
       helmRepoList: [],
-      storageList: []
+      storageList: [],
+      imageRegistryList: []
     }
   },
   methods: {
@@ -78,11 +90,17 @@ export default {
       getHelmRepoAPI().then(res => {
         this.helmRepoList = res
       })
+    },
+    getRegistryList () {
+      getRegistryListAPI().then(res => {
+        this.imageRegistryList = res
+      })
     }
   },
   created () {
     this.getHelmRepo()
     this.getStorageList()
+    this.getRegistryList()
   }
 }
 </script>
@@ -112,6 +130,13 @@ export default {
 
   /deep/.el-select > .el-input {
     width: 100%;
+  }
+
+  .desc {
+    display: inline-block;
+    margin-left: 10px;
+    color: #606266;
+    font-size: 12px;
   }
 }
 </style>

@@ -1235,7 +1235,7 @@ export function downloadChartInfoAPI (projectName, chartName, versionName) {
 }
 
 export function useGlobalVariablesAPI (payload) {
-  return http.post(`/api/aslan/delivery/release/helm/global-variables`, payload)
+  return http.post(`/api/aslan/delivery/releases/helm/global-variables`, payload)
 }
 
 // Forgot password

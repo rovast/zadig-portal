@@ -40,7 +40,7 @@
       <MultipaneResizer></MultipaneResizer>
       <div :style="{flexGrow: 1, minWidth: '100px'}" class="right">
         <div class="title">全局变量</div>
-        <Codemirror v-model="releaseInfo.globalVariables" class="mirror"></Codemirror>
+        <Codemirror v-model="globalYaml" class="mirror"></Codemirror>
         <div class="bottom">
           <el-button type="primary" size="mini" plain @click="applyGlobalVars" :loading="useLoading">应用</el-button>
           <el-button type="primary" size="mini" plain @click="resetAllVars" :disabled="useLoading">重置</el-button>
@@ -80,7 +80,8 @@ export default {
       serviceNames: [],
       selectedPath: '',
       newAddSelectedServicesName: [],
-      useLoading: false
+      useLoading: false,
+      globalYaml: ''
     }
   },
   computed: {
@@ -88,8 +89,9 @@ export default {
       return this.$route.params.project_name
     },
     cmOption () {
-      const path = this.selectedPath.split('/')
-      return { readOnly: this.useLoading || !(path.length === 2 && path[1] === 'values.yaml') }
+      return {
+        readOnly: this.useLoading || !this.validateValuesYaml(this.selectedPath)
+      }
     },
     lastServiceNames () {
       const selected = this.releaseInfo.chartDatas.map(
@@ -99,9 +101,12 @@ export default {
     }
   },
   methods: {
-    async applyGlobalVars () {
-      console.log('应用')
+    validateValuesYaml (path) {
+      return /^([^\/]*)\/values.yaml$/.exec(path)
+    },
+    applyGlobalVars () {
       const chartDatas = []
+      this.releaseInfo.globalVariables = this.globalYaml
       this.releaseInfo.chartDatas.forEach(chart => {
         const yaml = this.yamlStorage[`${chart.serviceName}/values.yaml`]
         if (yaml) {
@@ -111,7 +116,9 @@ export default {
           })
         }
       })
-
+      this.useGlobalVariables(chartDatas)
+    },
+    async useGlobalVariables (chartDatas) {
       const payload = {
         globalVariables: this.releaseInfo.globalVariables,
         chartDatas
@@ -133,6 +140,7 @@ export default {
       }
     },
     resetAllVars () {
+      this.globalYaml = ''
       this.releaseInfo.globalVariables = ''
       this.yamlStorage = {}
       this.selectedPath = ''
@@ -187,6 +195,14 @@ export default {
         await getHelmChartServiceFileContent(data).then(res => {
           this.$set(this.yamlStorage, data.fullPath, res)
         })
+        const valid = this.validateValuesYaml(data.fullPath)
+        if (valid && this.releaseInfo.globalVariables) {
+          const chartData = {
+            serviceName: valid[1],
+            valuesYamlContent: this.yamlStorage[data.fullPath]
+          }
+          await this.useGlobalVariables([chartData])
+        }
       }
       this.selectedPath = data.fullPath
     },

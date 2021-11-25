@@ -44,7 +44,7 @@ export default {
         globalVariables: '',
         chartRepoName: '', // 仓库名称
         imageRegistryID: '', // 镜像仓库 ID
-        options: {} // enableOfflineDist, s3Id
+        options: {} // enableOfflineDist, s3StorageID
       },
       createLoading: false
     }
@@ -102,8 +102,10 @@ export default {
     },
     cancel () {
       this.$router.push({
-        path: '/v1/delivery/version',
-        params: this.$route.params
+        path: `/v1/delivery/version/${this.$route.params.project_name}`,
+        query: {
+          deployType: 'helm'
+        }
       })
     }
   },

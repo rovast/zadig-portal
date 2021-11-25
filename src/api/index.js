@@ -1210,6 +1210,10 @@ export function deleteVersionAPI (projectName, versionId) {
   return http.delete(`/api/aslan/delivery/releases/${versionId}?projectName=${projectName}`)
 }
 
+export function getVersionDetailAPI (projectName, versionId) {
+  return http.get(`/api/aslan/delivery/releases/${versionId}?projectName=${projectName}`)
+}
+
 export function getVersionProductListAPI () {
   return http.get(`/api/v1/picket/projects?ignoreNoVersions=false&verbosity=detailed`)
 }

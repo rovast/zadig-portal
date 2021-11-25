@@ -30,20 +30,30 @@
                 描述：
                 <span class="dark-color">{{versionInfo.desc}}</span>
               </el-col>
+              <el-col :span="10">
+                状态：
+                <span
+                  class="dark-color"
+                  :style="{color: uploadProgressList(versionInfo.status).color}"
+                >{{uploadProgressList(versionInfo.status).desc}}</span>
+              </el-col>
             </el-row>
           </div>
           <div class="version-title">
             交付内容
-            <el-popover placement="right" trigger="click">
+            <el-popover placement="right" trigger="hover">
               <div>
                 <div>
                   进度详情
-                  <el-button type="text" class="little-btn">重试</el-button>
+                  <el-button type="text" class="little-btn" @click="retryCreate">重试</el-button>
                 </div>
-                <div style="width: 250px; padding: 0 5px;">
-                  <p>上传 Chart 和镜像：{{}}</p>
-                  <p>上传离线包：{{}}</p>
-                  <p>错误信息：{{}}</p>
+                <div style="width: 250px; padding: 0 5px; font-size: 13px;">
+                  <p>上传 Chart 和镜像：{{versionInfo.progress.successChartCount}}/{{versionInfo.progress.totalChartCount}}</p>
+                  <p>
+                    上传离线包：
+                    <span :style="{color: uploadProgress.color}">{{uploadProgress.desc}}</span>
+                  </p>
+                  <p v-if="versionInfo.progress.error">错误信息：{{versionInfo.progress.error}}</p>
                 </div>
               </div>
               <el-button slot="reference" type="text" class="little-btn">进度详情</el-button>
@@ -51,31 +61,45 @@
           </div>
           <div class="push-info">
             <div class="push-title">Chart 信息</div>
-            <el-table :data="charts" style="width: 100%;">
-              <el-table-column prop="name" label="Chart 名称"></el-table-column>
-              <el-table-column prop="repo" label="Chart 仓库"></el-table-column>
-              <el-table-column prop="version" label="版本库"></el-table-column>
+            <el-table :data="distributeChart" style="width: 100%;">
+              <el-table-column type="expand" width="50px">
+                <template slot-scope="{row}">
+                  <el-table :data="row.subDistributes" style="width: 100%;">
+                    <el-table-column prop="serviceName" label="组件名称"></el-table-column>
+                    <el-table-column label="镜像名称">
+                      <template slot-scope="{row}">
+                        <span>{{row.registryName}}</span>
+                        <!-- <router-link :to="`/v1/delivery/artifacts/detail/${row.id}?name=${row.serviceName}`">{{row.registryName}}</router-link> -->
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </template>
+              </el-table-column>
+              <el-table-column prop="chartName" label="Chart 名称"></el-table-column>
+              <el-table-column prop="chartRepoName" label="Chart 仓库"></el-table-column>
+              <el-table-column prop="chartVersion" label="版本库"></el-table-column>
               <el-table-column label="操作">
-                <!-- <el-button type="text">预览</el-button> -->
-                <el-button type="text">下载</el-button>
+                <template slot-scope="{row}">
+                  <!-- <el-button type="text">预览</el-button> -->
+                  <el-button type="text" @click="downloadChart(row)">下载</el-button>
+                </template>
               </el-table-column>
             </el-table>
-            <div class="push-title">服务信息</div>
-            <el-table :data="services" style="width: 100%;">
-              <el-table-column prop="service" label="服务名称"></el-table-column>
-              <el-table-column prop="image" label="镜像名称"></el-table-column>
-            </el-table>
-            <div class="push-title">离线包信息</div>
-            <el-table :data="tars" style="width: 100%;">
-              <el-table-column prop="name" label="离线包名称"></el-table-column>
-              <el-table-column prop="store" label="对象存储"></el-table-column>
-            </el-table>
+            <div v-if="packageFile">
+              <div class="push-title">离线包信息</div>
+              <el-table :data="packageFile" style="width: 100%;">
+                <el-table-column prop="packageFile" label="离线包名称"></el-table-column>
+                <el-table-column label="对象存储">
+                  <template slot-scope="{row}">{{row.storageUrl}}/{{row.storageBucket}}</template>
+                </el-table-column>
+              </el-table>
+            </div>
           </div>
         </div>
       </el-tab-pane>
       <el-tab-pane disabled>
         <span slot="label" class="version-push" @click="upgradeVersion">
-          <i class="el-icon-upload2"></i> 版本发布
+          <i class="el-icon-upload2"></i> 版本升级
         </span>
       </el-tab-pane>
     </el-tabs>
@@ -83,35 +107,20 @@
 </template>
 
 <script>
-import { getVersionListAPI } from '@api'
+import {
+  getVersionDetailAPI,
+  createHelmVersionAPI,
+  downloadChartInfoAPI
+} from '@api'
 export default {
   data () {
     return {
       loading: false,
-      versionInfo: {},
-      version: '1.3.0',
-      tag: '开源版',
-      desc: 'test',
-      charts: [
-        {
-          name: 'zadig',
-          repo: 'xxx',
-          version: '1.3.0'
-        }
-      ],
-      services: [
-        {
-          service: 'aslan',
-          image: 'xxx'
-        }
-      ],
-      tars: [
-        {
-          name: 'zadig.tar.gz',
-          store: 'xxx',
-          status: 'succss'
-        }
-      ]
+      versionInfo: {
+        progress: {}
+      }, // 基本信息
+      distributeChart: [], // chart 信息
+      packageFile: null // 离线包信息  高级功能
     }
   },
   computed: {
@@ -120,21 +129,89 @@ export default {
     },
     versionId () {
       return this.$route.params.id
+    },
+    uploadProgress () {
+      return this.uploadProgressList(this.versionInfo.progress.packageStatus)
     }
   },
   methods: {
+    uploadProgressList (status) {
+      const statusEnum = {
+        success: {
+          desc: '成功',
+          color: '#67c23a'
+        },
+        failed: {
+          desc: '失败',
+          color: '#f56c6c'
+        },
+
+        waiting: {
+          desc: '等待上传',
+          color: '#409eff'
+        },
+        uploading: {
+          desc: '上传中',
+          color: '#e6a23c'
+        },
+
+        creating: {
+          desc: '创建中',
+          color: '#e6a23c'
+        },
+        retrying: {
+          desc: '重试中',
+          color: '#409eff'
+        },
+        undefine: {
+          desc: '未知',
+          color: '#909399'
+        }
+      }
+      return statusEnum[status] || statusEnum.undefine
+    },
+    retryCreate () {
+      const payload = {
+        productName: this.projectName,
+        version: this.versionInfo.version,
+        retry: true
+      }
+      this.loading = true
+      createHelmVersionAPI(payload).then(() => {
+        this.$message.success(`重试成功！`)
+        this.getVersionDetail()
+      })
+    },
     upgradeVersion () {
       console.log('upgrade')
+      this.$message.info('敬请期待！')
     },
     getVersionDetail () {
       this.loading = true
       const versionId = this.versionId
       const projectName = this.projectName
-      getVersionListAPI('', projectName, '').then(res => {
+      getVersionDetailAPI(projectName, versionId).then(res => {
         this.loading = false
-        this.versionInfo = res.find(
-          item => item.versionInfo.id === versionId
-        ).versionInfo
+        this.versionInfo = res.versionInfo
+
+        const distributeChart = []
+        res.distributeInfo.forEach(info => {
+          if (info.distributeType === 'chart') {
+            distributeChart.push(info)
+          } else if (info.distributeType === 'file') {
+            this.packageFile = [info]
+          }
+        })
+        this.distributeChart = distributeChart
+      })
+    },
+    downloadChart (data) {
+      downloadChartInfoAPI(
+        this.projectName,
+        data.chartName,
+        data.chartVersion
+      ).then(res => {
+        console.log(data, res)
       })
     }
   },
@@ -197,6 +274,10 @@ export default {
   /deep/.el-table {
     .el-table__cell {
       padding: 6px 0;
+
+      &.el-table__expanded-cell {
+        padding: 10px 50px;
+      }
     }
   }
 

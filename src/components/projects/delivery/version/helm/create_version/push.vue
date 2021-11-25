@@ -35,8 +35,8 @@
           <el-switch v-model="releaseInfo.options.enableOfflineDist"></el-switch>
           <span class="desc">将所选服务的镜像和 Chart 打包并上传对象存储</span>
         </el-form-item>
-        <el-form-item label="对象存储" prop="options.s3Id">
-          <el-select v-model="releaseInfo.options.s3Id" placeholder="请选择对象存储" size="small">
+        <el-form-item label="对象存储" prop="options.s3StorageID">
+          <el-select v-model="releaseInfo.options.s3StorageID" placeholder="请选择对象存储" size="small">
             <el-option :label="`${storage.bucket}(${storage.endpoint})`" :value="storage.id" v-for="storage in storageList" :key="storage.id"></el-option>
           </el-select>
         </el-form-item>
@@ -64,7 +64,7 @@ export default {
         message: '请选择 Chart 仓库',
         trigger: ['change', 'blur']
       },
-      'options.s3Id': {
+      'options.s3StorageID': {
         required: true,
         message: '请选择对象存储',
         trigger: ['change', 'blur']

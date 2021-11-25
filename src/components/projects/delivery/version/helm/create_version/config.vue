@@ -6,9 +6,9 @@
           <el-option :label="name" :value="name" v-for="name in envNames" :key="name"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="服务" prop="chartDatas">
+      <el-form-item label="服务">
         <el-select
-          v-model="releaseInfo.chartDatas"
+          v-model="newAddSelectedServicesName"
           placeholder="请选择服务"
           multiple
           size="small"
@@ -16,11 +16,13 @@
           collapse-tags
           value-key="serviceName"
         >
-          <el-option :label="service.serviceName" :value="service" v-for="service in serviceNames" :key="service.serviceName"></el-option>
+          <el-option :label="service" :value="service" v-for="service in lastServiceNames" :key="service"></el-option>
         </el-select>
-        <el-button type="text" size="small" @click="releaseInfo.chartDatas = serviceNames">全选</el-button>
+        <el-button type="text" size="small" @click="newAddSelectedServicesName = lastServiceNames">全选</el-button>
+        <el-button type="primary" size="mini" plain @click="addServiceNames">添加</el-button>
       </el-form-item>
     </el-form>
+
     <Multipane class="config">
       <FileTree
         :style="{width: '200px', minWidth: '100px', maxWidth: '400px'}"
@@ -32,11 +34,18 @@
         @deleteService="deleteService"
       ></FileTree>
       <MultipaneResizer></MultipaneResizer>
-      <div :style="{minWidth: '200px', width: '500px'}" class="right">
+      <div :style="{minWidth: '200px', width: '500px'}" class="middle">
         <Codemirror v-model="yamlStorage[selectedPath]" :cmOption="cmOption"></Codemirror>
       </div>
       <MultipaneResizer></MultipaneResizer>
-      <div :style="{flexGrow: 1, minWidth: '100px'}"></div>
+      <div :style="{flexGrow: 1, minWidth: '100px'}" class="right">
+        <div class="title">全局变量</div>
+        <Codemirror v-model="releaseInfo.globalVariables" class="mirror"></Codemirror>
+        <div class="bottom">
+          <el-button type="primary" size="mini" plain @click="applyGlobalVars" :loading="useLoading">应用</el-button>
+          <el-button type="primary" size="mini" plain @click="resetAllVars" :disabled="useLoading">重置</el-button>
+        </div>
+      </div>
     </Multipane>
   </div>
 </template>
@@ -49,7 +58,8 @@ import FileTree from './file_tree.vue'
 import {
   listProductAPI,
   getHelmReleaseListAPI,
-  getHelmChartServiceFileContent
+  getHelmChartServiceFileContent,
+  useGlobalVariablesAPI
 } from '@api'
 
 export default {
@@ -62,18 +72,15 @@ export default {
         required: true,
         message: '请选择环境',
         trigger: ['change', 'blur']
-      },
-      chartDatas: {
-        required: true,
-        message: '请选择服务',
-        trigger: ['change', 'blur']
       }
     }
     return {
       yamlStorage: {},
       envNames: [],
       serviceNames: [],
-      selectedPath: ''
+      selectedPath: '',
+      newAddSelectedServicesName: [],
+      useLoading: false
     }
   },
   computed: {
@@ -82,10 +89,63 @@ export default {
     },
     cmOption () {
       const path = this.selectedPath.split('/')
-      return { readOnly: !(path.length === 2 && path[1] === 'values.yaml') }
+      return { readOnly: this.useLoading || !(path.length === 2 && path[1] === 'values.yaml') }
+    },
+    lastServiceNames () {
+      const selected = this.releaseInfo.chartDatas.map(
+        chart => chart.serviceName
+      )
+      return this.serviceNames.filter(name => !selected.includes(name))
     }
   },
   methods: {
+    async applyGlobalVars () {
+      console.log('应用')
+      const chartDatas = []
+      this.releaseInfo.chartDatas.forEach(chart => {
+        const yaml = this.yamlStorage[`${chart.serviceName}/values.yaml`]
+        if (yaml) {
+          chartDatas.push({
+            serviceName: chart.serviceName,
+            valuesYamlContent: yaml
+          })
+        }
+      })
+
+      const payload = {
+        globalVariables: this.releaseInfo.globalVariables,
+        chartDatas
+      }
+
+      this.useLoading = true
+      const res = await useGlobalVariablesAPI(payload).catch(err => {
+        console.log(err)
+      })
+      this.useLoading = false
+      if (res) {
+        res.chartDatas.forEach(chart => {
+          this.$set(
+            this.yamlStorage,
+            `${chart.serviceName}/values.yaml`,
+            chart.valuesYamlContent
+          )
+        })
+      }
+    },
+    resetAllVars () {
+      this.releaseInfo.globalVariables = ''
+      this.yamlStorage = {}
+      this.selectedPath = ''
+    },
+    addServiceNames () {
+      const add = this.newAddSelectedServicesName.map(name => {
+        return {
+          serviceName: name
+        }
+      })
+      this.releaseInfo.chartDatas = this.releaseInfo.chartDatas.concat(add)
+      this.newAddSelectedServicesName = []
+    },
     validate () {
       const info = this.releaseInfo
       if (info.envName && info.chartDatas.length) {
@@ -94,12 +154,16 @@ export default {
           return {
             serviceName: chart.serviceName,
             version: chart.version || info.version,
-            valuesYamlContent: this.yamlStorage[`${chart}/values.yaml`] || '',
-            lastVersion: revision[chart]
+            valuesYamlContent:
+              this.yamlStorage[`${chart.serviceName}/values.yaml`] || '',
+            lastVersion: revision[chart.serviceName]
           }
         })
+        return this.$refs.configRef.validate()
+      } else {
+        this.$message.error('请先选择服务')
+        return Promise.reject('false')
       }
-      return this.$refs.configRef.validate()
     },
     getEnvNames () {
       listProductAPI(this.projectName).then(res => {
@@ -107,18 +171,10 @@ export default {
       })
     },
     getServicesNameByEnv (envName) {
-      console.log('update env')
-      this.serviceNames = ['1', '2', '3', '4'].map(re => {
-        return {
-          serviceName: re
-        }
-      })
       if (envName) {
         getHelmReleaseListAPI(this.projectName, envName).then(res => {
           this.serviceNames = res.map(re => {
-            return {
-              serviceName: re.serviceName
-            }
+            return re.serviceName
           })
         })
       }
@@ -134,28 +190,24 @@ export default {
       }
       this.selectedPath = data.fullPath
     },
-    deleteService (names) {
-      names.forEach(name => {
-        const index = this.releaseInfo.chartDatas.findIndex(
-          chart => chart.serviceName === name
-        )
-        if (index > -1) {
-          this.releaseInfo.chartDatas.splice(index, 1)
-        }
-
-        const storages = []
-        Object.keys(this.yamlStorage).forEach(storage => {
-          if (storage.startsWith(`${name}/`)) {
-            storages.push(storage)
-          }
-        })
-        storages.forEach(sto => {
-          this.$delete(this.yamlStorage, sto)
-        })
-        if (this.selectedPath.startsWith(`${name}/`)) {
-          this.selectedPath = ''
+    deleteService (name) {
+      const index = this.releaseInfo.chartDatas.findIndex(
+        chart => chart.serviceName === name
+      )
+      // 清理列表里的服务
+      if (index > -1) {
+        this.releaseInfo.chartDatas.splice(index, 1)
+      }
+      // 清理缓存的文件
+      Object.keys(this.yamlStorage).forEach(storage => {
+        if (storage.startsWith(`${name}/`)) {
+          this.$delete(this.yamlStorage, storage)
         }
       })
+      // 如果当前展示的是被删除的服务 清空选择的文件
+      if (this.selectedPath.startsWith(`${name}/`)) {
+        this.selectedPath = ''
+      }
     }
   },
   created () {
@@ -173,6 +225,7 @@ export default {
 <style lang="less" scoped>
 .version-config {
   height: calc(~'100% - 200px');
+  color: #606266;
 
   .config {
     width: 100%;
@@ -180,15 +233,39 @@ export default {
     background-color: #f5f7f7;
     border: 3px solid transparent;
 
-    .left {
+    .left,
+    .right {
       height: 100%;
       max-height: 100%;
       overflow: auto;
+      background-color: #fff;
     }
 
     .right {
+      .title {
+        margin: 5px;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .mirror {
+        height: 80%;
+        margin: 5px;
+        overflow: hidden;
+        border: 1px solid #eee;
+        border-radius: 3px;
+      }
+
+      .bottom {
+        margin: 10px 5px;
+        white-space: nowrap;
+        text-align: right;
+      }
+    }
+
+    .middle {
       height: 100%;
-      margin-left: 3px;
+      margin: 0 3px;
       overflow: hidden;
     }
   }

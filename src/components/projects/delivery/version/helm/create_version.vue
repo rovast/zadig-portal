@@ -36,11 +36,14 @@ export default {
       deliveryRelease: {
         productName: '',
         version: '',
-        labels: '', // []string
+        retry: false, // true 用于重试
+        labels: '', // []string 接口使用时进行转换
         desc: '',
         envName: '',
         chartDatas: [], // {serviceName, version, valuesYamlContent} and lastVersion but not post
-        chartRepoID: '',
+        globalVariables: '',
+        chartRepoName: '', // 仓库名称
+        imageRegistryID: '', // 镜像仓库 ID
         options: {} // enableOfflineDist, s3Id
       },
       createLoading: false

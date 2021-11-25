@@ -1,8 +1,8 @@
 <template>
   <div class="version-push">
     <el-form ref="pushRef" :rules="rules" :model="releaseInfo" label-width="160px">
-      <el-form-item label="选择 Chart 仓库" prop="chartRepoID">
-        <el-select v-model="releaseInfo.chartRepoID" placeholder="请选择 Chart 仓库" size="small">
+      <el-form-item label="选择 Chart 仓库" prop="chartRepoName">
+        <el-select v-model="releaseInfo.chartRepoName" placeholder="请选择 Chart 仓库" size="small">
           <el-option :label="repo.url" :value="repo.id" v-for="repo in helmRepoList" :key="repo.id"></el-option>
         </el-select>
       </el-form-item>
@@ -48,7 +48,7 @@ export default {
   },
   data () {
     this.rules = {
-      chartRepoID: {
+      chartRepoName: {
         required: true,
         message: '请选择 Chart 仓库',
         trigger: ['change', 'blur']

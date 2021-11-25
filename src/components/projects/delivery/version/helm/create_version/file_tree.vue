@@ -22,8 +22,6 @@
 <script>
 import { getChartInfoAPI, getHelmChartServiceFilePath } from '@api'
 
-import { debounce } from 'lodash'
-
 const dataStructure = {
   name: '',
   parent: '',
@@ -119,12 +117,12 @@ export default {
       return this.serviceRevision
     },
     deleteNode ({ name }) {
-      this.$emit('deleteService', [name])
+      this.$emit('deleteService', name)
     }
   },
   watch: {
     fileData: {
-      handler: debounce(function (newV, oldV) {
+      handler (newV, oldV) {
         const treeData = this.treeData
         this.addServices = []
 
@@ -149,16 +147,7 @@ export default {
         if (this.addServices.length) {
           this.getChartInfo()
         }
-
-        const deletedServices = []
-        oldV &&
-          oldV.forEach(val => {
-            if (!newServices.includes(val.serviceName)) {
-              deletedServices.push(val.serviceName)
-            }
-          })
-        this.$emit('deleteService', deletedServices)
-      }, 500),
+      },
       deep: true,
       immediate: true
     }

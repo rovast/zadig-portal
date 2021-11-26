@@ -3,7 +3,7 @@
     <UpdateEnv ref="updateEnv"/>
     <div class="config-container-pm">
       <ServiceList
-        ref="serviceLsit"
+        ref="serviceList"
         :editService="editService"
         :addService="addService"
         :changeShowBuild="(value) =>showBuild = value"
@@ -21,7 +21,7 @@
                  alt="">
             <p style="color: #909399;">暂无服务，创建服务请在左侧栏点击&nbsp;<el-button size="mini"
                            icon="el-icon-plus"
-                           @click="$refs.serviceLsit.newService()"
+                           @click="$refs.serviceList.newService()"
                            plain
                            circle>
                 </el-button>&nbsp;创建服务</p>
@@ -69,7 +69,7 @@ export default {
     listenEvent (res) {
       if (res === 'success') {
         this.showNext = true
-        this.$refs.serviceLsit.getServiceTemplates()
+        this.$refs.serviceList.getServiceTemplates()
       }
     }
   },

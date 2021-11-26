@@ -82,7 +82,7 @@ export default {
     return {
       loading: false,
       versionList: [],
-      productList: [],
+      projectList: [],
       serviceList: [],
       selectedService: ''
     }

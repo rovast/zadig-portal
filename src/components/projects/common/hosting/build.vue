@@ -728,14 +728,6 @@
           </div>
         </div>
       </div>
-        <!-- <el-button
-            type="primary"
-            size="small"
-            @click="updateBuildConfig"
-            class="save-btn"
-            plain
-            >保存构建
-        </el-button> -->
       <el-dialog
         title="参数化构建"
         :visible.sync="paramsBuildDialogVisible"

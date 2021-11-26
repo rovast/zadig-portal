@@ -155,11 +155,11 @@ export default {
       return this.productInfo.is_prod
     },
     ...mapGetters([
-      'productList'
+      'projectList'
     ]),
     envNameList () {
       const envNameList = []
-      this.productList.forEach(element => {
+      this.projectList.forEach(element => {
         if (element.product_name === this.projectName) {
           envNameList.push({
             envName: element.env_name
@@ -177,7 +177,7 @@ export default {
       }
     },
     filteredProducts () {
-      return _.uniqBy(_.orderBy(this.productList, ['product_name', 'is_prod']), 'product_name')
+      return _.uniqBy(_.orderBy(this.projectList, ['product_name', 'is_prod']), 'product_name')
     },
     runningService () {
       return this.serviceList.filter(s => (s.status === 'Running' || s.status === 'Succeeded')).length

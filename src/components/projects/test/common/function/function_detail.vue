@@ -27,52 +27,8 @@
       <div class="divider"></div>
 
       <div class="title">执行环境</div>
-      <el-row :gutter="20">
-        <el-col :span="9">
-          <el-form-item prop="pre_test.image_id"
-                        label="构建系统">
-            <el-select size="small"
-                       v-model="test.pre_test.image_id"
-                       placeholder="请选择">
-              <el-option v-for="(sys,index) in systems"
-                         :key="index"
-                         :label="sys.label"
-                         :value="sys.id">
-                <span> {{sys.label}}
-                  <el-tag v-if="sys.image_from==='custom'"
-                          type="info"
-                          size="mini"
-                          effect="light">
-                    自定义
-                  </el-tag>
-                </span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="9">
-          <el-form-item prop="pre_test.res_req"
-                        label="资源规格">
+      <BuildEnv :pre_build="test.pre_test" :isCreate="!isEdit" :title="``"></BuildEnv>
 
-            <el-select size="small"
-                       v-model="test.pre_test.res_req"
-                       placeholder="请选择">
-              <el-option label="高 | CPU: 16 核 内存: 32 GB"
-                         value="high">
-              </el-option>
-              <el-option label="中 | CPU: 8 核 内存: 16 GB"
-                         value="medium">
-              </el-option>
-              <el-option label="低 | CPU: 4 核 内存: 8 GB"
-                         value="low">
-              </el-option>
-              <el-option label="最低 | CPU: 2 核 内存: 2 GB"
-                         value="min">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
       <div class="divider">
       </div>
 
@@ -392,12 +348,13 @@
 </template>
 
 <script>
+import BuildEnv from '@/components/projects/build/build_env.vue'
 import testTrigger from '@/components/common/test_trigger.vue'
 import bus from '@utils/event_bus'
 import ValidateSubmit from '@utils/validate_async'
 import Editor from 'vue2-ace-bind'
 import {
-  getAllAppsAPI, getImgListAPI, getCodeSourceMaskedAPI, createTestAPI, updateTestAPI, singleTestAPI
+  getAllAppsAPI, getCodeSourceMaskedAPI, createTestAPI, updateTestAPI, singleTestAPI
 } from '@api'
 const validateTestName = (rule, value, callback) => {
   if (value === '') {
@@ -416,7 +373,6 @@ export default {
       productTemplates: [],
       allApps: {},
       allCodeHosts: [],
-      systems: [],
       test: {
         name: '',
         product_name: '',
@@ -655,15 +611,6 @@ export default {
         return
       }
       Promise.all(refs.map(r => r.validate())).then(() => {
-        if (this.test.pre_test.image_id) {
-          const image = this.systems.find((item) => { return item.id === this.test.pre_test.image_id })
-          this.test.pre_test.image_from = image.image_from
-          this.test.pre_test.build_os = image.value
-        } else if (this.test.pre_test.build_os) {
-          const image = this.systems.find((item) => { return item.value === this.test.pre_test.build_os })
-          this.test.pre_test.image_id = image.id
-          this.test.pre_test.image_from = image.image_from
-        }
         this.test.repos.forEach(repo => {
           this.allCodeHosts.forEach(codehost => {
             if (repo.codehost_id === codehost.id) {
@@ -706,12 +653,6 @@ export default {
     })
     getCodeSourceMaskedAPI().then((response) => {
       this.allCodeHosts = response
-    })
-    getImgListAPI().then((response) => {
-      this.systems = response
-      if (!this.isEdit) {
-        this.test.pre_test.image_id = this.systems[0].id
-      }
     })
     this.test.product_name = this.projectName
     const topTitle = this.basePath === 'tests'
@@ -772,7 +713,8 @@ export default {
   },
   components: {
     Editor,
-    testTrigger
+    testTrigger,
+    BuildEnv
   }
 }
 </script>

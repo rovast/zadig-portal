@@ -24,7 +24,7 @@
         <el-input v-model="chart.version" placeholder="请输入 Chart 版本号" size="small"></el-input>
         <span class="last-version">上个版本：{{chart.lastVersion || '无'}}</span>
       </el-form-item>
-      <div>
+      <!-- <div>
         <el-button type="text" @click="showEnhanced = !showEnhanced">
           高级功能
           <i :class="{'el-icon-arrow-right': !showEnhanced, 'el-icon-arrow-down': showEnhanced}"></i>
@@ -40,7 +40,7 @@
             <el-option :label="`${storage.bucket}(${storage.endpoint})`" :value="storage.id" v-for="storage in storageList" :key="storage.id"></el-option>
           </el-select>
         </el-form-item>
-      </div>
+      </div> -->
     </el-form>
   </div>
 </template>

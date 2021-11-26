@@ -265,7 +265,7 @@
   </div>
 </template>
 <script>
-import { getProjectInfoAPI, getProductInfo, queryUserBindingsAPI, deleteProjectAPI, getClusterListAPI, getWorkflowsAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
+import { getProjectInfoAPI, getEnvInfoAPI, queryUserBindingsAPI, deleteProjectAPI, getClusterListAPI, getWorkflowsAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
 import { getProductStatus } from '@utils/word_translate'
 import { wordTranslate } from '@utils/word_translate.js'
 import { whetherOnboarding } from '@utils/onboarding_route'
@@ -296,7 +296,7 @@ export default {
       const projectName = this.projectName
       listProductAPI('', projectName).then((res) => {
         this.envList = res.map(element => {
-          getProductInfo(projectName, element.env_name).then((res) => {
+          getEnvInfoAPI(projectName, element.env_name).then((res) => {
             element.status = res.status
           })
           if (element.cluster_id) {

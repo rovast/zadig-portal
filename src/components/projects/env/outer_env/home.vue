@@ -26,14 +26,14 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'productList'
+      'projectList'
     ]),
     isInProject () {
       return this.$route.path.includes('/projects/detail/')
     }
   },
   watch: {
-    productList: {
+    projectList: {
       immediate: true,
       handler () {
         this.getProducts()
@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     async getProducts () {
-      const projectList = this.productList.filter(product => {
+      const projectList = this.projectList.filter(product => {
         return !product.onboard && product.envs.length
       })
       const routerList = projectList.map(element => {
@@ -53,7 +53,7 @@ export default {
         routerList: routerList
       })
       this.loading = false
-      if (this.productList.length === 0) {
+      if (this.projectList.length === 0) {
         this.emptyEnvs = true
         return
       } else {

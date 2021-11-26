@@ -88,10 +88,10 @@ export default {
         this.$emit('input', val)
       }
     },
-    ...mapGetters(['productList']),
+    ...mapGetters(['projectList']),
     envNameList () {
       const envNameList = []
-      this.productList.forEach(element => {
+      this.projectList.forEach(element => {
         if (element.name === this.projectName) {
           element.envs.forEach(envName => {
             envNameList.push({

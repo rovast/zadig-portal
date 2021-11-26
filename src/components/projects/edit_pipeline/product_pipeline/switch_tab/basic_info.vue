@@ -100,7 +100,7 @@ export default {
   data () {
     return {
       projects: [],
-      productList: [],
+      projectList: [],
       filteredEnvs: [],
       rules: {
         name: [

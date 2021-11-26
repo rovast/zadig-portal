@@ -472,6 +472,10 @@ export function getWorkflowsAPI (projectName) {
   return http.get(`/api/v1/picket/workflows?projectName=${projectName || ''}`)
 }
 
+export function getWorkflowsInProjectAPI (projectName) {
+  return http.get(`/api/aslan/workflow/workflow?projectName=${projectName || ''}`)
+}
+
 export function setFavoriteAPI (payload) {
   return http.post('/api/aslan/workflow/favorite', payload)
 }

@@ -700,9 +700,6 @@ export default {
         },
         scripts: '#!/bin/bash\nset -e',
         post_build: {
-          docker_build: {
-            source: 'local'
-          }
         }
       },
       editorOption: {
@@ -1001,21 +998,27 @@ export default {
         this.dockerfileTemplate = res
       }
     },
-    loadPage () {
+    async loadPage () {
       const projectName = this.projectName
       if (!this.isCreate) {
-        getBuildConfigDetailAPI(this.buildConfigName, this.projectName).then((response) => {
-          response.pre_build.installs.forEach(element => {
+        const buildConfig = await getBuildConfigDetailAPI(this.buildConfigName, this.projectName).catch(error => console.log(error))
+        const serviceTagets = await getServiceTargetsAPI(projectName).catch(error => console.log(error))
+        if (buildConfig && serviceTagets) {
+          buildConfig.pre_build.installs.forEach(element => {
             element.id = element.name + element.version
           })
-          response.targets.forEach(t => {
+          buildConfig.targets.forEach(t => {
             t.key = t.service_name + '/' + t.service_module
           })
-          this.buildConfig = response
+          this.buildConfig = buildConfig
+          this.serviceTargets = [...serviceTagets, ...this.buildConfig.targets].map(element => {
+            element.key = element.service_name + '/' + element.service_module
+            return element
+          })
           if (this.buildConfig.source) {
             this.source = this.buildConfig.source
             if (this.source === 'jenkins') {
-              this.jenkinsBuild = response
+              this.jenkinsBuild = buildConfig
             }
           }
           if (!this.buildConfig.timeout) {
@@ -1033,6 +1036,13 @@ export default {
           if (this.buildConfig.post_build.scripts) {
             this.post_script_enabled = true
           }
+        }
+      } else {
+        getServiceTargetsAPI(projectName).then((response) => {
+          this.serviceTargets = [...response, ...this.buildConfig.targets].map(element => {
+            element.key = element.service_name + '/' + element.service_module
+            return element
+          })
         })
       }
       getAllAppsAPI().then((response) => {
@@ -1046,12 +1056,6 @@ export default {
       })
       getCodeSourceMaskedAPI().then((response) => {
         this.allCodeHosts = response
-      })
-      getServiceTargetsAPI(projectName).then((response) => {
-        this.serviceTargets = [...response, ...this.buildConfig.targets].map(element => {
-          element.key = element.service_name + '/' + element.service_module
-          return element
-        })
       })
       getImgListAPI().then((response) => {
         this.systems = response

@@ -4,7 +4,7 @@
     <div v-if="title" class="divider item"></div>
     <el-row :gutter="20">
       <el-col :span="mini ? 12 : 7">
-        <el-form-item :label="mini ? '系统' : '构建系统'" prop="pre_build.image_id" :label-width="mini ? '60px' : 'auto'">
+        <el-form-item :label="mini ? '系统' : '构建系统'" label-width="auto" required>
           <el-select size="small" v-model="pre_build.image_id" placeholder="请选择" @change="changeImage('id', $event)">
             <el-option v-for="(sys,index) in systems" :key="index" :label="sys.label" :value="sys.id">
               <span>
@@ -19,7 +19,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="mini ? 12 : 16">
-        <el-form-item :label="mini ? '资源' : '资源规格'" :label-width="mini ? '50px' : 'auto'">
+        <el-form-item :label="mini ? '资源' : '资源规格'" label-width="auto" required>
           <el-select size="small" v-model="pre_build.res_req" placeholder="请选择">
             <el-option label="高 | CPU: 16 核 内存: 32 GB" value="high"></el-option>
             <el-option label="中 | CPU: 8 核 内存: 16 GB" value="medium"></el-option>
@@ -102,7 +102,6 @@ export default {
         this.pre_build.image_from = imageSys.image_from
         this.pre_build.build_os = imageSys.value
       }
-      console.log('data: ', this.pre_build)
     },
     checkSpec () {
       if (!this.pre_build.res_req_spec) {

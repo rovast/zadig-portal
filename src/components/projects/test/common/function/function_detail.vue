@@ -437,7 +437,11 @@ export default {
           build_os: 'xenial',
           image_from: '',
           image_id: '',
-          res_req: 'low',
+          res_req: 'low', // high 、medium、low、min、define
+          res_req_spec: {
+            cpu_limit: '1000m',
+            memory_limit: '512Mi'
+          },
           installs: [
             { name: '', version: '' }
           ],

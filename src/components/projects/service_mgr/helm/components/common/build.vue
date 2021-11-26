@@ -926,7 +926,11 @@ export default {
         repos: [],
         pre_build: {
           clean_workspace: false,
-          res_req: 'low',
+          res_req: 'low', // high 、medium、low、min、define
+          res_req_spec: {
+            cpu_limit: '1000m',
+            memory_limit: '512Mi'
+          },
           build_os: 'xenial',
           image_id: '',
           image_from: '',

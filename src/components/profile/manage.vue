@@ -77,7 +77,7 @@
                                  :keyword="{location:'个人中心',key:'KubeConfig'}"></support-doc>
                   </td>
                   <td class="">
-                    <el-button @click="downloadPubKey()"
+                    <el-button @click="downloadConfig()"
                                type="text">点击下载</el-button>
                   </td>
                 </tr>
@@ -148,7 +148,7 @@
 import bus from '@utils/event_bus'
 import store from 'storejs'
 import supportDoc from './common/support_doc.vue'
-import { getCurrentUserInfoAPI, updateCurrentUserInfoAPI, getSubscribeAPI, saveSubscribeAPI, downloadPubKeyAPI } from '@api'
+import { getCurrentUserInfoAPI, updateCurrentUserInfoAPI, getSubscribeAPI, saveSubscribeAPI, downloadConfigAPI } from '@api'
 import { mapState } from 'vuex'
 
 export default {
@@ -249,14 +249,14 @@ export default {
       this.$refs.ruleForm.resetFields()
       this.modifiedPwdDialogVisible = false
     },
-    downloadPubKey () {
+    downloadConfig () {
       this.$message({
-        message: '私钥获取中，请稍候...',
+        message: '获取配置中，请稍候...',
         type: 'info'
       })
-      downloadPubKeyAPI().then((res) => {
+      downloadConfigAPI().then((res) => {
         this.$message({
-          message: '私钥获取完毕，下载后请根据文档使用',
+          message: '配置获取完毕，下载后请按照文档使用',
           type: 'success'
         })
         const content = res

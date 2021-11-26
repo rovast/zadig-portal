@@ -81,7 +81,9 @@
               <el-table-column label="操作">
                 <template slot-scope="{row}">
                   <!-- <el-button type="text">预览</el-button> -->
-                  <el-button type="text" @click="downloadChart(row)">下载</el-button>
+                  <a download :href="downloadChartUrl(row)">
+                    <el-button type="text">下载</el-button>
+                  </a>
                 </template>
               </el-table-column>
             </el-table>
@@ -107,11 +109,8 @@
 </template>
 
 <script>
-import {
-  getVersionDetailAPI,
-  createHelmVersionAPI,
-  downloadChartInfoAPI
-} from '@api'
+import store from 'storejs'
+import { getVersionDetailAPI, createHelmVersionAPI } from '@api'
 export default {
   data () {
     return {
@@ -205,14 +204,12 @@ export default {
         this.distributeChart = distributeChart
       })
     },
-    downloadChart (data) {
-      downloadChartInfoAPI(
-        this.projectName,
-        data.chartName,
-        data.chartVersion
-      ).then(res => {
-        console.log(data, res)
-      })
+    downloadChartUrl (data) {
+      const projectName = this.projectName
+      const chartName = data.chartName
+      const versionName = data.chartVersion
+      const token = store.get('userInfo').token
+      return `/api/aslan/delivery/releases/helm/charts?projectName=${projectName}&chartName=${chartName}&version=${versionName}&token=${token}`
     }
   },
   created () {

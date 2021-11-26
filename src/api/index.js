@@ -1234,10 +1234,6 @@ export function createHelmVersionAPI (payload) {
   return http.post(`/api/aslan/delivery/releases/helm`, payload)
 }
 
-export function downloadChartInfoAPI (projectName, chartName, versionName) {
-  return http.get(`/api/aslan/delivery/releases/helm/charts?projectName=${projectName}&chartName=${chartName}&version=${versionName}`)
-}
-
 export function useGlobalVariablesAPI (payload) {
   return http.post(`/api/aslan/delivery/releases/helm/global-variables`, payload)
 }

@@ -65,7 +65,6 @@ import bus from '@utils/event_bus'
 import step from '../common/step.vue'
 import {
   createHelmEnvAPI,
-  getCreateHelmEnvStatusAPI,
   getEnvironmentsAPI
 } from '@api'
 export default {
@@ -155,7 +154,7 @@ export default {
       }
     },
     async checkEnvStatus () {
-      const res = await getCreateHelmEnvStatusAPI(this.projectName).catch(
+      const res = await getEnvironmentsAPI(this.projectName).catch(
         err => {
           console.log(err)
           if (this.sId) this.sId = setTimeout(this.checkEnvStatus, 2000)

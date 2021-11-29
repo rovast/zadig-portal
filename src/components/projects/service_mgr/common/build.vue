@@ -959,21 +959,23 @@ export default {
         this.dockerfileTemplate = res
       }
     },
-    loadPage () {
+    async loadPage () {
       const projectName = this.projectName
       if (this.isEdit) {
-        getBuildConfigDetailAPI(this.buildConfigName, this.projectName).then((response) => {
-          response.pre_build.installs.forEach(element => {
+        const build = await getBuildConfigDetailAPI(this.buildConfigName, this.projectName).catch(error => console.log(error))
+        const serviceTargets = await getServiceTargetsAPI(this.projectName).catch(error => console.log(error))
+        if (build && serviceTargets) {
+          build.pre_build.installs.forEach(element => {
             element.id = element.name + element.version
           })
-          response.targets.forEach(t => {
+          build.targets.forEach(t => {
             t.key = t.service_name + '/' + t.service_module
           })
-          this.buildConfig = response
+          this.buildConfig = build
           if (this.buildConfig.source) {
             this.source = this.buildConfig.source
             if (this.source === 'jenkins') {
-              this.jenkinsBuild = response
+              this.jenkinsBuild = build
             }
           }
           if (this.buildConfig.post_build.docker_build) {
@@ -984,6 +986,43 @@ export default {
           }
           if (this.buildConfig.post_build.file_archive) {
             this.binary_enabled = true
+          }
+          if (this.buildAdd) {
+            serviceTargets.forEach(element => {
+              element.key = element.service_name + '/' + element.service_module
+            })
+            this.$set(this.buildConfig, 'targets', serviceTargets.filter(element => {
+              return element.service_module === this.buildServiceName
+            }))
+            this.$set(this.jenkinsBuild, 'targets', serviceTargets.filter(element => {
+              return element.service_module === this.buildServiceName
+            }))
+            this.serviceTargets = serviceTargets
+          } else {
+            this.serviceTargets = [...serviceTargets, ...this.buildConfig.targets].map(element => {
+              element.key = element.service_name + '/' + element.service_module
+              return element
+            })
+          }
+        }
+      } else {
+        getServiceTargetsAPI(projectName).then((response) => {
+          if (this.buildAdd) {
+            response.forEach(element => {
+              element.key = element.service_name + '/' + element.service_module
+            })
+            this.$set(this.buildConfig, 'targets', response.filter(element => {
+              return element.service_module === this.buildServiceName
+            }))
+            this.$set(this.jenkinsBuild, 'targets', response.filter(element => {
+              return element.service_module === this.buildServiceName
+            }))
+            this.serviceTargets = response
+          } else {
+            this.serviceTargets = [...response, ...this.buildConfig.targets].map(element => {
+              element.key = element.service_name + '/' + element.service_module
+              return element
+            })
           }
         })
       }

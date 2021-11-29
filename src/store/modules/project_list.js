@@ -2,15 +2,15 @@ import * as types from '../mutations'
 import { getProjectsAPI } from '../../api'
 import { orderBy } from 'lodash'
 const state = {
-  productList: []
+  projectList: []
 }
 
 const getters = {
-  productList: (state) => {
-    return state.productList
+  projectList: (state) => {
+    return state.projectList
   },
   getOnboardingTemplates: (state) => {
-    return state.productList
+    return state.projectList
       .filter((temp) => {
         return temp.onboarding_status
       })
@@ -19,7 +19,7 @@ const getters = {
 
 const mutations = {
   [types.SET_PROJECT_LIST] (state, payload) {
-    state.productList = payload
+    state.projectList = payload
   }
 }
 

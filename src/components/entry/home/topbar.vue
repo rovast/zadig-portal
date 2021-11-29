@@ -178,7 +178,7 @@ export default {
       content: {
         title: '',
         breadcrumb: [],
-        productList: []
+        projectList: []
       }
     }
   },

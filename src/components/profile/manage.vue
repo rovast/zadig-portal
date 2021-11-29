@@ -70,7 +70,7 @@
                     </td>
                   </tr>
                 </template>
-                <tr>
+                <!-- <tr>
                   <td>
                     <span>Kube Config</span>
                     <support-doc :inline="true"
@@ -80,7 +80,7 @@
                     <el-button @click="downloadConfig()"
                                type="text">点击下载</el-button>
                   </td>
-                </tr>
+                </tr> -->
                 <tr v-if="currentEditUserInfo.identity_type ==='system'">
                   <td>
                     <span>修改密码

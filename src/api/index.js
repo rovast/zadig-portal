@@ -238,9 +238,9 @@ export function envRevisionsAPI (projectName, envName) {
 
 export function productServicesAPI (projectName, envName, envSource, searchName = '', perPage = 20, page = 1) {
   if (envSource === 'helm' || envSource === 'external') {
-    return http.get(`/api/aslan/environment/environments/${envName}/workloads?env=${envName}&projectName=${projectName}&filter=name=${searchName}&perPage=${perPage}&page=${page}`)
+    return http.get(`/api/aslan/environment/environments/${envName}/workloads?projectName=${projectName}&filter=name=${searchName}&perPage=${perPage}&page=${page}`)
   } else {
-    return http.get(`/api/aslan/environment/environments/${envName}/groups?projectName=${projectName}&envName=${envName}&serviceName=${searchName}&perPage=${perPage}&page=${page}`)
+    return http.get(`/api/aslan/environment/environments/${envName}/groups?projectName=${projectName}&serviceName=${searchName}&perPage=${perPage}&page=${page}`)
   }
 }
 

@@ -31,6 +31,7 @@
           <div v-if="pre_build.res_req_spec && pre_build.res_req === 'define'" class="define-resource">
             <el-form-item
               label="CPU(m)"
+              label-width="70px"
               :prop="`${propPre}.res_req_spec.cpu_limit`"
               :rules="{ validator: validateCpuLimit, trigger: ['change', 'blur'] }"
             >
@@ -38,7 +39,8 @@
             </el-form-item>
 
             <el-form-item
-              label="Memory(Mi)"
+              label="内存(Mi)"
+              label-width="70px"
               :prop="`${propPre}.res_req_spec.memory_limit`"
               :rules="{ validator: validateMemoryLimit, trigger: ['change', 'blur'] }"
             >
@@ -78,7 +80,7 @@ export default {
       if (!value) {
         callback(new Error('请输入自定义 CPU'))
       } else if (!/^\d+m$/.test(value)) {
-        callback(new Error('请输入正确 CPU 格式：数字 + m'))
+        callback(new Error('请输入正确 CPU 格式，例如：1000m'))
       } else {
         callback()
       }
@@ -88,7 +90,7 @@ export default {
       if (!value) {
         callback(new Error('请输入自定义内存'))
       } else if (!/^\d+Mi$/.test(value)) {
-        callback(new Error('请输入正确 CPU 格式：数字 + Mi'))
+        callback(new Error('请输入正确内存格式，例如：512Mi'))
       } else {
         callback()
       }

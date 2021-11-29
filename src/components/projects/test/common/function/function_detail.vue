@@ -27,7 +27,7 @@
       <div class="divider"></div>
 
       <div class="title">执行环境</div>
-      <BuildEnv :pre_build="test.pre_test" :isCreate="!isEdit" :title="``"></BuildEnv>
+      <BuildEnv :pre_build="test.pre_test" :isCreate="!isEdit" :title="``" :propPre="`pre_test`"></BuildEnv>
 
       <div class="divider">
       </div>

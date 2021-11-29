@@ -4,7 +4,7 @@
     <div v-if="title" class="divider item"></div>
     <el-row :gutter="20">
       <el-col :span="mini ? 12 : 7">
-        <el-form-item :label="mini ? '系统' : '构建系统'" :label-width="mini ? '60px' : 'inherit'" required>
+        <el-form-item :label="mini ? '系统' : '构建系统'" label-width="inherit" required>
           <el-select size="small" v-model="pre_build.image_id" placeholder="请选择" @change="changeImage('id', $event)">
             <el-option v-for="(sys,index) in systems" :key="index" :label="sys.label" :value="sys.id">
               <span>
@@ -19,7 +19,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="mini ? 12 : 16">
-        <el-form-item :label="mini ? '资源' : '资源规格'" :label-width="mini ? '60px' : 'inherit'" required>
+        <el-form-item :label="mini ? '资源' : '资源规格'" label-width="inherit" required>
           <el-select size="small" v-model="pre_build.res_req" placeholder="请选择">
             <el-option label="高 | CPU: 16 核 内存: 32 GB" value="high"></el-option>
             <el-option label="中 | CPU: 8 核 内存: 16 GB" value="medium"></el-option>
@@ -27,15 +27,23 @@
             <el-option label="最低 | CPU: 2 核 内存: 2 GB" value="min"></el-option>
             <el-option label="自定义" value="define" @click.native="checkSpec"></el-option>
           </el-select>
+
           <div v-if="pre_build.res_req_spec && pre_build.res_req === 'define'" class="define-resource">
-            <span>
-              CPU(m)
+            <el-form-item
+              label="CPU(m)"
+              :prop="`${propPre}.res_req_spec.cpu_limit`"
+              :rules="{ validator: validateCpuLimit, trigger: ['change', 'blur'] }"
+            >
               <el-input v-model="pre_build.res_req_spec.cpu_limit" placeholder="自定义 CPU" size="small"></el-input>
-            </span>
-            <span>
-              Memory(Mi)
+            </el-form-item>
+
+            <el-form-item
+              label="Memory(Mi)"
+              :prop="`${propPre}.res_req_spec.memory_limit`"
+              :rules="{ validator: validateMemoryLimit, trigger: ['change', 'blur'] }"
+            >
               <el-input v-model="pre_build.res_req_spec.memory_limit" placeholder="自定义内存" size="small"></el-input>
-            </span>
+            </el-form-item>
           </div>
         </el-form-item>
       </el-col>
@@ -59,9 +67,32 @@ export default {
     title: {
       default: '构建环境',
       type: String
+    },
+    propPre: {
+      default: 'pre_build',
+      type: String
     }
   },
   data () {
+    this.validateCpuLimit = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入自定义 CPU'))
+      } else if (!/^\d+m$/.test(value)) {
+        callback(new Error('请输入正确 CPU 格式：数字 + m'))
+      } else {
+        callback()
+      }
+    }
+
+    this.validateMemoryLimit = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入自定义内存'))
+      } else if (!/^\d+Mi$/.test(value)) {
+        callback(new Error('请输入正确 CPU 格式：数字 + Mi'))
+      } else {
+        callback()
+      }
+    }
     return {
       systems: []
     }
@@ -148,10 +179,13 @@ export default {
   display: inline-block;
   margin-left: 10px;
   color: #606266;
-  white-space: nowrap;
+
+  /deep/.el-form-item {
+    display: inline-block;
+  }
 
   /deep/.el-input {
-    width: 120px;
+    width: 100px;
     margin-right: 5px;
   }
 }

@@ -5,7 +5,7 @@
   "author": "koderover <hello@koderover.com>",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "node --max_old_space_size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "build": "eslint --ext .js,.vue src && stylelint src && node build/build.js",
     "eslint": "eslint --fix --ext .js,.vue src",

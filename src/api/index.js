@@ -279,7 +279,7 @@ export function serviceTemplateAPI (name, type, projectName) {
 }
 
 export function serviceTemplateAfterRenderAPI (projectName, serviceName, envName) {
-  return http.get(`/api/aslan/environment/diff/products/${projectName}/service/${serviceName}?projectName=${product_name}&envName=${envName}`)
+  return http.get(`/api/aslan/environment/diff/products/${projectName}/service/${serviceName}?projectName=${projectName}&envName=${envName}`)
 }
 
 export function saveServiceTemplateAPI (payload) {

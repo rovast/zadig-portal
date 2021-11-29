@@ -766,7 +766,7 @@ export function queryJenkinsParams (jobName) {
 
 // Mail
 export function getEmailHostAPI () {
-  return http.get(`/api/v1/emails/host`)
+  return http.get(`/api/v1/emails/internal/host`)
 }
 
 export function deleteEmailHostAPI () {
@@ -793,7 +793,7 @@ export function createEmailServiceAPI (payload) {
   return http.post(`/api/v1/emails/service`, payload)
 }
 
-export function updateeEmailServiceAPI (payload) {
+export function updateEmailServiceAPI (payload) {
   return http.patch(`/api/v1/emails/service`, payload)
 }
 // ----- System Setting-Application -----

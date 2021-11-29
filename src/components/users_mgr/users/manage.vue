@@ -53,6 +53,15 @@
         <el-col :span="3">
           <el-button @click="dialogAddUserVisible=true" size="small" plain type="primary">新建用户</el-button>
         </el-col>
+        <el-col :span="3">
+          <div style="width: 100%; line-height: 32px;">
+            <span class="text-title">用户注册:</span>
+            <el-switch v-model="registrationStatus"
+                       @change="changeRegistration"
+                       active-color="#1989fa">
+            </el-switch>
+          </div>
+        </el-col>
       </el-row>
     </div>
     <div
@@ -138,7 +147,9 @@ import {
   usersAPI,
   deleteUserAPI,
   getSystemRoleBindingsAPI,
-  addSystemRoleBindingsAPI
+  addSystemRoleBindingsAPI,
+  checkRegistrationAPI,
+  changeRegistrationAPI
 } from '@api'
 import bus from '@utils/event_bus'
 import EditUserRole from './editUserInfo.vue'
@@ -168,6 +179,7 @@ export default {
       dialogEditRoleVisible: false,
       dialogAddUserVisible: false,
       searchInputVisible: true,
+      registrationStatus: false,
       loading: true,
       identityTypeMap: {
         github: 'GitHub',
@@ -317,6 +329,25 @@ export default {
         }
       })
     },
+    checkRegistration () {
+      checkRegistrationAPI().then(res => {
+        this.registrationStatus = res.enabled
+      })
+    },
+    changeRegistration (val) {
+      const payload =
+        {
+          name: 'RegisterTrigger',
+          enabled: val
+        }
+      changeRegistrationAPI(payload).then(res => {
+        this.checkRegistration()
+        this.$message({
+          type: 'success',
+          message: '更改成功'
+        })
+      })
+    },
     handleSizeChange (val) {
       this.userPageSize = val
       this.getUsers(this.userPageSize, this.currentPageList, this.searchUser)
@@ -338,6 +369,7 @@ export default {
       routerList: []
     })
     this.getUsers(this.userPageSize, this.currentPageList, this.searchUser)
+    this.checkRegistration()
   }
 }
 </script>

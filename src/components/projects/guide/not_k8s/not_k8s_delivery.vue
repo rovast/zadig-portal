@@ -22,7 +22,7 @@
               <template slot-scope="scope">
                 <a v-if="scope.row.env_name"
                    class="env-name"
-                   :href="`/v1/projects/detail/${ scope.row.product_tmpl_name}/envs/detail?envName=${ scope.row.env_name}`"
+                   :href="`/v1/projects/detail/${ scope.row.projectName}/envs/detail?envName=${ scope.row.env_name}`"
                    target="_blank">{{ `${scope.row.env_name}`}}</a>
               </template>
             </el-table-column>
@@ -69,7 +69,7 @@
             <el-table-column width="150px"
                              label="更新信息（时间/操作人）">
               <template slot-scope="scope">
-                {{$utils.convertTimestamp(scope.row.update_time)}}
+                {{$utils.convertTimestamp(scope.row.updateTime)}}
               </template>
             </el-table-column>
             <el-table-column width="120px"
@@ -127,8 +127,9 @@
 <script>
 import bus from '@utils/event_bus'
 import step from './container/step_not_k8s.vue'
+import { wordTranslate } from '@utils/word_translate.js'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
-import { getWorkflowsAPI } from '@api'
+import { getWorkflowsInProjectAPI, getWorkflowDetailAPI } from '@api'
 export default {
   data () {
     return {
@@ -143,7 +144,7 @@ export default {
     async getWorkflows () {
       this.loading = true
       const projectName = this.projectName
-      const workflows = await getWorkflowsAPI(projectName)
+      const workflows = await getWorkflowsInProjectAPI(projectName)
       if (workflows) {
         this.loading = false
         const w1 = 'workflow-qa'
@@ -161,9 +162,17 @@ export default {
         this.mapWorkflows = currentWorkflows
       }
     },
+    wordTranslation (word, category, subitem) {
+      return wordTranslate(word, category, subitem)
+    },
     runCurrentTask (scope) {
-      this.workflow = scope
-      this.taskDialogVisible = true
+      getWorkflowDetailAPI(scope.projectName, scope.name).then(res => {
+        this.taskDialogVisible = true
+        this.workflow = res
+      }).catch(err => {
+        console.log(err)
+        this.taskDialogVisible = false
+      })
     },
     hideAfterSuccess () {
       this.taskDialogVisible = false

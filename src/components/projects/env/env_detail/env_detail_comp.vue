@@ -613,7 +613,7 @@ export default {
       return this.productInfo.is_prod
     },
     filteredProducts () {
-      return _.uniqBy(_.orderBy(this.productList, ['product_name', 'is_prod']), 'product_name')
+      return _.uniqBy(_.orderBy(this.projectList, ['product_name', 'is_prod']), 'product_name')
     },
     currentCluster () {
       if (this.productInfo.cluster_id) {

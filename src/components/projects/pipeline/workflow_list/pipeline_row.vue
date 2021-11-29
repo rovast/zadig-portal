@@ -1,7 +1,7 @@
 <template>
   <li class="pipeline-row">
     <div class="dash-body"
-         :class="latestTaskStatus">
+         :class="recentTaskStatus">
       <div class="dash-main">
         <span @click="setFavorite(projectName,name,type)"
               class="favorite el-icon-star-on"
@@ -16,7 +16,7 @@
               最近成功
               <router-link v-if="recentSuccessID"
                            :to="recentSuccessLink"
-                           class="passed">#{{ recentSuccessID }}</router-link>
+                           class="passed">{{ recentSuccessID }}</router-link>
               <span v-else>*</span>
             </span>
             <span class="task-type">
@@ -24,7 +24,7 @@
               最近失败
               <router-link v-if="recentFailID"
                            :to="recentFailLink"
-                           class="failed">#{{ recentFailID }}</router-link>
+                           class="failed">{{ recentFailID }}</router-link>
               <span v-else>*</span>
             </span>
           </h2>
@@ -80,13 +80,13 @@ export default {
       required: true
     },
 
-    latestTaskStatus: {
+    recentTaskStatus: {
       type: String,
       required: true
     },
 
     recentSuccessID: {
-      type: null,
+      type: String,
       required: true
     },
 
@@ -95,14 +95,10 @@ export default {
       required: true
     },
     recentFailID: {
-      type: null,
-      required: true
-    },
-    recentFailLink: {
       type: String,
       required: true
     },
-    updateBy: {
+    recentFailLink: {
       type: String,
       required: true
     },
@@ -119,6 +115,11 @@ export default {
       required: false
     }
   },
+  computed: {
+    workflowBelongToProject () {
+      return this.$route.params.project_name
+    }
+  },
   methods: {
     setFavorite (projectName, workflowName, type) {
       const payload = {
@@ -129,7 +130,8 @@ export default {
       if (this.isFavorite) {
         deleteFavoriteAPI(projectName, workflowName, type).then((res) => {
           if (type === 'workflow') {
-            this.$emit('refreshWorkflow', projectName)
+            // Refresh the workflow list
+            this.$emit('refreshWorkflow', this.workflowBelongToProject)
           }
           this.$message({
             type: 'success',
@@ -139,7 +141,8 @@ export default {
       } else {
         setFavoriteAPI(payload).then((res) => {
           if (type === 'workflow') {
-            this.$emit('refreshWorkflow', projectName)
+            // Refresh the workflow list
+            this.$emit('refreshWorkflow', this.workflowBelongToProject)
           }
           this.$message({
             type: 'success',
@@ -294,7 +297,7 @@ export default {
         }
       }
 
-      .dash-process {
+      .stages {
         width: 350px;
 
         .stage-tag {

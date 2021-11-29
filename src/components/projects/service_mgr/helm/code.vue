@@ -36,7 +36,7 @@
             <el-input v-model="searchService" placeholder="搜索服务" suffix-icon="el-icon-search" size="small"></el-input>
           </div>
         </div>
-        <order class="left-tree" v-show="mode === 'arrange'"></order>
+        <order class="left-tree" v-show="mode === 'arrange'" :isCreate="isCreate"></order>
       </div>
       <multipane-resizer class="resizer1"></multipane-resizer>
       <div class="center">
@@ -391,13 +391,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['productList']),
+    ...mapGetters(['projectList']),
     projectName () {
       return this.$route.params.project_name
     },
     envNameList () {
       const envNameList = []
-      this.productList.forEach(element => {
+      this.projectList.forEach(element => {
         if (element.name === this.projectName) {
           element.envs.forEach(envName => {
             envNameList.push({

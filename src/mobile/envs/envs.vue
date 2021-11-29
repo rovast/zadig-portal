@@ -35,10 +35,10 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'productList'
+      'projectList'
     ]),
     filteredProducts () {
-      return uniqBy(orderBy(this.productList, ['product_name', 'is_prod']), 'product_name')
+      return uniqBy(orderBy(this.projectList, ['product_name', 'is_prod']), 'product_name')
     }
   },
   methods: {
@@ -46,7 +46,7 @@ export default {
       const availableProjectNames = []
 
       await this.$store.dispatch('getProjectList')
-      for (const product of this.productList) {
+      for (const product of this.projectList) {
         availableProjectNames.push(product.product_name)
       }
       this.products = this.filteredProducts.map(element => {

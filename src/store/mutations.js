@@ -1,19 +1,14 @@
 // Profile
 export const INJECT_PROFILE = 'INJECT_PROFILE'
 
+// Role
 export const INJECT_ROLE = 'INJECT_ROLE'
 
-// Env List
+// Project List
 export const SET_PROJECT_LIST = 'SET_PROJECT_LIST'
 
 // Install Status
 export const SET_SIGNUP_STATUS = 'SET_SIGNUP_STATUS'
-
-// Workflow List
-export const SET_WORKFLOW_LIST = 'SET_WORKFLOW_LIST'
-
-// Project List
-export const SET_PROJECT_TEMPLATES = 'SET_PROJECT_TEMPLATES'
 
 // Sidebar
 export const SET_SIDEBAR_STATUS = 'SET_SIDEBAR_STATUS'
@@ -39,5 +34,5 @@ export const UPDATE_ENV_BUTTON = 'UPDATE_ENV_BUTTON'
 
 export const QUERY_ORDER_SERVICE = 'QUERY_ORDER_SERVICE'
 
-// external link
+// External Link
 export const SET_EXTERNAL_LINK = 'SET_EXTERNAL_LINK'

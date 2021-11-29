@@ -234,41 +234,25 @@
                 <el-table-column label="包含步骤">
                   <section slot-scope="scope">
                     <span>
-                      <span
-                            v-if="!$utils.isEmpty(scope.row.build_stage) && scope.row.build_stage.enabled">
-                        <el-tag size="small">构建部署</el-tag>
-                        <span v-if="scope.row.test_stage.enabled||scope.row.distribute_stage.enabled"
-                              class="step-arrow"><i class="el-icon-right"></i></span>
+                      <span v-for="(stage,index) in scope.row.enabledStages" :key="index" class="stage-tag">
+                        <el-tag size="mini">{{wordTranslation(stage,'workflowStage')}}</el-tag>
                       </span>
-                      <span
-                            v-if="!$utils.isEmpty(scope.row.artifact_stage) && scope.row.artifact_stage.enabled">
-                        <el-tag size="small">交付物部署</el-tag>
-                        <span v-if="scope.row.test_stage.enabled||scope.row.distribute_stage.enabled"
-                              class="step-arrow"><i class="el-icon-right"></i></span>
-                      </span>
-                      <span
-                            v-if="!$utils.isEmpty(scope.row.test_stage) && scope.row.test_stage.enabled">
-                        <el-tag size="small">测试</el-tag>
-                        <span v-if="scope.row.distribute_stage && scope.row.distribute_stage.enabled"
-                              class="step-arrow"><i class="el-icon-right"></i></span>
-                      </span>
-                      <el-tag v-if="!$utils.isEmpty(scope.row.distribute_stage) &&  scope.row.distribute_stage.enabled"
-                              size="small">分发</el-tag>
                     </span>
                   </section>
                 </el-table-column>
                 <el-table-column label="当前状态">
                   <template slot-scope="scope">
-                    <span>{{ wordTranslation(scope.row.lastest_task.status,'pipeline','task')}}</span>
+                    <span v-if="scope.row.recentTask">{{ wordTranslation(scope.row.recentTask.status,'pipeline','task')}}</span>
+                    <span v-else>-</span>
                   </template>
                 </el-table-column>
                 <el-table-column width="300"
                                  label="更新信息（时间/操作人）">
                   <template slot-scope="scope">
                     <div><i class="el-icon-time"></i>
-                      {{ $utils.convertTimestamp(scope.row.update_time) }} <i
+                      {{ $utils.convertTimestamp(scope.row.updateTime) }} <i
                          class="el-icon-user"></i>
-                      {{scope.row.update_by}}
+                      {{scope.row.updateBy}}
                     </div>
                   </template>
                 </el-table-column>
@@ -281,7 +265,7 @@
   </div>
 </template>
 <script>
-import { getProjectInfoAPI, getProductInfo, queryUserBindingsAPI, deleteProjectAPI, getClusterListAPI, getWorkflowsAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
+import { getProjectInfoAPI, getProductInfo, queryUserBindingsAPI, deleteProjectAPI, getClusterListAPI, getWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
 import { getProductStatus } from '@utils/word_translate'
 import { wordTranslate } from '@utils/word_translate.js'
 import { whetherOnboarding } from '@utils/onboarding_route'
@@ -303,9 +287,9 @@ export default {
       return getProductStatus(status, updateble)
     },
     async getWorkflows (projectName) {
-      const res = await getWorkflowsAPI(projectName)
+      const res = await getWorkflowsInProjectAPI(projectName)
       if (res) {
-        this.workflows = res.filter(item => item.product_tmpl_name === projectName)
+        this.workflows = res.filter(item => item.projectName === projectName)
       }
     },
     getEnvList () {

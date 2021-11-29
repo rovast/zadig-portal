@@ -3,42 +3,11 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-7 col-md-12 col-pad-0 form-section">
-          <div class="login-inner-form" v-show="!showForgotPassword && !showSignUp">
-            <div class="details">
-              <header>
-                <span class="name">Zadig</span>
-                <h3>登入账户</h3>
-              </header>
-              <section>
-                <el-form :model="loginForm" status-icon :rules="rules" ref="loginForm">
-                  <el-form-item label prop="account">
-                    <el-input v-model="loginForm.account" placeholder="用户名" autocomplete="off"></el-input>
-                  </el-form-item>
-                  <el-form-item label prop="password">
-                    <el-input
-                      type="password"
-                      @keyup.enter.native="login"
-                      v-model="loginForm.password"
-                      autocomplete="off"
-                      placeholder="密码"
-                      show-password
-                    ></el-input>
-                  </el-form-item>
-                </el-form>
-                <el-button type="submit" @click="login" v-loading="loading" class="btn-md btn-theme btn-block login-btn">登录</el-button>
-              </section>
-              <div class="bottom">
-                <a v-if="showConnectors" href="/api/v1/login">第三方登录</a>
-                <a @click="showForgotPassword = true">找回密码</a>
-                <a @click="showSignUp = true">注册</a>
-              </div>
-            </div>
-          </div>
           <div class="login-inner-form" v-show="showForgotPassword">
-            <ForgetPassword :openLogin="()=> showForgotPassword=false" :retrieveToken="retrieveToken" />
+            <ForgetPassword :openLogin="checkLogin" :retrieveToken="retrieveToken" />
           </div>
           <div class="login-inner-form" v-show="showSignUp">
-            <SignUp :openLogin="()=> showSignUp=false"/>
+            <SignUp :openLogin="checkLogin"/>
           </div>
         </div>
         <div class="col-lg-5 col-md-12 col-pad-0 bg-img none-992">
@@ -72,7 +41,6 @@ import { isMobile } from 'mobile-device-detect'
 import ForgetPassword from './components/forgetPassword.vue'
 import SignUp from './components/signUp.vue'
 import store from 'storejs'
-import { checkConnectorsAPI } from '@api'
 
 export default {
   components: {
@@ -83,19 +51,7 @@ export default {
     return {
       showForgotPassword: false,
       showSignUp: false,
-      showConnectors: false,
       retrieveToken: '',
-      loading: false,
-      loginForm: {
-        account: '',
-        password: ''
-      },
-      rules: {
-        account: [
-          { required: true, message: '请输入用户名', trigger: 'change' }
-        ],
-        password: [{ required: true, message: '请输入密码', trigger: 'change' }]
-      },
       moment,
       copywriting: {
         common: {
@@ -107,27 +63,12 @@ export default {
     }
   },
   methods: {
-    login () {
-      this.$refs.loginForm.validate(async valid => {
-        if (valid) {
-          this.loading = true
-          const payload = this.loginForm
-          const res = await this.$store.dispatch('LOGIN', payload)
-          if (res) {
-            this.loading = false
-            this.redirectByDevice()
-          } else {
-            this.loading = false
-          }
-        } else {
-          return false
-        }
-      })
-    },
     checkLogin () {
       const userInfo = store.get('userInfo')
       if (userInfo) {
         this.redirectByDevice()
+      } else {
+        window.location.href = '/api/v1/login'
       }
     },
     redirectByDevice () {
@@ -155,18 +96,19 @@ export default {
   },
   async mounted () {
     const token = this.$route.query.token
+    // 邮箱通过 Token 设置新密码
     const retrieveToken = this.$route.query.idtoken
+    // Dex 主动找回密码
+    const findPassword = this.$route.query.findPassword
+    const signUp = this.$route.query.signUp
     if (retrieveToken) {
       this.retrieveToken = retrieveToken
       this.showForgotPassword = true
-    }
-    const connectorsCheck = await checkConnectorsAPI()
-    if (connectorsCheck && connectorsCheck.enabled) {
-      this.showConnectors = true
-    } else {
-      this.showConnectors = false
-    }
-    if (token) {
+    } else if (findPassword) {
+      this.showForgotPassword = true
+    } else if (signUp) {
+      this.showSignUp = true
+    } else if (token) {
       const res = await this.$store
         .dispatch('OTHERLOGIN', token)
         .catch(error => console.log(error))

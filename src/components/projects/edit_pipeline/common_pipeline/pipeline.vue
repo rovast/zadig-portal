@@ -5,7 +5,7 @@
       <TabMenu class="top" :validObj="validObj"></TabMenu>
       <el-card class="content">
         <keep-alive>
-          <component :is="isComp" :validObj="validObj" ref="commonStep"></component>
+          <component :is="isComp" :validObj="validObj" ref="commonStep" :isEdit="!!pipelineId"></component>
         </keep-alive>
       </el-card>
     </div>

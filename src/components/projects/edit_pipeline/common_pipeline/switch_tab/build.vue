@@ -330,6 +330,9 @@ export default {
       this.buildConfig.repos = buildv3.job_ctx ? buildv3.job_ctx.builds : []
     },
     updateCommonInfo () {
+      const system = this.systems.find(system => system.id === this.buildInfo.image_id)
+      this.buildInfo.image_from = system.image_from
+      this.buildInfo.build_os = system.value
       this.buildInfo.job_ctx.builds = this.buildConfig.repos
       this.$store.commit('UPDATE_COMMON_INFO', { buildv3: this.buildInfo })
     }

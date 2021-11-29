@@ -79,8 +79,13 @@ export default {
     this.validateCpuLimit = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请输入自定义 CPU'))
-      } else if (!/^\d+m$/.test(value)) {
+        return
+      }
+      const exec = /^(\d+)m$/.exec(value)
+      if (!exec) {
         callback(new Error('请输入正确 CPU 格式，例如：1000m'))
+      } else if (exec[1] <= 0) {
+        callback(new Error('CPU 必须大于0'))
       } else {
         callback()
       }
@@ -89,8 +94,13 @@ export default {
     this.validateMemoryLimit = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请输入自定义内存'))
-      } else if (!/^\d+Mi$/.test(value)) {
+        return
+      }
+      const exec = /^(\d+)Mi$/.exec(value)
+      if (!exec) {
         callback(new Error('请输入正确内存格式，例如：512Mi'))
+      } else if (exec[1] <= 0) {
+        callback(new Error('内存必须大于0'))
       } else {
         callback()
       }

@@ -1136,7 +1136,7 @@ export function saveSubscribeAPI (payload) {
 }
 
 export function downloadConfigAPI () {
-  return http.get('/api/v1/picket/downloads/kube')
+  return http.get('/api/v1/picket/kubeconfig')
 }
 
 export function updateServiceImageAPI (payload, type, projectName, envType = '') {

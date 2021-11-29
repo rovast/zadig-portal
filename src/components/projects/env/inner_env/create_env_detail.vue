@@ -427,7 +427,8 @@ export default {
       }
     },
     async getCluster () {
-      const res = await getClusterListAPI()
+      const projectName = this.projectName
+      const res = await getClusterListAPI(projectName)
       if (!this.rollbackMode) {
         this.allCluster = res.filter(element => {
           return element.status === 'normal'

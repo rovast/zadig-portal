@@ -922,8 +922,8 @@ export function deleteStorageAPI (id) {
 }
 
 // Cluster
-export function getClusterListAPI () {
-  return http.get(`/api/aslan/cluster/clusters`)
+export function getClusterListAPI (projectName) {
+  return http.get(`/api/aslan/cluster/clusters?projectName=${projectName}`)
 }
 
 export function createClusterAPI (payload) {

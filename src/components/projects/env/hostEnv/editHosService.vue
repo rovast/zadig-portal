@@ -20,7 +20,6 @@ export default {
   },
   data () {
     return {
-      allCluster: [],
       hostingNamespace: [],
       form: null,
       rules: {

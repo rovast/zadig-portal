@@ -615,7 +615,7 @@ export function addUserAPI (payload) {
 }
 
 export function deleteUserAPI (uid) {
-  return http.delete(`/api/v1/users/${uid}`)
+  return http.delete(`/api/v1/picket/users/${uid}`)
 }
 
 export function updateUserAPI (uid, payload) {

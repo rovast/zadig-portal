@@ -818,7 +818,7 @@ export default {
         this.$notify.error({
           title: '获取环境信息失败'
         })
-        this.$router.push(`/v1/projects/detail/${this.projectName}`)
+        // this.$router.push(`/v1/projects/detail/${this.projectName}`)
       }
     },
     async getProductEnvInfo (projectName, envName) {

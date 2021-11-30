@@ -57,7 +57,7 @@
         <el-form ref="cluster"
                  :rules="rules"
                  label-width="120px"
-                 label-position="top"
+                 label-position="left"
                  :model="cluster">
           <el-form-item label="名称"
                         prop="name">
@@ -103,6 +103,31 @@
               <el-radio :label="false">否</el-radio>
             </el-radio-group>
           </el-form-item>
+          <div v-if="isEdit">
+            <el-button type="text" @click="advancedConfig">高级配置<i :class="{'el-icon-arrow-right': !cluster.config.strategy,'el-icon-arrow-down': cluster.config.strategy}"></i></el-button>
+            <div v-if="cluster.config.strategy">
+              <h4>调度策略</h4>
+              <el-form-item label="选择策略" prop="config.strategy" required>
+                <el-select v-model="cluster.config.strategy" placeholder="请选择策略" size="small" required>
+                  <el-option label="随机调度" value="normal"></el-option>
+                  <el-option label="强制调度" value="required"></el-option>
+                  <el-option label="优先调度" value="preferred"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item v-if="cluster.config.strategy !== 'normal'"  prop="config.node_labels" label="选择标签">
+                <el-select v-model="cluster.config.node_labels" placeholder="请选择" multiple size="small">
+                  <el-option v-for="node in clusterNodes.labels" :key="node" :label="node" :value="node"></el-option>
+                </el-select>
+                <span style="color: #e6a23c; font-size: 12px;" v-if="clusterNodes.labels.length == 0">请先在对应节点上打上标签</span>
+                <div class="list-host">
+                  <div v-for="host in  matchedHost" :key="host.node_ip">
+                    {{host.node_ip}} - {{host.node_status}}
+                  </div>
+                </div>
+              </el-form-item>
+            </div>
+          </div>
+
         </el-form>
         <div slot="footer"
              class="dialog-footer">
@@ -111,7 +136,7 @@
           <el-button :plain="true"
                      size="small"
                      type="success"
-                     @click="clusterOperation(isEdit ? 'update' : 'add')">保存</el-button>
+                     @click="clusterOperation(cluster.id ? 'update' : 'add')">保存</el-button>
         </div>
       </el-dialog>
       <!--Cluster-dialog-->
@@ -141,7 +166,7 @@
                       style="width: 100%;">
               <el-table-column label="名称">
                 <template slot-scope="scope">
-                  <i :class="getProviderMap(scope.row.provider,'icon')"></i>
+                  <i :class="getProviderMap(scope.row.provider, 'icon')"></i>
                   <span>{{scope.row.name}}</span>
                 </template>
               </el-table-column>
@@ -178,18 +203,21 @@
               <el-table-column width="240"
                                label="操作">
                 <template slot-scope="scope">
-                  <el-button v-if="scope.row.status==='pending'||scope.row.status==='abnormal'"
-                             @click="clusterOperation('access',scope.row)"
-                             size="mini">接入</el-button>
-                  <el-button v-if="scope.row.status==='normal'"
-                             @click="clusterOperation('disconnect',scope.row)"
-                             size="mini">断开</el-button>
-                  <el-button v-if="scope.row.status==='disconnected'"
-                             @click="clusterOperation('recover',scope.row)"
-                             size="mini">恢复</el-button>
+                  <span v-show="!scope.row.local">
+                    <el-button v-if="scope.row.status==='pending'||scope.row.status==='abnormal'"
+                              @click="clusterOperation('access',scope.row)"
+                              size="mini">接入</el-button>
+                    <el-button v-if="scope.row.status==='normal'"
+                              @click="clusterOperation('disconnect',scope.row)"
+                              size="mini">断开</el-button>
+                    <el-button v-if="scope.row.status==='disconnected'"
+                              @click="clusterOperation('recover',scope.row)"
+                              size="mini">恢复</el-button>
+                  </span>
                   <el-button @click="clusterOperation('edit',scope.row)"
                              size="mini">编辑</el-button>
-                  <el-button @click="clusterOperation('delete',scope.row)"
+                  <el-button v-show="!scope.row.local"
+                             @click="clusterOperation('delete',scope.row)"
                              size="mini"
                              type="danger">删除</el-button>
                 </template>
@@ -202,7 +230,7 @@
 </template>
 
 <script>
-import { getClusterListAPI, createClusterAPI, updateClusterAPI, deleteClusterAPI, recoverClusterAPI, disconnectClusterAPI } from '@api'
+import { getClusterListAPI, createClusterAPI, updateClusterAPI, deleteClusterAPI, recoverClusterAPI, disconnectClusterAPI, getClusterNodeInfo } from '@api'
 import { wordTranslate } from '@utils/word_translate'
 import bus from '@utils/event_bus'
 import { cloneDeep } from 'lodash'
@@ -224,6 +252,10 @@ const clusterInfo = {
   production: false,
   description: '',
   namespace: ''
+  // config: { // 编辑的时候有这个数据
+  //   strategy: '',
+  //   node_labels: []
+  // }
 }
 export default {
   data () {
@@ -275,13 +307,31 @@ export default {
           type: 'boolean',
           required: true,
           message: '请选择是否为生产集群'
-        }]
+        }],
+        'config.node_labels': {
+          required: true,
+          message: '请选择标签',
+          type: 'array'
+        }
+      },
+      clusterNodes: {
+        labels: [],
+        data: [] // {node_labels, node_status, node_ip}
       }
+
     }
   },
   computed: {
     isEdit () {
-      return !!this.cluster.id
+      return !!this.cluster.id || this.cluster.local
+    },
+    matchedHost () {
+      const labels = this.cluster.config.node_labels
+      return this.clusterNodes.data.filter(data => {
+        return labels.filter(label => {
+          return data.labels.includes(label)
+        }).length
+      })
     }
   },
   watch: {
@@ -292,6 +342,22 @@ export default {
     }
   },
   methods: {
+    advancedConfig () {
+      if (!this.cluster.config.strategy) {
+        this.cluster.config.strategy = 'normal'
+      } else {
+        this.cluster.config = {
+          strategy: '',
+          node_labels: []
+        }
+      }
+    },
+    getClusterNode (current_cluster) {
+      const clusterId = current_cluster.local ? '' : current_cluster.id
+      getClusterNodeInfo(clusterId).then(res => {
+        this.clusterNodes = res
+      })
+    },
     getProviderMap (name, type) {
       if (name && type) {
         return this.providerMap[name][type]
@@ -327,6 +393,7 @@ export default {
       } else if (operate === 'recover') {
         this.recoverCluster(current_cluster.id)
       } else if (operate === 'edit') {
+        this.getClusterNode(current_cluster)
         this.cluster = this.$utils.cloneObj(current_cluster)
         this.dialogClusterFormVisible = true
       } else if (operate === 'update') {
@@ -399,7 +466,30 @@ export default {
       this.loading = true
       getClusterListAPI().then((res) => {
         this.loading = false
-        this.allCluster = res
+        const localId = res.findIndex(re => re.local)
+        if (localId !== -1) {
+          res.splice(localId, 1, res.find(re => re.local))
+        } else {
+          res.unshift({
+            name: 'local',
+            provider: 0,
+            production: false,
+            description: '测试集群',
+            namespace: '',
+            createdBy: 'system',
+            status: 'normal',
+            local: true
+          })
+        }
+        this.allCluster = res.map(re => {
+          if (!re.config) {
+            re.config = {
+              strategy: '',
+              node_labels: []
+            }
+          }
+          return re
+        })
       })
     },
     copyCommandSuccess (event) {
@@ -541,6 +631,11 @@ export default {
       line-height: 20px;
       background: #303133;
     }
+  }
+
+  .list-host {
+    max-height: 50px;
+    overflow: auto;
   }
 }
 </style>

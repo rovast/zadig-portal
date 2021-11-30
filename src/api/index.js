@@ -946,6 +946,10 @@ export function deleteClusterAPI (id) {
   return http.delete(`/api/aslan/cluster/clusters/${id}`)
 }
 
+export function getClusterNodeInfo (clusterId = '') {
+  return http.get(`/api/aslan/environment/kube/nodes?clusterId=${clusterId}`)
+}
+
 // Host
 export function getHostListAPI () {
   return http.get(`/api/aslan/system/privateKey`)

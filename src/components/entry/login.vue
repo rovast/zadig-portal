@@ -28,8 +28,8 @@
               </section>
               <div class="bottom">
                 <a @click="showForgotPassword = true">找回密码</a>
-                <span class="divide">|</span>
-                <a @click="showSignUp = true">注册</a>
+                <span v-if="showRegistration" class="divide">|</span>
+                <a v-if="showRegistration" @click="showSignUp = true">注册</a>
               </div>
             </div>
           </div>
@@ -37,7 +37,7 @@
             <ForgetPassword :openLogin="checkLogin" :retrieveToken="retrieveToken" />
           </div>
           <div class="login-inner-form" v-show="showSignUp">
-            <SignUp :openLogin="checkLogin" />
+            <SignUp :openLogin="afterSignUp" />
           </div>
         </div>
         <div class="col-lg-5 col-md-12 col-pad-0 bg-img none-992">
@@ -68,7 +68,7 @@
 <script>
 import moment from 'moment'
 import { isMobile } from 'mobile-device-detect'
-import { checkConnectorsAPI } from '@api'
+import { checkConnectorsAPI, checkRegistrationAPI } from '@api'
 import ForgetPassword from './components/forgetPassword.vue'
 import SignUp from './components/signUp.vue'
 import store from 'storejs'
@@ -83,6 +83,7 @@ export default {
       showForgotPassword: false,
       showSignUp: false,
       showConnectors: false,
+      showRegistration: false,
       retrieveToken: '',
       loading: false,
       loginForm: {
@@ -134,6 +135,13 @@ export default {
         }
       }
     },
+    async afterSignUp () {
+      this.showSignUp = false
+      const connectorsCheck = await checkConnectorsAPI()
+      if (connectorsCheck && connectorsCheck.enabled) {
+        window.location.href = '/api/v1/login'
+      }
+    },
     redirectByDevice () {
       if (isMobile) {
         this.$router.push('/mobile')
@@ -159,11 +167,19 @@ export default {
   },
   async mounted () {
     const token = this.$route.query.token
-    // 邮箱通过 Token 设置新密码
+    // 邮箱通过 Token 设置新密码接收参数
     const retrieveToken = this.$route.query.idtoken
-    // Dex 主动找回密码
+    // Dex 找回密码接收参数
     const findPassword = this.$route.query.findPassword
+    // Dex 注册接收参数
     const signUp = this.$route.query.signUp
+    // 注册检测
+    const registrationCheck = await checkRegistrationAPI()
+    if (registrationCheck && registrationCheck.enabled) {
+      this.showRegistration = true
+    } else {
+      this.showRegistration = false
+    }
     if (retrieveToken) {
       this.retrieveToken = retrieveToken
       this.showForgotPassword = true

@@ -31,9 +31,9 @@
       </el-dialog>
       <!--Cluster-access-dialog-->
 
-      <!--Cluster-create-dialog-->
-      <el-dialog title='添加集群'
-                 :visible.sync="dialogClusterCreateFormVisible"
+      <!--Cluster-dialog-->
+      <el-dialog :title="isEdit ? '修改集群': '添加集群'"
+                 :visible.sync="dialogClusterFormVisible"
                  custom-class="dialog-style"
                  :close-on-click-modal="false"
                  width="45%">
@@ -107,82 +107,15 @@
         <div slot="footer"
              class="dialog-footer">
           <el-button size="small"
-                     @click="dialogClusterCreateFormVisible = false">取 消</el-button>
+                     @click="dialogClusterFormVisible = false">取 消</el-button>
           <el-button :plain="true"
                      size="small"
                      type="success"
-                     @click="clusterOperation('add')">保存</el-button>
+                     @click="clusterOperation(isEdit ? 'update' : 'add')">保存</el-button>
         </div>
       </el-dialog>
-      <!--Cluster-create-dialog-->
+      <!--Cluster-dialog-->
 
-      <!--Cluster-edit-dialog-->
-      <el-dialog title='修改'
-                 :visible.sync="dialogClusterEditFormVisible"
-                 custom-class="dialog-style"
-                 :close-on-click-modal="false"
-                 width="35%">
-        <el-form ref="swapCluster"
-                 :rules="rules"
-                 label-width="120px"
-                 label-position="top"
-                 :model="swapCluster">
-          <el-form-item label="名称"
-                        prop="name">
-            <el-input size="small"
-                      v-model="swapCluster.name"
-                      placeholder="请输入集群名称"></el-input>
-          </el-form-item>
-          <el-form-item label="集群提供商"
-                        prop="provider">
-            <el-select v-model="swapCluster.provider"
-                       style="width: 100%;"
-                       size="small"
-                       placeholder="请选择集群提供商">
-              <el-option :value="1"
-                         label="阿里云 ACK">
-                <i class="iconfont iconaliyun"></i> <span>阿里云 ACK</span>
-              </el-option>
-
-              <el-option :value="2"
-                         label="腾讯云 TKE">
-                <i class="iconfont icontengxunyun"></i> <span>腾讯云 TKE</span>
-              </el-option>
-              <el-option :value="3"
-                         label="华为云 CCE">
-                <i class="iconfont iconhuawei"></i> <span>华为云 CCE</span>
-              </el-option>
-              <el-option :value="0"
-                         label="其它">
-                <i class="iconfont iconqita"></i> <span>其它</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="描述"
-                        prop="description">
-            <el-input size="small"
-                      v-model="swapCluster.description"
-                      placeholder="请输入描述"></el-input>
-          </el-form-item>
-          <el-form-item label="生产集群"
-                        prop="production">
-            <el-radio-group v-model="swapCluster.production">
-              <el-radio :label="true">是</el-radio>
-              <el-radio :label="false">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-form>
-        <div slot="footer"
-             class="dialog-footer">
-          <el-button size="small"
-                     @click="dialogClusterEditFormVisible = false">取 消</el-button>
-          <el-button size="small"
-                     :plain="true"
-                     type="success"
-                     @click="clusterOperation('update')">保存</el-button>
-        </div>
-      </el-dialog>
-      <!--Cluster-edit-dialog-->
       <div class="section">
         <el-alert type="info"
                   :closable="false">
@@ -199,7 +132,7 @@
         <div class="sync-container">
           <el-button size="small"
                      :plain="true"
-                     @click="dialogClusterCreateFormVisible=true"
+                     @click="dialogClusterFormVisible=true"
                      type="success">新建</el-button>
         </div>
         <div class="cluster-list">
@@ -272,6 +205,7 @@
 import { getClusterListAPI, createClusterAPI, updateClusterAPI, deleteClusterAPI, recoverClusterAPI, disconnectClusterAPI } from '@api'
 import { wordTranslate } from '@utils/word_translate'
 import bus from '@utils/event_bus'
+import { cloneDeep } from 'lodash'
 const validateClusterName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入集群名称'))
@@ -282,6 +216,14 @@ const validateClusterName = (rule, value, callback) => {
       callback()
     }
   }
+}
+
+const clusterInfo = {
+  name: '',
+  provider: null,
+  production: false,
+  description: '',
+  namespace: ''
 }
 export default {
   data () {
@@ -294,20 +236,7 @@ export default {
       },
       allCluster: [],
       deployType: 'Deployment',
-      cluster: {
-        name: '',
-        provider: null,
-        production: false,
-        description: '',
-        namespace: ''
-      },
-      swapCluster: {
-        name: '',
-        provider: null,
-        production: false,
-        description: '',
-        namespace: ''
-      },
+      cluster: cloneDeep(clusterInfo),
       providerMap: {
         0: {
           icon: 'iconfont logo iconqita',
@@ -331,8 +260,7 @@ export default {
         yaml: 'init',
         name: 'test'
       },
-      dialogClusterCreateFormVisible: false,
-      dialogClusterEditFormVisible: false,
+      dialogClusterFormVisible: false,
       dialogClusterAccessVisible: false,
       loading: false,
       rules: {
@@ -348,6 +276,18 @@ export default {
           required: true,
           message: '请选择是否为生产集群'
         }]
+      }
+    }
+  },
+  computed: {
+    isEdit () {
+      return !!this.cluster.id
+    }
+  },
+  watch: {
+    dialogClusterFormVisible (nVal, oldV) {
+      if (!nVal) {
+        this.clearValidate()
       }
     }
   },
@@ -367,7 +307,7 @@ export default {
         this.$refs.cluster.validate(valid => {
           if (valid) {
             const payload = this.cluster
-            this.dialogClusterCreateFormVisible = false
+            this.dialogClusterFormVisible = false
             this.addCluster(payload)
           } else {
             return false
@@ -387,14 +327,14 @@ export default {
       } else if (operate === 'recover') {
         this.recoverCluster(current_cluster.id)
       } else if (operate === 'edit') {
-        this.swapCluster = this.$utils.cloneObj(current_cluster)
-        this.dialogClusterEditFormVisible = true
+        this.cluster = this.$utils.cloneObj(current_cluster)
+        this.dialogClusterFormVisible = true
       } else if (operate === 'update') {
-        this.$refs.swapCluster.validate(valid => {
+        this.$refs.cluster.validate(valid => {
           if (valid) {
-            const id = this.swapCluster.id
-            const payload = this.swapCluster
-            this.dialogClusterEditFormVisible = false
+            const id = this.cluster.id
+            const payload = this.cluster
+            this.dialogClusterFormVisible = false
             this.updateCluster(id, payload)
           } else {
             return false
@@ -419,7 +359,6 @@ export default {
     },
     addCluster (payload) {
       createClusterAPI(payload).then((res) => {
-        this.$refs.cluster.resetFields()
         this.getCluster()
         this.accessCluster = res
         this.dialogClusterAccessVisible = true
@@ -449,7 +388,6 @@ export default {
     },
     updateCluster (id, payload) {
       updateClusterAPI(id, payload).then((res) => {
-        this.$refs.swapCluster.resetFields()
         this.getCluster()
         this.$message({
           type: 'success',
@@ -478,6 +416,12 @@ export default {
     },
     myTranslate (word) {
       return wordTranslate(word, 'setting', 'cluster')
+    },
+    clearValidate () {
+      this.cluster = cloneDeep(clusterInfo)
+      this.$nextTick(() => {
+        this.$refs.cluster.clearValidate()
+      })
     }
   },
   created () {

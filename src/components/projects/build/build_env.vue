@@ -35,7 +35,7 @@
               :prop="`${propPre}.res_req_spec.cpu_limit`"
               :rules="{ validator: validateCpuLimit, trigger: ['change', 'blur'] }"
             >
-              <el-input v-model="pre_build.res_req_spec.cpu_limit" placeholder="自定义 CPU" size="small"></el-input>
+              <el-input v-model.number="pre_build.res_req_spec.cpu_limit" placeholder="自定义 CPU" size="small"></el-input>
             </el-form-item>
 
             <el-form-item
@@ -44,7 +44,7 @@
               :prop="`${propPre}.res_req_spec.memory_limit`"
               :rules="{ validator: validateMemoryLimit, trigger: ['change', 'blur'] }"
             >
-              <el-input v-model="pre_build.res_req_spec.memory_limit" placeholder="自定义内存" size="small"></el-input>
+              <el-input v-model.number="pre_build.res_req_spec.memory_limit" placeholder="自定义内存" size="small"></el-input>
             </el-form-item>
           </div>
         </el-form-item>
@@ -77,30 +77,24 @@ export default {
   },
   data () {
     this.validateCpuLimit = (rule, value, callback) => {
-      if (!value) {
+      if (value === '') {
         callback(new Error('请输入自定义 CPU'))
-        return
-      }
-      const exec = /^(\d+)m$/.exec(value)
-      if (!exec) {
-        callback(new Error('请输入正确 CPU 格式，例如：1000m'))
-      } else if (exec[1] <= 0) {
-        callback(new Error('CPU 必须大于0'))
+      } else if (typeof value === 'string') {
+        callback(new Error('请输入正确数字'))
+      } else if (value <= 0) {
+        callback(new Error('CPU 必须大于 0'))
       } else {
         callback()
       }
     }
 
     this.validateMemoryLimit = (rule, value, callback) => {
-      if (!value) {
+      if (value === '') {
         callback(new Error('请输入自定义内存'))
-        return
-      }
-      const exec = /^(\d+)Mi$/.exec(value)
-      if (!exec) {
-        callback(new Error('请输入正确内存格式，例如：512Mi'))
-      } else if (exec[1] <= 0) {
-        callback(new Error('内存必须大于0'))
+      } else if (typeof value === 'string') {
+        callback(new Error('请输入正确数字'))
+      } else if (value <= 0) {
+        callback(new Error('内存必须大于 0'))
       } else {
         callback()
       }
@@ -149,8 +143,8 @@ export default {
     checkSpec () {
       if (!this.pre_build.res_req_spec) {
         this.$set(this.pre_build, 'res_req_spec', {
-          cpu_limit: '1000m',
-          memory_limit: '512Mi'
+          cpu_limit: 1000,
+          memory_limit: 512
         })
       }
     }

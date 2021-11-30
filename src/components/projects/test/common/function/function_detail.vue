@@ -395,8 +395,8 @@ export default {
           image_id: '',
           res_req: 'low', // high 、medium、low、min、define
           res_req_spec: {
-            cpu_limit: '1000m',
-            memory_limit: '512Mi'
+            cpu_limit: 1000,
+            memory_limit: 512
           },
           installs: [
             { name: '', version: '' }

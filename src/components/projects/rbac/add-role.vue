@@ -20,7 +20,7 @@
                   class="sub-permissions-checkbox"
                   v-for="(subPermission,sub_index) in   group.rules"
                   :key="sub_index"
-                  :label="subPermission.action"
+                  :label="subPermission. uniqueAction"
                 >{{subPermission.alias}}</el-checkbox>
               </div>
             </el-checkbox-group>
@@ -36,7 +36,6 @@
 </template>
 <script>
 import { queryPolicyDefinitionsAPI, addRoleAPI, queryRoleDetailAPI, queryPublicRoleDetailAPI, updateRoleAPI, updatePublicRoleAPI, addPublicRoleAPI } from '@/api'
-import * as permissionMap from '@/consts/permissionMap'
 import _ from 'lodash'
 
 const initFormData = {
@@ -99,17 +98,20 @@ export default {
       }
       res.rules.forEach(item => {
         if (item.kind === 'resource') {
-          this.form.permissions = this.form.permissions.concat(item.verbs)
+          item.verbs.forEach(action => {
+            this.form.permissions.push(`${item.resources[0]}/${action}`)
+          })
         }
       })
     },
     handlePermissionGroupChange (rules) {
+      console.log(rules)
       for (let i = 0; i < rules.length; i++) {
-        if (this.form.permissions.includes(rules[i].action)) {
-          const index = this.form.permissions.indexOf(rules[i].action)
+        if (this.form.permissions.includes(rules[i].uniqueAction)) {
+          const index = this.form.permissions.indexOf(rules[i].uniqueAction)
           this.form.permissions.splice(index, 1)
         } else {
-          const res = rules.map(item => (item.action))
+          const res = rules.map(item => (item.uniqueAction))
           this.form.permissions = _.uniq(this.form.permissions.concat(res))
           return
         }
@@ -117,7 +119,7 @@ export default {
     },
     calculatePermissionGroupsCheckedState (rules) {
       for (const rule of rules) {
-        if (!this.form.permissions.includes(rule.action)) {
+        if (!this.form.permissions.includes(rule.uniqueAction)) {
           return false
         }
       }
@@ -125,7 +127,7 @@ export default {
     },
     isIndeterminate (resource, rules) {
       for (const rule of rules) {
-        if (this.form.permissions.includes(rule.action)) {
+        if (this.form.permissions.includes(rule.uniqueAction)) {
           resources[resource] = true
           return true
         }
@@ -138,6 +140,12 @@ export default {
       const projectName = this.projectName
       const res = await queryPolicyDefinitionsAPI(projectName).catch(error => console.log(error))
       if (res) {
+        res.forEach(group => {
+          group.rules.forEach(item => {
+            item.uniqueAction = `${group.resource}/${item.action}`
+            item.resource = group.resource
+          })
+        })
         this.permissionGroups = res
       }
     },
@@ -151,13 +159,27 @@ export default {
         }
       })
 
-      let rules = []
-      const frontResources = []
+      const rules = []
+      const permissions = this.form.permissions
       if (res) {
-        this.form.permissions.forEach(key => {
-          frontResources.push(permissionMap[key])
-        })
-        rules = [{ verbs: this.form.permissions, resources: resource, kind: 'resource' }, { verbs: ['VIEW'], resources: frontResources, kind: '' }]
+        const resourceMap = {}
+        for (let index = 0; index < permissions.length; index++) {
+          const element = permissions[index]
+          const resource = element.split('/')[0]
+          const action = element.split('/')[1]
+          resourceMap[resource] = resourceMap[resource] || []
+          resourceMap[resource].push(action)
+        }
+        for (const resource in resourceMap) {
+          if (Object.hasOwnProperty.call(resourceMap, resource)) {
+            const element = resourceMap[resource]
+            rules.push({
+              kind: 'resource',
+              resources: [resource],
+              verbs: element
+            })
+          }
+        }
         if (this.isEdit) {
           let result = null
           if (this.form.isPublic) {

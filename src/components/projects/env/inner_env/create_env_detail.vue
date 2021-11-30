@@ -279,7 +279,7 @@ import {
   createProductAPI,
   getSingleProjectAPI,
   getHostListAPI,
-  createHelmProductEnvAPI
+  createHelmEnvAPI
 } from '@api'
 import bus from '@utils/event_bus'
 import { uniq, cloneDeep } from 'lodash'
@@ -427,7 +427,8 @@ export default {
       }
     },
     async getCluster () {
-      const res = await getClusterListAPI()
+      const projectName = this.projectName
+      const res = await getClusterListAPI(projectName)
       if (!this.rollbackMode) {
         this.allCluster = res.filter(element => {
           return element.status === 'normal'
@@ -812,7 +813,7 @@ export default {
             namespace: this.projectConfig.defaultNamespace
           }
           this.startDeployLoading = true
-          createHelmProductEnvAPI(this.projectConfig.product_name, [
+          createHelmEnvAPI(this.projectConfig.product_name, [
             payload
           ]).then(
             res => {

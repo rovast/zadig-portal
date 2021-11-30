@@ -110,7 +110,7 @@ export default {
           res = '环境创建成功'
           break
         case 'failed':
-          res = `环境创建失败：${envInfo.err_message}`
+          res = `环境创建失败：${envInfo.error}`
           break
         case 'Unstable':
           res = '环境创建成功（运行不稳定）'

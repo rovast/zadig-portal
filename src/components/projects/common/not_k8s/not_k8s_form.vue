@@ -1470,9 +1470,9 @@ export default {
       if (!this.isEdit) {
         listProductAPI('', projectName).then(res => {
           res.forEach(element => {
-            if (element.product_name === this.projectName) {
+            if (element.projectName === this.projectName) {
               this.pmService.env_configs.push({
-                env_name: element.env_name,
+                env_name: element.name,
                 host_ids: []
               })
             }

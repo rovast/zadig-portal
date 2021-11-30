@@ -162,7 +162,7 @@ export default {
       this.projectList.forEach(element => {
         if (element.product_name === this.projectName) {
           envNameList.push({
-            envName: element.env_name
+            envName: element.name
           })
         }
       })

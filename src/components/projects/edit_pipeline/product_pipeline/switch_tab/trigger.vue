@@ -100,12 +100,12 @@
           >
             <el-option
               v-for="pro of matchedProducts"
-              :key="`${pro.product_name} / ${pro.env_name}`"
-              :label="`${pro.product_name} / ${pro.env_name}（${pro.is_prod?'生产':'测试'}）`"
-              :value="`${pro.env_name}`"
+              :key="`${pro.projectName} / ${pro.name}`"
+              :label="`${pro.projectName} / ${pro.name}（${pro.is_prod?'生产':'测试'}）`"
+              :value="`${pro.name}`"
             >
               <span>
-                {{`${pro.product_name} / ${pro.env_name}`}}
+                {{`${pro.projectName} / ${pro.name}`}}
                 <el-tag v-if="pro.is_prod" type="danger" size="mini" effect="dark">生产</el-tag>
               </span>
             </el-option>

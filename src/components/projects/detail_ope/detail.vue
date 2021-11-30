@@ -186,16 +186,15 @@
 
                   <template slot-scope="scope">
                     <router-link
-                                 :to="`/v1/projects/detail/${scope.row.product_name}/envs/detail?envName=${scope.row.env_name}`">
-                      <span class="env-name">{{`${scope.row.env_name}`}}</span>
+                                 :to="`/v1/projects/detail/${scope.row.projectName}/envs/detail?envName=${scope.row.name}`">
+                      <span class="env-name">{{`${scope.row.name}`}}</span>
                     </router-link>
                   </template>
                 </el-table-column>
                 <el-table-column label="集群归属">
                   <template slot-scope="scope">
-                    <span v-if="scope.row.cluster_name">{{`${scope.row.cluster_name}`}}</span>
+                    <span v-if="scope.row.clusterName && scope.row.production">{{`${scope.row.production?'生产':'测试'}`}}</span>
                     <span v-else>本地</span>
-                    <span v-if="scope.row.cluster_name && scope.row.is_prod">{{`${scope.row.is_prod?'生产':'测试'}`}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column label="当前状态">
@@ -296,7 +295,7 @@ export default {
       const projectName = this.projectName
       listProductAPI('', projectName).then((res) => {
         this.envList = res.map(element => {
-          getEnvInfoAPI(projectName, element.env_name).then((res) => {
+          getEnvInfoAPI(projectName, element.name).then((res) => {
             element.status = res.status
           })
           return element
@@ -307,7 +306,7 @@ export default {
       const projectName = this.projectName
       const externalFlag = this.currentProject.product_feature.create_env_type
       const workflows = this.workflows.map((element) => { return element.name })
-      const envNames = this.envList.map((element) => { return element.env_name })
+      const envNames = this.envList.map((element) => { return element.name })
       const result = await Promise.all([getServiceTemplatesAPI(projectName), getBuildConfigsAPI(projectName)])
       const services = result[0].data.filter(element => element.product_name === projectName).map((element) => { return element.service_name })
       const buildConfigs = result[1].map((element) => { return element.name })

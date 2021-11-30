@@ -3,11 +3,41 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-7 col-md-12 col-pad-0 form-section">
+          <div class="login-inner-form" v-show="!showForgotPassword && !showSignUp">
+            <div class="details">
+              <header>
+                <a href="#"><img src="@assets/icons/logo/default-logo.png" alt="logo"></a>
+              </header>
+              <section>
+                <el-form :model="loginForm" status-icon :rules="rules" ref="loginForm" hide-required-asterisk>
+                  <el-form-item label="用户名" prop="account">
+                    <el-input v-model="loginForm.account" placeholder="请输入用户名" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="密码" prop="password">
+                    <el-input
+                      type="password"
+                      @keyup.enter.native="login"
+                      v-model="loginForm.password"
+                      autocomplete="off"
+                      placeholder="请输入密码"
+                      show-password
+                    ></el-input>
+                  </el-form-item>
+                </el-form>
+                <el-button type="submit" @click="login" v-loading="loading" class="btn-md btn-theme btn-block login-btn">登录</el-button>
+              </section>
+              <div class="bottom">
+                <a @click="showForgotPassword = true">找回密码</a>
+                <span class="divide">|</span>
+                <a @click="showSignUp = true">注册</a>
+              </div>
+            </div>
+          </div>
           <div class="login-inner-form" v-show="showForgotPassword">
             <ForgetPassword :openLogin="checkLogin" :retrieveToken="retrieveToken" />
           </div>
           <div class="login-inner-form" v-show="showSignUp">
-            <SignUp :openLogin="checkLogin"/>
+            <SignUp :openLogin="checkLogin" />
           </div>
         </div>
         <div class="col-lg-5 col-md-12 col-pad-0 bg-img none-992">
@@ -38,6 +68,7 @@
 <script>
 import moment from 'moment'
 import { isMobile } from 'mobile-device-detect'
+import { checkConnectorsAPI } from '@api'
 import ForgetPassword from './components/forgetPassword.vue'
 import SignUp from './components/signUp.vue'
 import store from 'storejs'
@@ -51,7 +82,19 @@ export default {
     return {
       showForgotPassword: false,
       showSignUp: false,
+      showConnectors: false,
       retrieveToken: '',
+      loading: false,
+      loginForm: {
+        account: '',
+        password: ''
+      },
+      rules: {
+        account: [
+          { required: true, message: '请输入用户名', trigger: 'change' }
+        ],
+        password: [{ required: true, message: '请输入密码', trigger: 'change' }]
+      },
       moment,
       copywriting: {
         common: {
@@ -63,12 +106,32 @@ export default {
     }
   },
   methods: {
-    checkLogin () {
+    login () {
+      this.$refs.loginForm.validate(async valid => {
+        if (valid) {
+          this.loading = true
+          const payload = this.loginForm
+          const res = await this.$store.dispatch('LOGIN', payload)
+          if (res) {
+            this.loading = false
+            this.redirectByDevice()
+          } else {
+            this.loading = false
+          }
+        } else {
+          return false
+        }
+      })
+    },
+    async checkLogin () {
       const userInfo = store.get('userInfo')
       if (userInfo) {
         this.redirectByDevice()
       } else {
-        window.location.href = '/api/v1/login'
+        const connectorsCheck = await checkConnectorsAPI()
+        if (connectorsCheck && connectorsCheck.enabled) {
+          window.location.href = '/api/v1/login'
+        }
       }
     },
     redirectByDevice () {
@@ -129,6 +192,10 @@ export default {
   align-items: center;
   float: right;
   padding: 0 10px;
+
+  .divide {
+    color: #ced4da;
+  }
 
   a {
     padding-right: 10px;
@@ -216,14 +283,18 @@ export default {
           cursor: pointer;
         }
 
+        /deep/ .el-form-item {
+          margin-bottom: 18px;
+        }
+
         /deep/ .el-input {
           .el-input__inner {
-            border-radius: 20px;
+            border-radius: 0.25rem;
           }
         }
 
         /deep/ .el-form-item__label {
-          color: #c0c4cc;
+          color: #717171;
         }
 
         input[type='checkbox'],
@@ -246,8 +317,9 @@ export default {
 
         .btn-theme {
           color: #fff;
-          background: #376bff;
+          background: #007bff;
           border: none;
+          border-radius: 0.25rem;
         }
 
         .btn-theme.focus,
@@ -331,15 +403,5 @@ export default {
   .login .form-section {
     padding: 30px 15px;
   }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
 }
 </style>

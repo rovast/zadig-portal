@@ -1139,8 +1139,8 @@ export function saveSubscribeAPI (payload) {
   return http.post('/api/aslan/system/notification/subscribe', payload)
 }
 
-export function downloadPubKeyAPI () {
-  return http.get('/api/aslan/setting/user/kube/config')
+export function downloadConfigAPI () {
+  return http.get('/api/v1/picket/kubeconfig')
 }
 
 export function updateServiceImageAPI (payload, type, projectName, envType = '') {

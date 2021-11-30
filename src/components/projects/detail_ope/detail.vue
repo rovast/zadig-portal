@@ -208,9 +208,9 @@
                                  label="更新信息（时间/操作人）">
                   <template slot-scope="scope">
                     <div><i class="el-icon-time"></i>
-                      {{ $utils.convertTimestamp(scope.row.update_time) }} <i
+                      {{ $utils.convertTimestamp(scope.row.updateTime) }} <i
                          class="el-icon-user"></i>
-                      <span>{{scope.row.update_by}}</span>
+                      <span>{{scope.row.updateBy}}</span>
                     </div>
                   </template>
                 </el-table-column>

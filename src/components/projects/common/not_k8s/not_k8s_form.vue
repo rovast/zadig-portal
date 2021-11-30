@@ -1523,7 +1523,7 @@ export default {
           resList.forEach(element => {
             if (element.product_name === this.projectName) {
               envNameList.push(
-                element.env_name
+                element.name
               )
             }
           })

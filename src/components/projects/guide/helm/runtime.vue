@@ -42,7 +42,7 @@
           <div class="ai-bottom">
             <el-button type="primary" size="small" @click="createHelmProductEnv" :loading="isCreating" :disabled="!cantNext">创建环境</el-button>
             <div v-for="(env, index) in createRes" :key="index" class="ai-status">
-              <span class="env-name">{{env.env_name}}:</span>
+              <span class="env-name">{{env.name}}:</span>
               <span>{{getStatusDesc(env)}}</span>
             </div>
           </div>

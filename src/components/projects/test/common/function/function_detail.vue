@@ -26,7 +26,7 @@
       </el-form-item>
       <div class="divider"></div>
 
-      <div class="title">执行环境</div>
+      <div class="title">运行时环境</div>
       <BuildEnv :pre_build="test.pre_test" :isCreate="!isEdit" :title="``" :propPre="`pre_test`"></BuildEnv>
 
       <div class="divider">

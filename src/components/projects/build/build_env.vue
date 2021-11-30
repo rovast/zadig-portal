@@ -50,11 +50,31 @@
         </el-form-item>
       </el-col>
     </el-row>
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-form-item label="集群名称" label-width="inherit" required>
+          <el-select v-model="pre_build.cluster_id" placeholder="选择集群名称" size="small" @change="getProductHostingNamespace">
+            <el-option v-for="cluster in clusters" :key="cluster.id" :label="cluster.name" :value="cluster.id"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="命名空间" label-width="inherit" :prop="`${propPre}.namespace`" required :show-message="false">
+          <el-select v-model="pre_build.namespace" placeholder="选择命名空间" size="small">
+            <el-option v-for="namespace in namespaces" :key="namespace.name" :label="namespace.name" :value="namespace.name"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-import { getImgListAPI } from '@api'
+import {
+  getImgListAPI,
+  getClusterListAPI,
+  productHostingNamespaceAPI
+} from '@api'
 export default {
   props: {
     pre_build: Object,
@@ -67,7 +87,7 @@ export default {
       type: Boolean
     },
     title: {
-      default: '构建环境',
+      default: '运行时环境',
       type: String
     },
     propPre: {
@@ -100,7 +120,14 @@ export default {
       }
     }
     return {
-      systems: []
+      systems: [],
+      clusters: [],
+      namespaces: []
+    }
+  },
+  computed: {
+    projectName () {
+      return this.$route.params.project_name
     }
   },
   methods: {
@@ -108,6 +135,26 @@ export default {
       getImgListAPI().then(response => {
         this.systems = response
         this.paddingData(this.isCreate)
+      })
+    },
+    getClusterList () {
+      getClusterListAPI(this.projectName).then(res => {
+        const local = res.find(re => re.local)
+        if (local) {
+          local.id = ''
+        } else {
+          res.push({
+            id: '',
+            name: 'local'
+          })
+        }
+        this.clusters = res
+      })
+    },
+    getProductHostingNamespace (id = '') {
+      this.namespaces = []
+      return productHostingNamespaceAPI(id).then(res => {
+        this.namespaces = res
       })
     },
     paddingData (val) {
@@ -123,6 +170,21 @@ export default {
         if (key) {
           this.changeImage(key, value)
         }
+      }
+      // 兼容老数据：默认使用 local + Zadig 所在的命名空间 cluster_id 可为空 -> 本地集群
+      if (!this.pre_build.namespace) {
+        this.$set(this.pre_build, 'cluster_id', '')
+        this.getProductHostingNamespace().then(() => {
+          const ns = this.namespaces.find(ns => ns.current)
+          this.$set(
+            this.pre_build,
+            'namespace',
+            ns ? ns.name : ''
+          )
+        })
+      } else {
+        // 请求一次当前集群的命名空间
+        this.getProductHostingNamespace(this.pre_build.cluster_id)
       }
     },
     changeImage (key, value, index = -1) {
@@ -161,6 +223,7 @@ export default {
   },
   created () {
     this.getImgList()
+    this.getClusterList()
   }
 }
 </script>

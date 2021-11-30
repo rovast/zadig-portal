@@ -3,8 +3,8 @@
     <span v-if="title" class="item-title">{{title}}</span>
     <div v-if="title" class="divider item"></div>
     <el-row :gutter="20">
-      <el-col :span="mini ? 12 : 7">
-        <el-form-item :label="mini ? '系统' : '构建系统'" label-width="inherit" required>
+      <el-col :span="12">
+        <el-form-item label="构建系统" label-width="inherit" required>
           <el-select size="small" v-model="pre_build.image_id" placeholder="请选择" @change="changeImage('id', $event)">
             <el-option v-for="(sys,index) in systems" :key="index" :label="sys.label" :value="sys.id">
               <span>
@@ -18,8 +18,8 @@
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :span="mini ? 12 : 16">
-        <el-form-item :label="mini ? '资源' : '资源规格'" label-width="inherit" required>
+      <el-col :span="12">
+        <el-form-item label="资源规格" label-width="inherit" required>
           <el-select size="small" v-model="pre_build.res_req" placeholder="请选择">
             <el-option label="高 | CPU: 16 核 内存: 32 GB" value="high"></el-option>
             <el-option label="中 | CPU: 8 核 内存: 16 GB" value="medium"></el-option>
@@ -182,17 +182,11 @@ export default {
 }
 
 .define-resource {
-  display: inline-block;
   margin-left: 10px;
   color: #606266;
 
-  /deep/.el-form-item {
-    display: inline-block;
-  }
-
   /deep/.el-input {
-    width: 100px;
-    margin-right: 5px;
+    max-width: 190px;
   }
 }
 </style>

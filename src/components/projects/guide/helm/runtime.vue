@@ -64,8 +64,7 @@ import HelmEnvTemplate from '@/components/projects/env/env_detail/components/upd
 import bus from '@utils/event_bus'
 import step from '../common/step.vue'
 import {
-  createHelmProductEnvAPI,
-  getCreateHelmEnvStatusAPI,
+  createHelmEnvAPI,
   getEnvironmentsAPI
 } from '@api'
 export default {
@@ -144,7 +143,7 @@ export default {
 
       const payload = Object.values(payloadObj)
       this.isCreating = true
-      const res = await createHelmProductEnvAPI(projectName, payload).catch(
+      const res = await createHelmEnvAPI(projectName, payload).catch(
         err => {
           console.log(err)
           this.isCreating = false
@@ -155,7 +154,7 @@ export default {
       }
     },
     async checkEnvStatus () {
-      const res = await getCreateHelmEnvStatusAPI(this.projectName).catch(
+      const res = await getEnvironmentsAPI(this.projectName).catch(
         err => {
           console.log(err)
           if (this.sId) this.sId = setTimeout(this.checkEnvStatus, 2000)

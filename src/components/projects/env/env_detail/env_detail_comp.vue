@@ -62,7 +62,7 @@
               <el-col :span="8">
                 <div v-if="productInfo.cluster_id"
                      class="grid-content">
-                  {{currentCluster.production?currentCluster.name+' (生产集群)':currentCluster.name +' (测试集群)'}}
+                  {{productInfo.is_prod?productInfo.cluster_name+' (生产集群)':productInfo.cluster_name +' (测试集群)'}}
                 </div>
                 <div v-else
                      class="grid-content">本地集群</div>
@@ -178,7 +178,7 @@
               </div>
             </el-col>
           </el-row>
-          <el-row v-if="productInfo.error!==''"
+          <el-row v-if="productInfo.error && productInfo.error!==''"
                   :gutter="20">
             <el-col :span="3">
               <div class="grid-content">错误信息:</div>
@@ -514,8 +514,7 @@
 import { getProductStatus, serviceTypeMap } from '@utils/word_translate'
 import {
   envRevisionsAPI, productEnvInfoAPI, productServicesAPI, serviceTemplateAfterRenderAPI, listProductAPI,
-  updateServiceAPI, updateK8sEnvAPI, restartPmServiceAPI, restartServiceOriginAPI,
-  getClusterListAPI, deleteProductEnvAPI, getSingleProjectAPI, getServicePipelineAPI, initSource, rmSource
+  updateServiceAPI, updateK8sEnvAPI, restartPmServiceAPI, restartServiceOriginAPI, deleteProductEnvAPI, getSingleProjectAPI, getServicePipelineAPI, initSource, rmSource
 } from '@api'
 import _ from 'lodash'
 import runWorkflow from './run_workflow.vue'
@@ -543,7 +542,6 @@ export default {
     return {
       recycleDay: null,
       ctlCancel: null,
-      allCluster: [],
       envNameList: [],
       containerServiceList: [],
       pmServiceList: [],
@@ -614,13 +612,6 @@ export default {
     },
     filteredProducts () {
       return _.uniqBy(_.orderBy(this.projectList, ['product_name', 'is_prod']), 'product_name')
-    },
-    currentCluster () {
-      if (this.productInfo.cluster_id) {
-        return this.allCluster.find(cluster => cluster.id === this.productInfo.cluster_id)
-      } else {
-        return null
-      }
     },
     runningContainerService () {
       return this.containerServiceList.filter(s => (s.status === 'Running' || s.status === 'Succeeded')).length
@@ -741,7 +732,6 @@ export default {
         this.initPageInfo()
         this.getEnvNameList()
         this.getEnvServices()
-        this.getCluster()
         this.fetchEnvRevision()
         this.checkProjectFeature()
       } catch (err) {
@@ -916,32 +906,6 @@ export default {
       const env_name = this.envName
       serviceTemplateAfterRenderAPI(product_name, service.service_name, env_name).then((tpls) => {
         this.combineTemplate = jsdiff.diffLines(tpls.current.yaml, tpls.latest.yaml)
-      })
-    },
-    getClusterType (clusterId) {
-      if (clusterId && this.allCluster.length > 0) {
-        const clusterObj = this.allCluster.find(cluster => cluster.id === clusterId)
-        if (clusterObj && clusterObj.production) {
-          return {
-            type: '生产',
-            name: clusterObj.name
-          }
-        } else if (clusterObj && clusterObj.production === false) {
-          return {
-            type: '测试',
-            name: clusterObj.name
-          }
-        }
-      } else {
-        return {
-          type: '本地',
-          name: ''
-        }
-      }
-    },
-    getCluster () {
-      getClusterListAPI().then((res) => {
-        this.allCluster = res
       })
     },
     getProdStatus (status, updateble) {

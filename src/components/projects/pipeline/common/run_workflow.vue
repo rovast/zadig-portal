@@ -682,7 +682,7 @@ export default {
         this.specificEnv = false
       }
       // 克隆任务适配
-      if (this.haveForcedInput && this.currentProjectEnvs.find(p => p.product_name === projectName)) {
+      if (this.haveForcedInput && this.currentProjectEnvs.find(p => p.projectName === projectName)) {
         const projectName = this.forcedUserInput.product_tmpl_name
         const envName = this.forcedUserInput.namespace
         this.getPresetInfo(`${projectName} / ${envName}`)

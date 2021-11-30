@@ -201,63 +201,7 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <span class="item-title">构建环境</span>
-            <div class="divider item"></div>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item
-                  label="系统"
-                  prop="pre_build.image_id"
-                  label-width="60px"
-                >
-                  <el-select
-                    size="mini"
-                    v-model="buildConfig.pre_build.image_id"
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="(sys, index) in systems"
-                      :key="index"
-                      :label="sys.label"
-                      :value="sys.id"
-                    >
-                      <span>
-                        {{ sys.label }}
-                        <el-tag
-                          v-if="sys.image_from === 'custom'"
-                          type="info"
-                          size="mini"
-                          effect="light"
-                        >
-                          自定义
-                        </el-tag>
-                      </span>
-                    </el-option>
-                    <el-option value="NEWCUSTOM">
-                      <router-link to="/v1/system/imgs" style="color: #606266;">新建自定义构建镜像</router-link>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="资源" label-width="50px">
-                  <el-select
-                    size="mini"
-                    v-model="buildConfig.pre_build.res_req"
-                    placeholder="请选择"
-                  >
-                    <el-option label="高 | CPU: 16 核 内存: 32 GB" value="high">
-                    </el-option>
-                    <el-option label="中 | CPU: 8 核 内存: 16 GB" value="medium">
-                    </el-option>
-                    <el-option label="低 | CPU: 4 核 内存: 8 GB" value="low">
-                    </el-option>
-                    <el-option label="最低 | CPU: 2 核 内存: 2 GB" value="min">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
+            <BuildEnv :pre_build="buildConfig.pre_build" mini></BuildEnv>
           </el-form>
           <el-form
             ref="buildApp"
@@ -847,12 +791,12 @@
     </div>
 </template>
 <script>
+import BuildEnv from '@/components/projects/build/build_env.vue'
 import {
   getBuildConfigDetailAPI,
   getAllAppsAPI,
   getDockerfileTemplatesAPI,
   getDockerfileAPI,
-  getImgListAPI,
   getCodeSourceMaskedAPI,
   createBuildConfigAPI,
   updateBuildConfigAPI,
@@ -915,7 +859,11 @@ export default {
         repos: [],
         pre_build: {
           clean_workspace: false,
-          res_req: 'low',
+          res_req: 'low', // high 、medium、low、min、define
+          res_req_spec: {
+            cpu_limit: 1000,
+            memory_limit: 512
+          },
           build_os: 'xenial',
           image_id: '',
           image_from: '',
@@ -995,8 +943,7 @@ export default {
             trigger: 'blur'
           }
         ]
-      },
-      systems: []
+      }
     }
   },
   methods: {
@@ -1200,13 +1147,6 @@ export default {
         formName = 'jenkinsForm'
         payload = this.$utils.cloneObj(this.jenkinsBuild)
       }
-      if (payload.pre_build.image_id) {
-        const image = this.systems.find((item) => {
-          return item.id === payload.pre_build.image_id
-        })
-        payload.pre_build.image_from = image.image_from
-        payload.pre_build.build_os = image.value
-      }
       payload.product_name = this.projectName
       payload.source = this.source
       const valid = await this.$refs[formName].validate()
@@ -1340,12 +1280,6 @@ export default {
       getCodeSourceMaskedAPI().then((response) => {
         this.allCodeHosts = response
       })
-      getImgListAPI().then((response) => {
-        this.systems = response
-        if (!this.isEdit) {
-          this.buildConfig.pre_build.image_id = this.systems[0].id
-        }
-      })
       getRegistryWhenBuildAPI().then((res) => {
         this.allRegistry = res
       })
@@ -1389,7 +1323,8 @@ export default {
   components: {
     Editor,
     Resize,
-    Codemirror
+    Codemirror,
+    BuildEnv
   }
 }
 </script>

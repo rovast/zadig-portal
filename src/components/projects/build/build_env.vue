@@ -52,7 +52,7 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="集群名称" label-width="inherit" :prop="`${propPre}.cluster_id`" required>
+        <el-form-item label="集群名称" label-width="inherit" :prop="`${propPre}.cluster_id`" required :show-message="false">
           <el-select v-model="pre_build.cluster_id" placeholder="选择集群名称" size="small" @change="getProductHostingNamespace">
             <el-option v-for="cluster in clusters" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
           </el-select>

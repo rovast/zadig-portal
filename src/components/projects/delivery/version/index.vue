@@ -20,7 +20,7 @@
                  size="small"
                  icon="el-icon-search">搜索</el-button>
       <el-button type="primary"
-                 @click="$router.push(`${$route.path}/create`)"
+                 @click="$router.push(`${$route.path}/create?deployType=${deployType}`)"
                  size="small"
                  v-if="deployType === 'helm'">
         创建版本

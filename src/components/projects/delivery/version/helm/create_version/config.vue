@@ -175,7 +175,7 @@ export default {
     },
     getEnvNames () {
       listProductAPI(this.projectName).then(res => {
-        this.envNames = res.map(re => re.env_name)
+        this.envNames = res.map(re => re.name)
       })
     },
     getServicesNameByEnv (envName) {

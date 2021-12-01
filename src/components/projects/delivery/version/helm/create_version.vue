@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import bus from '@utils/event_bus'
+
 import Info from './create_version/info.vue'
 import Config from './create_version/config.vue'
 import Push from './create_version/push.vue'
@@ -108,6 +110,20 @@ export default {
         }
       })
     }
+  },
+  created () {
+    const projectName = this.$route.params.project_name
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '版本管理', url: `` },
+        {
+          title: projectName,
+          url: `/v1/delivery/version/${projectName}?deployType=helm`
+        },
+        { title: '创建版本', url: `` }
+      ]
+    })
   },
   mounted () {
     this.deliveryRelease.productName = this.$route.params.project_name

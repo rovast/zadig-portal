@@ -211,7 +211,7 @@
                 <template slot-scope="scope">
                   <i v-if="scope.row.name ==='local'" class="iconfont iconk8s"></i>
                   <i v-else :class="getProviderMap(scope.row.provider,'icon')"></i>
-                  <span v-if="scope.row.name ==='local'">本地集群</span>
+                  <span v-if="scope.row.name ==='local'">本地集群（local）</span>
                   <span v-else>{{scope.row.name}}</span>
                 </template>
               </el-table-column>

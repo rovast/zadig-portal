@@ -476,8 +476,8 @@ export default {
         this.loading = false
         const localId = res.findIndex(re => re.local)
         if (localId !== -1) {
-          res.splice(localId, 1)
-          res.unshift(res.find(re => re.local))
+          const local = res.splice(localId, 1)
+          res.unshift(local[0])
         } else {
           this.$message.error(`未找到本地集群！`)
         }

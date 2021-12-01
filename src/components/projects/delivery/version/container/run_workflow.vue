@@ -8,10 +8,10 @@
                  :disabled="specificEnv"
                  class="full-width">
         <el-option v-for="pro of matchedProducts"
-                   :key="`${pro.product_name}/${pro.env_name}`"
-                   :label="`${pro.product_name}/${pro.env_name}${pro.is_prod?'（生产）':''}`"
-                   :value="`${pro.product_name}/${pro.env_name}`">
-          <span>{{`${pro.product_name} / ${pro.env_name}`}}
+                   :key="`${pro.projectName}/${pro.name}`"
+                   :label="`${pro.projectName}/${pro.name}${pro.is_prod?'（生产）':''}`"
+                   :value="`${pro.projectName}/${pro.name}`">
+          <span>{{`${pro.projectName} / ${pro.name}`}}
             <el-tag v-if="pro.is_prod"
                     type="danger"
                     size="mini"
@@ -97,16 +97,16 @@ export default {
   methods: {
     async filterProducts (products) {
       const prodProducts = products.filter(element => {
-        if (element.product_name === this.projectName) {
-          if (element.is_prod) {
+        if (element.projectName === this.projectName) {
+          if (element.production) {
             return element
           }
         }
         return false
       })
       const testProducts = products.filter(element => {
-        if (element.product_name === this.projectName) {
-          if (!element.is_prod) {
+        if (element.projectName === this.projectName) {
+          if (!element.production) {
             return element
           }
         }

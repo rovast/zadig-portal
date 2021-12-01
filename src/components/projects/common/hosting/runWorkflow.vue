@@ -6,105 +6,18 @@
           <span style="margin-left: 10px;">{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column width="200px" label="环境信息">
-        <template slot-scope="scope">
-          <a
-            v-if="scope.row.env_name"
-            class="env-name"
-            :href="`/v1/projects/detail/${scope.row.product_tmpl_name}/envs/detail?envName=${scope.row.env_name}`"
-            target="_blank"
-            >{{ `${scope.row.env_name}` }}</a
-          >
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column label="服务入口">
-        <template slot-scope="scope">
-          <div
-            v-for="(ingress, ingress_index) in scope.row.ingress_infos"
-            :key="ingress_index"
-          >
-            <div
-              v-for="(item, host_index) in scope.row.ingress_infos[
-                ingress_index
-              ]['host_info']"
-              :key="host_index"
-            >
-              <a
-                style="color: #1989fa;"
-                :href="`http://${item.host}`"
-                target="_blank"
-                >{{ item.host }}</a
-              >
-            </div>
-          </div>
-        </template>
-      </el-table-column> -->
-      <el-table-column width="300px" label="包含步骤">
+      <el-table-column width="200px" label="包含步骤">
         <template slot-scope="scope">
           <span>
-            <span
-              v-if="
-                !$utils.isEmpty(scope.row.build_stage) &&
-                scope.row.build_stage.enabled
-              "
-            >
-              <el-tag size="small">构建部署</el-tag>
-              <span
-                v-if="
-                  scope.row.test_stage.enabled ||
-                  (!$utils.isEmpty(scope.row.security_stage) &&
-                    scope.row.security_stage.enabled) ||
-                  scope.row.distribute_stage.enabled
-                "
-                class="step-arrow"
-                ><i class="el-icon-right"></i
-              ></span>
+            <span v-for="(stage,index) in scope.row.enabledStages" :key="index" class="stage-tag">
+              <el-tag size="mini">{{wordTranslation(stage,'workflowStage')}}</el-tag>
             </span>
-            <span
-              v-if="
-                !$utils.isEmpty(scope.row.artifact_stage) &&
-                scope.row.artifact_stage.enabled
-              "
-            >
-              <el-tag size="small">交付物部署</el-tag>
-              <span
-                v-if="
-                  scope.row.test_stage.enabled ||
-                  (!$utils.isEmpty(scope.row.security_stage) &&
-                    scope.row.security_stage.enabled) ||
-                  scope.row.distribute_stage.enabled
-                "
-                class="step-arrow"
-                ><i class="el-icon-right"></i
-              ></span>
-            </span>
-            <span
-              v-if="
-                (!$utils.isEmpty(scope.row.test_stage) &&
-                  scope.row.test_stage.enabled) ||
-                (!$utils.isEmpty(scope.row.security_stage) &&
-                  scope.row.security_stage.enabled)
-              "
-            >
-              <el-tag size="small">测试</el-tag>
-              <span v-if="scope.row.distribute_stage.enabled" class="step-arrow"
-                ><i class="el-icon-right"></i
-              ></span>
-            </span>
-            <el-tag
-              v-if="
-                !$utils.isEmpty(scope.row.distribute_stage) &&
-                scope.row.distribute_stage.enabled
-              "
-              size="small"
-              >分发</el-tag
-            >
           </span>
         </template>
       </el-table-column>
       <el-table-column width="400px" label="更新信息（时间/操作人）">
         <template slot-scope="scope">
-          {{ $utils.convertTimestamp(scope.row.update_time)}}/ {{scope.row.update_by}}
+          {{ $utils.convertTimestamp(scope.row.updateTime)}}/ {{scope.row.updateBy}}
         </template>
       </el-table-column>
       <el-table-column width="120px" label="操作">
@@ -134,8 +47,9 @@
   </div>
 </template>
 <script>
+import { wordTranslate } from '@utils/word_translate.js'
 import RunWorkflow from '../../pipeline/common/run_workflow.vue'
-import { getProjectIngressAPI, generatePipeAPI } from '@api'
+import { getProjectIngressAPI, getWorkflowDetailAPI, getWorkflowsInProjectAPI, generatePipeAPI } from '@api'
 
 export default {
   name: 'runWorkflow',
@@ -148,30 +62,35 @@ export default {
     }
   },
   methods: {
-    getWorkflows () {
+    async getWorkflows () {
       this.loading = true
-      this.$store.dispatch('refreshWorkflowList', this.projectName).then(() => {
+      const projectName = this.projectName
+      const workflows = await getWorkflowsInProjectAPI(projectName)
+      const ingresses = await getProjectIngressAPI(projectName)
+      if (workflows && ingresses) {
         this.loading = false
-      }).then(() => {
-        const projectName = this.projectName
-        const currentWorkflows = this.$store.getters.workflowList.filter(element => {
-          return element.product_tmpl_name === this.projectName
-        })
-        getProjectIngressAPI(projectName).then((res) => {
-          currentWorkflows.forEach(workflow => {
-            res.forEach(ingress => {
-              if (ingress.env_name === workflow.env_name) {
-                workflow.ingress_infos = ingress.ingress_infos
-              }
-            })
+        const currentWorkflows = workflows
+        currentWorkflows.forEach(workflow => {
+          ingresses.forEach(ingress => {
+            if (ingress.env_name === workflow.env_name) {
+              workflow.ingress_infos = ingress.ingress_infos
+            }
           })
-          this.mapWorkflows = currentWorkflows
         })
-      })
+        this.mapWorkflows = currentWorkflows
+      }
+    },
+    wordTranslation (word, category, subitem) {
+      return wordTranslate(word, category, subitem)
     },
     runCurrentTask (scope) {
-      this.workflow = scope
-      this.taskDialogVisible = true
+      getWorkflowDetailAPI(scope.projectName, scope.name).then(res => {
+        this.taskDialogVisible = true
+        this.workflow = res
+      }).catch(err => {
+        console.log(err)
+        this.taskDialogVisible = false
+      })
     },
     hideAfterSuccess () {
       this.taskDialogVisible = false

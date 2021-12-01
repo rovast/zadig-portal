@@ -47,8 +47,8 @@
                            placeholder="请选择环境"
                            clearable
                            filterable>
-                    <el-option :label="env.env_name" v-for="(env,index) in filteredEnvs" :key="index"
-                               :value="env.env_name">
+                    <el-option :label="env.name" v-for="(env,index) in filteredEnvs" :key="index"
+                               :value="env.name">
                     </el-option>
                     <el-option v-if="filteredEnvs.length===0"
                                label=""

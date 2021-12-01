@@ -90,7 +90,7 @@ import bus from '@utils/event_bus'
 import step from '../common/step.vue'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
 import { wordTranslate } from '@utils/word_translate.js'
-import { getProjectIngressAPI, getWorkflowsInProjectAPI, generatePipeAPI } from '@api'
+import { getProjectIngressAPI, getWorkflowsInProjectAPI, getWorkflowDetailAPI, generatePipeAPI } from '@api'
 export default {
   data () {
     return {
@@ -141,8 +141,13 @@ export default {
       return wordTranslate(word, category, subitem)
     },
     runCurrentTask (scope) {
-      this.workflow = scope
-      this.taskDialogVisible = true
+      getWorkflowDetailAPI(scope.projectName, scope.name).then(res => {
+        this.taskDialogVisible = true
+        this.workflow = res
+      }).catch(err => {
+        console.log(err)
+        this.taskDialogVisible = false
+      })
     },
     hideAfterSuccess () {
       this.taskDialogVisible = false

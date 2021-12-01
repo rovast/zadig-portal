@@ -91,15 +91,7 @@ import runWorkflow from './common/run_workflow.vue'
 import RunCommonWorkflow from './common/run_common_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
-import {
-  getWorkflowsAPI,
-  getWorkflowsInProjectAPI,
-  deleteWorkflowAPI,
-  copyWorkflowAPI,
-  getCommonPipelineListAPI,
-  deleteCommonPipelineAPI,
-  getWorkflowDetailAPI
-} from '@api'
+import { getWorkflowsAPI, getWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteWorkflowAPI, copyWorkflowAPI } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
@@ -338,6 +330,9 @@ export default {
       getWorkflowDetailAPI(workflow.projectName, workflow.name).then(res => {
         this.showStartProductBuild = true
         this.workflowToRun = res
+      }).catch(err => {
+        this.showStartProductBuild = false
+        console.log(err)
       })
     },
     hideProductTaskDialog () {

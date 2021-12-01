@@ -1,6 +1,6 @@
 <template>
   <div class="integration-account-container">
-    <el-dialog title="用户账户管理-添加" :close-on-click-modal="false" custom-class="edit-form-dialog" :visible.sync="dialogUserAccountFormVisible">
+    <el-dialog title="用户账户管理-添加" :close-on-click-modal="false" custom-class="user-form-dialog" :visible.sync="dialogUserAccountFormVisible">
       <el-form :model="userAccount" @submit.native.prevent :rules="userAccountRules" status-icon ref="userAccountForm">
         <el-form-item label="账户类型" prop="type">
           <el-select v-model="userAccount.name" @change="clearValidate('userAccountForm')" :disabled="userAccount.mode ==='edit'">
@@ -8,6 +8,7 @@
             <el-option label="OpenLDAP" value="OpenLDAP"></el-option>
             <el-option label="GitHub" value="GitHub"></el-option>
             <el-option label="OAuth" value="OAuth"></el-option>
+            <el-option label="自定义" value="custom"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -264,25 +265,51 @@
             <el-input v-model="userAccountOAuth.config.userInfoURL" placeholder="用户信息 URL" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="用户名属性（用于登录）" prop="userIDKey">
-            <el-input v-model="userAccountOAuth.config.userIDKey" placeholder autofocus clearable auto-complete="off"></el-input>
+            <el-input v-model="userAccountOAuth.config.userIDKey" placeholder="user_id" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="用户昵称属性" prop="claimMapping.userNameKey">
-            <el-input
-              v-model="userAccountOAuth.config.claimMapping.userNameKey"
-              autofocus
-              clearable
-              auto-complete="off"
-            ></el-input>
+            <el-input v-model="userAccountOAuth.config.claimMapping.userNameKey" placeholder="user_name" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="用户邮箱属性" prop="claimMapping.emailKey">
-            <el-input
-              v-model="userAccountOAuth.config.claimMapping.emailKey"
-              autofocus
-              clearable
-              auto-complete="off"
-            ></el-input>
+            <el-input v-model="userAccountOAuth.config.claimMapping.emailKey" placeholder="email" autofocus clearable auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="Scopes" prop="scopes">
+            <el-select v-model="userAccountOAuth.config.scopes"
+              multiple
+              filterable
+              allow-create
+              default-first-option
+              placeholder="请输入 Scopes">
+            </el-select>
           </el-form-item>
         </el-form>
+      </template>
+      <template v-if="userAccount.name ==='custom'">
+        <el-form
+          :model="userAccountCustom"
+          @submit.native.prevent
+          :rules="userAccountCustomRules"
+          ref="userAccountCustomForm"
+          label-position="left"
+          label-width="105px"
+        >
+          <!-- <el-alert type="info" :closable="false" style="margin-bottom: 15px;">
+            <slot>
+              <span class="tips">{{`请参考文档获取帮助`}}</span>
+            </slot>
+          </el-alert> -->
+          <el-form-item label="账户类型" prop="type">
+            <el-input v-model="userAccountCustom.type" :disabled="userAccount.mode ==='edit'" placeholder="输入自定义账户类型" autofocus clearable auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="账户名称" prop="name">
+            <el-input v-model="userAccountCustom.name" placeholder="输入账户名称" autofocus clearable auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="YAML 配置" prop="yaml">
+          </el-form-item>
+        </el-form>
+        <div class="yaml-editor">
+          <codemirror class="codemirror" ref="yamlEditor" v-model="userAccountCustom.yaml" :options="editorOptions"></codemirror>
+        </div>
       </template>
       <div slot="footer" class="dialog-footer">
         <el-button
@@ -327,7 +354,7 @@
         <el-button size="small" type="primary" plain @click="addAccount()">添加</el-button>
       </div>
       <el-table :data="accounts" style="width: 100%;">
-        <el-table-column label="账户类型">
+        <el-table-column label="账户名称">
           <template slot-scope="scope">{{scope.row.name}}</template>
         </el-table-column>
         <el-table-column label="操作" width="300">
@@ -357,12 +384,30 @@ import {
   syncLDAPAPI
 } from '@api'
 import { cloneDeep, omit } from 'lodash'
+import { codemirror } from 'vue-codemirror'
+import jsyaml from 'js-yaml'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/mode/yaml/yaml'
+import 'codemirror/theme/neo.css'
 export default {
   data () {
     return {
       accounts: [],
       dialogUserAccountFormVisible: false,
       syncAccountUserLoading: false,
+      editorOptions: {
+        mode: 'yaml',
+        theme: 'neo',
+        lineNumbers: true,
+        lineWrapping: true,
+        indentUnit: 2,
+        tabSize: 2,
+        indentWithTabs: false,
+        autofocus: true,
+        extraKeys: {
+          'Ctrl-Space': 'autocomplete'
+        }
+      },
       userAccount: {
         name: '',
         mode: 'add'
@@ -393,7 +438,7 @@ export default {
           },
           groupSearch: {
             baseDN: '',
-            filter: '(objectClass=group)',
+            filter: '(cn=*)',
             // userMatchers: [
             //   {
             //     userAttr: 'uid',
@@ -431,7 +476,7 @@ export default {
           },
           groupSearch: {
             baseDN: '',
-            filter: '(objectClass=group)',
+            filter: '(cn=*)',
             // userMatchers: [
             //   {
             //     userAttr: 'uid',
@@ -471,11 +516,11 @@ export default {
         config: {
           authorizationURL: '',
           claimMapping: {
-            emailKey: 'email',
+            emailKey: '',
             emailVerifiedKey: '',
             groupsKey: '',
-            preferredUsernameKey: 'user_id',
-            userNameKey: 'user_name'
+            preferredUsernameKey: '',
+            userNameKey: ''
           },
           clientID: '',
           clientSecret: '',
@@ -483,8 +528,32 @@ export default {
           redirectURI: '',
           scopes: [],
           tokenURL: '',
-          userIDKey: 'user_id',
+          userIDKey: '',
           userInfoURL: ''
+        }
+      },
+      userAccountCustom: {
+        type: '',
+        id: '',
+        name: '',
+        yaml: '',
+        config: {}
+      },
+      userAccountCustomRules: {
+        type: {
+          required: true,
+          message: '请填写自定义账户类型',
+          trigger: ['blur', 'change']
+        },
+        name: {
+          required: true,
+          message: '请填写名称',
+          trigger: ['blur', 'change']
+        },
+        yaml: {
+          required: true,
+          message: '请输入 YAML 配置',
+          trigger: ['blur', 'change']
         }
       },
       userAccountRules: {},
@@ -709,6 +778,10 @@ export default {
         this.userAccountGitHub = cloneDeep(row)
       } else if (name === 'OAuth') {
         this.userAccountOAuth = cloneDeep(row)
+      } else {
+        this.userAccount.name = 'custom'
+        row.yaml = jsyaml.dump(row.config)
+        this.userAccountCustom = cloneDeep(row)
       }
     },
     handleUserAccountCancel () {
@@ -763,7 +836,7 @@ export default {
             },
             groupSearch: {
               baseDN: '',
-              filter: '(objectClass=group)',
+              filter: '(cn=*)',
               // userMatchers: [
               //   {
               //     userAttr: 'uid',
@@ -802,7 +875,7 @@ export default {
             },
             groupSearch: {
               baseDN: '',
-              filter: '(objectClass=group)',
+              filter: '(cn=*)',
               // userMatchers: [
               //   {
               //     userAttr: 'uid',
@@ -822,11 +895,11 @@ export default {
           config: {
             authorizationURL: '',
             claimMapping: {
-              emailKey: 'email',
+              emailKey: '',
               emailVerifiedKey: '',
               groupsKey: '',
-              preferredUsernameKey: 'user_id',
-              userNameKey: 'user_name'
+              preferredUsernameKey: '',
+              userNameKey: ''
             },
             clientID: '',
             clientSecret: '',
@@ -834,15 +907,24 @@ export default {
             redirectURI: '',
             scopes: [],
             tokenURL: '',
-            userIDKey: 'user_id',
+            userIDKey: '',
             userInfoURL: ''
           }
+        }
+      }
+      if (this.$refs.userAccountCustomForm) {
+        this.userAccountCustom = {
+          type: '',
+          id: '',
+          name: '',
+          yaml: '',
+          config: {}
         }
       }
       this.dialogUserAccountFormVisible = false
     },
     handleUserAccountDelete (row) {
-      this.$confirm(`确定要删除 ${row.name} 这个账户类型吗？`, '确认', {
+      this.$confirm(`确定要删除 ${row.name} 这个账户吗？`, '确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -941,11 +1023,25 @@ export default {
             const payload = this.userAccountOAuth
             payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
             payload.config.claimMapping.preferredUsernameKey = payload.config.userIDKey
-            payload.config.scopes = [
-              payload.config.userIDKey,
-              payload.config.claimMapping.userNameKey,
-              payload.config.claimMapping.emailKey
-            ]
+            createConnectorAPI(payload).then(res => {
+              this.getAccountConfig()
+              this.handleUserAccountCancel()
+              this.$message({
+                message: '账户数据添加成功',
+                type: 'success'
+              })
+            })
+          } else {
+            return false
+          }
+        })
+      } else {
+        this.$refs.userAccountCustomForm.validate(valid => {
+          if (valid) {
+            const payload = this.userAccountCustom
+            payload.id = payload.type
+            payload.config = jsyaml.load(payload.yaml)
+            omit(payload, ['yaml'])
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()
@@ -1038,8 +1134,29 @@ export default {
             return false
           }
         })
+      } else {
+        this.$refs.userAccountCustomForm.validate(valid => {
+          if (valid) {
+            let payload = this.userAccountCustom
+            payload.config = jsyaml.load(payload.yaml)
+            payload = omit(payload, ['yaml'])
+            updateConnectorAPI(payload.id, payload).then(res => {
+              this.getAccountConfig()
+              this.handleUserAccountCancel()
+              this.$message({
+                message: '账户数据修改成功',
+                type: 'success'
+              })
+            })
+          } else {
+            return false
+          }
+        })
       }
     }
+  },
+  components: {
+    codemirror
   },
   mounted () {
     this.getAccountConfig()
@@ -1078,7 +1195,7 @@ export default {
     }
   }
 
-  .edit-form-dialog {
+  .user-form-dialog {
     width: 600px;
 
     .el-dialog__header {
@@ -1096,6 +1213,11 @@ export default {
       padding-bottom: 0;
       color: #606266;
       font-size: 14px;
+
+      .yaml-editor {
+        border: 1px solid #ccc;
+        border-radius: 2px;
+      }
     }
 
     .el-select {

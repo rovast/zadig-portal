@@ -158,6 +158,9 @@ export default {
       getWorkflowDetailAPI(scope.projectName, scope.name).then(res => {
         this.taskDialogVisible = true
         this.workflow = res
+      }).catch(err => {
+        console.log(err)
+        this.taskDialogVisible = false
       })
     },
     hideAfterSuccess () {

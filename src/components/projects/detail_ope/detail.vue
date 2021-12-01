@@ -186,15 +186,15 @@
 
                   <template slot-scope="scope">
                     <router-link
-                                 :to="`/v1/projects/detail/${scope.row.product_name}/envs/detail?envName=${scope.row.env_name}`">
-                      <span class="env-name">{{`${scope.row.env_name}`}}</span>
+                                 :to="`/v1/projects/detail/${scope.row.projectName}/envs/detail?envName=${scope.row.name}`">
+                      <span class="env-name">{{`${scope.row.name}`}}</span>
                     </router-link>
                   </template>
                 </el-table-column>
                 <el-table-column label="集群归属">
                   <template slot-scope="scope">
-                    <span v-if="scope.row.clusterName">{{`${scope.row.clusterName}`}}</span>
-                    <span v-else>{{`${scope.row.clusterType}`}}</span>
+                    <span v-if="scope.row.clusterName && scope.row.production">{{`${scope.row.production?'生产':'测试'}`}}</span>
+                    <span v-else>本地</span>
                   </template>
                 </el-table-column>
                 <el-table-column label="当前状态">
@@ -208,9 +208,9 @@
                                  label="更新信息（时间/操作人）">
                   <template slot-scope="scope">
                     <div><i class="el-icon-time"></i>
-                      {{ $utils.convertTimestamp(scope.row.update_time) }} <i
+                      {{ $utils.convertTimestamp(scope.row.updateTime) }} <i
                          class="el-icon-user"></i>
-                      <span>{{scope.row.update_by}}</span>
+                      <span>{{scope.row.updateBy}}</span>
                     </div>
                   </template>
                 </el-table-column>
@@ -265,7 +265,7 @@
   </div>
 </template>
 <script>
-import { getProjectInfoAPI, getProductInfo, queryUserBindingsAPI, deleteProjectAPI, getClusterListAPI, getWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
+import { getProjectInfoAPI, getEnvInfoAPI, queryUserBindingsAPI, deleteProjectAPI, getWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
 import { getProductStatus } from '@utils/word_translate'
 import { wordTranslate } from '@utils/word_translate.js'
 import { whetherOnboarding } from '@utils/onboarding_route'
@@ -277,7 +277,6 @@ export default {
       currentProject: {},
       envList: [],
       workflows: [],
-      allCluster: [],
       userBindings: [],
       detailLoading: true
     }
@@ -296,51 +295,18 @@ export default {
       const projectName = this.projectName
       listProductAPI('', projectName).then((res) => {
         this.envList = res.map(element => {
-          getProductInfo(projectName, element.env_name).then((res) => {
+          getEnvInfoAPI(projectName, element.name).then((res) => {
             element.status = res.status
           })
-          if (element.cluster_id) {
-            element.clusterType = this.getClusterType(element.cluster_id).type
-            element.clusterName = this.getClusterType(element.cluster_id).name
-          } else {
-            element.clusterName = ''
-            element.clusterType = '本地'
-          }
           return element
         })
       })
-    },
-    getCluster () {
-      getClusterListAPI().then((res) => {
-        this.allCluster = res
-      })
-    },
-    getClusterType (clusterId) {
-      if (clusterId && this.allCluster.length > 0) {
-        const clusterObj = this.allCluster.find(cluster => cluster.id === clusterId)
-        if (clusterObj && clusterObj.production) {
-          return {
-            type: '生产',
-            name: clusterObj.name
-          }
-        } else if (clusterObj && clusterObj.production === false) {
-          return {
-            type: '测试',
-            name: clusterObj.name
-          }
-        }
-      } else {
-        return {
-          type: '本地',
-          name: ''
-        }
-      }
     },
     async deleteProject () {
       const projectName = this.projectName
       const externalFlag = this.currentProject.product_feature.create_env_type
       const workflows = this.workflows.map((element) => { return element.name })
-      const envNames = this.envList.map((element) => { return element.env_name })
+      const envNames = this.envList.map((element) => { return element.name })
       const result = await Promise.all([getServiceTemplatesAPI(projectName), getBuildConfigsAPI(projectName)])
       const services = result[0].data.filter(element => element.product_name === projectName).map((element) => { return element.service_name })
       const buildConfigs = result[1].map((element) => { return element.name })
@@ -452,7 +418,6 @@ export default {
     this.getProject(this.projectName)
     this.getWorkflows(this.projectName)
     this.getEnvList()
-    this.getCluster()
     bus.$emit('show-sidebar', true)
     bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
     bus.$emit('set-sub-sidebar-title', {

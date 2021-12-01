@@ -273,7 +273,7 @@ export default {
       const projectName = this.projectName
       const envNameList = await listProductAPI('', projectName)
       envNameList.forEach(element => {
-        element.envName = element.env_name
+        element.envName = element.name
       })
       if (envNameList.length) {
         this.envNameList = envNameList

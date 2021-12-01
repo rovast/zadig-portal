@@ -163,11 +163,14 @@
         <div class="cluster-list">
           <template>
             <el-table :data="allCluster"
-                      style="width: 100%;">
+                      style="width: 100%;"
+                      :row-class-name="tableRowClassName">
               <el-table-column label="名称">
                 <template slot-scope="scope">
-                  <i :class="getProviderMap(scope.row.provider, 'icon')"></i>
-                  <span>{{scope.row.name}}</span>
+                  <i v-if="scope.row.local" class="iconfont iconk8s"></i>
+                  <i v-else :class="getProviderMap(scope.row.provider,'icon')"></i>
+                  <span v-if="scope.row.local">本地集群（local）</span>
+                  <span v-else>{{scope.row.name}}</span>
                 </template>
               </el-table-column>
               <el-table-column width="120"
@@ -352,11 +355,16 @@ export default {
         }
       }
     },
-    getClusterNode (current_cluster) {
-      const clusterId = current_cluster.local ? '' : current_cluster.id
+    getClusterNode (clusterId) {
       getClusterNodeInfo(clusterId).then(res => {
         this.clusterNodes = res
       })
+    },
+    tableRowClassName ({ row, rowIndex }) {
+      if (row.local) {
+        return 'local-row'
+      }
+      return ''
     },
     getProviderMap (name, type) {
       if (name && type) {
@@ -393,7 +401,7 @@ export default {
       } else if (operate === 'recover') {
         this.recoverCluster(current_cluster.id)
       } else if (operate === 'edit') {
-        this.getClusterNode(current_cluster)
+        this.getClusterNode(current_cluster.id)
         this.cluster = this.$utils.cloneObj(current_cluster)
         this.dialogClusterFormVisible = true
       } else if (operate === 'update') {
@@ -565,6 +573,10 @@ export default {
 
       .logo {
         font-size: 20px;
+      }
+
+      .local-row {
+        background: #fafafa;
       }
     }
   }

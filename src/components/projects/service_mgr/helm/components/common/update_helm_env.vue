@@ -25,7 +25,7 @@
 </template>
 <script>
 import ChartValues from '@/components/projects/env/env_detail/common/updateHelmEnvChart.vue'
-import { updateHelmProductEnvAPI } from '@api'
+import { updateHelmEnvAPI } from '@api'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
@@ -57,7 +57,7 @@ export default {
           chartValues: this.$refs.chartValuesRef.getAllChartNameInfo()
         }
         const projectName = this.projectName
-        updateHelmProductEnvAPI(projectName, payload).then(res => {
+        updateHelmEnvAPI(projectName, payload).then(res => {
           this.$router.push(`/v1/projects/detail/${projectName}/envs`)
           this.$message({
             message: '更新环境成功',
@@ -88,10 +88,10 @@ export default {
         this.$emit('input', val)
       }
     },
-    ...mapGetters(['productList']),
+    ...mapGetters(['projectList']),
     envNameList () {
       const envNameList = []
-      this.productList.forEach(element => {
+      this.projectList.forEach(element => {
         if (element.name === this.projectName) {
           element.envs.forEach(envName => {
             envNameList.push({

@@ -316,7 +316,6 @@ const utils = {
    */
   headCut (text, showLen, ellipsis) {
     ellipsis = ellipsis || ''
-
     if (text.length <= showLen) {
       return text
     } else if (showLen > ellipsis.length) {
@@ -342,28 +341,6 @@ const utils = {
     const userinfo = store.get('userInfo')
     if (userinfo && userinfo.name) {
       return userinfo.name
-    }
-  },
-  guideCheck (type) {
-    const guideInfo = store.get('ZADIG_GUIDE')
-    if (guideInfo) {
-      if (type) {
-        return guideInfo[type]
-      } else {
-        return guideInfo
-      }
-    } else {
-      return false
-    }
-  },
-  setGuide (type) {
-    if (type) {
-      let current = store.get('ZADIG_GUIDE')
-      if (typeof current === 'undefined') {
-        current = {}
-      }
-      current[type] = true
-      storejs.set('ZADIG_GUIDE', current)
     }
   },
   /**
@@ -675,6 +652,13 @@ const utils = {
    */
   getHostname () {
     return window.location.hostname
+  },
+  showClusterName (cluster) {
+    if (cluster.name === 'local') {
+      return '本地集群'
+    } else {
+      return `${cluster.name} （${cluster.production ? '生产集群' : '测试集群'})`
+    }
   }
 }
 

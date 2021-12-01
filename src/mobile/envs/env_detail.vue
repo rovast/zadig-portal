@@ -102,7 +102,7 @@
 <script>
 import { Col, Collapse, CollapseItem, Row, NavBar, Tag, Panel, Loading, Button, Notify, Tab, Tabs, Cell, CellGroup, Icon, Divider, ActionSheet, List } from 'vant'
 import { getProductStatus, serviceTypeMap } from '@utils/word_translate'
-import { envRevisionsAPI, productEnvInfoAPI, fetchGroupsDataAPI } from '@api'
+import { envRevisionsAPI, productEnvInfoAPI, getEnvServicesAPI } from '@api'
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 export default {
@@ -155,14 +155,14 @@ export default {
       return this.productInfo.is_prod
     },
     ...mapGetters([
-      'productList'
+      'projectList'
     ]),
     envNameList () {
       const envNameList = []
-      this.productList.forEach(element => {
+      this.projectList.forEach(element => {
         if (element.product_name === this.projectName) {
           envNameList.push({
-            envName: element.env_name
+            envName: element.name
           })
         }
       })
@@ -177,7 +177,7 @@ export default {
       }
     },
     filteredProducts () {
-      return _.uniqBy(_.orderBy(this.productList, ['product_name', 'is_prod']), 'product_name')
+      return _.uniqBy(_.orderBy(this.projectList, ['product_name', 'is_prod']), 'product_name')
     },
     runningService () {
       return this.serviceList.filter(s => (s.status === 'Running' || s.status === 'Succeeded')).length
@@ -205,16 +205,16 @@ export default {
     async getProducts () {
       await this.$store.dispatch('getProjectList')
     },
-    fetchGroupsData (name, env_name = '') {
+    getEnvServices (projectName, envName = '') {
       return new Promise((resolve, reject) => {
-        return fetchGroupsDataAPI(name, env_name).then(
+        return getEnvServicesAPI(projectName, envName).then(
           response => {
             this.serviceList = this.$utils.deepSortOn(response, 'service_name')
             this.initTemplateStatus()
             resolve()
           },
           response => {
-            reject(new Error('get group error'))
+            reject(new Error('获取环境服务列表失败'))
           }
         )
       })
@@ -257,7 +257,7 @@ export default {
       this.getProduct(this.projectName)
       this.getProducts()
       this.fetchEnvRevision()
-      this.fetchGroupsData(this.projectName, this.envName)
+      this.getEnvServices(this.projectName, this.envName)
     },
     getProdStatus (status, updateble) {
       return getProductStatus(status, updateble)

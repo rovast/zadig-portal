@@ -14,10 +14,9 @@
         </el-form-item>
         <el-form-item label="集群">
           <el-select filterable v-model="form.cluster_id" placeholder="请选择集群"  @change="changeCluster">
-             <el-option label="本地集群" value=""></el-option>
              <el-option v-for="cluster in allCluster"
                          :key="cluster.id"
-                         :label="`${cluster.name} （${cluster.production?'生产集群':'测试集群'})`"
+                         :label="$utils.showClusterName(cluster)"
                          :value="cluster.id">
             </el-option>
           </el-select>
@@ -107,7 +106,8 @@ export default {
       })
     },
     async getCluster () {
-      const res = await getClusterListAPI()
+      const projectName = this.projectName
+      const res = await getClusterListAPI(projectName)
       this.allCluster = res.filter(element => {
         return element.status === 'normal'
       })

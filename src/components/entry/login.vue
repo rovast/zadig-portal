@@ -6,21 +6,20 @@
           <div class="login-inner-form" v-show="!showForgotPassword && !showSignUp">
             <div class="details">
               <header>
-                <span class="name">Zadig</span>
-                <h3>登入账户</h3>
+                <a href="#"><img src="@assets/icons/logo/default-logo.png" alt="logo"></a>
               </header>
               <section>
-                <el-form :model="loginForm" status-icon :rules="rules" ref="loginForm">
-                  <el-form-item label prop="account">
-                    <el-input v-model="loginForm.account" placeholder="用户名" autocomplete="off"></el-input>
+                <el-form :model="loginForm" status-icon :rules="rules" ref="loginForm" hide-required-asterisk>
+                  <el-form-item label="用户名" prop="account">
+                    <el-input v-model="loginForm.account" placeholder="请输入用户名" autocomplete="off"></el-input>
                   </el-form-item>
-                  <el-form-item label prop="password">
+                  <el-form-item label="密码" prop="password">
                     <el-input
                       type="password"
                       @keyup.enter.native="login"
                       v-model="loginForm.password"
                       autocomplete="off"
-                      placeholder="密码"
+                      placeholder="请输入密码"
                       show-password
                     ></el-input>
                   </el-form-item>
@@ -28,17 +27,17 @@
                 <el-button type="submit" @click="login" v-loading="loading" class="btn-md btn-theme btn-block login-btn">登录</el-button>
               </section>
               <div class="bottom">
-                <a v-if="showConnectors" href="/api/v1/login">第三方登录</a>
                 <a @click="showForgotPassword = true">找回密码</a>
+                <span v-if="showRegistration" class="divide">|</span>
                 <a v-if="showRegistration" @click="showSignUp = true">注册</a>
               </div>
             </div>
           </div>
           <div class="login-inner-form" v-show="showForgotPassword">
-            <ForgetPassword :openLogin="()=> showForgotPassword=false" :retrieveToken="retrieveToken" />
+            <ForgetPassword :openLogin="checkLogin" :retrieveToken="retrieveToken" />
           </div>
           <div class="login-inner-form" v-show="showSignUp">
-            <SignUp :openLogin="()=> showSignUp=false"/>
+            <SignUp :openLogin="afterSignUp" />
           </div>
         </div>
         <div class="col-lg-5 col-md-12 col-pad-0 bg-img none-992">
@@ -69,10 +68,10 @@
 <script>
 import moment from 'moment'
 import { isMobile } from 'mobile-device-detect'
+import { checkConnectorsAPI, checkRegistrationAPI } from '@api'
 import ForgetPassword from './components/forgetPassword.vue'
 import SignUp from './components/signUp.vue'
 import store from 'storejs'
-import { checkConnectorsAPI, checkRegistrationAPI } from '@api'
 
 export default {
   components: {
@@ -83,8 +82,8 @@ export default {
     return {
       showForgotPassword: false,
       showSignUp: false,
-      showRegistration: false,
       showConnectors: false,
+      showRegistration: false,
       retrieveToken: '',
       loading: false,
       loginForm: {
@@ -125,10 +124,22 @@ export default {
         }
       })
     },
-    checkLogin () {
+    async checkLogin () {
       const userInfo = store.get('userInfo')
       if (userInfo) {
         this.redirectByDevice()
+      } else {
+        const connectorsCheck = await checkConnectorsAPI()
+        if (connectorsCheck && connectorsCheck.enabled) {
+          window.location.href = '/api/v1/login'
+        }
+      }
+    },
+    async afterSignUp () {
+      this.showSignUp = false
+      const connectorsCheck = await checkConnectorsAPI()
+      if (connectorsCheck && connectorsCheck.enabled) {
+        window.location.href = '/api/v1/login'
       }
     },
     redirectByDevice () {
@@ -156,24 +167,27 @@ export default {
   },
   async mounted () {
     const token = this.$route.query.token
+    // 邮箱通过 Token 设置新密码接收参数
     const retrieveToken = this.$route.query.idtoken
-    if (retrieveToken) {
-      this.retrieveToken = retrieveToken
-      this.showForgotPassword = true
-    }
-    const connectorsCheck = await checkConnectorsAPI()
-    if (connectorsCheck && connectorsCheck.enabled) {
-      this.showConnectors = true
-    } else {
-      this.showConnectors = false
-    }
+    // Dex 找回密码接收参数
+    const findPassword = this.$route.query.findPassword
+    // Dex 注册接收参数
+    const signUp = this.$route.query.signUp
+    // 注册检测
     const registrationCheck = await checkRegistrationAPI()
     if (registrationCheck && registrationCheck.enabled) {
       this.showRegistration = true
     } else {
       this.showRegistration = false
     }
-    if (token) {
+    if (retrieveToken) {
+      this.retrieveToken = retrieveToken
+      this.showForgotPassword = true
+    } else if (findPassword) {
+      this.showForgotPassword = true
+    } else if (signUp) {
+      this.showSignUp = true
+    } else if (token) {
       const res = await this.$store
         .dispatch('OTHERLOGIN', token)
         .catch(error => console.log(error))
@@ -194,6 +208,10 @@ export default {
   align-items: center;
   float: right;
   padding: 0 10px;
+
+  .divide {
+    color: #ced4da;
+  }
 
   a {
     padding-right: 10px;
@@ -281,14 +299,18 @@ export default {
           cursor: pointer;
         }
 
+        /deep/ .el-form-item {
+          margin-bottom: 18px;
+        }
+
         /deep/ .el-input {
           .el-input__inner {
-            border-radius: 20px;
+            border-radius: 0.25rem;
           }
         }
 
         /deep/ .el-form-item__label {
-          color: #c0c4cc;
+          color: #717171;
         }
 
         input[type='checkbox'],
@@ -311,8 +333,9 @@ export default {
 
         .btn-theme {
           color: #fff;
-          background: #376bff;
+          background: #007bff;
           border: none;
+          border-radius: 0.25rem;
         }
 
         .btn-theme.focus,
@@ -396,15 +419,5 @@ export default {
   .login .form-section {
     padding: 30px 15px;
   }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
 }
 </style>

@@ -75,57 +75,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <span class="item-title">构建环境</span>
-        <div class="divider item"></div>
-        <el-row :gutter="30">
-          <el-col :span="10">
-            <el-form-item prop="pre_build.image_id"
-                          label="构建系统">
-              <el-select size="small"
-                         style="width: 200px;"
-                         v-model="buildConfig.pre_build.image_id"
-                         placeholder="请选择">
-                <el-option v-for="(sys,index) in systems"
-                           :key="index"
-                           :label="sys.label"
-                           :value="sys.id">
-                  <span> {{sys.label}}
-                    <el-tag v-if="sys.image_from==='custom'"
-                            type="info"
-                            size="mini"
-                            effect="light">
-                      自定义
-                    </el-tag>
-                  </span>
-                </el-option>
-                <el-option value="NEWCUSTOM">
-                  <router-link to="/v1/system/imgs" style="color: #606266;">新建自定义构建镜像</router-link>
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-              <el-form-item label="资源规格">
-
-                  <el-select size="small"
-                            v-model="buildConfig.pre_build.res_req"
-                            placeholder="请选择">
-                    <el-option label="高 | CPU: 16 核 内存: 32 GB"
-                              value="high">
-                    </el-option>
-                    <el-option label="中 | CPU: 8 核 内存: 16 GB"
-                              value="medium">
-                    </el-option>
-                    <el-option label="低 | CPU: 4 核 内存: 8 GB"
-                              value="low">
-                    </el-option>
-                    <el-option label="最低 | CPU: 2 核 内存: 2 GB"
-                              value="min">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-          </el-col>
-        </el-row>
+        <BuildEnv :pre_build="buildConfig.pre_build" :isCreate="!isEdit"></BuildEnv>
       </el-form>
       <el-form ref="buildApp"
                :inline="true"
@@ -735,7 +685,8 @@
   </div>
 </template>
 <script>
-import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getAllAppsAPI, getImgListAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
+import BuildEnv from '@/components/projects/build/build_env.vue'
+import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getAllAppsAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
 import Editor from 'vue2-ace-bind'
 import ValidateSubmit from '@utils/validate_async'
 import Resize from '@/components/common/resize.vue'
@@ -929,7 +880,6 @@ export default {
           message: '请输入私钥'
         }]
       },
-      systems: [],
       validObj: new ValidateSubmit()
     }
   },
@@ -1289,11 +1239,6 @@ export default {
       }]
       const buildConfigPayload = this.$utils.cloneObj({ targets, ...this.buildConfig })
       buildConfigPayload.product_name = this.projectName
-      if (buildConfigPayload.pre_build.image_id) {
-        const image = this.systems.find((item) => { return item.id === buildConfigPayload.pre_build.image_id })
-        buildConfigPayload.pre_build.image_from = image.image_from
-        buildConfigPayload.pre_build.build_os = image.value
-      }
       // 处理主机标签
       const pmServicePayload =
       {
@@ -1364,15 +1309,6 @@ export default {
       }
       const buildConfigPayload = this.$utils.cloneObj(this.buildConfig)
       const pmServicePayload = this.$utils.cloneObj(this.pmService)
-      if (buildConfigPayload.pre_build.image_id) {
-        const image = this.systems.find((item) => { return item.id === buildConfigPayload.pre_build.image_id })
-        buildConfigPayload.pre_build.image_from = image.image_from
-        buildConfigPayload.pre_build.build_os = image.value
-      } else if (buildConfigPayload.pre_build.build_os) {
-        const image = this.systems.find((item) => { return item.value === buildConfigPayload.pre_build.build_os })
-        buildConfigPayload.pre_build.image_id = image.id
-        buildConfigPayload.pre_build.image_from = image.image_from
-      }
       buildConfigPayload.product_name = this.projectName
       pmServicePayload.build_name = buildConfigPayload.name
       const combinePayload = {
@@ -1431,9 +1367,13 @@ export default {
         timeout: 60,
         pre_build: {
           clean_workspace: false,
-          res_req: 'low',
+          res_req: 'low', // high 、medium、low、min、define
+          res_req_spec: {
+            cpu_limit: 1000,
+            memory_limit: 512
+          },
           build_os: 'xenial',
-          image_id: this.systems[0].id,
+          image_id: '',
           image_from: '',
           installs: [],
           envs: [],
@@ -1470,9 +1410,9 @@ export default {
       if (!this.isEdit) {
         listProductAPI(projectName).then(res => {
           res.forEach(element => {
-            if (element.product_name === this.projectName) {
+            if (element.projectName === this.projectName) {
               this.pmService.env_configs.push({
-                env_name: element.env_name,
+                env_name: element.name,
                 host_ids: []
               })
             }
@@ -1488,12 +1428,6 @@ export default {
       })
       getCodeSourceMaskedAPI().then((response) => {
         this.allCodeHosts = response
-      })
-      getImgListAPI().then((response) => {
-        this.systems = response
-        if (!this.isEdit) {
-          this.buildConfig.pre_build.image_id = this.systems[0].id
-        }
       })
       getHostLabelListAPI().then((res) => {
         this.allHostLabels = res
@@ -1523,7 +1457,7 @@ export default {
           resList.forEach(element => {
             if (element.product_name === this.projectName) {
               envNameList.push(
-                element.env_name
+                element.name
               )
             }
           })
@@ -1602,7 +1536,8 @@ export default {
   components: {
     Editor,
     Resize,
-    AddHost
+    AddHost,
+    BuildEnv
   }
 }
 </script>

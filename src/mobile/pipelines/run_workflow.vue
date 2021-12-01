@@ -19,10 +19,10 @@
                  :disabled="specificEnv"
                  class="full-width">
         <el-option v-for="pro of matchedProducts"
-                   :key="`${pro.product_name} / ${pro.env_name}`"
-                   :label="`${pro.product_name} / ${pro.env_name}${pro.is_prod?'（生产）':''}`"
-                   :value="`${pro.product_name} / ${pro.env_name}`">
-          <span>{{`${pro.product_name} / ${pro.env_name}`}}
+                   :key="`${pro.projectName} / ${pro.name}`"
+                   :label="`${pro.projectName} / ${pro.name}${pro.is_prod?'（生产）':''}`"
+                   :value="`${pro.projectName} / ${pro.name}`">
+          <span>{{`${pro.projectName} / ${pro.name}`}}
             <el-tag v-if="pro.is_prod"
                     type="danger"
                     size="mini"
@@ -447,7 +447,7 @@ export default {
       this.filterProducts()
       const product = this.forcedUserInput.product_tmpl_name
       const namespace = this.forcedUserInput.namespace
-      if (this.workflowMeta.env_name && this.products.find(p => (p.product_name === this.workflowMeta.product_tmpl_name) && (p.env_name === this.workflowMeta.env_name))) {
+      if (this.workflowMeta.env_name && this.products.find(env => (env.projectName === this.workflowMeta.product_tmpl_name) && (env.name === this.workflowMeta.env_name))) {
         const namespace = this.workflowMeta.env_name
         const product = this.workflowMeta.product_tmpl_name
         this.specificEnv = true

@@ -1,7 +1,7 @@
 <template>
   <div class="tab">
     <el-tabs type="card" :value="envName" @tab-click="tabChange">
-      <el-tab-pane v-for="item in envNameList"  :key="item.env_name" :label="item.env_name" :name="item.env_name"></el-tab-pane>
+      <el-tab-pane v-for="item in envNameList"  :key="item.envName" :label="item.envName" :name="item.envName"></el-tab-pane>
     </el-tabs>
     <ServiceBuild v-if="envName" :envName="envName" :serviceName="serviceName" class="serviceBuild"/>
   </div>
@@ -33,7 +33,7 @@ export default {
     async getEnvNameList () {
       const envNameList = await listProductAPI(this.projectName)
       envNameList.forEach(element => {
-        element.envName = element.env_name
+        element.envName = element.name
       })
       this.envNameList = envNameList
     }
@@ -44,7 +44,7 @@ export default {
     if (this.$route.query.envName) {
       this.envName = this.$route.query.envName
     } else if (this.envNameList.length) {
-      this.envName = this.envNameList[0].env_name
+      this.envName = this.envNameList[0].envName
     }
   }
 }

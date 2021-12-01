@@ -46,7 +46,7 @@
          element-loading-spinner="iconfont iconfont-loading iconxiangmuloading"
          class="projects-grid">
       <el-row :gutter="12">
-        <el-col v-for="(project,index) in productList"
+        <el-col v-for="(project,index) in projectList"
                 :key="index"
                 :span="6">
           <el-card shadow="hover"
@@ -121,7 +121,7 @@
           </el-card>
         </el-col>
       </el-row>
-      <div v-if="productList.length === 0"
+      <div v-if="projectList.length === 0"
            class="no-product">
         <img src="@assets/icons/illustration/product.svg"
              alt="">
@@ -133,8 +133,8 @@
          element-loading-text="加载中..."
          element-loading-spinner="iconfont iconfont-loading iconxiangmuloading"
          class="projects-list">
-      <el-table v-if="productList.length > 0"
-                :data="productList"
+      <el-table v-if="projectList.length > 0"
+                :data="projectList"
                 stripe
                 style="width: 100%;">
         <el-table-column label="项目名称">
@@ -173,7 +173,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div v-if="productList.length === 0"
+      <div v-if="projectList.length === 0"
            class="no-product">
         <img src="@assets/icons/illustration/product.svg"
              alt="">
@@ -184,7 +184,7 @@
 </template>
 <script>
 import bus from '@utils/event_bus'
-import { getWorkflowsAPI, getBuildConfigsAPI, getSingleProjectAPI, getServiceTemplatesAPI, deleteProjectAPI } from '@api'
+import { getWorkflowsInProjectAPI, getBuildConfigsAPI, getSingleProjectAPI, getServiceTemplatesAPI, deleteProjectAPI } from '@api'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -206,12 +206,12 @@ export default {
       }
     },
     async deleteProject (projectName) {
-      const result = await Promise.all([getSingleProjectAPI(projectName), getWorkflowsAPI(projectName), getServiceTemplatesAPI(projectName), getBuildConfigsAPI(projectName)])
+      const result = await Promise.all([getSingleProjectAPI(projectName), getWorkflowsInProjectAPI(projectName), getServiceTemplatesAPI(projectName), getBuildConfigsAPI(projectName)])
       const externalFlag = result[0].product_feature.create_env_type
       const workflows = result[1].filter(w => w.product_tmpl_name === projectName).map((element) => { return element.name })
       const services = result[2].data.filter(element => element.product_name === projectName).map((element) => { return element.service_name })
       const buildConfigs = result[3].map((element) => { return element.name })
-      const envNames = this.productList.filter(elemnet => elemnet.name === projectName)[0].envs
+      const envNames = this.projectList.filter(elemnet => elemnet.name === projectName)[0].envs
       const htmlTemplate = externalFlag === 'external'
         ? `
         <p>该项目下的以下资源会被取消托管，<span style="color:red">请谨慎操作！！</span></p>
@@ -265,7 +265,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'productList'
+      'projectList'
     ])
   },
   mounted () {

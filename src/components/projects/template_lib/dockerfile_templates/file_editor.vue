@@ -175,7 +175,7 @@ export default {
       return this.fileContent.status
     },
     disabledSave () {
-      return this.errors.length > 0 || !this.fileContentChange
+      return this.errors.length > 0
     }
   },
   mounted () {

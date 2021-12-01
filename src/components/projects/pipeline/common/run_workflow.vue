@@ -9,11 +9,11 @@
                  :disabled="specificEnv"
                  class="full-width">
         <el-option v-for="pro of currentProjectEnvs"
-                   :key="`${pro.product_name} / ${pro.env_name}`"
-                   :label="`${pro.product_name} / ${pro.env_name}${pro.is_prod?'（生产）':''}`"
-                   :value="`${pro.product_name} / ${pro.env_name}`">
-          <span>{{`${pro.product_name} / ${pro.env_name}`}}
-            <el-tag v-if="pro.is_prod"
+                   :key="`${pro.projectName} / ${pro.name}`"
+                   :label="`${pro.projectName} / ${pro.name}${pro.production?'（生产）':''}`"
+                   :value="`${pro.projectName} / ${pro.name}`">
+          <span>{{`${pro.projectName} / ${pro.name}`}}
+            <el-tag v-if="pro.production"
                     type="danger"
                     size="mini"
                     effect="light">
@@ -671,9 +671,9 @@ export default {
     }
     listProductAPI(projectName).then(res => {
       // 生产环境升序，名称升序
-      this.currentProjectEnvs = orderBy(res, ['is_prod', 'env_name'], ['asc', 'asc'])
+      this.currentProjectEnvs = orderBy(res, ['production', 'name'], ['asc', 'asc'])
       // 指定环境运行，匹配到则显示数据，匹配不到则由放开由用户选择
-      if (this.workflowMeta.env_name && this.currentProjectEnvs.find(p => (p.product_name === this.workflowMeta.product_tmpl_name) && (p.env_name === this.workflowMeta.env_name))) {
+      if (this.workflowMeta.env_name && this.currentProjectEnvs.find(env => (env.projectName === this.workflowMeta.product_tmpl_name) && (env.name === this.workflowMeta.env_name))) {
         const projectName = this.workflowMeta.product_tmpl_name
         const envName = this.workflowMeta.env_name
         this.specificEnv = true
@@ -682,7 +682,7 @@ export default {
         this.specificEnv = false
       }
       // 克隆任务适配
-      if (this.haveForcedInput && this.currentProjectEnvs.find(p => p.product_name === projectName)) {
+      if (this.haveForcedInput && this.currentProjectEnvs.find(p => p.projectName === projectName)) {
         const projectName = this.forcedUserInput.product_tmpl_name
         const envName = this.forcedUserInput.namespace
         this.getPresetInfo(`${projectName} / ${envName}`)

@@ -8,10 +8,10 @@
                  size="small"
                  class="full-width">
         <el-option v-for="pro of matchedProducts"
-                   :key="`${pro.product_name} / ${pro.env_name}`"
-                   :label="`${pro.product_name} / ${pro.env_name}（${pro.is_prod?'生产':'测试'}）`"
-                   :value="`${pro.product_name} / ${pro.env_name}`">
-          <span>{{`${pro.product_name} / ${pro.env_name}`}}
+                   :key="`${pro.projectName} / ${pro.name}`"
+                   :label="`${pro.projectName} / ${pro.name}（${pro.is_prod?'生产':'测试'}）`"
+                   :value="`${pro.projectName} / ${pro.name}`">
+          <span>{{`${pro.projectName} / ${pro.name}`}}
             <el-tag v-if="pro.is_prod"
                     type="danger"
                     size="mini"
@@ -148,7 +148,7 @@ export default {
       return {}
     },
     matchedProducts () {
-      return this.products.filter(p => p.product_name === this.targetProduct)
+      return this.products.filter(p => p.projectName === this.targetProduct)
     }
   },
   watch: {
@@ -358,7 +358,7 @@ export default {
       const product = this.forcedUserInput.product_tmpl_name
       const namespace = this.forcedUserInput.namespace
       if (this.haveForcedInput &&
-        this.products.find(p => p.product_name === product)) {
+        this.products.find(p => p.projectName === product)) {
         this.precreate(`${product} / ${namespace}`)
       }
     })

@@ -192,56 +192,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-
-          <span class="item-title">构建环境</span>
-          <div class="divider item"></div>
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item label="构建系统">
-                <el-select size="small"
-                           v-model="buildConfig.pre_build.image_id"
-                           placeholder="请选择">
-                  <el-option v-for="(sys,index) in systems"
-                             :key="index"
-                             :label="sys.label"
-                             :value="sys.id">
-                    <span> {{sys.label}}
-                      <el-tag v-if="sys.image_from==='custom'"
-                              type="info"
-                              size="mini"
-                              effect="light">
-                        自定义
-                      </el-tag>
-                    </span>
-                  </el-option>
-                  <el-option value="NEWCUSTOM">
-                    <router-link to="/v1/system/imgs" style="color: #606266;">新建自定义构建镜像</router-link>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="资源规格">
-
-                <el-select size="small"
-                           v-model="buildConfig.pre_build.res_req"
-                           placeholder="请选择">
-                  <el-option label="高 | CPU: 16 核 内存: 32 GB"
-                             value="high">
-                  </el-option>
-                  <el-option label="中 | CPU: 8 核 内存: 16 GB"
-                             value="medium">
-                  </el-option>
-                  <el-option label="低 | CPU: 4 核 内存: 8 GB"
-                             value="low">
-                  </el-option>
-                  <el-option label="最低 | CPU: 2 核 内存: 2 GB"
-                             value="min">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
+          <BuildEnv :pre_build="buildConfig.pre_build" :isCreate="isCreate"></BuildEnv>
         </el-form>
 
         <el-form ref="buildApp"
@@ -637,7 +588,9 @@
   </div>
 </template>
 <script>
-import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getImgListAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkinsJob, queryJenkinsParams } from '@api'
+import BuildEnv from '@/components/projects/build/build_env.vue'
+
+import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkinsJob, queryJenkinsParams } from '@api'
 import Editor from 'vue2-ace-bind'
 import bus from '@utils/event_bus'
 import Codemirror from '@/components/projects/common/codemirror.vue'
@@ -689,7 +642,11 @@ export default {
         timeout: 60,
         pre_build: {
           clean_workspace: false,
-          res_req: 'low',
+          res_req: 'low', // high 、medium、low、min、define
+          res_req_spec: {
+            cpu_limit: 1000,
+            memory_limit: 512
+          },
           build_os: 'xenial',
           image_id: '',
           installs: [],
@@ -700,9 +657,6 @@ export default {
         },
         scripts: '#!/bin/bash\nset -e',
         post_build: {
-          docker_build: {
-            source: 'local'
-          }
         }
       },
       editorOption: {
@@ -761,7 +715,6 @@ export default {
           }
         ]
       },
-      systems: [],
       validObj: new ValidateSubmit(),
       saveLoading: false
     }
@@ -891,11 +844,6 @@ export default {
             }
           })
         })
-        if (payload.pre_build.image_id) {
-          const image = this.systems.find((item) => { return item.id === payload.pre_build.image_id })
-          payload.pre_build.image_from = image.image_from
-          payload.pre_build.build_os = image.value
-        }
         if (payload.post_build && payload.post_build.docker_build && payload.post_build.docker_build.source) {
           const docker_build = payload.post_build.docker_build
           if (docker_build.source === 'template' && docker_build.docker_file) {
@@ -945,15 +893,6 @@ export default {
             }
           })
         })
-        if (payload.pre_build.image_id) {
-          const image = this.systems.find((item) => { return item.id === payload.pre_build.image_id })
-          payload.pre_build.image_from = image.image_from
-          payload.pre_build.build_os = image.value
-        } else if (payload.pre_build.build_os) {
-          const image = this.systems.find((item) => { return item.value === payload.pre_build.build_os })
-          payload.pre_build.image_id = image.id
-          payload.pre_build.image_from = image.image_from
-        }
         if (payload.post_build && payload.post_build.docker_build && payload.post_build.docker_build.source) {
           const docker_build = payload.post_build.docker_build
           if (docker_build.source === 'template' && docker_build.docker_file) {
@@ -1001,21 +940,27 @@ export default {
         this.dockerfileTemplate = res
       }
     },
-    loadPage () {
+    async loadPage () {
       const projectName = this.projectName
       if (!this.isCreate) {
-        getBuildConfigDetailAPI(this.buildConfigName, this.projectName).then((response) => {
-          response.pre_build.installs.forEach(element => {
+        const buildConfig = await getBuildConfigDetailAPI(this.buildConfigName, this.projectName).catch(error => console.log(error))
+        const serviceTagets = await getServiceTargetsAPI(projectName).catch(error => console.log(error))
+        if (buildConfig && serviceTagets) {
+          buildConfig.pre_build.installs.forEach(element => {
             element.id = element.name + element.version
           })
-          response.targets.forEach(t => {
+          buildConfig.targets.forEach(t => {
             t.key = t.service_name + '/' + t.service_module
           })
-          this.buildConfig = response
+          this.buildConfig = buildConfig
+          this.serviceTargets = [...serviceTagets, ...this.buildConfig.targets].map(element => {
+            element.key = element.service_name + '/' + element.service_module
+            return element
+          })
           if (this.buildConfig.source) {
             this.source = this.buildConfig.source
             if (this.source === 'jenkins') {
-              this.jenkinsBuild = response
+              this.jenkinsBuild = buildConfig
             }
           }
           if (!this.buildConfig.timeout) {
@@ -1033,6 +978,13 @@ export default {
           if (this.buildConfig.post_build.scripts) {
             this.post_script_enabled = true
           }
+        }
+      } else {
+        getServiceTargetsAPI(projectName).then((response) => {
+          this.serviceTargets = [...response, ...this.buildConfig.targets].map(element => {
+            element.key = element.service_name + '/' + element.service_module
+            return element
+          })
         })
       }
       getAllAppsAPI().then((response) => {
@@ -1052,12 +1004,6 @@ export default {
           element.key = element.service_name + '/' + element.service_module
           return element
         })
-      })
-      getImgListAPI().then((response) => {
-        this.systems = response
-        if (this.isCreate) {
-          this.buildConfig.pre_build.image_id = this.systems[0].id
-        }
       })
       getRegistryWhenBuildAPI(projectName).then((res) => {
         this.allRegistry = res
@@ -1111,7 +1057,8 @@ export default {
   components: {
     Editor,
     Resize,
-    Codemirror
+    Codemirror,
+    BuildEnv
   }
 
 }

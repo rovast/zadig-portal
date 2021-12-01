@@ -42,7 +42,7 @@
 </template>
 <script>
 import ChartValues from '../common/updateHelmEnvChart.vue'
-import { getHelmEnvChartDiffAPI, updateHelmProductEnvAPI } from '@/api'
+import { getHelmEnvChartDiffAPI, updateHelmEnvAPI } from '@/api'
 const jsdiff = require('diff')
 export default {
   name: 'updateHelmEnv',
@@ -85,7 +85,7 @@ export default {
             envNames: [this.productInfo.env_name],
             chartValues: this.$refs.chartValuesRef.getAllChartNameInfo()
           }
-          updateHelmProductEnvAPI(projectName, payload).then(response => {
+          updateHelmEnvAPI(projectName, payload).then(response => {
             this.updateHelmEnvDialogVisible = false
             this.updataHelmEnvLoading = false
             this.fetchAllData()

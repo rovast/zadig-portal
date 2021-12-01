@@ -99,13 +99,13 @@
             placeholder="请选择"
           >
             <el-option
-              v-for="pro of matchedProducts"
-              :key="`${pro.product_name} / ${pro.env_name}`"
-              :label="`${pro.product_name} / ${pro.env_name}（${pro.is_prod?'生产':'测试'}）`"
-              :value="`${pro.env_name}`"
+              v-for="pro of projectEnvs"
+              :key="`${pro.projectName} / ${pro.name}`"
+              :label="`${pro.projectName} / ${pro.name}（${pro.production?'生产':'测试'}）`"
+              :value="`${pro.name}`"
             >
               <span>
-                {{`${pro.product_name} / ${pro.env_name}`}}
+                {{`${pro.projectName} / ${pro.name}`}}
                 <el-tag v-if="pro.is_prod" type="danger" size="mini" effect="dark">生产</el-tag>
               </span>
             </el-option>
@@ -381,7 +381,7 @@ export default {
       testInfos: [],
       gotScheduleRepo: false,
       currentForcedUserInput: {},
-      products: [],
+      projectEnvs: [],
       webhookBranches: {},
       webhookSwap: {
         repo: {},
@@ -788,9 +788,9 @@ export default {
         this.webhookSwap.env_update_policy = 'single'
       }
     },
-    getProducts () {
-      listProductAPI(this.projectName, 'test').then(res => {
-        this.products = res
+    getProjectEnvs () {
+      listProductAPI(this.projectName).then(res => {
+        this.projectEnvs = res
       })
     },
     getBranchInfoById (id, repo_owner, repo_name) {
@@ -850,9 +850,6 @@ export default {
         return targets
       }
     },
-    matchedProducts () {
-      return this.products.filter(p => p.product_name === this.projectName)
-    },
     isK8sEnv () {
       return (
         this.presets &&
@@ -867,7 +864,7 @@ export default {
   },
   watch: {
     projectName () {
-      this.getProducts()
+      this.getProjectEnvs()
     },
     'workflowToRun.test_stage.tests' (newVal) {
       if (this.workflowToRun.test_stage.enabled) {

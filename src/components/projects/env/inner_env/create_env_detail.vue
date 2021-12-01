@@ -48,11 +48,10 @@
         </el-form-item>
         <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="集群：" prop="cluster_id">
           <el-select class="select" filterable @change="changeCluster" v-model="projectConfig.cluster_id" size="small" placeholder="请选择集群">
-            <el-option label="本地集群" value></el-option>
             <el-option
               v-for="cluster in allCluster"
               :key="cluster.id"
-              :label="`${cluster.name} （${cluster.production?'生产集群':'测试集群'})`"
+              :label="showClusterName(cluster)"
               :value="cluster.id"
             ></el-option>
           </el-select>
@@ -341,7 +340,7 @@ export default {
       serviceTypeMap: serviceTypeMap,
       rules: {
         cluster_id: [
-          { required: false, trigger: 'change', message: '请选择集群' }
+          { required: true, trigger: 'change', message: '请选择集群' }
         ],
         source: [
           { required: true, trigger: 'change', message: '请选择环境类型' }
@@ -418,6 +417,13 @@ export default {
     }
   },
   methods: {
+    showClusterName (cluster) {
+      if (cluster.id === 'local') {
+        return '本地集群'
+      } else {
+        return `${cluster.name} （${cluster.production ? '生产集群' : '测试集群'})`
+      }
+    },
     changeEnvName (value) {
       if (
         this.projectConfig.source === 'system' &&
@@ -661,7 +667,7 @@ export default {
       const selectType = this.projectConfig.source
       const projectType = this.deployType
       if (projectType === 'k8s' && selectType === 'system') {
-        this.deployEnv()
+        this.deployK8sEnv()
       } else if (projectType === 'helm' && selectType === 'system') {
         this.deployHelmEnv()
       } else if (selectType === 'external') {
@@ -720,7 +726,7 @@ export default {
         }
       })
     },
-    deployEnv () {
+    deployK8sEnv () {
       const picked2D = []
       const picked1D = []
       this.$refs['create-env-ref'].validate(valid => {
@@ -774,17 +780,22 @@ export default {
           payload.namespace = payload.defaultNamespace
           const envType = 'test'
           this.startDeployLoading = true
+          function sleep (time) {
+            return new Promise((resolve) => setTimeout(resolve, time))
+          }
           createProductAPI(payload, envType).then(
             res => {
-              const envName = payload.env_name
-              this.startDeployLoading = false
-              this.$message({
-                message: '创建环境成功',
-                type: 'success'
+              sleep(5000).then(() => {
+                const envName = payload.env_name
+                this.startDeployLoading = false
+                this.$message({
+                  message: '创建环境成功',
+                  type: 'success'
+                })
+                this.$router.push(
+                  `/v1/projects/detail/${this.projectName}/envs/detail?envName=${envName}`
+                )
               })
-              this.$router.push(
-                `/v1/projects/detail/${this.projectName}/envs/detail?envName=${envName}`
-              )
             },
             () => {
               this.startDeployLoading = false

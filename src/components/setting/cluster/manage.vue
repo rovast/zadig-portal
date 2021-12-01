@@ -461,7 +461,7 @@ export default {
       this.loading = true
       getClusterListAPI().then((res) => {
         this.loading = false
-        this.allCluster = res
+        this.allCluster = res.filter(item => item.id !== 'local')
       })
     },
     copyCommandSuccess (event) {

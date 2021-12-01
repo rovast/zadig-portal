@@ -653,7 +653,7 @@ const utils = {
   getHostname () {
     return window.location.hostname
   },
-  showClusterName (clusterName) {
+  showClusterName (cluster) {
     if (cluster.id === 'local') {
       return '本地集群'
     } else {

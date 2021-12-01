@@ -205,11 +205,14 @@
         <div class="cluster-list">
           <template>
             <el-table :data="allCluster"
-                      style="width: 100%;">
+                      style="width: 100%;"
+                      :row-class-name="tableRowClassName">
               <el-table-column label="名称">
                 <template slot-scope="scope">
-                  <i :class="getProviderMap(scope.row.provider,'icon')"></i>
-                  <span>{{scope.row.name}}</span>
+                  <i v-if="scope.row.name ==='local'" class="iconfont iconk8s"></i>
+                  <i v-else :class="getProviderMap(scope.row.provider,'icon')"></i>
+                  <span v-if="scope.row.name ==='local'">本地集群（local）</span>
+                  <span v-else>{{scope.row.name}}</span>
                 </template>
               </el-table-column>
               <el-table-column width="120"
@@ -245,6 +248,7 @@
               <el-table-column width="240"
                                label="操作">
                 <template slot-scope="scope">
+                  <div v-if="scope.row.name !=='local'">
                   <el-button v-if="scope.row.status==='pending'||scope.row.status==='abnormal'"
                              @click="clusterOperation('access',scope.row)"
                              size="mini">接入</el-button>
@@ -259,6 +263,7 @@
                   <el-button @click="clusterOperation('delete',scope.row)"
                              size="mini"
                              type="danger">删除</el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -352,6 +357,12 @@ export default {
     }
   },
   methods: {
+    tableRowClassName ({ row, rowIndex }) {
+      if (row.name === 'local') {
+        return 'local-row'
+      }
+      return ''
+    },
     getProviderMap (name, type) {
       if (name && type) {
         return this.providerMap[name][type]
@@ -531,6 +542,10 @@ export default {
 
       .logo {
         font-size: 20px;
+      }
+
+      .local-row {
+        background: #fafafa;
       }
     }
   }

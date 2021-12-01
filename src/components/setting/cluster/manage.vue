@@ -136,7 +136,7 @@
           <el-button :plain="true"
                      size="small"
                      type="success"
-                     @click="clusterOperation(cluster.id ? 'update' : 'add')">保存</el-button>
+                     @click="clusterOperation(isEdit ? 'update' : 'add')">保存</el-button>
         </div>
       </el-dialog>
       <!--Cluster-dialog-->
@@ -326,7 +326,7 @@ export default {
   },
   computed: {
     isEdit () {
-      return !!this.cluster.id || this.cluster.local
+      return !!this.cluster.id
     },
     matchedHost () {
       const labels = this.cluster.config.node_labels
@@ -478,16 +478,7 @@ export default {
         if (localId !== -1) {
           res.splice(localId, 1, res.find(re => re.local))
         } else {
-          res.unshift({
-            name: 'local',
-            provider: 0,
-            production: false,
-            description: '测试集群',
-            namespace: '',
-            createdBy: 'system',
-            status: 'normal',
-            local: true
-          })
+          this.$message.error(`未找到本地集群！`)
         }
         this.allCluster = res.map(re => {
           if (!re.config) {

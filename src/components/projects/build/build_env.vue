@@ -52,9 +52,9 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="集群名称" label-width="inherit" required>
+        <el-form-item label="集群名称" label-width="inherit" :prop="`${propPre}.cluster_id`" required>
           <el-select v-model="pre_build.cluster_id" placeholder="选择集群名称" size="small" @change="getProductHostingNamespace">
-            <el-option v-for="cluster in clusters" :key="cluster.id" :label="cluster.name" :value="cluster.id"></el-option>
+            <el-option v-for="cluster in clusters" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
@@ -138,20 +138,11 @@ export default {
       })
     },
     getClusterList () {
-      getClusterListAPI(this.projectName).then(res => {
-        const local = res.find(re => re.local)
-        if (local) {
-          local.id = ''
-        } else {
-          res.push({
-            id: '',
-            name: 'local'
-          })
-        }
-        this.clusters = res
+      return getClusterListAPI(this.projectName).then(res => {
+        this.clusters = res.filter(element => element.status === 'normal')
       })
     },
-    getProductHostingNamespace (id = '') {
+    getProductHostingNamespace (id) {
       this.namespaces = []
       return productHostingNamespaceAPI(id).then(res => {
         this.namespaces = res
@@ -171,16 +162,13 @@ export default {
           this.changeImage(key, value)
         }
       }
-      // 兼容老数据：默认使用 local + Zadig 所在的命名空间 cluster_id 可为空 -> 本地集群
-      if (!this.pre_build.namespace) {
-        this.$set(this.pre_build, 'cluster_id', '')
-        this.getProductHostingNamespace().then(() => {
+      // 兼容老数据：默认使用 local + Zadig 所在的命名空间
+      if (!this.pre_build.cluster_id) {
+        const localId = this.clusters.find(cluster => cluster.local).id
+        this.$set(this.pre_build, 'cluster_id', localId)
+        this.getProductHostingNamespace(localId).then(() => {
           const ns = this.namespaces.find(ns => ns.current)
-          this.$set(
-            this.pre_build,
-            'namespace',
-            ns ? ns.name : ''
-          )
+          this.$set(this.pre_build, 'namespace', ns ? ns.name : '')
         })
       } else {
         // 请求一次当前集群的命名空间
@@ -222,8 +210,9 @@ export default {
     }
   },
   created () {
-    this.getImgList()
-    this.getClusterList()
+    this.getClusterList().then(() => {
+      this.getImgList()
+    })
   }
 }
 </script>

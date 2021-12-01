@@ -922,7 +922,7 @@ export function deleteStorageAPI (id) {
 }
 
 // Cluster
-export function getClusterListAPI (projectName) {
+export function getClusterListAPI (projectName = '') {
   return http.get(`/api/aslan/cluster/clusters?projectName=${projectName}`)
 }
 

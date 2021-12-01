@@ -51,7 +51,7 @@
             <el-option
               v-for="cluster in allCluster"
               :key="cluster.id"
-              :label="showClusterName(cluster)"
+              :label="$utils.showClusterName(cluster)"
               :value="cluster.id"
             ></el-option>
           </el-select>
@@ -417,13 +417,6 @@ export default {
     }
   },
   methods: {
-    showClusterName (cluster) {
-      if (cluster.id === 'local') {
-        return '本地集群'
-      } else {
-        return `${cluster.name} （${cluster.production ? '生产集群' : '测试集群'})`
-      }
-    },
     changeEnvName (value) {
       if (
         this.projectConfig.source === 'system' &&

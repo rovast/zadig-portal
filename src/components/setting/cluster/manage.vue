@@ -526,6 +526,8 @@ export default {
 </script>
 
 <style lang="less">
+@import url("~@assets/css/common/scroll-bar.less");
+
 .setting-cluster-container {
   position: relative;
   flex: 1;
@@ -639,9 +641,16 @@ export default {
 
   .list-host {
     max-height: 50px;
+    padding: 5px;
     overflow: auto;
     color: #909399;
     font-size: 12px;
+
+    .scrollBar2();
+
+    div {
+      line-height: 1.2;
+    }
   }
 }
 </style>

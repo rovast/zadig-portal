@@ -75,7 +75,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <BuildEnv :pre_build="buildConfig.pre_build" :isCreate="!isEdit"></BuildEnv>
+        <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit"></BuildEnv>
       </el-form>
       <el-form ref="buildApp"
                :inline="true"
@@ -880,7 +880,8 @@ export default {
           message: '请输入私钥'
         }]
       },
-      validObj: new ValidateSubmit()
+      validObj: new ValidateSubmit(),
+      configDataLoading: true
     }
   },
   methods: {
@@ -935,6 +936,7 @@ export default {
       }
     },
     syncBuildConfig (buildName, projectName) {
+      this.configDataLoading = true
       getBuildConfigDetailAPI(buildName, projectName).then((response) => {
         response.pre_build.installs.forEach(element => {
           element.id = element.name + element.version
@@ -967,6 +969,7 @@ export default {
         } else {
           this.useSshKey = false
         }
+        this.configDataLoading = false
       })
     },
     initEnvConfig () {

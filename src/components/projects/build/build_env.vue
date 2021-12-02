@@ -93,7 +93,8 @@ export default {
     propPre: {
       default: 'pre_build',
       type: String
-    }
+    },
+    initFlag: Boolean
   },
   data () {
     this.validateCpuLimit = (rule, value, callback) => {
@@ -132,9 +133,8 @@ export default {
   },
   methods: {
     getImgList () {
-      getImgListAPI().then(response => {
+      return getImgListAPI().then(response => {
         this.systems = response
-        this.paddingData(this.isCreate)
       })
     },
     getClusterList () {
@@ -155,9 +155,21 @@ export default {
         this.namespaces = res
       })
     },
-    paddingData (val) {
-      if (val) {
+
+    // 以后构建全部修改的话 初始化信息修改就放在数据请求回后处理，这里处理的一个必要条件是数据是已经请求成功的，否则初始化数据是错误的
+    paddingData () {
+      const initNs = () => {
+        const localId = this.clusters.find(cluster => cluster.local).id
+        this.$set(this.pre_build, 'cluster_id', localId)
+        this.getProductHostingNamespace(localId).then(() => {
+          const ns = this.namespaces.find(ns => ns.current)
+          this.$set(this.pre_build, 'namespace', ns ? ns.name : '')
+        })
+      }
+
+      if (this.isCreate) {
         this.changeImage('', '', 0)
+        initNs()
       } else {
         const key = this.pre_build.image_id
           ? 'id'
@@ -168,18 +180,14 @@ export default {
         if (key) {
           this.changeImage(key, value)
         }
-      }
-      // 兼容老数据：默认使用 local + Zadig 所在的命名空间
-      if (!this.pre_build.cluster_id) {
-        const localId = this.clusters.find(cluster => cluster.local).id
-        this.$set(this.pre_build, 'cluster_id', localId)
-        this.getProductHostingNamespace(localId).then(() => {
-          const ns = this.namespaces.find(ns => ns.current)
-          this.$set(this.pre_build, 'namespace', ns ? ns.name : '')
-        })
-      } else {
+
+        // 兼容老数据：默认使用 local + Zadig 所在的命名空间
+        if (!this.pre_build.cluster_id) {
+          initNs()
+        } else {
         // 请求一次当前集群的命名空间
-        this.getProductHostingNamespace(this.pre_build.cluster_id)
+          this.getProductHostingNamespace(this.pre_build.cluster_id)
+        }
       }
     },
     changeImage (key, value, index = -1) {
@@ -207,18 +215,24 @@ export default {
     }
   },
   watch: {
-    isCreate: {
+    initFlag: {
       handler (newV) {
-        if (this.systems.length) {
-          this.paddingData(newV)
+        // false 时，代表编辑构建的数据请求结束
+        // 初始化数据未请求结束时，不能初始化数据
+        if (!newV && this.systems.length && this.clusters.length) {
+          this.paddingData()
         }
       },
       immediate: true
     }
   },
   created () {
-    this.getClusterList().then(() => {
-      this.getImgList()
+    // 初始化前的数据必须先获取
+    Promise.all([this.getClusterList(), this.getImgList()]).then(() => {
+      // 如果构建数据未请求结束，不能初始化
+      if (!this.initFlag) {
+        this.paddingData()
+      }
     })
   }
 }

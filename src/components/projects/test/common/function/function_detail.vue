@@ -27,7 +27,7 @@
       <div class="divider"></div>
 
       <div class="title">运行时环境</div>
-      <BuildEnv :pre_build="test.pre_test" :isCreate="!isEdit" :title="``" :propPre="`pre_test`"></BuildEnv>
+      <BuildEnv :initFlag="configDataLoading" :pre_build="test.pre_test" :isCreate="!isEdit" :title="``" :propPre="`pre_test`"></BuildEnv>
 
       <div class="divider">
       </div>
@@ -510,7 +510,8 @@ export default {
           }
         ]
       },
-      validObj: new ValidateSubmit()
+      validObj: new ValidateSubmit(),
+      configDataLoading: true
     }
   },
   props: {
@@ -665,6 +666,7 @@ export default {
         projectUrl: `/v1/${this.basePath}/detail/${this.projectName}`
       }
     if (this.isEdit) {
+      this.configDataLoading = true
       bus.$emit(`set-topbar-title`, {
         title: '',
         breadcrumb: [
@@ -697,6 +699,7 @@ export default {
         if (this.test.artifact_paths.length === 0) {
           this.addArtifactPath()
         }
+        this.configDataLoading = false
       })
     } else {
       bus.$emit(`set-topbar-title`, {
@@ -709,6 +712,7 @@ export default {
         ]
       })
       this.addArtifactPath()
+      this.configDataLoading = false
     }
   },
   components: {

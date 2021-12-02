@@ -487,6 +487,8 @@ export default {
               strategy: '',
               node_labels: []
             }
+          } else if (!re.config.node_labels) {
+            re.config.node_labels = []
           }
           return re
         })

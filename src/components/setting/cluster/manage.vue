@@ -341,6 +341,10 @@ export default {
     dialogClusterFormVisible (nVal, oldV) {
       if (!nVal) {
         this.clearValidate()
+        this.clusterNodes = {
+          labels: [],
+          data: []
+        }
       }
     }
   },

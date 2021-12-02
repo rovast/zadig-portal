@@ -60,12 +60,12 @@
                 <div class="grid-content">所属集群:</div>
               </el-col>
               <el-col :span="8">
-                <div v-if="productInfo.cluster_id"
+                <div v-if="productInfo.is_local"
+                     class="grid-content">{{productInfo.cluster_name}}(本地集群)</div>
+                <div v-else
                      class="grid-content">
                   {{productInfo.is_prod?productInfo.cluster_name+' (生产集群)':productInfo.cluster_name +' (测试集群)'}}
                 </div>
-                <div v-else
-                     class="grid-content">{{productInfo.cluster_name}}(本地集群)</div>
               </el-col>
             </template>
             <el-col :span="3">

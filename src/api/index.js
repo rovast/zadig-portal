@@ -1228,12 +1228,12 @@ export function productHostingNamespaceAPI (clusterId) {
   return http.get(`/api/aslan/environment/kube/available_namespaces?clusterId=${clusterId}`)
 }
 
-export function getHelmReleaseListAPI (productName, envName) {
-  return http.get(`/api/aslan/environment/environments/${productName}/helm/releases?envName=${envName}`)
+export function getHelmReleaseListAPI (projectName, envName) {
+  return http.get(`/api/aslan/environment/environments/${envName}/helm/releases?projectName=${projectName}`)
 }
 
-export function getChartInfoAPI (productName, envName, serviceName) {
-  return http.get(`/api/aslan/environment/environments/${productName}/helm/charts?envName=${envName}&serviceName=${serviceName.join(',')}`)
+export function getChartInfoAPI (projectName, envName, serviceName) {
+  return http.get(`/api/aslan/environment/environments/${envName}/helm/charts?projectName=${projectName}&serviceName=${serviceName.join(',')}`)
 }
 
 export function createHelmVersionAPI (payload) {

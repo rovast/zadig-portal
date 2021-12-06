@@ -82,10 +82,7 @@ export default {
             }
           })
 
-          if (
-            commonInfo.buildv3.job_ctx &&
-            commonInfo.buildv3.job_ctx.clean_workspace
-          ) {
+          if (commonInfo.buildv3.job_ctx) {
             commonInfo.buildv3.job_ctx.clean_workspace = !commonInfo.buildv3
               .job_ctx.clean_workspace
           }

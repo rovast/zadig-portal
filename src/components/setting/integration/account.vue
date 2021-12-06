@@ -965,8 +965,8 @@ export default {
           if (valid) {
             const payload = this.userAccountLDAP
             payload.config.host = `${payload.config.addr}:${payload.config.port}`
-            payload.config.userSearch.idAttr =
-              payload.config.userSearch.username
+            payload.config.userSearch.idAttr = payload.config.userSearch.username
+            payload.config.userSearch.preferredUsernameAttr = payload.config.userSearch.username
             omit(payload.config, ['addr', 'port'])
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()
@@ -985,8 +985,8 @@ export default {
           if (valid) {
             const payload = this.userAccountAD
             payload.config.host = `${payload.config.addr}:${payload.config.port}`
-            payload.config.userSearch.idAttr =
-              payload.config.userSearch.username
+            payload.config.userSearch.idAttr = payload.config.userSearch.username
+            payload.config.userSearch.preferredUsernameAttr = payload.config.userSearch.username
             omit(payload.config, ['addr', 'port'])
             createConnectorAPI(payload).then(res => {
               this.getAccountConfig()

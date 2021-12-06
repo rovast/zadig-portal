@@ -358,9 +358,13 @@ export default {
           this.taskDetail = res.data
           if (this.taskDetail.stages) {
             this.buildStage = this.taskDetail.stages.find(stage => stage.type === 'buildv3')
-            this.buildStage.sub_tasks = this.buildStage.sub_tasks[`${workflowName}-job`]
+            if (this.buildStage) {
+              this.buildStage.sub_tasks = this.buildStage.sub_tasks[`${workflowName}-job`]
+            }
             this.extensionStage = this.taskDetail.stages.find(stage => stage.type === 'trigger')
-            this.extensionStage.sub_tasks = this.extensionStage.sub_tasks[`${workflowName}-job`]
+            if (this.extensionStage) {
+              this.extensionStage.sub_tasks = this.extensionStage.sub_tasks[`${workflowName}-job`]
+            }
           }
         })
         .closeWhenDestroy(this)
@@ -371,9 +375,13 @@ export default {
         this.taskDetail = res
         if (this.taskDetail.stages) {
           this.buildStage = this.taskDetail.stages.find(stage => stage.type === 'buildv3')
-          this.buildStage.sub_tasks = this.buildStage.sub_tasks[`${workflowName}-job`]
+          if (this.buildStage) {
+            this.buildStage.sub_tasks = this.buildStage.sub_tasks[`${workflowName}-job`]
+          }
           this.extensionStage = this.taskDetail.stages.find(stage => stage.type === 'trigger')
-          this.extensionStage.sub_tasks = this.extensionStage.sub_tasks[`${workflowName}-job`]
+          if (this.extensionStage) {
+            this.extensionStage.sub_tasks = this.extensionStage.sub_tasks[`${workflowName}-job`]
+          }
         }
       })
     },
@@ -472,10 +480,6 @@ export default {
             window.msgServer = sse
             sse.onError(e => {
               console.error('lost connection; giving up!', e)
-              this.$message({
-                message: `日志获取失败`,
-                type: 'error'
-              })
               sse.close()
               this.killLog(buildType)
             })
@@ -489,10 +493,6 @@ export default {
           })
           .catch(err => {
             console.error('Failed to connect to server', err)
-            this.$message({
-              message: `${buildType}日志获取失败`,
-              type: 'error'
-            })
             this.killLog(buildType)
           })
       }

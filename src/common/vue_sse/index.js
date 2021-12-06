@@ -12,13 +12,15 @@ export default {
         {},
         {
           withCredentials: false,
-          format: 'plain'
+          format: 'plain',
+          heartbeatTimeout: 3600 * 1000
         },
         cfg
       )
 
       const source = new EventSource(url, {
         withCredentials: config.withCredentials,
+        heartbeatTimeout: config.heartbeatTimeout || 45000,
         headers: {
           Authorization: 'Bearer ' + store.get('userInfo').token
         }

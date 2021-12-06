@@ -36,7 +36,7 @@
             <el-input v-model="searchService" placeholder="搜索服务" suffix-icon="el-icon-search" size="small"></el-input>
           </div>
         </div>
-        <order class="left-tree" v-show="mode === 'arrange'" :isCreate="isCreate"></order>
+        <order class="left-tree" v-show="mode === 'arrange'"></order>
       </div>
       <multipane-resizer class="resizer1"></multipane-resizer>
       <div class="center">

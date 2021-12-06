@@ -56,8 +56,8 @@
             <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns.name" :value="ns.name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库" prop="registryID">
-          <el-select class="select" v-model.trim="projectConfig.registryID" placeholder="请选择镜像仓库" size="small" @change="getImages">
+        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库" prop="registry_id">
+          <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small" @change="getImages">
             <el-option v-for="registry in imageRegistry" :key="registry.id" :label="`${registry.reg_addr}/${registry.namespace}`" :value="registry.id"></el-option>
           </el-select>
         </el-form-item>
@@ -325,7 +325,7 @@ export default {
         revision: null,
         isPublic: true,
         roleIds: [],
-        registryID: ''
+        registry_id: ''
       },
       projectInfo: {},
       hostingNamespace: [],
@@ -350,7 +350,7 @@ export default {
         namespace: [
           { required: true, trigger: 'change', message: '请选择命名空间' }
         ],
-        registryID: [
+        registry_id: [
           { required: true, trigger: ['change', 'blur'], message: '请选择镜像仓库' }
         ],
         defaultNamespace: [
@@ -585,7 +585,7 @@ export default {
       this.getImages()
     },
     getImages () {
-      imagesAPI(this.containerNames, this.projectConfig.registryID || '').then(images => {
+      imagesAPI(this.containerNames, this.projectConfig.registry_id || '').then(images => {
         if (images) {
           for (const image of images) {
             image.full = `${image.host}/${image.owner}/${image.name}:${image.tag}`
@@ -824,7 +824,7 @@ export default {
           const payload = {
             envName: this.projectConfig.env_name,
             clusterID: this.projectConfig.cluster_id,
-            registryID: this.projectConfig.registryID,
+            registry_id: this.projectConfig.registry_id,
             chartValues: valueInfo.chartInfo,
             defaultValues: valueInfo.envInfo.DEFAULT || '',
             namespace: this.projectConfig.defaultNamespace
@@ -902,8 +902,8 @@ export default {
     })
     getRegistryWhenBuildAPI(this.projectName).then(res => {
       this.imageRegistry = res
-      if (!this.projectConfig.registryID) {
-        this.projectConfig.registryID = res.find(reg => reg.is_default).id
+      if (!this.projectConfig.registry_id) {
+        this.projectConfig.registry_id = res.find(reg => reg.is_default).id
       }
       this.getTemplateAndImg()
     })

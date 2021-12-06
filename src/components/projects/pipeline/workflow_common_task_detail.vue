@@ -279,7 +279,8 @@
             </div>
           </el-col>
           <el-col :span="6">
-            <QrcodeVue v-if="codeURL" :value="codeURL" class="item-desc"></QrcodeVue>
+            <!-- <QrcodeVue v-if="codeURL" :value="codeURL" class="item-desc"></QrcodeVue> -->
+            <div v-if="codeURL">{{codeURL}}</div>
             <div v-else class="item-desc">N/A</div>
           </el-col>
         </el-row>

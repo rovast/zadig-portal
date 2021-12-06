@@ -1382,7 +1382,9 @@ export default {
           envs: [],
           enable_proxy: false,
           enable_gocov: false,
-          parameters: []
+          parameters: [],
+          cluster_id: '',
+          namespace: ''
         },
         scripts: '#!/bin/bash\nset -e',
         main_file: '',
@@ -1445,6 +1447,10 @@ export default {
       handler (val, old_val) {
         if (!this.isEdit && val) {
           this.buildConfig.name = val + '-build'
+          this.configDataLoading = true
+          this.$nextTick(() => {
+            this.configDataLoading = false
+          })
         }
       }
     },

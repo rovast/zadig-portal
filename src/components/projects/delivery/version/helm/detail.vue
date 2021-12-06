@@ -207,9 +207,9 @@ export default {
     downloadChartUrl (data) {
       const projectName = this.projectName
       const chartName = data.chartName
-      const versionName = data.chartVersion
+      const version = this.versionInfo.version
       const token = store.get('userInfo').token
-      return `/api/aslan/delivery/releases/helm/charts?projectName=${projectName}&chartName=${chartName}&version=${versionName}&token=${token}`
+      return `/api/aslan/delivery/releases/helm/charts?projectName=${projectName}&chartName=${chartName}&version=${version}&token=${token}`
     }
   },
   created () {

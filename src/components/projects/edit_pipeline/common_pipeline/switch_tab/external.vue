@@ -16,6 +16,28 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <div>
+          <el-tag size="small">Headers</el-tag>
+          <el-button type="text" @click="addHeader" class="add-header">添加</el-button>
+        </div>
+        <el-table :data="externalData.headers" style="width: 100%;">
+          <el-table-column label="Header Name">
+            <template slot-scope="{row}">
+              <el-input v-model="row.key" placeholder="Header Name" size="small"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="Header Value">
+            <template slot-scope="{row}">
+              <el-input v-model="row.value" placeholder="Header Value" size="small"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="value" label="操作" width="100px">
+            <template slot-scope="{$index}">
+              <el-button style="font-size: 20px;" type="text" icon="el-icon-remove-outline" @click="deleteHeader($index)"></el-button>
+              <el-button style="font-size: 20px;" type="text" icon="el-icon-circle-plus-outline" @click="addHeader"></el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-form-item>
       <el-form-item label="是否回调">
         <el-switch v-model="externalData.is_callback"></el-switch>
@@ -31,11 +53,13 @@
 <script>
 import { getExternalsAPI } from '@api'
 import { mapState } from 'vuex'
+import { cloneDeep } from 'lodash'
 const externalInfo = {
   enabled: true,
   type: 'trigger',
   url: '',
   path: '',
+  headers: [], // key,value
   is_callback: false,
   timeout: 10
 }
@@ -54,7 +78,7 @@ export default {
       }
     }
     return {
-      externalData: { ...externalInfo },
+      externalData: cloneDeep(externalInfo),
       externalList: [
         {
           id: 'xx',
@@ -90,7 +114,16 @@ export default {
       return this.$refs.externalForm.validate()
     },
     updateCommonInfo () {
-      this.$store.commit('UPDATE_COMMON_INFO', { trigger: this.externalData })
+      this.externalData.headers = this.externalData.headers.filter(
+        header => header.key
+      )
+      this.$store.commit('UPDATE_COMMON_INFO', { trigger: cloneDeep(this.externalData) })
+    },
+    addHeader () {
+      this.externalData.headers.push({ key: '', value: '' })
+    },
+    deleteHeader (index) {
+      this.externalData.headers.splice(index, 1)
     }
   },
   created () {
@@ -103,7 +136,10 @@ export default {
       name: '扩展',
       valid: this.validate
     })
-    this.externalData = { ...externalInfo, ...this.commonInfo.trigger }
+    this.externalData = {
+      ...cloneDeep(externalInfo),
+      ...cloneDeep(this.commonInfo.trigger)
+    }
   },
 
   deactivated () {
@@ -118,6 +154,25 @@ export default {
   /deep/.el-input,
   .el-select {
     width: 100%;
+  }
+
+  /deep/.el-table {
+    .el-table__cell {
+      padding: 0;
+    }
+
+    .el-table__empty-block {
+      min-height: 48px;
+
+      .el-table__empty-text {
+        line-height: 48px;
+      }
+    }
+  }
+
+  .add-header {
+    margin-left: 5px;
+    font-size: 13px;
   }
 }
 </style>

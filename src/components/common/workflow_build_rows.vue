@@ -16,8 +16,9 @@
             <template v-if="!build.use_default">
               <el-col :span="7">
                 <div class="repo-name-container">
-                  <span :class="{'repo-name': true}"> {{
-              $utils.tailCut(build.repo_name,20) }}</span>
+                  <el-tooltip class="item" effect="dark" :content="build.repo_name" placement="top">
+                    <span :class="{'repo-name': true}"> {{$utils.tailCut(build.repo_name,20) }}</span>
+                  </el-tooltip>
                 </div>
               </el-col>
               <template v-if="build.showBranch">

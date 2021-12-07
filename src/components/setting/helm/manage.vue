@@ -17,11 +17,14 @@
         <el-form-item label="URL" prop="url">
           <el-input size="small" placeholder="http(s)://example.com" v-model="helm.url"></el-input>
         </el-form-item>
+        <el-form-item label="仓库名称" prop="repo_name">
+          <el-input size="small" placeholder="请输入仓库名称" v-model="helm.repo_name"></el-input>
+        </el-form-item>
         <el-form-item label="用户名" prop="username">
-          <el-input size="small" v-model="helm.username"></el-input>
+          <el-input size="small" placeholder="请输入用户名" v-model="helm.username"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input size="small" type="passsword" v-model="helm.password"></el-input>
+          <el-input size="small" type="passsword" placeholder="请输入密码" v-model="helm.password"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -43,11 +46,14 @@
         <el-form-item label="URL" prop="url">
           <el-input size="small" placeholder="http(s)://example.com" v-model="swapHelm.url"></el-input>
         </el-form-item>
+        <el-form-item label="仓库名称" prop="repo_name">
+          <el-input size="small" placeholder="请输入仓库名称" v-model="swapHelm.repo_name"></el-input>
+        </el-form-item>
         <el-form-item label="用户名" prop="username">
-          <el-input size="small" v-model="swapHelm.username"></el-input>
+          <el-input size="small" placeholder="请输入用户名" v-model="swapHelm.username"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input size="small" type="passsword" v-model="swapHelm.password"></el-input>
+          <el-input size="small" type="passsword" placeholder="请输入密码" v-model="swapHelm.password"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -138,7 +144,7 @@ export default {
             trigger: ['blur', 'change']
           }
         ],
-        repo_name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+        repo_name: [{ required: true, message: '请输入仓库名称', trigger: 'blur' }],
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
         ],

@@ -13,6 +13,7 @@
           multiple
           size="small"
           clearable
+          filterable
           collapse-tags
           value-key="serviceName"
         >

@@ -35,11 +35,11 @@
         @deleteService="deleteService"
       ></FileTree>
       <MultipaneResizer></MultipaneResizer>
-      <div :style="{minWidth: '200px', width: '500px'}" class="middle">
+      <div :style="{ minWidth: '200px', width: '50%'}" class="middle">
         <Codemirror v-model="yamlStorage[selectedPath]" :cmOption="cmOption"></Codemirror>
       </div>
       <MultipaneResizer></MultipaneResizer>
-      <div :style="{flexGrow: 1, minWidth: '100px'}" class="right">
+      <div :style="{flexGrow: 1, width: '200px', minWidth: '100px'}" class="right">
         <div class="title">全局变量</div>
         <Codemirror v-model="globalYaml" class="mirror"></Codemirror>
         <div class="bottom">

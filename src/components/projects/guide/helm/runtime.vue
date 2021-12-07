@@ -136,7 +136,11 @@ export default {
           return {
             envName: re.name,
             isEdit: false,
-            initName: re.name
+            initName: re.name,
+            infos: {
+              clusterID: re.cluster_id || '',
+              registry_id: re.registry_id || ''
+            }
           }
         })
         this.activeName = this.envInfos[0].initName

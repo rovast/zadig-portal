@@ -887,8 +887,8 @@ export default {
       if (envInfo) {
         if (!envInfo.registry_id) {
           envInfo.registry_id = ''
-          envInfo.editRegistryID = envInfo.registry_id
         }
+        envInfo.editRegistryID = envInfo.registry_id
         this.productInfo = envInfo
         this.envLoading = false
         this.recycleDay = envInfo.recycle_day ? envInfo.recycle_day : undefined

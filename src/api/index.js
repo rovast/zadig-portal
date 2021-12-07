@@ -1244,6 +1244,10 @@ export function useGlobalVariablesAPI (payload) {
   return http.post(`/api/aslan/delivery/releases/helm/global-variables`, payload)
 }
 
+export function getChartLastVersionAPI (chartRepoName, chartName) {
+  return http.get(`/api/aslan/delivery/releases/helm/charts/version?chartName=${chartName.join(',')}&chartRepoName=${chartRepoName}`)
+}
+
 // Forgot password
 
 export function retrievePasswordAPI (account) {

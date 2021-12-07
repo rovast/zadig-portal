@@ -113,9 +113,6 @@ export default {
         }
       )
     },
-    getRevision () {
-      return this.serviceRevision
-    },
     deleteNode ({ name }) {
       this.$emit('deleteService', name)
     }

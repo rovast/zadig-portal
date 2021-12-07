@@ -7,7 +7,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="选择 Chart 仓库" prop="chartRepoName">
-        <el-select v-model="releaseInfo.chartRepoName" placeholder="请选择 Chart 仓库" size="small">
+        <el-select v-model="releaseInfo.chartRepoName" placeholder="请选择 Chart 仓库" size="small" @change="updateSelectedChart">
           <el-option :label="repo.repo_name" :value="repo.repo_name" v-for="repo in helmRepoList" :key="repo.id"></el-option>
         </el-select>
       </el-form-item>
@@ -40,13 +40,19 @@
             <el-option :label="`${storage.bucket}(${storage.endpoint})`" :value="storage.id" v-for="storage in storageList" :key="storage.id"></el-option>
           </el-select>
         </el-form-item>
-      </div> -->
+      </div>-->
     </el-form>
   </div>
 </template>
 
 <script>
-import { getStorageListAPI, getHelmRepoAPI, getRegistryListAPI } from '@api'
+import {
+  getStorageListAPI,
+  getHelmRepoAPI,
+  getRegistryListAPI,
+  getChartLastVersionAPI
+} from '@api'
+import { keyBy } from 'lodash'
 
 export default {
   props: {
@@ -95,12 +101,31 @@ export default {
       getRegistryListAPI().then(res => {
         this.imageRegistryList = res
       })
+    },
+    updateSelectedChart () {
+      const chartRepoName = this.releaseInfo.chartRepoName
+      if (!chartRepoName) {
+        return
+      }
+      const chartName = this.releaseInfo.chartDatas.map(chart => {
+        chart.lastVersion = ''
+        return chart.serviceName
+      })
+      getChartLastVersionAPI(chartRepoName, chartName).then(res => {
+        const resObj = keyBy(res, 'chartName')
+        this.releaseInfo.chartDatas.forEach(chart => {
+          chart.lastVersion = resObj[chart.serviceName].chartVersion
+        })
+      })
     }
   },
   created () {
     this.getHelmRepo()
     this.getStorageList()
     this.getRegistryList()
+  },
+  activated () {
+    this.updateSelectedChart()
   }
 }
 </script>

@@ -28,7 +28,6 @@
       <FileTree
         :style="{width: '200px', minWidth: '100px', maxWidth: '400px'}"
         class="left"
-        ref="fileTreeRef"
         :envName="this.releaseInfo.envName"
         :fileData="releaseInfo.chartDatas"
         @clickFile="getFile"
@@ -158,14 +157,13 @@ export default {
     validate () {
       const info = this.releaseInfo
       if (info.envName && info.chartDatas.length) {
-        const revision = this.$refs.fileTreeRef.getRevision()
         this.releaseInfo.chartDatas = this.releaseInfo.chartDatas.map(chart => {
           return {
             serviceName: chart.serviceName,
             version: chart.version || info.version,
             valuesYamlContent:
               this.yamlStorage[`${chart.serviceName}/values.yaml`] || '',
-            lastVersion: revision[chart.serviceName]
+            lastVersion: ''
           }
         })
         return this.$refs.configRef.validate()

@@ -121,7 +121,7 @@
                 <span style="color: #e6a23c; font-size: 12px;" v-if="clusterNodes.labels.length == 0">请先在对应节点上打上标签</span>
                 <div class="list-host">
                   <div v-for="host in  matchedHost" :key="host.node_ip">
-                    {{host.node_ip}} &nbsp;&nbsp;-&nbsp;&nbsp; {{host.node_status}}
+                    {{host.node_ip}} &nbsp;&nbsp;-&nbsp;&nbsp; {{host.ready ? 'Ready' : 'Not Ready'}}
                   </div>
                 </div>
               </el-form-item>
@@ -319,7 +319,7 @@ export default {
       },
       clusterNodes: {
         labels: [],
-        data: [] // {node_labels, node_status, node_ip}
+        data: [] // {node_labels, ready, node_ip}
       }
 
     }

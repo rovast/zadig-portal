@@ -310,6 +310,9 @@ export default {
       return !this.isHelm && !this.isPm
     },
     imageRegistryByEnv () {
+      if (!this.currentProjectEnvs.length || !this.runner.namespace) {
+        return
+      }
       const namespace = this.runner.namespace
       const registryId = this.currentProjectEnvs.find(env => env.name === namespace).registry_id
       if (registryId) {

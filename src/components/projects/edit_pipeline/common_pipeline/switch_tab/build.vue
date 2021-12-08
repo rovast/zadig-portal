@@ -14,7 +14,7 @@
                     <el-tag v-if="sys.image_from === 'custom'" type="info" size="mini" effect="light">自定义</el-tag>
                   </span>
                 </el-option>
-                <el-option value="NEWCUSTOM">
+                <el-option value="">
                   <router-link to="/v1/system/imgs" style="color: #606266;">新建自定义构建镜像</router-link>
                 </el-option>
               </el-select>

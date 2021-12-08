@@ -41,7 +41,7 @@
       </el-form-item>
       <el-form-item label="是否回调">
         <el-switch v-model="externalData.is_callback"></el-switch>
-        <div>请按规定调用接口：{{fullUrl}} 接口</div>
+        <div v-show="externalData.is_callback">请按规定调用接口：{{fullUrl}} 接口</div>
       </el-form-item>
       <el-form-item label="超时">
         <el-input-number v-model="externalData.timeout" :min="1" :max="100" size="small"></el-input-number>分钟
@@ -93,12 +93,9 @@ export default {
   },
   computed: {
     fullUrl () {
-      let str = '-'
+      let str = '*'
       if (this.externalData.url) {
-        str = this.externalData.url
-        if (this.externalData.path) {
-          str += '/' + this.externalData.path
-        }
+        str = this.externalData.url + this.externalData.path || ''
       }
       return str
     },

@@ -183,11 +183,11 @@ export default {
   .middle {
     flex: 1 1 auto;
     width: 70%;
-    margin: 5%;
+    margin: 50px 5% 0;
     margin-left: 30px;
 
     .content {
-      max-height: 90%;
+      max-height: calc(~'100% - 35px');
       overflow: auto;
       background-color: #fff;
       border-radius: 6px;

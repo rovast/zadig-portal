@@ -50,20 +50,14 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-input v-show="check === 'body'" type="textarea" v-model="paramData.external_setting.body" placeholder="请输入请求头" rows="4"></el-input>
+          <el-input v-show="check === 'body'" type="textarea" v-model="paramData.external_setting.body" placeholder="请输入请求体" rows="4"></el-input>
         </el-form-item>
         <el-form-item label="变量名称">
-          <el-row :gutter="10" v-for="(param, index) in paramData.external_setting.params" :key="index">
-            <el-col :span="7">
-              <el-input v-model="param.param_key" placeholder="变量名" size="small"></el-input>
-            </el-col>
-            <el-col :span="2">
-              <span>-&gt;</span>
-            </el-col>
-            <el-col :span="7">
-              <el-input v-model="param.response_key" placeholder="接口返回字段" size="small"></el-input>
-            </el-col>
-            <el-col :span="7">
+          <div v-for="(param, index) in paramData.external_setting.params" :key="index" class="show-variable">
+            <el-input class="item" v-model="param.param_key" placeholder="变量名" size="small"></el-input>
+            <span class="item small">-&gt;</span>
+            <el-input class="item" v-model="param.response_key" placeholder="接口返回字段" size="small"></el-input>
+            <span class="item operation">
               <el-radio v-model="display" :label="param.param_key">显示</el-radio>
               <el-button
                 v-if="paramData.external_setting.params.length > 1 "
@@ -79,8 +73,8 @@
                 icon="el-icon-circle-plus-outline"
                 @click="addParam"
               ></el-button>
-            </el-col>
-          </el-row>
+            </span>
+          </div>
         </el-form-item>
       </el-form>
     </section>
@@ -223,6 +217,29 @@ export default {
 
   /deep/.el-radio {
     margin-right: 15px;
+  }
+
+  .show-variable {
+    display: inline-flex;
+
+    .item {
+      flex: 1 1 auto;
+
+      &.small {
+        flex: 0 0 auto;
+        width: 30px;
+        text-align: center;
+      }
+
+      &.operation {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        width: 130px;
+        margin-left: 10px;
+      }
+    }
   }
 }
 </style>

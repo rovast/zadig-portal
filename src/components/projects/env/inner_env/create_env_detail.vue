@@ -58,8 +58,14 @@
         </el-form-item>
         <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库" prop="registry_id">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small" @change="getImages">
-            <el-option v-for="registry in imageRegistry" :key="registry.id" :label="`${registry.reg_addr}/${registry.namespace}`" :value="registry.id"></el-option>
+            <el-option
+              v-for="registry in imageRegistry"
+              :key="registry.id"
+              :label="`${registry.reg_addr}/${registry.namespace}`"
+              :value="registry.id"
+            ></el-option>
           </el-select>
+          <div v-if="deployType==='helm'" class="image-secret">imagePullSecret 名称：default</div>
         </el-form-item>
       </el-form>
 
@@ -169,7 +175,14 @@
                   </div>
                   <i class="el-icon-info"></i>
                 </el-tooltip>
-                <el-select :disabled="rollbackMode" size="small" class="img-select" v-model="quickSelection" placeholder="请选择" @change="quickInitImage">
+                <el-select
+                  :disabled="rollbackMode"
+                  size="small"
+                  class="img-select"
+                  v-model="quickSelection"
+                  placeholder="请选择"
+                  @change="quickInitImage"
+                >
                   <el-option label="全容器-智能选择镜像" value="latest"></el-option>
                   <el-option label="全容器-全部默认镜像" value="default"></el-option>
                 </el-select>
@@ -351,7 +364,11 @@ export default {
           { required: true, trigger: 'change', message: '请选择命名空间' }
         ],
         registry_id: [
-          { required: true, trigger: ['change', 'blur'], message: '请选择镜像仓库' }
+          {
+            required: true,
+            trigger: ['change', 'blur'],
+            message: '请选择镜像仓库'
+          }
         ],
         defaultNamespace: [
           { required: true, trigger: 'change', message: '命名空间不能为空' }
@@ -585,18 +602,20 @@ export default {
       this.getImages()
     },
     getImages () {
-      imagesAPI(this.containerNames, this.projectConfig.registry_id || '').then(images => {
-        if (images) {
-          for (const image of images) {
-            image.full = `${image.host}/${image.owner}/${image.name}:${image.tag}`
-          }
-          this.imageMap = this.makeMapOfArray(images, 'name')
-          if (!this.rollbackMode) {
-            this.quickSelection = 'latest'
-            this.quickInitImage()
+      imagesAPI(this.containerNames, this.projectConfig.registry_id || '').then(
+        images => {
+          if (images) {
+            for (const image of images) {
+              image.full = `${image.host}/${image.owner}/${image.name}:${image.tag}`
+            }
+            this.imageMap = this.makeMapOfArray(images, 'name')
+            if (!this.rollbackMode) {
+              this.quickSelection = 'latest'
+              this.quickInitImage()
+            }
           }
         }
-      })
+      )
     },
     makeMapOfArray (arr, namePropName) {
       const map = {}
@@ -921,6 +940,13 @@ export default {
   padding: 15px 20px;
   overflow: auto;
   font-size: 13px;
+
+  .image-secret {
+    margin-left: 3px;
+    color: #cdcfd4;
+    font-size: 12px;
+    line-height: 1.5;
+  }
 
   .helm-yaml-drawer {
     .el-drawer__header {

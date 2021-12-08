@@ -220,7 +220,7 @@ export default {
   .dash-body {
     position: relative;
     flex-grow: 1;
-    padding: 0 1.5em;
+    padding-left: 0.8em;
     border-left: 4px solid #77797d;
 
     &.running,
@@ -274,6 +274,8 @@ export default {
       }
 
       .desc {
+        flex: 0 0 19%;
+        width: 19%;
         color: #666;
         font-size: 14px;
       }

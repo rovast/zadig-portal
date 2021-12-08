@@ -39,6 +39,7 @@
             <el-tooltip v-if="item.builds.length > 0" class="item" effect="light"  :open-delay="250" placement="right">
               <div slot="content">
                 <div v-for="(build,buildIndex) in item.builds" :key="buildIndex">
+                  <span v-if="build.repo_name">{{build.repo_name }}</span>
                   <span v-if="build.tag">Tag-{{build.tag }}</span>
                   <span v-if="build.branch">Branch-{{ build.branch }}</span>
                   <span v-if="build.pr">PR-{{ build.pr }}</span>

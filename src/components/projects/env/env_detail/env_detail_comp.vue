@@ -707,7 +707,7 @@ export default {
           registry_id: this.productInfo.registry_id,
           namespace: this.productInfo.namespace
         }
-        const res = await updateEnvImageRegistry(this.projectName, payload).catch(err => console.log(err))
+        const res = await updateEnvImageRegistry(this.projectName, this.envName, payload).catch(err => console.log(err))
         if (res) {
           this.$message.success(`环境默认镜像仓库更新成功`)
         }

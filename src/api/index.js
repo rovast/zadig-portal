@@ -252,8 +252,8 @@ export function productEnvInfoAPI (projectName, envName) {
   return http.get(`/api/aslan/environment/environments/${envName}?projectName=${projectName}`)
 }
 
-export function updateEnvImageRegistry (projectName, payload) {
-  return http.put(`/api/aslan/environment/environments/registry?projectName=${projectName}`, payload)
+export function updateEnvImageRegistry (projectName, envName, payload) {
+  return http.put(`/api/aslan/environment/environments/${envName}/registry?projectName=${projectName}`, payload)
 }
 
 // Project

@@ -156,7 +156,8 @@ export default {
       })
     },
 
-    // 以后构建全部修改的话 初始化信息修改就放在数据请求回后处理，这里处理的一个必要条件是数据是已经请求成功的，否则初始化数据是错误的
+    // init information should handle in the home page after get build data
+    // the method must callback after init data requested
     paddingData () {
       const initNs = () => {
         const localId = this.clusters.find(cluster => cluster.local).id
@@ -181,11 +182,11 @@ export default {
           this.changeImage(key, value)
         }
 
-        // 兼容老数据：默认使用 local + Zadig 所在的命名空间
+        // compatible with old data: use the local and zadig namespace by default
         if (!this.pre_build.cluster_id) {
           initNs()
         } else {
-        // 请求一次当前集群的命名空间
+          // request namespaces of current cluster
           this.getProductHostingNamespace(this.pre_build.cluster_id)
         }
       }
@@ -217,8 +218,8 @@ export default {
   watch: {
     initFlag: {
       handler (newV) {
-        // false 时，代表编辑构建的数据请求结束
-        // 初始化数据未请求结束时，不能初始化数据
+        // when false, it represents the end of the data request for editing the build
+        // cannot init when the initial data is not requested
         if (!newV && this.systems.length && this.clusters.length) {
           this.paddingData()
         }
@@ -227,9 +228,9 @@ export default {
     }
   },
   created () {
-    // 初始化前的数据必须先获取
+    // data before initialization must be obtained first
     Promise.all([this.getClusterList(), this.getImgList()]).then(() => {
-      // 如果构建数据未请求结束，不能初始化
+      // if the build data has not been requested, it cannot be initialized
       if (!this.initFlag) {
         this.paddingData()
       }

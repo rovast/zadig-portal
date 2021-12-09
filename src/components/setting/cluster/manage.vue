@@ -104,24 +104,24 @@
             </el-radio-group>
           </el-form-item>
           <div v-if="isEdit">
-            <el-button type="text" @click="advancedConfig">高级配置<i :class="{'el-icon-arrow-right': !cluster.config.strategy,'el-icon-arrow-down': cluster.config.strategy}"></i></el-button>
-            <div v-if="cluster.config.strategy">
+            <el-button type="text" @click="advancedConfig">高级配置<i :class="{'el-icon-arrow-right': !cluster.advanced_config.strategy,'el-icon-arrow-down': cluster.advanced_config.strategy}"></i></el-button>
+            <div v-if="cluster.advanced_config.strategy">
               <h4>调度策略</h4>
-              <el-form-item label="选择策略" prop="config.strategy" required>
-                <el-select v-model="cluster.config.strategy" placeholder="请选择策略" size="small" required>
+              <el-form-item label="选择策略" prop="advanced_config.strategy" required>
+                <el-select v-model="cluster.advanced_config.strategy" placeholder="请选择策略" size="small" required>
                   <el-option label="随机调度" value="normal"></el-option>
                   <el-option label="强制调度" value="required"></el-option>
                   <el-option label="优先调度" value="preferred"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item v-if="cluster.config.strategy !== 'normal'"  prop="config.node_labels" label="选择标签">
-                <el-select v-model="cluster.config.node_labels" placeholder="请选择" multiple size="small">
+              <el-form-item v-if="cluster.advanced_config.strategy !== 'normal'"  prop="advanced_config.node_labels" label="选择标签">
+                <el-select v-model="cluster.advanced_config.node_labels" placeholder="请选择" multiple size="small">
                   <el-option v-for="node in clusterNodes.labels" :key="node" :label="node" :value="node"></el-option>
                 </el-select>
                 <span style="color: #e6a23c; font-size: 12px;" v-if="clusterNodes.labels.length == 0">请先在对应节点上打上标签</span>
                 <div class="list-host">
-                  <div v-for="host in  matchedHost" :key="host.node_ip">
-                    {{host.node_ip}} &nbsp;&nbsp;-&nbsp;&nbsp; {{host.ready ? 'Ready' : 'Not Ready'}}
+                  <div v-for="host in  matchedHost" :key="host.ip">
+                    {{host.ip}} &nbsp;&nbsp;-&nbsp;&nbsp; {{host.ready ? 'Ready' : 'Not Ready'}}
                   </div>
                 </div>
               </el-form-item>
@@ -255,7 +255,7 @@ const clusterInfo = {
   production: false,
   description: '',
   namespace: ''
-  // config: { // 编辑的时候有这个数据
+  // advanced_config: { // 编辑的时候有这个数据
   //   strategy: '',
   //   node_labels: []
   // }
@@ -311,7 +311,7 @@ export default {
           required: true,
           message: '请选择是否为生产集群'
         }],
-        'config.node_labels': {
+        'advanced_config.node_labels': {
           required: true,
           message: '请选择标签',
           type: 'array'
@@ -319,7 +319,7 @@ export default {
       },
       clusterNodes: {
         labels: [],
-        data: [] // {node_labels, ready, node_ip}
+        data: [] // {labels, ready, ip}
       }
 
     }
@@ -329,10 +329,10 @@ export default {
       return !!this.cluster.id
     },
     matchedHost () {
-      const labels = this.cluster.config.node_labels
+      const labels = this.cluster.advanced_config.node_labels
       return this.clusterNodes.data.filter(data => {
         return labels.filter(label => {
-          return data.node_labels.includes(label)
+          return data.labels.includes(label)
         }).length
       })
     }
@@ -350,10 +350,10 @@ export default {
   },
   methods: {
     advancedConfig () {
-      if (!this.cluster.config.strategy) {
-        this.cluster.config.strategy = 'normal'
+      if (!this.cluster.advanced_config.strategy) {
+        this.cluster.advanced_config.strategy = 'normal'
       } else {
-        this.cluster.config = {
+        this.cluster.advanced_config = {
           strategy: '',
           node_labels: []
         }
@@ -486,13 +486,13 @@ export default {
           this.$message.error(`未找到本地集群！`)
         }
         this.allCluster = res.map(re => {
-          if (!re.config) {
-            re.config = {
+          if (!re.advanced_config) {
+            re.advanced_config = {
               strategy: '',
               node_labels: []
             }
-          } else if (!re.config.node_labels) {
-            re.config.node_labels = []
+          } else if (!re.advanced_config.node_labels) {
+            re.advanced_config.node_labels = []
           }
           return re
         })

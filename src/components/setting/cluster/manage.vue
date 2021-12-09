@@ -107,21 +107,32 @@
             <el-button type="text" @click="advancedConfig">高级配置<i :class="{'el-icon-arrow-right': !cluster.advanced_config.strategy,'el-icon-arrow-down': cluster.advanced_config.strategy}"></i></el-button>
             <div v-if="cluster.advanced_config.strategy">
               <h4>调度策略</h4>
-              <el-form-item label="选择策略" prop="advanced_config.strategy" required>
-                <el-select v-model="cluster.advanced_config.strategy" placeholder="请选择策略" size="small" required>
+              <el-form-item prop="advanced_config.strategy" required>
+                 <span slot="label">选择策略
+                  <el-tooltip effect="dark" placement="top-start">
+                    <div slot="content" style="line-height: 1.5;">
+                      <div>随机调度：工作流任务被随机调度到集群的可用节点上</div>
+                      <div>强制调度：工作流任务被强制调度到对应节点上，如果节点有问题，任务可能调度不成功</div>
+                      <div>优先调度：工作流任务被优先调度到对应节点上，如果节点有问题，会调度到其他可用节点上</div>
+                    </div>
+                    <i class="el-icon-question"></i>
+                  </el-tooltip>
+                </span>
+                <el-select v-model="cluster.advanced_config.strategy" placeholder="请选择策略" style="width: 100%;" size="small" required>
                   <el-option label="随机调度" value="normal"></el-option>
                   <el-option label="强制调度" value="required"></el-option>
                   <el-option label="优先调度" value="preferred"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item v-if="cluster.advanced_config.strategy !== 'normal'"  prop="advanced_config.node_labels" label="选择标签">
-                <el-select v-model="cluster.advanced_config.node_labels" placeholder="请选择" multiple size="small">
+                <el-select v-model="cluster.advanced_config.node_labels" placeholder="请选择" multiple style="width: 100%;" size="small">
                   <el-option v-for="node in clusterNodes.labels" :key="node" :label="node" :value="node"></el-option>
                 </el-select>
                 <span style="color: #e6a23c; font-size: 12px;" v-if="clusterNodes.labels.length == 0">请先在对应节点上打上标签</span>
                 <div class="list-host">
                   <div v-for="host in  matchedHost" :key="host.ip">
-                    {{host.ip}} &nbsp;&nbsp;-&nbsp;&nbsp; {{host.ready ? 'Ready' : 'Not Ready'}}
+                    {{host.ip}} &nbsp;&nbsp;-&nbsp;&nbsp;
+                    <span :style="{color: host.ready ? '#67c23a' : '#f56c6c'}">{{host.ready ? 'Ready' : 'Not Ready'}}</span>
                   </div>
                 </div>
               </el-form-item>

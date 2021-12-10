@@ -663,7 +663,7 @@ export default {
     color: #909399;
     font-size: 12px;
 
-    .scrollBar2();
+    .blockScrollBar();
 
     div {
       line-height: 1.2;

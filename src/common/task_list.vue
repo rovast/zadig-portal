@@ -182,7 +182,10 @@ export default {
       return env_name
     },
     getRepo (row) {
-      const buildStage = row.stages.find(stage => stage.type === 'buildv2')
+      const buildStage = row.stages.find(stage => { console.log(stage); return stage.type === 'buildv2' })
+      if (!buildStage) {
+        return []
+      }
       const buildStageArray = this.$utils.mapToArray(buildStage.sub_tasks, 'service_name').map((element) => {
         return {
           service_name: element.service_name,

@@ -265,7 +265,7 @@
   </div>
 </template>
 <script>
-import { getProjectInfoAPI, getEnvInfoAPI, queryUserBindingsAPI, deleteProjectAPI, getWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
+import { getProjectInfoAPI, productEnvInfoAPI, queryUserBindingsAPI, deleteProjectAPI, getWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
 import { getProductStatus } from '@utils/word_translate'
 import { wordTranslate } from '@utils/word_translate.js'
 import { whetherOnboarding } from '@utils/onboarding_route'
@@ -295,7 +295,7 @@ export default {
       const projectName = this.projectName
       listProductAPI('', projectName).then((res) => {
         this.envList = res.map(element => {
-          getEnvInfoAPI(projectName, element.name).then((res) => {
+          productEnvInfoAPI(projectName, element.name).then((res) => {
             element.status = res.status
           })
           return element

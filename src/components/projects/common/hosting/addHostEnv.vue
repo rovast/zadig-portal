@@ -108,7 +108,11 @@ export default {
     async getCluster () {
       const projectName = this.projectName
       const res = await getClusterListAPI(projectName)
+      const cluster_id = this.form.cluster_id
       this.allCluster = res.filter(element => {
+        if (element.local && !cluster_id) {
+          this.form.cluster_id = element.id
+        }
         return element.status === 'normal'
       })
     },

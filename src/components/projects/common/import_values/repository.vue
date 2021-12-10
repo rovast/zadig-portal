@@ -209,7 +209,7 @@ export default {
     overflow: auto;
     line-height: 20px;
 
-    .scrollBar2();
+    .blockScrollBar();
   }
 
   .error-tip {

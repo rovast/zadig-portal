@@ -31,6 +31,9 @@
         </header>
 
         <slot name="more"></slot>
+        <section class="desc">
+          <span>{{description}}</span>
+        </section>
         <section class="dash-basicinfo">
           <span class="avg-run-time">平均执行时间</span>
           <span class="value">{{avgRuntime}}</span>
@@ -111,6 +114,10 @@ export default {
       required: true
     },
     avgSuccessRate: {
+      type: String,
+      required: false
+    },
+    description: {
       type: String,
       required: false
     }
@@ -213,7 +220,7 @@ export default {
   .dash-body {
     position: relative;
     flex-grow: 1;
-    padding: 0 1.5em;
+    padding-left: 0.8em;
     border-left: 4px solid #77797d;
 
     &.running,
@@ -264,6 +271,13 @@ export default {
         position: relative;
         flex: 0 0 19%;
         width: 19%;
+      }
+
+      .desc {
+        flex: 0 0 19%;
+        width: 19%;
+        color: #666;
+        font-size: 14px;
       }
 
       .dash-basicinfo {

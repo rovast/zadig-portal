@@ -138,7 +138,7 @@ export default {
   height: calc(~'100% - 200px');
   padding-bottom: 20px;
   overflow: auto;
-  .scrollBar2();
+  .blockScrollBar();
 
   .last-version {
     display: inline-block;

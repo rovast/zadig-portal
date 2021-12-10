@@ -26,8 +26,8 @@
       </el-form-item>
       <div class="divider"></div>
 
-      <div class="title">执行环境</div>
-      <BuildEnv :pre_build="test.pre_test" :isCreate="!isEdit" :title="``" :propPre="`pre_test`"></BuildEnv>
+      <div class="title">运行时环境</div>
+      <BuildEnv :initFlag="configDataLoading" :pre_build="test.pre_test" :isCreate="!isEdit" :title="``" :propPre="`pre_test`"></BuildEnv>
 
       <div class="divider">
       </div>
@@ -294,6 +294,7 @@
               $LINKED_ENV &nbsp; 被测命名空间<br />
               $ENV_NAME &nbsp;&nbsp;&nbsp;&nbsp; 被测环境名称<br />
               $TEST_URL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 测试任务的 URL<br>
+              $SERVICES &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 通过工作流任务更新的服务组，服务名以“,”分隔，形如 service1,service2,service3。推荐使用array=(${SERVICES//,/ }方式转化成数组<br />
               $CI
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               值恒等于 true，表示当前环境是 CI/CD 环境<br />
@@ -510,7 +511,8 @@ export default {
           }
         ]
       },
-      validObj: new ValidateSubmit()
+      validObj: new ValidateSubmit(),
+      configDataLoading: true
     }
   },
   props: {
@@ -665,6 +667,7 @@ export default {
         projectUrl: `/v1/${this.basePath}/detail/${this.projectName}`
       }
     if (this.isEdit) {
+      this.configDataLoading = true
       bus.$emit(`set-topbar-title`, {
         title: '',
         breadcrumb: [
@@ -697,6 +700,7 @@ export default {
         if (this.test.artifact_paths.length === 0) {
           this.addArtifactPath()
         }
+        this.configDataLoading = false
       })
     } else {
       bus.$emit(`set-topbar-title`, {
@@ -709,6 +713,7 @@ export default {
         ]
       })
       this.addArtifactPath()
+      this.configDataLoading = false
     }
   },
   components: {

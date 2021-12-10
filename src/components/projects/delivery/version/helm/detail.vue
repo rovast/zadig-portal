@@ -45,14 +45,14 @@
               <div>
                 <div>
                   进度详情
-                  <el-button type="text" class="little-btn" @click="retryCreate">重试</el-button>
+                  <el-button v-if="versionInfo.status !== 'success'" type="text" class="little-btn" @click="retryCreate">重试</el-button>
                 </div>
                 <div style="width: 250px; padding: 0 5px; font-size: 13px;">
                   <p>上传 Chart 和镜像：{{versionInfo.progress.successChartCount}}/{{versionInfo.progress.totalChartCount}}</p>
-                  <p>
+                  <!-- <p>
                     上传离线包：
                     <span :style="{color: uploadProgress.color}">{{uploadProgress.desc}}</span>
-                  </p>
+                  </p> -->
                   <p v-if="versionInfo.progress.error">错误信息：{{versionInfo.progress.error}}</p>
                 </div>
               </div>

@@ -60,7 +60,7 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label="命名空间" label-width="inherit" :prop="`${propPre}.namespace`" required :show-message="false">
-          <el-select v-model="pre_build.namespace" placeholder="选择命名空间" size="small">
+          <el-select v-model="pre_build.namespace" placeholder="选择命名空间" size="small" filterable>
             <el-option v-for="namespace in namespaces" :key="namespace.name" :label="namespace.name" :value="namespace.name"></el-option>
           </el-select>
         </el-form-item>

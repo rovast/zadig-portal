@@ -65,7 +65,7 @@
               :value="registry.id"
             ></el-option>
           </el-select>
-          <div v-if="deployType==='helm'" class="image-secret">imagePullSecret 名称：default</div>
+          <div v-if="deployType==='helm'" class="image-secret">imagePullSecret 名称：default-registry-secret</div>
         </el-form-item>
       </el-form>
 

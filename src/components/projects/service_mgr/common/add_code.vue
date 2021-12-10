@@ -264,16 +264,20 @@ export default {
       this.$refs.codeForm.validate((valid) => {
         if (valid) {
           const payload = this.codeAdd
-          const redirect_url = window.location.href.split('?')[0]
+          const redirectUrl = window.location.href.split('?')[0]
+          const callbackUrl = `${this.$utils.getOrigin()}/api/directory/codehosts/callback`
           const provider = this.codeAdd.type
+          if (provider === 'github') {
+            payload.address = 'https://github.com'
+          }
           createCodeSourceAPI(payload).then((res) => {
-            const code_source_id = res.id
+            const codehostId = res.id
             this.$message({
               message: '代码源添加成功',
               type: 'success'
             })
             if (payload.type === 'gitlab' || payload.type === 'github') {
-              this.goToCodeHostAuth(code_source_id, redirect_url, provider)
+              this.goToCodeHostAuth(codehostId, redirectUrl, callbackUrl)
             }
             this.handleCodeCancel()
           })
@@ -282,8 +286,8 @@ export default {
         }
       })
     },
-    goToCodeHostAuth (code_source_id, redirect_url, provider) {
-      window.location.href = `/api/directory/codehostss/${code_source_id}/auth?redirect=${redirect_url}&provider=${provider}`
+    goToCodeHostAuth (codehostId, redirectUrl, callbackUrl) {
+      window.location.href = `/api/v1/codehosts/${codehostId}/auth?redirect=${redirectUrl}&callback_url=${callbackUrl}`
     },
     copyCommandSuccess (event) {
       this.$message({

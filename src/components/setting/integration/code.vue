@@ -562,20 +562,21 @@ export default {
       this.$refs.codeForm.validate((valid) => {
         if (valid) {
           const payload = this.codeAdd
-          const redirect_url = window.location.href.split('?')[0]
+          const redirectUrl = window.location.href.split('?')[0]
           const provider = this.codeAdd.type
+          const callbackUrl = `${this.$utils.getOrigin()}/api/directory/codehosts/callback`
           if (provider === 'github') {
             payload.address = 'https://github.com'
           }
           createCodeSourceAPI(payload).then((res) => {
-            const code_source_id = res.id
+            const codehostId = res.id
             this.getCodeConfig()
             this.$message({
               message: '代码源添加成功',
               type: 'success'
             })
             if (payload.type === 'gitlab' || payload.type === 'github') {
-              this.goToCodeHostAuth(code_source_id, redirect_url, provider)
+              this.goToCodeHostAuth(codehostId, redirectUrl, callbackUrl)
             }
             this.handleCodeCancel()
           })
@@ -588,20 +589,21 @@ export default {
       this.$refs.codeUpdateForm.validate((valid) => {
         if (valid) {
           const payload = this.codeEdit
-          const code_source_id = this.codeEdit.id
-          const redirect_url = window.location.href.split('?')[0]
+          const codehostId = this.codeEdit.id
+          const redirectUrl = window.location.href.split('?')[0]
+          const callbackUrl = `${this.$utils.getOrigin()}/api/directory/codehosts/callback`
           const provider = this.codeEdit.type
           if (provider === 'github') {
             payload.address = 'https://github.com'
           }
-          updateCodeSourceAPI(code_source_id, payload).then((res) => {
+          updateCodeSourceAPI(codehostId, payload).then((res) => {
             this.getCodeConfig()
             if (payload.type === 'gitlab' || payload.type === 'github') {
               this.$message({
                 message: '代码源修改成功，正在前往授权',
                 type: 'success'
               })
-              this.goToCodeHostAuth(code_source_id, redirect_url, provider)
+              this.goToCodeHostAuth(codehostId, redirectUrl, callbackUrl)
             } else {
               this.handleCodeCancel()
               this.$message({
@@ -620,8 +622,8 @@ export default {
         this.code = res
       })
     },
-    goToCodeHostAuth (code_source_id, redirect_url, provider) {
-      window.location.href = `/api/v1/codehosts/${code_source_id}/auth?redirect=${redirect_url}&provider=${provider}`
+    goToCodeHostAuth (codehostId, redirectUrl, callbackUrl) {
+      window.location.href = `/api/v1/codehosts/${codehostId}/auth?redirect=${redirectUrl}&callback_url=${callbackUrl}`
     },
     copyCommandSuccess (event) {
       this.$message({

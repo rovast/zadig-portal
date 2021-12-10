@@ -37,8 +37,8 @@ export default {
   },
   data () {
     this.defaultProps = { children: 'children', label: 'name' }
-    this.addServices = [] // 记录新添加的服务项，用来请求版本信息
-    this.serviceRevision = {} // 保存服务的版本，用来请求目录、文件内容
+    this.addServices = [] // record the new added services, for requesting version info
+    this.serviceRevision = {} // save services version, for request directory and file content
 
     return {
       treeData: [],
@@ -53,7 +53,6 @@ export default {
   },
   methods: {
     async handleNodeClick (data) {
-      console.log('nodeDate: ', data)
       const serviceName = data.fullPath.split('/')[0]
       const isService = data.fullPath === data.name
       const params = {
@@ -66,13 +65,13 @@ export default {
       }
       if (data.is_dir) {
         if (!data.children.length) {
-          // 请求文件目录信息
+          // request directory
           await getHelmChartServiceFilePath(params).then(res => {
             this.setChildren(data, serviceName, res)
           })
         }
       } else {
-        // 请求文件内容
+        // request file content
         this.$emit('clickFile', {
           ...params,
           path: data.parent,
@@ -95,14 +94,14 @@ export default {
       this.expandedKey.splice(0, 1, data.fullPath)
     },
     getChartInfo () {
-      // 请求版本信息
+      // request version info
       getChartInfoAPI(this.projectName, this.envName, this.addServices).then(
         res => {
           res.chartInfos.forEach((chart, index) => {
-            this.serviceRevision[chart.serviceName] = chart.revision // 保存版本信息
+            this.serviceRevision[chart.serviceName] = chart.revision // save version info
 
             if (index === 0) {
-              // 第一个数据有目录信息
+              // directory information for the first service
               this.setChildren(
                 this.treeData.find(data => data.name === chart.serviceName),
                 chart.serviceName,

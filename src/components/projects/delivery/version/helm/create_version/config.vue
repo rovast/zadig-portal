@@ -189,7 +189,7 @@ export default {
       this.yamlStorage = {}
     },
     async getFile (data) {
-      // 两种情况  一种直接请求数据  另一种使用缓存
+      // Two cases: request data or use cache
       if (!this.yamlStorage[data.fullPath]) {
         await getHelmChartServiceFileContent(data).then(res => {
           this.$set(this.yamlStorage, data.fullPath, res)
@@ -209,17 +209,17 @@ export default {
       const index = this.releaseInfo.chartDatas.findIndex(
         chart => chart.serviceName === name
       )
-      // 清理列表里的服务
+      // clear cached data
       if (index > -1) {
         this.releaseInfo.chartDatas.splice(index, 1)
       }
-      // 清理缓存的文件
+      // clear cached files
       Object.keys(this.yamlStorage).forEach(storage => {
         if (storage.startsWith(`${name}/`)) {
           this.$delete(this.yamlStorage, storage)
         }
       })
-      // 如果当前展示的是被删除的服务 清空选择的文件
+      // if show the service while will be deleted, clear selected file name
       if (this.selectedPath.startsWith(`${name}/`)) {
         this.selectedPath = ''
       }

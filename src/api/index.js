@@ -921,7 +921,7 @@ export function deleteStorageAPI (id) {
   return http.delete(`/api/aslan/system/s3storage/${id}`)
 }
 
-// 系统设置-HELM
+// System setting : HELM
 export function getHelmRepoAPI () {
   return http.get(`/api/aslan/system/helm`)
 }

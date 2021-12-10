@@ -38,14 +38,14 @@ export default {
       deliveryRelease: {
         productName: '',
         version: '',
-        retry: false, // true 用于重试
-        labels: '', // []string 接口使用时进行转换
+        retry: false, // true: use for retry
+        labels: '', // []string api will convert to array
         desc: '',
         envName: '',
         chartDatas: [], // {serviceName, version, valuesYamlContent} and lastVersion but not post
         globalVariables: '',
-        chartRepoName: '', // 仓库名称
-        imageRegistryID: '', // 镜像仓库 ID
+        chartRepoName: '', // repo name
+        imageRegistryID: '', // image registry ID
         options: {} // enableOfflineDist, s3StorageID
       },
       createLoading: false

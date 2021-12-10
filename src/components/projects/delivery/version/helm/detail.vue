@@ -117,9 +117,9 @@ export default {
       loading: false,
       versionInfo: {
         progress: {}
-      }, // 基本信息
-      distributeChart: [], // chart 信息
-      packageFile: null // 离线包信息  高级功能
+      }, // base info
+      distributeChart: [], // chart info
+      packageFile: null // offline package information(advanced feature)
     }
   },
   computed: {
@@ -182,7 +182,6 @@ export default {
       })
     },
     upgradeVersion () {
-      console.log('upgrade')
       this.$message.info('敬请期待！')
     },
     getVersionDetail () {

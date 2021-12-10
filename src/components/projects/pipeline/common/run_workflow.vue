@@ -670,7 +670,7 @@ export default {
       })
     }
     listProductAPI(projectName).then(res => {
-      // 生产环境升序，名称升序
+      // product env ascending, name ascending
       this.currentProjectEnvs = orderBy(res, ['production', 'name'], ['asc', 'asc'])
       // 指定环境运行，匹配到则显示数据，匹配不到则由放开由用户选择
       if (this.workflowMeta.env_name && this.currentProjectEnvs.find(env => (env.projectName === this.workflowMeta.product_tmpl_name) && (env.name === this.workflowMeta.env_name))) {

@@ -252,6 +252,10 @@ export function productEnvInfoAPI (projectName, envName) {
   return http.get(`/api/aslan/environment/environments/${envName}?projectName=${projectName}`)
 }
 
+export function updateEnvImageRegistry (projectName, envName, payload) {
+  return http.put(`/api/aslan/environment/environments/${envName}/registry?projectName=${projectName}`, payload)
+}
+
 // Project
 export function getProjectsAPI () {
   return http.get('/api/v1/picket/projects?verbosity=detailed')// verbosity=detailed<brief,minimal>,IgnoreNoVersions,IgnoreNoEnvs
@@ -1113,10 +1117,6 @@ export function podEventAPI (projectName, podName, envName = '', envType = '') {
 
 export function exportYamlAPI (projectName, serviceName, envName = '', envType = '') {
   return http.get(`/api/aslan/environment/export/service?serviceName=${serviceName}&envName=${envName}&projectName=${projectName}&envType=${envType}`)
-}
-
-export function getEnvInfoAPI (projectName, envName = '') {
-  return http.get(`/api/aslan/environment/environments/${envName}?projectName=${projectName}`)
 }
 
 export function getServiceInfo (projectName, serviceName, envName = '', envType = '', workLoadType) {

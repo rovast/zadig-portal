@@ -32,6 +32,23 @@
               <span slot="label" @click="handleTabsEdit('', 'add')">新建环境</span>
             </el-tab-pane>
           </el-tabs>
+          <el-form label-width="100px" ref="createEnvRef" :model="currentInfo" :rules="rules" label-position="left" inline>
+            <el-form-item label="集群：" prop="clusterID">
+              <el-select class="select" filterable v-model="currentInfo.clusterID" size="small" placeholder="请选择集群">
+                <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="镜像仓库：" prop="registry_id">
+              <el-select class="select" v-model.trim="currentInfo.registry_id" placeholder="请选择镜像仓库" size="small">
+                <el-option
+                  v-for="registry in imageRegistry"
+                  :key="registry.id"
+                  :label="`${registry.reg_addr}/${registry.namespace}`"
+                  :value="registry.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
           <HelmEnvTemplate
             class="chart-value"
             ref="helmEnvTemplateRef"
@@ -65,20 +82,48 @@ import bus from '@utils/event_bus'
 import step from '../common/step.vue'
 import {
   createHelmEnvAPI,
-  getEnvironmentsAPI
+  getEnvironmentsAPI,
+  getClusterListAPI,
+  getRegistryWhenBuildAPI
 } from '@api'
 export default {
   data () {
+    this.rules = {
+      clusterID: [{ required: true, trigger: 'change', message: '请选择集群' }],
+      registry_id: [
+        {
+          required: true,
+          trigger: ['change', 'blur'],
+          message: '请选择镜像仓库'
+        }
+      ]
+    }
     return {
       envInfos: [
-        { envName: 'dev', isEdit: false, initName: 'dev' },
-        { envName: 'qa', isEdit: false, initName: 'qa' }
+        {
+          envName: 'dev',
+          isEdit: false,
+          initName: 'dev',
+          infos: { clusterID: '', registry_id: '' }
+        },
+        {
+          envName: 'qa',
+          isEdit: false,
+          initName: 'qa',
+          infos: { clusterID: '', registry_id: '' }
+        }
       ],
       cantNext: true,
       activeName: 'dev',
       isCreating: false,
       createRes: [],
-      sId: null
+      sId: null,
+      allCluster: [],
+      imageRegistry: [],
+      defaultInfo: {
+        clusterID: '',
+        registry_id: ''
+      }
     }
   },
   methods: {
@@ -91,7 +136,11 @@ export default {
           return {
             envName: re.name,
             isEdit: false,
-            initName: re.name
+            initName: re.name,
+            infos: {
+              clusterID: re.cluster_id || '',
+              registry_id: re.registry_id || ''
+            }
           }
         })
         this.activeName = this.envInfos[0].initName
@@ -129,7 +178,8 @@ export default {
       this.envInfos.forEach(info => {
         payloadObj[info.initName] = {
           envName: info.envName,
-          clusterID: '',
+          clusterID: info.infos.clusterID || this.defaultInfo.clusterID,
+          registry_id: info.infos.registry_id || this.defaultInfo.registry_id,
           chartValues: [],
           defaultValues: envInfo[info.initName] || '',
           namespace: `${projectName}-env-${info.envName}`
@@ -143,23 +193,19 @@ export default {
 
       const payload = Object.values(payloadObj)
       this.isCreating = true
-      const res = await createHelmEnvAPI(projectName, payload).catch(
-        err => {
-          console.log(err)
-          this.isCreating = false
-        }
-      )
+      const res = await createHelmEnvAPI(projectName, payload).catch(err => {
+        console.log(err)
+        this.isCreating = false
+      })
       if (res) {
         this.sId = setTimeout(this.checkEnvStatus, 0)
       }
     },
     async checkEnvStatus () {
-      const res = await getEnvironmentsAPI(this.projectName).catch(
-        err => {
-          console.log(err)
-          if (this.sId) this.sId = setTimeout(this.checkEnvStatus, 2000)
-        }
-      )
+      const res = await getEnvironmentsAPI(this.projectName).catch(err => {
+        console.log(err)
+        if (this.sId) this.sId = setTimeout(this.checkEnvStatus, 2000)
+      })
       if (res) {
         this.createRes = res
         const notValid = res.filter(r => r.status === 'creating')
@@ -180,7 +226,8 @@ export default {
         this.envInfos.push({
           envName: newTabName,
           isEdit: true,
-          initName: newTabName
+          initName: newTabName,
+          infos: { clusterID: '', registry_id: '' }
         })
         setTimeout(() => {
           this.activeName = newTabName
@@ -192,6 +239,19 @@ export default {
           this.activeName = this.envInfos[0] ? this.envInfos[0].envName : ''
         }
       }
+    },
+    getClusterAndRegistry () {
+      getClusterListAPI(this.projectName).then(res => {
+        this.allCluster = res.filter(element => {
+          return element.status === 'normal'
+        })
+        this.defaultInfo.clusterID =
+          this.allCluster.find(cluster => cluster.local).id || ''
+      })
+      getRegistryWhenBuildAPI(this.projectName).then(res => {
+        this.imageRegistry = res
+        this.defaultInfo.registry_id = res.find(reg => reg.is_default).id || ''
+      })
     }
   },
   computed: {
@@ -203,6 +263,16 @@ export default {
     },
     canHandle () {
       return !this.isCreating && this.cantNext
+    },
+    currentInfo () {
+      if (this.activeName === 'addNew') {
+        return {}
+      }
+      const activeName = this.activeName
+      const info = this.envInfos.find(info => info.initName === activeName).infos
+      info.clusterID = info.clusterID || this.defaultInfo.clusterID
+      info.registry_id = info.registry_id || this.defaultInfo.registry_id
+      return info
     }
   },
   created () {
@@ -219,6 +289,7 @@ export default {
       routerList: []
     })
     this.getProducts()
+    this.getClusterAndRegistry()
   },
   beforeDestroy () {
     this.sId = null

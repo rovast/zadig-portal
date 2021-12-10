@@ -19,6 +19,12 @@
                  plain
                  size="small"
                  icon="el-icon-search">搜索</el-button>
+      <el-button type="primary"
+                 @click="$router.push(`${$route.path}/create?deployType=${deployType}`)"
+                 size="small"
+                 v-if="deployType === 'helm'">
+        创建版本
+      </el-button>
     </div>
     <el-table :data="versionList"
               v-show="versionList.length > 0"
@@ -27,7 +33,7 @@
         <template slot-scope="scope">
           <span class="version-link">
             <router-link
-                         :to="`/v1/delivery/version/${projectName}/${scope.row.versionInfo.id}?version=${scope.row.versionInfo.version}`">{{
+                         :to="`/v1/delivery/version/${projectName}/${scope.row.versionInfo.id}?deployType=${deployType}&version=${scope.row.versionInfo.version}`">{{
               scope.row.versionInfo.version }}</router-link>
           </span>
         </template>
@@ -113,7 +119,7 @@ export default {
       this.loading = true
       const projectName = this.projectName
       const selectedService = this.selectedService
-      getVersionListAPI('', projectName, '', selectedService).then((res) => {
+      getVersionListAPI('', projectName, '', selectedService, 'brief').then((res) => {
         this.versionList = res
         this.loading = false
       }).catch((err) => {
@@ -130,6 +136,9 @@ export default {
   computed: {
     projectName () {
       return this.$route.params.project_name
+    },
+    deployType () {
+      return this.$route.query.deployType
     }
   },
   watch: {

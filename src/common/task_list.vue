@@ -182,7 +182,7 @@ export default {
       return env_name
     },
     getRepo (row) {
-      const buildStage = row.stages.find(stage => { console.log(stage); return stage.type === 'buildv2' })
+      const buildStage = row.stages.find(stage => stage.type === 'buildv2')
       if (!buildStage) {
         return []
       }

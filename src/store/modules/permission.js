@@ -1,4 +1,4 @@
-import * as types from '../mutations'
+// import * as types from '../mutations'
 
 const state = {
   permissionList: {

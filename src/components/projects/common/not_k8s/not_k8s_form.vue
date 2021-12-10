@@ -1413,7 +1413,7 @@ export default {
         this.builds = res
       })
       if (!this.isEdit) {
-        listProductAPI('', projectName).then(res => {
+        listProductAPI(projectName).then(res => {
           res.forEach(element => {
             if (element.projectName === this.projectName) {
               this.pmService.env_configs.push({
@@ -1461,7 +1461,7 @@ export default {
         const projectName = this.projectName
         const env_configs = []
         const envNameList = []
-        const resList = await listProductAPI('', projectName).catch(error => console.log(error))
+        const resList = await listProductAPI(projectName).catch(error => console.log(error))
         if (resList) {
           resList.forEach(element => {
             if (element.product_name === this.projectName) {

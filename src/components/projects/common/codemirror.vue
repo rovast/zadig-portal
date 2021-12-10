@@ -29,6 +29,11 @@ export default {
     },
     cmOption: { type: Object, default: () => { return {} } }
   },
+  computed: {
+    options () {
+      return Object.assign({}, options, this.cmOption)
+    }
+  },
   methods: {
     handleInput: debounce(function (code) {
       this.$emit('input', code)
@@ -43,9 +48,6 @@ export default {
   components: {
     codemirror
   },
-  created () {
-    this.options = Object.assign({}, options, this.cmOption)
-  },
   mounted () {
     this.$refs.cmEditor.codemirror.focus()
   }
@@ -57,7 +59,7 @@ export default {
   height: 100%;
 
   .codemirror {
-    height: 100%;
+    height: calc(~'100% + 5px');
     margin: -5px;
 
     /deep/.CodeMirror {

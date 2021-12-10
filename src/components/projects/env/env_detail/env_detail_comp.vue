@@ -896,7 +896,7 @@ export default {
     },
     async getEnvNameList () {
       const projectName = this.projectName
-      const envNameList = await listProductAPI('', projectName)
+      const envNameList = await listProductAPI(projectName)
       envNameList.forEach(element => {
         element.envName = element.name
       })

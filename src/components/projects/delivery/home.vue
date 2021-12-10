@@ -1,12 +1,12 @@
 <template>
-  <div class="insight-home"
-       v-loading="loading"
-       element-loading-text="加载中..."
-       element-loading-spinner="iconfont iconfont-loading iconjiaofu">
-    <div class="no-show"
-         v-if="loading || productNames.length===0">
-      <img src="@assets/icons/illustration/version_manage.svg"
-           alt="" />
+  <div
+    class="insight-home"
+    v-loading="loading"
+    element-loading-text="加载中..."
+    element-loading-spinner="iconfont iconfont-loading iconjiaofu"
+  >
+    <div class="no-show" v-if="loading || routerList.length===0">
+      <img src="@assets/icons/illustration/version_manage.svg" alt />
       <p v-if="!loading">没有版本管理信息</p>
     </div>
     <router-view></router-view>
@@ -19,41 +19,48 @@ export default {
   data () {
     return {
       loading: true,
-      productNames: []
+      routerList: []
     }
   },
   methods: {
     getVersionProductList () {
-      getVersionProductListAPI().then((res) => {
-        this.loading = false
-        this.productNames = res.map(item => item.name)
-        if (this.productNames.length === 0) {
-          return
-        } else {
-          const routerList = this.productNames.map(item => {
+      getVersionProductListAPI()
+        .then(res => {
+          this.loading = false
+          const productNames = res.map(item => {
             return {
-              name: item,
-              url: `/v1/delivery/version/${item}`
+              name: item.name,
+              deployType: item.deployType
             }
           })
-          bus.$emit(`set-sub-sidebar-title`, {
-            title: '项目列表',
-            routerList: routerList
-          })
-        }
-        if (!this.$route.params.project_name) {
-          this.$router.replace(`/v1/delivery/version/${this.productNames[0]}`)
-        }
-      }).catch(() => {
-        this.$message.error('获取项目信息出错！')
-        this.$router.go(-1)
-      })
+          if (productNames.length === 0) {
+            return
+          } else {
+            this.routerList = productNames.map(item => {
+              return {
+                ...item,
+                url: `/v1/delivery/version/${item.name}?deployType=${item.deployType}`
+              }
+            })
+            bus.$emit(`set-sub-sidebar-title`, {
+              title: '项目列表',
+              routerList: this.routerList
+            })
+          }
+          if (!this.$route.params.project_name) {
+            this.$router.replace(this.routerList[0].url)
+          }
+        })
+        .catch(() => {
+          this.$message.error('获取项目信息出错！')
+          this.$router.go(-1)
+        })
     }
   },
   watch: {
     $route (to, from) {
-      if (!to.params.project_name && this.productNames.length > 0) {
-        this.$router.replace(`/v1/delivery/version/${this.productNames[0]}`)
+      if (!to.params.project_name && this.routerList.length > 0) {
+        this.$router.replace(this.routerList[0].url)
       }
     }
   },

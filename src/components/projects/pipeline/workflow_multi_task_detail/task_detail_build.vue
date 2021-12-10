@@ -297,7 +297,7 @@ export default {
       el.overflow = 'auto'
     },
     openBuildLog (buildType) {
-      let url = `/api/aslan/logs/sse/workflow/build/${this.pipelineName}/${this.taskID}/999999/${this.serviceName}?subTask=${buildType}`
+      let url = `/api/aslan/logs/sse/workflow/build/${this.pipelineName}/${this.taskID}/999999/${this.serviceName}?subTask=${buildType}&projectName=${this.projectName}`
       if (this.serviceType === 'pm') {
         url = `/api/aslan/logs/sse/workflow/build/${this.pipelineName}/${this.taskID}/999999/${this.serviceName}?subTask=buildv2&envName=${this.envName}&projectName=${this.projectName}`
       }

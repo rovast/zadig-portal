@@ -788,6 +788,7 @@ export default {
     },
     fetchAllData () {
       try {
+        this.editImageRegistry = false
         this.initPageInfo()
         this.getEnvNameList()
         this.getEnvServices()

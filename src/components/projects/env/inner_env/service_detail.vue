@@ -790,7 +790,7 @@ export default {
       })
     },
     getEnvInfo () {
-      listProductAPI('', this.projectName).then(res => {
+      listProductAPI(this.projectName).then(res => {
         this.registryId = res.find(re => re.name === this.envName).registry_id || ''
       })
     }

@@ -926,7 +926,7 @@ export function deleteStorageAPI (id) {
 }
 
 // Cluster
-export function getClusterListAPI (projectName) {
+export function getClusterListAPI (projectName = '') {
   return http.get(`/api/aslan/cluster/clusters?projectName=${projectName}`)
 }
 
@@ -948,6 +948,10 @@ export function disconnectClusterAPI (id) {
 
 export function deleteClusterAPI (id) {
   return http.delete(`/api/aslan/cluster/clusters/${id}`)
+}
+
+export function getClusterNodeInfo (clusterId = '') {
+  return http.get(`/api/aslan/environment/kube/nodes?clusterId=${clusterId}`)
 }
 
 // Host

@@ -13,6 +13,7 @@
                   :recentFailID="workflow.recentFailedTask?`#${workflow.recentFailedTask.taskID}`:'-'"
                   :recentFailLink="makeTaskDetailLink(workflow.projectName,workflow.recentFailedTask)"
                   :updateTime="$utils.convertTimestamp(workflow.update_time)"
+                  :description="workflow.description"
                   @refreshWorkflow="refreshWorkflow">
       <section slot="more"
                class="stages">

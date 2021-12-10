@@ -28,6 +28,12 @@
         <el-form-item label="创建方式" prop="source">
           <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
             <el-option label="系统创建" value="system"></el-option>
+            <el-option label="复制环境" value="copy"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="projectConfig.source === 'copy'" label="复制环境" prop="baseEnvName">
+          <el-select class="select" @change="changeBaseEnv" v-model="projectConfig.baseEnvName" size="small" placeholder="请选择复制的环境名称">
+            <el-option v-for="name in projectEnvNames" :key="name" :label="name" :value="name"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="集群：" prop="cluster_id">
@@ -42,7 +48,14 @@
         <div slot="header" class="clearfix">
           <span class="second-title">Chart (HELM 部署)</span>
         </div>
-        <HelmEnvTemplate class="chart-value" ref="helmEnvTemplateRef" :chartNames="chartNames" :envScene="`createEnv`"></HelmEnvTemplate>
+        <HelmEnvTemplate
+          class="chart-value"
+          ref="helmEnvTemplateRef"
+          :chartNames="chartNames"
+          :envNames="envNames"
+          :handledEnv="envName"
+          :envScene="envScene"
+        ></HelmEnvTemplate>
       </el-card>
       <el-form label-width="200px" class="ops">
         <el-form-item>
@@ -82,10 +95,11 @@ import {
   initProductAPI,
   getClusterListAPI,
   getSingleProjectAPI,
-  createHelmEnvAPI
+  createHelmEnvAPI,
+  getEnvironmentsAPI
 } from '@api'
 import bus from '@utils/event_bus'
-import { uniq } from 'lodash'
+import { uniq, cloneDeep } from 'lodash'
 import HelmEnvTemplate from './env_detail/components/updateHelmEnvTemp.vue'
 
 const validateEnvName = (rule, value, callback) => {
@@ -108,6 +122,7 @@ export default {
         cluster_id: '',
         env_name: '',
         source: 'system',
+        baseEnvName: '',
         namespace: '',
         defaultNamespace: '',
         isPublic: true
@@ -124,6 +139,9 @@ export default {
         source: [
           { required: true, trigger: 'change', message: '请选择环境类型' }
         ],
+        baseEnvName: [
+          { required: true, trigger: 'change', message: '请选择复制的环境名称' }
+        ],
         namespace: [
           { required: true, trigger: 'change', message: '请选择命名空间' }
         ],
@@ -134,7 +152,12 @@ export default {
           { required: true, trigger: 'change', validator: validateEnvName }
         ]
       },
-      chartNames: []
+      projectEnvNames: [],
+      projectChartNames: [],
+      chartNames: null,
+      envNames: [],
+      envName: '',
+      envScene: 'createEnv' // updateRenderSet
     }
   },
 
@@ -166,7 +189,7 @@ export default {
       this.loading = true
       const template = await initProductAPI(this.projectName, this.isStcov)
       this.loading = false
-      this.chartNames = template.chart_infos
+      this.projectChartNames = template.chart_infos
         ? template.chart_infos.map(chart => {
           return {
             serviceName: chart.service_name,
@@ -175,7 +198,7 @@ export default {
           }
         })
         : []
-
+      this.chartNames = this.projectChartNames
       this.projectConfig.source = 'system'
       for (const group of template.services) {
         group.sort((a, b) => {
@@ -208,7 +231,25 @@ export default {
       })
     },
     changeCreateMethod () {
-      // this.getTemplateAndImg()
+      const source = this.projectConfig.source
+      if (source === 'system') {
+        this.chartNames = this.projectChartNames
+        this.envNames = []
+        this.envName = ''
+        this.envScene = 'createEnv'
+        // this.getTemplateAndImg()
+      } else if (source === 'copy') {
+        if (!this.projectConfig.baseEnvName) {
+          this.projectConfig.baseEnvName = this.projectEnvNames[0]
+        }
+        this.changeBaseEnv()
+      }
+    },
+    changeBaseEnv () {
+      this.chartNames = null
+      this.envNames = [this.projectConfig.baseEnvName]
+      this.envName = this.projectConfig.baseEnvName
+      this.envScene = 'updateRenderSet'
     },
     async deployHelmEnv () {
       const res = await this.$refs.helmEnvTemplateRef.validate().catch(err => {
@@ -219,16 +260,27 @@ export default {
       }
       this.$refs['create-env-ref'].validate(valid => {
         if (valid) {
-          const valueInfo = this.$refs.helmEnvTemplateRef.getAllInfo()
+          const valueInfo = cloneDeep(this.$refs.helmEnvTemplateRef.getAllInfo())
+
+          const isCopy = this.projectConfig.source === 'copy'
+          const baseEnvName = this.projectConfig.baseEnvName
+          if (isCopy) {
+            valueInfo.chartInfo.forEach(info => {
+              info.envName = ''
+            })
+          }
+          const defaultEnv = isCopy ? baseEnvName : 'DEFAULT'
           const payload = {
             envName: this.projectConfig.env_name,
             clusterID: this.projectConfig.cluster_id,
+            baseEnvName: isCopy ? baseEnvName : '',
             chartValues: valueInfo.chartInfo,
-            defaultValues: valueInfo.envInfo.DEFAULT || '',
+            defaultValues: valueInfo.envInfo[defaultEnv] || '',
             namespace: this.projectConfig.defaultNamespace
           }
+          const scene = isCopy ? 'copy' : ''
           this.startDeployLoading = true
-          createHelmEnvAPI(this.projectConfig.product_name, [payload]).then(
+          createHelmEnvAPI(this.projectConfig.product_name, [payload], scene).then(
             res => {
               const envName = payload.envName
               this.startDeployLoading = false
@@ -245,6 +297,11 @@ export default {
             }
           )
         }
+      })
+    },
+    getEnvNames () {
+      getEnvironmentsAPI(this.projectName).then(res => {
+        this.projectEnvNames = res.map(re => re.name)
       })
     }
   },
@@ -265,6 +322,7 @@ export default {
     this.getTemplateAndImg()
     this.checkProjectFeature()
     this.getCluster()
+    this.getEnvNames()
   },
   components: {
     HelmEnvTemplate

@@ -44,7 +44,7 @@
       </el-form>
 
       <div style="color: rgb(153, 153, 153); font-size: 16px; line-height: 20px;">服务列表</div>
-      <el-card v-if="!$utils.isEmpty(helmServiceMap)" class="box-card-service" :body-style="{padding: '0px'}">
+      <el-card class="box-card-service" :body-style="{padding: '0px'}">
         <div slot="header" class="clearfix">
           <span class="second-title">Chart (HELM 部署)</span>
         </div>
@@ -91,7 +91,6 @@
 
 <script>
 import {
-  imagesAPI,
   initProductAPI,
   getClusterListAPI,
   getSingleProjectAPI,
@@ -99,7 +98,7 @@ import {
   getEnvironmentsAPI
 } from '@api'
 import bus from '@utils/event_bus'
-import { uniq, cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash'
 import HelmEnvTemplate from './env_detail/components/updateHelmEnvTemp.vue'
 
 const validateEnvName = (rule, value, callback) => {
@@ -131,7 +130,6 @@ export default {
       allCluster: [],
       startDeployLoading: false,
       loading: false,
-      helmServiceMap: {},
       rules: {
         cluster_id: [
           { required: true, trigger: 'change', message: '请选择集群' }
@@ -166,7 +164,7 @@ export default {
       return this.$route.params.project_name
     },
     showEmptyServiceModal () {
-      return this.$utils.isEmpty(this.helmServiceMap)
+      return this.projectChartNames.length === 0
     }
   },
   methods: {
@@ -200,35 +198,6 @@ export default {
         : []
       this.chartNames = this.projectChartNames
       this.projectConfig.source = 'system'
-      for (const group of template.services) {
-        group.sort((a, b) => {
-          if (a.service_name !== b.service_name) {
-            return a.service_name.charCodeAt(0) - b.service_name.charCodeAt(0)
-          }
-          if (a.type === 'k8s' || b.type === 'k8s') {
-            return a.type === 'k8s' ? 1 : -1
-          }
-          return 0
-        })
-      }
-      const helmServiceMap = {}
-      const containerNames = []
-      for (const group of template.services) {
-        for (const ser of group) {
-          helmServiceMap[ser.service_name] =
-            helmServiceMap[ser.service_name] || {}
-          helmServiceMap[ser.service_name][ser.type] = ser
-        }
-      }
-      this.projectConfig.services = template.services
-      this.helmServiceMap = helmServiceMap
-      imagesAPI(uniq(containerNames)).then(images => {
-        if (images) {
-          for (const image of images) {
-            image.full = `${image.host}/${image.owner}/${image.name}:${image.tag}`
-          }
-        }
-      })
     },
     changeCreateMethod () {
       const source = this.projectConfig.source
@@ -260,7 +229,9 @@ export default {
       }
       this.$refs['create-env-ref'].validate(valid => {
         if (valid) {
-          const valueInfo = cloneDeep(this.$refs.helmEnvTemplateRef.getAllInfo())
+          const valueInfo = cloneDeep(
+            this.$refs.helmEnvTemplateRef.getAllInfo()
+          )
 
           const isCopy = this.projectConfig.source === 'copy'
           const baseEnvName = this.projectConfig.baseEnvName
@@ -278,9 +249,12 @@ export default {
             defaultValues: valueInfo.envInfo[defaultEnv] || '',
             namespace: this.projectConfig.defaultNamespace
           }
-          const scene = isCopy ? 'copy' : ''
           this.startDeployLoading = true
-          createHelmEnvAPI(this.projectConfig.product_name, [payload], scene).then(
+          createHelmEnvAPI(
+            this.projectConfig.product_name,
+            [payload],
+            isCopy ? 'copy' : ''
+          ).then(
             res => {
               const envName = payload.envName
               this.startDeployLoading = false

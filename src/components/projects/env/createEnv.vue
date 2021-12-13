@@ -2,8 +2,8 @@
     <component :is="currentComponents" />
 </template>
 <script>
-import CreatHostEnv from './hostEnv/creatHostEnv.vue'
-import CreatEnvDetail from './inner_env/create_env_detail.vue'
+import CreateHostEnv from './hostEnv/createHostEnv.vue'
+import CreateEnvDetail from './inner_env/create_env_detail.vue'
 import CreateHelmEnv from './createHelmEnv.vue'
 import { getSingleProjectAPI } from '@/api'
 
@@ -21,14 +21,14 @@ export default {
       const feature = this.projectInfo.product_feature
       if (feature) {
         if (feature.create_env_type === 'external') {
-          this.currentComponents = CreatHostEnv
+          this.currentComponents = CreateHostEnv
         } else if (feature.deploy_type === 'helm') {
           this.currentComponents = CreateHelmEnv
         } else {
-          this.currentComponents = CreatEnvDetail
+          this.currentComponents = CreateEnvDetail
         }// Compatible with old project
       } else {
-        this.currentComponents = CreatEnvDetail
+        this.currentComponents = CreateEnvDetail
       }
     }
   },

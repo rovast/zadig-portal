@@ -192,7 +192,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <BuildEnv :pre_build="buildConfig.pre_build" :isCreate="isCreate"></BuildEnv>
+          <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="isCreate"></BuildEnv>
         </el-form>
 
         <el-form ref="buildApp"
@@ -716,7 +716,8 @@ export default {
         ]
       },
       validObj: new ValidateSubmit(),
-      saveLoading: false
+      saveLoading: false,
+      configDataLoading: true
     }
   },
   methods: {
@@ -941,6 +942,7 @@ export default {
       }
     },
     async loadPage () {
+      this.configDataLoading = true
       const projectName = this.projectName
       if (!this.isCreate) {
         const buildConfig = await getBuildConfigDetailAPI(this.buildConfigName, this.projectName).catch(error => console.log(error))
@@ -987,6 +989,7 @@ export default {
           })
         })
       }
+      this.configDataLoading = false
       getAllAppsAPI().then((response) => {
         const apps = this.$utils.sortVersion(response, 'name', 'asc')
         this.allApps = apps.map((app, index) => {

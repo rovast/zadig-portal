@@ -201,7 +201,7 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <BuildEnv :pre_build="buildConfig.pre_build" :isCreate="!isEdit" mini></BuildEnv>
+            <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit" mini></BuildEnv>
           </el-form>
           <el-form
             ref="buildApp"
@@ -959,7 +959,8 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      configDataLoading: true
     }
   },
   methods: {
@@ -1239,6 +1240,7 @@ export default {
       }
     },
     async loadPage () {
+      this.configDataLoading = true
       const projectName = this.projectName
       this.$set(this.buildConfig, 'name', this.projectName + '-build-' + this.name)
       this.$set(this.jenkinsBuild, 'name', this.projectName + '-build-' + this.name)
@@ -1250,40 +1252,40 @@ export default {
         })
       }
       if (this.isEdit) {
-        getBuildConfigDetailAPI(
+        const response = await getBuildConfigDetailAPI(
           this.buildName,
           this.projectName
-        ).then((response) => {
-          response.pre_build.installs.forEach((element) => {
-            element.id = element.name + element.version
-          })
-          this.buildConfig = response
-          if (this.buildConfig.source) {
-            this.source = this.buildConfig.source
-            if (this.source === 'jenkins') {
-              this.jenkinsBuild = response
-            }
-          }
+        ).catch(error => console.log(error))
 
-          const targets = this.buildConfig.targets.map(element => {
-            element.key = element.service_name + '/' + element.service_module
-            return element
-          })
-          this.buildConfig.targets = targets
-          this.jenkinsBuild.targets = targets
-
-          this.serviceTargets = this.serviceTargets.concat(this.buildConfig.targets)
-
-          if (this.buildConfig.post_build.docker_build) {
-            this.docker_enabled = true
-            if (this.buildConfig.post_build.docker_build.template_id) {
-              this.getDockerfileTemplate(this.buildConfig.post_build.docker_build.template_id)
-            }
-          }
-          if (this.buildConfig.post_build.file_archive) {
-            this.binary_enabled = true
-          }
+        response.pre_build.installs.forEach((element) => {
+          element.id = element.name + element.version
         })
+        this.buildConfig = response
+        if (this.buildConfig.source) {
+          this.source = this.buildConfig.source
+          if (this.source === 'jenkins') {
+            this.jenkinsBuild = response
+          }
+        }
+
+        const targets = this.buildConfig.targets.map(element => {
+          element.key = element.service_name + '/' + element.service_module
+          return element
+        })
+        this.buildConfig.targets = targets
+        this.jenkinsBuild.targets = targets
+
+        this.serviceTargets = this.serviceTargets.concat(this.buildConfig.targets)
+
+        if (this.buildConfig.post_build.docker_build) {
+          this.docker_enabled = true
+          if (this.buildConfig.post_build.docker_build.template_id) {
+            this.getDockerfileTemplate(this.buildConfig.post_build.docker_build.template_id)
+          }
+        }
+        if (this.buildConfig.post_build.file_archive) {
+          this.binary_enabled = true
+        }
       } else {
         const item = this.serviceTargets.find(
           (item) => item.service_module === this.name
@@ -1292,6 +1294,7 @@ export default {
         this.$set(this.buildConfig, 'targets', target)
         this.$set(this.jenkinsBuild, 'targets', target)
       }
+      this.configDataLoading = false
       getAllAppsAPI().then((response) => {
         const apps = this.$utils.sortVersion(response, 'name', 'asc')
         this.allApps = apps.map((app, index) => {

@@ -789,7 +789,7 @@ export default {
       }
     },
     getProjectEnvs () {
-      listProductAPI('', this.projectName).then(res => {
+      listProductAPI(this.projectName).then(res => {
         this.projectEnvs = res
       })
     },

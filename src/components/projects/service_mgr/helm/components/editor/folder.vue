@@ -123,7 +123,7 @@ export default {
         if (!data.txt) {
           const params = {
             projectName: this.$route.params.project_name,
-            service: data.service_name,
+            serviceName: data.service_name,
             path: data.parent,
             fileName: data.label
           }

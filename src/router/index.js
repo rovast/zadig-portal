@@ -558,6 +558,15 @@ const routes = [
             }
           },
           {
+            path: ':project_name/create',
+            component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/version/helm/create_version.vue'),
+            meta: {
+              requiresAuth: true,
+              requiresSuperAdmin: false,
+              title: '创建版本'
+            }
+          },
+          {
             path: ':project_name/:id',
             component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/version/detail.vue'),
             meta: {
@@ -728,6 +737,15 @@ const routes = [
           requiresAuth: true,
           requiresSuperAdmin: true,
           title: '对象存储'
+        }
+      },
+      {
+        path: 'helm',
+        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/helm/manage.vue'),
+        meta: {
+          requiresAuth: true,
+          requiresSuperAdmin: true,
+          title: 'HELM 仓库'
         }
       },
       {

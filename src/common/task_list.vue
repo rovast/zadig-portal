@@ -35,7 +35,21 @@
                        label="服务名称"
                        show-overflow-tooltip>
         <template slot-scope="{ row }">
-          <span>{{ row.build_services && row.build_services.length > 0 && row.build_services.slice().sort().join(', ') || 'N/A' }}</span>
+          <div v-for="(item,index) in getRepo(row)" :key="index">
+            <el-tooltip v-if="item.builds.length > 0" class="item" effect="light"  :open-delay="250" placement="right">
+              <div slot="content">
+                <div v-for="(build,buildIndex) in item.builds" :key="buildIndex">
+                  <span v-if="build.repo_name">{{build.repo_name }}</span>
+                  <span v-if="build.tag">Tag-{{build.tag }}</span>
+                  <span v-if="build.branch">Branch-{{ build.branch }}</span>
+                  <span v-if="build.pr">PR-{{ build.pr }}</span>
+                  <span v-if="build.commit_id">{{build.commit_id.substring(0, 7)}}</span>
+                </div>
+              </div>
+              <span class="service-name pointer">{{item.service_name}}</span>
+            </el-tooltip>
+             <span v-else class="service-name">{{item.service_name}}</span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column width="120"
@@ -150,6 +164,7 @@
 <script>
 import { wordTranslate } from '@utils/word_translate.js'
 import moment from 'moment'
+import { get, orderBy } from 'lodash'
 export default {
   data () {
     return {
@@ -165,6 +180,19 @@ export default {
         }
       })
       return env_name
+    },
+    getRepo (row) {
+      const buildStage = row.stages.find(stage => stage.type === 'buildv2')
+      if (!buildStage) {
+        return []
+      }
+      const buildStageArray = this.$utils.mapToArray(buildStage.sub_tasks, 'service_name').map((element) => {
+        return {
+          service_name: element.service_name,
+          builds: get(element, 'job_ctx.builds', '')
+        }
+      })
+      return orderBy(buildStageArray, ['service_name'], ['asc'])
     },
     convertTimestamp (value) {
       return moment.unix(value).format('MM-DD HH:mm')
@@ -259,5 +287,16 @@ export default {
 .pagination {
   display: flex;
   justify-content: center;
+}
+
+.task-list-container {
+  .service-name {
+    color: #000;
+    font-weight: 500;
+
+    &.pointer {
+      cursor: pointer;
+    }
+  }
 }
 </style>

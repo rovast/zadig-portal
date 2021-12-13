@@ -48,18 +48,24 @@
         </el-form-item>
         <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="集群：" prop="cluster_id">
           <el-select class="select" filterable @change="changeCluster" v-model="projectConfig.cluster_id" size="small" placeholder="请选择集群">
-            <el-option
-              v-for="cluster in allCluster"
-              :key="cluster.id"
-              :label="$utils.showClusterName(cluster)"
-              :value="cluster.id"
-            ></el-option>
+            <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="projectConfig.source==='external'" label="命名空间" prop="namespace">
           <el-select class="select" v-model.trim="projectConfig.namespace" size="small" placeholder="请选择命名空间" allow-create filterable>
             <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns.name" :value="ns.name"></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库" prop="registry_id">
+          <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small" @change="getImages">
+            <el-option
+              v-for="registry in imageRegistry"
+              :key="registry.id"
+              :label="`${registry.reg_addr}/${registry.namespace}`"
+              :value="registry.id"
+            ></el-option>
+          </el-select>
+          <div v-if="deployType==='helm'" class="image-secret">imagePullSecret 名称：default-registry-secret</div>
         </el-form-item>
       </el-form>
 
@@ -169,7 +175,14 @@
                   </div>
                   <i class="el-icon-info"></i>
                 </el-tooltip>
-                <el-select :disabled="rollbackMode" size="small" class="img-select" v-model="quickSelection" placeholder="请选择">
+                <el-select
+                  :disabled="rollbackMode"
+                  size="small"
+                  class="img-select"
+                  v-model="quickSelection"
+                  placeholder="请选择"
+                  @change="quickInitImage"
+                >
                   <el-option label="全容器-智能选择镜像" value="latest"></el-option>
                   <el-option label="全容器-全部默认镜像" value="default"></el-option>
                 </el-select>
@@ -278,7 +291,8 @@ import {
   createProductAPI,
   getSingleProjectAPI,
   getHostListAPI,
-  createHelmEnvAPI
+  createHelmEnvAPI,
+  getRegistryWhenBuildAPI
 } from '@api'
 import bus from '@utils/event_bus'
 import { uniq, cloneDeep } from 'lodash'
@@ -323,7 +337,8 @@ export default {
         vars: [],
         revision: null,
         isPublic: true,
-        roleIds: []
+        roleIds: [],
+        registry_id: ''
       },
       projectInfo: {},
       hostingNamespace: [],
@@ -347,6 +362,13 @@ export default {
         ],
         namespace: [
           { required: true, trigger: 'change', message: '请选择命名空间' }
+        ],
+        registry_id: [
+          {
+            required: true,
+            trigger: ['change', 'blur'],
+            message: '请选择镜像仓库'
+          }
         ],
         defaultNamespace: [
           { required: true, trigger: 'change', message: '命名空间不能为空' }
@@ -388,7 +410,9 @@ export default {
           }
         ]
       },
-      chartNames: []
+      chartNames: [],
+      imageRegistry: [],
+      containerNames: []
     }
   },
 
@@ -428,12 +452,19 @@ export default {
     async getCluster () {
       const projectName = this.projectName
       const res = await getClusterListAPI(projectName)
+      const cluster_id = this.projectConfig.cluster_id
       if (!this.rollbackMode) {
         this.allCluster = res.filter(element => {
+          if (element.local && !cluster_id) {
+            this.projectConfig.cluster_id = element.id
+          }
           return element.status === 'normal'
         })
       } else if (this.rollbackMode) {
         this.allCluster = res.filter(element => {
+          if (element.local && !cluster_id) {
+            this.projectConfig.cluster_id = element.id
+          }
           return element.status === 'normal' && !element.production
         })
       }
@@ -574,17 +605,24 @@ export default {
       this.containerMap = containerMap
       this.pmServiceMap = pmServiceMap
       this.helmServiceMap = helmServiceMap
-      imagesAPI(uniq(containerNames)).then(images => {
-        if (images) {
-          for (const image of images) {
-            image.full = `${image.host}/${image.owner}/${image.name}:${image.tag}`
-          }
-          this.imageMap = this.makeMapOfArray(images, 'name')
-          if (!this.rollbackMode) {
-            this.quickSelection = 'latest'
+      this.containerNames = uniq(containerNames)
+      this.getImages()
+    },
+    getImages () {
+      imagesAPI(this.containerNames, this.projectConfig.registry_id || '').then(
+        images => {
+          if (images) {
+            for (const image of images) {
+              image.full = `${image.host}/${image.owner}/${image.name}:${image.tag}`
+            }
+            this.imageMap = this.makeMapOfArray(images, 'name')
+            if (!this.rollbackMode) {
+              this.quickSelection = 'latest'
+              this.quickInitImage()
+            }
           }
         }
-      })
+      )
     },
     makeMapOfArray (arr, namePropName) {
       const map = {}
@@ -774,7 +812,7 @@ export default {
           const envType = 'test'
           this.startDeployLoading = true
           function sleep (time) {
-            return new Promise((resolve) => setTimeout(resolve, time))
+            return new Promise(resolve => setTimeout(resolve, time))
           }
           createProductAPI(payload, envType).then(
             res => {
@@ -812,14 +850,13 @@ export default {
           const payload = {
             envName: this.projectConfig.env_name,
             clusterID: this.projectConfig.cluster_id,
+            registry_id: this.projectConfig.registry_id,
             chartValues: valueInfo.chartInfo,
             defaultValues: valueInfo.envInfo.DEFAULT || '',
             namespace: this.projectConfig.defaultNamespace
           }
           this.startDeployLoading = true
-          createHelmEnvAPI(this.projectConfig.product_name, [
-            payload
-          ]).then(
+          createHelmEnvAPI(this.projectConfig.product_name, [payload]).then(
             res => {
               const envName = payload.envName
               this.startDeployLoading = false
@@ -843,10 +880,9 @@ export default {
     },
     createHost () {
       this.$router('/v1/system/host')
-    }
-  },
-  watch: {
-    quickSelection (select) {
+    },
+    quickInitImage () {
+      const select = this.quickSelection
       for (const group of this.projectConfig.services) {
         for (const ser of group) {
           ser.picked =
@@ -885,11 +921,17 @@ export default {
     })
     this.getVersionList()
     this.projectConfig.product_name = this.projectName
-    this.getTemplateAndImg()
     this.checkProjectFeature()
     this.getCluster()
     getHostListAPI().then(res => {
       this.allHost = res
+    })
+    getRegistryWhenBuildAPI(this.projectName).then(res => {
+      this.imageRegistry = res
+      if (!this.projectConfig.registry_id) {
+        this.projectConfig.registry_id = res.find(reg => reg.is_default).id
+      }
+      this.getTemplateAndImg()
     })
   },
   components: {
@@ -905,6 +947,13 @@ export default {
   padding: 15px 20px;
   overflow: auto;
   font-size: 13px;
+
+  .image-secret {
+    margin-left: 3px;
+    color: #cdcfd4;
+    font-size: 12px;
+    line-height: 1.5;
+  }
 
   .helm-yaml-drawer {
     .el-drawer__header {

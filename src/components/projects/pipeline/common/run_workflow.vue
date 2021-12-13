@@ -37,6 +37,7 @@
         <span><i style="color: #909399;"
              class="el-icon-question"></i></span>
       </el-tooltip>
+      <div v-show="imageRegistryByEnv" class="show-image-info">镜像仓库：{{imageRegistryByEnv}}</div>
     </el-form-item>
 
     <div v-if="buildDeployEnabled"
@@ -171,7 +172,7 @@ import WorkflowTestRows from '@/components/common/workflow_test_rows.vue'
 import K8sArtifactDeploy from './k8sArtifactDeploy.vue'
 import PmArtifactDeploy from './pmArtifactDeploy.vue'
 import deployIcons from '@/components/common/deploy_icons'
-import { listProductAPI, precreateWorkflowTaskAPI, getAllBranchInfoAPI, runWorkflowAPI, getBuildTargetsAPI, getSingleProjectAPI } from '@api'
+import { listProductAPI, precreateWorkflowTaskAPI, getAllBranchInfoAPI, runWorkflowAPI, getBuildTargetsAPI, getSingleProjectAPI, getRegistryWhenBuildAPI } from '@api'
 
 export default {
   data () {
@@ -195,7 +196,8 @@ export default {
       startTaskLoading: false,
       fastSelect: false,
       isHelm: false,
-      isPm: false
+      isPm: false,
+      imageRegistry: []
     }
   },
   computed: {
@@ -306,6 +308,20 @@ export default {
     },
     showCreateVersion () {
       return !this.isHelm && !this.isPm
+    },
+    imageRegistryByEnv () {
+      if (!this.currentProjectEnvs.length || !this.runner.namespace) {
+        return
+      }
+      const namespace = this.runner.namespace
+      const registryId = this.currentProjectEnvs.find(env => env.name === namespace).registry_id
+      if (registryId) {
+        const registry = this.imageRegistry.find(registry => registry.id === registryId)
+        if (registry) {
+          return `${registry.reg_addr}/${registry.namespace}`
+        }
+      }
+      return ''
     }
   },
   watch: {
@@ -660,17 +676,23 @@ export default {
           return false
         }
       }
+    },
+    getRegistryInfo (projectName) {
+      getRegistryWhenBuildAPI(projectName).then(res => {
+        this.imageRegistry = res
+      })
     }
   },
   created () {
     const projectName = this.workflowMeta.product_tmpl_name
+    this.getRegistryInfo(projectName)
     if (this.buildDeployEnabled) {
       getBuildTargetsAPI(projectName).then(res => {
         this.buildTargets = res
       })
     }
-    listProductAPI('', projectName).then(res => {
-      // 生产环境升序，名称升序
+    listProductAPI(projectName).then(res => {
+      // product env ascending, name ascending
       this.currentProjectEnvs = orderBy(res, ['production', 'name'], ['asc', 'asc'])
       // 指定环境运行，匹配到则显示数据，匹配不到则由放开由用户选择
       if (this.workflowMeta.env_name && this.currentProjectEnvs.find(env => (env.projectName === this.workflowMeta.product_tmpl_name) && (env.name === this.workflowMeta.env_name))) {
@@ -758,6 +780,13 @@ export default {
   .start-task {
     margin-bottom: 10px;
     margin-left: 10px;
+  }
+
+  .show-image-info {
+    margin: 2px 0 -10px;
+    color: #b1b3b6;
+    font-size: 12px;
+    line-height: 1;
   }
 }
 </style>

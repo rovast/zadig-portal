@@ -60,12 +60,12 @@
                 <div class="grid-content">所属集群:</div>
               </el-col>
               <el-col :span="8">
-                <div v-if="productInfo.cluster_id"
+                <div v-if="productInfo.is_local"
+                     class="grid-content">本地集群</div>
+                <div v-else
                      class="grid-content">
                   {{productInfo.is_prod?productInfo.cluster_name+' (生产集群)':productInfo.cluster_name +' (测试集群)'}}
                 </div>
-                <div v-else
-                     class="grid-content">本地集群</div>
               </el-col>
             </template>
             <el-col :span="3">
@@ -88,6 +88,29 @@
             <el-col :span="8">
               <div class="grid-content">
                 {{getProdStatus(productInfo.status,productStatus.updatable)}}
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" v-if="envSource===''||envSource==='spock' || envSource==='helm'">
+            <el-col :span="3">
+              <div class="grid-content">镜像仓库:</div>
+            </el-col>
+            <el-col :span="16" class="image-registry">
+              <div v-if="editImageRegistry === false">
+                <span>{{imageRegistryDesc}}</span>
+                <i class="icon el-icon-edit icon-primary" @click="editImageRegistry = true"></i>
+              </div>
+              <div v-else>
+                <el-select v-model="productInfo.editRegistryID" size="mini">
+                  <el-option
+                    v-for="registry in imageRegistry"
+                    :key="registry.id"
+                    :label="`${registry.reg_addr}/${registry.namespace}`"
+                    :value="registry.id">
+                  </el-option>
+                </el-select>
+                <i class="icon el-icon-circle-close icon-gray" @click="editEnvImageRegistry('cancel')">取消</i>
+                <i class="icon el-icon-circle-check icon-primary" @click="editEnvImageRegistry('update')">保存</i>
               </div>
             </el-col>
           </el-row>
@@ -514,7 +537,8 @@
 import { getProductStatus, serviceTypeMap } from '@utils/word_translate'
 import {
   envRevisionsAPI, productEnvInfoAPI, productServicesAPI, serviceTemplateAfterRenderAPI, listProductAPI,
-  updateServiceAPI, updateK8sEnvAPI, restartPmServiceAPI, restartServiceOriginAPI, deleteProductEnvAPI, getSingleProjectAPI, getServicePipelineAPI, initSource, rmSource
+  updateServiceAPI, updateK8sEnvAPI, restartPmServiceAPI, restartServiceOriginAPI, deleteProductEnvAPI, getSingleProjectAPI, getServicePipelineAPI, initSource, rmSource,
+  getRegistryWhenBuildAPI, updateEnvImageRegistry
 } from '@api'
 import _ from 'lodash'
 import runWorkflow from './run_workflow.vue'
@@ -597,7 +621,9 @@ export default {
       perPage: 20,
       envTotal: 0,
       scrollGetFlag: true,
-      scrollFinish: false
+      scrollFinish: false,
+      editImageRegistry: false,
+      imageRegistry: []
     }
   },
   computed: {
@@ -652,9 +678,42 @@ export default {
           this.$router.push({ path: `${this.envBasePath}`, query: { envName: newValue } })
         }
       }
+    },
+    imageRegistryDesc () {
+      let findImage = ''
+      let defaultImage = ''
+      const registryId = this.productInfo.registry_id
+      this.imageRegistry.forEach(image => {
+        if (image.id === registryId) {
+          findImage = `${image.reg_addr}/${image.namespace}`
+        } else if (image.is_default) {
+          defaultImage = `${image.reg_addr}/${image.namespace}`
+        }
+      })
+      return findImage || defaultImage
     }
   },
   methods: {
+    async editEnvImageRegistry (flag) {
+      if (flag === 'cancel') {
+        this.productInfo.editRegistryID = this.productInfo.registry_id
+      } else if (flag === 'update') {
+        this.productInfo.registry_id = this.productInfo.editRegistryID
+        if (!this.productInfo.registry_id) {
+          this.$message.error(`不能更新镜像仓库为空`)
+          return
+        }
+        const payload = {
+          registry_id: this.productInfo.registry_id,
+          namespace: this.productInfo.namespace
+        }
+        const res = await updateEnvImageRegistry(this.projectName, this.envName, payload).catch(err => console.log(err))
+        if (res) {
+          this.$message.success(`环境默认镜像仓库更新成功`)
+        }
+      }
+      this.editImageRegistry = false
+    },
     editExternalConfig (product_info) {
       const params = {
         step: 1,
@@ -729,6 +788,7 @@ export default {
     },
     fetchAllData () {
       try {
+        this.editImageRegistry = false
         this.initPageInfo()
         this.getEnvNameList()
         this.getEnvServices()
@@ -826,6 +886,10 @@ export default {
       this.serviceLoading = true
       const envInfo = await productEnvInfoAPI(projectName, envName)
       if (envInfo) {
+        if (!envInfo.registry_id) {
+          envInfo.registry_id = ''
+        }
+        envInfo.editRegistryID = envInfo.registry_id
         this.productInfo = envInfo
         this.envLoading = false
         this.recycleDay = envInfo.recycle_day ? envInfo.recycle_day : undefined
@@ -833,7 +897,7 @@ export default {
     },
     async getEnvNameList () {
       const projectName = this.projectName
-      const envNameList = await listProductAPI('', projectName)
+      const envNameList = await listProductAPI(projectName)
       envNameList.forEach(element => {
         element.envName = element.name
       })
@@ -1184,6 +1248,11 @@ export default {
       return hostStrArray[0]
     }
   },
+  created () {
+    getRegistryWhenBuildAPI(this.projectName).then(res => {
+      this.imageRegistry = res
+    })
+  },
   beforeDestroy () {
     this.removeListener()
   },
@@ -1222,4 +1291,19 @@ export default {
 
 <style lang="less">
 @import "~@assets/css/component/env-detail.less";
+
+.image-registry {
+  .icon {
+    margin-left: 3px;
+    cursor: pointer;
+
+    &.icon-primary {
+      color: #409eff;
+    }
+
+    &.icon-gray {
+      color: #9ea3a9;
+    }
+  }
+}
 </style>

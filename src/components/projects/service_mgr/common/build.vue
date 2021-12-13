@@ -193,7 +193,7 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <BuildEnv :pre_build="buildConfig.pre_build"  :isCreate="!isEdit" mini></BuildEnv>
+            <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build"  :isCreate="!isEdit" mini></BuildEnv>
           </el-form>
           <el-form ref="buildApp"
                   :inline="true"
@@ -707,7 +707,8 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      configDataLoading: true
     }
   },
   methods: {
@@ -960,6 +961,7 @@ export default {
       }
     },
     async loadPage () {
+      this.configDataLoading = true
       const projectName = this.projectName
       if (this.isEdit) {
         const build = await getBuildConfigDetailAPI(this.buildConfigName, this.projectName).catch(error => console.log(error))
@@ -1026,6 +1028,7 @@ export default {
           }
         })
       }
+      this.configDataLoading = false
       if (this.buildAdd && !this.isEdit && this.buildServiceName) {
         this.$set(this.buildConfig, 'name', this.projectName + '-build-' + this.buildServiceName)
         this.$set(this.jenkinsBuild, 'name', this.projectName + '-build-' + this.buildServiceName)

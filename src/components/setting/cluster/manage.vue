@@ -31,9 +31,9 @@
       </el-dialog>
       <!--Cluster-access-dialog-->
 
-      <!--Cluster-create-dialog-->
-      <el-dialog title='添加集群'
-                 :visible.sync="dialogClusterCreateFormVisible"
+      <!--Cluster-dialog-->
+      <el-dialog :title="isEdit ? '修改集群': '添加集群'"
+                 :visible.sync="dialogClusterFormVisible"
                  custom-class="dialog-style"
                  :close-on-click-modal="false"
                  width="45%">
@@ -57,7 +57,7 @@
         <el-form ref="cluster"
                  :rules="rules"
                  label-width="120px"
-                 label-position="top"
+                 label-position="left"
                  :model="cluster">
           <el-form-item label="名称"
                         prop="name">
@@ -103,86 +103,55 @@
               <el-radio :label="false">否</el-radio>
             </el-radio-group>
           </el-form-item>
+          <div v-if="isEdit">
+            <el-button type="text" @click="advancedConfig">高级配置<i :class="{'el-icon-arrow-right': !cluster.advanced_config.strategy,'el-icon-arrow-down': cluster.advanced_config.strategy}"></i></el-button>
+            <div v-if="cluster.advanced_config.strategy">
+              <h4>调度策略</h4>
+              <el-form-item prop="advanced_config.strategy" required>
+                 <span slot="label">选择策略
+                  <el-tooltip effect="dark" placement="top-start">
+                    <div slot="content" style="line-height: 1.5;">
+                      <div>随机调度：工作流任务被随机调度到集群的可用节点上</div>
+                      <div>强制调度：工作流任务被强制调度到对应节点上，如果节点有问题，任务可能调度不成功</div>
+                      <div>优先调度：工作流任务被优先调度到对应节点上，如果节点有问题，会调度到其他可用节点上</div>
+                    </div>
+                    <i class="el-icon-question"></i>
+                  </el-tooltip>
+                </span>
+                <el-select v-model="cluster.advanced_config.strategy" placeholder="请选择策略" style="width: 100%;" size="small" required>
+                  <el-option label="随机调度" value="normal"></el-option>
+                  <el-option label="强制调度" value="required"></el-option>
+                  <el-option label="优先调度" value="preferred"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item v-if="cluster.advanced_config.strategy !== 'normal'"  prop="advanced_config.node_labels" label="选择标签">
+                <el-select v-model="cluster.advanced_config.node_labels" placeholder="请选择" multiple style="width: 100%;" size="small">
+                  <el-option v-for="node in clusterNodes.labels" :key="node" :label="node" :value="node"></el-option>
+                </el-select>
+                <span style="color: #e6a23c; font-size: 12px;" v-if="clusterNodes.labels.length == 0">请先在对应节点上打上标签</span>
+                <div class="list-host">
+                  <div v-for="host in  matchedHost" :key="host.ip">
+                    {{host.ip}} &nbsp;&nbsp;-&nbsp;&nbsp;
+                    <span :style="{color: host.ready ? '#67c23a' : '#f56c6c'}">{{host.ready ? 'Ready' : 'Not Ready'}}</span>
+                  </div>
+                </div>
+              </el-form-item>
+            </div>
+          </div>
+
         </el-form>
         <div slot="footer"
              class="dialog-footer">
           <el-button size="small"
-                     @click="dialogClusterCreateFormVisible = false">取 消</el-button>
+                     @click="dialogClusterFormVisible = false">取 消</el-button>
           <el-button :plain="true"
                      size="small"
                      type="success"
-                     @click="clusterOperation('add')">保存</el-button>
+                     @click="clusterOperation(isEdit ? 'update' : 'add')">保存</el-button>
         </div>
       </el-dialog>
-      <!--Cluster-create-dialog-->
+      <!--Cluster-dialog-->
 
-      <!--Cluster-edit-dialog-->
-      <el-dialog title='修改'
-                 :visible.sync="dialogClusterEditFormVisible"
-                 custom-class="dialog-style"
-                 :close-on-click-modal="false"
-                 width="35%">
-        <el-form ref="swapCluster"
-                 :rules="rules"
-                 label-width="120px"
-                 label-position="top"
-                 :model="swapCluster">
-          <el-form-item label="名称"
-                        prop="name">
-            <el-input size="small"
-                      v-model="swapCluster.name"
-                      placeholder="请输入集群名称"></el-input>
-          </el-form-item>
-          <el-form-item label="集群提供商"
-                        prop="provider">
-            <el-select v-model="swapCluster.provider"
-                       style="width: 100%;"
-                       size="small"
-                       placeholder="请选择集群提供商">
-              <el-option :value="1"
-                         label="阿里云 ACK">
-                <i class="iconfont iconaliyun"></i> <span>阿里云 ACK</span>
-              </el-option>
-
-              <el-option :value="2"
-                         label="腾讯云 TKE">
-                <i class="iconfont icontengxunyun"></i> <span>腾讯云 TKE</span>
-              </el-option>
-              <el-option :value="3"
-                         label="华为云 CCE">
-                <i class="iconfont iconhuawei"></i> <span>华为云 CCE</span>
-              </el-option>
-              <el-option :value="0"
-                         label="其它">
-                <i class="iconfont iconqita"></i> <span>其它</span>
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="描述"
-                        prop="description">
-            <el-input size="small"
-                      v-model="swapCluster.description"
-                      placeholder="请输入描述"></el-input>
-          </el-form-item>
-          <el-form-item label="生产集群"
-                        prop="production">
-            <el-radio-group v-model="swapCluster.production">
-              <el-radio :label="true">是</el-radio>
-              <el-radio :label="false">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-form>
-        <div slot="footer"
-             class="dialog-footer">
-          <el-button size="small"
-                     @click="dialogClusterEditFormVisible = false">取 消</el-button>
-          <el-button size="small"
-                     :plain="true"
-                     type="success"
-                     @click="clusterOperation('update')">保存</el-button>
-        </div>
-      </el-dialog>
-      <!--Cluster-edit-dialog-->
       <div class="section">
         <el-alert type="info"
                   :closable="false">
@@ -199,7 +168,7 @@
         <div class="sync-container">
           <el-button size="small"
                      :plain="true"
-                     @click="dialogClusterCreateFormVisible=true"
+                     @click="dialogClusterFormVisible=true"
                      type="success">新建</el-button>
         </div>
         <div class="cluster-list">
@@ -209,9 +178,9 @@
                       :row-class-name="tableRowClassName">
               <el-table-column label="名称">
                 <template slot-scope="scope">
-                  <i v-if="scope.row.name ==='local'" class="iconfont iconk8s"></i>
+                  <i v-if="scope.row.local" class="iconfont iconk8s"></i>
                   <i v-else :class="getProviderMap(scope.row.provider,'icon')"></i>
-                  <span v-if="scope.row.name ==='local'">本地集群（local）</span>
+                  <span v-if="scope.row.local">本地集群（local）</span>
                   <span v-else>{{scope.row.name}}</span>
                 </template>
               </el-table-column>
@@ -248,22 +217,23 @@
               <el-table-column width="240"
                                label="操作">
                 <template slot-scope="scope">
-                  <div v-if="scope.row.name !=='local'">
-                  <el-button v-if="scope.row.status==='pending'||scope.row.status==='abnormal'"
-                             @click="clusterOperation('access',scope.row)"
-                             size="mini">接入</el-button>
-                  <el-button v-if="scope.row.status==='normal'"
-                             @click="clusterOperation('disconnect',scope.row)"
-                             size="mini">断开</el-button>
-                  <el-button v-if="scope.row.status==='disconnected'"
-                             @click="clusterOperation('recover',scope.row)"
-                             size="mini">恢复</el-button>
+                  <span v-show="!scope.row.local">
+                    <el-button v-if="scope.row.status==='pending'||scope.row.status==='abnormal'"
+                              @click="clusterOperation('access',scope.row)"
+                              size="mini">接入</el-button>
+                    <el-button v-if="scope.row.status==='normal'"
+                              @click="clusterOperation('disconnect',scope.row)"
+                              size="mini">断开</el-button>
+                    <el-button v-if="scope.row.status==='disconnected'"
+                              @click="clusterOperation('recover',scope.row)"
+                              size="mini">恢复</el-button>
+                  </span>
                   <el-button @click="clusterOperation('edit',scope.row)"
                              size="mini">编辑</el-button>
-                  <el-button @click="clusterOperation('delete',scope.row)"
+                  <el-button v-show="!scope.row.local"
+                             @click="clusterOperation('delete',scope.row)"
                              size="mini"
                              type="danger">删除</el-button>
-                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -274,9 +244,10 @@
 </template>
 
 <script>
-import { getClusterListAPI, createClusterAPI, updateClusterAPI, deleteClusterAPI, recoverClusterAPI, disconnectClusterAPI } from '@api'
+import { getClusterListAPI, createClusterAPI, updateClusterAPI, deleteClusterAPI, recoverClusterAPI, disconnectClusterAPI, getClusterNodeInfo } from '@api'
 import { wordTranslate } from '@utils/word_translate'
 import bus from '@utils/event_bus'
+import { cloneDeep } from 'lodash'
 const validateClusterName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入集群名称'))
@@ -287,6 +258,18 @@ const validateClusterName = (rule, value, callback) => {
       callback()
     }
   }
+}
+
+const clusterInfo = {
+  name: '',
+  provider: null,
+  production: false,
+  description: '',
+  namespace: ''
+  // advanced_config: { // 编辑的时候有这个数据
+  //   strategy: '',
+  //   node_labels: []
+  // }
 }
 export default {
   data () {
@@ -299,20 +282,7 @@ export default {
       },
       allCluster: [],
       deployType: 'Deployment',
-      cluster: {
-        name: '',
-        provider: null,
-        production: false,
-        description: '',
-        namespace: ''
-      },
-      swapCluster: {
-        name: '',
-        provider: null,
-        production: false,
-        description: '',
-        namespace: ''
-      },
+      cluster: cloneDeep(clusterInfo),
       providerMap: {
         0: {
           icon: 'iconfont logo iconqita',
@@ -336,8 +306,7 @@ export default {
         yaml: 'init',
         name: 'test'
       },
-      dialogClusterCreateFormVisible: false,
-      dialogClusterEditFormVisible: false,
+      dialogClusterFormVisible: false,
       dialogClusterAccessVisible: false,
       loading: false,
       rules: {
@@ -352,13 +321,62 @@ export default {
           type: 'boolean',
           required: true,
           message: '请选择是否为生产集群'
-        }]
+        }],
+        'advanced_config.node_labels': {
+          required: true,
+          message: '请选择标签',
+          type: 'array'
+        }
+      },
+      clusterNodes: {
+        labels: [],
+        data: [] // {labels, ready, ip}
+      }
+
+    }
+  },
+  computed: {
+    isEdit () {
+      return !!this.cluster.id
+    },
+    matchedHost () {
+      const labels = this.cluster.advanced_config.node_labels
+      return this.clusterNodes.data.filter(data => {
+        return labels.filter(label => {
+          return data.labels.includes(label)
+        }).length
+      })
+    }
+  },
+  watch: {
+    dialogClusterFormVisible (nVal, oldV) {
+      if (!nVal) {
+        this.clearValidate()
+        this.clusterNodes = {
+          labels: [],
+          data: []
+        }
       }
     }
   },
   methods: {
+    advancedConfig () {
+      if (!this.cluster.advanced_config.strategy) {
+        this.cluster.advanced_config.strategy = 'normal'
+      } else {
+        this.cluster.advanced_config = {
+          strategy: '',
+          node_labels: []
+        }
+      }
+    },
+    getClusterNode (clusterId) {
+      getClusterNodeInfo(clusterId).then(res => {
+        this.clusterNodes = res
+      })
+    },
     tableRowClassName ({ row, rowIndex }) {
-      if (row.name === 'local') {
+      if (row.local) {
         return 'local-row'
       }
       return ''
@@ -378,7 +396,7 @@ export default {
         this.$refs.cluster.validate(valid => {
           if (valid) {
             const payload = this.cluster
-            this.dialogClusterCreateFormVisible = false
+            this.dialogClusterFormVisible = false
             this.addCluster(payload)
           } else {
             return false
@@ -398,14 +416,15 @@ export default {
       } else if (operate === 'recover') {
         this.recoverCluster(current_cluster.id)
       } else if (operate === 'edit') {
-        this.swapCluster = this.$utils.cloneObj(current_cluster)
-        this.dialogClusterEditFormVisible = true
+        this.getClusterNode(current_cluster.id)
+        this.cluster = this.$utils.cloneObj(current_cluster)
+        this.dialogClusterFormVisible = true
       } else if (operate === 'update') {
-        this.$refs.swapCluster.validate(valid => {
+        this.$refs.cluster.validate(valid => {
           if (valid) {
-            const id = this.swapCluster.id
-            const payload = this.swapCluster
-            this.dialogClusterEditFormVisible = false
+            const id = this.cluster.id
+            const payload = this.cluster
+            this.dialogClusterFormVisible = false
             this.updateCluster(id, payload)
           } else {
             return false
@@ -430,7 +449,6 @@ export default {
     },
     addCluster (payload) {
       createClusterAPI(payload).then((res) => {
-        this.$refs.cluster.resetFields()
         this.getCluster()
         this.accessCluster = res
         this.dialogClusterAccessVisible = true
@@ -460,7 +478,6 @@ export default {
     },
     updateCluster (id, payload) {
       updateClusterAPI(id, payload).then((res) => {
-        this.$refs.swapCluster.resetFields()
         this.getCluster()
         this.$message({
           type: 'success',
@@ -472,7 +489,24 @@ export default {
       this.loading = true
       getClusterListAPI().then((res) => {
         this.loading = false
-        this.allCluster = res
+        const localId = res.findIndex(re => re.local)
+        if (localId !== -1) {
+          const local = res.splice(localId, 1)
+          res.unshift(local[0])
+        } else {
+          this.$message.error(`未找到本地集群！`)
+        }
+        this.allCluster = res.map(re => {
+          if (!re.advanced_config) {
+            re.advanced_config = {
+              strategy: '',
+              node_labels: []
+            }
+          } else if (!re.advanced_config.node_labels) {
+            re.advanced_config.node_labels = []
+          }
+          return re
+        })
       })
     },
     copyCommandSuccess (event) {
@@ -489,6 +523,12 @@ export default {
     },
     myTranslate (word) {
       return wordTranslate(word, 'setting', 'cluster')
+    },
+    clearValidate () {
+      this.cluster = cloneDeep(clusterInfo)
+      this.$nextTick(() => {
+        this.$refs.cluster.clearValidate()
+      })
     }
   },
   created () {
@@ -503,6 +543,8 @@ export default {
 </script>
 
 <style lang="less">
+@import url("~@assets/css/common/scroll-bar.less");
+
 .setting-cluster-container {
   position: relative;
   flex: 1;
@@ -611,6 +653,20 @@ export default {
       font-size: 13px;
       line-height: 20px;
       background: #303133;
+    }
+  }
+
+  .list-host {
+    max-height: 50px;
+    padding: 5px;
+    overflow: auto;
+    color: #909399;
+    font-size: 12px;
+
+    .blockScrollBar();
+
+    div {
+      line-height: 1.2;
     }
   }
 }

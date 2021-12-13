@@ -41,6 +41,17 @@
             <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="镜像仓库" prop="registry_id">
+          <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small">
+            <el-option
+              v-for="registry in imageRegistry"
+              :key="registry.id"
+              :label="`${registry.reg_addr}/${registry.namespace}`"
+              :value="registry.id"
+            ></el-option>
+          </el-select>
+          <div class="image-secret">imagePullSecret 名称：default-registry-secret</div>
+        </el-form-item>
       </el-form>
 
       <div style="color: rgb(153, 153, 153); font-size: 16px; line-height: 20px;">服务列表</div>
@@ -95,7 +106,8 @@ import {
   getClusterListAPI,
   getSingleProjectAPI,
   createHelmEnvAPI,
-  getEnvironmentsAPI
+  getEnvironmentsAPI,
+  getRegistryWhenBuildAPI
 } from '@api'
 import bus from '@utils/event_bus'
 import { cloneDeep } from 'lodash'
@@ -124,7 +136,8 @@ export default {
         baseEnvName: '',
         namespace: '',
         defaultNamespace: '',
-        isPublic: true
+        isPublic: true,
+        registry_id: ''
       },
       projectInfo: {},
       allCluster: [],
@@ -143,6 +156,13 @@ export default {
         namespace: [
           { required: true, trigger: 'change', message: '请选择命名空间' }
         ],
+        registry_id: [
+          {
+            required: true,
+            trigger: ['change', 'blur'],
+            message: '请选择镜像仓库'
+          }
+        ],
         defaultNamespace: [
           { required: true, trigger: 'change', message: '命名空间不能为空' }
         ],
@@ -155,7 +175,8 @@ export default {
       chartNames: null,
       envNames: [],
       envName: '',
-      envScene: 'createEnv' // updateRenderSet
+      envScene: 'createEnv', // updateRenderSet
+      imageRegistry: []
     }
   },
 
@@ -244,6 +265,7 @@ export default {
           const payload = {
             envName: this.projectConfig.env_name,
             clusterID: this.projectConfig.cluster_id,
+            registry_id: this.projectConfig.registry_id,
             baseEnvName: isCopy ? baseEnvName : '',
             chartValues: valueInfo.chartInfo,
             defaultValues: valueInfo.envInfo[defaultEnv] || '',
@@ -293,10 +315,16 @@ export default {
       ]
     })
     this.projectConfig.product_name = this.projectName
-    this.getTemplateAndImg()
     this.checkProjectFeature()
     this.getCluster()
     this.getEnvNames()
+    getRegistryWhenBuildAPI(this.projectName).then(res => {
+      this.imageRegistry = res
+      if (!this.projectConfig.registry_id) {
+        this.projectConfig.registry_id = res.find(reg => reg.is_default).id
+      }
+      this.getTemplateAndImg()
+    })
   },
   components: {
     HelmEnvTemplate
@@ -311,6 +339,13 @@ export default {
   padding: 15px 20px;
   overflow: auto;
   font-size: 13px;
+
+  .image-secret {
+    margin-left: 3px;
+    color: #cdcfd4;
+    font-size: 12px;
+    line-height: 1.5;
+  }
 
   .module-title h1 {
     margin-bottom: 30px;

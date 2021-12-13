@@ -50,11 +50,31 @@
         </el-form-item>
       </el-col>
     </el-row>
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-form-item label="集群名称" label-width="inherit" :prop="`${propPre}.cluster_id`" required :show-message="false">
+          <el-select v-model="pre_build.cluster_id" placeholder="选择集群名称" size="small" @change="changeNamespaces">
+            <el-option v-for="cluster in clusters" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="命名空间" label-width="inherit" :prop="`${propPre}.namespace`" required :show-message="false">
+          <el-select v-model="pre_build.namespace" placeholder="选择命名空间" size="small" filterable>
+            <el-option v-for="namespace in namespaces" :key="namespace.name" :label="namespace.name" :value="namespace.name"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-import { getImgListAPI } from '@api'
+import {
+  getImgListAPI,
+  getClusterListAPI,
+  productHostingNamespaceAPI
+} from '@api'
 export default {
   props: {
     pre_build: Object,
@@ -67,13 +87,14 @@ export default {
       type: Boolean
     },
     title: {
-      default: '构建环境',
+      default: '运行时环境',
       type: String
     },
     propPre: {
       default: 'pre_build',
       type: String
-    }
+    },
+    initFlag: Boolean
   },
   data () {
     this.validateCpuLimit = (rule, value, callback) => {
@@ -100,19 +121,56 @@ export default {
       }
     }
     return {
-      systems: []
+      systems: [],
+      clusters: [],
+      namespaces: []
+    }
+  },
+  computed: {
+    projectName () {
+      return this.$route.params.project_name
     }
   },
   methods: {
     getImgList () {
-      getImgListAPI().then(response => {
+      return getImgListAPI().then(response => {
         this.systems = response
-        this.paddingData(this.isCreate)
       })
     },
-    paddingData (val) {
-      if (val) {
+    getClusterList () {
+      return getClusterListAPI(this.projectName).then(res => {
+        this.clusters = res.filter(element => element.status === 'normal')
+      })
+    },
+    changeNamespaces (id) {
+      this.pre_build.namespace = ''
+      this.getProductHostingNamespace(id).then(() => {
+        const ns = this.namespaces.find(ns => ns.current)
+        this.pre_build.namespace = ns ? ns.name : ''
+      })
+    },
+    getProductHostingNamespace (id) {
+      this.namespaces = []
+      return productHostingNamespaceAPI(id).then(res => {
+        this.namespaces = res
+      })
+    },
+
+    // init information should handle in the home page after get build data
+    // the method must callback after init data requested
+    paddingData () {
+      const initNs = () => {
+        const localId = this.clusters.find(cluster => cluster.local).id
+        this.$set(this.pre_build, 'cluster_id', localId)
+        this.getProductHostingNamespace(localId).then(() => {
+          const ns = this.namespaces.find(ns => ns.current)
+          this.$set(this.pre_build, 'namespace', ns ? ns.name : '')
+        })
+      }
+
+      if (this.isCreate) {
         this.changeImage('', '', 0)
+        initNs()
       } else {
         const key = this.pre_build.image_id
           ? 'id'
@@ -122,6 +180,14 @@ export default {
         const value = this.pre_build.image_id || this.pre_build.build_os
         if (key) {
           this.changeImage(key, value)
+        }
+
+        // compatible with old data: use the local and zadig namespace by default
+        if (!this.pre_build.cluster_id) {
+          initNs()
+        } else {
+          // request namespaces of current cluster
+          this.getProductHostingNamespace(this.pre_build.cluster_id)
         }
       }
     },
@@ -150,17 +216,25 @@ export default {
     }
   },
   watch: {
-    isCreate: {
+    initFlag: {
       handler (newV) {
-        if (this.systems.length) {
-          this.paddingData(newV)
+        // when false, it represents the end of the data request for editing the build
+        // cannot init when the initial data is not requested
+        if (!newV && this.systems.length && this.clusters.length) {
+          this.paddingData()
         }
       },
       immediate: true
     }
   },
   created () {
-    this.getImgList()
+    // data before initialization must be obtained first
+    Promise.all([this.getClusterList(), this.getImgList()]).then(() => {
+      // if the build data has not been requested, it cannot be initialized
+      if (!this.initFlag) {
+        this.paddingData()
+      }
+    })
   }
 }
 </script>

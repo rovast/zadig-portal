@@ -287,7 +287,7 @@ export default {
       })
     },
     goToCodeHostAuth (codehostId, redirectUrl, callbackUrl) {
-      window.location.href = `/api/v1/codehosts/${codehostId}/auth?redirect=${redirectUrl}&callback_url=${callbackUrl}`
+      window.location.href = `/api/v1/codehosts/${codehostId}/auth?redirect_url=${redirectUrl}&callback_url=${callbackUrl}`
     },
     copyCommandSuccess (event) {
       this.$message({

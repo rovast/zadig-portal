@@ -138,7 +138,8 @@ export default {
           this.paramData = {
             ...cloneDeep(paramInfo),
             ...cloneDeep(this.param),
-            ...{ choice_option }
+            external_setting: this.param.external_setting || cloneDeep(paramInfo.external_setting),
+            choice_option
           }
           if (this.paramData.external_setting.params) {
             const res = this.paramData.external_setting.params.filter(

@@ -265,7 +265,6 @@ export default {
         if (valid) {
           const payload = this.codeAdd
           const redirectUrl = window.location.href.split('?')[0]
-          const callbackUrl = `${this.$utils.getOrigin()}/api/directory/codehosts/callback`
           const provider = this.codeAdd.type
           if (provider === 'github') {
             payload.address = 'https://github.com'
@@ -277,7 +276,7 @@ export default {
               type: 'success'
             })
             if (payload.type === 'gitlab' || payload.type === 'github') {
-              this.goToCodeHostAuth(codehostId, redirectUrl, callbackUrl)
+              this.goToCodeHostAuth(codehostId, redirectUrl)
             }
             this.handleCodeCancel()
           })
@@ -286,8 +285,8 @@ export default {
         }
       })
     },
-    goToCodeHostAuth (codehostId, redirectUrl, callbackUrl) {
-      window.location.href = `/api/v1/codehosts/${codehostId}/auth?redirect_url=${redirectUrl}&callback_url=${callbackUrl}`
+    goToCodeHostAuth (codehostId, redirectUrl) {
+      window.location.href = `/api/v1/codehosts/${codehostId}/auth?redirect_url=${redirectUrl}`
     },
     copyCommandSuccess (event) {
       this.$message({

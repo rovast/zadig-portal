@@ -564,7 +564,6 @@ export default {
           const payload = this.codeAdd
           const redirectUrl = window.location.href.split('?')[0]
           const provider = this.codeAdd.type
-          const callbackUrl = `${this.$utils.getOrigin()}/api/directory/codehosts/callback`
           if (provider === 'github') {
             payload.address = 'https://github.com'
           }
@@ -576,7 +575,7 @@ export default {
               type: 'success'
             })
             if (payload.type === 'gitlab' || payload.type === 'github') {
-              this.goToCodeHostAuth(codehostId, redirectUrl, callbackUrl)
+              this.goToCodeHostAuth(codehostId, redirectUrl)
             }
             this.handleCodeCancel()
           })
@@ -591,7 +590,6 @@ export default {
           const payload = this.codeEdit
           const codehostId = this.codeEdit.id
           const redirectUrl = window.location.href.split('?')[0]
-          const callbackUrl = `${this.$utils.getOrigin()}/api/directory/codehosts/callback`
           const provider = this.codeEdit.type
           if (provider === 'github') {
             payload.address = 'https://github.com'
@@ -603,7 +601,7 @@ export default {
                 message: '代码源修改成功，正在前往授权',
                 type: 'success'
               })
-              this.goToCodeHostAuth(codehostId, redirectUrl, callbackUrl)
+              this.goToCodeHostAuth(codehostId, redirectUrl)
             } else {
               this.handleCodeCancel()
               this.$message({
@@ -622,8 +620,8 @@ export default {
         this.code = res
       })
     },
-    goToCodeHostAuth (codehostId, redirectUrl, callbackUrl) {
-      window.location.href = `/api/v1/codehosts/${codehostId}/auth?redirect_url=${redirectUrl}&callback_url=${callbackUrl}`
+    goToCodeHostAuth (codehostId, redirectUrl) {
+      window.location.href = `/api/v1/codehosts/${codehostId}/auth?redirect_url=${redirectUrl}`
     },
     copyCommandSuccess (event) {
       this.$message({

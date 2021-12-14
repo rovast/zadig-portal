@@ -76,7 +76,11 @@
           </el-col>
           <el-col :span="2">
             <div class="build-item view">
-              <i class="el-icon-view icon" :style="{ color: config.show_service_module ? '#1989fa' : '#99a9bf'}" @click="config.show_service_module = !config.show_service_module"></i>
+              <i class="iconfont icon"
+                 :class="{'iconview-off1': !config.show_service_module, iconview: config.show_service_module}"
+                 :style="{ color: config.show_service_module ? '#1989fa' : '#99a9bf'}"
+                 @click="config.show_service_module = !config.show_service_module"
+              ></i>
             </div>
           </el-col>
         </el-row>

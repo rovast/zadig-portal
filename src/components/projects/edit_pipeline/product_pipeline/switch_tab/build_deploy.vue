@@ -5,19 +5,25 @@
               v-show="allTargets.length > 0"
               class="header">
         <el-col :span="2">
-          <div class="index">
+          <div class="build-item">
             序号
           </div>
         </el-col>
-        <el-col :span="11">
-          <div class="service">
+        <el-col :span="10">
+          <div class="build-item service">
             服务
           </div>
         </el-col>
 
-        <el-col :span="11">
-          <div class="deploy">
+        <el-col :span="10">
+          <div class="build-item deploy">
             部署
+          </div>
+        </el-col>
+
+        <el-col :span="2">
+          <div class="build-item view">
+            是否显示
           </div>
         </el-col>
       </el-row>
@@ -45,12 +51,12 @@
                 :gutter="20"
                 class="row">
           <el-col :span="2">
-            <div class="index">
+            <div class="build-item">
               {{ _idx+1 }}
             </div>
           </el-col>
-          <el-col :span="11">
-            <div class="service">
+          <el-col :span="10">
+            <div class="build-item service">
               <span class="service-link">
                 <template>
                   <router-link
@@ -61,11 +67,16 @@
               </span>
             </div>
           </el-col>
-          <el-col :span="11">
-            <div class="deploy">
+          <el-col :span="10">
+            <div class="build-item deploy">
               <div>
                 {{ `${config.target.service_name}/${config.target.service_module}`}}
               </div>
+            </div>
+          </el-col>
+          <el-col :span="2">
+            <div class="build-item view">
+              <i class="el-icon-view icon" :style="{ color: config.show_service_module ? '#1989fa' : '#99a9bf'}" @click="config.show_service_module = !config.show_service_module"></i>
             </div>
           </el-col>
         </el-row>
@@ -86,7 +97,12 @@ export default {
     },
     serviceConfigs: {
       get () {
-        return this.build_stage.modules
+        return this.build_stage.modules.map(config => {
+          if (typeof config.show_service_module === 'undefined') {
+            this.$set(config, 'show_service_module', true)
+          }
+          return config
+        })
       },
       set (val) {
         this.build_stage.modules = val
@@ -121,11 +137,14 @@ export default {
       }
     },
     allTargets (newVal, oldVal) {
-      this.serviceConfigs = newVal.map(tar => {
-        return {
-          target: tar
-        }
-      })
+      if (!this.serviceConfigs.length) {
+        this.serviceConfigs = newVal.map(tar => {
+          return {
+            show_service_module: true,
+            target: tar
+          }
+        })
+      }
     }
   },
   created () {
@@ -143,13 +162,20 @@ export default {
 .build-stage {
   .header,
   .row {
-    .index,
-    .service,
-    .deploy {
+    .build-item {
       display: inline-block;
       height: 42px;
       line-height: 42px;
       vertical-align: top;
+    }
+
+    .view {
+      display: block;
+      text-align: center;
+
+      .icon {
+        font-size: 18px;
+      }
     }
 
     .service {

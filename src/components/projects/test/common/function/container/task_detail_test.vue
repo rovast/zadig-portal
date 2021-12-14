@@ -210,7 +210,7 @@ export default {
           }
           this.hasNewTestMsg = false
         }, 500)
-        const url = `/api/aslan/logs/sse/workflow/test/${this.pipelineName}/${this.taskID}/${this.testName}/999999/${this.serviceName}?workflowType=test`
+        const url = `/api/aslan/logs/sse/workflow/test/${this.pipelineName}/${this.taskID}/${this.testName}/999999/${this.serviceName}?workflowType=test&projectName=${this.projectName}`
         this.$sse(url, { format: 'plain' }).then(sse => {
           // Store SSE object at a higher scope
           window.msgServer[this.serviceName] = sse

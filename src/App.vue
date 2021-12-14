@@ -10,11 +10,37 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
-  methods: {
-  },
   computed: {
-
+    processEnv () {
+      return process.env
+    }
+  },
+  mounted () {
+    if (this.processEnv && this.processEnv.NODE_ENV === 'production') {
+      console.log('%cHello ZADIG！', 'color: #e20382;font-size: 13px;')
+      const buildInfo = []
+      if (this.processEnv.VERSION) {
+        buildInfo.push(`${this.processEnv.VERSION}`)
+      }
+      if (this.processEnv.TAG) {
+        buildInfo.push(`Tag-${this.processEnv.TAG}`)
+      }
+      if (this.processEnv.BRANCH) {
+        buildInfo.push(`Branch-${this.processEnv.BRANCH}`)
+      }
+      if (this.processEnv.PR) {
+        buildInfo.push(`PR-${this.processEnv.PR}`)
+      }
+      if (this.processEnv.COMMIT_ID) {
+        buildInfo.push(`${this.processEnv.COMMIT_ID.substring(0, 7)}`)
+      }
+      console.log(`%cBuild:${buildInfo.join(' ')}`, 'color: #e20382;font-size: 13px;')
+      if (this.processEnv.BUILD_TIME) {
+        console.log(`%cTime:${moment.unix(this.processEnv.BUILD_TIME).format('YYYYMMDDHHmm')}`, 'color: #e20382;font-size: 13px;')
+      }
+    }
   }
 }
 </script>

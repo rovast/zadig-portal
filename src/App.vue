@@ -11,10 +11,27 @@
 
 <script>
 export default {
-  methods: {
-  },
   computed: {
-
+    processEnv () {
+      return process.env
+    }
+  },
+  mounted () {
+    if (this.processEnv && this.processEnv.NODE_ENV === 'production') {
+      console.log('%cHello ZADIG！', 'color: #e20382;font-size: 13px;')
+      if (this.processEnv.VERSION) {
+        console.log(`%cVersion:${this.processEnv.VERSION}`, 'color: #e20382;font-size: 13px;')
+      }
+      if (this.processEnv.TAG) {
+        console.log(`%cCommit:${this.processEnv.TAG}`, 'color: #e20382;font-size: 13px;')
+      }
+      if (this.processEnv.COMMIT_ID) {
+        console.log(`%cCommit:${this.processEnv.COMMIT_ID}`, 'color: #e20382;font-size: 13px;')
+      }
+      if (this.processEnv.BUILD_TIME) {
+        console.log(`%cBuild:${this.processEnv.BUILD_TIME}`, 'color: #e20382;font-size: 13px;')
+      }
+    }
   }
 }
 </script>

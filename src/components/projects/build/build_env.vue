@@ -160,11 +160,14 @@ export default {
     // the method must callback after init data requested
     paddingData () {
       const initNs = () => {
-        const localId = this.clusters.find(cluster => cluster.local).id
-        this.$set(this.pre_build, 'cluster_id', localId)
-        this.getProductHostingNamespace(localId).then(() => {
+        this.$set(this.pre_build, 'cluster_id', '')
+        this.$set(this.pre_build, 'namespace', '')
+
+        const local = this.clusters.find(cluster => cluster.local)
+        this.pre_build.cluster_id = local ? local.id : ''
+        this.getProductHostingNamespace(this.pre_build.cluster_id).then(() => {
           const ns = this.namespaces.find(ns => ns.current)
-          this.$set(this.pre_build, 'namespace', ns ? ns.name : '')
+          this.pre_build.namespace = ns ? ns.name : ''
         })
       }
 

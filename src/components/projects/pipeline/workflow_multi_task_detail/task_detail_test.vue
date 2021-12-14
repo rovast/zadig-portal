@@ -231,14 +231,14 @@ export default {
           }
           this.hasNewTestMsg = false
         }, 500)
-        const url = `/api/aslan/logs/sse/workflow/test/${this.pipelineName}/${this.taskID}/${this.testName}/999999/${this.serviceName}`
+        const url = `/api/aslan/logs/sse/workflow/test/${this.pipelineName}/${this.taskID}/${this.testName}/999999/${this.serviceName}?projectName=${this.projectName}`
         this.$sse(url, { format: 'plain' }).then(sse => {
           // Store SSE object at a higher scope
           window.msgServer[this.serviceName] = sse
           sse.onError(e => {
             console.error('lost connection; giving up!', e)
             this.$message({
-              message: 'test日志获取失败',
+              message: '测试日志获取失败',
               type: 'error'
             })
             sse.close()

@@ -81,14 +81,14 @@ export default {
     wordTranslation (word, category) {
       return wordTranslate(word, category)
     },
-    showRealTimeLog (pod_name, container_name, operation) {
+    showRealTimeLog (podName, containerName, operation) {
       if (operation === 'open') {
         if (typeof window.msgServer === 'undefined') {
           const ownerQ = this.$route.query.envName
             ? '&envName=' + this.$route.query.envName
             : ''
           this.$sse(
-            `/api/aslan/logs/sse/pods/${pod_name}/containers/${container_name}?tails=1000&projectName=${this.productName}` +
+            `/api/aslan/logs/sse/pods/${podName}/containers/${containerName}?tails=1000&projectName=${this.projectName}` +
               ownerQ
           )
             .then(sse => {
@@ -135,7 +135,7 @@ export default {
     }
   },
   computed: {
-    productName () {
+    projectName () {
       return this.$route.params.project_name
     },
     serviceName () {

@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   computed: {
     processEnv () {
@@ -17,19 +18,27 @@ export default {
     }
   },
   mounted () {
-    if (this.processEnv && this.processEnv.NODE_ENV === 'production') {
+    if (this.processEnv && this.processEnv.NODE_ENV === 'development') {
       console.log('%cHello ZADIG！', 'color: #e20382;font-size: 13px;')
+      const buildInfo = []
       if (this.processEnv.VERSION) {
-        console.log(`%cVersion:${this.processEnv.VERSION}`, 'color: #e20382;font-size: 13px;')
+        buildInfo.push(`${this.processEnv.VERSION}`)
       }
       if (this.processEnv.TAG) {
-        console.log(`%cCommit:${this.processEnv.TAG}`, 'color: #e20382;font-size: 13px;')
+        buildInfo.push(`Tag:${this.processEnv.TAG}`)
+      }
+      if (this.processEnv.BRANCH) {
+        buildInfo.push(`Branch：${this.processEnv.BRANCH}`)
+      }
+      if (this.processEnv.PR) {
+        buildInfo.push(`PR：${this.processEnv.PR}`)
       }
       if (this.processEnv.COMMIT_ID) {
-        console.log(`%cCommit:${this.processEnv.COMMIT_ID}`, 'color: #e20382;font-size: 13px;')
+        buildInfo.push(`Commit：${this.processEnv.COMMIT_ID}`)
       }
+      console.log(`%cBuild:${buildInfo.join(' ')}`, 'color: #e20382;font-size: 13px;')
       if (this.processEnv.BUILD_TIME) {
-        console.log(`%cBuild:${this.processEnv.BUILD_TIME}`, 'color: #e20382;font-size: 13px;')
+        console.log(`%cTime:${moment.unix(this.processEnv.BUILD_TIME).format('YYYYMMDDHHmm')}`, 'color: #e20382;font-size: 13px;')
       }
     }
   }

@@ -127,78 +127,77 @@
         </div>
       </div>
       <div class="zadig" v-show="source === 'zadig'">
-        <div class="section">
-          <el-form ref="addConfigForm"
-                  :model="buildConfig"
-                  :rules="createRules"
-                  label-position="left"
-                  label-width="80px">
-             <el-row>
-              <el-col :span="24">
-                <el-form-item label="构建来源">
-                  <el-select style="width: 100%;"
-                            v-model="source"
-                            size="small"
-                            value-key="key"
-                            :disabled="isEdit"
-                            filterable>
-                    <el-option v-for="(item,index) in orginOptions"
+        <el-form ref="addConfigForm"
+                :model="buildConfig"
+                :rules="createRules"
+                label-position="left"
+                label-width="80px">
+          <el-form-item label="构建来源">
+            <el-select style="width: 100%;"
+                      v-model="source"
+                      size="small"
+                      value-key="key"
+                      :disabled="isEdit"
+                      filterable>
+              <el-option v-for="(item,index) in orginOptions"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="构建名称"
+                        prop="name">
+            <!-- <el-input v-model="buildConfig.name"
+                      placeholder="构建名称"
+                      autofocus
+                      size="mini"
+                      :disabled="isEdit"
+                      auto-complete="off"></el-input> -->
+            <el-select style="width: 100%;"
+                       v-model="buildConfig.name"
+                       placeholder="构建名称" :disabled="isEdit"
+                       size="small"
+                       @change="changeBuildName"
+                       allow-create
+                       filterable>
+              <el-option
+                v-for="item in buildNames"
+                :key="item"
+                :label="item"
+                :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="targets"
+                        label="构建服务">
+            <el-select style="width: 100%;"
+                      v-model="buildConfig.targets"
+                      multiple
+                      size="mini"
+                      value-key="key"
+                      filterable>
+              <el-option v-for="(service,index) in serviceTargets.concat(buildServices)"
                         :key="index"
-                        :label="item.label"
-                        :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-form-item label="构建超时">
-                  <el-input-number size="mini"
-                                  :min="1"
-                                  v-model="buildConfig.timeout"></el-input-number>
-                  <span>分钟</span>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-form-item label="构建名称"
-                              prop="name">
-                  <el-input v-model="buildConfig.name"
-                            placeholder="构建名称"
-                            autofocus
-                            size="mini"
-                            :disabled="isEdit"
-                            auto-complete="off"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-form-item prop="targets"
-                              label="构建服务">
-                  <el-select style="width: 100%;"
-                            v-model="buildConfig.targets"
-                            multiple
-                            size="mini"
-                            value-key="key"
-                            filterable>
-                    <el-option v-for="(service,index) in serviceTargets"
-                              :key="index"
-                              :label="`${service.service_module}(${service.service_name})`"
-                              :value="service">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build"  :isCreate="!isEdit" mini></BuildEnv>
-          </el-form>
-          <el-form ref="buildApp"
+                        :label="`${service.service_module}(${service.service_name})`"
+                        :value="service">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item  v-show="!isSelectedBuild" label="构建超时">
+            <el-input-number size="mini"
+                            :min="1"
+                            v-model="buildConfig.timeout"></el-input-number>
+            <span>分钟</span>
+          </el-form-item>
+          <BuildEnv v-show="!isSelectedBuild" :initFlag="configDataLoading" :pre_build="buildConfig.pre_build"  :isCreate="!isEdit" mini></BuildEnv>
+        </el-form>
+        <div v-show="!isSelectedBuild" class="section">
+          <el-form
+                  ref="buildApp"
                   :inline="true"
                   :model="buildConfig"
-                  class="form-style1"
+                  class="form-style1 section"
                   label-position="top"
                   label-width="80px">
             <span class="item-title">应用列表</span>
@@ -246,20 +245,17 @@
               </el-col>
             </el-row>
           </el-form>
-        </div>
-        <div class="section">
           <repo-select :config="buildConfig"
                       ref="repoSelect"
+                      class="section"
                       showDivider
                       addBtnMini
                       shortDescription
                       showFirstLine></repo-select>
-        </div>
-        <div class="section">
           <el-form ref="buildEnv"
                   :inline="true"
                   :model="buildConfig"
-                  class="form-style1"
+                  class="form-style1 section"
                   label-position="top"
                   label-width="120px">
             <span class="item-title">环境变量</span>
@@ -320,13 +316,10 @@
               </el-col>
             </el-row>
           </el-form>
-        </div>
-
-        <div class="section">
           <el-form ref="cacheDir"
                   :inline="true"
                   :model="buildConfig"
-                  class="form-style1"
+                  class="form-style1 section"
                   label-position="left"
                   label-width="130px">
             <span class="item-title">缓存策略</span>
@@ -381,8 +374,6 @@
               </el-row>
             </template>
           </el-form>
-        </div>
-        <div class="section">
           <el-form ref="buildScript"
                   :model="buildConfig"
                   label-position="left"
@@ -423,84 +414,84 @@
               </el-col>
             </el-row>
           </el-form>
-        <el-form v-if="docker_enabled"
-                 :model="buildConfig.post_build.docker_build"
-                 :rules="docker_rules"
-                 ref="docker_build"
-                 class="docker label-at-left input-width-middle">
+          <el-form v-if="docker_enabled"
+                  :model="buildConfig.post_build.docker_build"
+                  :rules="docker_rules"
+                  ref="docker_build"
+                  class="docker label-at-left input-width-middle">
 
-          <div class="dashed-container">
-            <span class="title">镜像构建
-              <el-button type="text"
-                         @click="removeDocker"
-                         icon="el-icon-delete"></el-button>
-            </span>
-            <div v-if="allRegistry.length === 0"
-                 class="registry-alert">
-              <el-alert title="私有镜像仓库未集成，请前往系统设置 -> Registry 管理  进行集成。"
-                        type="warning">
-              </el-alert>
-            </div>
-            <el-form-item label="镜像构建目录："
-                          prop="work_dir">
-              <el-input v-model="buildConfig.post_build.docker_build.work_dir"
-                        size="small">
-                <template slot="prepend">$WORKSPACE/</template>
-              </el-input>
-            </el-form-item>
-            <el-form-item label="Dockerfile 来源："
-                          prop="source">
-              <el-select size="small" style="width: 100%;" v-model="buildConfig.post_build.docker_build.source" placeholder="请选择">
-                <el-option
-                  label="代码仓库"
-                  value="local">
-                </el-option>
-                <el-option
-                  label="模板库"
-                  value="template">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item v-if="buildConfig.post_build.docker_build.source === 'local'" label="Dockerfile 文件的完整路径："
-                          prop="docker_file">
-              <el-input v-model="buildConfig.post_build.docker_build.docker_file"
-                        size="small">
-                <template slot="prepend">$WORKSPACE/</template>
-              </el-input>
-            </el-form-item>
-            <el-form-item v-if="buildConfig.post_build.docker_build.source === 'template'"  label="选择模板："
-                          prop="template_name">
-              <el-select style="width: 90%;" size="small" filterable @change="getDockerfileTemplate" v-model="buildConfig.post_build.docker_build.template_id" placeholder="请选择">
-                <el-option v-for="(template,index) in dockerfileTemplates"
-                  :key="index"
-                  :label="template.name"
-                  :value="template.id">
-                </el-option>
-              </el-select>
-              <template >
-              <el-button :disabled="!buildConfig.post_build.docker_build.template_id" style="margin-left: 5px;" type="text" @click="showDockerfile = true"> 预览</el-button>
-              <div v-if="dockerfileTemplate.variable && dockerfileTemplate.variable.length > 0" class="dockerfile-args-container">
-                <span>ARG</span>
-                <span v-for="(item,index) in dockerfileTemplate.variable" :key="index">
-                  <span v-if="item.value">{{`${item.key}=${item.value} `}}</span>
-                  <span v-else>{{`${item.key} `}}</span>
-                </span>
+            <div class="dashed-container">
+              <span class="title">镜像构建
+                <el-button type="text"
+                          @click="removeDocker"
+                          icon="el-icon-delete"></el-button>
+              </span>
+              <div v-if="allRegistry.length === 0"
+                  class="registry-alert">
+                <el-alert title="私有镜像仓库未集成，请前往系统设置 -> Registry 管理  进行集成。"
+                          type="warning">
+                </el-alert>
               </div>
-              </template>
-            </el-form-item>
-            <el-form-item label="镜像构建参数：">
-              <el-tooltip effect="dark"
-                          content="支持所有 Docker Build 参数"
-                          placement="top-start">
-                <el-input v-model="buildConfig.post_build.docker_build.build_args"
-                          size="small"
-                          placeholder="--build-arg key=value"></el-input>
-              </el-tooltip>
-            </el-form-item>
-          </div>
-          <div class="divider">
-          </div>
-        </el-form>
+              <el-form-item label="镜像构建目录："
+                            prop="work_dir">
+                <el-input v-model="buildConfig.post_build.docker_build.work_dir"
+                          size="small">
+                  <template slot="prepend">$WORKSPACE/</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="Dockerfile 来源："
+                            prop="source">
+                <el-select size="small" style="width: 100%;" v-model="buildConfig.post_build.docker_build.source" placeholder="请选择">
+                  <el-option
+                    label="代码仓库"
+                    value="local">
+                  </el-option>
+                  <el-option
+                    label="模板库"
+                    value="template">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item v-if="buildConfig.post_build.docker_build.source === 'local'" label="Dockerfile 文件的完整路径："
+                            prop="docker_file">
+                <el-input v-model="buildConfig.post_build.docker_build.docker_file"
+                          size="small">
+                  <template slot="prepend">$WORKSPACE/</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item v-if="buildConfig.post_build.docker_build.source === 'template'"  label="选择模板："
+                            prop="template_name">
+                <el-select style="width: 90%;" size="small" filterable @change="getDockerfileTemplate" v-model="buildConfig.post_build.docker_build.template_id" placeholder="请选择">
+                  <el-option v-for="(template,index) in dockerfileTemplates"
+                    :key="index"
+                    :label="template.name"
+                    :value="template.id">
+                  </el-option>
+                </el-select>
+                <template >
+                <el-button :disabled="!buildConfig.post_build.docker_build.template_id" style="margin-left: 5px;" type="text" @click="showDockerfile = true"> 预览</el-button>
+                <div v-if="dockerfileTemplate.variable && dockerfileTemplate.variable.length > 0" class="dockerfile-args-container">
+                  <span>ARG</span>
+                  <span v-for="(item,index) in dockerfileTemplate.variable" :key="index">
+                    <span v-if="item.value">{{`${item.key}=${item.value} `}}</span>
+                    <span v-else>{{`${item.key} `}}</span>
+                  </span>
+                </div>
+                </template>
+              </el-form-item>
+              <el-form-item label="镜像构建参数：">
+                <el-tooltip effect="dark"
+                            content="支持所有 Docker Build 参数"
+                            placement="top-start">
+                  <el-input v-model="buildConfig.post_build.docker_build.build_args"
+                            size="small"
+                            placeholder="--build-arg key=value"></el-input>
+                </el-tooltip>
+              </el-form-item>
+            </div>
+            <div class="divider">
+            </div>
+          </el-form>
           <el-form v-if="binary_enabled"
                   :model="buildConfig.post_build.file_archive"
                   :rules="file_archive_rules"
@@ -571,7 +562,7 @@
 </template>
 <script>
 import BuildEnv from '@/components/projects/build/build_env.vue'
-import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkinsJob, queryJenkinsParams } from '@api'
+import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkinsJob, queryJenkinsParams, getBuildConfigsAPI, saveBuildConfigTargetsAPI } from '@api'
 import qs from 'qs'
 import Editor from 'vue2-ace-bind'
 import Resize from '@/components/common/resize.vue'
@@ -708,7 +699,8 @@ export default {
           }
         ]
       },
-      configDataLoading: true
+      configDataLoading: true,
+      buildInfos: []
     }
   },
   methods: {
@@ -828,13 +820,37 @@ export default {
     },
     updateBuildConfig () {
       if (this.source === 'zadig') {
-        this.$refs.repoSelect.validateForm().then(res => {
-          if (this.isEdit) {
-            this.saveBuildConfig()
-          } else {
-            this.createBuildConfig()
+        if (this.isSelectedBuild) {
+          const projectName = this.projectName
+          const targetsPayload = {
+            name: this.buildConfig.name,
+            targets: this.buildConfig.targets,
+            productName: projectName
           }
-        })
+          saveBuildConfigTargetsAPI(projectName, targetsPayload).then(() => {
+            this.$router.replace({
+              query: Object.assign(
+                {},
+                qs.parse(window.location.search, { ignoreQueryPrefix: true }),
+                {
+                  rightbar: 'var'
+                })
+            })
+            this.$emit('getServiceModules')
+            this.$message({
+              type: 'success',
+              message: '新建构建成功'
+            })
+          })
+        } else {
+          this.$refs.repoSelect.validateForm().then(res => {
+            if (this.isEdit) {
+              this.saveBuildConfig()
+            } else {
+              this.createBuildConfig()
+            }
+          })
+        }
       } else {
         if (this.isEdit) {
           this.saveBuildConfig()
@@ -1027,6 +1043,9 @@ export default {
             })
           }
         })
+        getBuildConfigsAPI(projectName).then(res => {
+          this.buildInfos = res
+        })
       }
       this.configDataLoading = false
       if (this.buildAdd && !this.isEdit && this.buildServiceName) {
@@ -1067,6 +1086,15 @@ export default {
       getRegistryWhenBuildAPI(projectName).then((res) => {
         this.allRegistry = res
       })
+    },
+    changeBuildName () {
+      let targets = this.buildConfig.targets
+      if (this.isSelectedBuild) {
+        targets = targets.concat(this.buildServices)
+      }
+      const allTargetsKey = this.serviceTargets.concat(this.buildServices).map(build => build.key)
+
+      this.buildConfig.targets = targets.filter(tar => allTargetsKey.includes(tar.key))
     }
   },
   props: {
@@ -1097,6 +1125,23 @@ export default {
       },
       set (val) {
         this.buildConfig.pre_build.clean_workspace = !val
+      }
+    },
+    isSelectedBuild () {
+      return this.buildNames.includes(this.buildConfig.name)
+    },
+    buildNames () {
+      return this.buildInfos.map(build => build.name)
+    },
+    buildServices () {
+      const target = this.buildInfos.find(build => build.name === this.buildConfig.name)
+      if (target) {
+        return target.targets.map(tar => {
+          this.$set(tar, 'key', `${tar.service_name}/${tar.service_module}`)
+          return tar
+        })
+      } else {
+        return []
       }
     }
   },

@@ -339,7 +339,7 @@ export function getHelmChartServiceFilePath ({ projectName, serviceName, path, r
 }
 
 export function getHelmChartServiceFileContent ({ projectName, serviceName, path, fileName, revision = '', deliveryVersion = false }) {
-  return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/fileContent?filePath=${path}&fileName=${fileName}&revision=${revision}&deliveryVersion=${deliveryVersion}`)
+  return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/fileContent?filePath=${path}&fileName=${fileName}&revision=${revision}&deliveryVersion=${deliveryVersion}&projectName=${projectName}`)
 }
 
 export function getHelmChartServiceModule (projectName, serviceName) {

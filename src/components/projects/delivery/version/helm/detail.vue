@@ -68,8 +68,7 @@
                     <el-table-column prop="serviceName" label="组件名称"></el-table-column>
                     <el-table-column label="镜像名称">
                       <template slot-scope="{row}">
-                        <span>{{row.registryName}}</span>
-                        <!-- <router-link :to="`/v1/delivery/artifacts/detail/${row.id}?name=${row.serviceName}`">{{row.registryName}}</router-link> -->
+                        <router-link :to="`/v1/delivery/artifacts?image=${row.registryName}`">{{row.registryName}}</router-link>
                       </template>
                     </el-table-column>
                   </el-table>

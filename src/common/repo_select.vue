@@ -373,9 +373,16 @@ export default {
       }
     },
     getRepoNameById (index, id, repo_owner, key = '') {
+      if (!repo_owner) {
+        return
+      }
       const item = (this.codeInfo[index].repo_owners.find(item => { return item.path === repo_owner }))
-      const type = item ? item.kind : 'group'
-      const project_uuid = item.project_uuid ? item.project_uuid : ''
+      let type = 'group'
+      let project_uuid = ''
+      if (item) {
+        type = item.kind
+        project_uuid = item.project_uuid || ''
+      }
       if (repo_owner) {
         if (!key) {
           this.codeInfo[index].repos = []
@@ -393,9 +400,16 @@ export default {
       this.config.repos[index].branch = ''
     },
     getBranchInfoById (index, id, repo_owner, repo_name) {
+      if (!repo_name) {
+        return
+      }
       const repoItem = (this.codeInfo[index].repos.find(item => { return item.name === repo_name }))
-      const repoId = repoItem.repo_id ? repoItem.repo_id : ''
-      const repoUUID = repoItem.repo_uuid ? repoItem.repo_uuid : ''
+      let repoId = ''
+      let repoUUID = ''
+      if (repoItem) {
+        repoId = repoItem.repo_id
+        repoUUID = repoItem.repo_uuid
+      }
       if (repo_owner && repo_name) {
         this.codeInfo[index].branches = []
         this.setLoadingState(index, 'branch', true)

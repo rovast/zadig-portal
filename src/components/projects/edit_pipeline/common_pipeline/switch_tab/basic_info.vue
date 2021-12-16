@@ -140,7 +140,6 @@ export default {
     },
     validate () {
       return this.$refs.basicForm.validate()
-      // return Promise.resolve()
     },
     handleParameters (type, index) {
       if (type === 'delete') {

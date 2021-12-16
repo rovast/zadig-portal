@@ -32,7 +32,7 @@
           </el-col>
         </el-row>
       </el-form>
-      <el-form ref="buildApp" :inline="true" :model="buildInfo" class="form-style1" label-position="top" label-width="80px">
+      <el-form ref="buildApp" :inline="true" :model="buildInfo" class="form-bottom-0" label-position="top" label-width="80px">
         <span class="item-title">应用列表</span>
         <el-button v-if="buildInfo.install_items.length === 0" style="padding: 0;" @click="addFirstBuildApp()" size="mini" type="text">新增</el-button>
         <div class="divider item"></div>
@@ -97,7 +97,7 @@
       <repo-select ref="repoSelect" :validObj="validRepoObj" :config="buildConfig" showDivider addBtnMini shortDescription showFirstLine></repo-select>
     </div>
     <div class="section">
-      <el-form ref="cacheDir" :inline="true" :model="buildInfo" class="form-style1" label-position="left" label-width="130px">
+      <el-form ref="cacheDir" :inline="true" :model="buildInfo" class="form-bottom-0" label-position="left" label-width="130px">
         <span class="item-title">缓存策略</span>
         <div class="divider item"></div>
         <el-form-item label="使用工作空间缓存">
@@ -409,7 +409,7 @@ export default {
     }
   }
 
-  .form-style1 {
+  .form-bottom-0 {
     .el-form-item {
       margin-bottom: 0;
     }

@@ -1,6 +1,6 @@
 export default class ValidateSubmit {
   constructor () {
-    this.validateArr = [] // []{name, valid} name唯一
+    this.validateArr = [] // []{name, valid} name only
     this.validateBoo = false
     this.validateRes = []
   }

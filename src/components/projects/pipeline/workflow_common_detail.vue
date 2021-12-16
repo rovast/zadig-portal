@@ -148,7 +148,7 @@ export default {
       this.workflowTasks = res.data
       this.total = res.total
       if (!this.timeTimeoutFinishFlag) {
-        this.timerId = setTimeout(this.autoRefreshHistoryTask, 3000) // 保证内存中只有一个定时器
+        this.timerId = setTimeout(this.autoRefreshHistoryTask, 3000) // just one timeout
       }
     },
     getCommonWorkflowTasks (start, max) {

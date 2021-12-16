@@ -300,6 +300,7 @@ import {
   getCommonWorkflowHistoryLogAPI
 } from '@api'
 import bus from '@utils/event_bus'
+import { get } from 'lodash'
 export default {
   data () {
     return {
@@ -348,7 +349,7 @@ export default {
       return this.colorTranslation(this.buildOverallStatus, 'pipeline', 'task')
     },
     codeURL () {
-      return this.extensionStage.sub_tasks && this.extensionStage.sub_tasks.callback_payload && this.extensionStage.sub_tasks.callback_payload.QR_code_URL
+      return get(this.extensionStage.sub_tasks, 'callback_payload.QR_code_URL')
     }
   },
   methods: {

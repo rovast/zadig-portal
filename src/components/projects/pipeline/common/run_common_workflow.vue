@@ -93,14 +93,14 @@ export default {
       getCommonWorkflowAPI(this.workflow.project_name, this.workflow.id).then(
         res => {
           const buildStep = res.sub_tasks.find(task => task.type === 'buildv3')
-          // 没有构建不能运行工作流
+          // can not run workflow without build step
           if (!buildStep) {
             this.cantRun = true
             return
           }
 
-          const infos = [] // 用来请求branch pr信息
-          const builds = [] // post 信息，页面使用信息
+          const infos = [] // used to request branch and pr information
+          const builds = [] // post information that page use
 
           if (buildStep.job_ctx.builds && buildStep.job_ctx.builds.length) {
             buildStep.job_ctx.builds.forEach(build => {
@@ -163,7 +163,7 @@ export default {
 
       payload.build_args.forEach(arg => {
         arg.is_credential = false
-        // external 选择的是一个对象，数据key1:value1->key:key1,value:value1
+        // external is a object: key1:value1->key:key1,value:value1
         if (arg.type === 'external') {
           const value = cloneDeep(arg.value)
           arg.value = this.stringFromData(arg.value)

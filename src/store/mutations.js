@@ -37,7 +37,7 @@ export const QUERY_ORDER_SERVICE = 'QUERY_ORDER_SERVICE'
 // External Link
 export const SET_EXTERNAL_LINK = 'SET_EXTERNAL_LINK'
 
-// common pipeline
+// common workflow
 export const UPDATE_TABS = 'UPDATE_TABS'
 
 export const UPDATE_COMMON_INFO = 'UPDATE_COMMON_INFO'

@@ -117,12 +117,12 @@ export default {
       return flag
     },
     /*
-    任务操作
-    * @param  {string}           taskType 任务类型（running，queue）
-    * @param  {string}           operation 操作 （cancel，restart，delete）
-    * @param  {string}           项目名称
-    * @param  {number}           id 任务 id
-    * @param  {string}           workflowName 工作流名称
+    task operation
+    * @param  {string}           taskType（running，queue）
+    * @param  {string}           operation （cancel，restart，delete）
+    * @param  {string}           project name
+    * @param  {number}           id: task id
+    * @param  {string}           workflowName
     * @return {}
     */
     taskOperation (taskType, operation, projectName, id, workflowName) {

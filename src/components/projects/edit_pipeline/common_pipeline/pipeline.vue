@@ -26,7 +26,7 @@ import External from './switch_tab/external.vue'
 import ValidateSubmit from '@utils/validate_async'
 
 import { mapGetters, mapState } from 'vuex'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, get } from 'lodash'
 import {
   createCommonWorkflowAPI,
   getCommonWorkflowAPI,
@@ -143,7 +143,7 @@ export default {
 
         this.$store.commit('UPDATE_TABS', { type: 'add', tab: '基本信息' })
 
-        if (res.buildv3 && res.buildv3.job_ctx) {
+        if (get(res.buildv3, 'job_ctx')) {
           res.buildv3.job_ctx.clean_workspace = !res.buildv3.job_ctx
             .clean_workspace
         }

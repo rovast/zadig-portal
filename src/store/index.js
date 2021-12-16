@@ -15,7 +15,7 @@ import service_manage from './modules/service_manage'
 // External Link
 import external_link from './modules/external_link'
 
-// common pipeline
+// common workflow
 import common_pipeline from './modules/common_pipeline'
 
 Vue.use(Vuex)

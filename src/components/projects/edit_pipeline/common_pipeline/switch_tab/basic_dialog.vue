@@ -83,7 +83,7 @@
 
 <script>
 import { getExternalSystemsAPI } from '@api'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, get } from 'lodash'
 
 const paramInfo = {
   key: '',
@@ -92,20 +92,20 @@ const paramInfo = {
   choice_option: '',
   external_setting: {
     system_id: '',
-    // Endpoint路径
+    // Endpoint route
     endpoint: '',
-    // 请求方法
+    // request methods
     method: 'GET',
-    // 请求头
+    // request header
     headers: [
       {
         key: '',
         value: ''
       }
     ],
-    // 请求体
+    // request body
     body: '',
-    // 变量设置
+    // variable config
     params: [
       {
         param_key: '',
@@ -164,10 +164,7 @@ export default {
       this.paramData.external_setting.headers.push({ key: '', value: '' })
     },
     getParamData () {
-      if (
-        this.paramData.external_setting &&
-        this.paramData.external_setting.params
-      ) {
+      if (get(this.paramData.external_setting, 'params')) {
         let hasUsed = false
         this.paramData.external_setting.params.forEach(param => {
           if (param.param_key === this.display) {

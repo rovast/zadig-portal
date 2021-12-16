@@ -148,7 +148,7 @@ export default {
       this.workflowTasks = res.data
       this.total = res.total
       if (!this.timeTimeoutFinishFlag) {
-        this.timerId = setTimeout(this.autoRefreshHistoryTask, 3000) // just one timeout
+        this.timerId = setTimeout(this.autoRefreshHistoryTask, 3000) // Keep only one timer
       }
     },
     getCommonWorkflowTasks (start, max) {
@@ -167,10 +167,6 @@ export default {
       const start = (val - 1) * this.pageSize
       this.pageStart = start
       this.getCommonWorkflowTasks(start, this.pageSize)
-    },
-    hideAndgetCommonWorkflowTasks () {
-      this.taskDialogVisible = false
-      this.getCommonWorkflowTasks(0, this.pageSize)
     },
     startTask () {
       this.taskDialogVisible = true

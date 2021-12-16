@@ -43,7 +43,7 @@
       </el-table>
     </section>
     <footer>
-      <el-button :loading="loading" type="primary" plain size="small" :disabled="cantRun" @click="runCommonPipeline">启动任务</el-button>
+      <el-button :loading="loading" type="primary" plain size="small" :disabled="cantRun" @click="runCommonWorkflow">启动任务</el-button>
     </footer>
   </div>
 </template>
@@ -149,7 +149,7 @@ export default {
         }
       })
     },
-    runCommonPipeline () {
+    runCommonWorkflow () {
       const payload = cloneDeep(this.runCommonInfo)
 
       payload.builds.forEach(build => {

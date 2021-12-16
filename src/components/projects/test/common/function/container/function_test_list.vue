@@ -9,6 +9,12 @@
           </router-link>
         </template>
       </el-table-column>
+      <el-table-column prop="desc"
+                       label="描述">
+        <template slot-scope="scope">
+            <span class="desc">{{scope.row.desc}}</span>
+        </template>
+      </el-table-column>
       <el-table-column width="100px"
                        prop="test_case_num"
                        label="用例数量">
@@ -145,6 +151,11 @@ export default {
 .function-test-list {
   .link {
     color: #1989fa;
+  }
+
+  .desc {
+    color: #909399;
+    font-size: 13px;
   }
 
   .delete-connection {

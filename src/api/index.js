@@ -1385,8 +1385,8 @@ export function getEnvDefaultVariableAPI (projectName, envName) {
   return http.get(`/api/aslan/environment/rendersets/default-values?projectName=${projectName}&envName=${envName}`)
 }
 
-export function createHelmEnvAPI (projectName, payload) {
-  return http.post(`/api/aslan/environment/environments?helm=true&projectName=${projectName}`, payload)
+export function createHelmEnvAPI (projectName, payload, scene = '') {
+  return http.post(`/api/aslan/environment/environments?helm=true&projectName=${projectName}&scene=${scene}`, payload)
 }
 
 export function updateHelmEnvAPI (projectName, payload) {

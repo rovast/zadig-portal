@@ -141,9 +141,13 @@ export default {
     serviceNames () {
       return (
         this.chartNames ||
-        Object.keys(this.allChartNameInfo).map(name => {
-          return { serviceName: name, type: 'common' }
-        })
+        Object.keys(this.allChartNameInfo)
+          .filter(name => {
+            return this.allChartNameInfo[name][this.selectedEnv]
+          })
+          .map(name => {
+            return { serviceName: name, type: 'common' }
+          })
       )
     },
     filteredServiceNames () {
@@ -225,7 +229,7 @@ export default {
     },
     getAllChartNameInfo () {
       const chartValues = []
-      const serviceNames = this.serviceNames.map(chart => chart.serviceName)
+      const serviceNames = Object.keys(this.allChartNameInfo)
       const chartNameInfo = this.allChartNameInfo
       const envNames = this.envNames.length ? this.envNames : ['DEFAULT']
       for (const serviceName in chartNameInfo) {

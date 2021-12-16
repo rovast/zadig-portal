@@ -131,7 +131,7 @@ export default {
       })
     },
     handleExternalDelete (id) {
-      this.$confirm(`确定要删除这个 External 配置吗？`, '确认', {
+      this.$confirm(`确定要删除这个外部系统配置吗？`, '确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -139,7 +139,7 @@ export default {
         deleteExternalSystemAPI(id).then(res => {
           this.getExternalConfig()
           this.$message({
-            message: 'External 配置删除成功',
+            message: '外部系统配置删除成功',
             type: 'success'
           })
         })
@@ -161,7 +161,7 @@ export default {
             this.getExternalConfig()
             this.dialogExternalVisible = false
             this.$message({
-              message: `External 配置${id ? '修改' : '创建'}成功`,
+              message: `外部系统配置${id ? '修改' : '创建'}成功`,
               type: 'success'
             })
           })

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <CommonRow v-if="source.type === 'common'" :workflow="source"></CommonRow>
-    <pipeline-row v-else :name="workflow.name"
+    <CommonWorkflowRow v-if="source.type === 'common'" :workflow="source"></CommonWorkflowRow>
+    <ProductWorkflowRow v-else :name="workflow.name"
                   :isFavorite="workflow.isFavorite"
                   :type="'workflow'"
                   :projectName="workflow.projectName"
@@ -50,13 +50,13 @@
           </el-dropdown-menu>
         </el-dropdown>
       </template>
-    </pipeline-row>
+    </ProductWorkflowRow>
   </div>
 </template>
 
 <script>
-import pipelineRow from './pipeline_row.vue'
-import CommonRow from './common_row.vue'
+import ProductWorkflowRow from './pipeline_row.vue'
+import CommonWorkflowRow from './common_row.vue'
 import mixins from '@utils/virtual_scroll_list_mixin'
 import { wordTranslate } from '@utils/word_translate.js'
 import { getWorkflowDetailAPI, updateWorkflowAPI } from '@api'
@@ -144,8 +144,8 @@ export default {
     }
   },
   components: {
-    pipelineRow,
-    CommonRow
+    ProductWorkflowRow,
+    CommonWorkflowRow
   }
 }
 </script>

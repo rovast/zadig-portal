@@ -823,23 +823,23 @@ export function queryJenkinsParams (jobName) {
 
 // other
 
-export function createExternalAPI (payload) {
+export function createExternalSystemAPI (payload) {
   return http.post(`/api/aslan/system/external`, payload)
 }
 
-export function getExternalsAPI (page_num = 1, page_size = 100) {
+export function getExternalSystemsAPI (page_num = 1, page_size = 100) {
   return http.get(`/api/aslan/system/external?page_num=${page_num}&page_size=${page_size}`)
 }
 
-export function getExternalByIdAPI (id) {
+export function getExternalSystemByIdAPI (id) {
   return http.get(`/api/aslan/system/external/${id}`)
 }
 
-export function updateExternalAPI (id, payload) {
+export function updateExternalSystemAPI (id, payload) {
   return http.put(`/api/aslan/system/external/${id}`, payload)
 }
 
-export function deleteExternalAPI (id) {
+export function deleteExternalSystemAPI (id) {
   return http.delete(`/api/aslan/system/external/${id}`)
 }
 

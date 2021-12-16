@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { getExternalsAPI } from '@api'
+import { getExternalSystemsAPI } from '@api'
 import { mapState } from 'vuex'
 import { cloneDeep } from 'lodash'
 const externalInfo = {
@@ -118,7 +118,7 @@ export default {
     }
   },
   created () {
-    getExternalsAPI().then(res => {
+    getExternalSystemsAPI().then(res => {
       this.externalList = res.external_system
     })
   },

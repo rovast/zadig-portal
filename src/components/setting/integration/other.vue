@@ -54,11 +54,11 @@
 </template>
 <script>
 import {
-  getExternalsAPI,
-  getExternalByIdAPI,
-  updateExternalAPI,
-  deleteExternalAPI,
-  createExternalAPI
+  getExternalSystemsAPI,
+  getExternalSystemByIdAPI,
+  updateExternalSystemAPI,
+  deleteExternalSystemAPI,
+  createExternalSystemAPI
 } from '@api'
 import { cloneDeep } from 'lodash'
 const externalInfo = {
@@ -117,14 +117,14 @@ export default {
   },
   methods: {
     getExternalConfig () {
-      getExternalsAPI().then(res => {
+      getExternalSystemsAPI().then(res => {
         this.external = res.external_system
       })
     },
     handleExternalEdit (row) {
       this.dialogExternalVisible = true
       this.externalEdit = cloneDeep(row)
-      getExternalByIdAPI(row.id).then(res => {
+      getExternalSystemByIdAPI(row.id).then(res => {
         if (this.externalEdit.id === res.id) {
           this.externalEdit = res
         }
@@ -136,7 +136,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteExternalAPI(id).then(res => {
+        deleteExternalSystemAPI(id).then(res => {
           this.getExternalConfig()
           this.$message({
             message: 'External 配置删除成功',
@@ -155,8 +155,8 @@ export default {
             api_token: this.externalEdit.api_token
           }
           const fn = id
-            ? updateExternalAPI(id, payload)
-            : createExternalAPI(payload)
+            ? updateExternalSystemAPI(id, payload)
+            : createExternalSystemAPI(payload)
           fn.then(res => {
             this.getExternalConfig()
             this.dialogExternalVisible = false

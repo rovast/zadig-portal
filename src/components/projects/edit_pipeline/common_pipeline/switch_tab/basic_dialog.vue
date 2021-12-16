@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { getExternalsAPI } from '@api'
+import { getExternalSystemsAPI } from '@api'
 import { cloneDeep } from 'lodash'
 
 const paramInfo = {
@@ -199,7 +199,7 @@ export default {
     }
   },
   created () {
-    getExternalsAPI().then(res => {
+    getExternalSystemsAPI().then(res => {
       this.externalList = res.external_system
     })
   }

@@ -280,7 +280,7 @@
           </el-col>
           <el-col :span="6">
             <!-- <QrcodeVue v-if="codeURL" :value="codeURL" class="item-desc"></QrcodeVue> -->
-            <el-link v-if="codeURL" :href="codeURL" target="_blank" rel="noopener noreferrer">{{codeURL}}</el-link>
+            <el-link v-if="codeURL" type="primary" :href="codeURL" target="_blank" rel="noopener noreferrer">{{codeURL}}</el-link>
             <div v-else class="item-desc">N/A</div>
           </el-col>
         </el-row>

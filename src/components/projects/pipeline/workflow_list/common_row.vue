@@ -33,6 +33,9 @@
       <div class="step">
         <!-- <el-tag size="mini">{{}}</el-tag> -->
       </div>
+      <div class="desc">
+          <!-- {{desc}} -->
+      </div>
       <div class="average font">
         <div>平均执行时间</div>
         <div>-</div>
@@ -92,12 +95,8 @@ export default {
     align-items: center;
     justify-content: space-between;
     height: 70px;
-    padding: 0 24px;
+    padding-left: 0.8em;
     border-left: 4px solid;
-
-    & > div {
-      flex: 0 0 auto;
-    }
 
     .favorite {
       color: #dbdbdb;
@@ -105,7 +104,7 @@ export default {
     }
 
     .info {
-      width: 19%;
+      flex: 0 0 19%;
       font-weight: 500;
 
       .top {
@@ -121,6 +120,12 @@ export default {
 
     .step {
       width: 350px;
+    }
+
+    .desc {
+      flex: 0 0 19%;
+      color: #666;
+      font-size: 14px;
     }
 
     .average {

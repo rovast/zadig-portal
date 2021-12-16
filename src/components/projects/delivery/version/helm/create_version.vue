@@ -87,12 +87,13 @@ export default {
         delete chart.lastVersion
       })
       deliveryRelease.labels = deliveryRelease.labels
-        .split(',')
-        .map(label => label.trim())
+        ? deliveryRelease.labels.split(',').map(label => label.trim())
+        : []
       this.createLoading = true
-      const res = await createHelmVersionAPI(deliveryRelease).catch(err =>
-        console.log(err)
-      )
+      const res = await createHelmVersionAPI(
+        deliveryRelease.productName,
+        deliveryRelease
+      ).catch(err => console.log(err))
       this.createLoading = false
       if (res) {
         this.$message.success(

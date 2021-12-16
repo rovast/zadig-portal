@@ -175,7 +175,7 @@ export default {
         retry: true
       }
       this.loading = true
-      createHelmVersionAPI(payload).then(() => {
+      createHelmVersionAPI(this.projectName, payload).then(() => {
         this.$message.success(`重试成功！`)
         this.getVersionDetail()
       })

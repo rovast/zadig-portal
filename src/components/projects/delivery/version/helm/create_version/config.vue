@@ -125,7 +125,7 @@ export default {
       }
 
       this.useLoading = true
-      const res = await useGlobalVariablesAPI(payload).catch(err => {
+      const res = await useGlobalVariablesAPI(this.projectName, payload).catch(err => {
         console.log(err)
       })
       this.useLoading = false

@@ -104,8 +104,6 @@ export default {
           delete commonInfo.buildv3
           delete commonInfo.trigger
 
-          console.log('保存', commonInfo)
-
           const projectName = commonInfo.project_name
 
           const fn = this.pipelineId

@@ -56,7 +56,6 @@ export default {
       if (this.currentStep === 0) {
         this.$refs.component.submit(this.currentStep + 2)
       } else if (this.currentStep === 1) {
-        console.log('123')
         this.$router.push(`/v1/projects/detail/${this.projectName}/envs/externalConfig?envName=${envName}&step=${this.currentStep + 2}`)
       } else {
         this.$router.push(`/v1/projects/detail/${this.projectName}/envs/detail?envName=${envName}`)

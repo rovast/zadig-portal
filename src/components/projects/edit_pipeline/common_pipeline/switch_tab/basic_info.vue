@@ -182,7 +182,6 @@ export default {
   },
   deactivated () {
     this.updateCommonInfo()
-    console.log('deactivated')
   }
 }
 </script>

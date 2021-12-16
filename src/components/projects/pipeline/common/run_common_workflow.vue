@@ -78,7 +78,6 @@ export default {
   methods: {
     getAllBranchInfo (payload) {
       getAllBranchInfoAPI(payload, 'bp').then(res => {
-        console.log(res)
         const builds = this.runCommonInfo.builds
         res.forEach(re => {
           const key = `${re.codehost_id}/${re.repo_owner}/${re.repo}`
@@ -93,8 +92,6 @@ export default {
     getCommonPipelineInfo () {
       getCommonWorkflowAPI(this.workflow.project_name, this.workflow.id).then(
         res => {
-          console.log(res)
-
           const buildStep = res.sub_tasks.find(task => task.type === 'buildv3')
           // 没有构建不能运行工作流
           if (!buildStep) {
@@ -189,7 +186,6 @@ export default {
 
       payload.build_args = payload.build_args.concat(extarnalArgs)
 
-      console.log('payload:', payload)
       this.loading = true
       const projectName = payload.project_name
       runCommonWorkflowAPI(projectName, payload)

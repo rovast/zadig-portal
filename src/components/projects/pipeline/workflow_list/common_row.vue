@@ -45,7 +45,7 @@
         <div>-</div>
       </div>
       <div class="operate">
-        <el-button type="success" icon="el-icon-video-play" @click="StartCommonWorkflowBuild(workflow)">执行</el-button>
+        <el-button type="success" icon="el-icon-video-play" @click="startCommonWorkflowBuild(workflow)">执行</el-button>
         <i
           class="icon el-icon-setting"
           @click="$router.push(`/workflows/common/edit/${workflow.name}?projectName=${workflow.project_name}&id=${workflow.id}`)"
@@ -72,7 +72,7 @@ export default {
   props: {
     workflow: Object
   },
-  inject: ['StartCommonWorkflowBuild', 'deleteCommonWorkflow']
+  inject: ['startCommonWorkflowBuild', 'deleteCommonWorkflow']
 }
 </script>
 

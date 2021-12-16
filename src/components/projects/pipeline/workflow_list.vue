@@ -70,13 +70,13 @@
     </el-dialog>
 
     <el-dialog title="运行 产品-工作流" :visible.sync="showStartProductBuild" custom-class="run-workflow" width="60%">
-      <run-workflow
+      <RunProductWorkflow
         v-if="workflowToRun.name"
         :workflowName="workflowToRun.name"
         :workflowMeta="workflowToRun"
         :targetProduct="workflowToRun.product_tmpl_name"
         @success="hideProductTaskDialog"
-      ></run-workflow>
+      ></RunProductWorkflow>
     </el-dialog>
 
     <el-dialog title="运行 通用-工作流" :visible.sync="showStartCommonWorkflowBuild" :close-on-click-modal="false">
@@ -87,7 +87,7 @@
 
 <script>
 import VirtualListItem from './workflow_list/virtual_list_item'
-import runWorkflow from './common/run_workflow.vue'
+import RunProductWorkflow from './common/run_workflow.vue'
 import RunCommonWorkflow from './common/run_common_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
@@ -122,7 +122,7 @@ export default {
       copyWorkflow: this.copyWorkflow,
       deleteProductWorkflow: this.deleteProductWorkflow,
       renamePipeline: this.renamePipeline,
-      StartCommonWorkflowBuild: this.StartCommonWorkflowBuild,
+      startCommonWorkflowBuild: this.startCommonWorkflowBuild,
       deleteCommonWorkflow: this.deleteCommonWorkflow
     }
   },
@@ -385,7 +385,7 @@ export default {
     sortWorkflow (cm) {
       this.sortBy = cm
     },
-    StartCommonWorkflowBuild (worflow) {
+    startCommonWorkflowBuild (worflow) {
       this.commonToRun = worflow
       this.showStartCommonWorkflowBuild = true
     }
@@ -443,7 +443,7 @@ export default {
     }
   },
   components: {
-    runWorkflow,
+    RunProductWorkflow,
     VirtualListItem,
     VirtualList,
     RunCommonWorkflow

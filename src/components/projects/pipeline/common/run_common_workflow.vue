@@ -89,7 +89,7 @@ export default {
         })
       })
     },
-    getCommonPipelineInfo () {
+    getCommonWorkflowInfo () {
       getCommonWorkflowAPI(this.workflow.project_name, this.workflow.id).then(
         res => {
           const buildStep = res.sub_tasks.find(task => task.type === 'buildv3')
@@ -208,7 +208,7 @@ export default {
     value: {
       handler (val) {
         if (val) {
-          this.getCommonPipelineInfo()
+          this.getCommonWorkflowInfo()
         } else {
           this.loading = false
         }

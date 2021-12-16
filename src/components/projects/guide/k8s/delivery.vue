@@ -98,7 +98,7 @@
                custom-class="run-workflow"
                width="60%"
                class="dialog">
-      <run-workflow v-if="workflow.product_tmpl_name"
+      <run-workflow v-if="taskDialogVisible"
                     :workflowName="workflow.name"
                     :workflowMeta="workflow"
                     :targetProduct="workflow.product_tmpl_name"

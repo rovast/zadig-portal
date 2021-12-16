@@ -28,9 +28,9 @@ import ValidateSubmit from '@utils/validate_async'
 import { mapGetters, mapState } from 'vuex'
 import { cloneDeep } from 'lodash'
 import {
-  createCommonPipelineAPI,
-  getCommonPipelineAPI,
-  updateCommonPipelineAPI
+  createCommonWorkflowAPI,
+  getCommonWorkflowAPI,
+  updateCommonWorkflowAPI
 } from '@api'
 export default {
   data () {
@@ -109,8 +109,8 @@ export default {
           const projectName = commonInfo.project_name
 
           const fn = this.pipelineId
-            ? updateCommonPipelineAPI(projectName, this.pipelineId, commonInfo)
-            : createCommonPipelineAPI(projectName, commonInfo)
+            ? updateCommonWorkflowAPI(projectName, this.pipelineId, commonInfo)
+            : createCommonWorkflowAPI(projectName, commonInfo)
 
           fn.then(res => {
             this.$message.success(
@@ -134,7 +134,7 @@ export default {
   created () {
     if (this.pipelineId) {
       const projectName = this.$route.query.projectName
-      getCommonPipelineAPI(projectName, this.pipelineId).then(res => {
+      getCommonWorkflowAPI(projectName, this.pipelineId).then(res => {
         let length = res.sub_tasks.length
         let task = {}
         while (length--) {

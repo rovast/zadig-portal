@@ -101,8 +101,8 @@
 
 <script>
 import {
-  getCommonPipelineAPI,
-  deleteCommonPipelineAPI,
+  getCommonWorkflowAPI,
+  deleteCommonWorkflowAPI,
   getCommonWorkflowTasksAPI
 } from '@api'
 import RunCommonWorkflow from './common/run_common_workflow.vue'
@@ -198,7 +198,7 @@ export default {
           }
         }
       }).then(({ value }) => {
-        deleteCommonPipelineAPI(projectName, workflowID).then(() => {
+        deleteCommonWorkflowAPI(projectName, workflowID).then(() => {
           this.$message.success('删除成功')
           this.$router.push(`/v1/projects/detail/${this.projectName}/pipelines`)
         })
@@ -231,7 +231,7 @@ export default {
     const projectName = this.projectName
     const workflowID = this.workflowID
     const workflowName = this.workflowName
-    getCommonPipelineAPI(projectName, workflowID).then(res => {
+    getCommonWorkflowAPI(projectName, workflowID).then(res => {
       this.workflow = res
     })
     this.autoRefreshHistoryTask()

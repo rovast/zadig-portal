@@ -559,23 +559,23 @@ export function workflowTaskDetailSSEAPI (projectName, workflowName, taskID, wor
 }
 
 // Common Workflow
-export function createCommonPipelineAPI (projectName = '', payload) {
+export function createCommonWorkflowAPI (projectName = '', payload) {
   return http.post(`/api/aslan/workflow/v3?projectName = ${projectName}`, payload)
 }
 
-export function deleteCommonPipelineAPI (projectName = '', id) {
+export function deleteCommonWorkflowAPI (projectName = '', id) {
   return http.delete(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`)
 }
 
-export function getCommonPipelineAPI (projectName = '', id) {
+export function getCommonWorkflowAPI (projectName = '', id) {
   return http.get(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`)
 }
 
-export function updateCommonPipelineAPI (projectName = '', id, payload) {
+export function updateCommonWorkflowAPI (projectName = '', id, payload) {
   return http.put(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`, payload)
 }
 
-export function getCommonPipelineListAPI (projectName = '', pageNum = 1, pageSize = 999) {
+export function getCommonWorkflowListAPI (projectName = '', pageNum = 1, pageSize = 999) {
   return http.get(`/api/aslan/workflow/v3?project_name=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
 }
 
@@ -583,7 +583,7 @@ export function getCommonBuildArgsAPI (id) {
   return http.get(`/api/aslan/workflow/v3/${id}/args`)
 }
 
-export function runCommonPipelineAPI (projectName = '', payload) {
+export function runCommonWorkflowAPI (projectName = '', payload) {
   return http.post(`/api/aslan/workflow/v3/workflowtask?projectName=${projectName}`, payload)
 }
 

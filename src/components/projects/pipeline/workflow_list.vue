@@ -91,7 +91,7 @@ import runWorkflow from './common/run_workflow.vue'
 import RunCommonWorkflow from './common/run_common_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
-import { getWorkflowsAPI, getWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteWorkflowAPI, copyWorkflowAPI, getCommonPipelineListAPI, deleteCommonPipelineAPI } from '@api'
+import { getWorkflowsAPI, getWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteWorkflowAPI, copyWorkflowAPI, getCommonWorkflowListAPI, deleteCommonWorkflowAPI } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
@@ -269,7 +269,7 @@ export default {
         })
       }
 
-      const res2 = await getCommonPipelineListAPI(projectName).catch(err => {
+      const res2 = await getCommonWorkflowListAPI(projectName).catch(err => {
         console.log(err)
         return []
       })
@@ -316,7 +316,7 @@ export default {
         }
       })
         .then(({ value }) => {
-          deleteCommonPipelineAPI(workflow.project_name, workflow.id).then(res => {
+          deleteCommonWorkflowAPI(workflow.project_name, workflow.id).then(res => {
             this.getWorkflows(this.projectName)
             this.$message.success(`${value}删除成功！`)
           })

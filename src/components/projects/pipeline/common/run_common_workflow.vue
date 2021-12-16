@@ -51,8 +51,8 @@
 <script>
 import {
   getAllBranchInfoAPI,
-  runCommonPipelineAPI,
-  getCommonPipelineAPI,
+  runCommonWorkflowAPI,
+  getCommonWorkflowAPI,
   getCommonBuildArgsAPI
 } from '@api'
 import { cloneDeep } from 'lodash'
@@ -91,7 +91,7 @@ export default {
       })
     },
     getCommonPipelineInfo () {
-      getCommonPipelineAPI(this.workflow.project_name, this.workflow.id).then(
+      getCommonWorkflowAPI(this.workflow.project_name, this.workflow.id).then(
         res => {
           console.log(res)
 
@@ -192,7 +192,7 @@ export default {
       console.log('payload:', payload)
       this.loading = true
       const projectName = payload.project_name
-      runCommonPipelineAPI(projectName, payload)
+      runCommonWorkflowAPI(projectName, payload)
         .then(res => {
           this.loading = false
           this.$message.success('创建成功')

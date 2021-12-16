@@ -1240,16 +1240,16 @@ export function getChartInfoAPI (projectName, envName, serviceName) {
   return http.get(`/api/aslan/environment/environments/${envName}/helm/charts?projectName=${projectName}&serviceName=${serviceName.join(',')}`)
 }
 
-export function createHelmVersionAPI (payload) {
-  return http.post(`/api/aslan/delivery/releases/helm`, payload)
+export function createHelmVersionAPI (projectName, payload) {
+  return http.post(`/api/aslan/delivery/releases/helm?projectName=${projectName}`, payload)
 }
 
-export function useGlobalVariablesAPI (payload) {
-  return http.post(`/api/aslan/delivery/releases/helm/global-variables`, payload)
+export function useGlobalVariablesAPI (projectName, payload) {
+  return http.post(`/api/aslan/delivery/releases/helm/global-variables?projectName=${projectName}`, payload)
 }
 
-export function getChartLastVersionAPI (chartRepoName, chartName) {
-  return http.get(`/api/aslan/delivery/releases/helm/charts/version?chartName=${chartName.join(',')}&chartRepoName=${chartRepoName}`)
+export function getChartLastVersionAPI (projectName, chartRepoName, chartName) {
+  return http.get(`/api/aslan/delivery/releases/helm/charts/version?projectName=${projectName}&chartName=${chartName.join(',')}&chartRepoName=${chartRepoName}`)
 }
 
 // Forgot password

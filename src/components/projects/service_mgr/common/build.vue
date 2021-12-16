@@ -167,6 +167,10 @@
                 :label="item"
                 :value="item">
               </el-option>
+              <el-option
+                :label="`${projectName}-build-${buildServiceName}`"
+                :value="`${projectName}-build-${buildServiceName}`">
+              </el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="targets"

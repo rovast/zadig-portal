@@ -172,6 +172,10 @@
                 :label="item"
                 :value="item">
               </el-option>
+              <el-option
+                :label="`${projectName}-build-${name}`"
+                :value="`${projectName}-build-${name}`">
+              </el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="targets" label="构建服务">

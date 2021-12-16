@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import { getWorkflowDetailAPI, deleteWorkflowAPI, workflowTaskListAPI } from '@api'
+import { getWorkflowDetailAPI, deleteProductWorkflowAPI, workflowTaskListAPI } from '@api'
 import runWorkflow from './common/run_workflow.vue'
 import bus from '@utils/event_bus'
 export default {
@@ -251,7 +251,7 @@ export default {
           }
         }
       }).then(({ value }) => {
-        deleteWorkflowAPI(this.$route.params.project_name, name).then(() => {
+        deleteProductWorkflowAPI(this.$route.params.project_name, name).then(() => {
           this.$message.success('删除成功')
           this.$router.push(`/v1/projects/detail/${this.projectName}/pipelines`)
         })

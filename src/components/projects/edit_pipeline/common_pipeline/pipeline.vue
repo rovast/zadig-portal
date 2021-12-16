@@ -12,7 +12,7 @@
     <footer class="footer">
       <el-tag>填写相关信息，然后点击保存</el-tag>
       <el-button type="primary" plain @click="$router.go(-1)">取消</el-button>
-      <el-button type="primary" plain @click="saveCommonPipeline">保存</el-button>
+      <el-button type="primary" plain @click="saveCommonWorkflow">保存</el-button>
     </footer>
   </div>
 </template>
@@ -64,7 +64,7 @@ export default {
     }
   },
   methods: {
-    saveCommonPipeline () {
+    saveCommonWorkflow () {
       this.validObj.validateAll().then(res => {
         if (res[1]) {
           this.$refs.commonStep.updateCommonInfo()

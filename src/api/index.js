@@ -503,7 +503,7 @@ export function updateWorkflowAPI (data) {
   return http.put(`/api/aslan/workflow/workflow?projectName=${data.product_tmpl_name}`, data)
 }
 
-export function deleteWorkflowAPI (projectName, name) {
+export function deleteProductWorkflowAPI (projectName, name) {
   return http.delete(`/api/aslan/workflow/workflow/${name}?projectName=${projectName}`)
 }
 

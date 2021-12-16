@@ -79,16 +79,7 @@ export default {
     }
     return {
       externalData: cloneDeep(externalInfo),
-      externalList: [
-        {
-          id: 'xx',
-          server: 'xx'
-        },
-        {
-          id: 'yy',
-          server: 'yy'
-        }
-      ],
+      externalList: [],
       origin: location.origin
     }
   },

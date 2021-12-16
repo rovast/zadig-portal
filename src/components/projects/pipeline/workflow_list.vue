@@ -79,8 +79,8 @@
       ></run-workflow>
     </el-dialog>
 
-    <el-dialog title="运行 通用-工作流" :visible.sync="showStartCommonBuild" :close-on-click-modal="false">
-      <RunCommonWorkflow :value="showStartCommonBuild" :workflow="commonToRun"></RunCommonWorkflow>
+    <el-dialog title="运行 通用-工作流" :visible.sync="showStartCommonWorkflowBuild" :close-on-click-modal="false">
+      <RunCommonWorkflow :value="showStartCommonWorkflowBuild" :workflow="commonToRun"></RunCommonWorkflow>
     </el-dialog>
   </div>
 </template>
@@ -91,7 +91,7 @@ import runWorkflow from './common/run_workflow.vue'
 import RunCommonWorkflow from './common/run_common_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
-import { getWorkflowsAPI, getWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteWorkflowAPI, copyWorkflowAPI, getCommonWorkflowListAPI, deleteCommonWorkflowAPI } from '@api'
+import { getWorkflowsAPI, getWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteProductWorkflowAPI, copyWorkflowAPI, getCommonWorkflowListAPI, deleteCommonWorkflowAPI } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
@@ -112,18 +112,18 @@ export default {
       showSelectWorkflowType: false,
       selectWorkflowType: 'product',
 
-      showStartCommonBuild: false,
+      showStartCommonWorkflowBuild: false,
       commonToRun: {}
     }
   },
   provide () {
     return {
-      startProductBuild: this.startProductBuild,
+      startProductWorkflowBuild: this.startProductWorkflowBuild,
       copyWorkflow: this.copyWorkflow,
-      deleteWorkflow: this.deleteWorkflow,
+      deleteProductWorkflow: this.deleteProductWorkflow,
       renamePipeline: this.renamePipeline,
-      startCommonBuild: this.startCommonBuild,
-      deleteCommon: this.deleteCommon
+      StartCommonWorkflowBuild: this.StartCommonWorkflowBuild,
+      deleteCommonWorkflow: this.deleteCommonWorkflow
     }
   },
   computed: {
@@ -269,17 +269,17 @@ export default {
         })
       }
 
-      const res2 = await getCommonWorkflowListAPI(projectName).catch(err => {
+      const workflowList = await getCommonWorkflowListAPI(projectName).catch(err => {
         console.log(err)
         return []
       })
-      res2.workflow_list.forEach(list => {
+      workflowList.workflow_list.forEach(list => {
         list.type = 'common'
       })
       this.workflowListLoading = false
-      this.workflowsList = [...res, ...res2.workflow_list]
+      this.workflowsList = [...res, ...workflowList.workflow_list]
     },
-    deleteWorkflow (workflow) {
+    deleteProductWorkflow (workflow) {
       const name = workflow.name
       const projectName = workflow.projectName
       this.$prompt('输入工作流名称确认', '删除工作流 ' + name, {
@@ -296,13 +296,13 @@ export default {
           }
         }
       }).then(({ value }) => {
-        deleteWorkflowAPI(projectName, name).then(() => {
+        deleteProductWorkflowAPI(projectName, name).then(() => {
           this.getWorkflows(this.projectName)
           this.$message.success('删除成功')
         })
       })
     },
-    deleteCommon (workflow) {
+    deleteCommonWorkflow (workflow) {
       this.$prompt('输入工作流名称确认', `删除工作流 ${workflow.name}`, {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -325,7 +325,7 @@ export default {
           this.$message.info('取消删除')
         })
     },
-    startProductBuild (workflow) {
+    startProductWorkflowBuild (workflow) {
       this.workflowToRun = {}
       getWorkflowDetailAPI(workflow.projectName, workflow.name).then(res => {
         this.showStartProductBuild = true
@@ -385,9 +385,9 @@ export default {
     sortWorkflow (cm) {
       this.sortBy = cm
     },
-    startCommonBuild (worflow) {
+    StartCommonWorkflowBuild (worflow) {
       this.commonToRun = worflow
-      this.showStartCommonBuild = true
+      this.showStartCommonWorkflowBuild = true
     }
   },
   created () {

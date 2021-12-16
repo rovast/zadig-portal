@@ -45,15 +45,15 @@
         <div>-</div>
       </div>
       <div class="operate">
-        <el-button type="success" icon="el-icon-video-play" @click="startCommonBuild(workflow)">执行</el-button>
+        <el-button type="success" icon="el-icon-video-play" @click="StartCommonWorkflowBuild(workflow)">执行</el-button>
         <i
           class="icon el-icon-setting"
           @click="$router.push(`/workflows/common/edit/${workflow.name}?projectName=${workflow.project_name}&id=${workflow.id}`)"
         ></i>
-        <el-dropdown @command="deleteCommonPipeline">
+        <el-dropdown>
           <i class="icon el-icon-s-operation"></i>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="delete">删除</el-dropdown-item>
+            <el-dropdown-item @click.native="deleteCommonWorkflow(workflow)">删除</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -72,14 +72,7 @@ export default {
   props: {
     workflow: Object
   },
-  inject: ['startCommonBuild', 'deleteCommon'],
-  methods: {
-    deleteCommonPipeline (command) {
-      if (command === 'delete') {
-        this.deleteCommon(this.workflow)
-      }
-    }
-  }
+  inject: ['StartCommonWorkflowBuild', 'deleteCommonWorkflow']
 }
 </script>
 

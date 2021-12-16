@@ -27,7 +27,7 @@
       <template slot="operations">
         <el-button type="success"
                    class="button-exec"
-                   @click="startProductBuild(workflow)">
+                   @click="startProductWorkflowBuild(workflow)">
           <span class="el-icon-video-play">&nbsp;执行</span>
         </el-button>
         <router-link :to="`/workflows/product/edit/${workflow.name}?projectName=${workflow.projectName}`">
@@ -44,7 +44,7 @@
             <el-dropdown-item @click.native="copyWorkflow(workflow)">
               <span>复制</span>
             </el-dropdown-item>
-            <el-dropdown-item @click.native="deleteWorkflow(workflow)">
+            <el-dropdown-item @click.native="deleteProductWorkflow(workflow)">
               <span>删除</span>
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -80,9 +80,9 @@ export default {
     }
   },
   inject: [
-    'startProductBuild',
+    'startProductWorkflowBuild',
     'copyWorkflow',
-    'deleteWorkflow',
+    'deleteProductWorkflow',
     'renamePipeline'],
   computed: {
     workflow () {

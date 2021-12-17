@@ -10,15 +10,21 @@
             序号
           </div>
         </el-col>
-        <el-col :span="11">
+        <el-col :span="10">
           <div class="service">
             服务
           </div>
         </el-col>
 
-        <el-col :span="11">
+        <el-col :span="10">
           <div class="deploy">
             部署
+          </div>
+        </el-col>
+
+        <el-col :span="2">
+          <div class="view">
+            是否显示
           </div>
         </el-col>
       </el-row>
@@ -50,7 +56,7 @@
               {{ _idx+1 }}
             </div>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="10">
             <div class="service">
               <span class="service-link">
                 <template>
@@ -62,11 +68,20 @@
               </span>
             </div>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="10">
             <div class="deploy">
               <div>
                 {{ `${config.target.service_name}/${config.target.service_module}`}}
               </div>
+            </div>
+          </el-col>
+          <el-col :span="2">
+            <div class="build-item view">
+              <i class="iconfont icon"
+                 :class="{'iconview-off1': config.hide_service_module, iconview: !config.hide_service_module}"
+                 :style="{ color: config.hide_service_module ? '#99a9bf' : '#1989fa' }"
+                 @click="config.hide_service_module = !config.hide_service_module"
+              ></i>
             </div>
           </el-col>
         </el-row>
@@ -87,7 +102,12 @@ export default {
     },
     serviceConfigs: {
       get () {
-        return this.artifact_stage.modules
+        return this.artifact_stage.modules.map(config => {
+          if (typeof config.hide_service_module === 'undefined') {
+            this.$set(config, 'hide_service_module', false)
+          }
+          return config
+        })
       },
       set (val) {
         this.artifact_stage.modules = val
@@ -122,11 +142,14 @@ export default {
       }
     },
     allTargets (newVal, oldVal) {
-      this.serviceConfigs = newVal.map(tar => {
-        return {
-          target: tar
-        }
-      })
+      if (!this.serviceConfigs.length) {
+        this.serviceConfigs = newVal.map(tar => {
+          return {
+            hide_service_module: false,
+            target: tar
+          }
+        })
+      }
     }
   },
   created () {
@@ -146,7 +169,8 @@ export default {
   .row {
     .index,
     .service,
-    .deploy {
+    .deploy,
+    .view {
       display: inline-block;
       height: 42px;
       line-height: 42px;
@@ -166,6 +190,15 @@ export default {
     .deploy {
       vertical-align: initial;
       word-break: break-all;
+    }
+
+    .view {
+      display: block;
+      text-align: center;
+
+      .icon {
+        font-size: 18px;
+      }
     }
   }
 

@@ -99,7 +99,6 @@ export default {
       const payload = []
       uids.forEach(uid => {
         payload.push({
-          name: uid + '-' + name,
           uid: uid,
           role: name,
           public: role.isPublic ? role.isPublic : false

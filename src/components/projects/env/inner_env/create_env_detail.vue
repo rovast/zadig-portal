@@ -781,6 +781,7 @@ export default {
           }
           createProductAPI(payload, envType).then(
             res => {
+              // Add delay to solve the back-end permission synchronization problem
               sleep(5000).then(() => {
                 const envName = payload.env_name
                 this.startDeployLoading = false

@@ -15,8 +15,8 @@ import service_manage from './modules/service_manage'
 // External Link
 import external_link from './modules/external_link'
 
-// common workflow
-import common_pipeline from './modules/common_pipeline'
+// Common Workflow
+import common_workflow from './modules/common_workflow'
 
 Vue.use(Vuex)
 
@@ -29,7 +29,7 @@ export default new Vuex.Store({
     sidebar_status,
     service_manage,
     external_link,
-    common_pipeline
+    common_workflow
   },
   strict: debug
 })

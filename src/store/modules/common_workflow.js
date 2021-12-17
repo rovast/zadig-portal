@@ -68,7 +68,7 @@ const mutations = {
   [types.UPDATE_COMMON_INFO] (state, payload) {
     Object.assign(state.commonInfo, payload)
   },
-  [types.RESET_COMMON_PIPELINE] (state) {
+  [types.RESET_COMMON_WORKFLOW] (state) {
     state.tabs = cloneDeep(tabInfo)
     state.commonInfo = cloneDeep(commonInfo)
   }

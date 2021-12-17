@@ -85,7 +85,7 @@ export default {
   },
   computed: {
     ...mapState({
-      commonInfo: state => state.common_pipeline.commonInfo
+      commonInfo: state => state.common_workflow.commonInfo
     })
   },
   props: {

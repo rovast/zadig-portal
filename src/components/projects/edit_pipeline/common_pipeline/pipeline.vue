@@ -41,7 +41,7 @@ export default {
   computed: {
     ...mapGetters(['currentTab', 'selectedTabs']),
     ...mapState({
-      commonInfo: state => state.common_pipeline.commonInfo
+      commonInfo: state => state.common_workflow.commonInfo
     }),
     isComp () {
       let res = BasicInfo
@@ -152,7 +152,7 @@ export default {
     }
   },
   destroyed () {
-    this.$store.commit('RESET_COMMON_PIPELINE')
+    this.$store.commit('RESET_COMMON_WORKFLOW')
   }
 }
 </script>

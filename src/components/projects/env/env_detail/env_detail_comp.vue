@@ -310,7 +310,7 @@
                       <el-tooltip effect="dark"
                                   content="配置变更"
                                   placement="top">
-                        <i @click="openPopper(scope.row, serviceStatus[scope.row.service_name])"
+                        <i @click="openPopper(scope.row)"
                            class="el-icon-question icon operation"></i>
                       </el-tooltip>
                     </span>
@@ -965,10 +965,10 @@ export default {
       }
     },
 
-    openPopper (service, service_status) {
-      const product_name = this.projectName
-      const env_name = this.envName
-      serviceTemplateAfterRenderAPI(product_name, service.service_name, env_name).then((tpls) => {
+    openPopper (service) {
+      const projectName = this.projectName
+      const envName = this.envName
+      serviceTemplateAfterRenderAPI(projectName, service.service_name, envName).then((tpls) => {
         this.combineTemplate = jsdiff.diffLines(tpls.current.yaml, tpls.latest.yaml)
       })
     },

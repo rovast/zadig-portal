@@ -62,19 +62,24 @@ export default {
   },
   methods: {
     getArtifactWorkspace () {
-      this.loading = true
+      const projectName = this.projectName
       const workflowName = this.workflowName
       const taskId = this.taskId
-      getArtifactWorkspaceAPI(workflowName, taskId).then((res) => {
+      this.loading = true
+      getArtifactWorkspaceAPI(projectName, workflowName, taskId).then((res) => {
         this.loading = false
         this.fileList = res
       })
     }
   },
   computed: {
+    projectName () {
+      return this.$route.params.project_name
+    },
     downloadUrl () {
+      const projectName = this.projectName
       const token = store.get('userInfo').token
-      return `/api/aslan/workflow/v2/tasks/workflow/${this.workflowName}/taskId/${this.taskId}?&token=${token}`
+      return `/api/aslan/workflow/v2/tasks/workflow/${this.workflowName}/taskId/${this.taskId}?token=${token}&projectName=${projectName}`
     }
   },
   mounted () {

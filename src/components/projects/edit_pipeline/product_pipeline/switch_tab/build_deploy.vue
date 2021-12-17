@@ -77,9 +77,9 @@
           <el-col :span="2">
             <div class="build-item view">
               <i class="iconfont icon"
-                 :class="{'iconview-off1': !config.show_service_module, iconview: config.show_service_module}"
-                 :style="{ color: config.show_service_module ? '#1989fa' : '#99a9bf'}"
-                 @click="config.show_service_module = !config.show_service_module"
+                 :class="{'iconview-off1': config.hide_service_module, iconview: !config.hide_service_module}"
+                 :style="{ color: config.hide_service_module ? '#99a9bf': '#1989fa' }"
+                 @click="config.hide_service_module = !config.hide_service_module"
               ></i>
             </div>
           </el-col>
@@ -102,8 +102,8 @@ export default {
     serviceConfigs: {
       get () {
         return this.build_stage.modules.map(config => {
-          if (typeof config.show_service_module === 'undefined') {
-            this.$set(config, 'show_service_module', true)
+          if (typeof config.hide_service_module === 'undefined') {
+            this.$set(config, 'hide_service_module', false)
           }
           return config
         })
@@ -144,7 +144,7 @@ export default {
       if (!this.serviceConfigs.length) {
         this.serviceConfigs = newVal.map(tar => {
           return {
-            show_service_module: true,
+            hide_service_module: false,
             target: tar
           }
         })

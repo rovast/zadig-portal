@@ -1498,7 +1498,3 @@ export function queryUserBindingsAPI (uid, projectName = '') { // 查询用户�
 export function getArtifactFileAPI (payload, id) {
   return http.post(`/api/aslan/system/s3storage/${id}/releases/search?kind=file`, payload)
 }
-
-export function evaluateAPI (projectName, payload) {
-  return http.post(`/api/v1/evaluate?projectName=${projectName}`, payload)
-}

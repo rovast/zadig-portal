@@ -306,10 +306,6 @@ export function getHelmChartProjectChartsAPI (project, projectName = '') {
   return http.get(`/api/aslan/service/harbor/project/${project}/charts?projectName=${projectName}`)
 }
 
-export function getHelmChartProjectAPI (projectName = '') {
-  return http.get(`/api/aslan/service/harbor/project`)
-}
-
 export function updateHelmChartAPI (projectName = '', payload) {
   return http.put(`/api/aslan/service/helm/${projectName}?projectName=${projectName}`, payload)
 }
@@ -454,10 +450,6 @@ export function imageReposAPI () {
 
 export function getArtifactWorkspaceAPI (projectName, workflowName, taskId, dir = '') {
   return http.get(`/api/aslan/testing/workspace/workflow/${workflowName}/taskId/${taskId}?dir=${dir}&projectName=${projectName}`)
-}
-
-export function downloadArtifactAPI (workflowName, taskId) {
-  return http.get(`/api/aslan/v2/tasks/workflow/${workflowName}/taskId/${taskId}`)
 }
 
 export function getAllBranchInfoAPI (data, param = '') {

@@ -59,7 +59,7 @@
           filterable
           :disabled="isUpdate"
         >
-          <el-option v-for="(repo, index) in codeInfo['repoOwners']" :key="index" :label="repo.name" :value="repo.name"></el-option>
+          <el-option v-for="(repo, index) in codeInfo['repoOwners']" :key="index" :label="repo.path" :value="repo.path"></el-option>
         </el-select>
       </el-form-item>
       <template>

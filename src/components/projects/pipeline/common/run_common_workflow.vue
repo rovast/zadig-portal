@@ -90,7 +90,8 @@ export default {
       })
     },
     getCommonWorkflowInfo () {
-      getCommonWorkflowAPI(this.workflow.project_name, this.workflow.id).then(
+      const projectName = this.workflow.project_name
+      getCommonWorkflowAPI(projectName, this.workflow.id).then(
         res => {
           const buildStep = res.sub_tasks.find(task => task.type === 'buildv3')
           // can not run workflow without build step
@@ -137,7 +138,7 @@ export default {
         }
       )
 
-      getCommonBuildArgsAPI(this.workflow.id).then(res => {
+      getCommonBuildArgsAPI(projectName, this.workflow.id).then(res => {
         res.forEach(re => {
           if (re.type === 'external') {
             re.value = {}

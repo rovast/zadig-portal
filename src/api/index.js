@@ -567,7 +567,7 @@ export function deleteCommonWorkflowAPI (projectName = '', id) {
   return http.delete(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`)
 }
 
-export function getCommonWorkflowAPI (projectName = '', id) {
+export function getCommonWorkflowAPI (projectName, id) {
   return http.get(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`)
 }
 
@@ -579,8 +579,8 @@ export function getCommonWorkflowListAPI (projectName = '', pageNum = 1, pageSiz
   return http.get(`/api/aslan/workflow/v3?project_name=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
 }
 
-export function getCommonBuildArgsAPI (id) {
-  return http.get(`/api/aslan/workflow/v3/${id}/args`)
+export function getCommonBuildArgsAPI (projectName, id) {
+  return http.get(`/api/aslan/workflow/v3/${id}/args?projectName = ${projectName}`)
 }
 
 export function runCommonWorkflowAPI (projectName = '', payload) {

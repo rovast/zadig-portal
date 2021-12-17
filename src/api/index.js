@@ -327,7 +327,7 @@ export function getHelmChartService (projectName) {
 }
 
 export function updateServicesOrchestrationAPI (projectName, payload) {
-  return http.patch(`/api/aslan/project/products/${projectName}`, payload)
+  return http.patch(`/api/aslan/project/products/${projectName}?projectName=${projectName}`, payload)
 }
 
 export function getHelmChartServiceFilePath (projectName, serviceName, path) {
@@ -452,8 +452,8 @@ export function imageReposAPI () {
   return http.get('/api/aslan/system/registry/release/repos')
 }
 
-export function getArtifactWorkspaceAPI (workflowName, taskId, dir = '') {
-  return http.get(`/api/aslan/testing/workspace/workflow/${workflowName}/taskId/${taskId}?dir=${dir}`)
+export function getArtifactWorkspaceAPI (projectName, workflowName, taskId, dir = '') {
+  return http.get(`/api/aslan/testing/workspace/workflow/${workflowName}/taskId/${taskId}?dir=${dir}&projectName=${projectName}`)
 }
 
 export function downloadArtifactAPI (workflowName, taskId) {
@@ -1460,4 +1460,8 @@ export function queryUserBindingsAPI (uid, projectName = '') { // 查询用户�
 
 export function getArtifactFileAPI (payload, id) {
   return http.post(`/api/aslan/system/s3storage/${id}/releases/search?kind=file`, payload)
+}
+
+export function evaluateAPI (projectName, payload) {
+  return http.post(`/api/v1/evaluate?projectName=${projectName}`, payload)
 }

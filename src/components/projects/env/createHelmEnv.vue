@@ -275,21 +275,27 @@ export default {
             namespace: this.projectConfig.defaultNamespace
           }
           this.startDeployLoading = true
+          function sleep (time) {
+            return new Promise(resolve => setTimeout(resolve, time))
+          }
           createHelmEnvAPI(
             this.projectConfig.product_name,
             [payload],
             isCopy ? 'copy' : ''
           ).then(
             res => {
-              const envName = payload.envName
-              this.startDeployLoading = false
-              this.$message({
-                message: '创建环境成功',
-                type: 'success'
+              // Add delay to solve the back-end permission synchronization problem
+              sleep(5000).then(() => {
+                const envName = payload.envName
+                this.startDeployLoading = false
+                this.$message({
+                  message: '创建环境成功',
+                  type: 'success'
+                })
+                this.$router.push(
+                  `/v1/projects/detail/${this.projectName}/envs/detail?envName=${envName}`
+                )
               })
-              this.$router.push(
-                `/v1/projects/detail/${this.projectName}/envs/detail?envName=${envName}`
-              )
             },
             () => {
               this.startDeployLoading = false

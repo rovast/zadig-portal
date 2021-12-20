@@ -1,5 +1,5 @@
 <template>
-  <div class="project-home">
+  <div class="project-rbac-container">
     <div class="tab-container" style="width: 100%;">
       <el-tabs  v-model="activeTab" :tab-position="tabPosition" type="card" style="height: 200px;">
         <el-tab-pane name="member" label="成员管理"><Member v-if="activeTab==='member'" :projectName="projectName" /></el-tab-pane>
@@ -48,7 +48,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.project-home {
+.project-rbac-container {
   padding: 25px 20px;
   font-size: 15px;
 }

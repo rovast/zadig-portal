@@ -10,7 +10,7 @@
             序号
           </div>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="9">
           <div class="service">
             服务
           </div>
@@ -22,9 +22,12 @@
           </div>
         </el-col>
 
-        <el-col :span="2">
+        <el-col :span="3">
           <div class="view">
             是否显示
+            <el-tooltip effect="dark" content="执行工作流任务时是否在服务列表中显示，供用户选择。" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
           </div>
         </el-col>
       </el-row>
@@ -56,7 +59,7 @@
               {{ _idx+1 }}
             </div>
           </el-col>
-          <el-col :span="10">
+          <el-col :span="9">
             <div class="service">
               <span class="service-link">
                 <template>
@@ -75,7 +78,7 @@
               </div>
             </div>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="3">
             <div class="build-item view">
               <i class="iconfont icon"
                  :class="{'iconview-off1': config.hide_service_module, iconview: !config.hide_service_module}"

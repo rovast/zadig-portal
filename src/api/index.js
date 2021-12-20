@@ -576,7 +576,7 @@ export function updateCommonWorkflowAPI (projectName = '', id, payload) {
 }
 
 export function getCommonWorkflowListAPI (projectName = '', pageNum = 1, pageSize = 999) {
-  return http.get(`/api/aslan/workflow/v3?projectName=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
+  return http.get(`/api/aslan/workflow/v3?project_name=${projectName}&projectName=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
 }
 
 export function getCommonBuildArgsAPI (projectName, id) {

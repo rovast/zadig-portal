@@ -8,9 +8,10 @@
     </section>
     <section v-else
              class="running-time">
-      <productStatus :productTasks="productTasks"
-                     :expandId="productExpandId"></productStatus>
-      <testStatus :testTasks="testTasks"></testStatus>
+      <ProductWorkflowStatus :productWorkflowTasks="productWorkflowTasks"
+                     :expandId="productExpandId"></ProductWorkflowStatus>
+      <CommonWorkflowStatus :commonWorkflowTasks="commonWorkflowTasks"></CommonWorkflowStatus>
+      <TestStatus :testTasks="testTasks"></TestStatus>
     </section>
   </div>
 </template>
@@ -18,8 +19,9 @@
 <script>
 import { taskRunningSSEAPI, taskPendingSSEAPI } from '@api'
 import bus from '@utils/event_bus'
-import productStatus from './constainer/product_status'
-import testStatus from './constainer/test_status'
+import ProductWorkflowStatus from './constainer/product_workflow_status'
+import CommonWorkflowStatus from './constainer/common_workflow_status'
+import TestStatus from './constainer/test_status'
 export default {
   data () {
     return {
@@ -27,9 +29,13 @@ export default {
         running: null,
         pending: null
       },
-      productTasks: {
+      productWorkflowTasks: {
         pending: [],
         running: []
+      },
+      commonWorkflowTasks: {
+        running: [],
+        pending: []
       },
       testTasks: {
         pending: [],
@@ -44,19 +50,21 @@ export default {
       if (type === 'running') {
         taskRunningSSEAPI()
           .then(res => {
-            this.productTasks.running = res.data.filter(task => task.type === 'workflow')
+            this.productWorkflowTasks.running = res.data.filter(task => task.type === 'workflow')
             this.testTasks.running = res.data.filter(task => task.type === 'test')
+            this.commonWorkflowTasks.running = res.data.filter(task => task.type === 'workflow_v3')
             this.task.running = res.data.length
-            if (this.productTasks.running.length > 0) {
-              this.productExpandId = this.productTasks.running[0].task_id
+            if (this.productWorkflowTasks.running.length > 0) {
+              this.productExpandId = this.productWorkflowTasks.running[0].task_id
             }
           })
           .closeWhenDestroy(this)
       } else if (type === 'queue') {
         taskPendingSSEAPI()
           .then(res => {
-            this.productTasks.pending = res.data.filter(task => task.type === 'workflow')
+            this.productWorkflowTasks.pending = res.data.filter(task => task.type === 'workflow')
             this.testTasks.pending = res.data.filter(task => task.type === 'test')
+            this.commonWorkflowTasks.pending = res.data.filter(task => task.type === 'workflow_v3')
             this.task.pending = res.data.length
           })
           .closeWhenDestroy(this)
@@ -82,7 +90,7 @@ export default {
     })
   },
   components: {
-    productStatus, testStatus
+    ProductWorkflowStatus, TestStatus, CommonWorkflowStatus
   }
 }
 </script>

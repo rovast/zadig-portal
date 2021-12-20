@@ -36,3 +36,10 @@ export const QUERY_ORDER_SERVICE = 'QUERY_ORDER_SERVICE'
 
 // External Link
 export const SET_EXTERNAL_LINK = 'SET_EXTERNAL_LINK'
+
+// Common Workflow
+export const UPDATE_TABS = 'UPDATE_TABS'
+
+export const UPDATE_COMMON_INFO = 'UPDATE_COMMON_INFO'
+
+export const RESET_COMMON_WORKFLOW = 'RESET_COMMON_WORKFLOW'

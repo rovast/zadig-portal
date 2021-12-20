@@ -80,7 +80,7 @@
       <el-form ref="buildApp"
                :inline="true"
                :model="buildConfig"
-               class="form-style1"
+               class="form-bottom-0"
                label-position="top"
                label-width="80px">
         <span class="item-title">应用列表</span>
@@ -138,7 +138,7 @@
       <el-form ref="buildEnv"
                :inline="true"
                :model="buildConfig"
-               class="form-style1"
+               class="form-bottom-0"
                label-position="top"
                label-width="80px">
         <span class="item-title">环境变量</span>
@@ -204,7 +204,7 @@
       <el-form ref="cacheDir"
                :inline="true"
                :model="buildConfig"
-               class="form-style1"
+               class="form-bottom-0"
                label-position="left"
                label-width="130px">
         <span class="item-title">缓存策略</span>
@@ -465,7 +465,7 @@
         <el-form ref="deploy-env"
                  :inline="true"
                  :model="buildConfig"
-                 class="form-style1"
+                 class="form-bottom-0"
                  label-position="left"
                  label-width="80px">
           <span class="item-title">部署配置</span>
@@ -520,7 +520,7 @@
         <el-form ref="deploy"
                  :inline="true"
                  :model="pmService"
-                 class="form-style1"
+                 class="form-bottom-0"
                  label-position="left"
                  label-width="80px">
           <el-row>
@@ -1615,7 +1615,7 @@ export default {
     }
   }
 
-  .form-style1 {
+  .form-bottom-0 {
     .el-form-item {
       margin-bottom: 0;
     }

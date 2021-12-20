@@ -105,7 +105,6 @@ export default {
       })
     },
     handlePermissionGroupChange (rules) {
-      console.log(rules)
       for (let i = 0; i < rules.length; i++) {
         if (this.form.permissions.includes(rules[i].uniqueAction)) {
           const index = this.form.permissions.indexOf(rules[i].uniqueAction)

@@ -125,6 +125,12 @@ export default {
             name: '对象存储',
             icon: 'iconfont iconduixiangcunchu',
             url: 'system/storage'
+          },
+          {
+            name: 'HELM 仓库',
+            icon: 'iconfont iconhelmrepo',
+            url: 'system/helm',
+            features: 'helm'
           }]
         },
         {

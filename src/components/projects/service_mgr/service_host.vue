@@ -31,7 +31,7 @@ export default {
       this.envName = tab.name
     },
     async getEnvNameList () {
-      const envNameList = await listProductAPI('', this.projectName)
+      const envNameList = await listProductAPI(this.projectName)
       envNameList.forEach(element => {
         element.envName = element.name
       })

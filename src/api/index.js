@@ -220,7 +220,7 @@ export function taskPendingSSEAPI () {
 }
 
 // Env
-export function listProductAPI (envType = '', projectName = '') {
+export function listProductAPI (projectName = '', envType = '') {
   if (envType) {
     return http.get(`/api/aslan/environment/environments?projectName=${projectName}&envType=${envType}`)
   } else {
@@ -250,6 +250,10 @@ export function getEnvServicesAPI (projectName, envName) {
 
 export function productEnvInfoAPI (projectName, envName) {
   return http.get(`/api/aslan/environment/environments/${envName}?projectName=${projectName}`)
+}
+
+export function updateEnvImageRegistry (projectName, envName, payload) {
+  return http.put(`/api/aslan/environment/environments/${envName}/registry?projectName=${projectName}`, payload)
 }
 
 // Project
@@ -330,12 +334,12 @@ export function updateServicesOrchestrationAPI (projectName, payload) {
   return http.patch(`/api/aslan/project/products/${projectName}`, payload)
 }
 
-export function getHelmChartServiceFilePath (projectName, serviceName, path) {
-  return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/filePath?dir=${path}&projectName=${projectName}`)
+export function getHelmChartServiceFilePath ({ projectName, serviceName, path, revision = '', deliveryVersion = false }) {
+  return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/filePath?projectName=${projectName}&dir=${path}&revision=${revision}&deliveryVersion=${deliveryVersion}`)
 }
 
-export function getHelmChartServiceFileContent (projectName, serviceName, path, fileName) {
-  return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/fileContent?projectName=${projectName}&filePath=${path}&fileName=${fileName}`)
+export function getHelmChartServiceFileContent ({ projectName, serviceName, path, fileName, revision = '', deliveryVersion = false }) {
+  return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/fileContent?filePath=${path}&fileName=${fileName}&revision=${revision}&deliveryVersion=${deliveryVersion}&projectName=${projectName}`)
 }
 
 export function getHelmChartServiceModule (projectName, serviceName) {
@@ -499,7 +503,7 @@ export function updateWorkflowAPI (data) {
   return http.put(`/api/aslan/workflow/workflow?projectName=${data.product_tmpl_name}`, data)
 }
 
-export function deleteWorkflowAPI (projectName, name) {
+export function deleteProductWorkflowAPI (projectName, name) {
   return http.delete(`/api/aslan/workflow/workflow/${name}?projectName=${projectName}`)
 }
 
@@ -552,6 +556,59 @@ export function workflowTaskDetailAPI (projectName, workflowName, taskID, workfl
 
 export function workflowTaskDetailSSEAPI (projectName, workflowName, taskID, workflowType = '') {
   return makeEventSource(`/api/aslan/workflow/sse/workflows/id/${taskID}/pipelines/${workflowName}?projectName=${projectName}&workflowType=${workflowType}`)
+}
+
+// Common Workflow
+export function createCommonWorkflowAPI (projectName = '', payload) {
+  return http.post(`/api/aslan/workflow/v3?projectName = ${projectName}`, payload)
+}
+
+export function deleteCommonWorkflowAPI (projectName = '', id) {
+  return http.delete(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`)
+}
+
+export function getCommonWorkflowAPI (projectName, id) {
+  return http.get(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`)
+}
+
+export function updateCommonWorkflowAPI (projectName = '', id, payload) {
+  return http.put(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`, payload)
+}
+
+export function getCommonWorkflowListAPI (projectName = '', pageNum = 1, pageSize = 999) {
+  return http.get(`/api/aslan/workflow/v3?project_name=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
+}
+
+export function getCommonBuildArgsAPI (projectName, id) {
+  return http.get(`/api/aslan/workflow/v3/${id}/args?projectName = ${projectName}`)
+}
+
+export function runCommonWorkflowAPI (projectName = '', payload) {
+  return http.post(`/api/aslan/workflow/v3/workflowtask?projectName=${projectName}`, payload)
+}
+
+export function getCommonWorkflowTasksAPI (projectName = '', workflowName, start, max) {
+  return http.get(`/api/aslan/workflow/v3/workflowtask/max/${max}/start/${start}/name/${workflowName}?projectName=${projectName}`)
+}
+
+export function getCommonWorkflowTaskDetailAPI (projectName = '', workflowName, taskID) {
+  return http.get(`/api/aslan/workflow/v3/workflowtask/id/${taskID}/name/${workflowName}?projectName=${projectName}`)
+}
+
+export function getCommonWorkflowTaskDetailSSEAPI (projectName = '', workflowName, taskID) {
+  return makeEventSource(`/api/aslan/workflow/sse/workflowtask/v3/id/${taskID}/name/${workflowName}?projectName=${projectName}`)
+}
+
+export function restartCommonWorkflowTaskAPI (projectName = '', workflowName, taskID) {
+  return http.post(`/api/aslan/workflow/v3/workflowtask/id/${taskID}/name/${workflowName}/restart?projectName=${projectName}`)
+}
+
+export function cancelCommonWorkflowTaskAPI (projectName = '', workflowName, taskID) {
+  return http.delete(`/api/aslan/workflow/v3/workflowtask/id/${taskID}/name/${workflowName}?projectName=${projectName}`)
+}
+
+export function getCommonWorkflowHistoryLogAPI (projectName = '', workflowName, taskID) {
+  return http.get(`/api/aslan/logs/log/v3/workflow/${workflowName}/tasks/${taskID}?projectName=${projectName}&type=buildv3`)
 }
 
 // Test
@@ -638,7 +695,7 @@ export function deleteSystemRoleBindingsAPI (name) {
   return http.delete(`/api/v1/system-rolebindings/${name}`)
 }
 
-// ----- Syetem Setting-Integration -----
+// ----- System Setting-Integration -----
 
 // Code
 // Information is masked no detail
@@ -762,6 +819,28 @@ export function queryJenkinsJob () {
 
 export function queryJenkinsParams (jobName) {
   return http.get(`/api/aslan/system/jenkins/buildArgs/${jobName}`)
+}
+
+// other
+
+export function createExternalSystemAPI (payload) {
+  return http.post(`/api/aslan/system/external`, payload)
+}
+
+export function getExternalSystemsAPI (page_num = 1, page_size = 100) {
+  return http.get(`/api/aslan/system/external?page_num=${page_num}&page_size=${page_size}`)
+}
+
+export function getExternalSystemByIdAPI (id) {
+  return http.get(`/api/aslan/system/external/${id}`)
+}
+
+export function updateExternalSystemAPI (id, payload) {
+  return http.put(`/api/aslan/system/external/${id}`, payload)
+}
+
+export function deleteExternalSystemAPI (id) {
+  return http.delete(`/api/aslan/system/external/${id}`)
 }
 
 // Mail
@@ -921,8 +1000,25 @@ export function deleteStorageAPI (id) {
   return http.delete(`/api/aslan/system/s3storage/${id}`)
 }
 
+// System setting : HELM
+export function getHelmRepoAPI () {
+  return http.get(`/api/aslan/system/helm`)
+}
+
+export function createHelmAPI (payload) {
+  return http.post(`/api/aslan/system/helm`, payload)
+}
+
+export function updateHelmAPI (id, payload) {
+  return http.put(`/api/aslan/system/helm/${id}`, payload)
+}
+
+export function deleteHelmAPI (id) {
+  return http.delete(`/api/aslan/system/helm/${id}`)
+}
+
 // Cluster
-export function getClusterListAPI (projectName) {
+export function getClusterListAPI (projectName = '') {
   return http.get(`/api/aslan/cluster/clusters?projectName=${projectName}`)
 }
 
@@ -944,6 +1040,10 @@ export function disconnectClusterAPI (id) {
 
 export function deleteClusterAPI (id) {
   return http.delete(`/api/aslan/cluster/clusters/${id}`)
+}
+
+export function getClusterNodeInfo (clusterId = '') {
+  return http.get(`/api/aslan/environment/kube/nodes?clusterId=${clusterId}`)
 }
 
 // Host
@@ -1094,10 +1194,6 @@ export function exportYamlAPI (projectName, serviceName, envName = '', envType =
   return http.get(`/api/aslan/environment/export/service?serviceName=${serviceName}&envName=${envName}&projectName=${projectName}&envType=${envType}`)
 }
 
-export function getEnvInfoAPI (projectName, envName = '') {
-  return http.get(`/api/aslan/environment/environments/${envName}?projectName=${projectName}`)
-}
-
 export function getServiceInfo (projectName, serviceName, envName = '', envType = '', workLoadType) {
   return http.get(`/api/aslan/environment/environments/${envName}/services/${serviceName}?projectName=${projectName}&envType=${envType}&workLoadType=${workLoadType}`)
 }
@@ -1187,8 +1283,8 @@ export function getProjectIngressAPI (projectName) {
 
 // Delivery
 
-export function getVersionListAPI (workflowName = '', projectName = '', taskId = '', serviceName = '') {
-  return http.get(`/api/aslan/delivery/releases?workflowName=${workflowName}&projectName=${projectName}&taskId=${taskId}&serviceName=${serviceName}`)
+export function getVersionListAPI (workflowName = '', projectName = '', taskId = '', serviceName = '', verbosity = 'detailed') {
+  return http.get(`/api/aslan/delivery/releases?workflowName=${workflowName}&projectName=${projectName}&taskId=${taskId}&serviceName=${serviceName}&verbosity=${verbosity}`)
 }
 
 export function getVersionServiceListAPI (projectName) {
@@ -1199,12 +1295,36 @@ export function deleteVersionAPI (projectName, versionId) {
   return http.delete(`/api/aslan/delivery/releases/${versionId}?projectName=${projectName}`)
 }
 
+export function getVersionDetailAPI (projectName, versionId) {
+  return http.get(`/api/aslan/delivery/releases/${versionId}?projectName=${projectName}`)
+}
+
 export function getVersionProductListAPI () {
-  return http.get(`/api/v1/picket/projects?ignoreNoVersions=true`)
+  return http.get(`/api/v1/picket/projects?ignoreNoVersions=false&verbosity=detailed`)
 }
 
 export function productHostingNamespaceAPI (clusterId) {
   return http.get(`/api/aslan/environment/kube/available_namespaces?clusterId=${clusterId}`)
+}
+
+export function getHelmReleaseListAPI (projectName, envName) {
+  return http.get(`/api/aslan/environment/environments/${envName}/helm/releases?projectName=${projectName}`)
+}
+
+export function getChartInfoAPI (projectName, envName, serviceName) {
+  return http.get(`/api/aslan/environment/environments/${envName}/helm/charts?projectName=${projectName}&serviceName=${serviceName.join(',')}`)
+}
+
+export function createHelmVersionAPI (payload) {
+  return http.post(`/api/aslan/delivery/releases/helm`, payload)
+}
+
+export function useGlobalVariablesAPI (payload) {
+  return http.post(`/api/aslan/delivery/releases/helm/global-variables`, payload)
+}
+
+export function getChartLastVersionAPI (chartRepoName, chartName) {
+  return http.get(`/api/aslan/delivery/releases/helm/charts/version?chartName=${chartName.join(',')}&chartRepoName=${chartRepoName}`)
 }
 
 // Forgot password

@@ -367,6 +367,22 @@ const routes = [
         }
       },
       {
+        path: 'projects/detail/:project_name/pipelines/common/:workflow_name',
+        component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_common_detail.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '工作流详情'
+        }
+      },
+      {
+        path: 'projects/detail/:project_name/pipelines/common/:workflow_name/:task_id',
+        component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_common_task_detail.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '任务详情'
+        }
+      },
+      {
         path: 'projects/detail/:project_name/test',
         component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function.vue'),
         meta: {
@@ -542,6 +558,15 @@ const routes = [
             }
           },
           {
+            path: ':project_name/create',
+            component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/version/helm/create_version.vue'),
+            meta: {
+              requiresAuth: true,
+              requiresSuperAdmin: false,
+              title: '创建版本'
+            }
+          },
+          {
             path: ':project_name/:id',
             component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/version/detail.vue'),
             meta: {
@@ -581,7 +606,7 @@ const routes = [
     },
     children: [
       {
-        path: 'create',
+        path: 'product/create',
         component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/product_pipeline/pipeline.vue'),
         meta: {
           requiresAuth: true,
@@ -589,8 +614,24 @@ const routes = [
         }
       },
       {
-        path: 'edit/:name',
+        path: 'product/edit/:name',
         component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/product_pipeline/pipeline.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '编辑工作流'
+        }
+      },
+      {
+        path: 'common/create',
+        component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/common_pipeline/pipeline.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '新建工作流'
+        }
+      },
+      {
+        path: 'common/edit/:name',
+        component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/common_pipeline/pipeline.vue'),
         meta: {
           requiresAuth: true,
           title: '编辑工作流'
@@ -696,6 +737,15 @@ const routes = [
           requiresAuth: true,
           requiresSuperAdmin: true,
           title: '对象存储'
+        }
+      },
+      {
+        path: 'helm',
+        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/helm/manage.vue'),
+        meta: {
+          requiresAuth: true,
+          requiresSuperAdmin: true,
+          title: 'HELM 仓库'
         }
       },
       {

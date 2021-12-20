@@ -27,12 +27,10 @@
             </div>
           </div>
           <div class="header-end">
-            <router-link :to="`/workflows/create?projectName=${this.projectName ? this.projectName : ''}`">
-              <button type="button" class="add-project-btn">
-                <i class="el-icon-plus"></i>
-                新建工作流
-              </button>
-            </router-link>
+            <button type="button" class="add-project-btn" @click="showSelectWorkflowType = true">
+              <i class="el-icon-plus"></i>
+              新建工作流
+            </button>
           </div>
         </div>
         <div
@@ -49,8 +47,7 @@
             :keeps="20"
             :estimate-size="72"
             :data-component="itemComponent"
-          >
-          </VirtualList>
+          ></VirtualList>
           <div v-if="availableWorkflows.length === 0" class="no-product">
             <img src="@assets/icons/illustration/pipeline.svg" alt />
             <p>暂无可展示的工作流，请手动添加工作流</p>
@@ -59,24 +56,42 @@
       </ul>
     </div>
 
+    <el-dialog title="选择工作流类型" :visible.sync="showSelectWorkflowType" width="450px">
+      <div class="type-content">
+        <el-radio v-model="selectWorkflowType" label="product">产品-工作流</el-radio>
+        <div class="type-desc">具有对项目环境构建、部署、测试和服务版本交付的能力</div>
+        <el-radio v-model="selectWorkflowType" label="common">通用-工作流</el-radio>
+        <div class="type-desc">可自定义工作流程，内置构建、K8s 部署、小程序发版等步骤</div>
+      </div>
+      <div slot="footer">
+        <el-button size="small" @click="showSelectWorkflowType = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="createWorkflow">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <el-dialog title="运行 产品-工作流" :visible.sync="showStartProductBuild" custom-class="run-workflow" width="60%">
-      <run-workflow
-        v-if="showStartProductBuild"
+      <RunProductWorkflow
+        v-if="workflowToRun.name"
         :workflowName="workflowToRun.name"
         :workflowMeta="workflowToRun"
         :targetProduct="workflowToRun.product_tmpl_name"
         @success="hideProductTaskDialog"
-      ></run-workflow>
+      ></RunProductWorkflow>
+    </el-dialog>
+
+    <el-dialog title="运行 通用-工作流" :visible.sync="showStartCommonWorkflowBuild" :close-on-click-modal="false">
+      <RunCommonWorkflow :value="showStartCommonWorkflowBuild" :workflow="commonToRun"></RunCommonWorkflow>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import VirtualListItem from './workflow_list/virtual_list_item'
-import runWorkflow from './common/run_workflow.vue'
+import RunProductWorkflow from './common/run_workflow.vue'
+import RunCommonWorkflow from './common/run_common_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
-import { getWorkflowsAPI, getWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteWorkflowAPI, copyWorkflowAPI } from '@api'
+import { getWorkflowsAPI, getWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteProductWorkflowAPI, copyWorkflowAPI, getCommonWorkflowListAPI, deleteCommonWorkflowAPI } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
@@ -93,15 +108,22 @@ export default {
       remain: 10,
       keyword: '',
       sortBy: 'name-asc',
-      workflowsList: []
+      workflowsList: [],
+      showSelectWorkflowType: false,
+      selectWorkflowType: 'product',
+
+      showStartCommonWorkflowBuild: false,
+      commonToRun: {}
     }
   },
   provide () {
     return {
-      startProductBuild: this.startProductBuild,
+      startProductWorkflowBuild: this.startProductWorkflowBuild,
       copyWorkflow: this.copyWorkflow,
-      deleteWorkflow: this.deleteWorkflow,
-      renamePipeline: this.renamePipeline
+      deleteProductWorkflow: this.deleteProductWorkflow,
+      renamePipeline: this.renamePipeline,
+      startCommonWorkflowBuild: this.startCommonWorkflowBuild,
+      deleteCommonWorkflow: this.deleteCommonWorkflow
     }
   },
   computed: {
@@ -220,6 +242,18 @@ export default {
     }
   },
   methods: {
+    createWorkflow () {
+      const type = this.selectWorkflowType
+      let path = ''
+      if (type === 'product') {
+        path = '/workflows/product/create'
+      } else if (type === 'common') {
+        path = '/workflows/common/create'
+      }
+      this.$router.push(
+        `${path}?projectName=${this.projectName ? this.projectName : ''}`
+      )
+    },
     async getWorkflows (projectName) {
       this.workflowListLoading = true
       let res = []
@@ -234,12 +268,18 @@ export default {
           return []
         })
       }
-      if (res) {
-        this.workflowsList = res
-        this.workflowListLoading = false
-      }
+
+      const workflowList = await getCommonWorkflowListAPI(projectName).catch(err => {
+        console.log(err)
+        return []
+      })
+      workflowList.workflow_list.forEach(list => {
+        list.type = 'common'
+      })
+      this.workflowListLoading = false
+      this.workflowsList = [...res, ...workflowList.workflow_list]
     },
-    deleteWorkflow (workflow) {
+    deleteProductWorkflow (workflow) {
       const name = workflow.name
       const projectName = workflow.projectName
       this.$prompt('输入工作流名称确认', '删除工作流 ' + name, {
@@ -256,13 +296,37 @@ export default {
           }
         }
       }).then(({ value }) => {
-        deleteWorkflowAPI(projectName, name).then(() => {
+        deleteProductWorkflowAPI(projectName, name).then(() => {
           this.getWorkflows(this.projectName)
           this.$message.success('删除成功')
         })
       })
     },
-    startProductBuild (workflow) {
+    deleteCommonWorkflow (workflow) {
+      this.$prompt('输入工作流名称确认', `删除工作流 ${workflow.name}`, {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        confirmButtonClass: 'el-button--danger',
+        inputValidator: value => {
+          if (value === workflow.name) {
+            return true
+          } else {
+            return '输入名称不相符'
+          }
+        }
+      })
+        .then(({ value }) => {
+          deleteCommonWorkflowAPI(workflow.project_name, workflow.id).then(res => {
+            this.getWorkflows(this.projectName)
+            this.$message.success(`${value}删除成功！`)
+          })
+        })
+        .catch(() => {
+          this.$message.info('取消删除')
+        })
+    },
+    startProductWorkflowBuild (workflow) {
+      this.workflowToRun = {}
       getWorkflowDetailAPI(workflow.projectName, workflow.name).then(res => {
         this.showStartProductBuild = true
         this.workflowToRun = res
@@ -313,16 +377,22 @@ export default {
           type: 'success'
         })
         this.getWorkflows(this.projectName)
-        this.$router.push(`/workflows/edit/${newName}?projectName=${projectName}`)
+        this.$router.push(
+          `/workflows/product/edit/${newName}?projectName=${projectName}`
+        )
       })
     },
     sortWorkflow (cm) {
       this.sortBy = cm
+    },
+    startCommonWorkflowBuild (worflow) {
+      this.commonToRun = worflow
+      this.showStartCommonWorkflowBuild = true
     }
   },
   created () {
     // Detecting change from VirtualListItem component event.
-    this.$on('refreshWorkflow', (projectName) => {
+    this.$on('refreshWorkflow', projectName => {
       this.getWorkflows(projectName)
     })
     this.keyword = this.$route.query.name ? this.$route.query.name : ''
@@ -373,9 +443,10 @@ export default {
     }
   },
   components: {
-    runWorkflow,
+    RunProductWorkflow,
     VirtualListItem,
-    VirtualList
+    VirtualList,
+    RunCommonWorkflow
   }
 }
 </script>
@@ -573,6 +644,16 @@ export default {
       padding: 8px 10px;
       color: #606266;
       font-size: 14px;
+    }
+  }
+
+  .type-content {
+    line-height: 32px;
+
+    .type-desc {
+      margin-bottom: 22px;
+      margin-left: 25px;
+      color: #999;
     }
   }
 }

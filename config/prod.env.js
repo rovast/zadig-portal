@@ -3,5 +3,8 @@ module.exports = {
   NODE_ENV: '"production"',
   VERSION: '"${VERSION}"',
   BUILD_TIME: '"${BUILD_TIME}"',
-  TAG: '"${TAG}"'
+  TAG: '"${TAG}"',
+  COMMIT_ID: '"${COMMIT_ID}"',
+  BRANCH: '"${BRANCH}"',
+  PR: '"${PR}"',
 }

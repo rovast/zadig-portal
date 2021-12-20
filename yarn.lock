@@ -5415,6 +5415,11 @@ js-base64@^2.1.9:
   resolved "https://registry.npmmirror.com/js-base64/download/js-base64-2.6.4.tgz?cache=0&sync_timestamp=1604450430432&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fjs-base64%2Fdownload%2Fjs-base64-2.6.4.tgz#f4e686c5de1ea1f867dbcad3d46d969428df98c4"
   integrity sha1-9OaGxd4eofhn28rT1G2WlCjfmMQ=
 
+js-base64@^3.7.2:
+  version "3.7.2"
+  resolved "https://registry.npmmirror.com/js-base64/download/js-base64-3.7.2.tgz#816d11d81a8aff241603d19ce5761e13e41d7745"
+  integrity sha1-gW0R2BqK/yQWA9Gc5XYeE+Qdd0U=
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmmirror.com/js-tokens/download/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -8039,6 +8044,11 @@ q@^1.1.2:
   version "1.5.1"
   resolved "https://registry.npmmirror.com/q/download/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
+
+qrcode.vue@1.7.0:
+  version "1.7.0"
+  resolved "https://registry.npmmirror.com/qrcode.vue/download/qrcode.vue-1.7.0.tgz#c54b2934f0650c10d92785d08aaad36c55e0fc56"
+  integrity sha1-xUspNPBlDBDZJ4XQiqrTbFXg/FY=
 
 qs@6.7.0:
   version "6.7.0"

@@ -425,7 +425,7 @@
 
 <script>
 import containerLog from '../service_detail/container_log.vue'
-import { restartPodAPI, restartServiceAPI, scaleServiceAPI, scaleEventAPI, podEventAPI, exportYamlAPI, imagesAPI, updateServiceImageAPI, getServiceInfo } from '@api'
+import { restartPodAPI, restartServiceAPI, scaleServiceAPI, scaleEventAPI, podEventAPI, exportYamlAPI, imagesAPI, updateServiceImageAPI, getServiceInfo, listProductAPI } from '@api'
 import moment from 'moment'
 import Editor from 'vue2-ace-bind'
 import bus from '@utils/event_bus'
@@ -481,7 +481,8 @@ export default {
         unstable: 'red',
         unknown: 'purple',
         terminating: 'gray'
-      }
+      },
+      registryId: ''
     }
   },
 
@@ -610,7 +611,7 @@ export default {
     },
     getImages (containerName) {
       const containerNames = [containerName]
-      imagesAPI(containerNames).then(res => {
+      imagesAPI(containerNames, this.registryId).then(res => {
         this.$set(this.imgBucket, containerName, res)
       })
     },
@@ -787,9 +788,15 @@ export default {
           return row
         })
       })
+    },
+    getEnvInfo () {
+      listProductAPI(this.projectName).then(res => {
+        this.registryId = res.find(re => re.name === this.envName).registry_id || ''
+      })
     }
   },
   created () {
+    this.getEnvInfo()
     this.fetchServiceData()
     bus.$emit('set-topbar-title',
       {

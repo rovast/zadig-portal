@@ -1,6 +1,7 @@
 <template>
   <div>
-    <pipeline-row :name="workflow.name"
+    <CommonWorkflowRow v-if="source.type === 'common'" :workflow="source"></CommonWorkflowRow>
+    <ProductWorkflowRow v-else :name="workflow.name"
                   :isFavorite="workflow.isFavorite"
                   :type="'workflow'"
                   :projectName="workflow.projectName"
@@ -13,6 +14,7 @@
                   :recentFailID="workflow.recentFailedTask?`#${workflow.recentFailedTask.taskID}`:'-'"
                   :recentFailLink="makeTaskDetailLink(workflow.projectName,workflow.recentFailedTask)"
                   :updateTime="$utils.convertTimestamp(workflow.update_time)"
+                  :description="workflow.description"
                   @refreshWorkflow="refreshWorkflow">
       <section slot="more"
                class="stages">
@@ -25,10 +27,10 @@
       <template slot="operations">
         <el-button type="success"
                    class="button-exec"
-                   @click="startProductBuild(workflow)">
+                   @click="startProductWorkflowBuild(workflow)">
           <span class="el-icon-video-play">&nbsp;执行</span>
         </el-button>
-        <router-link :to="`/workflows/edit/${workflow.name}?projectName=${workflow.projectName}`">
+        <router-link :to="`/workflows/product/edit/${workflow.name}?projectName=${workflow.projectName}`">
           <span class="menu-item el-icon-setting start-build"></span>
         </router-link>
         <el-dropdown @visible-change="(status) => fnShowTimer(status, index, workflow)">
@@ -42,18 +44,19 @@
             <el-dropdown-item @click.native="copyWorkflow(workflow)">
               <span>复制</span>
             </el-dropdown-item>
-            <el-dropdown-item @click.native="deleteWorkflow(workflow)">
+            <el-dropdown-item @click.native="deleteProductWorkflow(workflow)">
               <span>删除</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </template>
-    </pipeline-row>
+    </ProductWorkflowRow>
   </div>
 </template>
 
 <script>
-import pipelineRow from './pipeline_row.vue'
+import ProductWorkflowRow from './pipeline_row.vue'
+import CommonWorkflowRow from './common_row.vue'
 import mixins from '@utils/virtual_scroll_list_mixin'
 import { wordTranslate } from '@utils/word_translate.js'
 import { getWorkflowDetailAPI, updateWorkflowAPI } from '@api'
@@ -77,9 +80,9 @@ export default {
     }
   },
   inject: [
-    'startProductBuild',
+    'startProductWorkflowBuild',
     'copyWorkflow',
-    'deleteWorkflow',
+    'deleteProductWorkflow',
     'renamePipeline'],
   computed: {
     workflow () {
@@ -141,7 +144,8 @@ export default {
     }
   },
   components: {
-    pipelineRow
+    ProductWorkflowRow,
+    CommonWorkflowRow
   }
 }
 </script>

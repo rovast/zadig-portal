@@ -201,13 +201,13 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <BuildEnv :pre_build="buildConfig.pre_build" mini></BuildEnv>
+            <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit" mini></BuildEnv>
           </el-form>
           <el-form
             ref="buildApp"
             :inline="true"
             :model="buildConfig"
-            class="form-style1"
+            class="form-bottom-0"
             label-position="top"
             label-width="80px"
           >
@@ -299,7 +299,7 @@
             ref="buildEnv"
             :inline="true"
             :model="buildConfig"
-            class="form-style1"
+            class="form-bottom-0"
             label-position="top"
             label-width="120px"
           >
@@ -402,7 +402,7 @@
             ref="cacheDir"
             :inline="true"
             :model="buildConfig"
-            class="form-style1"
+            class="form-bottom-0"
             label-position="left"
             label-width="130px"
           >
@@ -943,7 +943,8 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      configDataLoading: true
     }
   },
   methods: {
@@ -1211,6 +1212,7 @@ export default {
       }
     },
     async loadPage () {
+      this.configDataLoading = true
       const projectName = this.projectName
       this.$set(this.buildConfig, 'name', this.projectName + '-build-' + this.name)
       this.$set(this.jenkinsBuild, 'name', this.projectName + '-build-' + this.name)
@@ -1264,6 +1266,7 @@ export default {
         this.$set(this.buildConfig, 'targets', target)
         this.$set(this.jenkinsBuild, 'targets', target)
       }
+      this.configDataLoading = false
       getAllAppsAPI().then((response) => {
         const apps = this.$utils.sortVersion(response, 'name', 'asc')
         this.allApps = apps.map((app, index) => {
@@ -1453,7 +1456,7 @@ export default {
     }
   }
 
-  .form-style1 {
+  .form-bottom-0 {
     .el-form-item {
       margin-bottom: 0;
     }

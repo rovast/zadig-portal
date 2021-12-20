@@ -1,6 +1,6 @@
 <template>
-  <div class="product-status-container">
-    <div v-for="task in productTasks.running"
+  <div class="product-workflow-status-container">
+    <div v-for="task in productWorkflowTasks.running"
          :key="task.task_id"
          class="task-container">
       <div class="progress-header">
@@ -373,7 +373,7 @@
         </div>
       </div>
     </div>
-    <div v-for="task in productTasks.pending"
+    <div v-for="task in productWorkflowTasks.pending"
          :key="task.task_id"
          class="progress-header">
       <div class="progress-header-view">
@@ -635,7 +635,7 @@ export default {
     }
   },
   props: {
-    productTasks: {
+    productWorkflowTasks: {
       type: Object,
       required: true
     },
@@ -650,7 +650,7 @@ export default {
 }
 </script>
 <style lang="less">
-.product-status-container {
+.product-workflow-status-container {
   position: relative;
   margin-right: 0;
   margin-left: 0;

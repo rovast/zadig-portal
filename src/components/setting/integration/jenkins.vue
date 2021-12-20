@@ -58,6 +58,7 @@ export default {
         },
         {
           label: '操作',
+          width: '160px',
           render: (scope) => {
             return (
               <div>

@@ -108,7 +108,7 @@ export default {
       if (operation === 'open') {
         if (typeof window.msgServer === 'undefined') {
           this.$sse(
-            `/api/aslan/logs/sse/service/build/${serviceName}/${envName}/${projectName}?subTask=buildv2&lines=9999`
+            `/api/aslan/logs/sse/service/build/${serviceName}/${envName}/${projectName}?subTask=buildv2&lines=9999&projectName=${projectName}`
           )
             .then((sse) => {
               // Store SSE object at a higher scope

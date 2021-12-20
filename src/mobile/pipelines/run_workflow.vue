@@ -442,7 +442,7 @@ export default {
   },
   created () {
     const projectName = this.workflowMeta.product_tmpl_name
-    listProductAPI('', projectName).then(res => {
+    listProductAPI(projectName).then(res => {
       this.products = res
       this.filterProducts()
       const product = this.forcedUserInput.product_tmpl_name

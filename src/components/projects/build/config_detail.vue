@@ -192,13 +192,13 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <BuildEnv :pre_build="buildConfig.pre_build" :isCreate="isCreate"></BuildEnv>
+          <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="isCreate"></BuildEnv>
         </el-form>
 
         <el-form ref="buildApp"
                  :inline="true"
                  :model="buildConfig"
-                 class="form-style1"
+                 class="form-bottom-0"
                  label-position="top"
                  label-width="80px">
 
@@ -256,7 +256,7 @@
         <el-form ref="buildEnv"
                  :inline="true"
                  :model="buildConfig"
-                 class="form-style1"
+                 class="form-bottom-0"
                  label-position="top"
                  label-width="80px">
           <span class="item-title">环境变量</span>
@@ -322,7 +322,7 @@
         <el-form ref="cacheDir"
                  :inline="true"
                  :model="buildConfig"
-                 class="form-style1"
+                 class="form-bottom-0"
                  label-position="left"
                  label-width="130px">
           <span class="item-title">缓存策略</span>
@@ -716,7 +716,8 @@ export default {
         ]
       },
       validObj: new ValidateSubmit(),
-      saveLoading: false
+      saveLoading: false,
+      configDataLoading: true
     }
   },
   methods: {
@@ -941,6 +942,7 @@ export default {
       }
     },
     async loadPage () {
+      this.configDataLoading = true
       const projectName = this.projectName
       if (!this.isCreate) {
         const buildConfig = await getBuildConfigDetailAPI(this.buildConfigName, this.projectName).catch(error => console.log(error))
@@ -987,6 +989,7 @@ export default {
           })
         })
       }
+      this.configDataLoading = false
       getAllAppsAPI().then((response) => {
         const apps = this.$utils.sortVersion(response, 'name', 'asc')
         this.allApps = apps.map((app, index) => {
@@ -1211,7 +1214,7 @@ export default {
     }
   }
 
-  .form-style1 {
+  .form-bottom-0 {
     .el-form-item {
       margin-bottom: 0;
     }

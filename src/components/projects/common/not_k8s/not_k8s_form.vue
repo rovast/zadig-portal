@@ -75,12 +75,12 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <BuildEnv :pre_build="buildConfig.pre_build" :isCreate="!isEdit"></BuildEnv>
+        <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit"></BuildEnv>
       </el-form>
       <el-form ref="buildApp"
                :inline="true"
                :model="buildConfig"
-               class="form-style1"
+               class="form-bottom-0"
                label-position="top"
                label-width="80px">
         <span class="item-title">应用列表</span>
@@ -138,7 +138,7 @@
       <el-form ref="buildEnv"
                :inline="true"
                :model="buildConfig"
-               class="form-style1"
+               class="form-bottom-0"
                label-position="top"
                label-width="80px">
         <span class="item-title">环境变量</span>
@@ -204,7 +204,7 @@
       <el-form ref="cacheDir"
                :inline="true"
                :model="buildConfig"
-               class="form-style1"
+               class="form-bottom-0"
                label-position="left"
                label-width="130px">
         <span class="item-title">缓存策略</span>
@@ -465,7 +465,7 @@
         <el-form ref="deploy-env"
                  :inline="true"
                  :model="buildConfig"
-                 class="form-style1"
+                 class="form-bottom-0"
                  label-position="left"
                  label-width="80px">
           <span class="item-title">部署配置</span>
@@ -520,7 +520,7 @@
         <el-form ref="deploy"
                  :inline="true"
                  :model="pmService"
-                 class="form-style1"
+                 class="form-bottom-0"
                  label-position="left"
                  label-width="80px">
           <el-row>
@@ -880,7 +880,8 @@ export default {
           message: '请输入私钥'
         }]
       },
-      validObj: new ValidateSubmit()
+      validObj: new ValidateSubmit(),
+      configDataLoading: true
     }
   },
   methods: {
@@ -935,6 +936,7 @@ export default {
       }
     },
     syncBuildConfig (buildName, projectName) {
+      this.configDataLoading = true
       getBuildConfigDetailAPI(buildName, projectName).then((response) => {
         response.pre_build.installs.forEach(element => {
           element.id = element.name + element.version
@@ -967,6 +969,7 @@ export default {
         } else {
           this.useSshKey = false
         }
+        this.configDataLoading = false
       })
     },
     initEnvConfig () {
@@ -1379,7 +1382,9 @@ export default {
           envs: [],
           enable_proxy: false,
           enable_gocov: false,
-          parameters: []
+          parameters: [],
+          cluster_id: '',
+          namespace: ''
         },
         scripts: '#!/bin/bash\nset -e',
         main_file: '',
@@ -1408,7 +1413,7 @@ export default {
         this.builds = res
       })
       if (!this.isEdit) {
-        listProductAPI('', projectName).then(res => {
+        listProductAPI(projectName).then(res => {
           res.forEach(element => {
             if (element.projectName === this.projectName) {
               this.pmService.env_configs.push({
@@ -1442,6 +1447,10 @@ export default {
       handler (val, old_val) {
         if (!this.isEdit && val) {
           this.buildConfig.name = val + '-build'
+          this.configDataLoading = true
+          this.$nextTick(() => {
+            this.configDataLoading = false
+          })
         }
       }
     },
@@ -1452,7 +1461,7 @@ export default {
         const projectName = this.projectName
         const env_configs = []
         const envNameList = []
-        const resList = await listProductAPI('', projectName).catch(error => console.log(error))
+        const resList = await listProductAPI(projectName).catch(error => console.log(error))
         if (resList) {
           resList.forEach(element => {
             if (element.product_name === this.projectName) {
@@ -1606,7 +1615,7 @@ export default {
     }
   }
 
-  .form-style1 {
+  .form-bottom-0 {
     .el-form-item {
       margin-bottom: 0;
     }

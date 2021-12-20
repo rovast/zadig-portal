@@ -447,13 +447,11 @@ export default {
           color: #333;
           font-weight: 300;
           font-size: 16px;
-          line-height: 1;
         }
       }
 
       .name-listing-footer {
         position: relative;
-        margin-top: 3px;
         padding: 0;
         background-color: transparent;
         border-radius: 0 0 4px 4px;

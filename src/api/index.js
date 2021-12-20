@@ -552,27 +552,27 @@ export function workflowTaskDetailSSEAPI (projectName, workflowName, taskID, wor
 
 // Common Workflow
 export function createCommonWorkflowAPI (projectName = '', payload) {
-  return http.post(`/api/aslan/workflow/v3?projectName = ${projectName}`, payload)
+  return http.post(`/api/aslan/workflow/v3?projectName=${projectName}`, payload)
 }
 
 export function deleteCommonWorkflowAPI (projectName = '', id) {
-  return http.delete(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`)
+  return http.delete(`/api/aslan/workflow/v3/${id}?projectName=${projectName}`)
 }
 
 export function getCommonWorkflowAPI (projectName, id) {
-  return http.get(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`)
+  return http.get(`/api/aslan/workflow/v3/${id}?projectName=${projectName}`)
 }
 
 export function updateCommonWorkflowAPI (projectName = '', id, payload) {
-  return http.put(`/api/aslan/workflow/v3/${id}?projectName = ${projectName}`, payload)
+  return http.put(`/api/aslan/workflow/v3/${id}?projectName=${projectName}`, payload)
 }
 
 export function getCommonWorkflowListAPI (projectName = '', pageNum = 1, pageSize = 999) {
-  return http.get(`/api/aslan/workflow/v3?project_name=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
+  return http.get(`/api/aslan/workflow/v3?project_name=${projectName}&projectName=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
 }
 
 export function getCommonBuildArgsAPI (projectName, id) {
-  return http.get(`/api/aslan/workflow/v3/${id}/args?projectName = ${projectName}`)
+  return http.get(`/api/aslan/workflow/v3/${id}/args?projectName=${projectName}`)
 }
 
 export function runCommonWorkflowAPI (projectName = '', payload) {

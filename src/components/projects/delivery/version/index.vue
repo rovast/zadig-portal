@@ -123,12 +123,13 @@ export default {
         this.versionList = res
         this.loading = false
       }).catch((err) => {
-        this.$message.error(`获取${this.selectedService || this.projectName}版本信息出错：${err}`)
+        this.$message.error(`获取${this.selectedService || projectName}版本信息出错：${err}`)
         this.loading = false
       })
     },
     getVersionServiceList () {
-      getVersionServiceListAPI(this.projectName).then((res) => {
+      const projectName = this.projectName
+      getVersionServiceListAPI(projectName).then((res) => {
         this.serviceList = res
       })
     }

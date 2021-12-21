@@ -1,6 +1,7 @@
 <template>
     <div class="product-detail-container"
          ref="envContainer">
+      <PmHostList ref="pmHostList" :currentPmServiceData="currentPmServiceData"></PmHostList>
       <el-dialog title="通过工作流升级服务"
                  :visible.sync="showStartProductBuild"
                  custom-class="run-workflow"
@@ -400,7 +401,7 @@
                   <el-tooltip effect="dark"
                               content="通过工作流升级服务"
                               placement="top">
-                      <i @click="upgradeServiceByPipe(projectName,envName,scope.row.service_name,scope.row.type)"
+                      <i @click="upgradeServiceByWorkflow(projectName,envName,scope.row.service_name,scope.row.type)"
                          class="iconfont iconshengji"></i>
                   </el-tooltip>
                 </span>
@@ -481,7 +482,9 @@
                     </span>
                   </div>
                 </template>
-                <span v-else>N/A</span>
+                <span class="add-host el-icon-edit" @click="editHost(scope.row)">
+                  编辑
+                </span>
               </template>
             </el-table-column>
 
@@ -493,7 +496,7 @@
                   <el-tooltip effect="dark"
                               content="通过工作流升级服务"
                               placement="top">
-                      <i @click="upgradeServiceByPipe(projectName,envName,scope.row.service_name,scope.row.type)"
+                      <i @click="upgradeServiceByWorkflow(projectName,envName,scope.row.service_name,scope.row.type)"
                          class="iconfont iconshengji"></i>
                   </el-tooltip>
                 </span>
@@ -534,7 +537,7 @@
 </template>
 
 <script>
-import { getProductStatus, serviceTypeMap } from '@utils/word_translate'
+import { translateEnvStatus, serviceTypeMap } from '@utils/word_translate'
 import {
   envRevisionsAPI, productEnvInfoAPI, productServicesAPI, serviceTemplateAfterRenderAPI, listProductAPI,
   updateServiceAPI, updateK8sEnvAPI, restartPmServiceAPI, restartServiceOriginAPI, deleteProductEnvAPI, getSingleProjectAPI, getServicePipelineAPI, initSource, rmSource,
@@ -543,6 +546,7 @@ import {
 import _ from 'lodash'
 import runWorkflow from './run_workflow.vue'
 import PmServiceLog from './components/pmLogDialog.vue'
+import PmHostList from './components/pmHostList.vue'
 import UpdateHelmEnvDialog from './components/updateHelmEnvDialog'
 import UpdateHelmVarDialog from './components/updateHelmVarDialog'
 import UpdateK8sVarDialog from './components/updateK8sVarDialog'
@@ -572,6 +576,7 @@ export default {
       ingressList: [],
       combineTemplate: [],
       currentServiceWorkflows: [],
+      currentPmServiceData: {},
       selectVersion: '',
       activeDiffTab: 'template',
       selectVersionDialogVisible: false,
@@ -713,12 +718,16 @@ export default {
       }
       this.editImageRegistry = false
     },
-    editExternalConfig (product_info) {
+    editHost (data) {
+      this.currentPmServiceData = data
+      this.$refs.pmHostList.editHostDialogVisible = true
+    },
+    editExternalConfig (envInfo) {
       const params = {
         step: 1,
-        envName: product_info.env_name,
-        namespace: product_info.namespace,
-        productName: product_info.product_name,
+        envName: envInfo.env_name,
+        namespace: envInfo.namespace,
+        productName: envInfo.product_name,
         clusterId: this.clusterId
       }
       this.$router.push({ path: `/v1/projects/detail/${this.projectName}/envs/externalConfig`, query: params })
@@ -967,30 +976,30 @@ export default {
     openPopper (service) {
       const projectName = this.projectName
       const envName = this.envName
-      serviceTemplateAfterRenderAPI(projectName, service.service_name, envName).then((tpls) => {
-        this.combineTemplate = jsdiff.diffLines(tpls.current.yaml, tpls.latest.yaml)
+      serviceTemplateAfterRenderAPI(projectName, service.service_name, envName).then((res) => {
+        this.combineTemplate = jsdiff.diffLines(res.current.yaml, res.latest.yaml)
       })
     },
     getProdStatus (status, updateble) {
-      return getProductStatus(status, updateble)
+      return translateEnvStatus(status, updateble)
     },
     rollbackToVersion () {
       this.$router.push(`/v1/projects/detail/${this.projectName}/envs/create?rollbackId=${this.selectVersion}`)
     },
-    showUpdate (product_info, product_status) {
-      return product_status.updatable
+    showUpdate (envInfo, envStatus) {
+      return envStatus.updatable
     },
-    updateK8sEnv (product_info) {
+    updateK8sEnv (envInfo) {
       this.$confirm('更新环境, 是否继续?', '更新', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          const projectName = product_info.product_name
-          const envName = product_info.env_name
+          const projectName = envInfo.product_name
+          const envName = envInfo.env_name
           const envType = this.isProd ? 'prod' : ''
-          const payload = { vars: product_info.vars }
+          const payload = { vars: envInfo.vars }
           const force = false
           updateK8sEnvAPI(projectName, envName, payload, envType, force).then(
             response => {
@@ -1003,22 +1012,22 @@ export default {
             const description = error.response.data.description
             const res = description.match('the following services are modified since last update')
             if (res) {
-              this.updateEnv(description, product_info)
+              this.updateEnv(description, envInfo)
             }
           })
         })
     },
-    updateEnv (res, product_info) {
+    updateEnv (res, envInfo) {
       const message = JSON.parse(res.match(/{.+}/g)[0])
       this.$confirm(`您的更新操作将覆盖集成环境中${message.name}服务变更，确认继续?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const projectName = product_info.product_name
-        const envName = product_info.env_name
+        const projectName = envInfo.product_name
+        const envName = envInfo.env_name
         const envType = this.isProd ? 'prod' : ''
-        const payload = { vars: product_info.vars }
+        const payload = { vars: envInfo.vars }
         const force = true
         updateK8sEnvAPI(projectName, envName, payload, envType, force).then(
           response => {
@@ -1030,7 +1039,7 @@ export default {
           })
       })
     },
-    upgradeServiceByPipe (projectName, envName, serviceName, serviceType) {
+    upgradeServiceByWorkflow (projectName, envName, serviceName, serviceType) {
       getServicePipelineAPI(projectName, envName, serviceName, serviceType).then((res) => {
         this.currentServiceWorkflows = res.workflows || []
         this.currentServiceMeta = {
@@ -1274,6 +1283,7 @@ export default {
   components: {
     runWorkflow,
     PmServiceLog,
+    PmHostList,
     UpdateHelmEnvDialog,
     UpdateHelmVarDialog,
     UpdateK8sVarDialog,
@@ -1304,5 +1314,10 @@ export default {
       color: #9ea3a9;
     }
   }
+}
+
+.add-host {
+  color: #1989fa;
+  cursor: pointer;
 }
 </style>

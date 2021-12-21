@@ -101,7 +101,7 @@
 </template>
 <script>
 import { Col, Collapse, CollapseItem, Row, NavBar, Tag, Panel, Loading, Button, Notify, Tab, Tabs, Cell, CellGroup, Icon, Divider, ActionSheet, List } from 'vant'
-import { getProductStatus, serviceTypeMap } from '@utils/word_translate'
+import { translateEnvStatus, serviceTypeMap } from '@utils/word_translate'
 import { envRevisionsAPI, productEnvInfoAPI, getEnvServicesAPI } from '@api'
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
@@ -260,7 +260,7 @@ export default {
       this.getEnvServices(this.projectName, this.envName)
     },
     getProdStatus (status, updateble) {
-      return getProductStatus(status, updateble)
+      return translateEnvStatus(status, updateble)
     }
   },
   watch: {

@@ -63,46 +63,6 @@
                     <el-radio :label="false">私有</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item v-if="isEdit" v-show="activeName==='advance'" label="服务部署超时（分钟）" prop="timeout">
-                  <el-input v-model.number="projectForm.timeout"></el-input>
-                </el-form-item>
-                <el-form-item v-if="isEdit" v-show="activeName==='advance'" label="自定义交付物名称">
-                  <span slot="label">
-                    自定义交付物名称
-                    <el-tooltip effect="dark" placement="top">
-                      <div slot="content">
-                        镜像和 TAR 包规则可以通过变量和常量组装生成：
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.TIMESTAMP}}'"></span> 时间戳
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.TASK_ID}}'"></span> 工作流任务 ID
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.REPO_BRANCH}}'"></span> 代码分支名称
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.REPO_PR}}'"></span> 代码 PR ID
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.REPO_TAG}}'"></span> 代码 TAG
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.REPO_COMMIT_ID}}'"></span> 代码 Commit ID
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.PROJECT}}'"></span> 项目名称
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.SERVICE}}'"></span> 服务名称
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.ENV_NAME}}'">${ENV_NAME}</span> 环境名称
-                        <br />注意：常量字符只能是大小写字母、数字、中划线、下划线和点，即 [a-zA-Z0-9_.-]，首个字符不能是&nbsp;.&nbsp;或&nbsp;-。不能超过 127 个字符
-                      </div>
-                      <i class="el-icon-question"></i>
-                    </el-tooltip>
-                  </span>
-                  <CusDeliverable
-                    v-show="activeName==='advance'"
-                    :customImageRule="projectForm.custom_image_rule"
-                    :customTarRule="projectForm.custom_tar_rule"
-                    ref="cusDeliverable"
-                    v-if="isEdit"
-                  />
-                </el-form-item>
                 <el-form-item label="描述信息" v-show="activeName !=='advance'" prop="desc">
                   <el-input type="textarea" :rows="2" placeholder="请输入描述信息" v-model="projectForm.desc"></el-input>
                 </el-form-item>
@@ -170,6 +130,46 @@
                       </el-radio-group>
                     </el-col>
                   </el-row>
+                </el-form-item>
+                <el-form-item v-if="isEdit" v-show="activeName==='advance'" label="服务部署超时（分钟）" prop="timeout">
+                  <el-input v-model.number="projectForm.timeout"></el-input>
+                </el-form-item>
+                <el-form-item v-if="isEdit" v-show="activeName==='advance'" label="自定义交付物名称">
+                  <span slot="label">
+                    自定义交付物名称
+                    <el-tooltip effect="dark" placement="top">
+                      <div slot="content">
+                        镜像和 TAR 包规则可以通过变量和常量组装生成：
+                        <br />
+                        <span class="tooltip-key" v-html="'{{.TIMESTAMP}}'"></span> 时间戳
+                        <br />
+                        <span class="tooltip-key" v-html="'{{.TASK_ID}}'"></span> 工作流任务 ID
+                        <br />
+                        <span class="tooltip-key" v-html="'{{.REPO_BRANCH}}'"></span> 代码分支名称
+                        <br />
+                        <span class="tooltip-key" v-html="'{{.REPO_PR}}'"></span> 代码 PR ID
+                        <br />
+                        <span class="tooltip-key" v-html="'{{.REPO_TAG}}'"></span> 代码 TAG
+                        <br />
+                        <span class="tooltip-key" v-html="'{{.REPO_COMMIT_ID}}'"></span> 代码 Commit ID
+                        <br />
+                        <span class="tooltip-key" v-html="'{{.PROJECT}}'"></span> 项目名称
+                        <br />
+                        <span class="tooltip-key" v-html="'{{.SERVICE}}'"></span> 服务名称
+                        <br />
+                        <span class="tooltip-key" v-html="'{{.ENV_NAME}}'">${ENV_NAME}</span> 环境名称
+                        <br />注意：常量字符只能是大小写字母、数字、中划线、下划线和点，即 [a-zA-Z0-9_.-]，首个字符不能是&nbsp;.&nbsp;或&nbsp;-。不能超过 127 个字符
+                      </div>
+                      <i class="el-icon-question"></i>
+                    </el-tooltip>
+                  </span>
+                  <CusDeliverable
+                    v-show="activeName==='advance'"
+                    :customImageRule="projectForm.custom_image_rule"
+                    :customTarRule="projectForm.custom_tar_rule"
+                    ref="cusDeliverable"
+                    v-if="isEdit"
+                  />
                 </el-form-item>
               </el-form>
             </div>

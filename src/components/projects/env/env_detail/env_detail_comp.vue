@@ -704,8 +704,7 @@ export default {
           return
         }
         const payload = {
-          registry_id: this.productInfo.registry_id,
-          namespace: this.productInfo.namespace
+          registry_id: this.productInfo.registry_id
         }
         const res = await updateEnvImageRegistry(this.projectName, this.envName, payload).catch(err => console.log(err))
         if (res) {

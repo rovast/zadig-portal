@@ -72,7 +72,7 @@ export default {
           labels: labels
         }]
         : []
-      const envStatus = this.serviceHosts.length > 0
+      const envStatuses = this.serviceHosts.length > 0
         ? hostIds.map(item => {
           return {
             host_id: item,
@@ -90,7 +90,7 @@ export default {
         revision: this.currentPmServiceData.revision,
         is_manu: true,
         env_configs: envConfigs,
-        env_status: envStatus
+        env_statuses: envStatuses
       }
       addHostToPmEnvAPI(projectName, payload).then((res) => {
         this.$message({

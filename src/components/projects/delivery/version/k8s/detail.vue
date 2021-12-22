@@ -582,6 +582,7 @@ export default {
       return this.$route.params.id
     },
     showArtifactDeployBtn () {
+      // current version detail has not buildInfo but before, so has not buildInfo or buildInfo length is 0 is ok
       if (this.currentVersionDetail.deployInfo.length !== 0 && (!this.currentVersionDetail.buildInfo || this.currentVersionDetail.buildInfo.length === 0)) {
         return true
       } else {

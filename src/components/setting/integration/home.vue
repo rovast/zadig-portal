@@ -2,7 +2,7 @@
   <div class="integration-home">
     <div class="tab-container">
       <el-tabs @tab-click="changeTab" type="card" style="height: 200px;" v-model="currentTab">
-        <el-tab-pane  name="code" label="代码源集成">
+        <el-tab-pane name="code" label="代码源集成">
           <keep-alive>
             <Code v-if="currentTab === 'code'" />
           </keep-alive>
@@ -17,14 +17,9 @@
             <Account v-if="currentTab === 'account'" />
           </keep-alive>
         </el-tab-pane>
-        <el-tab-pane name="jira" label="Jira 集成">
+        <el-tab-pane name="external" label="外部系统集成">
           <keep-alive>
-            <Jira v-if="currentTab === 'jira'" />
-          </keep-alive>
-        </el-tab-pane>
-        <el-tab-pane name="jenkins" label="Jenkins 集成">
-          <keep-alive>
-            <Jenkins v-if="currentTab === 'jenkins'" />
+            <External v-if="currentTab === 'external'" />
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane name="mail" label="邮件集成">
@@ -41,9 +36,8 @@ import bus from '@utils/event_bus'
 import Code from './code.vue'
 import GitHubApp from './github_app.vue'
 import Account from './account.vue'
-import Jira from './jira.vue'
 import Mail from './mail.vue'
-import Jenkins from './jenkins.vue'
+import External from './external.vue'
 
 export default {
   name: 'integration',
@@ -51,9 +45,8 @@ export default {
     Code,
     GitHubApp,
     Account,
-    Jira,
-    Jenkins,
-    Mail
+    Mail,
+    External
   },
   data () {
     return {
@@ -68,7 +61,10 @@ export default {
       }
     },
     changeTab (detail) {
-      this.$router.replace({ path: '/v1/system/integration', query: { currentTab: detail.name } })
+      this.$router.replace({
+        path: '/v1/system/integration',
+        query: { currentTab: detail.name }
+      })
     }
   },
   computed: {},

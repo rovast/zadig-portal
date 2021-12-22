@@ -44,7 +44,7 @@
           placeholder="请选择代码库拥有者"
           filterable
         >
-          <el-option v-for="(repo, index) in codeInfo['repoOwners']" :key="index" :label="repo.name" :value="repo.name"></el-option>
+          <el-option v-for="(repo, index) in codeInfo['repoOwners']" :key="index" :label="repo.path" :value="repo.path"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item prop="repo" label="代码库名称">

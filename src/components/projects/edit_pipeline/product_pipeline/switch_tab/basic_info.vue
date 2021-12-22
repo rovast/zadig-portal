@@ -24,7 +24,7 @@
                            style="width: 80%;"
                            @change="getEnvServices(pipelineInfo.product_tmpl_name)"
                            placeholder="请选择项目"
-                           :disabled="editMode || $route.query.projectName"
+                           :disabled="editMode || !!$route.query.projectName"
                            filterable>
                     <el-option v-for="pro in projects" :key="pro.value" :label="pro.label"
                                :value="pro.value">

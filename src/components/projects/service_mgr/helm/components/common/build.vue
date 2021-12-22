@@ -209,7 +209,7 @@
             ref="buildApp"
             :inline="true"
             :model="buildConfig"
-            class="form-style1 section"
+            class="form-style1 section form-bottom-0"
             label-position="top"
             label-width="80px"
           >
@@ -298,7 +298,7 @@
             ref="buildEnv"
             :inline="true"
             :model="buildConfig"
-            class="form-style1 section"
+            class="form-style1 section form-bottom-0"
             label-position="top"
             label-width="120px"
           >
@@ -398,7 +398,7 @@
             ref="cacheDir"
             :inline="true"
             :model="buildConfig"
-            class="form-style1 section"
+            class="form-style1 section form-bottom-0"
             label-position="left"
             label-width="130px"
           >
@@ -1527,7 +1527,7 @@ export default {
     }
   }
 
-  .form-style1 {
+  .form-bottom-0 {
     .el-form-item {
       margin-bottom: 0;
     }

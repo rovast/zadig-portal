@@ -166,7 +166,6 @@ export default {
       this.$refs.repo.closeSelectRepo()
     },
     loadData (data) {
-      console.log(typeof data.parent)
       let path = ''
       if (typeof data.parent !== 'undefined') {
         path = data.parent + '/' + data.label

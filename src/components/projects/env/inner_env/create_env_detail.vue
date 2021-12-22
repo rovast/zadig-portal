@@ -65,7 +65,6 @@
               :value="registry.id"
             ></el-option>
           </el-select>
-          <div v-if="deployType==='helm'" class="image-secret">imagePullSecret 名称：default-registry-secret</div>
         </el-form-item>
       </el-form>
 
@@ -239,15 +238,6 @@
             </el-form>
           </el-card>
         </template>
-        <template v-if="deployType==='helm'">
-          <el-card v-if="!$utils.isEmpty(helmServiceMap)" class="box-card-service" :body-style="{padding: '0px'}">
-            <div slot="header" class="clearfix">
-              <span class="second-title">Chart (HELM 部署)</span>
-              <span class="small-title"></span>
-            </div>
-            <HelmEnvTemplate class="chart-value" ref="helmEnvTemplateRef" :chartNames="chartNames" :envScene="`createEnv`"></HelmEnvTemplate>
-          </el-card>
-        </template>
       </div>
       <el-form label-width="200px" class="ops">
         <el-form-item>
@@ -291,13 +281,11 @@ import {
   createProductAPI,
   getSingleProjectAPI,
   getHostListAPI,
-  createHelmEnvAPI,
   getRegistryWhenBuildAPI
 } from '@api'
 import bus from '@utils/event_bus'
 import { uniq, cloneDeep } from 'lodash'
 import { serviceTypeMap } from '@utils/word_translate'
-import HelmEnvTemplate from '../env_detail/components/updateHelmEnvTemp.vue'
 
 const validateKey = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {
@@ -350,7 +338,6 @@ export default {
       imageMap: {},
       containerMap: {},
       pmServiceMap: {},
-      helmServiceMap: {},
       quickSelection: '',
       serviceTypeMap: serviceTypeMap,
       rules: {
@@ -410,7 +397,6 @@ export default {
           }
         ]
       },
-      chartNames: [],
       imageRegistry: [],
       containerNames: []
     }
@@ -435,7 +421,6 @@ export default {
       return (
         this.$utils.isEmpty(this.containerMap) &&
         this.$utils.isEmpty(this.pmServiceMap) &&
-        this.$utils.isEmpty(this.helmServiceMap) &&
         this.projectConfig.source !== 'external'
       )
     }
@@ -514,7 +499,6 @@ export default {
       if (
         template.source === '' ||
         template.source === 'spock' ||
-        template.source === 'helm' ||
         template.source === 'pm'
       ) {
         this.projectConfig.source = 'system'
@@ -538,20 +522,9 @@ export default {
       this.loading = false
       this.projectConfig.revision = template.revision
       this.projectConfig.vars = template.vars
-      this.chartNames = template.chart_infos
-        ? template.chart_infos.map(chart => {
-          return {
-            serviceName: chart.service_name,
-            chartVersion: chart.chart_version,
-            type: 'common'
-          }
-        })
-        : []
-
       if (
         template.source === '' ||
         template.source === 'spock' ||
-        template.source === 'helm' ||
         template.source === 'pm'
       ) {
         this.projectConfig.source = 'system'
@@ -570,7 +543,6 @@ export default {
 
       const containerMap = {}
       const pmServiceMap = {}
-      const helmServiceMap = {}
       const containerNames = []
       for (const group of template.services) {
         for (const ser of group) {
@@ -594,17 +566,12 @@ export default {
             pmServiceMap[ser.service_name] =
               pmServiceMap[ser.service_name] || {}
             pmServiceMap[ser.service_name][ser.type] = ser
-          } else if (ser.type === 'helm') {
-            helmServiceMap[ser.service_name] =
-              helmServiceMap[ser.service_name] || {}
-            helmServiceMap[ser.service_name][ser.type] = ser
           }
         }
       }
       this.projectConfig.services = template.services
       this.containerMap = containerMap
       this.pmServiceMap = pmServiceMap
-      this.helmServiceMap = helmServiceMap
       this.containerNames = uniq(containerNames)
       this.getImages()
     },
@@ -699,8 +666,6 @@ export default {
       const projectType = this.deployType
       if (projectType === 'k8s' && selectType === 'system') {
         this.deployK8sEnv()
-      } else if (projectType === 'helm' && selectType === 'system') {
-        this.deployHelmEnv()
       } else if (selectType === 'external') {
         this.loadHosting()
       }
@@ -816,6 +781,7 @@ export default {
           }
           createProductAPI(payload, envType).then(
             res => {
+              // Add delay to solve the back-end permission synchronization problem
               sleep(5000).then(() => {
                 const envName = payload.env_name
                 this.startDeployLoading = false
@@ -834,44 +800,6 @@ export default {
           )
         } else {
           console.log('not-valid')
-        }
-      })
-    },
-    async deployHelmEnv () {
-      const res = await this.$refs.helmEnvTemplateRef.validate().catch(err => {
-        console.log(err)
-      })
-      if (!res) {
-        return
-      }
-      this.$refs['create-env-ref'].validate(valid => {
-        if (valid) {
-          const valueInfo = this.$refs.helmEnvTemplateRef.getAllInfo()
-          const payload = {
-            envName: this.projectConfig.env_name,
-            clusterID: this.projectConfig.cluster_id,
-            registry_id: this.projectConfig.registry_id,
-            chartValues: valueInfo.chartInfo,
-            defaultValues: valueInfo.envInfo.DEFAULT || '',
-            namespace: this.projectConfig.defaultNamespace
-          }
-          this.startDeployLoading = true
-          createHelmEnvAPI(this.projectConfig.product_name, [payload]).then(
-            res => {
-              const envName = payload.envName
-              this.startDeployLoading = false
-              this.$message({
-                message: '创建环境成功',
-                type: 'success'
-              })
-              this.$router.push(
-                `/v1/projects/detail/${this.projectName}/envs/detail?envName=${envName}`
-              )
-            },
-            () => {
-              this.startDeployLoading = false
-            }
-          )
         }
       })
     },
@@ -933,9 +861,6 @@ export default {
       }
       this.getTemplateAndImg()
     })
-  },
-  components: {
-    HelmEnvTemplate
   }
 }
 </script>
@@ -947,42 +872,6 @@ export default {
   padding: 15px 20px;
   overflow: auto;
   font-size: 13px;
-
-  .image-secret {
-    margin-left: 3px;
-    color: #cdcfd4;
-    font-size: 12px;
-    line-height: 1.5;
-  }
-
-  .helm-yaml-drawer {
-    .el-drawer__header {
-      margin-bottom: 10px;
-
-      :first-child {
-        &:focus {
-          outline: none;
-        }
-      }
-    }
-
-    .el-drawer__body {
-      padding: 20px;
-    }
-
-    .helm-yaml-drawer__content {
-      flex: 1;
-    }
-
-    .helm-yaml-drawer__footer {
-      display: flex;
-      margin-top: 15px;
-    }
-
-    .helm-yaml-drawer__footer button {
-      flex: 1;
-    }
-  }
 
   .module-title h1 {
     margin-bottom: 30px;
@@ -1067,12 +956,6 @@ export default {
       .img-select {
         width: 140px;
       }
-    }
-
-    .chart-value {
-      width: 80%;
-      min-width: 450px;
-      margin-left: 5px;
     }
   }
 

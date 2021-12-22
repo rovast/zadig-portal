@@ -15,6 +15,9 @@ import service_manage from './modules/service_manage'
 // External Link
 import external_link from './modules/external_link'
 
+// Common Workflow
+import common_workflow from './modules/common_workflow'
+
 Vue.use(Vuex)
 
 const debug = process.env.NODE_ENV !== 'production'
@@ -25,7 +28,8 @@ export default new Vuex.Store({
     project_list,
     sidebar_status,
     service_manage,
-    external_link
+    external_link,
+    common_workflow
   },
   strict: debug
 })

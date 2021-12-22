@@ -582,7 +582,7 @@ export default {
       return this.$route.params.id
     },
     showArtifactDeployBtn () {
-      if (this.currentVersionDetail.deployInfo.length !== 0 && this.currentVersionDetail.buildInfo.length === 0) {
+      if (this.currentVersionDetail.deployInfo.length !== 0 && (!this.currentVersionDetail.buildInfo || this.currentVersionDetail.buildInfo.length === 0)) {
         return true
       } else {
         return false

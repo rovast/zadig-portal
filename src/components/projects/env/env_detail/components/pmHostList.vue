@@ -38,9 +38,9 @@ export default {
   },
   watch: {
     currentPmServiceData (newVal, oldVal) {
-      if (newVal.env_statuses) {
-        this.serviceHosts = newVal.env_statuses.map((item) => {
-          return item.host_id
+      if (newVal.env_configs) {
+        this.serviceHosts = newVal.env_configs.map((item) => {
+          return item.host_ids.concat(item.host_labels)
         })
       }
     }
@@ -97,6 +97,7 @@ export default {
           message: '主机资源修改成功',
           type: 'success'
         })
+        this.$emit('success')
         this.editHostDialogVisible = false
       })
     }

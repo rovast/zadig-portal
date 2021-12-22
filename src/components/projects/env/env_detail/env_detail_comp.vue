@@ -1,7 +1,7 @@
 <template>
     <div class="product-detail-container"
          ref="envContainer">
-      <PmHostList ref="pmHostList" :currentPmServiceData="currentPmServiceData" @success="getEnvServices()"></PmHostList>
+      <PmHostList ref="pmHostList" :currentPmServiceData="currentPmServiceData" @success="refreshServiceList"></PmHostList>
       <el-dialog title="通过工作流升级服务"
                  :visible.sync="showStartProductBuild"
                  custom-class="run-workflow"
@@ -762,6 +762,10 @@ export default {
       if (scrollTop + 1.5 * clientHeight > scrollHeight) {
         this.getEnvServices()
       }
+    },
+    refreshServiceList () {
+      this.initPageInfo()
+      this.getEnvServices()
     },
     initPageInfo () {
       this.removeListener()

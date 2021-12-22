@@ -267,52 +267,52 @@
             <el-button @click="addWebhookBtn" type="text">添加配置</el-button>
             <el-table class="add-border" :data="webhook.items" style="width: 100%;">
               <el-table-column label="名称">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.name?scope.row.main_repo.name:'' }}</span>
+                <template slot-scope="{ row }">
+                  <span>{{ row.main_repo.name?row.main_repo.name:'' }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="描述">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.description?scope.row.main_repo.description:'' }}</span>
+                <template slot-scope="{ row }">
+                  <span>{{ row.main_repo.description?row.main_repo.description:'' }}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="代码库拥有者">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.repo_owner }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column label="代码库">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.repo_name }}</span>
+              <el-table-column label="代码库拥有者/代码库" width="160px">
+                <template slot-scope="{ row }">
+                  <span>{{ row.main_repo.repo_owner }}/{{ row.main_repo.repo_name }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="目标分支">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.branch }}</span>
+                <template slot-scope="{ row }">
+                  <span>{{ row.main_repo.branch || 'N/A' }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="部署环境">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.workflow_args.namespace }}</span>
+                <template slot-scope="{ row }">
+                  <span>{{ row.workflow_args.namespace || 'N/A' }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="触发方式">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.events.join() }}</span>
+                <template slot-scope="{ row }">
+                  <span>{{ row.main_repo.events.join() || 'N/A' }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="文件目录">
-                <template slot-scope="scope">
+                <template slot-scope="{ row }">
                   <span
-                    v-if="scope.row.main_repo.source!=='gerrit' && scope.row.main_repo.source!=='codehub'"
-                  >{{ scope.row.main_repo.match_folders ? scope.row.main_repo.match_folders.join() : '' }}</span>
+                    v-if="row.main_repo.source!=='gerrit' && row.main_repo.source!=='codehub'"
+                  >{{ row.main_repo.match_folders ? row.main_repo.match_folders.join() : 'N/A' }}</span>
                   <span v-else>N/A</span>
                 </template>
               </el-table-column>
+              <el-table-column label="YAML 文件路径">
+                <template slot-scope="{ row }">
+                  <span>{{ row.yaml_path || 'N/A' }}</span>
+                </template>
+              </el-table-column>
               <el-table-column label="操作">
-                <template slot-scope="scope">
-                  <el-button @click.native.prevent="editWebhook(scope.$index)" type="text" size="small">编辑</el-button>
-                  <el-button @click.native.prevent="deleteWebhook(scope.$index)" type="text" size="small">移除</el-button>
+                <template slot-scope="{ $index }">
+                  <el-button @click.native.prevent="editWebhook($index)" type="text" size="small">编辑</el-button>
+                  <el-button @click.native.prevent="deleteWebhook($index)" type="text" size="small">移除</el-button>
                 </template>
               </el-table-column>
             </el-table>

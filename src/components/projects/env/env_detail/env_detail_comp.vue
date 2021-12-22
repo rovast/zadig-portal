@@ -1,7 +1,7 @@
 <template>
     <div class="product-detail-container"
          ref="envContainer">
-      <PmHostList ref="pmHostList" :currentPmServiceData="currentPmServiceData"></PmHostList>
+      <PmHostList ref="pmHostList" :currentPmServiceData="currentPmServiceData" @success="getEnvServices()"></PmHostList>
       <el-dialog title="通过工作流升级服务"
                  :visible.sync="showStartProductBuild"
                  custom-class="run-workflow"

@@ -38,9 +38,11 @@ export default {
   },
   watch: {
     currentPmServiceData (newVal, oldVal) {
-      this.serviceHosts = newVal.env_statuses.map((item) => {
-        return item.host_id
-      })
+      if (newVal.env_statuses) {
+        this.serviceHosts = newVal.env_statuses.map((item) => {
+          return item.host_id
+        })
+      }
     }
   },
   methods: {
@@ -63,19 +65,32 @@ export default {
         return (allHostIds.indexOf(item) >= 0)
       })
       const projectName = this.currentPmServiceData.product_name
+      const envConfigs = this.serviceHosts.length > 0
+        ? [{
+          env_name: this.currentPmServiceData.env_name,
+          host_ids: hostIds,
+          labels: labels
+        }]
+        : []
+      const envStatus = this.serviceHosts.length > 0
+        ? hostIds.map(item => {
+          return {
+            host_id: item,
+            address: this.allHost.find(host => {
+              return host.id === item
+            }).ip,
+            env_name: this.currentPmServiceData.env_name
+          }
+        })
+        : []
       const payload = {
         product_name: this.currentPmServiceData.product_name,
         service_name: this.currentPmServiceData.service_name,
         env_name: this.currentPmServiceData.env_name,
         revision: this.currentPmServiceData.revision,
         is_manu: true,
-        env_configs: [{
-          env_name: this.currentPmServiceData.env_name,
-          host_ids: hostIds,
-          labels: labels
-        }],
-        env_status: this.currentPmServiceData.env_statuses
-
+        env_configs: envConfigs,
+        env_status: envStatus
       }
       addHostToPmEnvAPI(projectName, payload).then((res) => {
         this.$message({

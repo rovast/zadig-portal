@@ -73,7 +73,7 @@ export default {
           host_ids: hostIds,
           labels: labels
         },
-        env_status: this.currentPmServiceData
+        env_status: this.currentPmServiceData.env_statuses
 
       }
       addHostToPmEnvAPI(projectName, payload).then((res) => {

@@ -66,6 +66,7 @@ export default {
       const payload = {
         product_name: this.currentPmServiceData.product_name,
         service_name: this.currentPmServiceData.service_name,
+        revision: this.currentPmServiceData.revision,
         is_manu: true,
         env_configs: {
           env_name: this.currentPmServiceData.env_name,

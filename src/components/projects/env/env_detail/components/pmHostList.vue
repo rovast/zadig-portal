@@ -62,6 +62,7 @@ export default {
       const hostIds = this.serviceHosts.filter(item => {
         return (allHostIds.indexOf(item) >= 0)
       })
+      const projectName = this.currentPmServiceData.product_name
       const payload = {
         product_name: this.currentPmServiceData.product_name,
         service_name: this.currentPmServiceData.service_name,
@@ -73,7 +74,7 @@ export default {
         env_status: this.currentPmServiceData
 
       }
-      addHostToPmEnvAPI(payload).then((res) => {
+      addHostToPmEnvAPI(projectName, payload).then((res) => {
         this.$message({
           message: '主机资源修改成功',
           type: 'success'

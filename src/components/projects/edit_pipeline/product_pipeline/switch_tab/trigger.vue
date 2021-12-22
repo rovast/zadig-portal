@@ -119,8 +119,7 @@
               <i class="el-icon-arrow-left"></i>
             </el-button>
           </el-form-item>
-          <div class="env-update-list" v-show="showEnvUpdatePolicy">
-            <p>环境更新策略</p>
+          <el-form-item label="环境更新策略" class="env-update-list" v-show="showEnvUpdatePolicy">
             <el-radio-group v-model="webhookSwap.env_update_policy">
               <el-tooltip content="目前一个触发任务仅支持更新单个环境，部署环境指定单个环境时可选" placement="right">
                 <el-radio label="all" :disabled="!(webhookSwap.namespace.length===1)">更新指定环境</el-radio>
@@ -132,7 +131,7 @@
                 <el-radio label="base" :disabled="!(webhookSwap.namespace.length===1 && webhookSwap.repo.source==='gitlab')">设置指定环境为基准环境</el-radio>
               </el-tooltip>
             </el-radio-group>
-          </div>
+          </el-form-item>
           <el-form-item
             v-if="webhookSwap.env_update_policy === 'base' && webhookSwap.repo.source==='gitlab' && showEnvUpdatePolicy"
             label="销毁策略"
@@ -193,7 +192,7 @@
               placeholder="输入目录时，多个目录请用回车换行分隔"
             ></el-input>
           </el-form-item>
-          <ul v-if="webhookSwap.repo.source!=='gerrit' && webhookSwap.repo.source!=='codehub'" style="padding-left: 80px;">
+          <ul v-if="webhookSwap.repo.source!=='gerrit' && webhookSwap.repo.source!=='codehub'" style="padding-left: 120px;">
             <li>"/" 表示代码库中的所有文件</li>
             <li>用 "!" 符号开头可以排除相应的文件</li>
           </ul>
@@ -276,7 +275,7 @@
                   <span>{{ row.main_repo.description?row.main_repo.description:'' }}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="代码库拥有者/代码库" width="160px">
+              <el-table-column label="代码库拥有者/代码库" min-width="160px">
                 <template slot-scope="{ row }">
                   <span>{{ row.main_repo.repo_owner }}/{{ row.main_repo.repo_name }}</span>
                 </template>
@@ -304,7 +303,7 @@
                   <span v-else>N/A</span>
                 </template>
               </el-table-column>
-              <el-table-column label="YAML 文件路径">
+              <el-table-column label="YAML 文件路径" min-width="120px">
                 <template slot-scope="{ row }">
                   <span>{{ row.yaml_path || 'N/A' }}</span>
                 </template>
@@ -929,8 +928,6 @@ export default {
 
     .env-update-list {
       .el-radio-group {
-        margin-top: -1rem;
-        margin-left: 80px;
         padding: 5px 0;
 
         .el-radio {

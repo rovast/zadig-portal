@@ -202,7 +202,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .host-form {
   padding: 30px 20px;
 }

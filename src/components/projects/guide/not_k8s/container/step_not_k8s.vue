@@ -1,5 +1,5 @@
 <template>
-  <div class="not-k8s-step-container">
+  <div class="pm-service-step-container">
     <div class="step-detail">
       <div class="guide-title">
         <h4>
@@ -38,7 +38,7 @@ export default {
 }
 </script>
 <style lang="less">
-.not-k8s-step-container {
+.pm-service-step-container {
   display: flex;
   flex-direction: row;
 

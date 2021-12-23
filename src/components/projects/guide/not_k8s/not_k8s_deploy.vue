@@ -1,5 +1,5 @@
 <template>
-  <div class="projects-not-k8s-deploy-container">
+  <div class="projects-pm-service-deploy-container">
     <div class="guide-container">
       <step :activeStep="2">
       </step>
@@ -236,7 +236,7 @@ export default {
 </script>
 
 <style lang="less">
-.projects-not-k8s-deploy-container {
+.projects-pm-service-deploy-container {
   position: relative;
   flex: 1;
   overflow: auto;

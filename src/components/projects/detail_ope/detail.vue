@@ -269,6 +269,7 @@ import { getProjectInfoAPI, productEnvInfoAPI, queryUserBindingsAPI, deleteProje
 import { getProductStatus } from '@utils/word_translate'
 import { wordTranslate } from '@utils/word_translate.js'
 import { whetherOnboarding } from '@utils/onboarding_route'
+import { get } from 'lodash'
 import bus from '@utils/event_bus'
 import store from 'storejs'
 export default {
@@ -304,7 +305,7 @@ export default {
     },
     async deleteProject () {
       const projectName = this.projectName
-      const externalFlag = this.currentProject.product_feature.create_env_type
+      const externalFlag = get(this.currentProject, 'product_feature.create_env_type', '')
       const workflows = this.workflows.map((element) => { return element.name })
       const envNames = this.envList.map((element) => { return element.name })
       const result = await Promise.all([getServiceTemplatesAPI(projectName), getBuildConfigsAPI(projectName)])

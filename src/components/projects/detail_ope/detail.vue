@@ -44,6 +44,14 @@
                     <span class="add-filter-value-title">权限</span>
                   </button>
                 </router-link>
+                <router-link v-if="isProjectAdmin"
+                             :to="`/v1/projects/detail/${projectName}/policy`">
+                  <button type="button"
+                          class="display-btn">
+                    <i class="el-icon-s-operation"></i>
+                    <span class="add-filter-value-title">协作模式</span>
+                  </button>
+                </router-link>
               </div>
 
             </div>

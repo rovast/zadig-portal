@@ -343,6 +343,14 @@ const routes = [
         }
       },
       {
+        path: 'projects/detail/:project_name/policy',
+        component: () => import(/* webpackChunkName: "project-policy" */ '@/components/projects/policy/home.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '权限管理'
+        }
+      },
+      {
         path: 'projects/detail/:project_name/pipelines/multi/:workflow_name',
         component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_multi_detail.vue'),
         meta: {

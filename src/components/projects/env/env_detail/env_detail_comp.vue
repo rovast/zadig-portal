@@ -482,9 +482,7 @@
                     </span>
                   </div>
                 </template>
-                <span class="add-host el-icon-edit" @click="editHost(scope.row)">
-                  编辑
-                </span>
+                <span class="add-host el-icon-edit-outline" @click="editHost(scope.row)"></span>
               </template>
             </el-table-column>
 

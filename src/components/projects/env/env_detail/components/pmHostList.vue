@@ -2,9 +2,9 @@
   <div>
     <el-dialog title="编辑主机资源" :visible.sync="editHostDialogVisible" width="30%" center>
       <el-select style="width: 100%;" size="small" multiple filterable v-model="serviceHosts" placeholder="请选择主机">
-        <el-option-group label="主机标签">
+        <!-- <el-option-group label="主机标签">
           <el-option v-for="(item,index) in allHostLabels" :key="index" :label="`${item}`" :value="item"></el-option>
-        </el-option-group>
+        </el-option-group> -->
         <el-option-group label="主机列表">
           <el-option v-for="item in allHost" :key="item.name" :label="`${item.name}-${item.ip}`" :value="item.id"></el-option>
         </el-option-group>
@@ -42,7 +42,7 @@ export default {
       if (newVal.env_configs) {
         this.serviceHosts = []
         newVal.env_configs.forEach((item) => {
-          this.serviceHosts = uniq(concat(this.serviceHosts, item.host_ids, item.host_labels))
+          this.serviceHosts = uniq(concat(this.serviceHosts, item.host_ids, item.labels))
         })
       }
     }

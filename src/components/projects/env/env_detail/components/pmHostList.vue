@@ -18,6 +18,7 @@
 </template>
 <script>
 import { getHostLabelListAPI, getHostListAPI, addHostToPmEnvAPI } from '@api'
+import { concat, uniq } from 'lodash'
 export default {
   name: 'pmHostList',
   props: {
@@ -39,8 +40,9 @@ export default {
   watch: {
     currentPmServiceData (newVal, oldVal) {
       if (newVal.env_configs) {
-        this.serviceHosts = newVal.env_configs.map((item) => {
-          return item.host_ids.concat(item.host_labels)
+        this.serviceHosts = []
+        newVal.env_configs.forEach((item) => {
+          this.serviceHosts = uniq(concat(this.serviceHosts, item.host_ids, item.host_labels))
         })
       }
     }
@@ -65,15 +67,15 @@ export default {
         return (allHostIds.indexOf(item) >= 0)
       })
       const projectName = this.currentPmServiceData.product_name
-      const envConfigs = this.serviceHosts.length > 0
-        ? [{
+      let envConfigs = []
+      let envStatuses = []
+      if (this.serviceHosts.length > 0) {
+        envConfigs = [{
           env_name: this.currentPmServiceData.env_name,
           host_ids: hostIds,
           labels: labels
         }]
-        : []
-      const envStatuses = this.serviceHosts.length > 0
-        ? hostIds.map(item => {
+        envStatuses = hostIds.map(item => {
           return {
             host_id: item,
             address: this.allHost.find(host => {
@@ -82,7 +84,10 @@ export default {
             env_name: this.currentPmServiceData.env_name
           }
         })
-        : []
+      } else {
+        envConfigs = []
+        envStatuses = []
+      }
       const payload = {
         product_name: this.currentPmServiceData.product_name,
         service_name: this.currentPmServiceData.service_name,

@@ -272,7 +272,7 @@
               </el-table-column>
               <el-table-column label="描述">
                 <template slot-scope="{ row }">
-                  <span>{{ row.main_repo.description?row.main_repo.description:'' }}</span>
+                  <span>{{ row.main_repo.description?row.main_repo.description:'N/A' }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="代码库拥有者/代码库" min-width="160px">
@@ -712,7 +712,6 @@ export default {
 
       let repoInfo = {}
       if (webhookSwap.is_yaml) {
-        webhookSwap.repo.match_folders = []
         webhookSwap.repo.events = []
         webhookSwap.repo.branch = ''
         repoInfo = {
@@ -907,7 +906,7 @@ export default {
 <style lang="less">
 .add-trigger-dialog {
   .trigger-mode {
-    margin-bottom: 5px;
+    margin-top: -30px;
     text-align: right;
   }
 

@@ -463,10 +463,10 @@ export default {
         that.matchedBranchNames = res || []
       })
     }, 500),
-    validateForm (fnName, flag) {
+    validateForm (fnName, action) {
       this.$refs.triggerForm.validate(valid => {
         if (valid) {
-          this[fnName](flag)
+          this[fnName](action)
         }
       })
     },
@@ -704,7 +704,7 @@ export default {
         this.$refs.triggerForm.clearValidate()
       })
     },
-    updateWebhook (flag) {
+    updateWebhook (action) {
       const webhookSwap = this.$utils.cloneObj(this.webhookSwap)
 
       webhookSwap.repo.name = webhookSwap.name
@@ -754,10 +754,10 @@ export default {
         }
       }
 
-      if (flag === 'add') {
+      if (action === 'add') {
         this.webhook.items.push(repoInfo)
         this.webhookAddMode = false
-      } else if (flag === 'save') {
+      } else if (action === 'save') {
         this.$set(this.webhook.items, this.currenteditWebhookIndex, repoInfo)
         this.webhookEditMode = false
       }
@@ -806,11 +806,11 @@ export default {
   computed: {
     showWebhookDialog: {
       get: function () {
-        const flag = this.webhookAddMode ? this.webhookAddMode : this.webhookEditMode
-        if (!flag) {
+        const mode = this.webhookAddMode ? this.webhookAddMode : this.webhookEditMode
+        if (!mode) {
           this.matchedBranchNames = null
         }
-        return flag
+        return mode
       },
       set: function (newValue) {
         this.webhookAddMode

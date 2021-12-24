@@ -68,25 +68,14 @@ export default {
       })
       const projectName = this.currentPmServiceData.product_name
       let envConfigs = []
-      let envStatuses = []
       if (this.serviceHosts.length > 0) {
         envConfigs = [{
           env_name: this.currentPmServiceData.env_name,
           host_ids: hostIds,
           labels: labels
         }]
-        envStatuses = hostIds.map(item => {
-          return {
-            host_id: item,
-            address: this.allHost.find(host => {
-              return host.id === item
-            }).ip,
-            env_name: this.currentPmServiceData.env_name
-          }
-        })
       } else {
         envConfigs = []
-        envStatuses = []
       }
       const payload = {
         product_name: this.currentPmServiceData.product_name,
@@ -94,8 +83,7 @@ export default {
         env_name: this.currentPmServiceData.env_name,
         revision: this.currentPmServiceData.revision,
         is_manu: true,
-        env_configs: envConfigs,
-        env_statuses: envStatuses
+        env_configs: envConfigs
       }
       addHostToPmEnvAPI(projectName, payload).then((res) => {
         this.$message({

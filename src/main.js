@@ -15,14 +15,10 @@ import translate from '@utils/word_translate'
 import '@utils/traversal'
 
 import App from './App.vue'
-import VueIntro from 'vue-introjs'
-import 'intro.js/introjs.css'
 import { analyticsRequestAPI } from '@api'
 import { JSEncrypt } from 'jsencrypt'
 import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill'
 global.EventSource = EventSourcePolyfill || NativeEventSource
-
-Vue.use(VueIntro)
 
 Vue.prototype.$utils = utils
 Vue.prototype.$translate = translate

@@ -46,10 +46,6 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     }
   },
   plugins: [
-    new webpack.ProvidePlugin({
-      // other modules
-      introJs: ['intro.js', 'introJs']
-    }),
     new webpack.DefinePlugin({
       'process.env': require('../config/dev.env')
     }),

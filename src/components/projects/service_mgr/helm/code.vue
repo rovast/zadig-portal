@@ -392,7 +392,13 @@ export default {
         // }
         // this.changeExpandFileList('add', item)
       } else {
-        this.autoShowValuesYaml(this.nodeData[0])
+        const serviceName = this.$route.query.service_name
+        const node = this.nodeData.find(node => node.label === serviceName)
+        if (node) {
+          this.loadData(node)
+        } else {
+          this.autoShowValuesYaml(this.nodeData[0])
+        }
       }
     }
   },

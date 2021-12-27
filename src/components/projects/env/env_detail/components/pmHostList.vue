@@ -82,7 +82,6 @@ export default {
         service_name: this.currentPmServiceData.service_name,
         env_name: this.currentPmServiceData.env_name,
         revision: this.currentPmServiceData.revision,
-        is_manu: true,
         env_configs: envConfigs
       }
       addHostToPmEnvAPI(projectName, payload).then((res) => {

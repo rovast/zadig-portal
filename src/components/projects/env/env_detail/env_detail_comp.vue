@@ -474,15 +474,33 @@
                              label="主机资源">
               <template slot-scope="scope">
                 <template v-if="scope.row.env_statuses && scope.row.env_statuses.length>0">
-                  <div v-for="(value,name) in scope.row.serviceHostStatus"
-                       :key="name">
+                  <div v-if="scope.row.serviceHostStatusArr[0]">
                     <span class="pm-service-status"
-                          :class="value['color']">
-                      {{name}}
+                          :class="scope.row.serviceHostStatusArr[0]['color']">
+                      {{scope.row.serviceHostStatusArr[0].host}}
                     </span>
                   </div>
+                  <div v-if="scope.row.serviceHostStatusArr[1]">
+                    <span class="pm-service-status"
+                          :class="scope.row.serviceHostStatusArr[1]['color']">
+                      {{scope.row.serviceHostStatusArr[1].host}}
+                    </span>
+                  </div>
+                  <el-popover v-if="scope.row.serviceHostStatusArr.length > 2"
+                    placement="right"
+                    popper-class="pm-service-host-status-popover"
+                    trigger="hover">
+                    <div v-for="(item,index) in _.drop(scope.row.serviceHostStatusArr,2)"
+                        :key="index">
+                      <span class="pm-service-status"
+                            :class="item['color']">
+                        {{item.host}}
+                      </span>
+                    </div>
+                    <span slot="reference" class="add-host el-icon-more-outline"></span>
+                  </el-popover>
                 </template>
-                <span class="add-host el-icon-edit-outline" @click="editHost(scope.row)"></span>
+                <div><span class="add-host el-icon-edit-outline" @click="editHost(scope.row)"></span></div>
               </template>
             </el-table-column>
 
@@ -656,6 +674,9 @@ export default {
     },
     clusterId () {
       return this.productInfo.cluster_id ? this.productInfo.cluster_id : ''
+    },
+    _ () {
+      return _
     },
     envName: {
       get: function () {
@@ -928,6 +949,7 @@ export default {
               serviceItem.serviceHostStatus[host].status.push(hostItem.status)
               serviceItem.serviceHostStatus[host].color = checkStatus(serviceItem.serviceHostStatus[host].status)
             })
+            serviceItem.serviceHostStatusArr = this.$utils.mapToArray(serviceItem.serviceHostStatus, 'host')
           }
         })
         function checkStatus (arr) {

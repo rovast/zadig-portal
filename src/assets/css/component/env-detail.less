@@ -25,6 +25,26 @@
   }
 }
 
+.pm-service-host-status-popover {
+  .pm-service-status {
+    display: block;
+
+    &.Running,
+    &.green {
+      color: #67c23a;
+    }
+
+    &.Error,
+    &.red {
+      color: #ff1949;
+    }
+
+    &.yellow {
+      color: #e6a23c;
+    }
+  }
+}
+
 .grant-dialog {
   .label {
     display: block;

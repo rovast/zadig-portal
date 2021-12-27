@@ -82,6 +82,13 @@
                 <span>开发者中心</span>
               </a>
             </li>
+            <li>
+              <a href="https://docs.koderover.com/zadig/glossary/"
+                 target="_blank">
+                <i class="icon el-icon-link"></i>
+                <span>术语表</span>
+              </a>
+            </li>
           </ul>
           <span slot="reference"
                 class="help">

@@ -86,7 +86,7 @@ export default {
         tests: []
       },
       workflowName: '',
-      targetProduct: '',
+      targetProject: '',
       products: [],
       matchedProducts: [],
       repoInfoMap: {},
@@ -204,10 +204,10 @@ export default {
     },
     async filterProducts () {
       const prodProducts = this.products.filter(element => {
-        return (element.product_name === this.targetProduct && element.is_prod)
+        return (element.product_name === this.targetProject && element.is_prod)
       })
       const testProducts = this.products.filter(element => {
-        return (element.product_name === this.targetProduct && !element.is_prod)
+        return (element.product_name === this.targetProject && !element.is_prod)
       })
       this.matchedProducts = prodProducts.concat(testProducts)
     },

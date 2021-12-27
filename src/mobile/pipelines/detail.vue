@@ -111,7 +111,7 @@
         <run-workflow v-if="taskDialogVisible"
                       :workflowName="workflowName"
                       :workflowMeta="workflow"
-                      :targetProduct="workflow.product_tmpl_name"
+                      :targetProject="workflow.product_tmpl_name"
                       :forcedUserInput="forcedUserInput"
                       @success="hideAndFetchHistory"></run-workflow>
       </el-dialog>

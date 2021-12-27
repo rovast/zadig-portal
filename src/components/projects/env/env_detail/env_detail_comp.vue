@@ -657,9 +657,6 @@ export default {
     clusterId () {
       return this.productInfo.cluster_id ? this.productInfo.cluster_id : ''
     },
-    isPublic () {
-      return this.productInfo.isPublic
-    },
     envName: {
       get: function () {
         if (this.$route.query.envName) {
@@ -888,7 +885,6 @@ export default {
         this.$notify.error({
           title: '获取环境信息失败'
         })
-        // this.$router.push(`/v1/projects/detail/${this.projectName}`)
       }
     },
     async getProductEnvInfo (projectName, envName) {
@@ -924,26 +920,12 @@ export default {
       })
       if (pmServiceList.length > 0) {
         pmServiceList.forEach(serviceItem => {
-          serviceItem.serviceHostStatus = {}
           if (serviceItem.env_statuses) {
+            serviceItem.serviceHostStatus = {}
             serviceItem.env_statuses.forEach(hostItem => {
               const host = hostItem.address.split(':')[0]
               serviceItem.serviceHostStatus[host] = { status: [], color: '' }
-            })
-          }
-        })
-        pmServiceList.forEach(serviceItem => {
-          if (serviceItem.env_statuses) {
-            serviceItem.env_statuses.forEach(hostItem => {
-              const host = hostItem.address.split(':')[0]
               serviceItem.serviceHostStatus[host].status.push(hostItem.status)
-            })
-          }
-        })
-        pmServiceList.forEach(serviceItem => {
-          if (serviceItem.env_statuses) {
-            serviceItem.env_statuses.forEach(hostItem => {
-              const host = hostItem.address.split(':')[0]
               serviceItem.serviceHostStatus[host].color = checkStatus(serviceItem.serviceHostStatus[host].status)
             })
           }
@@ -1252,10 +1234,6 @@ export default {
       } else {
         return 'N/A'
       }
-    },
-    getPmServiceHost (addr) {
-      const hostStrArray = addr.split(':')
-      return hostStrArray[0]
     }
   },
   created () {

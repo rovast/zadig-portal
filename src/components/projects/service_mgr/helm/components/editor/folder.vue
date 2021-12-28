@@ -9,7 +9,6 @@
       :default-expanded-keys="expandKey"
       @node-contextmenu="handleNodeClick"
       @node-click="addExpandFileList"
-      @node-expand="nodeExpand"
     ></el-tree>
   </div>
 </template>
@@ -142,10 +141,7 @@ export default {
         }
       } else if (data.children && data.children.length === 0) {
         this.loadData(data)
-      }
-    },
-    nodeExpand (data) {
-      if (data.isService) {
+      } else if (data.isService) {
         this.autoShowValuesYaml(data)
       }
     },

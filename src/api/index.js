@@ -306,6 +306,10 @@ export function updatePmServiceAPI (projectName, payload) {
   return http.put(`/api/aslan/service/pm/${projectName}?projectName=${projectName}`, payload)
 }
 
+export function addHostToPmEnvAPI (projectName, data) {
+  return http.put(`/api/aslan/service/pm/healthCheckUpdate?projectName=${projectName}`, data)
+}
+
 export function getHelmChartProjectChartsAPI (project, projectName = '') {
   return http.get(`/api/aslan/service/harbor/project/${project}/charts?projectName=${projectName}`)
 }

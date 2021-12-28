@@ -266,7 +266,7 @@
 </template>
 <script>
 import { getProjectInfoAPI, productEnvInfoAPI, queryUserBindingsAPI, deleteProjectAPI, getWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
-import { getProductStatus } from '@utils/word_translate'
+import { translateEnvStatus } from '@utils/word_translate'
 import { wordTranslate } from '@utils/word_translate.js'
 import { whetherOnboarding } from '@utils/onboarding_route'
 import { get } from 'lodash'
@@ -284,7 +284,7 @@ export default {
   },
   methods: {
     getProdStatus (status, updateble) {
-      return getProductStatus(status, updateble)
+      return translateEnvStatus(status, updateble)
     },
     async getWorkflows (projectName) {
       const res = await getWorkflowsInProjectAPI(projectName)

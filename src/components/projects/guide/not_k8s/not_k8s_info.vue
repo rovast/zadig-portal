@@ -1,5 +1,5 @@
 <template>
-  <div class="projects-not-k8s-info-container">
+  <div class="projects-pm-service-info-container">
     <transition name="el-fade-in-linear">
       <div class="page-title-container">
         <h1>恭喜您成功创建新的项目 {{this.projectName}}</h1>
@@ -116,7 +116,7 @@ export default {
 </script>
 
 <style lang="less">
-.projects-not-k8s-info-container {
+.projects-pm-service-info-container {
   position: relative;
   flex: 1;
   overflow: auto;

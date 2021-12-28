@@ -276,6 +276,16 @@ export default {
   },
   methods: {
     changeReleaseMethod (repo) {
+      if (repo.releaseMethod === 'tag') {
+        repo.showTag = true
+      } else {
+        repo.showTag = false
+      }
+      if (repo.releaseMethod === 'branch') {
+        repo.showBranch = true
+      } else {
+        repo.showBranch = false
+      }
       repo.tag = ''
       repo.branch = ''
     }

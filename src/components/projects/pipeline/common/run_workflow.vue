@@ -61,13 +61,12 @@
         </el-select>
       </el-form-item>
       <el-form-item label="服务">
-        <el-select v-model="pickedTargetNames"
+        <el-select v-model="pickedBuildTargetNames"
                    filterable
                    multiple
                    clearable
                    reserve-keyword
                    value-key="key"
-                   @change="pickService"
                    size="medium"
                    class="full-width">
           <el-option v-for="(service,index) of allServiceNames"
@@ -157,7 +156,7 @@
     </div>
 
     <div class="start-task">
-      <el-button @click="submit"
+      <el-button @click="startTask"
                  :loading="startTaskLoading"
                  type="primary"
                  size="small">
@@ -174,17 +173,17 @@ import K8sArtifactDeploy from './k8sArtifactDeploy.vue'
 import PmArtifactDeploy from './pmArtifactDeploy.vue'
 import deployIcons from '@/components/common/deploy_icons'
 import { listProductAPI, precreateWorkflowTaskAPI, getAllBranchInfoAPI, runWorkflowAPI, getBuildTargetsAPI, getSingleProjectAPI, getRegistryWhenBuildAPI } from '@api'
-import { sortBy, keyBy, orderBy, cloneDeep, flattenDeep, uniqBy } from 'lodash'
+import { sortBy, keyBy, orderBy, cloneDeep, flattenDeep, differenceBy } from 'lodash'
 
 export default {
   data () {
     return {
       buildTargets: [],
-      buildRepos: [],
       pickedBuildTarget: [],
       imageRegistry: [],
       currentProjectEnvs: [],
-      pickedTargetNames: [],
+      allServiceNames: [],
+      pickedBuildTargetNames: [],
       k8sArtifactDeployData: {},
       pmArtifactDeployData: {},
       runner: {
@@ -212,57 +211,19 @@ export default {
     distributeEnabled () {
       return !!this.runner.distribute_enabled
     },
-    allServiceNames () {
-      const allNames = sortBy(this.runner.targets.map(element => {
-        element.key = element.name + '/' + element.service_name
-        return element
-      }), 'service_name')
-      return orderBy(allNames, 'name')
-    },
     pickedTargets: {
       get () {
-        this.pickedTargetNames.forEach((item) => {
-          item.build.repos.forEach((repo) => {
-            const findRepo = this.buildRepos.find(repoItem => repoItem.repo_owner === repo.repo_owner && repoItem.repo_name === repo.repo_name)
-            if (findRepo) {
-              repo = cloneDeep(Object.assign(repo, findRepo))
-            }
-          })
+        this.pickedBuildTargetNames.forEach((item) => {
           item.deploy.forEach((deploy) => {
             // Set deploy is enabled by default
             deploy.picked = deploy.picked !== false
           })
         })
-        return cloneDeep(this.pickedTargetNames)
-      }
-    },
-    testRepos () {
-      return this.$utils.flattenArray(
-        this.runner.tests.map(t => t.builds)
-      )
-    },
-    allRepos () {
-      if (this.buildDeployEnabled) {
-        return this.buildRepos.concat(this.testRepos)
-      } else {
-        return this.testRepos
+        return cloneDeep(this.pickedBuildTargetNames)
       }
     },
     haveForcedInput () {
       return !this.$utils.isEmpty(this.forcedUserInput)
-    },
-    forcedInputTargetMap () {
-      if (this.haveForcedInput) {
-        if (this.artifactDeployEnabled) {
-          return keyBy(this.forcedUserInput.artifact_args, (i) => {
-            return i.service_name + '/' + i.name
-          })
-        }
-        return keyBy(this.forcedUserInput.targets, (i) => {
-          return i.service_name + '/' + i.name
-        })
-      }
-      return {}
     },
     showCreateVersion () {
       return !this.isHelm && !this.isPm
@@ -286,20 +247,12 @@ export default {
     }
   },
   watch: {
-    buildRepos: {
-      handler (newVal) {
-        for (const repo of newVal) {
-          this.$set(
-            repo, 'showBranch',
-            (this.distributeEnabled && repo.releaseMethod === 'branch') ||
-            !this.distributeEnabled
-          )
-          this.$set(repo, 'showTag', this.distributeEnabled && repo.releaseMethod === 'tag')
-          this.$set(repo, 'showSwitch', this.distributeEnabled)
-          this.$set(repo, 'showPR', !this.distributeEnabled)
-        }
-      },
-      deep: true
+    pickedBuildTargetNames: {
+      immediate: true,
+      handler: function (val, oldVal) {
+        const newPicked = differenceBy(val, oldVal)
+        this.pickBuildService(newPicked)
+      }
     }
   },
   methods: {
@@ -319,7 +272,7 @@ export default {
       this.pickedBuildTarget.forEach(t => {
         allBuildTargets = allBuildTargets.concat(t.targets)
       })
-      this.pickedTargetNames = this.allServiceNames.filter(t => {
+      this.pickedBuildTargetNames = this.allServiceNames.filter(t => {
         const index = allBuildTargets.findIndex(i => {
           return i.service_name === t.service_name && i.service_module === t.name
         })
@@ -328,13 +281,36 @@ export default {
         }
         return false
       })
-      this.pickService(this.pickedTargetNames)
+      this.pickBuildService(this.pickedBuildTargetNames)
     },
-    pickService (services) {
+    pickBuildService (services) {
       // Get service repo info
-      const buildRepos = uniqBy(flattenDeep(services.map(tar => tar.build.repos)), (repo) => { return `${repo.repo_owner}/${repo.repo_name}` })
-      this.buildRepos = buildRepos
-      const buildReposQuery = buildRepos.map(re => {
+      const buildRepos = flattenDeep(services.map(tar => tar.build.repos))
+      const requestQuery = this.distributeEnabled ? 'bt' : 'bp'
+      for (const repo of buildRepos) {
+        this.$set(repo, 'showBranch', !this.distributeEnabled)
+        this.$set(repo, 'showTag', false)
+        this.$set(repo, 'showSwitch', this.distributeEnabled)
+        this.$set(repo, 'showPR', !this.distributeEnabled)
+      }
+      this.getRepoInfo(buildRepos, requestQuery)
+    },
+    pickTestService (tests) {
+      // Get test repo info
+      const testRepos = flattenDeep(tests.map(test => test.builds))
+      const requestQuery = 'bp'
+      for (const repo of testRepos) {
+        this.$set(repo, 'showBranch', false)
+        // The test code will not be changed according to the distribution
+        this.$set(repo, 'showTag', false)
+        this.$set(repo, 'showSwitch', false)
+        this.$set(repo, 'showPR', true)
+      }
+
+      this.getRepoInfo(testRepos, requestQuery)
+    },
+    async getRepoInfo (originRepos, requestQuery = 'bt') {
+      const reposQuery = originRepos.map(re => {
         if (re.source === 'codehub') {
           return {
             source: re.source,
@@ -356,62 +332,65 @@ export default {
           }
         }
       })
-      this.getRepoInfo(buildReposQuery)
-    },
-    getRepoInfo (repos) {
-      const payload = { infos: repos }
+      const payload = { infos: reposQuery }
       // b = branch, p = pr, t = tag
-      const requestQuery = this.distributeEnabled ? 'bt' : 'bp'
-      getAllBranchInfoAPI(payload, requestQuery).then(res => {
-        // make these repo info more friendly
-        res.forEach(repo => {
-          if (repo.prs) {
-            repo.prs.forEach(element => {
-              element.pr = element.id
-            })
-            repo.branchPRsMap = this.$utils.arrayToMapOfArrays(repo.prs, 'targetBranch')
-          } else {
-            repo.branchPRsMap = {}
-          }
-          if (repo.branches) {
-            repo.branchNames = repo.branches.map(b => b.name)
-          } else {
-            repo.branchNames = []
-          }
-        })
-
-        const repoInfoMap = keyBy(res, (repo) => {
-          return `${repo.repo_owner}/${repo.repo}`
-        })
-        for (const repo of this.buildRepos) {
-          this.$set(repo, '_id_', `${repo.repo_owner}/${repo.repo_name}`)
-          const repoInfo = repoInfoMap[repo._id_]
-          this.$set(repo, 'branchNames', repoInfo && repoInfo.branchNames)
-          this.$set(repo, 'branchPRsMap', repoInfo && repoInfo.branchPRsMap)
-          this.$set(repo, 'tags', (repoInfo && repoInfo.tags) ? repoInfo.tags : [])
-          this.$set(repo, 'prNumberPropName', 'pr')
-          this.$set(repo, 'errorMsg', repoInfo.error_msg || '')
-          if (repo.tag) {
-            this.$set(repo, 'releaseMethod', 'tag')
-          } else {
-            this.$set(repo, 'releaseMethod', 'branch')
-          }
-          this.$set(repo, 'branch', repo.branch || '')
-          this.$set(repo, repo.prNumberPropName, repo[repo.prNumberPropName] || null)
-          this.$set(repo, 'tag', repo.tag || '')
+      const res = await getAllBranchInfoAPI(payload, requestQuery)
+      // make these repo info more friendly
+      res.forEach(repo => {
+        if (repo.prs) {
+          repo.prs.forEach(element => {
+            element.pr = element.id
+          })
+          repo.branchPRsMap = this.$utils.arrayToMapOfArrays(repo.prs, 'targetBranch')
+        } else {
+          repo.branchPRsMap = {}
+        }
+        if (repo.branches) {
+          repo.branchNames = repo.branches.map(b => b.name)
+        } else {
+          repo.branchNames = []
         }
       })
+
+      const repoInfoMap = keyBy(res, (repo) => {
+        return `${repo.repo_owner}/${repo.repo}`
+      })
+      for (const repo of originRepos) {
+        this.$set(repo, '_id_', `${repo.repo_owner}/${repo.repo_name}`)
+        const repoInfo = repoInfoMap[repo._id_]
+        this.$set(repo, 'branchNames', repoInfo && repoInfo.branchNames)
+        this.$set(repo, 'branchPRsMap', repoInfo && repoInfo.branchPRsMap)
+        this.$set(repo, 'tags', (repoInfo && repoInfo.tags) ? repoInfo.tags : [])
+        this.$set(repo, 'prNumberPropName', 'pr')
+        this.$set(repo, 'errorMsg', repoInfo.error_msg || '')
+        if (repo.tag) {
+          this.$set(repo, 'releaseMethod', 'tag')
+        } else {
+          this.$set(repo, 'releaseMethod', 'branch')
+        }
+        this.$set(repo, 'branch', repo.branch || '')
+        this.$set(repo, repo.prNumberPropName, repo[repo.prNumberPropName] || null)
+        this.$set(repo, 'tag', repo.tag || '')
+        this.$set(
+          repo, 'showBranch',
+          (this.distributeEnabled && repo.releaseMethod === 'branch') ||
+            !this.distributeEnabled
+        )
+        this.$set(repo, 'showTag', this.distributeEnabled && repo.releaseMethod === 'tag')
+      }
     },
     getPresetInfo (projectNameAndEnvName) {
       const [, namespace] = projectNameAndEnvName.split(' / ')
       this.precreateLoading = true
       precreateWorkflowTaskAPI(this.projectName, this.workflowName, namespace).then(res => {
+      // Cloning task parameters exist
         if (this.haveForcedInput) {
           res.product_tmpl_name = this.forcedUserInput.product_tmpl_name
           const targets = orderBy(sortBy(this.forcedUserInput.targets.map(element => {
             element.key = element.name + '/' + element.service_name
             return element
           }), 'service_name'))
+          // Set the default value of the deploy in targets
           targets.forEach(element => {
             if (element.deploy.length === 0) {
               element.deploy = [{
@@ -421,24 +400,27 @@ export default {
               }]
             }
           })
-          this.$set(this, 'pickedTargetNames', targets)
-          this.pickService(targets)
+          // Set the default value of the build targets
+          this.$set(this, 'pickedBuildTargetNames', targets)
+          // Set the default value of the test targets
           res.tests = this.forcedUserInput.tests
         }
+        // Selected by default when only one service is available
+        if (!this.haveForcedInput && res.targets.length === 1) {
+          this.$set(this, 'pickedBuildTargetNames', res.targets)
+        }
         this.runner = res
+        this.allServiceNames = cloneDeep(orderBy(sortBy(this.runner.targets.map(element => {
+          element.key = element.name + '/' + element.service_name
+          return element
+        }), 'service_name'), 'name'))
         this.precreateLoading = false
+        this.pickTestService(res.tests)
       }).catch(() => {
         this.precreateLoading = false
       })
     },
-    deployID (deploy) {
-      return `${deploy.env}|${deploy.type}`
-    },
-    submit () {
-      if (!this.checkInput()) {
-        return
-      }
-      this.startTaskLoading = true
+    startTask () {
       const repoKeysToDelete = [
         '_id_', 'branchNames', 'branchPRsMap', 'tags', 'isGithub', 'prNumberPropName', 'id',
         'releaseMethod', 'showBranch', 'showTag', 'showSwitch', 'showPR'
@@ -479,9 +461,6 @@ export default {
         })
       } else {
         for (const tar of payload.targets) {
-          // trim target
-          delete tar.picked
-
           // trim build repos
           for (const repo of tar.build.repos) {
             repo.pr = repo.pr ? repo.pr : 0
@@ -509,12 +488,16 @@ export default {
         }
       }
       const projectName = this.targetProject
+      if (!this.checkInput(payload)) {
+        return
+      }
+      this.startTaskLoading = true
       runWorkflowAPI(projectName, payload, this.artifactDeployEnabled).then(res => {
         const taskId = res.task_id
-        const pipelineName = res.pipeline_name
+        const workflowName = res.pipeline_name
         this.$message.success('创建成功')
         this.$emit('success')
-        this.$router.push(`/v1/projects/detail/${projectName}/pipelines/multi/${pipelineName}/${taskId}?status=running`)
+        this.$router.push(`/v1/projects/detail/${projectName}/pipelines/multi/${workflowName}/${taskId}?status=running`)
       }).catch(error => {
         console.log(error)
         // handle error
@@ -534,12 +517,13 @@ export default {
         this.startTaskLoading = false
       })
     },
-    checkInput () {
-      if (!this.runner.product_tmpl_name || !this.runner.namespace) {
+    checkInput (payload) {
+      // Checking environment
+      if (!payload.product_tmpl_name || !payload.namespace) {
         this.$message.error('请选择集成环境')
         return false
       }
-      // K8s 交付物部署检查
+      // Checking K8s artifact deploy
       if (this.artifactDeployEnabled && !this.isPm) {
         const invalidService = []
         this.k8sArtifactDeployData.services.forEach(item => {
@@ -575,7 +559,7 @@ export default {
           } else {
             return true
           }
-        }// 物理机交付物部署检查
+        }// Checking PM artifact deploy
       } else if (this.artifactDeployEnabled && this.isPm) {
         const invalidService = []
         this.pmArtifactDeployData.services.forEach(item => {
@@ -605,46 +589,31 @@ export default {
           } else {
             return true
           }
-        }// K8s 构建部署检查
+        }// Checking K8s deploy
       } else {
-        const invalidRepo = []
-        const emptyValue = []
-        this.allRepos.forEach(item => {
-          if (item.use_default || !item.repo_name) {
-            return
-          }
-          if (this.showTag && item.tags.length === 0) {
-            invalidRepo.push(item.repo_name)
-          }
-          let filled = false
-          if (item.showBranch && item.branch) {
-            filled = true
-          }
-          if (item.showTag && item.tag) {
-            filled = true
-          }
-          if (item.showPR && item[item.prNumberPropName]) {
-            filled = true
-          }
-          if (!filled) {
-            emptyValue.push(item.repo_name)
+        if (payload.tests.length === 0 && payload.targets.length === 0) {
+          this.$message({
+            message: '请选择需要构建的服务',
+            type: 'error'
+          })
+          return
+        }
+        // Checking repos
+        const allRepos = flattenDeep(payload.targets.map(tar => tar.build.repos)).concat(flattenDeep(payload.tests.map(test => test.builds)))
+        const invalidRepo = allRepos.filter(repo => {
+          if (repo.branch === '' && !repo.pr && repo.tag === '') {
+            return true
+          } else {
+            return false
           }
         })
-
-        if (invalidRepo.length === 0 && emptyValue.length === 0) {
+        if (invalidRepo.length === 0) {
           return true
         } else {
-          if (invalidRepo.length > 0) {
-            this.$message({
-              message: invalidRepo.join(',') + ' 代码库不存在 Release Tag,请重新选择构建方式',
-              type: 'error'
-            })
-          } else if (emptyValue.length > 0) {
-            this.$message({
-              message: emptyValue.join(',') + ' 代码库尚未选择构建信息',
-              type: 'error'
-            })
-          }
+          this.$message({
+            message: invalidRepo.map((item) => { return item.repo_name }).join(',') + ' 代码库尚未选择构建信息',
+            type: 'error'
+          })
           return false
         }
       }

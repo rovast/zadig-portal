@@ -218,17 +218,22 @@
                   <div v-for="service in typeServiceMap" :key="`${service.service_name}-${service.type}`" class="service-block">
                     <div v-if="service.type==='pm'" class="container-images">
                       <el-form-item label="请关联主机资源：">
-                        <el-button v-if="allHost.length===0" @click="createHost" type="text">创建主机</el-button>
+                        <el-button v-if="allHost.length === 0" @click="createHost" type="text">创建主机</el-button>
                         <el-select
                           v-else
-                          v-model="service.host_ids"
+                          v-model="service.host_with_labels"
                           :disabled="rollbackMode"
                           filterable
                           multiple
+                          @change="addHost(service)"
                           placeholder="请选择要关联的主机"
-                          size="small"
-                        >
-                          <el-option v-for="(host,index) in  allHost" :key="index" :label="`${host.name}-${host.ip}`" :value="host.id"></el-option>
+                          size="small">
+                          <el-option-group label="主机标签">
+                            <el-option v-for="(item,index) in allHostLabels" :key="index" :label="`${item}`" :value="item"></el-option>
+                          </el-option-group>
+                          <el-option-group label="主机列表">
+                            <el-option v-for="(host,index) in  allHost" :key="index" :label="`${host.name}-${host.ip}`" :value="host.id"></el-option>
+                          </el-option-group>
                         </el-select>
                       </el-form-item>
                     </div>
@@ -281,6 +286,7 @@ import {
   createProductAPI,
   getSingleProjectAPI,
   getHostListAPI,
+  getHostLabelListAPI,
   getRegistryWhenBuildAPI
 } from '@api'
 import bus from '@utils/event_bus'
@@ -453,6 +459,27 @@ export default {
           return element.status === 'normal' && !element.production
         })
       }
+    },
+    getHosts () {
+      getHostLabelListAPI().then((res) => {
+        this.allHostLabels = res
+      })
+      getHostListAPI().then((res) => {
+        this.allHost = res
+      })
+    },
+    addHost (service) {
+      const allHostIds = this.allHost.map(item => {
+        return item.id
+      })
+      const labels = service.host_with_labels.filter(item => {
+        return (allHostIds.indexOf(item) < 0)
+      })
+      const hostIds = service.host_with_labels.filter(item => {
+        return (allHostIds.indexOf(item) >= 0)
+      })
+      service.host_ids = hostIds
+      service.labels = labels
     },
     async checkProjectFeature () {
       const projectName = this.projectName
@@ -763,10 +790,14 @@ export default {
                 ser.env_configs = [
                   {
                     env_name: this.projectConfig.env_name,
-                    host_ids: ser.host_ids
+                    host_ids: ser.host_ids,
+                    labels: ser.labels
                   }
                 ]
                 delete ser.host_ids
+                delete ser.labels
+                delete ser.host_with_labels
+                delete ser.picked
               }
             }
           }
@@ -851,9 +882,7 @@ export default {
     this.projectConfig.product_name = this.projectName
     this.checkProjectFeature()
     this.getCluster()
-    getHostListAPI().then(res => {
-      this.allHost = res
-    })
+    this.getHosts()
     getRegistryWhenBuildAPI(this.projectName).then(res => {
       this.imageRegistry = res
       if (!this.projectConfig.registry_id) {

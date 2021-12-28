@@ -63,46 +63,6 @@
                     <el-radio :label="false">私有</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item v-if="isEdit" v-show="activeName==='advance'" label="服务部署超时（分钟）" prop="timeout">
-                  <el-input v-model.number="projectForm.timeout"></el-input>
-                </el-form-item>
-                <el-form-item v-if="isEdit" v-show="activeName==='advance'" label="自定义交付物名称">
-                  <span slot="label">
-                    自定义交付物名称
-                    <el-tooltip effect="dark" placement="top">
-                      <div slot="content">
-                        镜像和 TAR 包规则可以通过变量和常量组装生成：
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.TIMESTAMP}}'"></span> 时间戳
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.TASK_ID}}'"></span> 工作流任务 ID
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.REPO_BRANCH}}'"></span> 代码分支名称
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.REPO_PR}}'"></span> 代码 PR ID
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.REPO_TAG}}'"></span> 代码 TAG
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.REPO_COMMIT_ID}}'"></span> 代码 Commit ID
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.PROJECT}}'"></span> 项目名称
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.SERVICE}}'"></span> 服务名称
-                        <br />
-                        <span class="tooltip-key" v-html="'{{.ENV_NAME}}'">${ENV_NAME}</span> 环境名称
-                        <br />注意：常量字符只能是大小写字母、数字、中划线、下划线和点，即 [a-zA-Z0-9_.-]，首个字符不能是&nbsp;.&nbsp;或&nbsp;-。不能超过 127 个字符
-                      </div>
-                      <i class="el-icon-question"></i>
-                    </el-tooltip>
-                  </span>
-                  <CusDeliverable
-                    v-show="activeName==='advance'"
-                    :customImageRule="projectForm.custom_image_rule"
-                    :customTarRule="projectForm.custom_tar_rule"
-                    ref="cusDeliverable"
-                    v-if="isEdit"
-                  />
-                </el-form-item>
                 <el-form-item label="描述信息" v-show="activeName !=='advance'" prop="desc">
                   <el-input type="textarea" :rows="2" placeholder="请输入描述信息" v-model="projectForm.desc"></el-input>
                 </el-form-item>
@@ -171,6 +131,74 @@
                     </el-col>
                   </el-row>
                 </el-form-item>
+                <div v-if="isEdit" v-show="activeName==='advance'">
+                  <el-form-item label="服务部署超时（分钟）" prop="timeout">
+                    <el-input v-model.number="projectForm.timeout"></el-input>
+                  </el-form-item>
+                  <el-form-item label="自定义交付物名称">
+                    <span slot="label">
+                      自定义交付物名称
+                      <el-tooltip effect="dark" placement="top">
+                        <div slot="content">
+                          镜像和 TAR 包规则可以通过变量和常量组装生成：
+                          <br />
+                          <span class="tooltip-key" v-html="'{{.TIMESTAMP}}'"></span> 时间戳
+                          <br />
+                          <span class="tooltip-key" v-html="'{{.TASK_ID}}'"></span> 工作流任务 ID
+                          <br />
+                          <span class="tooltip-key" v-html="'{{.REPO_BRANCH}}'"></span> 代码分支名称
+                          <br />
+                          <span class="tooltip-key" v-html="'{{.REPO_PR}}'"></span> 代码 PR ID
+                          <br />
+                          <span class="tooltip-key" v-html="'{{.REPO_TAG}}'"></span> 代码 TAG
+                          <br />
+                          <span class="tooltip-key" v-html="'{{.REPO_COMMIT_ID}}'"></span> 代码 Commit ID
+                          <br />
+                          <span class="tooltip-key" v-html="'{{.PROJECT}}'"></span> 项目名称
+                          <br />
+                          <span class="tooltip-key" v-html="'{{.SERVICE}}'"></span> 服务名称
+                          <br />
+                          <span class="tooltip-key" v-html="'{{.ENV_NAME}}'">${ENV_NAME}</span> 环境名称
+                          <br />注意：常量字符只能是大小写字母、数字、中划线、下划线和点，即 [a-zA-Z0-9_.-]，首个字符不能是&nbsp;.&nbsp;或&nbsp;-。不能超过 127 个字符
+                        </div>
+                        <i class="el-icon-question"></i>
+                      </el-tooltip>
+                    </span>
+                    <CusDeliverable
+                      v-show="activeName==='advance'"
+                      :customImageRule="projectForm.custom_image_rule"
+                      :customTarRule="projectForm.custom_tar_rule"
+                      ref="cusDeliverable"
+                      v-if="isEdit"
+                    />
+                  </el-form-item>
+                  <el-form-item v-if="isHelm">
+                    <span slot="label">
+                      版本交付 hook 配置
+                      <el-tooltip effect="dark" content="完成配置后，交付中心-创建版本可 hook 外部系统" placement="top">
+                        <i class="el-icon-question"></i>
+                      </el-tooltip>
+                      <el-switch v-model="projectForm.delivery_version_hook.enable" style="margin-left: 10px;"></el-switch>
+                    </span>
+                    <el-row :gutter="10" v-if="projectForm.delivery_version_hook.enable">
+                      <el-col :span="3" style="text-align: right;">
+                        * URL
+                      </el-col>
+                      <el-col :span="10">
+                        <el-form-item prop="delivery_version_hook.hook_host">
+                          <el-select v-model="projectForm.delivery_version_hook.hook_host" placeholder="选择外部系统" size="small" clearable style="width: 100%;">
+                            <el-option v-for="external in externalList" :key="external.id" :label="external.server" :value="external.server"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="10">
+                        <el-form-item prop="delivery_version_hook.path">
+                          <el-input v-model="projectForm.delivery_version_hook.path" placeholder="输入访问路径" size="small"></el-input>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </el-form-item>
+                </div>
               </el-form>
             </div>
           </div>
@@ -187,7 +215,8 @@ import {
   usersAPI,
   createProjectAPI,
   getSingleProjectAPI,
-  updateSingleProjectAPI
+  updateSingleProjectAPI,
+  getExternalSystemsAPI
 } from '@api'
 import CusDeliverable from './components/cusDeliverable.vue'
 
@@ -273,8 +302,15 @@ export default {
         ],
         public: [
           { required: true, message: '项目权限不能为空', trigger: 'blur' }
-        ]
-      }
+        ],
+        'delivery_version_hook.hook_host': {
+          required: true, message: '请选择外部系统', trigger: 'blur'
+        },
+        'delivery_version_hook.path': {
+          required: true, message: '请输入访问路径', trigger: 'blur'
+        }
+      },
+      externalList: []
     }
   },
   methods: {
@@ -355,6 +391,18 @@ export default {
         if (!res.timeout) {
           this.$set(this.projectForm, 'timeout', 10)
         }
+        if (this.isHelm) {
+          getExternalSystemsAPI().then(res => {
+            this.externalList = res.external_system
+          })
+          if (!this.projectForm.delivery_version_hook) {
+            this.$set(this.projectForm, 'delivery_version_hook', {
+              enable: false,
+              hook_host: '',
+              path: ''
+            })
+          }
+        }
       })
     },
     submitForm (formName) {
@@ -414,6 +462,9 @@ export default {
       } else {
         return false
       }
+    },
+    isHelm () {
+      return this.projectForm.product_feature && this.projectForm.product_feature.deploy_type === 'helm'
     }
   },
   mounted () {

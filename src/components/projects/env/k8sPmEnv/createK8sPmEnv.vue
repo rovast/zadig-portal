@@ -191,7 +191,7 @@
 </template>
 
 <script>
-import VarList from './varLIst.vue'
+import VarList from './varList.vue'
 import {
   imagesAPI,
   productHostingNamespaceAPI,

@@ -1,15 +1,14 @@
 <template>
   <div class="init-resource">
     <header>项目资源</header>
-
     <section>
       <div class="desc">您将获取以下资源</div>
       <article>
         <div class="title">
           <i class="iconfont icongongzuoliucheng"></i>工作流
         </div>
-        <div v-for="workflow in workflows" :key="workflow.name" class="detail-item">
-          <div class="item-name">workflow.name</div>
+        <div v-for="(workflow, index) in workflows" :key="index" class="detail-item">
+          <div class="item-name">{{workflow.name}}</div>
           <div class="item-desc">{{workflow.description || placeholder}}</div>
         </div>
       </article>
@@ -17,31 +16,25 @@
         <div class="title">
           <i class="iconfont iconrongqi"></i>环境
         </div>
-        <div v-for="env in envs" :key="env.name" class="detail-item display-flex">
+        <div v-for="(env, index) in envs" :key="index" class="detail-item display-flex">
           <div>
-            <div class="item-name">env.name</div>
+            <div class="item-name">{{env.name}}</div>
             <div class="item-desc">{{env.description || placeholder}}</div>
           </div>
-          <el-button type="primary" plain size="small" @click="dialogVisible = true">环境变量</el-button>
+          <el-button type="primary" plain size="small" @click="dialogVisible=true; currentEnv=env.name;">环境变量</el-button>
         </div>
       </article>
     </section>
-
     <footer>
       <el-button type="text" size="small" icon="el-icon-finished">确认</el-button>
     </footer>
 
-    <el-dialog title :visible.sync="dialogVisible" width="80%">
-      <div>这里包括 k8s 项目的变量列表 或者 helm 项目的服务列表</div>
-      <div slot="footer">
-        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="dialogVisible = false">确 定</el-button>
-      </div>
-    </el-dialog>
+    <InitEnvDialog :visible.sync="dialogVisible" :currentEnv="currentEnv"></InitEnvDialog>
   </div>
 </template>
 
 <script>
+import InitEnvDialog from './components/initEnvDialog.vue'
 import bus from '@utils/event_bus'
 export default {
   data () {
@@ -52,22 +45,23 @@ export default {
           description: ''
         },
         {
-          name: 'workflow1',
+          name: 'workflow2',
           description: 'xxxx'
         }
       ],
       envs: [
         {
-          name: 'workflow1',
+          name: 'environment1',
           description: 'xxxx'
         },
         {
-          name: 'workflow1',
+          name: 'environment2',
           description: 'xxxx'
         }
       ],
       placeholder: 'There is no description.',
-      dialogVisible: false
+      dialogVisible: false,
+      currentEnv: ''
     }
   },
   computed: {
@@ -89,6 +83,9 @@ export default {
       title: '',
       routerList: []
     })
+  },
+  components: {
+    InitEnvDialog
   }
 }
 </script>

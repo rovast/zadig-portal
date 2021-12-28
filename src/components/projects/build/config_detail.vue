@@ -33,7 +33,7 @@
                            :disabled="!isCreate"
                            value-key="key"
                            filterable>
-                  <el-option v-for="(item,index) in orginOptions"
+                  <el-option v-for="(item,index) in originOptions"
                              :key="index"
                              :label="item.label"
                              :value="item.value">
@@ -143,7 +143,7 @@
                            value-key="key"
                            :disabled="!isCreate"
                            filterable>
-                  <el-option v-for="(item,index) in orginOptions"
+                  <el-option v-for="(item,index) in originOptions"
                              :key="index"
                              :label="item.label"
                              :value="item.value">
@@ -612,7 +612,7 @@ export default {
     return {
       source: 'zadig',
       dockerfileTemplate: {},
-      orginOptions: [{
+      originOptions: [{
         value: 'zadig',
         label: 'Zadig 构建'
       },

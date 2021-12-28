@@ -32,7 +32,7 @@
                             :disabled="isEdit"
                             value-key="key"
                             filterable>
-                    <el-option v-for="(item,index) in orginOptions"
+                    <el-option v-for="(item,index) in originOptions"
                         :key="index"
                         :label="item.label"
                         :value="item.value">
@@ -129,85 +129,87 @@
         </div>
       </div>
       <div class="zadig" v-show="source === 'zadig'">
-        <div class="section">
-          <el-form
-            ref="addConfigForm"
-            :model="buildConfig"
-            :rules="createRules"
-            label-position="left"
-            label-width="80px"
-          >
-            <el-row>
-              <el-col :span="24">
-                <el-form-item label="构建来源">
-                  <el-select style="width: 100%;"
-                            v-model="source"
-                            size="small"
-                            value-key="key"
-                            :disabled="isEdit"
-                            filterable>
-                    <el-option v-for="(item,index) in orginOptions"
-                        :key="index"
-                        :label="item.label"
-                        :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-form-item label="构建超时">
-                  <el-input-number size="mini"
-                                  :min="1"
-                                  v-model="buildConfig.timeout"></el-input-number>
-                  <span>分钟</span>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-form-item label="构建名称" prop="name">
-                  <el-input
-                    v-model="buildConfig.name"
-                    placeholder="构建名称"
-                    autofocus
-                    size="mini"
-                    :disabled="isEdit"
-                    auto-complete="off"
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-form-item prop="targets" label="构建服务">
-                  <el-select
-                    style="width: 100%;"
-                    v-model="buildConfig.targets"
-                    value-key="key"
-                    multiple
-                    size="mini"
-                    filterable
-                  >
-                    <el-option
-                      v-for="(service, index) in serviceTargets"
-                      :key="index"
-                      :label="`${service.service_module}(${service.service_name})`"
-                      :value="service"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit" mini></BuildEnv>
-          </el-form>
+        <el-form
+          ref="addConfigForm"
+          :model="buildConfig"
+          :rules="createRules"
+          label-position="left"
+          label-width="80px"
+        >
+          <el-form-item label="构建来源">
+            <el-select style="width: 100%;"
+                      v-model="source"
+                      size="small"
+                      value-key="key"
+                      :disabled="isEdit"
+                      filterable>
+              <el-option v-for="(item,index) in originOptions"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="构建名称" prop="name">
+            <!-- <el-input
+              v-model="buildConfig.name"
+              placeholder="构建名称"
+              autofocus
+              size="mini"
+              :disabled="isEdit"
+              auto-complete="off"
+            ></el-input> -->
+            <el-select style="width: 100%;"
+                      v-model="buildConfig.name"
+                      placeholder="构建名称" :disabled="isEdit"
+                      size="small"
+                      @change="changeBuildName"
+                      allow-create
+                      filterable>
+              <el-option
+                v-for="item in buildNames"
+                :key="item"
+                :label="item"
+                :value="item">
+              </el-option>
+              <el-option
+                :label="`${projectName}-build-${name}`"
+                :value="`${projectName}-build-${name}`">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="targets" label="构建服务">
+            <el-select
+              style="width: 100%;"
+              v-model="buildConfig.targets"
+              value-key="key"
+              multiple
+              size="mini"
+              filterable
+            >
+              <el-option
+                v-for="(service, index) in serviceTargets.concat(buildServices)"
+                :key="index"
+                :label="`${service.service_module}(${service.service_name})`"
+                :value="service"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-show="!isSelectedBuild" label="构建超时">
+            <el-input-number size="mini"
+                            :min="1"
+                            v-model="buildConfig.timeout"></el-input-number>
+            <span>分钟</span>
+          </el-form-item>
+          <BuildEnv v-show="!isSelectedBuild" :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit" mini></BuildEnv>
+        </el-form>
+        <div v-show="!isSelectedBuild" class="section">
           <el-form
             ref="buildApp"
             :inline="true"
             :model="buildConfig"
-            class="form-bottom-0"
+            class="form-style1 section form-bottom-0"
             label-position="top"
             label-width="80px"
           >
@@ -283,23 +285,20 @@
               </el-col>
             </el-row>
           </el-form>
-        </div>
-        <div class="section">
           <repo-select
             ref="repoSelect"
             :config="buildConfig"
+            class="section"
             showDivider
             addBtnMini
             shortDescription
             showFirstLine
           ></repo-select>
-        </div>
-        <div class="section">
           <el-form
             ref="buildEnv"
             :inline="true"
             :model="buildConfig"
-            class="form-bottom-0"
+            class="form-style1 section form-bottom-0"
             label-position="top"
             label-width="120px"
           >
@@ -395,14 +394,11 @@
               </el-col>
             </el-row>
           </el-form>
-        </div>
-
-        <div class="section">
           <el-form
             ref="cacheDir"
             :inline="true"
             :model="buildConfig"
-            class="form-bottom-0"
+            class="form-style1 section form-bottom-0"
             label-position="left"
             label-width="130px"
           >
@@ -470,8 +466,6 @@
               </el-row>
             </template>
           </el-form>
-        </div>
-        <div class="section">
           <el-form
             ref="buildScript"
             :model="buildConfig"
@@ -672,14 +666,14 @@
           </div>
         </div>
       </div>
-        <el-button
-            type="primary"
-            size="small"
-            @click="updateBuildConfig"
-            class="save-btn"
-            plain
-            >保存构建
-        </el-button>
+      <el-button
+          type="primary"
+          size="small"
+          @click="updateBuildConfig"
+          class="save-btn"
+          plain
+          >保存构建
+      </el-button>
       <el-dialog
         title="参数化构建"
         :visible.sync="paramsBuildDialogVisible"
@@ -810,7 +804,9 @@ import {
   updateBuildConfigAPI,
   getServiceTargetsAPI,
   getRegistryWhenBuildAPI,
-  queryJenkinsJob, queryJenkinsParams
+  queryJenkinsJob, queryJenkinsParams,
+  getBuildConfigsAPI,
+  saveBuildConfigTargetsAPI
 } from '@api'
 import Editor from 'vue2-ace-bind'
 import Resize from '@/components/common/resize.vue'
@@ -837,7 +833,7 @@ export default {
   data () {
     return {
       source: 'zadig',
-      orginOptions: [{
+      originOptions: [{
         value: 'zadig',
         label: 'Zadig 构建'
       },
@@ -960,7 +956,8 @@ export default {
           }
         ]
       },
-      configDataLoading: true
+      configDataLoading: true,
+      buildInfos: []
     }
   },
   methods: {
@@ -1136,13 +1133,30 @@ export default {
     },
     updateBuildConfig () {
       if (this.source === 'zadig') {
-        this.$refs.repoSelect.validateForm().then(res => {
-          if (this.isEdit) {
-            this.saveBuildConfig()
-          } else {
-            this.createBuildConfig()
+        if (this.isSelectedBuild) {
+          const projectName = this.projectName
+          const targetsPayload = {
+            name: this.buildConfig.name,
+            targets: this.buildConfig.targets,
+            productName: projectName
           }
-        })
+          saveBuildConfigTargetsAPI(projectName, targetsPayload).then(() => {
+            this.$message({
+              type: 'success',
+              message: '新建构建成功'
+            })
+            this.changeExpandFileList('del', this.currentCode)
+          })
+          this.getServiceModules()
+        } else {
+          this.$refs.repoSelect.validateForm().then(res => {
+            if (this.isEdit) {
+              this.saveBuildConfig()
+            } else {
+              this.createBuildConfig()
+            }
+          })
+        }
       } else {
         if (this.isEdit) {
           this.saveBuildConfig()
@@ -1293,6 +1307,9 @@ export default {
         const target = item ? [item] : []
         this.$set(this.buildConfig, 'targets', target)
         this.$set(this.jenkinsBuild, 'targets', target)
+        getBuildConfigsAPI(projectName).then(res => {
+          this.buildInfos = res
+        })
       }
       this.configDataLoading = false
       getAllAppsAPI().then((response) => {
@@ -1314,6 +1331,15 @@ export default {
       getRegistryWhenBuildAPI().then((res) => {
         this.allRegistry = res
       })
+    },
+    changeBuildName () {
+      let targets = this.buildConfig.targets
+      if (this.isSelectedBuild) {
+        targets = targets.concat(this.buildServices)
+      }
+      const allTargetsKey = this.serviceTargets.concat(this.buildServices).map(build => build.key)
+
+      this.buildConfig.targets = targets.filter(tar => allTargetsKey.includes(tar.key))
     }
   },
   computed: {
@@ -1335,6 +1361,23 @@ export default {
       },
       set (val) {
         this.buildConfig.pre_build.clean_workspace = !val
+      }
+    },
+    isSelectedBuild () {
+      return this.buildNames.includes(this.buildConfig.name)
+    },
+    buildNames () {
+      return this.buildInfos.map(build => build.name)
+    },
+    buildServices () {
+      const target = this.buildInfos.find(build => build.name === this.buildConfig.name)
+      if (target) {
+        return target.targets.map(tar => {
+          this.$set(tar, 'key', `${tar.service_name}/${tar.service_module}`)
+          return tar
+        })
+      } else {
+        return []
       }
     }
   },

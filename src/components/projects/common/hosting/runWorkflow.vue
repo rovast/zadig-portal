@@ -41,7 +41,7 @@
       <RunWorkflow v-if="taskDialogVisible"
                     :workflowName="workflow.name"
                     :workflowMeta="workflow"
-                    :targetProduct="workflow.product_tmpl_name"
+                    :targetProject="workflow.product_tmpl_name"
                     @success="hideAfterSuccess"></RunWorkflow>
     </el-dialog>
   </div>

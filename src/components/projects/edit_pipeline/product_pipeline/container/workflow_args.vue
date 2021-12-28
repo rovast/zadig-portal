@@ -148,7 +148,7 @@ export default {
       return {}
     },
     matchedProducts () {
-      return this.products.filter(p => p.projectName === this.targetProduct)
+      return this.products.filter(p => p.projectName === this.targetProject)
     }
   },
   watch: {
@@ -181,7 +181,7 @@ export default {
       const deployID = (deploy) => {
         return `${deploy.env}|${deploy.type}`
       }
-      createWorkflowTaskAPI(this.targetProduct, namespace).then(res => {
+      createWorkflowTaskAPI(this.targetProject, namespace).then(res => {
         // prepare targets for view
         for (let i = 0; i < res.targets.length; i++) {
           res.targets[i].picked = false
@@ -205,7 +205,7 @@ export default {
           }
         }
         this.runner.workflow_name = this.workflowName
-        this.runner.product_tmpl_name = this.targetProduct
+        this.runner.product_tmpl_name = this.targetProject
         this.runner.namespace = namespace
 
         if (this.haveForcedInput) {
@@ -353,7 +353,7 @@ export default {
   },
   created () {
     this.runner.tests = this.testInfos
-    listProductAPI(this.targetProduct).then(res => {
+    listProductAPI(this.targetProject).then(res => {
       this.products = res
       const product = this.forcedUserInput.product_tmpl_name
       const namespace = this.forcedUserInput.namespace
@@ -368,7 +368,7 @@ export default {
       type: String,
       required: true
     },
-    targetProduct: {
+    targetProject: {
       type: String,
       required: true
     },

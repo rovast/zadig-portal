@@ -74,7 +74,7 @@
         v-if="workflowToRun.name"
         :workflowName="workflowToRun.name"
         :workflowMeta="workflowToRun"
-        :targetProduct="workflowToRun.product_tmpl_name"
+        :targetProject="workflowToRun.product_tmpl_name"
         @success="hideProductTaskDialog"
       ></RunProductWorkflow>
     </el-dialog>

@@ -237,7 +237,7 @@
                   :key="indexWork*(testInfos.length+1)"
                   :workflowName="workflowToRun.name"
                   :workflowMeta="workflowToRun"
-                  :targetProduct="workflowToRun.product_tmpl_name"
+                  :targetProject="workflowToRun.product_tmpl_name"
                   :forcedUserInput="orgsObject || {}"
                   :testInfos="testInfos"
                   whichSave="outside"

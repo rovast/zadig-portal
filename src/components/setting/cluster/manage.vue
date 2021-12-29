@@ -103,9 +103,15 @@
               <el-radio :label="false">否</el-radio>
             </el-radio-group>
           </el-form-item>
-          <div v-if="isEdit">
-            <el-button type="text" @click="advancedConfig">高级配置<i :class="{'el-icon-arrow-right': !cluster.advanced_config.strategy,'el-icon-arrow-down': cluster.advanced_config.strategy}"></i></el-button>
-            <div v-if="cluster.advanced_config.strategy">
+          <el-button type="text" @click="expendAdvanced = !expendAdvanced">高级配置<i :class="{'el-icon-arrow-right': !expendAdvanced,'el-icon-arrow-down': expendAdvanced}"></i></el-button>
+          <template v-if="expendAdvanced">
+            <el-form-item label="指定项目范围" prop="advanced_config.project_names">
+              <el-select v-model="cluster.advanced_config.project_names" placeholder="请选择项目" size="small" style="width: 100%;" filterable multiple>
+                <el-option label="全部项目" value="All"></el-option>
+                <el-option v-for="name in projectNames" :key="name" :label="name" :value="name"></el-option>
+              </el-select>
+            </el-form-item>
+            <div v-if="isEdit">
               <h4>调度策略</h4>
               <el-form-item prop="advanced_config.strategy" required>
                  <span slot="label">选择策略
@@ -137,8 +143,7 @@
                 </div>
               </el-form-item>
             </div>
-          </div>
-
+          </template>
         </el-form>
         <div slot="footer"
              class="dialog-footer">
@@ -265,11 +270,13 @@ const clusterInfo = {
   provider: null,
   production: false,
   description: '',
-  namespace: ''
-  // advanced_config: { // 编辑的时候有这个数据
-  //   strategy: '',
-  //   node_labels: []
-  // }
+  namespace: '',
+  advanced_config: {
+    project_scoped: 'All', // All/NotAll
+    project_names: ['All'], // the All will be deleted when post or put
+    strategy: 'normal',
+    node_labels: []
+  }
 }
 export default {
   data () {
@@ -326,13 +333,18 @@ export default {
           required: true,
           message: '请选择标签',
           type: 'array'
+        },
+        'advanced_config.project_names': {
+          required: true,
+          message: '请选择项目',
+          type: 'array'
         }
       },
       clusterNodes: {
         labels: [],
         data: [] // {labels, ready, ip}
-      }
-
+      },
+      expendAdvanced: false
     }
   },
   computed: {
@@ -346,11 +358,15 @@ export default {
           return data.labels.includes(label)
         }).length
       })
+    },
+    projectNames () {
+      return this.$store.getters.projectList.map(project => project.name)
     }
   },
   watch: {
     dialogClusterFormVisible (nVal, oldV) {
       if (!nVal) {
+        this.expendAdvanced = false
         this.clearValidate()
         this.clusterNodes = {
           labels: [],
@@ -360,16 +376,6 @@ export default {
     }
   },
   methods: {
-    advancedConfig () {
-      if (!this.cluster.advanced_config.strategy) {
-        this.cluster.advanced_config.strategy = 'normal'
-      } else {
-        this.cluster.advanced_config = {
-          strategy: '',
-          node_labels: []
-        }
-      }
-    },
     getClusterNode (clusterId) {
       getClusterNodeInfo(clusterId).then(res => {
         this.clusterNodes = res
@@ -392,10 +398,30 @@ export default {
       return `kubectl apply -f "${this.$utils.getOrigin()}/api/aslan/cluster/agent/${this.accessCluster.id}/agent.yaml${this.deployType === 'Deployment' ? '?type=deploy' : ''}"`
     },
     clusterOperation (operate, current_cluster) {
+      const fn = (cluster) => {
+        const payload = cloneDeep(cluster)
+        if (!this.expendAdvanced) {
+          payload.advanced_config = {
+            project_scoped: 'All', // All/NotAll
+            project_names: [],
+            strategy: 'normal',
+            node_labels: []
+          }
+        } else {
+          const allId = payload.advanced_config.project_names.findIndex(name => name === 'All')
+          if (allId !== -1) {
+            payload.advanced_config.project_names.splice(allId, 1)
+            payload.advanced_config.project_scoped = 'All'
+          } else {
+            payload.advanced_config.project_scoped = 'NotAll'
+          }
+        }
+        return payload
+      }
       if (operate === 'add') {
         this.$refs.cluster.validate(valid => {
           if (valid) {
-            const payload = this.cluster
+            const payload = fn(this.cluster)
             this.dialogClusterFormVisible = false
             this.addCluster(payload)
           } else {
@@ -418,12 +444,13 @@ export default {
       } else if (operate === 'edit') {
         this.getClusterNode(current_cluster.id)
         this.cluster = this.$utils.cloneObj(current_cluster)
+        this.expendAdvanced = true
         this.dialogClusterFormVisible = true
       } else if (operate === 'update') {
         this.$refs.cluster.validate(valid => {
           if (valid) {
             const id = this.cluster.id
-            const payload = this.cluster
+            const payload = fn(this.cluster)
             this.dialogClusterFormVisible = false
             this.updateCluster(id, payload)
           } else {
@@ -499,11 +526,18 @@ export default {
         this.allCluster = res.map(re => {
           if (!re.advanced_config) {
             re.advanced_config = {
-              strategy: '',
+              project_scoped: 'All',
+              project_names: ['All'],
+              strategy: 'normal',
               node_labels: []
             }
-          } else if (!re.advanced_config.node_labels) {
-            re.advanced_config.node_labels = []
+          } else {
+            if (!re.advanced_config.node_labels) {
+              re.advanced_config.node_labels = []
+            }
+            if (re.advanced_config.advanced_config === 'All') {
+              re.advanced_config.project_names.unshift('All')
+            }
           }
           return re
         })

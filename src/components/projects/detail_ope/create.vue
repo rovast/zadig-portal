@@ -57,6 +57,15 @@
                     </el-option>
                   </el-select>
                 </el-form-item>
+                <el-form-item v-if="!isEdit" label="指定集群资源" v-show="activeName !=='advance'" prop="cluster_ids">
+                  <el-select filterable multiple v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源" style="width: 100%;">
+                    <el-option v-for="cluster in allCluster"
+                         :key="cluster.id"
+                         :label="$utils.showClusterName(cluster)"
+                         :value="cluster.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
                 <el-form-item label="项目权限" v-show="activeName !=='advance'" prop="public">
                   <el-radio-group v-model="projectForm.public">
                     <el-radio :label="true">公开</el-radio>
@@ -216,7 +225,8 @@ import {
   createProjectAPI,
   getSingleProjectAPI,
   updateSingleProjectAPI,
-  getExternalSystemsAPI
+  getExternalSystemsAPI,
+  getClusterListAPI
 } from '@api'
 import CusDeliverable from './components/cusDeliverable.vue'
 
@@ -260,6 +270,7 @@ export default {
         project_name: '',
         product_name: '',
         admins: [],
+        cluster_ids: [],
         timeout: null,
         desc: '',
         enabled: true,
@@ -282,6 +293,14 @@ export default {
             type: 'array',
             required: true,
             message: '请选择项目管理员',
+            trigger: 'change'
+          }
+        ],
+        cluster_ids: [
+          {
+            type: 'array',
+            required: true,
+            message: '请选择集群资源',
             trigger: 'change'
           }
         ],
@@ -310,7 +329,8 @@ export default {
           required: true, message: '请输入访问路径', trigger: 'blur'
         }
       },
-      externalList: []
+      externalList: [],
+      allCluster: []
     }
   },
   methods: {
@@ -433,6 +453,13 @@ export default {
     },
     resetForm (formName) {
       this.$refs[formName].resetFields()
+    },
+    getCluster () {
+      getClusterListAPI().then(res => {
+        this.allCluster = res.filter(element => {
+          return element.status === 'normal'
+        })
+      })
     }
   },
   watch: {
@@ -472,6 +499,7 @@ export default {
       this.getProject(this.projectName)
     } else {
       this.getUsers()
+      this.getCluster()
       this.projectForm.admins.push(this.currentUserId)
     }
   }

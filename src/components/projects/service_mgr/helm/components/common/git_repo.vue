@@ -316,7 +316,8 @@ export default {
     closeFileTree (successServices) {
       this.$store.commit('SERVICE_DIALOG_VISIBLE', false)
       this.$store.dispatch('queryService', {
-        projectName: this.$route.params.project_name
+        projectName: this.$route.params.project_name,
+        showServiceName: successServices[0]
       })
       const services = successServices.map(service => {
         return {

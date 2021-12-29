@@ -30,7 +30,8 @@ export default {
     nodeData: Array,
     expandKey: Array,
     deleteServer: Function,
-    openRepoModal: Function
+    openRepoModal: Function,
+    autoShowValuesYaml: Function
   },
   data () {
     return {
@@ -140,6 +141,8 @@ export default {
         }
       } else if (data.children && data.children.length === 0) {
         this.loadData(data)
+      } else if (data.isService) {
+        this.autoShowValuesYaml(data)
       }
     },
     save (data) {

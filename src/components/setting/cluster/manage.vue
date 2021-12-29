@@ -105,9 +105,8 @@
           </el-form-item>
           <el-button type="text" @click="expendAdvanced = !expendAdvanced">高级配置<i :class="{'el-icon-arrow-right': !expendAdvanced,'el-icon-arrow-down': expendAdvanced}"></i></el-button>
           <template v-if="expendAdvanced">
-            <el-form-item label="指定项目范围" prop="advanced_config.project_names">
-              <el-select v-model="cluster.advanced_config.project_names" placeholder="请选择项目" size="small" style="width: 100%;" filterable multiple>
-                <el-option label="全部项目" value="All"></el-option>
+            <el-form-item label="指定项目范围">
+              <el-select v-model="cluster.advanced_config.project_names" placeholder="未选择项目表示应用到所有项目" size="small" style="width: 100%;" filterable multiple>
                 <el-option v-for="name in projectNames" :key="name" :label="name" :value="name"></el-option>
               </el-select>
             </el-form-item>
@@ -272,8 +271,7 @@ const clusterInfo = {
   description: '',
   namespace: '',
   advanced_config: {
-    project_scoped: 'All', // All/NotAll
-    project_names: ['All'], // the All will be deleted when post or put
+    project_names: [],
     strategy: 'normal',
     node_labels: []
   }
@@ -332,11 +330,6 @@ export default {
         'advanced_config.node_labels': {
           required: true,
           message: '请选择标签',
-          type: 'array'
-        },
-        'advanced_config.project_names': {
-          required: true,
-          message: '请选择项目',
           type: 'array'
         }
       },
@@ -401,20 +394,7 @@ export default {
       const fn = (cluster) => {
         const payload = cloneDeep(cluster)
         if (!this.expendAdvanced) {
-          payload.advanced_config = {
-            project_scoped: 'All', // All/NotAll
-            project_names: [],
-            strategy: 'normal',
-            node_labels: []
-          }
-        } else {
-          const allId = payload.advanced_config.project_names.findIndex(name => name === 'All')
-          if (allId !== -1) {
-            payload.advanced_config.project_names.splice(allId, 1)
-            payload.advanced_config.project_scoped = 'All'
-          } else {
-            payload.advanced_config.project_scoped = 'NotAll'
-          }
+          delete payload.advanced_config
         }
         return payload
       }
@@ -526,8 +506,7 @@ export default {
         this.allCluster = res.map(re => {
           if (!re.advanced_config) {
             re.advanced_config = {
-              project_scoped: 'All',
-              project_names: ['All'],
+              project_names: [],
               strategy: 'normal',
               node_labels: []
             }
@@ -535,8 +514,8 @@ export default {
             if (!re.advanced_config.node_labels) {
               re.advanced_config.node_labels = []
             }
-            if (re.advanced_config.advanced_config === 'All') {
-              re.advanced_config.project_names.unshift('All')
+            if (!re.advanced_config.project_names) {
+              re.advanced_config.project_names = []
             }
           }
           return re

@@ -265,7 +265,7 @@
   </div>
 </template>
 <script>
-import { getProjectInfoAPI, productEnvInfoAPI, queryUserBindingsAPI, deleteProjectAPI, getWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
+import { getProjectInfoAPI, productEnvInfoAPI, queryUserBindingsAPI, deleteProjectAPI, getProductWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
 import { translateEnvStatus } from '@utils/word_translate'
 import { wordTranslate } from '@utils/word_translate.js'
 import { whetherOnboarding } from '@utils/onboarding_route'
@@ -287,7 +287,7 @@ export default {
       return translateEnvStatus(status, updateble)
     },
     async getWorkflows (projectName) {
-      const res = await getWorkflowsInProjectAPI(projectName)
+      const res = await getProductWorkflowsInProjectAPI(projectName)
       if (res) {
         this.workflows = res.filter(item => item.projectName === projectName)
       }

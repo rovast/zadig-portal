@@ -91,7 +91,7 @@ import RunProductWorkflow from './common/run_workflow.vue'
 import RunCommonWorkflow from './common/run_common_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
-import { getWorkflowsAPI, getWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteProductWorkflowAPI, copyWorkflowAPI, getCommonWorkflowListAPI, deleteCommonWorkflowAPI } from '@api'
+import { getProductWorkflowsAPI, getProductWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteProductWorkflowAPI, copyWorkflowAPI, getCommonWorkflowListAPI, getCommonWorkflowListInProjectAPI, deleteCommonWorkflowAPI } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
@@ -256,28 +256,35 @@ export default {
     },
     async getWorkflows (projectName) {
       this.workflowListLoading = true
-      let res = []
+      let productWorkflows = []
+      let commonWorkflows = []
       if (this.projectName) {
-        res = await getWorkflowsInProjectAPI(projectName).catch(err => {
+        productWorkflows = await getProductWorkflowsInProjectAPI(projectName).catch(err => {
           console.log(err)
           return []
+        })
+        commonWorkflows = await getCommonWorkflowListInProjectAPI(projectName).catch(err => {
+          console.log(err)
+          return []
+        })
+        commonWorkflows.workflow_list.forEach(list => {
+          list.type = 'common'
         })
       } else {
-        res = await getWorkflowsAPI().catch(err => {
+        productWorkflows = await getProductWorkflowsAPI().catch(err => {
           console.log(err)
           return []
         })
+        commonWorkflows = await getCommonWorkflowListAPI().catch(err => {
+          console.log(err)
+          return []
+        })
+        commonWorkflows.workflow_list.forEach(list => {
+          list.type = 'common'
+        })
       }
-
-      const workflowList = await getCommonWorkflowListAPI(projectName).catch(err => {
-        console.log(err)
-        return []
-      })
-      workflowList.workflow_list.forEach(list => {
-        list.type = 'common'
-      })
       this.workflowListLoading = false
-      this.workflowsList = [...res, ...workflowList.workflow_list]
+      this.workflowsList = [...productWorkflows, ...commonWorkflows.workflow_list]
     },
     deleteProductWorkflow (workflow) {
       const name = workflow.name

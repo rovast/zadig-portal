@@ -70,9 +70,8 @@
                   <div>
                     私有镜像仓库未集成，
                     <el-button type="text"
-                               style="color: #e6a23c;"
+                               style="padding: 0; color: #1989fa;"
                                @click="registryCreateVisible = true">立即集成</el-button>
-                    ！
                   </div>
                 </el-alert>
               </div>

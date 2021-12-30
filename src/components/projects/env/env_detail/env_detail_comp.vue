@@ -106,7 +106,7 @@
                   <el-option
                     v-for="registry in imageRegistry"
                     :key="registry.id"
-                    :label="`${registry.reg_addr}/${registry.namespace}`"
+                    :label="registry.namespace?`${registry.reg_addr}/${registry.namespace}`:registry.reg_addr"
                     :value="registry.id">
                   </el-option>
                 </el-select>
@@ -706,9 +706,9 @@ export default {
       const registryId = this.productInfo.registry_id
       this.imageRegistry.forEach(image => {
         if (image.id === registryId) {
-          findImage = `${image.reg_addr}/${image.namespace}`
+          findImage = image.namespace ? `${image.reg_addr}/${image.namespace}` : image.reg_addr
         } else if (image.is_default) {
-          defaultImage = `${image.reg_addr}/${image.namespace}`
+          defaultImage = image.namespace ? `${image.reg_addr}/${image.namespace}` : image.reg_addr
         }
       })
       return findImage || defaultImage

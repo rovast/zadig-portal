@@ -1,8 +1,6 @@
 <template>
-  <div class="notify">
-    <el-card class="box-card">
-      <div>
-        <div class="script dashed-container">
+    <el-card class="notify box-card">
+        <div class="script dashed-container" v-if="showTitle">
           <span class="title">通知</span>
         </div>
         <div class="notify dashed-container">
@@ -102,18 +100,13 @@
                              @change="handleCheckAllChange">全选</el-checkbox>
                 <el-checkbox-group @change="handleCheckedValueChange"
                                    v-model="notify.notify_type">
-                  <el-checkbox label="passed">任务成功</el-checkbox>
-                  <el-checkbox label="failed">任务失败</el-checkbox>
-                  <el-checkbox label="timeout">任务超时</el-checkbox>
-                  <el-checkbox label="cancelled">任务取消</el-checkbox>
+                  <el-checkbox v-for="type in notifyType" :key="type.label" :label="type.label">{{type.desc}}</el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
             </el-form>
           </div>
         </div>
-      </div>
     </el-card>
-  </div>
 </template>
 
 <script type="text/javascript">
@@ -121,6 +114,28 @@ import bus from '@utils/event_bus'
 
 export default {
   data () {
+    this.notifyType = [
+      {
+        label: 'passed',
+        desc: '任务成功'
+      },
+      {
+        label: 'failed',
+        desc: '任务失败'
+      },
+      {
+        label: 'timeout',
+        desc: '任务超时'
+      },
+      {
+        label: 'cancelled',
+        desc: '任务取消'
+      },
+      {
+        label: 'update',
+        desc: '状态变更'
+      }
+    ]
     return {
       isIndeterminate: true,
       notifyRules: {
@@ -170,7 +185,10 @@ export default {
   computed: {
     checkAll: {
       get: function () {
-        return this.notify.notify_type.length === 4
+        return this.notify.notify_type.length === this.notifyType.length
+      },
+      set (val) {
+        return val
       }
     },
     'notify.at_mobiles': {
@@ -200,13 +218,13 @@ export default {
   },
   methods: {
     handleCheckAllChange (val) {
-      this.notify.notify_type = val ? ['timeout', 'passed', 'failed', 'cancelled'] : []
+      this.notify.notify_type = val ? this.notifyType.map(type => type.label) : []
       this.isIndeterminate = false
     },
     handleCheckedValueChange (value) {
+      const typeLength = this.notifyType.length
       const checkedCount = value.length
-      this.checkAll = (checkedCount === 4)
-      this.isIndeterminate = (checkedCount > 0 && checkedCount < 4)
+      this.isIndeterminate = (checkedCount > 0 && checkedCount < typeLength)
     },
     clearForm () {
       this.$refs.notify.clearValidate()
@@ -220,6 +238,10 @@ export default {
     editMode: {
       required: true,
       type: Boolean
+    },
+    showTitle: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -238,8 +260,7 @@ export default {
 </script>
 
 <style lang="less">
-.notify {
-  .box-card {
+  .notify.box-card {
     .el-card__header {
       text-align: center;
     }
@@ -286,5 +307,4 @@ export default {
       }
     }
   }
-}
 </style>

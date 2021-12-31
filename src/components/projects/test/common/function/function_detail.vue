@@ -208,6 +208,19 @@
       <div class="divider">
       </div>
       <label class="title">
+        <span>通知</span>
+        <el-button @click="test.notify_ctl.enabled = !test.notify_ctl.enabled"
+                    type="text">{{test.notify_ctl.enabled ? '删除': '添加'}}</el-button>
+      </label>
+      <Notify v-if="test.notify_ctl.enabled"
+              ref="notify"
+              class="notification"
+              :editMode="isEdit"
+              :notify="test.notify_ctl"
+              :showTitle="false"></Notify>
+      <div class="divider">
+      </div>
+      <label class="title">
         <slot name="label">
           <span>测试报告</span>
           <!-- <el-tooltip effect="dark"
@@ -354,6 +367,8 @@ import testTrigger from '@/components/common/test_trigger.vue'
 import bus from '@utils/event_bus'
 import ValidateSubmit from '@utils/validate_async'
 import Editor from 'vue2-ace-bind'
+import Notify from '@/components/projects/edit_pipeline/product_pipeline/switch_tab/notify.vue'
+
 import {
   getAllAppsAPI, getCodeSourceMaskedAPI, createTestAPI, updateTestAPI, singleTestAPI
 } from '@api'
@@ -387,6 +402,11 @@ export default {
         schedules: {
           enabled: false,
           items: []
+        },
+        notify_ctl: {
+          enabled: false,
+          weChat_webHook: '',
+          notify_type: []
         },
         pre_test: {
           enable_proxy: false,
@@ -607,6 +627,7 @@ export default {
       const refs = [this.$refs['test-form']]
         .concat(this.$refs.install_items_ref)
         .concat(this.$refs.env_ref)
+        .concat(this.$refs.notify && this.$refs.notify.$refs.notify)
         .filter(r => r)
       const res = await this.validObj.validateAll()
       if (!res[1]) {
@@ -697,6 +718,13 @@ export default {
             items: []
           })
         }
+        if (!res.notify_ctl) {
+          this.$set(this.test, 'notify_ctl', {
+            enabled: false,
+            weChat_webHook: '',
+            notify_type: []
+          })
+        }
         if (this.test.artifact_paths.length === 0) {
           this.addArtifactPath()
         }
@@ -719,7 +747,8 @@ export default {
   components: {
     Editor,
     testTrigger,
-    BuildEnv
+    BuildEnv,
+    Notify
   }
 }
 </script>
@@ -754,6 +783,12 @@ export default {
 
     .el-form-item__label {
       text-align: left;
+    }
+
+    .notification {
+      /deep/.el-card__body {
+        padding: 0 20px 6px;
+      }
     }
   }
 

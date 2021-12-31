@@ -406,8 +406,11 @@ export default {
           res.tests = this.forcedUserInput.tests
         }
         // Selected by default when only one service is available
-        if (!this.haveForcedInput && res.targets.length === 1) {
-          this.$set(this, 'pickedBuildTargetNames', res.targets)
+        const avaliableTargets = res.targets.filter(element => {
+          return element.has_build
+        })
+        if (!this.haveForcedInput && avaliableTargets.length === 1) {
+          this.$set(this, 'pickedBuildTargetNames', avaliableTargets)
         }
         this.runner = res
         this.allServiceNames = cloneDeep(orderBy(sortBy(this.runner.targets.map(element => {

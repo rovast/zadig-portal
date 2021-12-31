@@ -91,17 +91,18 @@ export default {
             }
             return child
           })
+          const showService = payload.showServiceName ? service.find(s => s.service_name === payload.showServiceName) : service[0]
           const params = {
             projectName: payload.projectName,
-            serviceName: service[0].service_name
+            serviceName: showService.service_name
           }
           router.replace({
             query: Object.assign(
               {},
               {},
               {
-                service_name: service[0].service_name,
-                service_type: service[0].service_type,
+                service_name: showService.service_name,
+                service_type: showService.service_type,
                 rightbar: 'var'
               })
           })

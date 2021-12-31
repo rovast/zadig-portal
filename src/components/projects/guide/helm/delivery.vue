@@ -90,7 +90,7 @@ import bus from '@utils/event_bus'
 import step from '../common/step.vue'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
 import { wordTranslate } from '@utils/word_translate.js'
-import { getProjectIngressAPI, getWorkflowsInProjectAPI, getWorkflowDetailAPI, generatePipeAPI } from '@api'
+import { getProjectIngressAPI, getProductWorkflowsInProjectAPI, getWorkflowDetailAPI, generatePipeAPI } from '@api'
 export default {
   data () {
     return {
@@ -111,7 +111,7 @@ export default {
     async getWorkflows () {
       this.loading = true
       const projectName = this.projectName
-      const workflows = await getWorkflowsInProjectAPI(projectName)
+      const workflows = await getProductWorkflowsInProjectAPI(projectName)
       const ingresses = await getProjectIngressAPI(projectName)
       if (workflows && ingresses) {
         this.loading = false

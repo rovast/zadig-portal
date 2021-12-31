@@ -886,7 +886,8 @@ export default {
     getRegistryWhenBuildAPI(this.projectName).then(res => {
       this.imageRegistry = res
       if (!this.projectConfig.registry_id) {
-        this.projectConfig.registry_id = res.find(reg => reg.is_default).id
+        const defaultRegistry = res.find(reg => reg.is_default)
+        this.projectConfig.registry_id = defaultRegistry ? defaultRegistry.id : ''
       }
       this.getTemplateAndImg()
     })

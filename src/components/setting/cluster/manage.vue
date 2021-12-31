@@ -103,8 +103,8 @@
               <el-radio :label="false">否</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-button type="text" @click="expendAdvanced = !expendAdvanced">高级配置<i :class="{'el-icon-arrow-right': !expendAdvanced,'el-icon-arrow-down': expendAdvanced}"></i></el-button>
-          <template v-if="expendAdvanced">
+          <el-button type="text" @click="expandAdvanced = !expandAdvanced">高级配置<i :class="{'el-icon-arrow-right': !expandAdvanced,'el-icon-arrow-down': expandAdvanced}"></i></el-button>
+          <template v-if="expandAdvanced">
             <el-form-item label="指定项目范围">
               <el-select v-model="cluster.advanced_config.project_names" placeholder="未选择项目表示应用到所有项目" size="small" style="width: 100%;" filterable multiple>
                 <el-option v-for="name in projectNames" :key="name" :label="name" :value="name"></el-option>
@@ -337,7 +337,7 @@ export default {
         labels: [],
         data: [] // {labels, ready, ip}
       },
-      expendAdvanced: false
+      expandAdvanced: false
     }
   },
   computed: {
@@ -359,7 +359,7 @@ export default {
   watch: {
     dialogClusterFormVisible (nVal, oldV) {
       if (!nVal) {
-        this.expendAdvanced = false
+        this.expandAdvanced = false
         this.clearValidate()
         this.clusterNodes = {
           labels: [],
@@ -393,7 +393,7 @@ export default {
     clusterOperation (operate, current_cluster) {
       const fn = (cluster) => {
         const payload = cloneDeep(cluster)
-        if (!this.expendAdvanced) {
+        if (!this.expandAdvanced) {
           delete payload.advanced_config
         }
         return payload
@@ -409,7 +409,7 @@ export default {
           }
         })
       } else if (operate === 'access') {
-        this.accessCluster = this.$utils.cloneObj(current_cluster)
+        this.accessCluster = cloneDeep(current_cluster)
         this.dialogClusterAccessVisible = true
       } else if (operate === 'disconnect') {
         this.$confirm(`确定要断开 ${current_cluster.name} 的连接?`, '确认', {
@@ -423,8 +423,8 @@ export default {
         this.recoverCluster(current_cluster.id)
       } else if (operate === 'edit') {
         this.getClusterNode(current_cluster.id)
-        this.cluster = this.$utils.cloneObj(current_cluster)
-        this.expendAdvanced = true
+        this.cluster = cloneDeep(current_cluster)
+        this.expandAdvanced = true
         this.dialogClusterFormVisible = true
       } else if (operate === 'update') {
         this.$refs.cluster.validate(valid => {

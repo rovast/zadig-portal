@@ -1,16 +1,13 @@
 <template>
-  <div class="inte-registry">
+  <div class="integration-registry">
     <el-alert type="warning">
       <div>
-        镜像仓库集成可参考
+        镜像仓库集成可以参考该
         <el-link type="warning"
-                 style="font-weight: 600;"
+                 style="color: #1989fa; font-weight: 500; vertical-align: baseline;"
                  :href="`https://docs.koderover.com/zadig/settings/image-registry/`"
                  :underline="false"
-                 target="_blank">
-          这里
-        </el-link>
-        ！
+                 target="_blank">文档</el-link>
       </div>
     </el-alert>
     <div class="content">
@@ -26,61 +23,42 @@
         <el-form-item label="提供商"
                       prop="reg_provider">
           <el-select v-model="registry.reg_provider"
+                     @change="changeProvider"
                      style="width: 100%;"
                      placeholder="请选择镜像仓库提供商">
-            <el-option value="acr"
-                       label="阿里云 ACR">
-              <i class="iconfont iconaliyun"></i> <span>阿里云 ACR</span>
-            </el-option>
-
-            <el-option value="swr"
-                       label="华为云 SWR">
-              <i class="iconfont iconhuawei"></i> <span>华为云 SWR</span>
-            </el-option>
-            <el-option value="tcr"
-                       label="腾讯云 TCR">
-              <i class="iconfont icontengxunyun"></i> <span>腾讯云 TCR</span>
-            </el-option>
-            <el-option value="harbor"
-                       label="Harbor">
-              <i class="iconfont iconHarbor"></i> <span>Harbor</span>
-            </el-option>
-            <el-option value="dockerhub"
-                       label="DockerHub">
-              <i class="iconfont icondocker"></i> <span>DockerHub</span>
-            </el-option>
-            <el-option value="native"
-                       label="其它">
-              <i class="iconfont iconqita"></i> <span>其它</span>
+            <el-option v-for="(provider,index) in providers" :key="index" :value="provider.value"
+                       :label="provider.label">
+              <i class="iconfont" :class="provider.icon"></i> <span>{{provider.label}}</span>
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="registry.reg_provider === 'swr'"
-                      label="区域"
+        <el-form-item v-if="registry.reg_provider === 'swr' || registry.reg_provider === 'ecr'"
+                      :label="providerMap[registry.reg_provider].region"
                       prop="region">
           <el-input clearable
                     v-model="registry.region"></el-input>
         </el-form-item>
-        <el-form-item label="地址"
+        <el-form-item v-if="registry.reg_provider"
+                      :label="providerMap[registry.reg_provider].reg_addr"
                       prop="reg_addr">
           <el-input clearable
                     v-model="registry.reg_addr"></el-input>
         </el-form-item>
-        <el-form-item prop="namespace">
+        <el-form-item  v-if="registry.reg_provider && registry.reg_provider !=='ecr'" prop="namespace">
           <template slot="label">
             {{ registry.reg_provider ? providerMap[registry.reg_provider].namespace : 'Namespace' }}
           </template>
           <el-input clearable
                     v-model="registry.namespace"></el-input>
         </el-form-item>
-        <el-form-item :label="registry.reg_provider === 'swr'?'Access Key':'Docker 用户名'"
-                      :rules="{ required: true, message: `请输入 ${registry.reg_provider === 'swr'?'Access Key':'Docker 用户名'}`, trigger: 'blur' }"
+        <el-form-item v-if="registry.reg_provider" :label="providerMap[registry.reg_provider].access_key"
+                      :rules="{ required: true, message: `请输入 ${providerMap[registry.reg_provider].access_key}`, trigger: ['blur'] }"
                       prop="access_key">
           <el-input clearable
                     v-model="registry.access_key"></el-input>
         </el-form-item>
-        <el-form-item :label="registry.reg_provider === 'swr'?'Secret Key':'Docker 密码'"
-                      :rules="{ required: true, message: `请输入 ${registry.reg_provider === 'swr'?'Secret Key':'Docker 密码'}`, trigger: 'blur' }"
+        <el-form-item v-if="registry.reg_provider" :label="providerMap[registry.reg_provider].secret_key"
+                      :rules="{ required: true, message: `请输入 ${providerMap[registry.reg_provider].secret_key}`, trigger: ['blur'] }"
                       prop="secret_key">
           <el-input clearable
                     type="passsword"
@@ -101,6 +79,7 @@
 
 <script>
 import { createRegistryAPI } from '@api'
+import { keyBy } from 'lodash'
 export default {
   name: 'IntegrationRegistry',
   data () {
@@ -114,73 +93,117 @@ export default {
         region: '',
         is_default: true
       },
-      providerMap: {
-        native: {
-          icon: 'iconfont logo iconqita',
-          name: '其它',
-          namespace: 'Namespace'
+      providers: [
+        {
+          value: 'acr',
+          label: '阿里云 ACR',
+          reg_addr: '地址',
+          namespace: '命名空间',
+          access_key: 'Docker 用户名',
+          secret_key: 'Docker 密码',
+          icon: 'iconfont logo iconaliyun'
         },
-        swr: {
-          icon: 'iconfont logo iconhuawei',
-          name: '华为云 SWR',
-          namespace: '组织名称'
+        {
+          value: 'swr',
+          label: '华为云 SWR',
+          reg_addr: '地址',
+          namespace: '组织名称',
+          region: '区域',
+          access_key: 'Access Key',
+          secret_key: 'Secret Key',
+          icon: 'iconfont logo iconhuawei'
         },
-        acr: {
-          icon: 'iconfont logo iconaliyun ',
-          name: '阿里云 ACR',
-          namespace: '命名空间'
+
+        {
+          value: 'tcr',
+          label: '腾讯云 TCR',
+          reg_addr: '地址',
+          namespace: '命名空间',
+          access_key: 'Docker 用户名',
+          secret_key: 'Docker 密码',
+          icon: 'iconfont logo icontengxunyun'
         },
-        tcr: {
-          icon: 'iconfont logo icontengxunyun',
-          name: '腾讯云 TCR',
-          namespace: '命名空间'
+        {
+          value: 'harbor',
+          label: 'Harbor',
+          reg_addr: '地址',
+          namespace: '项目',
+          access_key: 'Docker 用户名',
+          secret_key: 'Docker 密码',
+          icon: 'iconfont logo iconHarbor'
         },
-        harbor: {
-          icon: 'iconfont logo iconHarbor',
-          name: 'Harbor',
-          namespace: '项目'
+        {
+          value: 'dockerhub',
+          label: 'DockerHub',
+          reg_addr: '地址',
+          namespace: 'Namespace',
+          access_key: 'Docker 用户名',
+          secret_key: 'Docker 密码',
+          icon: 'iconfont logo icondocker'
         },
-        dockerhub: {
-          icon: 'iconfont logo icondocker',
-          name: 'DockerHub',
-          namespace: 'Namespace'
+        {
+          value: 'ecr',
+          label: 'Amazon ECR',
+          reg_addr: 'URI',
+          namespace: '',
+          region: 'Region',
+          access_key: 'Access Key ID',
+          secret_key: 'Secret Access Key',
+          icon: 'iconfont logo icondocker'
+        },
+        {
+          value: 'native',
+          label: '其它',
+          reg_addr: '地址',
+          namespace: 'Namespace',
+          access_key: 'Docker 用户名',
+          secret_key: 'Docker 密码',
+          icon: 'iconfont logo iconqita'
         }
-      },
+      ],
       rules: {
-        reg_provider: [{ required: true, message: '请选择镜像仓库提供商', trigger: 'blur' }],
+        reg_provider: [{ required: true, message: '请选择镜像仓库提供商', trigger: ['blur'] }],
         reg_addr: [{
           required: true,
           message: '请输入 URL',
-          trigger: 'blur'
+          trigger: ['blur']
         },
         {
           type: 'url',
           message: '请输入正确的 URL，包含协议',
-          trigger: ['blur', 'change']
+          trigger: ['blur']
         }],
-        region: [{ required: true, message: '请输入区域', trigger: 'blur' }],
-        namespace: [{ required: true, message: '请输入 Namespace', trigger: 'blur' }]
-
+        region: [{ required: true, message: '请输入区域', trigger: ['blur'] }],
+        namespace: [{ required: true, message: '请输入 Namespace', trigger: ['blur'] }]
       }
     }
   },
-  watch: {
-    'registry.reg_provider': {
-      deep: true,
-      immediate: false,
-      handler: function (val, oldVal) {
-        if (val === 'dockerhub') {
-          this.registry.reg_addr = 'https://registry.hub.docker.com'
-        }
-      }
+  computed: {
+    providerMap () {
+      return keyBy(this.providers, 'value')
     }
   },
   methods: {
+    changeProvider (val) {
+      this.$nextTick(() => {
+        this.registry = {
+          namespace: '',
+          reg_addr: val === 'dockerhub' ? 'https://registry.hub.docker.com' : '',
+          access_key: '',
+          secret_key: '',
+          reg_provider: val,
+          region: '',
+          is_default: false
+        }
+        this.$refs.registry.clearValidate()
+      })
+    },
     getProviderMap (name, type) {
-      if (this.providerMap[name] && type) {
-        return this.providerMap[name][type]
+      const providerMap = this.providerMap
+      if (providerMap[name] && type) {
+        return providerMap[name][type]
       } else {
-        return this.providerMap.native.icon
+        return providerMap.native.icon
       }
     },
     registryOperation () {
@@ -205,7 +228,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.inte-registry {
+.integration-registry {
   padding: 10px 15px;
   font-size: 13px;
 

@@ -52,6 +52,12 @@
                     <span class="add-filter-value-title">协作模式</span>
                   </button>
                 </router-link>
+                <router-link :to="`/v1/projects/initialize/${projectName}`">
+                  <button type="button"
+                          class="display-btn">
+                    <span class="add-filter-value-title">初始化测试</span>
+                  </button>
+                </router-link>
               </div>
 
             </div>

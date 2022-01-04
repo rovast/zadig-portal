@@ -112,9 +112,8 @@
               </el-select>
             </el-form-item>
             <div v-if="isEdit">
-              <h4>调度策略</h4>
               <el-form-item prop="advanced_config.strategy" required>
-                 <span slot="label">选择策略
+                 <span slot="label">调度策略
                   <el-tooltip effect="dark" placement="top-start">
                     <div slot="content" style="line-height: 1.5;">
                       <div>随机调度：工作流任务被随机调度到集群的可用节点上</div>

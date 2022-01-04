@@ -32,7 +32,7 @@
               </a>
             </li>
             <li>
-              <a href="https://docs.koderover.com/zadig/examples/voting/"
+              <a href="https://www.koderover.com/tutorials/"
                  target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>最佳实践</span>

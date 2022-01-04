@@ -4,6 +4,7 @@
       <EnvValues
         ref="envValuesRef"
         :envName="handledEnv"
+        :baseEnvName="baseEnvObj && baseEnvObj[handledEnv] || handledEnv"
         @envYaml="saveEnvYaml"
         :overrideYaml="defaultEnvValue && defaultEnvValue.defaultValues"
       ></EnvValues>
@@ -17,6 +18,7 @@
         :envScene="envScene"
         :showEnvTabs="showEnvTabs"
         :defaultEnvValue="defaultEnvValue"
+        :baseEnvObj="baseEnvObj"
       ></ChartValues>
     </el-collapse-item>
   </el-collapse>
@@ -65,6 +67,10 @@ export default {
       required: false,
       type: String,
       default: '服务'
+    },
+    baseEnvObj: {
+      type: Object,
+      default: () => null // {envName: baseEvnName}
     }
   },
   computed: {

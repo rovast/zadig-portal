@@ -7,7 +7,7 @@
         <div class="title">
           <i class="iconfont icongongzuoliucheng"></i>工作流
         </div>
-        <div v-for="(workflow, index) in workflows" :key="index" class="detail-item">
+        <div v-for="(workflow, index) in collaborationData.workflow" :key="index" class="detail-item">
           <div class="item-name">{{workflow.name}}</div>
           <div class="item-desc">{{workflow.description || placeholder}}</div>
         </div>
@@ -16,7 +16,7 @@
         <div class="title">
           <i class="iconfont iconrongqi"></i>环境
         </div>
-        <div v-for="(env, index) in envs" :key="index" class="detail-item display-flex">
+        <div v-for="(env, index) in collaborationData.product" :key="index" class="detail-item display-flex">
           <div>
             <div class="item-name">{{env.name}}</div>
             <div class="item-desc">{{env.description || placeholder}}</div>
@@ -29,7 +29,7 @@
       <el-button type="text" size="small" icon="el-icon-finished">确认</el-button>
     </footer>
 
-    <InitEnvDialog :visible.sync="dialogVisible" :currentEnv="currentEnv"></InitEnvDialog>
+    <InitEnvDialog :visible.sync="dialogVisible" :currentEnv="currentEnv" :envObj="collaborationData.product"></InitEnvDialog>
   </div>
 </template>
 
@@ -39,26 +39,40 @@ import bus from '@utils/event_bus'
 export default {
   data () {
     return {
-      workflows: [
-        {
-          name: 'workflow1',
-          description: ''
-        },
-        {
-          name: 'workflow2',
-          description: 'xxxx'
-        }
-      ],
-      envs: [
-        {
-          name: 'environment1',
-          description: 'xxxx'
-        },
-        {
-          name: 'environment2',
-          description: 'xxxx'
-        }
-      ],
+      collaborationData: {
+        workflow: [
+          {
+            name: 'workflow1',
+            description: ''
+          },
+          {
+            name: 'workflow2',
+            description: 'xxxx'
+          }
+        ],
+        product: [
+          {
+            name: 'environment1-dev',
+            base_name: 'dev',
+            description: 'xxxx'
+          },
+          {
+            name: 'environment2-dev',
+            base_name: 'dev',
+            description: 'xxxx'
+          },
+          {
+            name: 'environment3-qa',
+            base_name: 'qa',
+            description: 'xxxx'
+          },
+          {
+            name: 'environment4-qa',
+            base_name: 'qa',
+            description: 'xxxx'
+          }
+        ]
+      },
       placeholder: 'There is no description.',
       dialogVisible: false,
       currentEnv: ''

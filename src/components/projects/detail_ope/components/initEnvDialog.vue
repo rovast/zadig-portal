@@ -6,7 +6,8 @@
         v-else-if="deployType === 'helm'"
         class="chart-value"
         ref="helmEnvTemplateRef"
-        :envNames="envNames"
+        :envNames="envInfos.envNames"
+        :baseEnvObj="envInfos.baseEnvObj"
         :handledEnv="currentEnv"
         :envScene="`updateRenderSet`"
       ></HelmEnvTemplate>
@@ -26,7 +27,7 @@ export default {
   props: {
     visible: Boolean,
     currentEnv: String,
-    envNames: Array
+    envObj: Array
   },
   data () {
     return {
@@ -50,11 +51,22 @@ export default {
         project => project.name === projectName
       )
       return project ? project.deployType : ''
+    },
+    envInfos () {
+      const envNames = []
+      const envObj = {}
+      this.envObj.forEach(env => {
+        envNames.push(env.name, env.base_name)
+        envObj[env.name] = env.base_name
+      })
+      return {
+        envNames: [...new Set(envNames)],
+        baseEnvObj: envObj
+      }
     }
   },
   watch: {
     currentEnv: async function (nVal, oVal) {
-      console.log('???', nVal, oVal)
       this.variables = []
       if (!this.allEnvVariables[nVal]) {
         console.log('如果是k8s，请求vars，如果是helm，组件自己请求数据')

@@ -26,6 +26,10 @@ export default {
       type: String,
       required: true
     },
+    baseEnvName: {
+      type: String,
+      required: true
+    },
     overrideYaml: {
       type: String,
       required: false
@@ -59,10 +63,10 @@ export default {
       }
       return Promise.all(valid)
     },
-    async getEnvVariablesYaml ({ envName }) {
+    async getEnvVariablesYaml ({ envName, baseEnvName }) {
       const res = await getEnvDefaultVariableAPI(
         this.projectName,
-        envName
+        baseEnvName
       ).catch(err => {
         console.log(err)
         this.initEnvVariableInfo(envName)
@@ -81,7 +85,7 @@ export default {
         if (newV === '' || this.overrideYaml) {
           this.initEnvVariableInfo()
         } else {
-          this.getEnvVariablesYaml({ envName: newV })
+          this.getEnvVariablesYaml({ envName: newV, baseEnvName: this.baseEnvName })
         }
       },
       immediate: true

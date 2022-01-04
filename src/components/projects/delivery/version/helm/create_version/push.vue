@@ -109,12 +109,14 @@ export default {
       }
       const chartName = this.releaseInfo.chartDatas.map(chart => {
         chart.lastVersion = ''
+        chart.version = ''
         return chart.serviceName
       })
       getChartLastVersionAPI(this.releaseInfo.productName, chartRepoName, chartName).then(res => {
         const resObj = keyBy(res, 'chartName')
         this.releaseInfo.chartDatas.forEach(chart => {
           chart.lastVersion = resObj[chart.serviceName].chartVersion
+          chart.version = resObj[chart.serviceName].nextChartVersion
         })
       })
     }

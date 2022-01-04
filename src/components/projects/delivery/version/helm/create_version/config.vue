@@ -160,7 +160,7 @@ export default {
         this.releaseInfo.chartDatas = this.releaseInfo.chartDatas.map(chart => {
           return {
             serviceName: chart.serviceName,
-            version: chart.version || info.version,
+            version: '',
             valuesYamlContent:
               this.yamlStorage[`${chart.serviceName}/values.yaml`] || '',
             lastVersion: ''

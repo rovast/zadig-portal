@@ -191,7 +191,7 @@
             </el-radio-group>
           </div>
         </el-col>
-        <el-col :span="14"
+        <el-col v-hasPermi="{projectName: projectName, action: 'create_service'}" :span="14"
                 class="text-right">
           <div style="line-height: 32px;">
             <el-tooltip effect="dark"
@@ -275,19 +275,19 @@
               </el-button>
               <span :style="{'visibility': showHover[data.service_name] ? 'visible': 'hidden'}"
                     class="operation-container">
-                <el-button v-if="(data.product_name===projectName||data.status === 'named')"
+                <el-button v-hasPermi="{projectName: projectName, action: 'delete_service'}"  v-if="(data.product_name===projectName||data.status === 'named')"
                            type="text"
                            size="mini"
                            icon="el-icon-close"
                            @click.stop="() => deleteService(node, data)">
                 </el-button>
-                <el-button v-else-if="data.product_name!==projectName && data.type ==='k8s'"
+                <el-button v-hasPermi="{projectName: projectName, action: 'delete_service'}" v-else-if="data.product_name!==projectName && data.type ==='k8s'"
                            type="text"
                            size="mini"
                            icon="el-icon-close"
                            @click.stop="() => deleteSharedService(node, data)">
                 </el-button>
-                <el-button v-if="data.source && (data.source === 'gerrit'|| data.source === 'gitlab' || data.source==='github' || data.source==='codehub' ) && data.type==='k8s' && data.product_name=== projectName "
+                <el-button v-hasPermi="{projectName: projectName, action: 'edit_service'}" v-if="data.source && (data.source === 'gerrit'|| data.source === 'gitlab' || data.source==='github' || data.source==='codehub' ) && data.type==='k8s' && data.product_name=== projectName "
                            type="text"
                            size="mini"
                            icon="el-icon-refresh"
@@ -375,7 +375,7 @@
           </span>
           <span v-if="data.label!=='共享服务列表' && showHover[data.service_name] "
                 class="operation-container">
-            <el-button v-if="data.product_name!==projectName"
+            <el-button v-hasPermi="{projectName: projectName, action: 'edit_service'}" v-if="data.product_name!==projectName"
                        type="text"
                        size="mini"
                        icon="el-icon-plus"

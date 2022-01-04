@@ -52,7 +52,7 @@
 </template>
 
 <script type="text/javascript">
-import mixin from '@utils/workflow_mixin'
+import mixin from '@/mixin/workflowMixin'
 export default {
   data () {
     return {

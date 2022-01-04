@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     ...mapState({
-      lists: state => state.common_workflow.tabs
+      lists: state => state.commonWorkflow.tabs
     })
   },
   methods: {

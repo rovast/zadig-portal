@@ -344,7 +344,7 @@ export default {
   },
   computed: {
     ...mapState({
-      commonInfo: state => state.common_workflow.commonInfo
+      commonInfo: state => state.commonWorkflow.commonInfo
     })
   },
   created () {

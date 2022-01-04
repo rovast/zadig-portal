@@ -57,15 +57,6 @@
                     </el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item v-if="!isEdit && projectForm.product_feature.basic_facility === 'kubernetes'" label="指定集群资源" v-show="activeName !=='advance'" prop="cluster_ids">
-                  <el-select filterable multiple v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源" style="width: 100%;">
-                    <el-option v-for="cluster in allCluster"
-                         :key="cluster.id"
-                         :label="$utils.showClusterName(cluster)"
-                         :value="cluster.id">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
                 <el-form-item label="项目权限" v-show="activeName !=='advance'" prop="public">
                   <el-radio-group v-model="projectForm.public">
                     <el-radio :label="true">公开</el-radio>
@@ -140,6 +131,24 @@
                     </el-col>
                   </el-row>
                 </el-form-item>
+                <div v-if="!isEdit && projectForm.product_feature.basic_facility === 'kubernetes'" v-show="activeName !=='advance'">
+                  <el-button type="text" @click="showAdvanced = !showAdvanced">
+                    高级配置
+                    <i :class="{'el-icon-arrow-right': !showAdvanced, 'el-icon-arrow-down': showAdvanced }"></i>
+                  </el-button>
+                  <el-form-item v-show="showAdvanced" label="指定集群资源" prop="cluster_ids">
+                    <el-select filterable multiple v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源" style="width: 100%;">
+                      <el-option label="全部集群" value="">
+                      </el-option>
+                      <el-option v-for="cluster in allCluster"
+                          :key="cluster.id"
+                          :label="$utils.showClusterName(cluster)"
+                          :value="cluster.id"
+                          :disabled="cluster.status !== 'normal'">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </div>
                 <div v-if="isEdit" v-show="activeName==='advance'">
                   <el-form-item label="服务部署超时（分钟）" prop="timeout">
                     <el-input v-model.number="projectForm.timeout"></el-input>
@@ -270,7 +279,7 @@ export default {
         project_name: '',
         product_name: '',
         admins: [],
-        cluster_ids: [],
+        cluster_ids: [''],
         timeout: null,
         desc: '',
         enabled: true,
@@ -330,7 +339,8 @@ export default {
         }
       },
       externalList: [],
-      allCluster: []
+      allCluster: [],
+      showAdvanced: false
     }
   },
   methods: {
@@ -443,7 +453,9 @@ export default {
             ) {
               this.projectForm.product_feature.deploy_type = 'k8s'
               this.projectForm.product_feature.create_env_type = 'system'
-              this.projectForm.cluster_ids = []
+              delete this.projectForm.cluster_ids
+            } else if (!this.showAdvanced || this.projectForm.cluster_ids.includes('')) {
+              this.projectForm.cluster_ids = this.allCluster.map(cluster => cluster.id)
             }
             this.createProject(this.projectForm)
           }
@@ -457,9 +469,7 @@ export default {
     },
     getCluster () {
       getClusterListAPI().then(res => {
-        this.allCluster = res.filter(element => {
-          return element.status === 'normal'
-        })
+        this.allCluster = res
       })
     }
   },

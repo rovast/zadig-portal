@@ -57,7 +57,7 @@
                     </el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item v-if="!isEdit" label="指定集群资源" v-show="activeName !=='advance'" prop="cluster_ids">
+                <el-form-item v-if="!isEdit && projectForm.product_feature.basic_facility === 'kubernetes'" label="指定集群资源" v-show="activeName !=='advance'" prop="cluster_ids">
                   <el-select filterable multiple v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源" style="width: 100%;">
                     <el-option v-for="cluster in allCluster"
                          :key="cluster.id"
@@ -443,6 +443,7 @@ export default {
             ) {
               this.projectForm.product_feature.deploy_type = 'k8s'
               this.projectForm.product_feature.create_env_type = 'system'
+              this.projectForm.cluster_ids = []
             }
             this.createProject(this.projectForm)
           }

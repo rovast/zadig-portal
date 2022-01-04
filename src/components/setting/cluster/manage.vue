@@ -105,8 +105,9 @@
           </el-form-item>
           <el-button type="text" @click="expandAdvanced = !expandAdvanced">高级配置<i :class="{'el-icon-arrow-right': !expandAdvanced,'el-icon-arrow-down': expandAdvanced}"></i></el-button>
           <template v-if="expandAdvanced">
-            <el-form-item label="指定项目范围">
-              <el-select v-model="cluster.advanced_config.project_names" placeholder="未选择项目表示应用到所有项目" size="small" style="width: 100%;" filterable multiple>
+            <el-form-item label="指定项目范围" prop="advanced_config.project_names">
+              <el-select v-model="cluster.advanced_config.project_names" placeholder="请选择项目" size="small" style="width: 100%;" filterable multiple>
+                <el-option label="全部项目" value=""></el-option>
                 <el-option v-for="name in projectNames" :key="name" :label="name" :value="name"></el-option>
               </el-select>
             </el-form-item>
@@ -271,7 +272,7 @@ const clusterInfo = {
   description: '',
   namespace: '',
   advanced_config: {
-    project_names: [],
+    project_names: [''],
     strategy: 'normal',
     node_labels: []
   }
@@ -330,6 +331,11 @@ export default {
         'advanced_config.node_labels': {
           required: true,
           message: '请选择标签',
+          type: 'array'
+        },
+        'advanced_config.project_names': {
+          required: true,
+          message: '请选择项目',
           type: 'array'
         }
       },
@@ -393,8 +399,8 @@ export default {
     clusterOperation (operate, current_cluster) {
       const fn = (cluster) => {
         const payload = cloneDeep(cluster)
-        if (!this.expandAdvanced) {
-          delete payload.advanced_config
+        if (payload.advanced_config.project_names.findIndex(name => name === '') !== -1) {
+          payload.advanced_config.project_names = this.projectNames
         }
         return payload
       }
@@ -510,13 +516,8 @@ export default {
               strategy: 'normal',
               node_labels: []
             }
-          } else {
-            if (!re.advanced_config.node_labels) {
-              re.advanced_config.node_labels = []
-            }
-            if (!re.advanced_config.project_names) {
-              re.advanced_config.project_names = []
-            }
+          } else if (!re.advanced_config.node_labels) {
+            re.advanced_config.node_labels = []
           }
           return re
         })

@@ -116,7 +116,8 @@ export default {
         }
       }
     },
-    envScene: { // updateRenderSet: update env variable;  updateEnv, createEnv
+    envScene: {
+      // updateRenderSet: update env variable;  updateEnv, createEnv
       type: String,
       required: true
     },
@@ -206,7 +207,12 @@ export default {
         {
           projectName: this.projectName,
           serviceName: this.selectedChart,
-          envName: envName === 'DEFAULT' ? '' : envName,
+          envName:
+            envName === 'DEFAULT'
+              ? ''
+              : this.baseEnvObj
+                ? this.baseEnvObj[envName]
+                : envName,
           format: kvFlag ? 'flatMap' : 'yaml',
           scene: this.envScene
         },
@@ -340,16 +346,22 @@ export default {
       }
     },
     copyEnvChartInfo (envName, initEnvName) {
-      const services = Object.keys(this.allChartNameInfo)
-        .filter(name => {
-          return this.allChartNameInfo[name][initEnvName]
-        })
-      if (this.allChartNameInfo[services[0]] && this.allChartNameInfo[services[0]][envName] && this.allChartNameInfo[services[0]][envName].copy) {
+      const services = Object.keys(this.allChartNameInfo).filter(name => {
+        return this.allChartNameInfo[name][initEnvName]
+      })
+      if (
+        this.allChartNameInfo[services[0]] &&
+        this.allChartNameInfo[services[0]][envName] &&
+        this.allChartNameInfo[services[0]][envName].copy
+      ) {
         return
       }
       services.forEach(name => {
         const charts = this.allChartNameInfo[name]
-        this.$set(charts, envName, { ...cloneDeep(charts[initEnvName]), copy: true })
+        this.$set(charts, envName, {
+          ...cloneDeep(charts[initEnvName]),
+          copy: true
+        })
       })
     }
   },

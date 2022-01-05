@@ -1259,7 +1259,8 @@ export default {
     },
     async serviceName (value) {
       if (value) {
-        this.loading = true
+        // TODO: the reason of page show error is uncertain
+        // this.loading = true
         const pmServiceName = this.serviceName
         const projectName = this.projectName
         const envNameList = []
@@ -1295,7 +1296,7 @@ export default {
           } else {
             this.$set(this.buildConfig, 'service_name', this.pmService.service_name)
           }
-          this.loading = false
+          // this.loading = false
         }
       };
     }

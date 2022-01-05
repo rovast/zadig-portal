@@ -92,7 +92,7 @@
               </div>
             </el-col>
           </el-row>
-          <el-row :gutter="20" v-if="envSource===''||envSource==='spock' || envSource==='helm'">
+          <el-row :gutter="20" v-if="!pmServiceList.length">
             <el-col :span="3">
               <div class="grid-content">镜像仓库:</div>
             </el-col>

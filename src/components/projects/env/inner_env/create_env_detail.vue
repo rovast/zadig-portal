@@ -804,6 +804,9 @@ export default {
           picked2D.push(picked1D)
           const payload = this.$utils.cloneObj(this.projectConfig)
           payload.source = 'spock'
+          if (this.projectInfo.product_feature && this.projectInfo.product_feature.basic_facility === 'cloud_host') {
+            payload.source = 'pm'
+          }
           payload.namespace = payload.defaultNamespace
           const envType = 'test'
           this.startDeployLoading = true

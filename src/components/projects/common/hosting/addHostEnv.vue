@@ -115,6 +115,7 @@ export default {
         }
         return element.status === 'normal'
       })
+      this.changeCluster(this.form.cluster_id)
     },
     changeCluster (clusterId) {
       this.hostingNamespace = []

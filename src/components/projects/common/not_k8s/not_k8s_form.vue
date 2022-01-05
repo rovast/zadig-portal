@@ -590,7 +590,7 @@
   </div>
 </template>
 <script>
-import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getAllAppsAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
+import { serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getAllAppsAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
 import BuildEnv from '@/components/projects/build/build_env.vue'
 import Editor from 'vue2-ace-bind'
 import ValidateSubmit from '@utils/validate_async'
@@ -697,7 +697,6 @@ export default {
       allCodeHosts: [],
       allHost: [],
       allHostLabels: [],
-      envNameList: [],
       codeInfo: {},
       createRules: {
         service_name: [
@@ -1262,18 +1261,6 @@ export default {
         this.loading = true
         const pmServiceName = this.serviceName
         const projectName = this.projectName
-        const envNameList = []
-        const resList = await listProductAPI(projectName).catch(error => console.log(error))
-        if (resList) {
-          resList.forEach(element => {
-            if (element.product_name === this.projectName) {
-              envNameList.push(
-                element.name
-              )
-            }
-          })
-        }
-        this.envNameList = envNameList
         const res = await serviceTemplateAPI(pmServiceName, 'pm', projectName).catch(error => console.log(error))
         if (res) {
           this.pmService = res

@@ -229,17 +229,14 @@ export default {
       return !this.isHelm && !this.isPm
     },
     imageRegistryByEnv () {
-      if (!this.currentProjectEnvs.length || !this.runner.namespace) {
+      // host environment does't have registry
+      if (this.isPm || !this.currentProjectEnvs.length || !this.runner.namespace) {
         return
       }
       const namespace = this.runner.namespace
-      const env = this.currentProjectEnvs.find(env => env.name === namespace)
-      // host environment has not registry
-      if (env.source === 'pm') {
-        return
-      }
-      if (env.registry_id) {
-        const registry = this.imageRegistry.find(registry => registry.id === env.registry_id)
+      const registryId = this.currentProjectEnvs.find(env => env.name === namespace).registry_id
+      if (registryId) {
+        const registry = this.imageRegistry.find(registry => registry.id === registryId)
         if (registry) {
           return `${registry.reg_addr}/${registry.namespace}`
         }

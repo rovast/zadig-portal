@@ -173,9 +173,9 @@
                 :label="item"
                 :value="item">
               </el-option>
-              <el-option v-if="!buildNames.includes(`${projectName}-build-${name}`)"
-                :label="`${projectName}-build-${name}`"
-                :value="`${projectName}-build-${name}`">
+              <el-option v-if="!buildNames.includes(defaultBuildName)"
+                :label="defaultBuildName"
+                :value="defaultBuildName">
               </el-option>
             </el-select>
           </el-form-item>
@@ -1257,8 +1257,6 @@ export default {
     async loadPage () {
       this.configDataLoading = true
       const projectName = this.projectName
-      this.$set(this.buildConfig, 'name', this.projectName + '-build-' + this.name)
-      this.$set(this.jenkinsBuild, 'name', this.projectName + '-build-' + this.name)
       const response = await getServiceTargetsAPI(projectName).catch(error => console.log(error))
       if (response) {
         this.serviceTargets = response.map(element => {
@@ -1308,10 +1306,13 @@ export default {
         const target = item ? [item] : []
         this.$set(this.buildConfig, 'targets', target)
         this.$set(this.jenkinsBuild, 'targets', target)
-        getBuildConfigsAPI(projectName).then(res => {
+        await getBuildConfigsAPI(projectName).then(res => {
           this.buildInfos = res
         })
       }
+      const hasBuild = this.buildNames.includes(this.defaultBuildName)
+      this.$set(this.buildConfig, 'name', hasBuild ? '' : this.defaultBuildName)
+      this.$set(this.jenkinsBuild, 'name', hasBuild ? '' : this.defaultBuildName)
       this.configDataLoading = false
       getAllAppsAPI().then((response) => {
         const apps = this.$utils.sortVersion(response, 'name', 'asc')
@@ -1380,6 +1381,9 @@ export default {
       } else {
         return []
       }
+    },
+    defaultBuildName () {
+      return this.projectName + '-build-' + this.name
     }
   },
   watch: {

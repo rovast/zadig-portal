@@ -131,7 +131,7 @@
                     </el-col>
                   </el-row>
                 </el-form-item>
-                <div v-if="!isEdit && projectForm.product_feature.basic_facility === 'kubernetes'" v-show="activeName !=='advance'">
+                <div v-if="!isEdit" v-show="activeName !=='advance'">
                   <el-button type="text" @click="showAdvanced = !showAdvanced">
                     高级配置
                     <i :class="{'el-icon-arrow-right': !showAdvanced, 'el-icon-arrow-down': showAdvanced }"></i>
@@ -453,8 +453,8 @@ export default {
             ) {
               this.projectForm.product_feature.deploy_type = 'k8s'
               this.projectForm.product_feature.create_env_type = 'system'
-              delete this.projectForm.cluster_ids
-            } else if (!this.showAdvanced || this.projectForm.cluster_ids.includes('')) {
+            }
+            if (!this.showAdvanced || this.projectForm.cluster_ids.includes('')) {
               this.projectForm.cluster_ids = this.allCluster.map(cluster => cluster.id)
             }
             this.createProject(this.projectForm)

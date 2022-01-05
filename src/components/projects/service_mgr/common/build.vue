@@ -160,14 +160,15 @@
                        size="small"
                        @change="changeBuildName"
                        allow-create
-                       filterable>
+                       filterable
+                       clearable>
               <el-option
                 v-for="item in buildNames"
                 :key="item"
                 :label="item"
                 :value="item">
               </el-option>
-              <el-option
+              <el-option v-if="!buildNames.includes(`${projectName}-build-${buildServiceName}`)"
                 :label="`${projectName}-build-${buildServiceName}`"
                 :value="`${projectName}-build-${buildServiceName}`">
               </el-option>

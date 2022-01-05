@@ -92,7 +92,8 @@
               </div>
             </el-col>
           </el-row>
-          <el-row :gutter="20" v-if="envSource===''||envSource==='spock' || envSource==='helm'">
+          <!-- host project don't show registry -->
+          <el-row :gutter="20" v-if="!isPmService">
             <el-col :span="3">
               <div class="grid-content">镜像仓库:</div>
             </el-col>

@@ -96,7 +96,7 @@
         </div>
       </div>
       <div class="controls__wrap">
-          <div class="controls__right">
+          <div v-hasPermi="{projectName: projectName, action: 'config_environment'}" class="controls__right">
             <el-button type="primary"
                        size="small"
                        class="save-btn"

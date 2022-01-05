@@ -67,24 +67,24 @@
                            :to="`/v1/projects/detail/${projectName}/pipelines/multi/${workflow.name}`">
                 {{workflow.name}}
               </router-link>
-              <span @click="deleteConnection(scope.row.name,workflow)"
+              <span v-hasPermi="{projectName: projectName, action: 'edit_test'}" @click="deleteConnection(scope.row.name,workflow)"
                     class="delete-connection el-icon-remove"></span>
             </div>
           </div>
-          <span @click="addConnection(scope.row.name)"
+          <span v-hasPermi="{projectName: projectName, action: 'edit_test'}" @click="addConnection(scope.row.name)"
                 class="add-connection el-icon-circle-plus">添加</span>
         </template>
       </el-table-column>
       <el-table-column label="操作"
                        width="200px">
         <template slot-scope="scope">
-          <span class="menu-item el-icon-video-play"
+          <span v-hasPermi="{projectName: projectName, action: 'run_test'}" class="menu-item el-icon-video-play"
                 @click="runTests(scope.row.name)"><span style="font-size: 18px;"> 执行</span></span>
-          <router-link
+          <router-link v-hasPermi="{projectName: projectName, action: 'edit_test'}"
                        :to="`/v1/${basePath}/detail/${scope.row.product_name}/test/function/${scope.row.name}`">
             <span class="menu-item el-icon-setting"></span>
           </router-link>
-          <el-dropdown>
+          <el-dropdown v-hasPermi="{projectName: projectName, action: 'delete_test'}">
             <span class="el-dropdown-link">
               <i class="menu-item  el-icon-s-operation"></i>
             </span>

@@ -1579,6 +1579,10 @@ export function queryUserBindingsAPI (uid, projectName = '') { // 查询用户�
   return http.get(`/api/v1/userbindings?uid=${uid}&projectName=${projectName}`)
 }
 
+export function getProjectPermissionAPI (projectName = '', uid) {
+  return http.get(`/api/v1/policy/permission/${uid}?projectName=${projectName}`)
+}
+
 export function getArtifactFileAPI (payload, id) {
   return http.post(`/api/aslan/system/s3storage/${id}/releases/search?kind=file`, payload)
 }

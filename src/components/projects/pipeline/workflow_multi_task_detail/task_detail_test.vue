@@ -179,7 +179,7 @@
 </template>
 
 <script>
-import mixin from '@utils/task_detail_mixin'
+import mixin from '@/mixin/killSSELogMixin'
 import { getWorkflowHistoryTestLogAPI } from '@api'
 
 export default {

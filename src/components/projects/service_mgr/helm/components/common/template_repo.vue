@@ -94,7 +94,7 @@ export default {
   },
   computed: {
     ...mapState({
-      currentService: state => state.service_manage.currentService
+      currentService: state => state.serviceManage.currentService
     })
 
   },

@@ -7,6 +7,9 @@ export const INJECT_ROLE = 'INJECT_ROLE'
 // Project List
 export const SET_PROJECT_LIST = 'SET_PROJECT_LIST'
 
+// Project Permission
+export const SET_PROJECT_PERMISSION = 'SET_PROJECT_PERMISSION'
+
 // Install Status
 export const SET_SIGNUP_STATUS = 'SET_SIGNUP_STATUS'
 

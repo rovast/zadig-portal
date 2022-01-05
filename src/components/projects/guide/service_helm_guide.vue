@@ -56,7 +56,7 @@ export default {
       return this.$route.params.project_name
     },
     ...mapState({
-      showNext: (state) => state.service_manage.showNext
+      showNext: (state) => state.serviceManage.showNext
     }),
     serviceName () {
       return this.$route.query.service_name

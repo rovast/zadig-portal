@@ -421,10 +421,10 @@ export default {
       return envNameList
     },
     ...mapState({
-      service: state => state.service_manage.serviceList,
-      dialogVisible: state => state.service_manage.serviceDialogVisible,
-      currentService: state => state.service_manage.currentService,
-      updateEnv: state => state.service_manage.updateEnv
+      service: state => state.serviceManage.serviceList,
+      dialogVisible: state => state.serviceManage.serviceDialogVisible,
+      currentService: state => state.serviceManage.currentService,
+      updateEnv: state => state.serviceManage.updateEnv
     }),
     filteredNodeData () {
       return this.nodeData.filter(node => {

@@ -41,7 +41,7 @@
             </el-alert>
           </template>
           <div class="add-test">
-            <router-link :to="`/v1/${basePath}/detail/${projectName}/test/add/function`">
+            <router-link  v-hasPermi="{projectName: projectName, action: 'create_test'}" :to="`/v1/${basePath}/detail/${projectName}/test/add/function`">
               <el-button size="small"
                          type="primary"
                          plain>添加</el-button>

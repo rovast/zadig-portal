@@ -108,7 +108,7 @@
     </div>
 </template>
 <script>
-import mixin from '@utils/service_module_mixin'
+import mixin from '@/mixin/serviceModuleMixin'
 import serviceAsideK8s from './k8s/service_aside.vue'
 import serviceEditorK8s from './k8s/service_editor.vue'
 import serviceTree from './common/service_tree.vue'

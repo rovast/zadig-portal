@@ -38,13 +38,16 @@
               </a>
             </div>
           </el-col>
-          <el-col :span="6">
+          <el-col v-if="testingv2.status!=='running'"
+                  :span="6">
             <div class="grid-content item-title">
-              <i class="iconfont icontest"></i> 测试任务
+              <i class="iconfont iconshijian"></i> 持续时间
             </div>
           </el-col>
-          <el-col :span="6">
-            <div class="grid-content item-desc">{{ serviceName }}</div>
+          <el-col v-if="testingv2.status!=='running'"
+                  :span="6">
+            <span class="item-desc">{{$utils.timeFormat(testingv2.end_time -
+              testingv2.start_time)}}</span>
           </el-col>
         </el-row>
         <el-row :gutter="0"
@@ -61,7 +64,7 @@
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-title">
-              <i class="iconfont iconinfo"></i> 构建信息
+              <i class="iconfont iconinfo"></i> 代码信息
             </div>
           </el-col>
           <el-col :span="6">
@@ -144,19 +147,6 @@
                       v-else-if="build.source==='codehub'">{{build.commit_id.substring(0, 8)}}</span>
               </span>
             </el-tooltip>
-          </el-col>
-        </el-row>
-        <el-row :gutter="0">
-          <el-col v-if="testingv2.status!=='running'"
-                  :span="6">
-            <div class="grid-content item-title">
-              <i class="iconfont iconshijian"></i> 持续时间
-            </div>
-          </el-col>
-          <el-col v-if="testingv2.status!=='running'"
-                  :span="6">
-            <span class="item-desc">{{$utils.timeFormat(testingv2.end_time -
-              testingv2.start_time)}}</span>
           </el-col>
         </el-row>
       </div>

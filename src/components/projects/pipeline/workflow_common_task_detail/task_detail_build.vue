@@ -63,7 +63,7 @@
             </el-col>
             <el-col :span="6">
               <div class="grid-content item-title">
-                <i class="iconfont iconinfo"></i> 构建信息
+                <i class="iconfont iconinfo"></i> 代码信息
               </div>
             </el-col>
             <el-col :span="6">

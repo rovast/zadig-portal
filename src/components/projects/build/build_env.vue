@@ -164,11 +164,13 @@ export default {
         this.$set(this.pre_build, 'namespace', '')
 
         const local = this.clusters.find(cluster => cluster.local)
-        this.pre_build.cluster_id = local ? local.id : ''
-        this.getProductHostingNamespace(this.pre_build.cluster_id).then(() => {
-          const ns = this.namespaces.find(ns => ns.current)
-          this.pre_build.namespace = ns ? ns.name : ''
-        })
+        if (local) {
+          this.pre_build.cluster_id = local.id
+          this.getProductHostingNamespace(this.pre_build.cluster_id).then(() => {
+            const ns = this.namespaces.find(ns => ns.current)
+            this.pre_build.namespace = ns ? ns.name : ''
+          })
+        }
       }
 
       if (this.isCreate) {

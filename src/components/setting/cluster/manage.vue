@@ -107,7 +107,6 @@
           <template v-if="expandAdvanced">
             <el-form-item label="指定项目范围" prop="advanced_config.project_names">
               <el-select v-model="cluster.advanced_config.project_names" placeholder="请选择项目" size="small" style="width: 100%;" filterable multiple>
-                <el-option label="全部项目" value=""></el-option>
                 <el-option v-for="name in projectNames" :key="name" :label="name" :value="name"></el-option>
               </el-select>
             </el-form-item>
@@ -271,7 +270,7 @@ const clusterInfo = {
   description: '',
   namespace: '',
   advanced_config: {
-    project_names: [''],
+    project_names: [],
     strategy: 'normal',
     node_labels: []
   }
@@ -370,6 +369,8 @@ export default {
           labels: [],
           data: []
         }
+      } else if (!this.isEdit) {
+        this.cluster.advanced_config.project_names = cloneDeep(this.projectNames)
       }
     }
   },
@@ -396,17 +397,10 @@ export default {
       return `kubectl apply -f "${this.$utils.getOrigin()}/api/aslan/cluster/agent/${this.accessCluster.id}/agent.yaml${this.deployType === 'Deployment' ? '?type=deploy' : ''}"`
     },
     clusterOperation (operate, current_cluster) {
-      const fn = (cluster) => {
-        const payload = cloneDeep(cluster)
-        if (payload.advanced_config.project_names.findIndex(name => name === '') !== -1) {
-          payload.advanced_config.project_names = this.projectNames
-        }
-        return payload
-      }
       if (operate === 'add') {
         this.$refs.cluster.validate(valid => {
           if (valid) {
-            const payload = fn(this.cluster)
+            const payload = cloneDeep(this.cluster)
             this.dialogClusterFormVisible = false
             this.addCluster(payload)
           } else {
@@ -435,7 +429,7 @@ export default {
         this.$refs.cluster.validate(valid => {
           if (valid) {
             const id = this.cluster.id
-            const payload = fn(this.cluster)
+            const payload = cloneDeep(this.cluster)
             this.dialogClusterFormVisible = false
             this.updateCluster(id, payload)
           } else {
@@ -509,13 +503,7 @@ export default {
           this.$message.error(`未找到本地集群！`)
         }
         this.allCluster = res.map(re => {
-          if (!re.advanced_config) {
-            re.advanced_config = {
-              project_names: [],
-              strategy: 'normal',
-              node_labels: []
-            }
-          } else if (!re.advanced_config.node_labels) {
+          if (!re.advanced_config.node_labels) {
             re.advanced_config.node_labels = []
           }
           return re

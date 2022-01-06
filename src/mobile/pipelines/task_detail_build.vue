@@ -33,7 +33,7 @@
         </van-row>
         <van-row v-if="buildv2.job_ctx.builds">
           <div>
-            <span>构建信息</span>
+            <span>代码信息</span>
           </div>
         </van-row>
         <van-row :gutter="0"

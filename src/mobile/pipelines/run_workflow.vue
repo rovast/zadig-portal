@@ -432,9 +432,9 @@ export default {
         return true
       } else {
         if (invalidRepo.length > 0) {
-          Notify({ type: 'warning', message: invalidRepo.join(',') + ' 代码库不存在 Release Tag,请重新选择构建方式' })
+          Notify({ type: 'warning', message: invalidRepo.join(',') + ' 代码库不存在 Release Tag，请重新选择构建方式' })
         } else if (emptyValue.length > 0) {
-          Notify({ type: 'warning', message: emptyValue.join(',') + ' 代码库尚未选择构建信息' })
+          Notify({ type: 'warning', message: emptyValue.join(',') + ' 代码库尚未选择信息' })
         }
         return false
       }

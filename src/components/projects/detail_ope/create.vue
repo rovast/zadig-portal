@@ -138,13 +138,10 @@
                   </el-button>
                   <el-form-item v-show="showAdvanced" label="指定集群资源" prop="cluster_ids">
                     <el-select filterable multiple v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源" style="width: 100%;">
-                      <el-option label="全部集群" value="">
-                      </el-option>
                       <el-option v-for="cluster in allCluster"
                           :key="cluster.id"
                           :label="$utils.showClusterName(cluster)"
-                          :value="cluster.id"
-                          :disabled="cluster.status !== 'normal'">
+                          :value="cluster.id">
                       </el-option>
                     </el-select>
                   </el-form-item>
@@ -279,7 +276,7 @@ export default {
         project_name: '',
         product_name: '',
         admins: [],
-        cluster_ids: [''],
+        cluster_ids: [],
         timeout: null,
         desc: '',
         enabled: true,
@@ -454,9 +451,6 @@ export default {
               this.projectForm.product_feature.deploy_type = 'k8s'
               this.projectForm.product_feature.create_env_type = 'system'
             }
-            if (!this.showAdvanced || this.projectForm.cluster_ids.includes('')) {
-              this.projectForm.cluster_ids = this.allCluster.map(cluster => cluster.id)
-            }
             this.createProject(this.projectForm)
           }
         } else {
@@ -470,6 +464,7 @@ export default {
     getCluster () {
       getClusterListAPI().then(res => {
         this.allCluster = res
+        this.projectForm.cluster_ids = res.map(cluster => cluster.id)
       })
     }
   },

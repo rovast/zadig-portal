@@ -7,6 +7,7 @@
                tab-position="right">
         <el-tab-pane label="基本信息"></el-tab-pane>
         <el-tab-pane label="构建脚本"></el-tab-pane>
+        <el-tab-pane v-if="isOnboarding" label="资源配置"></el-tab-pane>
         <el-tab-pane label="部署配置"></el-tab-pane>
         <el-tab-pane label="探活配置"></el-tab-pane>
       </el-tabs>
@@ -18,7 +19,6 @@
                :rules="createRules"
                label-position="left"
                label-width="90px">
-
         <el-row>
           <el-col :span="7">
             <el-form-item prop="service_name"
@@ -366,6 +366,85 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
+      <div v-if="isOnboarding" id="资源配置"
+           class="section scroll">
+        <el-form :model="pmService"
+                 :inline="true"
+                 ref="envConfig"
+                 label-width="120px"
+                 label-position="top">
+          <span class="item-title">资源配置</span>
+          <div class="divider item"></div>
+          <div class="">
+            <el-row v-for="(item,item_index) in pmService.env_configs"
+                    class="env-config"
+                    :key="item_index">
+              <el-col :span="3">
+                <el-form-item :label="item_index===0?'环境':''"
+                              :prop="'env_configs.'+item_index+'.env_name'"
+                              :rules="{required: false, message: '请选择部署环境', trigger: 'blur'}">
+                  <div class="env-name">{{item.env_name}}</div>
+                </el-form-item>
+              </el-col>
+              <el-col :span="5">
+                <div class="">
+                  <el-form-item :label="item_index===0?'主机':''"
+                                :prop="'env_configs.'+item_index+'.host_ids'"
+                                :rules="{required: false, message: '请选择主机', trigger: 'blur'}">
+                    <el-button v-if="allHost.length===0"
+                               @click="createHost"
+                               type="text">创建主机</el-button>
+                    <el-select v-else
+                              size="mini"
+                              multiple
+                              filterable
+                              v-model="item.host_ids"
+                              placeholder="请选择主机">
+                      <el-option-group
+                        label="主机标签">
+                        <el-option
+                          v-for="(item,index) in allHostLabels"
+                          :key="index"
+                          :label="`${item}`"
+                          :value="item">
+                        </el-option>
+                      </el-option-group>
+                      <el-option-group
+                        label="主机列表">
+                        <el-option
+                          v-for="item in allHost"
+                          :key="item.name"
+                           :label="`${item.name}-${item.ip}`"
+                          :value="item.id">
+                        </el-option>
+                      </el-option-group>
+                    </el-select>
+                  </el-form-item>
+                </div>
+              </el-col>
+              <el-col v-if="!isOnboarding"
+                      :span="8">
+                <el-form-item :label="item_index===0?'操作':''">
+                  <div class="app-operation">
+                    <el-button v-if="item.showDelete"
+                               @click="deleteEnvConfig(item_index)"
+                               type="danger"
+                               icon="el-icon-delete"
+                               size="mini"
+                               circle></el-button>
+                    <el-tooltip v-else
+                                effect="dark"
+                                content="环境已存在，不可删除配置"
+                                placement="top">
+                      <span><i class="el-icon-question"></i></span>
+                    </el-tooltip>
+                  </div>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+        </el-form>
+      </div>
       <div id="部署配置"
            class="section scroll">
         <el-form ref="deploy-env"
@@ -590,7 +669,7 @@
   </div>
 </template>
 <script>
-import { serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getAllAppsAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
+import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getAllAppsAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
 import BuildEnv from '@/components/projects/build/build_env.vue'
 import Editor from 'vue2-ace-bind'
 import ValidateSubmit from '@utils/validate_async'
@@ -697,6 +776,7 @@ export default {
       allCodeHosts: [],
       allHost: [],
       allHostLabels: [],
+      envNameList: [],
       codeInfo: {},
       createRules: {
         service_name: [
@@ -873,6 +953,30 @@ export default {
         this.configDataLoading = false
       })
     },
+    initEnvConfig () {
+      this.pmService.env_configs = [{
+        env_name: 'dev',
+        host_ids: []
+      }, {
+        env_name: 'qa',
+        host_ids: []
+      }]
+    },
+    createHost () {
+      this.dialogHostCreateFormVisible = true
+    },
+    addHostOperation () {
+      this.$refs['add-host'].saveHost()
+        .then(() => {
+          getHostLabelListAPI().then((res) => {
+            this.allHostLabels = res
+          })
+          getHostListAPI().then((res) => {
+            this.dialogHostCreateFormVisible = false
+            this.allHost = res
+          })
+        })
+    },
     changeAdvancedShow (index) {
       if (this.showCheckStatusAdvanced[index]) {
         this.$set(this.showCheckStatusAdvanced, index, false)
@@ -967,6 +1071,35 @@ export default {
         callback(new Error('请输入正确的端口范围'))
       } else {
         callback()
+      }
+    },
+    addEnvConfig (index) {
+      this.$refs.envConfig.validate((valid) => {
+        if (valid) {
+          this.pmService.env_configs.push({
+            env_name: '',
+            host_ids: []
+          })
+        } else {
+          return false
+        }
+      })
+    },
+    addFirstEnvConfig () {
+      this.pmService.env_configs.push({
+        env_name: '',
+        host_ids: []
+      })
+    },
+    deleteEnvConfig (index) {
+      this.pmService.env_configs.splice(index, 1)
+    },
+    checkEnvConfig (val) {
+      if (val) {
+        if (this.pmService.env_configs.length === 0 || this.pmService.env_configs[0].host_ids.length === 0) {
+          this.$message({ type: 'error', message: '请先为部署环境关联主机，再配置探活' })
+          this.check_status_enabled = false
+        }
       }
     },
     addFirstCacheDir () {
@@ -1083,6 +1216,7 @@ export default {
       }]
       const buildConfigPayload = this.$utils.cloneObj({ targets, ...this.buildConfig })
       buildConfigPayload.product_name = this.projectName
+      // 处理主机标签
       const pmServicePayload =
       {
         product_name: this.projectName,
@@ -1090,14 +1224,27 @@ export default {
         visibility: 'private',
         type: 'pm',
         build_name: buildConfigPayload.name,
-        health_checks: this.checkStatusEnabled ? this.pmService.health_checks : []
+        health_checks: this.check_status_enabled ? this.pmService.health_checks : [],
+        env_configs: this.pmService.env_configs
       }
+      const hostIds = this.allHost.map(item => {
+        return item.id
+      })
+      // 处理主机标签
+      pmServicePayload.env_configs.forEach(element => {
+        element.labels = element.host_ids.filter(item => {
+          return (hostIds.indexOf(item) < 0)
+        })
+        element.host_ids = element.host_ids.filter(item => {
+          return (hostIds.indexOf(item) >= 0)
+        })
+      })
       const combinePayload = {
         pm_service_tmpl: pmServicePayload,
         build: buildConfigPayload
       }
-      const refs = [this.$refs.addConfigForm]
-      if (this.checkStatusEnabled) {
+      const refs = [this.$refs.addConfigForm, this.$refs.envConfig]
+      if (this.check_status_enabled) {
         refs.push(this.$refs.healthCheck)
       }
       Promise.all(refs.map(r => r.validate())).then(() => {
@@ -1131,7 +1278,7 @@ export default {
       if (!res[1]) {
         return
       }
-      if (!this.checkStatusEnabled) {
+      if (!this.check_status_enabled) {
         delete this.pmService.health_checks
       }
       if (!this.useSshKey) {
@@ -1145,8 +1292,20 @@ export default {
         pm_service_tmpl: pmServicePayload,
         build: buildConfigPayload
       }
+      const hostIds = this.allHost.map(item => {
+        return item.id
+      })
+      // 处理主机标签
+      pmServicePayload.env_configs.forEach(element => {
+        element.labels = element.host_ids.filter(item => {
+          return (hostIds.indexOf(item) < 0)
+        })
+        element.host_ids = element.host_ids.filter(item => {
+          return (hostIds.indexOf(item) >= 0)
+        })
+      })
       const refs = [this.$refs.addConfigForm]
-      if (this.checkStatusEnabled) {
+      if (this.check_status_enabled) {
         refs.push(this.$refs.healthCheck)
       }
       Promise.all(refs.map(r => r.validate())).then(() => {
@@ -1227,6 +1386,18 @@ export default {
       getBuildConfigsAPI(projectName).then((res) => {
         this.builds = res
       })
+      if (!this.isEdit) {
+        listProductAPI(projectName).then(res => {
+          res.forEach(element => {
+            if (element.projectName === this.projectName) {
+              this.pmService.env_configs.push({
+                env_name: element.name,
+                host_ids: []
+              })
+            }
+          })
+        })
+      }
       getAllAppsAPI().then((res) => {
         const apps = this.$utils.sortVersion(res, 'name', 'asc')
         this.allApps = apps.map((app) => {
@@ -1262,6 +1433,19 @@ export default {
         // this.loading = true
         const pmServiceName = this.serviceName
         const projectName = this.projectName
+        const env_configs = []
+        const envNameList = []
+        const resList = await listProductAPI(projectName).catch(error => console.log(error))
+        if (resList) {
+          resList.forEach(element => {
+            if (element.product_name === this.projectName) {
+              envNameList.push(
+                element.name
+              )
+            }
+          })
+        }
+        this.envNameList = envNameList
         const res = await serviceTemplateAPI(pmServiceName, 'pm', projectName).catch(error => console.log(error))
         if (res) {
           this.pmService = res
@@ -1277,6 +1461,30 @@ export default {
               healthy_threshold: null,
               unhealthy_threshold: null
             }])
+          }
+          if (res.env_configs && res.env_configs.length > 0) {
+            this.pmService.env_configs.forEach(confItem => {
+              confItem.host_ids = confItem.host_ids.concat(confItem.labels)
+              if (envNameList.indexOf(confItem.env_name) === -1) {
+                this.$set(confItem, 'showDelete', true)
+              }
+            })
+            envNameList.forEach(envItem => {
+              if (!(this.pmService.env_configs.filter(e => e.env_name === envItem).length > 0)) {
+                env_configs.push({
+                  env_name: envItem,
+                  host_ids: []
+                })
+              }
+            })
+          } else {
+            envNameList.forEach(envItem => {
+              env_configs.push({
+                env_name: envItem,
+                host_ids: []
+              })
+            })
+            this.$set(this.pmService, 'env_configs', env_configs)
           }
           if (this.pmService.build_name) {
             this.syncBuildConfig(this.pmService.build_name, projectName)

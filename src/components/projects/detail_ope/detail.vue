@@ -61,8 +61,7 @@
               基本信息
             </h4>
             <div class="info-list">
-              <el-row type="flex"
-                      justify="space-between">
+              <el-row type="flex" :gutter="20">
                 <el-col v-hasPermi="{projectName: projectName, action: 'get_workflow'}" :span="4">
                   <router-link :to="`/v1/projects/detail/${projectName}/pipelines`">
                     <div class="card">

@@ -26,10 +26,10 @@
       </article>
     </section>
     <footer>
-      <el-button type="text" size="small" icon="el-icon-finished">确认</el-button>
+      <el-button type="text" size="small" icon="el-icon-finished" @click="createEnvAndWorkflow">确认</el-button>
     </footer>
 
-    <InitEnvDialog :visible.sync="dialogVisible" :currentEnv="currentEnv" :envObj="collaborationData.product"></InitEnvDialog>
+    <InitEnvDialog ref="envDialogRef" :visible.sync="dialogVisible" :currentEnv="currentEnv" :envObj="collaborationData.product"></InitEnvDialog>
   </div>
 </template>
 
@@ -81,6 +81,12 @@ export default {
   computed: {
     projectName () {
       return this.$route.params.project_name
+    }
+  },
+  methods: {
+    createEnvAndWorkflow () {
+      console.log('确定')
+      this.$refs.envDialogRef.getEnvInfo()
     }
   },
   created () {

@@ -4,9 +4,8 @@
       <EnvValues
         ref="envValuesRef"
         :envName="handledEnv"
-        :baseEnvName="baseEnvObj && baseEnvObj[handledEnv] || handledEnv"
-        @envYaml="saveEnvYaml"
-        :overrideYaml="defaultEnvValue && defaultEnvValue.defaultValues"
+        :baseEnvObj="baseEnvObj"
+        :defaultEnvsValues="defaultEnvsValues"
       ></EnvValues>
     </el-collapse-item>
     <el-collapse-item :title="`${serviceVariableTitle}变量`" name="service">
@@ -83,10 +82,6 @@ export default {
     }
   },
   methods: {
-    saveEnvYaml (data) {
-      const envName = data.envName || 'DEFAULT'
-      this.$set(this.defaultEnvsValues, envName, data.defaultValues)
-    },
     validate () {
       const valid = []
       valid.push(this.$refs.envValuesRef.validate())

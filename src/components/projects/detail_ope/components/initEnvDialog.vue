@@ -81,6 +81,16 @@ export default {
       this.variables = this.allEnvVariables[nVal].usedData
     }
   },
+  methods: {
+    getEnvInfo () {
+      if (!this.$refs.helmEnvTemplateRef) {
+        console.log('env info has not')
+        return
+      }
+      const { envInfo, chartInfo } = this.$refs.helmEnvTemplateRef.getAllInfo()
+      console.log('env info', envInfo, chartInfo)
+    }
+  },
   components: {
     VarList,
     HelmEnvTemplate

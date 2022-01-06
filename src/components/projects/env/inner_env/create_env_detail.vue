@@ -841,7 +841,7 @@ export default {
       this.$router.back()
     },
     createHost () {
-      this.$router('/v1/system/host')
+      this.$router.push('/v1/system/host')
     },
     quickInitImage () {
       const select = this.quickSelection

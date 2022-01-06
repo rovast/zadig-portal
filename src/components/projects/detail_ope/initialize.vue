@@ -21,7 +21,13 @@
             <div class="item-name">{{env.name}}</div>
             <div class="item-desc">{{env.description || placeholder}}</div>
           </div>
-          <el-button type="primary" plain size="small" @click="dialogVisible=true; currentEnv=env.name;">环境变量</el-button>
+          <el-button
+            v-if="env.collaboration_type === 'new'"
+            type="primary"
+            plain
+            size="small"
+            @click="dialogVisible=true; currentEnv=env.name;"
+          >环境变量</el-button>
         </div>
       </article>
     </section>
@@ -36,6 +42,7 @@
 <script>
 import InitEnvDialog from './components/initEnvDialog.vue'
 import bus from '@utils/event_bus'
+import { getNewCollaborationAPI, createNewCollaborationAPI } from '@api'
 export default {
   data () {
     return {
@@ -57,6 +64,7 @@ export default {
             description: 'xxxx'
           },
           {
+            collaboration_type: 'new',
             name: 'environment2-dev',
             base_name: 'dev',
             description: 'xxxx'
@@ -67,6 +75,7 @@ export default {
             description: 'xxxx'
           },
           {
+            collaboration_type: 'new',
             name: 'environment4-qa',
             base_name: 'qa',
             description: 'xxxx'
@@ -87,6 +96,16 @@ export default {
     createEnvAndWorkflow () {
       console.log('确定')
       this.$refs.envDialogRef.getEnvInfo()
+      const payload = this.collaborationData
+      // createNewCollaborationAPI(this.projectName, payload).then(res => {
+      //   this.$message.success(`用户初始环境创建成功！`)
+      this.$router.go(-1)
+      // })
+    },
+    getNewCollaboration () {
+      getNewCollaborationAPI(this.projectName).then(res => {
+        this.collaborationData = res
+      })
     }
   },
   created () {
@@ -103,6 +122,7 @@ export default {
       title: '',
       routerList: []
     })
+    this.getNewCollaboration()
   },
   components: {
     InitEnvDialog

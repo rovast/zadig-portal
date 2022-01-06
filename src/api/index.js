@@ -4,10 +4,12 @@ import store from 'storejs'
 import Element from 'element-ui'
 import errorMap from '@/utilities/errorMap'
 import Store from '../store'
+import Router from '../router'
 const specialAPIs = ['/api/aslan/system/operation', '/api/aslan/delivery/artifacts', '/api/aslan/environment/kube/workloads']
 const ignoreErrReq = '/api/aslan/services/validateUpdate/'
 const reqExps = [/api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/workloads/, /api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/groups/]
 const analyticsReq = 'https://api.koderover.com/api/operation/upload'
+const userInitEnvRoute = '/v1/projects/initialize/'
 const http = axios.create()
 const CancelToken = axios.CancelToken
 
@@ -100,6 +102,12 @@ http.interceptors.response.use(
       return response
     } else if (isInReg) {
       return response
+    } else if (response.data.code === 10000) {
+      const currentRoute = Router.history.current
+      if (currentRoute.fullPath.startsWith(userInitEnvRoute)) {
+        return
+      }
+      Router.push(`${userInitEnvRoute}${currentRoute.params.project_name}`)
     } else {
       return response.data
     }
@@ -1572,4 +1580,13 @@ export function queryUserBindingsAPI (uid, projectName = '') { // 查询用户�
 
 export function getArtifactFileAPI (payload, id) {
   return http.post(`/api/aslan/system/s3storage/${id}/releases/search?kind=file`, payload)
+}
+
+// initialize project workflow and environment
+export function getNewCollaborationAPI (projectName) {
+  return http.get(`/api/collaboration/collaborations/new?projectName=${projectName}`)
+}
+
+export function createNewCollaborationAPI (projectName, payload) {
+  return http.post(`/api/collaboration/collaborations/sync?projectName=${projectName}`, payload)
 }

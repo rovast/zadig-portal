@@ -21,7 +21,6 @@
 <script>
 import VarList from '@/components/projects/env/k8sPmEnv/varList.vue'
 import HelmEnvTemplate from '@/components/projects/env/env_detail/components/updateHelmEnvTemp.vue'
-import { cloneDeep } from 'lodash'
 
 export default {
   props: {
@@ -31,7 +30,6 @@ export default {
   },
   data () {
     return {
-      allEnvVariables: {},
       variables: []
     }
   },
@@ -56,8 +54,11 @@ export default {
       const envNames = []
       const envObj = {}
       this.envObj.forEach(env => {
-        envNames.push(env.name, env.base_name)
-        envObj[env.name] = env.base_name
+        // new environment can initialize environment variable
+        if (env.collaboration_type === 'new') {
+          envNames.push(env.name, env.base_name)
+          envObj[env.name] = env.base_name
+        }
       })
       return {
         envNames: [...new Set(envNames)],
@@ -67,18 +68,10 @@ export default {
   },
   watch: {
     currentEnv: async function (nVal, oVal) {
-      this.variables = []
-      if (!this.allEnvVariables[nVal]) {
-        console.log('如果是k8s，请求vars，如果是helm，组件自己请求数据')
-        this.$set(this.allEnvVariables, nVal, {
-          initData: [],
-          usedData: []
-        })
+      console.log('如果是k8s，使用 vars，如果是helm，组件自己请求数据')
+      if (deployType === 'k8s') {
+        this.variables = this.envObj.find(obj => obj.name === nVal).vars
       }
-      this.allEnvVariables[nVal].usedData = cloneDeep(
-        this.allEnvVariables[nVal].initData
-      )
-      this.variables = this.allEnvVariables[nVal].usedData
     }
   },
   methods: {

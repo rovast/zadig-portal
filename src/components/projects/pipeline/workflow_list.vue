@@ -27,10 +27,17 @@
             </div>
           </div>
           <div class="header-end">
-            <button type="button" class="add-project-btn" @click="showSelectWorkflowType = true">
+           <!-- Todo: enable common workflow -->
+            <!-- <button type="button" class="add-project-btn" @click="showSelectWorkflowType = true">
               <i class="el-icon-plus"></i>
               新建工作流
-            </button>
+            </button> -->
+            <router-link :to="`/workflows/product/create?projectName=${this.projectName ? this.projectName : ''}`">
+              <button type="button" class="add-project-btn">
+                <i class="el-icon-plus"></i>
+                新建工作流
+              </button>
+            </router-link>
           </div>
         </div>
         <div
@@ -91,7 +98,7 @@ import RunProductWorkflow from './common/run_workflow.vue'
 import RunCommonWorkflow from './common/run_common_workflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
-import { getProductWorkflowsAPI, getProductWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteProductWorkflowAPI, copyWorkflowAPI, getCommonWorkflowListAPI, getCommonWorkflowListInProjectAPI, deleteCommonWorkflowAPI } from '@api'
+import { getProductWorkflowsAPI, getProductWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteProductWorkflowAPI, copyWorkflowAPI, deleteCommonWorkflowAPI } from '@api'
 import bus from '@utils/event_bus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
@@ -111,7 +118,6 @@ export default {
       workflowsList: [],
       showSelectWorkflowType: false,
       selectWorkflowType: 'product',
-
       showStartCommonWorkflowBuild: false,
       commonToRun: {}
     }
@@ -257,34 +263,36 @@ export default {
     async getWorkflows (projectName) {
       this.workflowListLoading = true
       let productWorkflows = []
-      let commonWorkflows = []
+      // const commonWorkflows = []
       if (this.projectName) {
         productWorkflows = await getProductWorkflowsInProjectAPI(projectName).catch(err => {
           console.log(err)
           return []
         })
-        commonWorkflows = await getCommonWorkflowListInProjectAPI(projectName).catch(err => {
-          console.log(err)
-          return []
-        })
-        commonWorkflows.workflow_list.forEach(list => {
-          list.type = 'common'
-        })
+        // Todo: enable common workflow
+        // commonWorkflows = await getCommonWorkflowListInProjectAPI(projectName).catch(err => {
+        //   console.log(err)
+        //   return []
+        // })
+        // commonWorkflows.workflow_list.forEach(list => {
+        //   list.type = 'common'
+        // })
       } else {
         productWorkflows = await getProductWorkflowsAPI().catch(err => {
           console.log(err)
           return []
         })
-        commonWorkflows = await getCommonWorkflowListAPI().catch(err => {
-          console.log(err)
-          return []
-        })
-        commonWorkflows.workflow_list.forEach(list => {
-          list.type = 'common'
-        })
+        // commonWorkflows = await getCommonWorkflowListAPI().catch(err => {
+        //   console.log(err)
+        //   return []
+        // })
+        // commonWorkflows.workflow_list.forEach(list => {
+        //   list.type = 'common'
+        // })
       }
       this.workflowListLoading = false
-      this.workflowsList = [...productWorkflows, ...commonWorkflows.workflow_list]
+      // this.workflowsList = [...productWorkflows, ...commonWorkflows.workflow_list]
+      this.workflowsList = [...productWorkflows]
     },
     deleteProductWorkflow (workflow) {
       const name = workflow.name

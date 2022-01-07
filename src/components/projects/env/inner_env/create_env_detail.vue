@@ -56,7 +56,7 @@
             <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns.name" :value="ns.name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库" prop="registry_id">
+        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small" @change="getImages">
             <el-option
               v-for="registry in imageRegistry"
@@ -355,13 +355,6 @@ export default {
         ],
         namespace: [
           { required: true, trigger: 'change', message: '请选择命名空间' }
-        ],
-        registry_id: [
-          {
-            required: true,
-            trigger: ['change', 'blur'],
-            message: '请选择镜像仓库'
-          }
         ],
         defaultNamespace: [
           { required: true, trigger: 'change', message: '命名空间不能为空' }

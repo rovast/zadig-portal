@@ -366,7 +366,7 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <div v-if="isOnboarding" id="资源配置"
+      <div v-show="isOnboarding" id="资源配置"
            class="section scroll">
         <el-form :model="pmService"
                  :inline="true"

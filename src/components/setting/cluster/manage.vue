@@ -105,10 +105,11 @@
           </el-form-item>
           <el-button type="text" @click="expandAdvanced = !expandAdvanced">高级配置<i :class="{'el-icon-arrow-right': !expandAdvanced,'el-icon-arrow-down': expandAdvanced}"></i></el-button>
           <template v-if="expandAdvanced">
-            <el-form-item label="指定项目范围" prop="advanced_config.project_names">
+            <el-form-item label="指定项目范围" prop="advanced_config.project_names" class="project-scoped">
               <el-select v-model="cluster.advanced_config.project_names" placeholder="请选择项目" size="small" style="width: 100%;" filterable multiple clearable collapse-tags>
                 <el-option v-for="name in projectNames" :key="name" :label="name" :value="name"></el-option>
               </el-select>
+              <el-button size="mini" plain @click="cluster.advanced_config.project_names = []">清空所有</el-button>
             </el-form-item>
             <div v-if="isEdit">
               <el-form-item prop="advanced_config.strategy" required>
@@ -654,6 +655,17 @@ export default {
       font-size: 13px;
       line-height: 20px;
       background: #303133;
+    }
+
+    .project-scoped {
+      position: relative;
+
+      .el-button {
+        position: absolute;
+        right: 1px;
+        bottom: 6px;
+        z-index: 1;
+      }
     }
   }
 

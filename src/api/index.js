@@ -1587,6 +1587,10 @@ export function getNewCollaborationAPI (projectName) {
   return http.get(`/api/collaboration/collaborations/new?projectName=${projectName}`)
 }
 
-export function createNewCollaborationAPI (projectName, payload) {
+export function initializeCollaborationAPI (projectName, payload) {
   return http.post(`/api/collaboration/collaborations/sync?projectName=${projectName}`, payload)
+}
+
+export function createNewCollaborationAPI (projectName, payload) {
+  return http.post(`/api/collaboration/collaborations?projectName=${projectName}`, payload)
 }

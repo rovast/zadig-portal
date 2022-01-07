@@ -42,7 +42,7 @@
 <script>
 import InitEnvDialog from './components/initEnvDialog.vue'
 import bus from '@utils/event_bus'
-import { getNewCollaborationAPI, createNewCollaborationAPI } from '@api'
+import { getNewCollaborationAPI, initializeCollaborationAPI } from '@api'
 export default {
   data () {
     return {
@@ -97,7 +97,7 @@ export default {
       console.log('确定')
       this.$refs.envDialogRef.getEnvInfo()
       const payload = this.collaborationData
-      // createNewCollaborationAPI(this.projectName, payload).then(res => {
+      // initializeCollaborationAPI(this.projectName, payload).then(res => {
       //   this.$message.success(`用户初始环境创建成功！`)
       this.$router.go(-1)
       // })

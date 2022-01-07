@@ -137,7 +137,7 @@
                     <i :class="{'el-icon-arrow-right': !showAdvanced, 'el-icon-arrow-down': showAdvanced }"></i>
                   </el-button>
                   <el-form-item v-show="showAdvanced" label="指定集群资源" prop="cluster_ids">
-                    <el-select filterable multiple v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源" style="width: 100%;">
+                    <el-select filterable multiple clearable v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源" style="width: 100%;">
                       <el-option v-for="cluster in allCluster"
                           :key="cluster.id"
                           :label="$utils.showClusterName(cluster)"

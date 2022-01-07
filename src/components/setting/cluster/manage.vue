@@ -106,7 +106,7 @@
           <el-button type="text" @click="expandAdvanced = !expandAdvanced">高级配置<i :class="{'el-icon-arrow-right': !expandAdvanced,'el-icon-arrow-down': expandAdvanced}"></i></el-button>
           <template v-if="expandAdvanced">
             <el-form-item label="指定项目范围" prop="advanced_config.project_names">
-              <el-select v-model="cluster.advanced_config.project_names" placeholder="请选择项目" size="small" style="width: 100%;" filterable multiple>
+              <el-select v-model="cluster.advanced_config.project_names" placeholder="请选择项目" size="small" style="width: 100%;" filterable multiple clearable>
                 <el-option v-for="name in projectNames" :key="name" :label="name" :value="name"></el-option>
               </el-select>
             </el-form-item>

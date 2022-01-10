@@ -11,7 +11,7 @@
           1
         </div>
         <p class="pipelines-aside-help__step-list-item-text">
-          输入服务名称，例如：voting
+          点击 + 新建服务，输入服务名称，例如：voting
         </p>
       </li>
       <li class="pipelines-aside-help__step-list-item">
@@ -19,10 +19,11 @@
           2
         </div>
         <p class="pipelines-aside-help__step-list-item-text">
-          填写该服务的配置信息，支持两种方式
+          填写该服务的配置信息，支持三种方式
         <ul>
           <span> 方式一：服务的 YAML 保存在平台上</span>
           <span> 方式二：服务的 YAML 保存在代码仓库中，平台通过配置的代码仓库地址实时获取服务配置</span>
+          <span> 方式三：服务的 YAML 从模板库导入</span>
         </ul>
         </p>
       </li>

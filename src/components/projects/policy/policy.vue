@@ -149,20 +149,17 @@
 </template>
 
 <script>
-import {
-  usersAPI,
-  createNewCollaborationAPI,
-  queryPolicyDefinitionsAPI,
-  getWorkflowsInProjectAPI,
-  getCommonWorkflowListAPI,
-  listProductAPI
-} from '@api'
+import { createNewCollaborationAPI } from '@api'
 export default {
+  props: {
+    userList: Array,
+    workflowList: Array,
+    envList: Array,
+    policy: Object
+  },
   data () {
     return {
-      workflowList: [],
-      envList: [],
-      userList: [],
+
       collaborationData: {
         project_name: '',
         name: '',
@@ -183,10 +180,6 @@ export default {
             verbs: ['get_environment', 'delete_environment']
           }
         ]
-      },
-      policy: {
-        workflow: [],
-        environment: []
       }
     }
   },
@@ -219,17 +212,7 @@ export default {
     handleCheckAllChange (val, row, type) {
       row.verbs = val ? this.policy[type].map(data => data.action) : []
     },
-    getUsers () {
-      const projectName = this.projectName
-      const payload = {
-        name: '',
-        page: 1,
-        per_page: 1000000
-      }
-      usersAPI(payload, projectName).then(res => {
-        this.userList = _.uniqBy(res.users, 'uid')
-      })
-    },
+
     deleteWorkflow (index) {
       this.collaborationData.workflows.splice(index, 1)
     },
@@ -251,63 +234,6 @@ export default {
         verbs: this.policy.environment.map(data => data.action)
       })
     },
-    async getPolicyDefinitions () {
-      const res = await queryPolicyDefinitionsAPI(
-        this.projectName
-      ).catch(error => console.log(error))
-      if (res) {
-        Object.keys(this.policy).forEach(key => {
-          this.policy[key] = res
-            .find(group => group.resource.toLowerCase() === key)
-            .rules.filter(rule => !rule.action.startsWith('create_'))
-            .map(rule => {
-              return {
-                ...rule,
-                icon: this.selectIcon(rule.action)
-              }
-            })
-        })
-      }
-    },
-    selectIcon (rule) {
-      const iconEnum = {
-        get_: 'el-icon-view',
-        edit_: 'el-icon-edit-outline',
-        delete_: 'el-icon-delete',
-        run_: 'el-icon-video-play',
-        config_: 'el-icon-setting',
-        manage_: 'el-icon-menu'
-      }
-      const icon = Object.keys(iconEnum).find(key => rule.startsWith(key))
-      return icon ? iconEnum[icon] : ''
-    },
-    async getWorkflows () {
-      let res = []
-      res = await getWorkflowsInProjectAPI(this.projectName).catch(err => {
-        console.log(err)
-        return []
-      })
-      const workflowList = await getCommonWorkflowListAPI(
-        this.projectName
-      ).catch(err => {
-        console.log(err)
-        return []
-      })
-      workflowList.workflow_list.forEach(list => {
-        list.type = 'common'
-      })
-      this.workflowList = [...res, ...workflowList.workflow_list]
-        .filter(workflow => !workflow.base_name)
-        .map(workflow => workflow.name)
-    },
-    async getEnvNameList () {
-      const res = await listProductAPI(this.projectName).catch(err =>
-        console.log(err)
-      )
-      if (res) {
-        this.envList = res.filter(env => !env.base_name).map(env => env.name)
-      }
-    },
     handleCollaboration () {
       // const payload = {
       //   name: ''
@@ -318,12 +244,7 @@ export default {
       console.log('确定生成', this.collaborationData)
     }
   },
-  created () {
-    this.getUsers()
-    this.getPolicyDefinitions()
-    this.getWorkflows()
-    this.getEnvNameList()
-  }
+  created () {}
 }
 </script>
 

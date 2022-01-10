@@ -23,27 +23,30 @@
                     <el-dropdown-item command="windows"> Windows </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-                <router-link :to="`/v1/projects/edit/${projectName}`">
+                <template v-if="isProjectAdmin">
+                  <router-link :to="`/v1/projects/edit/${projectName}`">
+                    <button type="button"
+                            class="display-btn">
+                      <i class="el-icon-edit-outline"></i>
+                      <span class="add-filter-value-title">修改</span>
+                    </button>
+                  </router-link>
                   <button type="button"
+                          @click="deleteProject"
                           class="display-btn">
-                    <i class="el-icon-edit-outline"></i>
-                    <span class="add-filter-value-title">修改</span>
+                    <i class="el-icon-delete"></i>
+                    <span class="add-filter-value-title">删除</span>
                   </button>
-                </router-link>
-                <button type="button"
-                        @click="deleteProject"
-                        class="display-btn">
-                  <i class="el-icon-delete"></i>
-                  <span class="add-filter-value-title">删除</span>
-                </button>
-                <router-link v-if="isProjectAdmin"
-                             :to="`/v1/projects/detail/${projectName}/rbac`">
-                  <button type="button"
-                          class="display-btn">
-                    <i class="el-icon-lock"></i>
-                    <span class="add-filter-value-title">权限</span>
-                  </button>
-                </router-link>
+                  <router-link
+                              :to="`/v1/projects/detail/${projectName}/rbac`">
+                    <button type="button"
+                            class="display-btn">
+                      <i class="el-icon-lock"></i>
+                      <span class="add-filter-value-title">权限</span>
+                    </button>
+                  </router-link>
+                </template>
+
               </div>
 
             </div>
@@ -58,9 +61,8 @@
               基本信息
             </h4>
             <div class="info-list">
-              <el-row type="flex"
-                      justify="space-between">
-                <el-col :span="4">
+              <el-row type="flex" :gutter="20">
+                <el-col v-hasPermi="{projectName: projectName, action: 'get_workflow'}" :span="4">
                   <router-link :to="`/v1/projects/detail/${projectName}/pipelines`">
                     <div class="card">
                       <div class="flex">
@@ -82,7 +84,7 @@
                     </div>
                   </router-link>
                 </el-col>
-                <el-col :span="4">
+                <el-col v-hasPermi="{projectName: projectName, action: 'get_environment'}" :span="4">
                   <router-link :to="`/v1/projects/detail/${projectName}/envs`">
                     <div class="card">
 
@@ -105,7 +107,7 @@
                     </div>
                   </router-link>
                 </el-col>
-                <el-col :span="4">
+                <el-col v-hasPermi="{projectName: projectName, action: 'get_service'}" :span="4">
                   <router-link :to="`/v1/projects/detail/${projectName}/services`">
                     <div class="card">
                       <div class="flex">
@@ -126,7 +128,7 @@
                     </div>
                   </router-link>
                 </el-col>
-                <el-col :span="4">
+                <el-col v-hasPermi="{projectName: projectName, action: 'get_build'}" :span="4">
                   <router-link :to="`/v1/projects/detail/${projectName}/builds`">
                     <div class="card">
 
@@ -149,7 +151,7 @@
                     </div>
                   </router-link>
                 </el-col>
-                <el-col :span="4">
+                <el-col v-hasPermi="{projectName: projectName, action: 'get_test'}" :span="4">
                   <router-link :to="`/v1/projects/detail/${projectName}/test`">
                     <div class="card">
 
@@ -176,7 +178,7 @@
           </div>
         </section>
         <section class="status">
-          <div class="env">
+          <div v-hasPermi="{projectName: projectName, action: 'get_environment'}" class="env">
             <h4 class="section-title">环境信息</h4>
             <div class="env-list">
               <el-table :data="envList"
@@ -217,7 +219,7 @@
               </el-table>
             </div>
           </div>
-          <div class="workflow">
+          <div v-hasPermi="{projectName: projectName, action: 'get_workflow'}" class="workflow">
             <h4 class="section-title">工作流信息</h4>
             <div class="workflow-info-list">
               <el-table :data="workflows"

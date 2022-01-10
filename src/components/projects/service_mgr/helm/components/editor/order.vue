@@ -21,7 +21,7 @@ export default {
   name: 'serviceOrder',
   computed: {
     ...mapState({
-      services: state => state.service_manage.services
+      services: state => state.serviceManage.services
     }),
     projectName () {
       return this.$route.params.project_name

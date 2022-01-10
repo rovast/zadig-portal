@@ -22,7 +22,7 @@ export default {
   },
   computed: {
     ...mapState({
-      links: state => state.external_link.links
+      links: state => state.externalLink.links
     })
   },
   methods: {

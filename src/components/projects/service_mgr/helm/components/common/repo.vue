@@ -44,8 +44,8 @@ export default {
   },
   computed: {
     ...mapState({
-      value: state => state.service_manage.serviceDialogVisible,
-      currentService: state => state.service_manage.currentService
+      value: state => state.serviceManage.serviceDialogVisible,
+      currentService: state => state.serviceManage.currentService
     })
   },
   watch: {

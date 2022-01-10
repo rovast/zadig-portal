@@ -84,7 +84,7 @@
                 <el-table-column prop="image"
                                  label="当前镜像版本">
                 </el-table-column>
-                <el-table-column label="构建信息/操作">
+                <el-table-column v-hasPermi="{projectName: projectName, action: 'create_build'}" label="构建信息/操作">
                   <template slot-scope="scope">
                     <router-link v-if="scope.row.build_name"
                                  :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_name=${scope.row.build_name}&service_project_name=${projectNameOfService}`">
@@ -153,7 +153,7 @@
                                 placeholder="请输入内容"></el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作"
+                  <el-table-column v-hasPermi="{projectName: projectName, action: 'edit_service'}" label="操作"
                                    width="150">
                     <template slot-scope="scope">
                         <span class="operate">
@@ -234,7 +234,7 @@
                     </el-table-column>
                   </el-table>
                 </div>
-                  <div>
+                  <div v-hasPermi="{projectName: projectName, action: 'edit_service'}">
                     <el-button size="medium"
                                class="add-kv-btn"
                                @click="addKeyInputVisable=true"

@@ -3,20 +3,23 @@ import Vuex from 'vuex'
 // Login
 import login from './modules/login'
 
-// Env
-import project_list from './modules/project_list'
+// Project
+import projectList from './modules/projectList'
 
 // Sidebar
-import sidebar_status from './modules/sidebar_status'
+import sidebarStatus from './modules/sidebarStatus'
 
 // Service
-import service_manage from './modules/service_manage'
+import serviceManage from './modules/serviceManage'
 
 // External Link
-import external_link from './modules/external_link'
+import externalLink from './modules/externalLink'
 
 // Common Workflow
-import common_workflow from './modules/common_workflow'
+import commonWorkflow from './modules/commonWorkflow'
+
+// Project Permission
+import projectPermission from './modules/projectPermission'
 
 Vue.use(Vuex)
 
@@ -25,11 +28,12 @@ const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({
   modules: {
     login,
-    project_list,
-    sidebar_status,
-    service_manage,
-    external_link,
-    common_workflow
+    projectList,
+    projectPermission,
+    sidebarStatus,
+    serviceManage,
+    externalLink,
+    commonWorkflow
   },
   strict: debug
 })

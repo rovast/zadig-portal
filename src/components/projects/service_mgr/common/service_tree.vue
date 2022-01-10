@@ -206,7 +206,7 @@
               </el-button>
             </el-tooltip>
             <el-tooltip effect="dark"
-                        content="仓库托管"
+                        content="仓库导入"
                         placement="top">
               <el-button v-if="deployType==='k8s'"
                          size="mini"

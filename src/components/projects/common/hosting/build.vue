@@ -704,7 +704,9 @@ import {
   updateBuildConfigAPI,
   getServiceTargetsAPI,
   getRegistryWhenBuildAPI,
-  queryJenkinsJob, queryJenkinsParams
+  queryJenkins,
+  queryJenkinsJob,
+  queryJenkinsParams
 } from '@api'
 import Editor from 'vue2-ace-bind'
 import Resize from '@/components/common/resize.vue'
@@ -739,6 +741,7 @@ export default {
         label: 'Jenkins 构建'
       }],
       jenkinsJobList: [],
+      jenkinsConfigs: [],
       jenkinsBuild: {
         name: '',
         desc: '',
@@ -1145,6 +1148,7 @@ export default {
         this.$set(this.buildConfig, 'targets', target)
         this.$set(this.jenkinsBuild, 'targets', target)
       }
+      this.jenkinsConfigs = await queryJenkins().catch(error => console.log(error))
       this.configDataLoading = false
       getAllAppsAPI().then((response) => {
         const apps = this.$utils.sortVersion(response, 'name', 'asc')

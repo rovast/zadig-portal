@@ -134,8 +134,8 @@
                  :rules="createRules"
                  label-position="left"
                  label-width="80px">
-          <el-row>
-            <el-col :span="8">
+          <el-row :gutter="20">
+            <el-col v-if="jenkinsConfigs.length > 0" :span="8">
               <el-form-item label="构建来源">
                 <el-select style="width: 100%;"
                            v-model="source"
@@ -151,9 +151,8 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="10">
-              <el-form-item style="margin-left: 20px;"
-                            label="构建超时">
+            <el-col :span="8">
+              <el-form-item label="构建超时">
                 <el-input-number size="mini"
                                  :min="1"
                                  v-model="buildConfig.timeout"></el-input-number>
@@ -161,7 +160,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="构建名称"
                             prop="name">
@@ -174,7 +173,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="构建服务">
                 <el-select style="width: 100%;"
@@ -527,14 +526,13 @@
 </template>
 <script>
 import BuildEnv from '@/components/projects/build/build_env.vue'
-import EnvVariable from '@/components/projects/build/env_variable.vue'
-
-import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkinsJob, queryJenkinsParams } from '@api'
+import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkins, queryJenkinsJob, queryJenkinsParams } from '@api'
 import Editor from 'vue2-ace-bind'
 import bus from '@utils/eventBus'
 import Codemirror from '@/components/projects/common/codemirror.vue'
 import ValidateSubmit from '@utils/validateAsync'
 import Resize from '@/components/common/resize.vue'
+import EnvVariable from '@/components/projects/build/env_variable.vue'
 const validateBuildConfigName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入构建名称'))
@@ -560,6 +558,7 @@ export default {
         label: 'Jenkins 构建'
       }],
       jenkinsJobList: [],
+      jenkinsConfigs: [],
       jenkinsBuild: {
         name: '',
         desc: '',
@@ -905,6 +904,7 @@ export default {
           })
         })
       }
+      this.jenkinsConfigs = await queryJenkins().catch(error => console.log(error))
       this.configDataLoading = false
       getAllAppsAPI().then((response) => {
         const apps = this.$utils.sortVersion(response, 'name', 'asc')

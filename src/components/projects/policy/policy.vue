@@ -22,8 +22,8 @@
     <el-table :data="collaborationData.workflows" style="width: 100%;">
       <el-table-column label="基准工作流">
         <template slot-scope="{ row }">
-          <el-select v-model="row.name" placeholder="请选择基准工作流" clearable filterable size="small">
-            <el-option v-for="workflow in workflowList" :key="workflow.value" :label="workflow.label" :value="workflow.value"></el-option>
+          <el-select v-model="row.name" placeholder="请选择基准工作流" filterable size="small" :disabled="!!row.name">
+            <el-option v-for="workflow in lastBaseWorkflows" :key="workflow" :label="workflow" :value="workflow"></el-option>
           </el-select>
         </template>
       </el-table-column>
@@ -37,31 +37,21 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="{ row }">
-          <el-popover ref="workflowPopoverRef" placement="top-start" width="200" trigger="click">
-            <div>
+          <el-popover ref="workflowPopoverRef" placement="right" width="150" trigger="click">
+            <div class="auth-list">
               <div class="title">
-                <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange"></el-checkbox>
+                <el-checkbox
+                  :indeterminate="isIndeterminate(row, 'workflow')"
+                  :value="checkAll(row, 'workflow')"
+                  @change="handleCheckAllChange($event, row, 'workflow')"
+                ></el-checkbox>
                 <i></i>
                 所有权限
               </div>
-              <el-checkbox-group v-model="row.verbs" @change="handleCheckedCitiesChange">
+              <el-checkbox-group v-model="row.verbs">
                 <el-checkbox v-for="workflow in policy.workflow" :key="workflow.action" :label="workflow.action">
-                  <i :class="[workflow.icon]"></i> {{workflow.alias}}
-                </el-checkbox>
-                <el-checkbox label="add">
-                  <i class="iconfont iconinformation_add icon"></i> 新建
-                </el-checkbox>
-                <el-checkbox label="delete">
-                  <i class="el-icon-delete"></i> 删除
-                </el-checkbox>
-                <el-checkbox label="edit">
-                  <i class="el-icon-edit-outline"></i> 编辑
-                </el-checkbox>
-                <el-checkbox label="look">
-                  <i class="el-icon-view"></i> 查看
-                </el-checkbox>
-                <el-checkbox label="run">
-                  <i class="el-icon-video-play"></i> 执行
+                  <i :class="[workflow.icon]"></i>
+                  {{workflow.alias}}
                 </el-checkbox>
               </el-checkbox-group>
             </div>
@@ -85,8 +75,8 @@
     <el-table :data="collaborationData.products" style="width: 100%;">
       <el-table-column label="基准环境">
         <template slot-scope="{ row }">
-          <el-select v-model="row.name" placeholder="请选择基准环境" clearable filterable size="small">
-            <el-option v-for="env in envList" :key="env.value" :label="env.label" :value="env.value"></el-option>
+          <el-select v-model="row.name" placeholder="请选择基准环境" filterable size="small" :disabled="!!row.name">
+            <el-option v-for="env in lastBaseEnvironments" :key="env" :label="env" :value="env"></el-option>
           </el-select>
         </template>
       </el-table-column>
@@ -99,9 +89,46 @@
         </template>
       </el-table-column>
       <el-table-column prop="prop" label="操作">
-        <template slot-scope="{  }">
-          <el-button type="primary" size="mini" plain>权限</el-button>
-          <el-button type="primary" size="mini" plain>回收策略</el-button>
+        <template slot-scope="{ row }">
+          <el-popover ref="envPopoverRef" placement="right" width="160" trigger="click">
+            <div class="auth-list">
+              <div class="title">
+                <el-checkbox
+                  :indeterminate="isIndeterminate(row, 'environment')"
+                  :value="checkAll(row, 'environment')"
+                  @change="handleCheckAllChange($event, row, 'environment')"
+                ></el-checkbox>
+                <i></i>
+                所有权限
+              </div>
+              <el-checkbox-group v-model="row.verbs">
+                <el-checkbox v-for="environment in policy.environment" :key="environment.action" :label="environment.action">
+                  <i :class="[environment.icon]"></i>
+                  {{environment.alias}}
+                </el-checkbox>
+              </el-checkbox-group>
+            </div>
+          </el-popover>
+          <el-popover ref="recoverPopoverRef" placement="right" width="300" trigger="click">
+            <div class="auth-list">
+              <div class="title">回收策略</div>
+              <div class="content">
+                <div>
+                  环境将在
+                  <el-input-number v-model="row.recycleDay" size="small" :min="0"></el-input-number>天后自动回收
+                </div>
+                <div class="tooltip">默认设置为 0 永久不回收</div>
+              </div>
+            </div>
+          </el-popover>
+          <el-button type="primary" v-popover:envPopoverRef size="mini" plain>权限</el-button>
+          <el-button
+            :type="row.collaboration_type === 'share' ? '' : 'primary'"
+            v-popover:recoverPopoverRef
+            size="mini"
+            plain
+            :disabled="row.collaboration_type === 'share'"
+          >回收策略</el-button>
         </template>
       </el-table-column>
       <el-table-column width="90px">
@@ -125,7 +152,10 @@
 import {
   usersAPI,
   createNewCollaborationAPI,
-  queryPolicyDefinitionsAPI
+  queryPolicyDefinitionsAPI,
+  getWorkflowsInProjectAPI,
+  getCommonWorkflowListAPI,
+  listProductAPI
 } from '@api'
 export default {
   data () {
@@ -163,9 +193,32 @@ export default {
   computed: {
     projectName () {
       return this.$route.params.project_name
+    },
+    lastBaseWorkflows () {
+      const usedWorkflows = this.collaborationData.workflows.map(
+        workflow => workflow.name
+      )
+      return this.workflowList.filter(
+        workflow => !usedWorkflows.includes(workflow)
+      )
+    },
+    lastBaseEnvironments () {
+      const usedEnvs = this.collaborationData.products.map(
+        workflow => workflow.name
+      )
+      return this.envList.filter(env => !usedEnvs.includes(env))
     }
   },
   methods: {
+    isIndeterminate (row, type) {
+      return row.verbs.length > 0 && row.verbs.length < this.policy[type].length
+    },
+    checkAll (row, type) {
+      return row.verbs.length === this.policy[type].length
+    },
+    handleCheckAllChange (val, row, type) {
+      row.verbs = val ? this.policy[type].map(data => data.action) : []
+    },
     getUsers () {
       const projectName = this.projectName
       const payload = {
@@ -184,7 +237,7 @@ export default {
       this.collaborationData.workflows.push({
         name: '',
         collaboration_type: 'share',
-        verbs: []
+        verbs: this.policy.workflow.map(data => data.action)
       })
     },
     deleteEnvironment (index) {
@@ -195,7 +248,7 @@ export default {
         name: '',
         collaboration_type: 'share',
         recycleDay: 0,
-        verbs: []
+        verbs: this.policy.environment.map(data => data.action)
       })
     },
     async getPolicyDefinitions () {
@@ -207,7 +260,52 @@ export default {
           this.policy[key] = res
             .find(group => group.resource.toLowerCase() === key)
             .rules.filter(rule => !rule.action.startsWith('create_'))
+            .map(rule => {
+              return {
+                ...rule,
+                icon: this.selectIcon(rule.action)
+              }
+            })
         })
+      }
+    },
+    selectIcon (rule) {
+      const iconEnum = {
+        get_: 'el-icon-view',
+        edit_: 'el-icon-edit-outline',
+        delete_: 'el-icon-delete',
+        run_: 'el-icon-video-play',
+        config_: 'el-icon-setting',
+        manage_: 'el-icon-menu'
+      }
+      const icon = Object.keys(iconEnum).find(key => rule.startsWith(key))
+      return icon ? iconEnum[icon] : ''
+    },
+    async getWorkflows () {
+      let res = []
+      res = await getWorkflowsInProjectAPI(this.projectName).catch(err => {
+        console.log(err)
+        return []
+      })
+      const workflowList = await getCommonWorkflowListAPI(
+        this.projectName
+      ).catch(err => {
+        console.log(err)
+        return []
+      })
+      workflowList.workflow_list.forEach(list => {
+        list.type = 'common'
+      })
+      this.workflowList = [...res, ...workflowList.workflow_list]
+        .filter(workflow => !workflow.base_name)
+        .map(workflow => workflow.name)
+    },
+    async getEnvNameList () {
+      const res = await listProductAPI(this.projectName).catch(err =>
+        console.log(err)
+      )
+      if (res) {
+        this.envList = res.filter(env => !env.base_name).map(env => env.name)
       }
     },
     handleCollaboration () {
@@ -223,6 +321,8 @@ export default {
   created () {
     this.getUsers()
     this.getPolicyDefinitions()
+    this.getWorkflows()
+    this.getEnvNameList()
   }
 }
 </script>
@@ -289,5 +389,33 @@ export default {
 
 .option-icon {
   margin-right: 3px;
+}
+
+.auth-list {
+  text-align: center;
+
+  .title {
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e4e7ed;
+  }
+
+  .content {
+    .tooltip {
+      margin-top: 15px;
+      color: #bcbec2;
+    }
+  }
+
+  .el-checkbox-group {
+    .el-checkbox {
+      margin-right: 0;
+      margin-bottom: 15px;
+
+      &:last-child {
+        margin-bottom: 2px;
+      }
+    }
+  }
 }
 </style>

@@ -57,10 +57,10 @@
                 <span class="el-dropdown-link">
                   <i class="el-icon-more"></i></span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item :command="{action:'edit',project_name:project.name}">
+                  <el-dropdown-item :command="{action:'edit',projectName:project.name}">
                     修改
                   </el-dropdown-item>
-                  <el-dropdown-item :command="{action:'delete',project_name:project.name}">
+                  <el-dropdown-item :command="{action:'delete',projectName:project.name}">
                     删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -74,7 +74,7 @@
                   </div>
                   <div class="card-text">
                     <h4 class="project-name">
-                      {{project.project_name?project.project_name:project.name}}&nbsp;
+                      {{project.alias?project.alias:project.name}}&nbsp;
                       <el-tooltip v-if="!project.public" effect="dark" content="私有项目" placement="top">
                         <i  class="icon iconfont iconprivate"></i>
                       </el-tooltip>
@@ -141,7 +141,7 @@
           <template slot-scope="scope">
             <router-link :to="`/v1/projects/detail/${scope.row.name}`"
                          class="project-name">
-              {{scope.row.project_name?scope.row.project_name:scope.row.name }}
+              {{scope.row.alias?scope.row.alias:scope.row.name }}
               <el-tooltip v-if="!scope.row.public" effect="dark" content="私有项目" placement="top">
                 <i class="icon iconfont iconprivate"></i>
               </el-tooltip>
@@ -201,9 +201,9 @@ export default {
     },
     handleCommand (command) {
       if (command.action === 'delete') {
-        this.deleteProject(command.project_name)
+        this.deleteProject(command.projectName)
       } else if (command.action === 'edit') {
-        this.$router.push(`/v1/projects/edit/${command.project_name}`)
+        this.$router.push(`/v1/projects/edit/${command.projectName}`)
       }
     },
     async deleteProject (projectName) {
@@ -235,10 +235,10 @@ export default {
         dangerouslyUseHTMLString: true,
         customClass: 'product-prompt',
         confirmButtonClass: 'el-button el-button--danger',
-        inputValidator: project_name => {
-          if (project_name === projectName) {
+        inputValidator: input => {
+          if (input === projectName) {
             return true
-          } else if (project_name === '') {
+          } else if (input === '') {
             return '请输入项目名'
           } else {
             return '项目名不相符'

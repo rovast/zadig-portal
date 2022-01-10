@@ -301,10 +301,10 @@ export default {
           color: #1989fa;
         }
 
-        .cf-block__item {
+        .info-block {
           min-height: 102px;
 
-          .account-box-item {
+          .info-block-item {
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
@@ -321,7 +321,7 @@ export default {
             -webkit-box-pack: justify;
             -ms-flex-pack: justify;
 
-            .integration-card {
+            .info-block-item-card {
               display: -webkit-box;
               display: -ms-flexbox;
               display: flex;
@@ -355,7 +355,7 @@ export default {
               }
             }
 
-            .integration-card > * {
+            .info-block-item-card > * {
               -ms-flex: 0 0 auto;
               flex: 0 0 auto;
               -webkit-box-flex: 0;

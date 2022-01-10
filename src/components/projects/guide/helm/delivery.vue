@@ -90,7 +90,7 @@ import bus from '@utils/eventBus'
 import step from '../common/step.vue'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
 import { wordTranslate } from '@utils/wordTranslate.js'
-import { getProjectIngressAPI, getProductWorkflowsInProjectAPI, getWorkflowDetailAPI, generatePipeAPI } from '@api'
+import { getProjectIngressAPI, getProductWorkflowsInProjectAPI, getWorkflowDetailAPI, generateWorkflowAPI } from '@api'
 export default {
   data () {
     return {
@@ -156,7 +156,7 @@ export default {
       this.pipeTimer = null
       const fn = () => {
         if (this.pipeStatus && this.pipeStatus.status !== 'success') {
-          generatePipeAPI(this.projectName)
+          generateWorkflowAPI(this.projectName)
             .then(res => {
               this.$set(this, 'pipeStatus', res)
             })

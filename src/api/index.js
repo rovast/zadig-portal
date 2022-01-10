@@ -1286,7 +1286,7 @@ export function generateEnvAPI (projectName, envType = '') {
   return http.post(`/api/aslan/environment/environments?auto=true&projectName=${projectName}&envType=${envType}`)
 }
 
-export function generatePipeAPI (projectName) {
+export function generateWorkflowAPI (projectName) {
   return http.post(`/api/aslan/workflow/workflow/${projectName}/auto?projectName=${projectName}`)
 }
 

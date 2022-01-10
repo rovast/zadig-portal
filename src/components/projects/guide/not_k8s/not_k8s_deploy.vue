@@ -8,23 +8,20 @@
           <span class="first">第三步</span>
           <span class="second">将服务加入运行环境，并准备对应的交付工作流，后续均可在项目中进行配置</span>
         </div>
-        <div class="account-integrations cf-block__list">
+        <div class="info-container cf-block__list">
           <div class="title">
             <h4>环境准备</h4>
-            <el-alert v-if="envFailure.length > 0||timeOut"
-                      type="warning">
-              <template v-solt:title>
-                环境正在准备中，可点击 “下一步” 或者
-                <el-button type="text"
-                           @click="jumpEnv">查看环境状态</el-button>
+            <el-alert v-if="envFailure.length > 0||timeOut" type="warning" show-icon>
+              <template v-slot:title>
+                环境正在准备中，可点击 「下一步」 或者 <span class="view-env-btn" @click="viewEnvStatus">查看环境状态</span>
                 <i v-if="jumpLoading"
                    class="el-icon-loading"></i>
               </template>
             </el-alert>
           </div>
-          <div class="cf-block__item">
-            <div class="account-box-item">
-              <div class="account-box-item__info integration-card">
+          <div class="info-block">
+            <div class="info-block-item">
+              <div class="account-box-item__info info-block-item-card">
                 <div class="integration-card__image">
                   <el-button v-if="envSuccess.length === 2"
                              type="success"
@@ -64,16 +61,16 @@
           </div>
           <div class="title">
             <h4>工作流准备</h4>
-            <el-alert v-if="pipeStatus.err_message"
-                      :title="pipeStatus.err_message"
-                      type="error">
+            <el-alert v-if="workflowStatus.err_message"
+                      :title="workflowStatus.err_message"
+                      type="warning" show-icon>
             </el-alert>
           </div>
-          <div class="cf-block__item">
-            <div class="account-box-item">
-              <div class="account-box-item__info integration-card">
+          <div class="info-block">
+            <div class="info-block-item">
+              <div class="account-box-item__info info-block-item-card">
                 <div class="integration-card__image">
-                  <el-button v-if="pipeStatus.status === 'success'"
+                  <el-button v-if="workflowStatus.status === 'success'"
                              type="success"
                              icon="el-icon-check"
                              circle></el-button>
@@ -123,22 +120,22 @@
 <script>
 import bus from '@utils/eventBus'
 import step from './container/step_not_k8s.vue'
-import { generateEnvAPI, generatePipeAPI } from '@api'
+import { generateEnvAPI, generateWorkflowAPI } from '@api'
 export default {
   data () {
     return {
       envStatus: [{ env_name: 'dev' }, { env_name: 'qa' }],
-      pipeStatus: {},
+      workflowStatus: {},
       getResult: false,
       envTimer: 0,
-      pipeTimer: 0,
+      workflowTimer: 0,
       secondCount: 0,
       timeOut: 0
     }
   },
   methods: {
-    jumpEnv () {
-      this.$confirm('确认跳出后就不再进入 onboarding 流程。', '确认跳出产品交付向导？', {
+    viewEnvStatus () {
+      this.$confirm('跳出后进入项目将不再进入向导流程', '确认跳出产品交付向导？', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -180,17 +177,17 @@ export default {
           this.timeOut = true
           this.getResult = true
         }
-        this.pipeTimer = setInterval(() => {
-          this.generatePipe(this.projectName)
+        this.workflowTimer = setInterval(() => {
+          this.generateWorkflow(this.projectName)
         }, 1000)
       })
     },
-    generatePipe (projectName) {
-      if (this.pipeStatus.status === 'success') {
-        clearInterval(this.pipeTimer)
+    generateWorkflow (projectName) {
+      if (this.workflowStatus.status === 'success') {
+        clearInterval(this.workflowTimer)
       } else {
-        generatePipeAPI(projectName).then((res) => {
-          this.$set(this, 'pipeStatus', res)
+        generateWorkflowAPI(projectName).then((res) => {
+          this.$set(this, 'workflowStatus', res)
         })
       }
     }
@@ -226,7 +223,7 @@ export default {
   },
   beforeDestroy () {
     clearInterval(this.envTimer)
-    clearInterval(this.pipeTimer)
+    clearInterval(this.workflowTimer)
   },
   components: {
     step
@@ -279,11 +276,14 @@ export default {
         }
       }
 
-      .account-integrations {
+      .info-container {
         .el-alert--warning {
-          .el-button--text {
-            color: inherit;
-          }
+          padding-left: 8px;
+        }
+
+        .view-env-btn {
+          color: #1989fa;
+          cursor: pointer;
         }
       }
 
@@ -301,7 +301,6 @@ export default {
             margin: 10px 0;
             color: #4c4c4c;
             font-weight: 400;
-            text-decoration: underline;
           }
 
           a {
@@ -310,10 +309,10 @@ export default {
           }
         }
 
-        .cf-block__item {
+        .info-block {
           min-height: 102px;
 
-          .account-box-item {
+          .info-block-item {
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
@@ -330,7 +329,7 @@ export default {
             -webkit-box-pack: justify;
             -ms-flex-pack: justify;
 
-            .integration-card {
+            .info-block-item-card {
               display: -webkit-box;
               display: -ms-flexbox;
               display: flex;
@@ -374,26 +373,13 @@ export default {
               }
             }
 
-            .integration-card > * {
+            .info-block-item-card > * {
               -ms-flex: 0 0 auto;
               flex: 0 0 auto;
               -webkit-box-flex: 0;
             }
           }
         }
-      }
-    }
-  }
-
-  .alert {
-    display: flex;
-    padding: 0 25px;
-
-    .el-alert {
-      margin-bottom: 35px;
-
-      .el-alert__title {
-        font-size: 15px;
       }
     }
   }

@@ -10,14 +10,14 @@
                       :class="{'active':currentTab==='grid'?true:false}"
                       class="display-btn">
                 <i class="el-icon-s-grid"></i>
-                <span class="add-filter-value-title">网格模式</span>
+                <span class="add-filter-value-title">网格视图</span>
               </button>
               <button type="button"
                       @click="currentTab = 'list'"
                       :class="{'active':currentTab==='list'?true:false}"
                       class="display-btn">
                 <i class="el-icon-s-fold"></i>
-                <span class="add-filter-value-title">列表模式</span>
+                <span class="add-filter-value-title">列表视图</span>
               </button>
               <button type="button"
                       @click="$router.push(`/v1/projects/template`)"

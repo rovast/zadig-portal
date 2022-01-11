@@ -49,7 +49,7 @@
             </el-form-item>
             <el-form-item v-if="versionList.length > 0 && taskDetail.status==='passed'"
                           label="交付清单">
-              <router-link :to="`/v1/delivery/version/${versionList[0].versionInfo.id}`">
+              <router-link :to="`/v1/delivery/version/${projectName}/${versionList[0].versionInfo.id}?deployType=k8s&version=${versionList[0].versionInfo.version}`">
                 <span class="version-link">{{ $utils.tailCut(versionList[0].versionInfo.id,8,'#')+
             versionList[0].versionInfo.version }}</span>
               </router-link>

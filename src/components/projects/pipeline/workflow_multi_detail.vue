@@ -81,10 +81,7 @@
                 <el-tooltip v-hasPermi="{projectName: projectName, action: 'edit_workflow'}" effect="dark"
                             content="编辑工作流"
                             placement="top">
-                  <router-link :to="`/workflows/product/edit/${workflowName}?projectName=${projectName}`"
-                               class="not-anchor">
-                    <i class="el-icon-edit-outline edit-pipeline"></i>
-                  </router-link>
+                  <i @click="$router.push(`/workflows/product/edit/${workflowName}?projectName=${projectName}`)" class="el-icon-edit-outline edit-pipeline"></i>
                 </el-tooltip>
                 <el-tooltip v-hasPermi="{projectName: projectName, action: 'delete_workflow'}" effect="dark"
                             content="删除工作流"

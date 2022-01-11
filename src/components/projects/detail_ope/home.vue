@@ -523,7 +523,7 @@ export default {
                   height: 18px;
                   color: #fff;
                   font-size: 18px;
-                  line-height: 22px;
+                  line-height: 18px;
                   text-align: center;
                   background-color: #999;
                   border-radius: 50%;
@@ -547,7 +547,7 @@ export default {
                 margin: 0;
                 padding: 0;
                 color: #4c4c4c;
-                font-weight: 400;
+                font-weight: 500;
                 font-size: 20px;
                 text-overflow: ellipsis;
                 cursor: pointer;

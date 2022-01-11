@@ -5,24 +5,20 @@
         <div class="container">
           <div class="display-mode">
             <div class="btn-container">
-              <button type="button"
-                      @click="currentTab = 'grid'"
-                      :class="{'active':currentTab==='grid'?true:false}"
-                      class="display-btn">
+              <button type="button" @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'?true:false}" class="display-btn">
                 <i class="el-icon-s-grid"></i>
                 <span class="add-filter-value-title">网格视图</span>
               </button>
-              <button type="button"
-                      @click="currentTab = 'list'"
-                      :class="{'active':currentTab==='list'?true:false}"
-                      class="display-btn">
+              <button type="button" @click="currentTab = 'list'" :class="{'active':currentTab==='list'?true:false}" class="display-btn">
                 <i class="el-icon-s-fold"></i>
                 <span class="add-filter-value-title">列表视图</span>
               </button>
-              <button type="button"
-                      @click="$router.push(`/v1/projects/template`)"
-                      style="margin-left: 10px; border-radius: 20px;"
-                      class="display-btn">
+              <button
+                type="button"
+                @click="$router.push(`/v1/projects/template`)"
+                style="margin-left: 10px; border-radius: 20px;"
+                class="display-btn"
+              >
                 <i class="iconfont iconicon-repertory" style="font-size: 13px;"></i>
                 <span class="add-filter-value-title">模板库</span>
               </button>
@@ -32,41 +28,35 @@
       </div>
       <div class="header-end">
         <router-link v-if="$utils.roleCheck('admin')" to="/v1/projects/create">
-          <button type="button"
-                  class="add-project-btn">
+          <button type="button" class="add-project-btn">
             <i class="el-icon-plus"></i>
             新建项目
           </button>
         </router-link>
       </div>
     </div>
-    <div v-if="currentTab==='grid'"
-         v-loading="loading"
-         element-loading-text="加载中..."
-         element-loading-spinner="iconfont iconfont-loading iconxiangmuloading"
-         class="projects-grid">
+    <div
+      v-if="currentTab==='grid'"
+      v-loading="loading"
+      element-loading-text="加载中..."
+      element-loading-spinner="iconfont iconfont-loading iconxiangmuloading"
+      class="projects-grid"
+    >
       <el-row :gutter="12">
-        <el-col v-for="(project,index) in projectList"
-                :key="index"
-                :span="6">
-          <el-card shadow="hover"
-                   class="project-card">
+        <el-col v-for="(project,index) in projectList" :key="index" :span="6">
+          <el-card shadow="hover" class="project-card">
             <span class="operations">
-              <el-dropdown @command="handleCommand"
-                           trigger="click">
+              <el-dropdown @command="handleCommand" trigger="click">
                 <span class="el-dropdown-link">
-                  <i class="el-icon-more"></i></span>
+                  <i class="el-icon-more"></i>
+                </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item :command="{action:'edit',projectName:project.name}">
-                    修改
-                  </el-dropdown-item>
-                  <el-dropdown-item :command="{action:'delete',projectName:project.name}">
-                    删除</el-dropdown-item>
+                  <el-dropdown-item :command="{action:'edit',projectName:project.name}">修改</el-dropdown-item>
+                  <el-dropdown-item :command="{action:'delete',projectName:project.name}">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </span>
-            <div @click="toProject(project)"
-                 class="content-container">
+            <div @click="toProject(project)" class="content-container">
               <div class="content">
                 <div class="card-header">
                   <div class="quickstart-icon">
@@ -76,7 +66,7 @@
                     <h4 class="project-name">
                       {{project.alias?project.alias:project.name}}&nbsp;
                       <el-tooltip v-if="!project.public" effect="dark" content="私有项目" placement="top">
-                        <i  class="icon iconfont iconprivate"></i>
+                        <i class="icon iconfont iconprivate"></i>
                       </el-tooltip>
                     </h4>
                   </div>
@@ -88,59 +78,39 @@
             </div>
             <div class="footer">
               <div class="module">
-                <el-tooltip effect="dark"
-                            content="工作流"
-                            placement="top">
-                  <router-link :to="`/v1/projects/detail/${project.name}/pipelines`">
-                    <span class="icon iconfont icongongzuoliucheng"></span>
-                  </router-link>
+                <el-tooltip effect="dark" content="工作流" placement="top">
+                  <span @click="$router.push(`/v1/projects/detail/${project.name}/pipelines`)" class="icon iconfont icongongzuoliucheng"></span>
                 </el-tooltip>
-                <el-tooltip effect="dark"
-                            content="构建管理"
-                            placement="top">
-                  <router-link :to="`/v1/projects/detail/${project.name}/builds`">
-                    <span class="icon iconfont icongoujianzhong"></span>
-                  </router-link>
+                <el-tooltip effect="dark" content="构建管理" placement="top">
+                  <span @click="$router.push(`/v1/projects/detail/${project.name}/builds`)" class="icon iconfont icongoujianzhong"></span>
                 </el-tooltip>
-                <el-tooltip effect="dark"
-                            content="测试管理"
-                            placement="top">
-                  <router-link :to="`/v1/projects/detail/${project.name}/test`">
-                    <span class="icon iconfont icontest"></span>
-                  </router-link>
+                <el-tooltip effect="dark" content="测试管理" placement="top">
+                  <span @click="$router.push(`/v1/projects/detail/${project.name}/test`)" class="icon iconfont icontest"></span>
                 </el-tooltip>
-                <el-tooltip effect="dark"
-                            content="查看服务"
-                            placement="top">
-                  <router-link :to="`/v1/projects/detail/${project.name}/services`">
-                    <span class="icon iconfont iconrongqifuwu"></span>
-                  </router-link>
+                <el-tooltip effect="dark" content="查看服务" placement="top">
+                  <span @click="$router.push(`/v1/projects/detail/${project.name}/services`)" class="icon iconfont iconrongqifuwu"></span>
                 </el-tooltip>
               </div>
             </div>
           </el-card>
         </el-col>
       </el-row>
-      <div v-if="projectList.length === 0"
-           class="no-product">
-        <img src="@assets/icons/illustration/product.svg"
-             alt="">
+      <div v-if="projectList.length === 0" class="no-product">
+        <img src="@assets/icons/illustration/product.svg" alt />
         <p>暂无可展示的项目，请手动添加项目</p>
       </div>
     </div>
-    <div v-if="currentTab==='list'"
-         v-loading="loading"
-         element-loading-text="加载中..."
-         element-loading-spinner="iconfont iconfont-loading iconxiangmuloading"
-         class="projects-list">
-      <el-table v-if="projectList.length > 0"
-                :data="projectList"
-                stripe
-                style="width: 100%;">
+    <div
+      v-if="currentTab==='list'"
+      v-loading="loading"
+      element-loading-text="加载中..."
+      element-loading-spinner="iconfont iconfont-loading iconxiangmuloading"
+      class="projects-list"
+    >
+      <el-table v-if="projectList.length > 0" :data="projectList" stripe style="width: 100%;">
         <el-table-column label="项目名称">
           <template slot-scope="scope">
-            <router-link :to="`/v1/projects/detail/${scope.row.name}`"
-                         class="project-name">
+            <router-link :to="`/v1/projects/detail/${scope.row.name}`" class="project-name">
               {{scope.row.alias?scope.row.alias:scope.row.name }}
               <el-tooltip v-if="!scope.row.public" effect="dark" content="私有项目" placement="top">
                 <i class="icon iconfont iconprivate"></i>
@@ -148,35 +118,32 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="envs"
-                         label="集成环境">
-          <template slot-scope="scope">
-            {{scope.row.envs.length}}
-          </template>
+        <el-table-column prop="envs" label="集成环境">
+          <template slot-scope="scope">{{scope.row.envs.length}}</template>
         </el-table-column>
         <el-table-column label="更新信息">
           <template slot-scope="scope">
-            <div><i class="el-icon-time"></i> {{ $utils.convertTimestamp(scope.row.updatedAt || '') }}
+            <div>
+              <i class="el-icon-time"></i>
+              {{ $utils.convertTimestamp(scope.row.updatedAt || '') }}
             </div>
-            <div><i class="el-icon-user"></i> {{ scope.row.updatedBy || '' }}</div>
+            <div>
+              <i class="el-icon-user"></i>
+              {{ scope.row.updatedBy || '' }}
+            </div>
           </template>
         </el-table-column>
-        <el-table-column label="">
+        <el-table-column label>
           <template slot-scope="scope">
             <router-link :to="`/v1/projects/detail/${scope.row.name}`">
-              <el-button class="operation"
-                         type="text">配置</el-button>
+              <el-button class="operation" type="text">配置</el-button>
             </router-link>
-            <el-button @click="deleteProject(scope.row.name)"
-                       class="operation"
-                       type="text">删除</el-button>
+            <el-button @click="deleteProject(scope.row.name)" class="operation" type="text">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div v-if="projectList.length === 0"
-           class="no-product">
-        <img src="@assets/icons/illustration/product.svg"
-             alt="">
+      <div v-if="projectList.length === 0" class="no-product">
+        <img src="@assets/icons/illustration/product.svg" alt />
         <p>暂无可展示的项目，请手动添加项目</p>
       </div>
     </div>
@@ -184,7 +151,13 @@
 </template>
 <script>
 import bus from '@utils/eventBus'
-import { getProductWorkflowsInProjectAPI, getBuildConfigsAPI, getSingleProjectAPI, getServiceTemplatesAPI, deleteProjectAPI } from '@api'
+import {
+  getProductWorkflowsInProjectAPI,
+  getBuildConfigsAPI,
+  getSingleProjectAPI,
+  getServiceTemplatesAPI,
+  deleteProjectAPI
+} from '@api'
 import { mapGetters } from 'vuex'
 import { get } from 'lodash'
 
@@ -207,27 +180,61 @@ export default {
       }
     },
     async deleteProject (projectName) {
-      const result = await Promise.all([getSingleProjectAPI(projectName), getProductWorkflowsInProjectAPI(projectName), getServiceTemplatesAPI(projectName), getBuildConfigsAPI(projectName)])
+      const result = await Promise.all([
+        getSingleProjectAPI(projectName),
+        getProductWorkflowsInProjectAPI(projectName),
+        getServiceTemplatesAPI(projectName),
+        getBuildConfigsAPI(projectName)
+      ])
       const externalFlag = get(result[0], 'product_feature.create_env_type', '')
-      const workflows = result[1].filter(w => w.product_tmpl_name === projectName).map((element) => { return element.name })
-      const services = result[2].data.filter(element => element.product_name === projectName).map((element) => { return element.service_name })
-      const buildConfigs = result[3].map((element) => { return element.name })
-      const envNames = this.projectList.filter(elemnet => elemnet.name === projectName)[0].envs
-      const htmlTemplate = externalFlag === 'external'
-        ? `
+      const workflows = result[1]
+        .filter(w => w.product_tmpl_name === projectName)
+        .map(element => {
+          return element.name
+        })
+      const services = result[2].data
+        .filter(element => element.product_name === projectName)
+        .map(element => {
+          return element.service_name
+        })
+      const buildConfigs = result[3].map(element => {
+        return element.name
+      })
+      const envNames = this.projectList.filter(
+        elemnet => elemnet.name === projectName
+      )[0].envs
+      const htmlTemplate =
+        externalFlag === 'external'
+          ? `
         <p>该项目下的以下资源会被取消托管，<span style="color:red">请谨慎操作！！</span></p>
-        <span><b>服务：</b>${services.length > 0 ? services.join(', ') : '无'}</span><br>
-        <span><b>环境：</b>${envNames.length > 0 ? envNames.join(', ') : '无'}</span><br>
+        <span><b>服务：</b>${
+  services.length > 0 ? services.join(', ') : '无'
+}</span><br>
+        <span><b>环境：</b>${
+  envNames.length > 0 ? envNames.join(', ') : '无'
+}</span><br>
         <p>该项目下的以下资源会同时被删除，<span style="color:red">请谨慎操作！！</span></p>
-        <span><b>构建：</b>${buildConfigs.length > 0 ? buildConfigs.join(', ') : '无'}</span><br>
-        <span><b>工作流：</b>${workflows.length > 0 ? workflows.join(', ') : '无'}</span>
+        <span><b>构建：</b>${
+  buildConfigs.length > 0 ? buildConfigs.join(', ') : '无'
+}</span><br>
+        <span><b>工作流：</b>${
+  workflows.length > 0 ? workflows.join(', ') : '无'
+}</span>
       `
-        : `
+          : `
         该项目下的资源会同时被删除<span style="color:red">请谨慎操作！！</span><br>
-        <span><b>服务：</b>${services.length > 0 ? services.join(', ') : '无'}</span><br>
-        <span><b>构建：</b>${buildConfigs.length > 0 ? buildConfigs.join(', ') : '无'}</span><br>
-        <span><b>环境：</b>${envNames.length > 0 ? envNames.join(', ') : '无'}</span><br>
-        <span><b>工作流：</b>${workflows.length > 0 ? workflows.join(', ') : '无'}</span>
+        <span><b>服务：</b>${
+  services.length > 0 ? services.join(', ') : '无'
+}</span><br>
+        <span><b>构建：</b>${
+  buildConfigs.length > 0 ? buildConfigs.join(', ') : '无'
+}</span><br>
+        <span><b>环境：</b>${
+  envNames.length > 0 ? envNames.join(', ') : '无'
+}</span><br>
+        <span><b>工作流：</b>${
+  workflows.length > 0 ? workflows.join(', ') : '无'
+}</span>
         `
       this.$prompt(htmlTemplate, `请输入项目名 ${projectName} 确认删除`, {
         confirmButtonText: '确定',
@@ -246,15 +253,13 @@ export default {
         }
       })
         .then(({ value }) => {
-          deleteProjectAPI(projectName).then(
-            response => {
-              this.$message({
-                type: 'success',
-                message: '项目删除成功'
-              })
-              this.$store.dispatch('getProjectList')
-            }
-          )
+          deleteProjectAPI(projectName).then(response => {
+            this.$message({
+              type: 'success',
+              message: '项目删除成功'
+            })
+            this.$store.dispatch('getProjectList')
+          })
         })
         .catch(() => {
           this.$message({
@@ -265,9 +270,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'projectList'
-    ])
+    ...mapGetters(['projectList'])
   },
   mounted () {
     this.$store.dispatch('getProjectList')
@@ -501,7 +504,7 @@ export default {
 
         .content-container {
           flex: 1;
-          height: calc(~"100% - 55px");
+          height: calc(~'100% - 55px');
           padding: 15px 15px 0 15px;
 
           .content {
@@ -516,11 +519,11 @@ export default {
 
                 span {
                   display: inline-block;
-                  width: 20px;
-                  height: 20px;
+                  width: 18px;
+                  height: 18px;
                   color: #fff;
                   font-size: 18px;
-                  line-height: 20px;
+                  line-height: 22px;
                   text-align: center;
                   background-color: #999;
                   border-radius: 50%;

@@ -48,11 +48,10 @@ export default {
 <style lang="less">
 @import url("~@assets/css/common/color.less");
 @import url("~@assets/css/common/icon.less");
+@import url("~@assets/css/common/common.less");
 @import url("~@assets/css/common/scroll-bar.less");
-
 // Todo: Try to use perfect-scrollbar
 .scrollBar();
-
 a {
   text-decoration: none;
 }

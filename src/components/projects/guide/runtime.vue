@@ -410,6 +410,10 @@ export default {
                   display: inline-block;
                   width: 250px;
                 }
+
+                &:last-child {
+                  margin-bottom: 0;
+                }
               }
             }
 

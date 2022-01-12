@@ -31,10 +31,37 @@
             <h2 class="mobile-block-title">内网访问</h2>
             <div class="mobile-block-desc">
               <template v-if="allEndpoints.length > 0">
-                <div v-for="ep of allEndpoints"
-                     :key="ep">
-                  {{ ep }}
-                </div>
+              <div v-for="(ep,index) in allEndpoints"
+                   :key="index">
+                <span>{{ `${ep.service_name}:${ep.service_port}` }}</span>
+                <el-popover v-if="index===0"
+                            placement="bottom"
+                            popper-class="ns-pop"
+                            trigger="hover">
+                  <span class="title">同 NS 访问：</span>
+                  <div v-for="(sameNs,indexSame) in allEndpoints"
+                       :key="indexSame+'same'">
+                    <span class="addr">{{ `${sameNs.service_name}:${sameNs.service_port}` }}</span>
+                    <span v-clipboard:copy="`${sameNs.service_name}:${sameNs.service_port}`"
+                          v-clipboard:success="copyCommandSuccess"
+                          v-clipboard:error="copyCommandError"
+                          class="copy-btn el-icon-copy-document">
+                    </span>
+                  </div>
+                  <span class="title">跨 NS 访问：</span>
+                  <div v-for="(crossNs,indexCross) in allEndpoints"
+                       :key="indexCross+'cross'">
+                    <span
+                          class="addr">{{ `${crossNs.service_name}.${namespace}:${crossNs.service_port}` }}</span>
+                    <span v-clipboard:copy="`${crossNs.service_name}.${namespace}:${crossNs.service_port}`"
+                          v-clipboard:success="copyCommandSuccess"
+                          v-clipboard:error="copyCommandError"
+                          class="copy-btn el-icon-copy-document">
+                    </span>
+                  </div>
+                  <span slot="reference"><i class="show-more el-icon-more"></i></span>
+                </el-popover>
+              </div>
               </template>
               <div v-else>无</div>
             </div>
@@ -241,6 +268,18 @@ export default {
     }
   },
   methods: {
+    copyCommandSuccess (event) {
+      this.$message({
+        message: '地址已成功复制到剪贴板',
+        type: 'success'
+      })
+    },
+    copyCommandError (event) {
+      this.$message({
+        message: '地址复制失败',
+        type: 'error'
+      })
+    },
     fetchServiceData () {
       const projectName = this.projectName
       const serviceName = this.serviceName

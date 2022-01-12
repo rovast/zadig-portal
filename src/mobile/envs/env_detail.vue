@@ -29,7 +29,7 @@
                 <div class="mobile-block">
                   <h2 class="mobile-block-title">更新时间</h2>
                   <div class="mobile-block-desc">
-                    {{$utils.convertTimestamp(productInfo.update_time)}}
+                    {{$utils.convertTimestamp(envInfo.update_time)}}
                   </div>
                 </div>
               </van-col>
@@ -37,7 +37,7 @@
                 <div class="mobile-block">
                   <h2 class="mobile-block-title">命名空间</h2>
                   <div class="mobile-block-desc">
-                    {{ productInfo.namespace}}
+                    {{ envInfo.namespace}}
                   </div>
                 </div>
               </van-col>
@@ -47,7 +47,7 @@
                 <div class="mobile-block">
                   <h2 class="mobile-block-title">环境状态</h2>
                   <div class="mobile-block-desc">
-                    {{getProdStatus(productInfo.status,productStatus.updatable)}}
+                    {{getProdStatus(envInfo.status,productStatus.updatable)}}
                   </div>
                 </div>
               </van-col>
@@ -102,8 +102,7 @@
 <script>
 import { Col, Collapse, CollapseItem, Row, NavBar, Tag, Panel, Loading, Button, Notify, Tab, Tabs, Cell, CellGroup, Icon, Divider, ActionSheet, List } from 'vant'
 import { translateEnvStatus, serviceTypeMap } from '@utils/word_translate'
-import { envRevisionsAPI, productEnvInfoAPI, getEnvServicesAPI } from '@api'
-import { mapGetters } from 'vuex'
+import { envRevisionsAPI, productEnvInfoAPI, productServicesAPI, listProductAPI } from '@api'
 import _ from 'lodash'
 export default {
   components: {
@@ -128,7 +127,8 @@ export default {
   },
   data () {
     return {
-      productInfo: {},
+      envInfo: {},
+      envNameList: [],
       serviceList: [],
       serviceStatus: {},
       productStatus: {
@@ -149,24 +149,13 @@ export default {
       return this.$route.params.project_name
     },
     envText () {
-      return this.productInfo.namespace
+      return this.envInfo.namespace
     },
     isProd () {
-      return this.productInfo.is_prod
+      return this.envInfo.is_prod
     },
-    ...mapGetters([
-      'projectList'
-    ]),
-    envNameList () {
-      const envNameList = []
-      this.projectList.forEach(element => {
-        if (element.product_name === this.projectName) {
-          envNameList.push({
-            envName: element.name
-          })
-        }
-      })
-      return envNameList
+    envSource () {
+      return this.envInfo.source || ''
     },
     envName: {
       get: function () {
@@ -175,9 +164,6 @@ export default {
       set: function (newValue) {
         this.$router.push({ path: `/mobile/envs/detail/${this.projectName}`, query: { envName: newValue } })
       }
-    },
-    filteredProducts () {
-      return _.uniqBy(_.orderBy(this.projectList, ['product_name', 'is_prod']), 'product_name')
     },
     runningService () {
       return this.serviceList.filter(s => (s.status === 'Running' || s.status === 'Succeeded')).length
@@ -194,30 +180,30 @@ export default {
         return name
       }
     },
-    getProduct (product_name) {
-      const env_name = typeof this.envName !== 'undefined' ? this.envName : this.$store.state.login.userinfo.name
-      productEnvInfoAPI(product_name, env_name).then(
-        response => {
-          this.productInfo = response
-        }
-      )
-    },
-    async getProducts () {
-      await this.$store.dispatch('getProjectList')
-    },
-    getEnvServices (projectName, envName = '') {
-      return new Promise((resolve, reject) => {
-        return getEnvServicesAPI(projectName, envName).then(
-          response => {
-            this.serviceList = this.$utils.deepSortOn(response, 'service_name')
-            this.initTemplateStatus()
-            resolve()
-          },
-          response => {
-            reject(new Error('获取环境服务列表失败'))
-          }
-        )
+    async getEnvNameList () {
+      const projectName = this.projectName
+      const envNameList = await listProductAPI(projectName)
+      envNameList.forEach(element => {
+        element.envName = element.name
       })
+      if (envNameList) {
+        this.envNameList = _.sortBy(envNameList, (item) => { return item.production })
+      }
+    },
+    async getEnvInfo (projectName, envName) {
+      const envInfo = await productEnvInfoAPI(projectName, envName)
+      if (envInfo) {
+        this.envInfo = envInfo
+      }
+    },
+    async getEnvServices () {
+      const projectName = this.projectName
+      const envName = this.envName
+      const envSource = this.envSource
+      const perPage = 999
+      const page = 1
+      const res = await productServicesAPI(projectName, envName, envSource, '', perPage, page)
+      this.serviceList = res.data
     },
     initTemplateStatus () {
       this.serviceList.forEach(service => {
@@ -254,10 +240,9 @@ export default {
       })
     },
     fetchAllData () {
-      this.getProduct(this.projectName)
-      this.getProducts()
-      this.fetchEnvRevision()
-      this.getEnvServices(this.projectName, this.envName)
+      this.getEnvNameList()
+      this.getEnvInfo(this.projectName, this.envName)
+      this.getEnvServices()
     },
     getProdStatus (status, updateble) {
       return translateEnvStatus(status, updateble)

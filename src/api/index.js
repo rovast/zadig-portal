@@ -1584,13 +1584,25 @@ export function getArtifactFileAPI (payload, id) {
 
 // initialize project workflow and environment
 export function getNewCollaborationAPI (projectName) {
-  return http.get(`/api/collaboration/collaborations/new?projectName=${projectName}`)
+  return http.get(`/api/aslan/collaboration/collaborations/new?projectName=${projectName}`)
 }
 
 export function initializeCollaborationAPI (projectName, payload) {
-  return http.post(`/api/collaboration/collaborations/sync?projectName=${projectName}`, payload)
+  return http.post(`/api/aslan/collaboration/collaborations/sync?projectName=${projectName}`, payload)
 }
 
-export function createNewCollaborationAPI (projectName, payload) {
-  return http.post(`/api/collaboration/collaborations?projectName=${projectName}`, payload)
+export function getAllCollaborationAPI (projectName) {
+  return http.get(`/api/aslan/collaboration/collaborations?projectName=${projectName}`)
+}
+
+export function createCollaborationAPI (projectName, payload) {
+  return http.post(`/api/aslan/collaboration/collaborations?projectName=${projectName}`, payload)
+}
+
+export function updateNewCollaborationAPI (projectName, name, payload) {
+  return http.put(`/api/aslan/collaboration/collaborations/${name}?projectName=${projectName}`, payload)
+}
+
+export function deleteCollaborationAPI (projectName, name) {
+  return http.delete(`/api/aslan/collaboration/collaborations/${name}?projectName=${projectName}`)
 }

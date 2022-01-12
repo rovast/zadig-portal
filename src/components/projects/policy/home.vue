@@ -1,11 +1,11 @@
 <template>
   <div class="cooperation-container">
     <el-alert type="warning" :closable="false" title="管理项目各个角色协作过程中使用功能模块和权限"></el-alert>
-    <el-tabs type="card">
-      <el-tab-pane v-for="(mode, index) in allMode" :key="mode.initName" :name="mode.initName">
+    <el-tabs type="card" v-model="activeName">
+      <el-tab-pane v-for="mode in allCollaboration" :key="mode.initName" :name="mode.initName">
         <span slot="label" class="policy-title">
           <el-input v-model="mode.name" placeholder="协作模式名称" size="small"></el-input>
-          <i class="el-icon-delete icon" @click.stop="deleteMode(index)"></i>
+          <i class="el-icon-delete icon" @click.stop="deleteMode(mode.initName)"></i>
         </span>
       </el-tab-pane>
       <el-tab-pane disabled>
@@ -14,57 +14,113 @@
         </span>
       </el-tab-pane>
     </el-tabs>
-    <Policy :userList="userList" :workflowList="workflowList" :envList="envList" :policy="policy"></Policy>
+    <Policy
+      ref="policyRef"
+      :userList="userList"
+      :workflowList="workflowList"
+      :envList="envList"
+      :policy="policy"
+      :collaborationData="currentCollaboration"
+      :deleteMode="deleteMode"
+      :updateActiveName="updateActiveName"
+    ></Policy>
   </div>
 </template>
 
 <script>
 import Policy from './policy.vue'
 import bus from '@utils/event_bus'
+import { cloneDeep } from 'lodash'
 import {
   usersAPI,
   queryPolicyDefinitionsAPI,
   getWorkflowsInProjectAPI,
   getCommonWorkflowListAPI,
-  listProductAPI
+  listProductAPI,
+  getAllCollaborationAPI
 } from '@api'
+const collaborationInfo = {
+  project_name: '',
+  name: '',
+  deploy_type: '',
+  members: [],
+  workflows: [], // name, collaboration_type, verbs=[]
+  products: [] // name, collaboration_type, recycleDay, verbs=[]
+}
 export default {
   data () {
     return {
-      allMode: [
-        {
-          name: '',
-          initName: ''
-        }
-      ],
       userList: [],
       workflowList: [],
       envList: [],
       policy: {
         workflow: [],
         environment: []
-      }
+      },
+      allCollaboration: [],
+      activeName: ''
     }
   },
   computed: {
     projectName () {
       return this.$route.params.project_name
+    },
+    deployType () {
+      return this.$store.getters.projectList.find(
+        project => project.name === this.projectName
+      ).deployType
+    },
+    currentCollaboration () {
+      const res = this.allCollaboration.find(
+        collaboration => collaboration.initName === this.activeName
+      ) || {
+        ...cloneDeep(collaborationInfo),
+        initName: ''
+      }
+      console.log('computed', this.activeName, res)
+      return res
     }
   },
   methods: {
-    deleteMode (index) {
-      console.log('删除需要做个判断：是删除已有的还是只是添加但未保存的', index)
-      this.allMode.splice(index, 1)
+    updateActiveName (name) {
+      this.activeName = name
+    },
+    deleteMode (initName) {
+      const index = this.allCollaboration.findIndex(
+        collaboration => collaboration.initName === initName
+      )
+      const collaboration = this.allCollaboration[index]
+      // the collaboration is not saved
+      if (!collaboration.initCollaboration) {
+        this.allCollaboration.splice(index, 1)
+        if (collaboration.initName === this.activeName) {
+          if (this.allCollaboration.length) {
+            this.activeName = this.allCollaboration[0].initName
+          } else {
+            this.addMode()
+          }
+        }
+      } else {
+        this.activeName = collaboration.initName
+        this.$refs.policyRef.checkDifferent(
+          null,
+          collaboration.initCollaboration
+        )
+      }
     },
     addMode () {
-      if (!this.allMode.lastLength) {
-        this.allMode.lastLength = this.allMode.length - 1
+      if (!this.allCollaboration.lastLength) {
+        this.allCollaboration.lastLength = this.allCollaboration.length - 1
       }
-      this.allMode.lastLength++
-      this.allMode.push({
-        name: '',
-        initName: `zadig-add-mode-${this.allMode.lastLength}`
+      this.allCollaboration.lastLength++
+      const initName = `zadig-add-mode-${this.allCollaboration.lastLength}`
+      this.allCollaboration.push({
+        ...cloneDeep(collaborationInfo),
+        project_name: this.projectName,
+        deploy_type: this.deployType,
+        initName
       })
+      this.activeName = initName
     },
     getUsers () {
       const projectName = this.projectName
@@ -133,6 +189,25 @@ export default {
       if (res) {
         this.envList = res.filter(env => !env.base_name).map(env => env.name)
       }
+    },
+    async getAllCollaboration () {
+      const res = await getAllCollaborationAPI(this.projectName).catch(err =>
+        console.log(err)
+      )
+      if (res) {
+        this.allCollaboration = res.collaborations.map(col => {
+          return {
+            ...col,
+            initName: col.name,
+            initCollaboration: cloneDeep(col)
+          }
+        })
+        if (!this.allCollaboration.length) {
+          this.addMode()
+        } else {
+          this.activeName = this.allCollaboration[0].initName
+        }
+      }
     }
   },
   components: {
@@ -143,6 +218,7 @@ export default {
     this.getPolicyDefinitions()
     this.getWorkflows()
     this.getEnvNameList()
+    this.getAllCollaboration()
     bus.$emit(`set-topbar-title`, {
       title: '',
       breadcrumb: [

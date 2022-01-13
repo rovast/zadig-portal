@@ -14,7 +14,7 @@
 <script>
 import Member from './member.vue'
 import Role from './role.vue'
-import Policy from './Policy'
+import Policy from './policy'
 import bus from '@utils/eventBus'
 
 export default {

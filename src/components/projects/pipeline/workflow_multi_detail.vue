@@ -71,14 +71,14 @@
           </el-col>
           <el-col :span="8">
             <div class="grid-content item-desc">
-              <el-tooltip effect="dark"
+              <el-tooltip v-hasPermi="{projectName: projectName, action: 'run_workflow'}" effect="dark"
                           content="执行"
                           placement="top">
                 <i @click="startTask"
                    class="el-icon-video-play start-build"></i>
               </el-tooltip>
               <template>
-                <el-tooltip effect="dark"
+                <el-tooltip v-hasPermi="{projectName: projectName, action: 'edit_workflow'}" effect="dark"
                             content="编辑工作流"
                             placement="top">
                   <router-link :to="`/workflows/product/edit/${workflowName}?projectName=${projectName}`"
@@ -86,7 +86,7 @@
                     <i class="el-icon-edit-outline edit-pipeline"></i>
                   </router-link>
                 </el-tooltip>
-                <el-tooltip effect="dark"
+                <el-tooltip v-hasPermi="{projectName: projectName, action: 'delete_workflow'}" effect="dark"
                             content="删除工作流"
                             placement="top">
                   <i @click="removeWorkflow"
@@ -153,11 +153,13 @@ export default {
       forcedUserInput: {},
       pageStart: 0,
       timerId: null,
-      timeTimeoutFinishFlag: false,
-      projectName: null
+      timeTimeoutFinishFlag: false
     }
   },
   computed: {
+    projectName () {
+      return this.$route.params.project_name
+    },
     workflowName () {
       return this.$route.params.workflow_name
     },
@@ -267,7 +269,6 @@ export default {
     clearTimeout(this.timerId)
   },
   mounted () {
-    this.projectName = this.$route.params.project_name
     getWorkflowDetailAPI(this.projectName, this.workflowName).then(res => {
       this.workflow = res
     })

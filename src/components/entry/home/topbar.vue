@@ -32,7 +32,7 @@
               </a>
             </li>
             <li>
-              <a href="https://docs.koderover.com/zadig/examples/voting/"
+              <a href="https://www.koderover.com/tutorials/"
                  target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>最佳实践</span>
@@ -82,13 +82,13 @@
                 <span>开发者中心</span>
               </a>
             </li>
-            <li>
+            <!-- <li>
               <a href="https://docs.koderover.com/zadig/glossary/"
                  target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>术语表</span>
               </a>
-            </li>
+            </li> -->
           </ul>
           <span slot="reference"
                 class="help">
@@ -176,7 +176,7 @@
 </template>
 <script>
 import notification from './common/notification.vue'
-import mixin from '@utils/topbar_mixin'
+import mixin from '@/mixin/topbarMixin'
 import bus from '@utils/event_bus'
 import { mapState } from 'vuex'
 export default {

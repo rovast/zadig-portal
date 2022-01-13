@@ -56,7 +56,7 @@
             <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns.name" :value="ns.name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库" prop="registry_id">
+        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small" @change="getImages">
             <el-option
               v-for="registry in imageRegistry"
@@ -355,13 +355,6 @@ export default {
         ],
         namespace: [
           { required: true, trigger: 'change', message: '请选择命名空间' }
-        ],
-        registry_id: [
-          {
-            required: true,
-            trigger: ['change', 'blur'],
-            message: '请选择镜像仓库'
-          }
         ],
         defaultNamespace: [
           { required: true, trigger: 'change', message: '命名空间不能为空' }
@@ -804,6 +797,9 @@ export default {
           picked2D.push(picked1D)
           const payload = this.$utils.cloneObj(this.projectConfig)
           payload.source = 'spock'
+          if (this.projectInfo.product_feature && this.projectInfo.product_feature.basic_facility === 'cloud_host') {
+            payload.source = 'pm'
+          }
           payload.namespace = payload.defaultNamespace
           const envType = 'test'
           this.startDeployLoading = true
@@ -838,7 +834,7 @@ export default {
       this.$router.back()
     },
     createHost () {
-      this.$router('/v1/system/host')
+      this.$router.push('/v1/system/host')
     },
     quickInitImage () {
       const select = this.quickSelection
@@ -886,7 +882,8 @@ export default {
     getRegistryWhenBuildAPI(this.projectName).then(res => {
       this.imageRegistry = res
       if (!this.projectConfig.registry_id) {
-        this.projectConfig.registry_id = res.find(reg => reg.is_default).id
+        const defaultRegistry = res.find(reg => reg.is_default)
+        this.projectConfig.registry_id = defaultRegistry ? defaultRegistry.id : ''
       }
       this.getTemplateAndImg()
     })

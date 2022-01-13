@@ -5,7 +5,7 @@
         集成环境
       </template>
     </van-nav-bar>
-    <van-cell v-for="(item,index) in products"
+    <van-cell v-for="(item,index) in envs"
               :key="index"
               is-link
               :to="item.url"
@@ -19,8 +19,8 @@
 </template>
 <script>
 import { NavBar, Empty, Cell, CellGroup } from 'vant'
-import { mapGetters } from 'vuex'
 import { uniqBy, orderBy } from 'lodash'
+import { getProjectsAPI } from '@api'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -30,33 +30,27 @@ export default {
   },
   data () {
     return {
-      products: []
+      envs: []
     }
   },
   computed: {
-    ...mapGetters([
-      'projectList'
-    ]),
     filteredProducts () {
       return uniqBy(orderBy(this.projectList, ['product_name', 'is_prod']), 'product_name')
     }
   },
   methods: {
-    async getProducts () {
-      const availableProjectNames = []
-
-      await this.$store.dispatch('getProjectList')
-      for (const product of this.projectList) {
-        availableProjectNames.push(product.product_name)
-      }
-      this.products = this.filteredProducts.map(element => {
-        return { name: element.product_name, url: `/mobile/envs/detail/${element.product_name}?envName=${element.env_name}` }
+    async getEnvs () {
+      const projects = await getProjectsAPI()
+      const sortedEnvs = orderBy(projects.filter(project => {
+        return !project.onboard && project.envs.length
+      }), 'name')
+      this.envs = sortedEnvs.map(element => {
+        return { name: element.name, url: `/mobile/envs/detail/${element.name}?envName=${element.envs[0]}` }
       })
     }
   },
   mounted () {
-    this.getProducts()
+    this.getEnvs()
   }
-
 }
 </script>

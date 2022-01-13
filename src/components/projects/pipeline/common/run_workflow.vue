@@ -229,7 +229,8 @@ export default {
       return !this.isHelm && !this.isPm
     },
     imageRegistryByEnv () {
-      if (!this.currentProjectEnvs.length || !this.runner.namespace) {
+      // host environment does't have registry
+      if (this.isPm || !this.currentProjectEnvs.length || !this.runner.namespace) {
         return
       }
       const namespace = this.runner.namespace

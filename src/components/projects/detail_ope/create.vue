@@ -131,6 +131,21 @@
                     </el-col>
                   </el-row>
                 </el-form-item>
+                <div v-if="!isEdit" v-show="activeName !=='advance'">
+                  <el-button type="text" @click="showAdvanced = !showAdvanced">
+                    高级配置
+                    <i :class="{'el-icon-arrow-right': !showAdvanced, 'el-icon-arrow-down': showAdvanced }"></i>
+                  </el-button>
+                  <el-form-item v-show="showAdvanced" label="指定集群资源" prop="cluster_ids">
+                    <el-select filterable multiple clearable v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源" style="width: 100%;">
+                      <el-option v-for="cluster in allCluster"
+                          :key="cluster.id"
+                          :label="$utils.showClusterName(cluster)"
+                          :value="cluster.id">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </div>
                 <div v-if="isEdit" v-show="activeName==='advance'">
                   <el-form-item label="服务部署超时（分钟）" prop="timeout">
                     <el-input v-model.number="projectForm.timeout"></el-input>
@@ -216,7 +231,8 @@ import {
   createProjectAPI,
   getSingleProjectAPI,
   updateSingleProjectAPI,
-  getExternalSystemsAPI
+  getExternalSystemsAPI,
+  getClusterListAPI
 } from '@api'
 import CusDeliverable from './components/cusDeliverable.vue'
 
@@ -260,6 +276,7 @@ export default {
         project_name: '',
         product_name: '',
         admins: [],
+        cluster_ids: [],
         timeout: null,
         desc: '',
         enabled: true,
@@ -282,6 +299,14 @@ export default {
             type: 'array',
             required: true,
             message: '请选择项目管理员',
+            trigger: 'change'
+          }
+        ],
+        cluster_ids: [
+          {
+            type: 'array',
+            required: true,
+            message: '请选择集群资源',
             trigger: 'change'
           }
         ],
@@ -310,7 +335,9 @@ export default {
           required: true, message: '请输入访问路径', trigger: 'blur'
         }
       },
-      externalList: []
+      externalList: [],
+      allCluster: [],
+      showAdvanced: false
     }
   },
   methods: {
@@ -433,6 +460,12 @@ export default {
     },
     resetForm (formName) {
       this.$refs[formName].resetFields()
+    },
+    getCluster () {
+      getClusterListAPI().then(res => {
+        this.allCluster = res
+        this.projectForm.cluster_ids = res.map(cluster => cluster.id)
+      })
     }
   },
   watch: {
@@ -472,6 +505,7 @@ export default {
       this.getProject(this.projectName)
     } else {
       this.getUsers()
+      this.getCluster()
       this.projectForm.admins.push(this.currentUserId)
     }
   }

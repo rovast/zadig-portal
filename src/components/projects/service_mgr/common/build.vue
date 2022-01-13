@@ -160,16 +160,17 @@
                        size="small"
                        @change="changeBuildName"
                        allow-create
-                       filterable>
+                       filterable
+                       clearable>
               <el-option
                 v-for="item in buildNames"
                 :key="item"
                 :label="item"
                 :value="item">
               </el-option>
-              <el-option
-                :label="`${projectName}-build-${buildServiceName}`"
-                :value="`${projectName}-build-${buildServiceName}`">
+              <el-option v-if="!buildNames.includes(defaultBuildName)"
+                :label="defaultBuildName"
+                :value="defaultBuildName">
               </el-option>
             </el-select>
           </el-form-item>
@@ -1047,14 +1048,15 @@ export default {
             })
           }
         })
-        getBuildConfigsAPI(projectName).then(res => {
+        await getBuildConfigsAPI(projectName).then(res => {
           this.buildInfos = res
         })
       }
       this.configDataLoading = false
       if (this.buildAdd && !this.isEdit && this.buildServiceName) {
-        this.$set(this.buildConfig, 'name', this.projectName + '-build-' + this.buildServiceName)
-        this.$set(this.jenkinsBuild, 'name', this.projectName + '-build-' + this.buildServiceName)
+        const hasBuild = this.buildNames.includes(this.defaultBuildName)
+        this.$set(this.buildConfig, 'name', hasBuild ? '' : this.defaultBuildName)
+        this.$set(this.jenkinsBuild, 'name', hasBuild ? '' : this.defaultBuildName)
       }
       getAllAppsAPI().then((response) => {
         const apps = this.$utils.sortVersion(response, 'name', 'asc')
@@ -1147,6 +1149,9 @@ export default {
       } else {
         return []
       }
+    },
+    defaultBuildName () {
+      return this.projectName + '-build-' + this.buildServiceName
     }
   },
   created () {

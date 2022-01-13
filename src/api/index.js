@@ -468,11 +468,11 @@ export function getWorkflowBindAPI (projectName, testName) {
   return http.get(`/api/v1/picket/workflows/testName/${testName}?projectName=${projectName}`)
 }
 
-export function getWorkflowsAPI (projectName) {
+export function getProductWorkflowsAPI (projectName) {
   return http.get(`/api/v1/picket/workflows?projectName=${projectName || ''}`)
 }
 
-export function getWorkflowsInProjectAPI (projectName) {
+export function getProductWorkflowsInProjectAPI (projectName) {
   return http.get(`/api/aslan/workflow/workflow?projectName=${projectName || ''}`)
 }
 
@@ -483,6 +483,7 @@ export function setFavoriteAPI (payload) {
 export function deleteFavoriteAPI (projectName, workflowName, type) {
   return http.delete(`/api/aslan/workflow/favorite/${projectName}/${workflowName}/${type}?projectName=${projectName}`)
 }
+
 export function getWorkflowDetailAPI (projectName, name) {
   return http.get(`/api/aslan/workflow/workflow/find/${name}?projectName=${projectName}`)
 }
@@ -571,8 +572,12 @@ export function updateCommonWorkflowAPI (projectName = '', id, payload) {
   return http.put(`/api/aslan/workflow/v3/${id}?projectName=${projectName}`, payload)
 }
 
-export function getCommonWorkflowListAPI (projectName = '', pageNum = 1, pageSize = 999) {
+export function getCommonWorkflowListInProjectAPI (projectName = '', pageNum = 1, pageSize = 999) {
   return http.get(`/api/aslan/workflow/v3?project_name=${projectName}&projectName=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
+}
+
+export function getCommonWorkflowListAPI (projectName = '', pageNum = 1, pageSize = 999) {
+  return http.get(`/api/v1/picket/workflows/v3?project_name=${projectName}&projectName=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
 }
 
 export function getCommonBuildArgsAPI (projectName, id) {
@@ -1572,6 +1577,10 @@ export function queryRoleBindingsAPI (projectName) { // 查询项目中的角色
 
 export function queryUserBindingsAPI (uid, projectName = '') { // 查询用户所有绑定的角色，传 projectName 是项目绑定，不传是系统绑定
   return http.get(`/api/v1/userbindings?uid=${uid}&projectName=${projectName}`)
+}
+
+export function getProjectPermissionAPI (projectName = '', uid) {
+  return http.get(`/api/v1/policy/permission/${uid}?projectName=${projectName}`)
 }
 
 export function getArtifactFileAPI (payload, id) {

@@ -4,8 +4,8 @@
        element-loading-spinner="iconfont iconfont-loading icondocker"
        class="setting-registry-container">
     <!--registry-create-dialog-->
-    <el-dialog title='添加'
-               :visible.sync="dialogRegistryCreateFormVisible"
+    <el-dialog :title="mode === 'create'?'添加':'编辑'"
+               :visible.sync="dialogRegistryFormVisible"
                :close-on-click-modal="false"
                custom-class="dialog-style"
                width="35%">
@@ -21,50 +21,31 @@
         <el-form-item label="提供商"
                       prop="reg_provider">
           <el-select v-model="registry.reg_provider"
+                     @change="changeProvider"
                      style="width: 100%;"
                      size="small"
                      placeholder="请选择镜像仓库提供商">
-            <el-option value="acr"
-                       label="阿里云 ACR">
-              <i class="iconfont iconaliyun"></i> <span>阿里云 ACR</span>
-            </el-option>
-
-            <el-option value="swr"
-                       label="华为云 SWR">
-              <i class="iconfont iconhuawei"></i> <span>华为云 SWR</span>
-            </el-option>
-            <el-option value="tcr"
-                       label="腾讯云 TCR">
-              <i class="iconfont icontengxunyun"></i> <span>腾讯云 TCR</span>
-            </el-option>
-            <el-option value="harbor"
-                       label="Harbor">
-              <i class="iconfont iconHarbor"></i> <span>Harbor</span>
-            </el-option>
-            <el-option value="dockerhub"
-                       label="DockerHub">
-              <i class="iconfont icondocker"></i> <span>DockerHub</span>
-            </el-option>
-            <el-option value="native"
-                       label="其它">
-              <i class="iconfont iconqita"></i> <span>其它</span>
+            <el-option v-for="(provider,index) in providers" :key="index" :value="provider.value"
+                       :label="provider.label">
+              <i :class="provider.icon"></i> <span>{{provider.label}}</span>
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="registry.reg_provider === 'swr'"
-                      label="区域"
+        <el-form-item v-if="registry.reg_provider === 'swr' || registry.reg_provider === 'ecr'"
+                      :label="providerMap[registry.reg_provider].region"
                       prop="region">
           <el-input size="small"
                     clearable
                     v-model="registry.region"></el-input>
         </el-form-item>
-        <el-form-item label="地址"
+        <el-form-item v-if="registry.reg_provider"
+                      :label="providerMap[registry.reg_provider].reg_addr"
                       prop="reg_addr">
           <el-input size="small"
                     clearable
                     v-model="registry.reg_addr"></el-input>
         </el-form-item>
-        <el-form-item prop="namespace">
+        <el-form-item v-if="registry.reg_provider && registry.reg_provider !=='ecr'" prop="namespace">
           <template slot="label">
             {{ registry.reg_provider ? providerMap[registry.reg_provider].namespace : 'Namespace' }}
           </template>
@@ -72,15 +53,15 @@
                     clearable
                     v-model="registry.namespace"></el-input>
         </el-form-item>
-        <el-form-item :label="registry.reg_provider === 'swr'?'Access Key':'Docker 用户名'"
-                      :rules="{ required: true, message: `请输入 ${registry.reg_provider === 'swr'?'Access Key':'Docker 用户名'}`, trigger: 'blur' }"
+        <el-form-item v-if="registry.reg_provider" :label="providerMap[registry.reg_provider].access_key"
+                      :rules="{ required: true, message: `请输入 ${providerMap[registry.reg_provider].access_key}`, trigger: ['blur'] }"
                       prop="access_key">
           <el-input size="small"
                     clearable
                     v-model="registry.access_key"></el-input>
         </el-form-item>
-        <el-form-item :label="registry.reg_provider === 'swr'?'Secret Key':'Docker 密码'"
-                      :rules="{ required: true, message: `请输入 ${registry.reg_provider === 'swr'?'Secret Key':'Docker 密码'}`, trigger: 'blur' }"
+        <el-form-item v-if="registry.reg_provider" :label="providerMap[registry.reg_provider].secret_key"
+                      :rules="{ required: true, message: `请输入 ${providerMap[registry.reg_provider].secret_key}`, trigger: ['blur'] }"
                       prop="secret_key">
           <el-input size="small"
                     clearable
@@ -91,111 +72,14 @@
       <div slot="footer"
            class="dialog-footer">
         <el-button size="small"
-                   @click="dialogRegistryCreateFormVisible = false">取 消</el-button>
+                   @click="dialogRegistryFormVisible = false">取 消</el-button>
         <el-button :plain="true"
                    type="success"
                    size="small"
-                   @click="registryOperation('add')">保存</el-button>
+                   @click="mode === 'create' ? registryAction('add'): registryAction('update')">保存</el-button>
       </div>
     </el-dialog>
     <!--registry-create-dialog-->
-
-    <!--registry-edit-dialog-->
-    <el-dialog title='修改'
-               :visible.sync="dialogRegistryEditFormVisible"
-               :close-on-click-modal="false"
-               custom-class="dialog-style"
-               width="35%">
-      <el-form ref="swapRegistry"
-               :rules="rules"
-               label-width="150px"
-               label-position="left"
-               :model="swapRegistry">
-        <el-form-item label="默认使用"
-                      prop="is_default">
-          <el-checkbox v-model="swapRegistry.is_default"></el-checkbox>
-        </el-form-item>
-        <el-form-item label="提供商"
-                      prop="reg_provider">
-          <el-select v-model="swapRegistry.reg_provider"
-                     style="width: 100%;"
-                     size="small"
-                     placeholder="请选择镜像仓库提供商">
-            <el-option value="acr"
-                       label="阿里云 ACR">
-              <i class="iconfont iconaliyun"></i> <span>阿里云 ACR</span>
-            </el-option>
-
-            <el-option value="swr"
-                       label="华为云 SWR">
-              <i class="iconfont iconhuawei"></i> <span>华为云 SWR</span>
-            </el-option>
-            <el-option value="tcr"
-                       label="腾讯云 TCR">
-              <i class="iconfont icontengxunyun"></i> <span>腾讯云 TCR</span>
-            </el-option>
-            <el-option value="harbor"
-                       label="Harbor">
-              <i class="iconfont iconHarbor"></i> <span>Harbor</span>
-            </el-option>
-            <el-option value="dockerhub"
-                       label="DockerHub">
-              <i class="iconfont icondocker"></i> <span>DockerHub</span>
-            </el-option>
-            <el-option value="native"
-                       label="其它">
-              <i class="iconfont iconqita"></i> <span>其它</span>
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="swapRegistry.reg_provider === 'swr'"
-                      label="区域"
-                      prop="region">
-          <el-input size="small"
-                    clearable
-                    v-model="swapRegistry.region"></el-input>
-        </el-form-item>
-        <el-form-item label="地址"
-                      prop="reg_addr">
-          <el-input size="small"
-                    clearable
-                    v-model="swapRegistry.reg_addr"></el-input>
-        </el-form-item>
-        <el-form-item prop="namespace">
-          <template slot="label">
-            {{ swapRegistry.reg_provider ? providerMap[swapRegistry.reg_provider].namespace : 'Namespace' }}
-          </template>
-          <el-input size="small"
-                    clearable
-                    v-model="swapRegistry.namespace"></el-input>
-        </el-form-item>
-        <el-form-item :label="swapRegistry.reg_provider === 'swr'?'Access Key':'Docker 用户名'"
-                      :rules="{ required: true, message: `请输入 ${swapRegistry.reg_provider === 'swr'?'Access Key':'Docker 用户名'}`, trigger: 'blur' }"
-                      prop="access_key">
-          <el-input size="small"
-                    clearable
-                    v-model="swapRegistry.access_key"></el-input>
-        </el-form-item>
-        <el-form-item :label="swapRegistry.reg_provider === 'swr'?'Secret Key':'Docker 密码'"
-                      :rules="{ required: true, message: `请输入 ${swapRegistry.reg_provider === 'swr'?'Secret Key':'Docker 密码'}`, trigger: 'blur' }"
-                      prop="secret_key">
-          <el-input size="small"
-                    clearable
-                    type="passsword"
-                    v-model="swapRegistry.secret_key"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer"
-           class="dialog-footer">
-        <el-button size="small"
-                   @click="dialogRegistryEditFormVisible = false">取 消</el-button>
-        <el-button :plain="true"
-                   type="success"
-                   size="small"
-                   @click="registryOperation('update')">保存</el-button>
-      </div>
-    </el-dialog>
-    <!--registry-edit-dialog-->
     <div class="section">
       <el-alert type="info"
                 :closable="false">
@@ -223,7 +107,8 @@
             <el-table-column label="提供商/地址/Namespace">
               <template slot-scope="scope">
                 <i :class="getProviderMap(scope.row.reg_provider,'icon')"></i>
-                <span>{{`${scope.row.reg_addr.split('://')[1]}/${scope.row.namespace}`}}</span>
+                <span v-if="scope.row.namespace">{{`${scope.row.reg_addr.split('://')[1]}/${scope.row.namespace}`}}</span>
+                <span v-else>{{`${scope.row.reg_addr.split('://')[1]}`}}</span>
               </template>
             </el-table-column>
             <el-table-column width="150px"
@@ -251,9 +136,9 @@
             <el-table-column label="操作"
                              width="180px">
               <template slot-scope="scope">
-                <el-button @click="registryOperation('edit',scope.row)"
+                <el-button @click="registryAction('edit',scope.row)"
                            size="mini">编辑</el-button>
-                <el-button @click="registryOperation('delete',scope.row)"
+                <el-button @click="registryAction('delete',scope.row)"
                            size="mini"
                            type="danger">删除</el-button>
               </template>
@@ -268,11 +153,13 @@
 <script>
 
 import { getRegistryListAPI, createRegistryAPI, updateRegistryAPI, deleteRegistryAPI } from '@api'
+import { keyBy, cloneDeep } from 'lodash'
 import bus from '@utils/event_bus'
 export default {
   data () {
     return {
       allRegistry: [],
+      mode: '',
       registry: {
         namespace: '',
         reg_addr: '',
@@ -282,65 +169,96 @@ export default {
         region: '',
         is_default: false
       },
-      swapRegistry: {
-        namespace: '',
-        reg_addr: '',
-        reg_provider: 'native',
-        region: '',
-        access_key: '',
-        secret_key: '',
-        is_default: false
-      },
-      providerMap: {
-        native: {
-          icon: 'iconfont logo iconqita',
-          name: '其它',
-          namespace: 'Namespace'
+      providers: [
+        {
+          value: 'acr',
+          label: '阿里云 ACR',
+          reg_addr: '地址',
+          namespace: '命名空间',
+          access_key: 'Docker 用户名',
+          secret_key: 'Docker 密码',
+          icon: 'iconfont logo iconaliyun'
         },
-        swr: {
-          icon: 'iconfont logo iconhuawei',
-          name: '华为云 SWR',
-          namespace: '组织名称'
+        {
+          value: 'swr',
+          label: '华为云 SWR',
+          reg_addr: '地址',
+          namespace: '组织名称',
+          region: '区域',
+          access_key: 'Access Key',
+          secret_key: 'Secret Key',
+          icon: 'iconfont logo iconhuawei'
         },
-        acr: {
-          icon: 'iconfont logo iconaliyun ',
-          name: '阿里云 ACR',
-          namespace: '命名空间'
+
+        {
+          value: 'tcr',
+          label: '腾讯云 TCR',
+          reg_addr: '地址',
+          namespace: '命名空间',
+          access_key: 'Docker 用户名',
+          secret_key: 'Docker 密码',
+          icon: 'iconfont logo icontengxunyun'
         },
-        tcr: {
-          icon: 'iconfont logo icontengxunyun',
-          name: '腾讯云 TCR',
-          namespace: '命名空间'
+        {
+          value: 'harbor',
+          label: 'Harbor',
+          reg_addr: '地址',
+          namespace: '项目',
+          access_key: 'Docker 用户名',
+          secret_key: 'Docker 密码',
+          icon: 'iconfont logo iconHarbor'
         },
-        harbor: {
-          icon: 'iconfont logo iconHarbor',
-          name: 'Harbor',
-          namespace: '项目'
+        {
+          value: 'dockerhub',
+          label: 'DockerHub',
+          reg_addr: '地址',
+          namespace: 'Namespace',
+          access_key: 'Docker 用户名',
+          secret_key: 'Docker 密码',
+          icon: 'iconfont logo icondocker'
         },
-        dockerhub: {
-          icon: 'iconfont logo icondocker',
-          name: 'DockerHub',
-          namespace: 'Namespace'
+        {
+          value: 'ecr',
+          label: 'Amazon ECR',
+          reg_addr: 'URI',
+          namespace: '',
+          region: 'Region',
+          access_key: 'Access Key ID',
+          secret_key: 'Secret Access Key',
+          icon: 'iconfont logo iconaws'
+        },
+        {
+          value: 'native',
+          label: '其它',
+          reg_addr: '地址',
+          namespace: 'Namespace',
+          access_key: 'Docker 用户名',
+          secret_key: 'Docker 密码',
+          icon: 'iconfont logo iconqita'
         }
-      },
-      dialogRegistryCreateFormVisible: false,
-      dialogRegistryEditFormVisible: false,
+      ],
+      dialogRegistryFormVisible: false,
       loading: true,
       rules: {
-        reg_provider: [{ required: true, message: '请选择镜像仓库提供商', trigger: 'blur' }],
+        reg_provider: [{ required: true, message: '请选择镜像仓库提供商', trigger: ['blur'] }],
         reg_addr: [{
           required: true,
           message: '请输入 URL',
-          trigger: 'blur'
+          trigger: ['blur']
         },
         {
           type: 'url',
           message: '请输入正确的 URL，包含协议',
-          trigger: ['blur', 'change']
+          trigger: ['blur']
         }],
-        region: [{ required: true, message: '请输入区域', trigger: 'blur' }],
-        namespace: [{ required: true, message: '请输入 Namespace', trigger: 'blur' }]
+        region: [{ required: true, message: '请输入区域', trigger: ['blur'] }],
+        namespace: [{ required: true, message: '请输入 Namespace', trigger: ['blur'] }]
       }
+    }
+  },
+  computed: {
+    providerMap () {
+      return keyBy(this.providers, 'value')
     }
   },
   methods: {
@@ -350,43 +268,72 @@ export default {
       } else {
         this.registry.is_default = false
       }
-      this.dialogRegistryCreateFormVisible = true
+      this.registry = {
+        namespace: '',
+        reg_addr: '',
+        access_key: '',
+        secret_key: '',
+        reg_provider: '',
+        region: '',
+        is_default: false
+      }
+      this.mode = 'create'
+      this.dialogRegistryFormVisible = true
     },
     getProviderMap (name, type) {
-      if (this.providerMap[name] && type) {
-        return this.providerMap[name][type]
+      const providerMap = this.providerMap
+      if (providerMap[name] && type) {
+        return providerMap[name][type]
       } else {
-        return this.providerMap.native.icon
+        return providerMap.native.icon
       }
     },
-    registryOperation (operate, current_registry) {
-      if (operate === 'add') {
+    changeProvider (val) {
+      this.$nextTick(() => {
+        this.registry = {
+          namespace: '',
+          reg_addr: val === 'dockerhub' ? 'https://registry.hub.docker.com' : '',
+          access_key: '',
+          secret_key: '',
+          reg_provider: val,
+          region: '',
+          is_default: false
+        }
+        this.$refs.registry.clearValidate()
+      })
+    },
+    registryAction (action, registry) {
+      if (action === 'add') {
         this.$refs.registry.validate(valid => {
           if (valid) {
             const payload = this.registry
-            this.dialogRegistryCreateFormVisible = false
+            this.dialogRegistryFormVisible = false
             this.addRegistry(payload)
           } else {
             return false
           }
         })
-      } else if (operate === 'edit') {
-        this.swapRegistry = this.$utils.cloneObj(current_registry)
-        this.dialogRegistryEditFormVisible = true
-      } else if (operate === 'update') {
-        this.$refs.swapRegistry.validate(valid => {
+      } else if (action === 'edit') {
+        this.registry = cloneDeep(registry)
+        this.mode = 'edit'
+        this.dialogRegistryFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.registry.clearValidate()
+        })
+      } else if (action === 'update') {
+        this.$refs.registry.validate(valid => {
           if (valid) {
-            const id = this.swapRegistry.id
-            const payload = this.swapRegistry
-            this.dialogRegistryEditFormVisible = false
+            const id = this.registry.id
+            const payload = this.registry
+            this.dialogRegistryFormVisible = false
             this.updateRegistry(id, payload)
           } else {
             return false
           }
         })
-      } else if (operate === 'delete') {
-        const id = current_registry.id
-        this.$confirm(`确定要删除 ${current_registry.namespace} ?`, '确认', {
+      } else if (action === 'delete') {
+        const id = registry.id
+        this.$confirm(`确定要删除 ${registry.namespace} ?`, '确认', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -413,7 +360,6 @@ export default {
     },
     updateRegistry (id, payload) {
       updateRegistryAPI(id, payload).then((res) => {
-        this.$refs.swapRegistry.resetFields()
         this.getRegistry()
         this.$message({
           type: 'success',
@@ -427,17 +373,6 @@ export default {
         this.loading = false
         this.allRegistry = res
       })
-    }
-  },
-  watch: {
-    'registry.reg_provider': {
-      deep: true,
-      immediate: false,
-      handler: function (val, oldVal) {
-        if (val === 'dockerhub') {
-          this.registry.reg_addr = 'https://registry.hub.docker.com'
-        }
-      }
     }
   },
   created () {
@@ -491,6 +426,7 @@ export default {
 
       .logo {
         font-size: 20px;
+        vertical-align: bottom;
       }
     }
 

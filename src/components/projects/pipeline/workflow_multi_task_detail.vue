@@ -49,18 +49,18 @@
             </el-form-item>
             <el-form-item v-if="versionList.length > 0 && taskDetail.status==='passed'"
                           label="交付清单">
-              <router-link :to="`/v1/delivery/version/${versionList[0].versionInfo.id}`">
+              <router-link :to="`/v1/delivery/version/${projectName}/${versionList[0].versionInfo.id}?deployType=k8s&version=${versionList[0].versionInfo.version}`">
                 <span class="version-link">{{ $utils.tailCut(versionList[0].versionInfo.id,8,'#')+
             versionList[0].versionInfo.version }}</span>
               </router-link>
             </el-form-item>
-            <el-form-item v-if="showOperation()"
+            <el-form-item v-hasPermi="{projectName: projectName, action: 'run_workflow'}" v-if="showOperation()"
                           label="操作">
                 <el-button v-if="taskDetail.status==='failed' || taskDetail.status==='cancelled' || taskDetail.status==='timeout'"
                            @click="rerun"
                            type="text"
                            size="medium">失败重试</el-button>
-                <el-button v-if="taskDetail.status==='running'||taskDetail.status==='created'"
+                <el-button v-hasPermi="{projectName: projectName, action: 'run_workflow'}" v-if="taskDetail.status==='running'||taskDetail.status==='created'"
                            @click="cancel"
                            type="text"
                            size="medium">取消任务</el-button>

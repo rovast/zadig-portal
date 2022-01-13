@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import mixin from '@utils/workflow_mixin'
+import mixin from '@/mixin/workflowMixin'
 import sideMenu from './side_menu.vue'
 import tabMenu from './tab_menu.vue'
 import basicInfo from './switch_tab/basic_info.vue'

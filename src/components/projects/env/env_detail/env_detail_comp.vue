@@ -34,7 +34,7 @@
                       type="primary">托管</el-tag>
             </span>
           </el-tab-pane>
-          <el-tab-pane label="新建"
+          <el-tab-pane v-hasPermi="{projectName: projectName, action: 'create_environment'}" label="新建"
                        name="CREATE_NEW_ENV">
             <span slot="label">
               新建环境 <i class="el-icon-circle-plus-outline"></i>
@@ -92,7 +92,8 @@
               </div>
             </el-col>
           </el-row>
-          <el-row :gutter="20" v-if="envSource===''||envSource==='spock' || envSource==='helm'">
+          <!-- host project don't show registry -->
+          <el-row :gutter="20" v-if="!isPmService">
             <el-col :span="3">
               <div class="grid-content">镜像仓库:</div>
             </el-col>
@@ -106,7 +107,7 @@
                   <el-option
                     v-for="registry in imageRegistry"
                     :key="registry.id"
-                    :label="`${registry.reg_addr}/${registry.namespace}`"
+                    :label="registry.namespace?`${registry.reg_addr}/${registry.namespace}`:registry.reg_addr"
                     :value="registry.id">
                   </el-option>
                 </el-select>
@@ -122,7 +123,7 @@
             <el-col v-if="!productInfo.is_prod"
                     :span="16">
               <div class="grid-content operation">
-                  <el-tooltip v-if="checkEnvUpdate(productInfo.status) && productInfo.status!=='Disconnected'"
+                  <el-tooltip v-hasPermi="{projectName: projectName, action: 'config_environment'}" v-if="checkEnvUpdate(productInfo.status) && productInfo.status!=='Disconnected'"
                               content="更新环境中引用的变量"
                               effect="dark"
                               placement="top">
@@ -135,7 +136,7 @@
                                  @click="openUpdateHelmVar">更新环境变量</el-button>
                     </template>
                   </el-tooltip>
-                <el-tooltip v-if="showUpdate(productInfo,productStatus) && productInfo.status!=='Disconnected'"
+                <el-tooltip v-hasPermi="{projectName: projectName, action: 'config_environment'}" v-if="showUpdate(productInfo,productStatus) && productInfo.status!=='Disconnected'"
                             content="根据最新环境配置更新，包括服务编排和服务配置的改动"
                             effect="dark"
                             placement="top">
@@ -149,19 +150,19 @@
                     </template>
                 </el-tooltip>
                 <template>
-                  <el-button v-if="envSource==='external'" @click="editExternalConfig(productInfo)" type="text">配置托管</el-button>
+                  <el-button v-hasPermi="{projectName: projectName, action: 'config_environment'}" v-if="envSource==='external'" @click="editExternalConfig(productInfo)" type="text">配置托管</el-button>
                 </template>
                 <template>
-                    <el-button  v-if="isShowDeleteEnv"
+                    <el-button v-hasPermi="{projectName: projectName, action: 'delete_environment'}" v-if="isShowDeleteEnv"
                                type="text"
                                @click="deleteProduct(productInfo.product_name,productInfo.env_name)">
                       删除环境</el-button>
-                    <el-button v-else-if="envSource==='external'"
+                    <el-button v-hasPermi="{projectName: projectName, action: 'config_environment'}" v-else-if="envSource==='external'"
                                type="text"
                                @click="deleteHostingEnv(productInfo.product_name,productInfo.env_name)">
                       取消托管</el-button>
 
-                    <el-button v-if="productInfo.status!=='Creating'"
+                    <el-button v-hasPermi="{projectName: projectName, action: 'config_environment'}" v-if="productInfo.status!=='Creating'"
                                type="text"
                                @click="openRecycleEnvDialog()">环境回收</el-button>
                 </template>
@@ -170,7 +171,7 @@
             <el-col v-if="productInfo.is_prod"
                     :span="16">
               <div class="grid-content operation">
-                  <el-tooltip v-if="checkEnvUpdate(productInfo.status) && productInfo.status!=='Disconnected' && (envSource===''||envSource==='spock'|| envSource==='helm')"
+                  <el-tooltip v-hasPermi="{projectName: projectName, action: 'config_environment'}" v-if="checkEnvUpdate(productInfo.status) && productInfo.status!=='Disconnected' && (envSource===''||envSource==='spock'|| envSource==='helm')"
                               content="更新环境中引用的变量"
                               effect="dark"
                               placement="top">
@@ -178,7 +179,7 @@
                                type="text"
                                @click="envSource==='helm' ? openUpdateHelmVar() : openUpdateK8sVar()">更新环境变量</el-button>
                   </el-tooltip>
-                <el-tooltip v-if="showUpdate(productInfo,productStatus) && productInfo.status!=='Disconnected' && (envSource===''||envSource==='spock'|| envSource==='helm')"
+                <el-tooltip v-hasPermi="{projectName: projectName, action: 'config_environment'}" v-if="showUpdate(productInfo,productStatus) && productInfo.status!=='Disconnected' && (envSource===''||envSource==='spock'|| envSource==='helm')"
                             content="根据最新环境配置更新，包括服务编排和服务配置的改动"
                             effect="dark"
                             placement="top">
@@ -187,14 +188,14 @@
                                @click="envSource==='helm' ? openUpdateHelmEnv() : updateK8sEnv(productInfo)">更新环境</el-button>
                 </el-tooltip>
                 <template>
-                  <el-button v-if="envSource==='external'" @click="editExternalConfig(productInfo)" type="text">配置托管</el-button>
+                  <el-button v-hasPermi="{projectName: projectName, action: 'config_environment'}" v-if="envSource==='external'" @click="editExternalConfig(productInfo)" type="text">配置托管</el-button>
                 </template>
                 <template>
-                    <el-button v-if="isShowDeleteEnv"
+                    <el-button v-hasPermi="{projectName: projectName, action: 'delete_environment'}" v-if="isShowDeleteEnv"
                                type="text"
                                @click="deleteProduct(productInfo.product_name,productInfo.env_name)">
                       删除环境</el-button>
-                    <el-button v-else-if="envSource==='external'"
+                    <el-button v-hasPermi="{projectName: projectName, action: 'config_environment'}" v-else-if="envSource==='external'"
                                type="text"
                                @click="deleteHostingEnv(productInfo.product_name,productInfo.env_name)">
                       取消托管</el-button>
@@ -316,7 +317,7 @@
                       </el-tooltip>
                     </span>
                   </el-popover>
-                  <el-tooltip effect="dark"
+                  <el-tooltip v-hasPermi="{projectName: projectName, action: 'manage_environment'}" effect="dark"
                               content="更新服务"
                               placement="top">
                       <i @click="updateService(scope.row)"
@@ -398,7 +399,7 @@
               <template slot-scope="scope">
                 <span v-if="envSource !=='external' && envSource !=='helm'"
                       class="operation">
-                  <el-tooltip effect="dark"
+                  <el-tooltip v-hasPermi="{projectName: projectName, action: 'manage_environment'}" effect="dark"
                               content="通过工作流升级服务"
                               placement="top">
                       <i @click="upgradeServiceByWorkflow(projectName,envName,scope.row.service_name,scope.row.type)"
@@ -406,7 +407,7 @@
                   </el-tooltip>
                 </span>
                 <span class="operation">
-                  <el-tooltip effect="dark"
+                  <el-tooltip v-hasPermi="{projectName: projectName, action: 'manage_environment'}" effect="dark"
                               content="重启服务"
                               placement="top">
                       <i @click="restartService(projectName,scope.row.service_name,$route.query.envName)"
@@ -415,7 +416,7 @@
                 </span>
                 <span v-if="(envSource===''||envSource ==='spock'||envSource ==='external')"
                       class="operation">
-                  <el-tooltip effect="dark"
+                  <el-tooltip v-hasPermi="{projectName: projectName, action: 'manage_environment'}" effect="dark"
                               content="查看服务配置"
                               placement="top">
                       <router-link :to="setServiceConfigRoute(scope)">
@@ -439,7 +440,7 @@
                 </router-link>
                 <template
                           v-if=" serviceStatus[scope.row.service_name] && serviceStatus[scope.row.service_name]['tpl_updatable']">
-                  <el-tooltip effect="dark"
+                  <el-tooltip v-hasPermi="{projectName: projectName, action: 'manage_environment'}" effect="dark"
                               content="更新主机资源和探活配置"
                               placement="top">
                       <i @click="updateService(scope.row)"
@@ -509,7 +510,7 @@
                              width="150px">
               <template slot-scope="scope">
                 <span class="operation">
-                  <el-tooltip effect="dark"
+                  <el-tooltip v-hasPermi="{projectName: projectName, action: 'manage_environment'}" effect="dark"
                               content="通过工作流升级服务"
                               placement="top">
                       <i @click="upgradeServiceByWorkflow(projectName,envName,scope.row.service_name,scope.row.type)"
@@ -518,7 +519,7 @@
                 </span>
                 <span v-if="scope.row.status!=='Succeeded'"
                       class="operation">
-                  <el-tooltip effect="dark"
+                  <el-tooltip v-hasPermi="{projectName: projectName, action: 'manage_environment'}" effect="dark"
                               content="查看服务升级日志"
                               placement="top">
                       <i @click="openPmServiceLog(envName,scope.row.service_name)"
@@ -526,7 +527,7 @@
                   </el-tooltip>
                 </span>
                 <span class="operation">
-                  <el-tooltip effect="dark"
+                  <el-tooltip v-hasPermi="{projectName: projectName, action: 'manage_environment'}" effect="dark"
                               content="查看服务配置"
                               placement="top">
                       <router-link :to="setPmServiceConfigRoute(scope)">
@@ -706,9 +707,9 @@ export default {
       const registryId = this.productInfo.registry_id
       this.imageRegistry.forEach(image => {
         if (image.id === registryId) {
-          findImage = `${image.reg_addr}/${image.namespace}`
+          findImage = image.namespace ? `${image.reg_addr}/${image.namespace}` : image.reg_addr
         } else if (image.is_default) {
-          defaultImage = `${image.reg_addr}/${image.namespace}`
+          defaultImage = image.namespace ? `${image.reg_addr}/${image.namespace}` : image.reg_addr
         }
       })
       return findImage || defaultImage

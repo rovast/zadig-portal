@@ -15,7 +15,11 @@ const state = {
   role: []
 }
 
-const getters = {}
+const getters = {
+  uid: state => {
+    return state.userinfo.uid
+  }
+}
 
 const actions = {
   OTHERLOGIN (context, token) { // 第三方登录

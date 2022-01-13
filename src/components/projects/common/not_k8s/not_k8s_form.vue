@@ -62,56 +62,6 @@
         </el-row>
         <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit"></BuildEnv>
       </el-form>
-      <el-form ref="buildApp"
-               :inline="true"
-               :model="buildConfig"
-               class="config-form"
-               label-position="top"
-               label-width="80px">
-        <span class="item-title">应用列表</span>
-        <el-button v-if="buildConfig.pre_build.installs.length===0"
-                   style="padding: 0;"
-                   @click="addFirstBuildApp()"
-                   type="text">新增</el-button>
-        <div class="divider item"></div>
-        <el-row v-for="(app,buildAppIndex) in buildConfig.pre_build.installs"
-                :key="buildAppIndex">
-          <el-col :span="6">
-            <el-form-item
-                          :prop="'pre_build.installs.' + buildAppIndex + '.name'"
-                          :rules="{required: true, message: '应用名不能为空', trigger: 'blur'}">
-              <el-select style="width: 100%;"
-                         v-model="buildConfig.pre_build.installs[buildAppIndex]"
-                         placeholder="请选择应用"
-                         size="small"
-                         value-key="id"
-                         filterable>
-                <el-option v-for="(app, index) in allApps"
-                           :key="index"
-                           :label="`${app.name} ${app.version} `"
-                           :value="{'name':app.name,'version':app.version,'id':app.name+app.version}">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item >
-              <div class="app-operation">
-                <el-button v-if="buildConfig.pre_build.installs.length >= 1"
-                           @click="deleteBuildApp(buildAppIndex)"
-                           type="danger"
-                           size="small"
-                           plain>删除</el-button>
-                <el-button v-if="buildAppIndex === buildConfig.pre_build.installs.length-1"
-                           @click="addBuildApp(buildAppIndex)"
-                           type="primary"
-                           size="small"
-                           plain>新增</el-button>
-              </div>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
     </div>
     <div class="section">
       <repo-select :config="buildConfig"
@@ -607,7 +557,7 @@
   </div>
 </template>
 <script>
-import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getAllAppsAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
+import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
 import BuildEnv from '@/components/projects/build/build_env.vue'
 import EnvVariable from '@/components/projects/build/env_variable.vue'
 import Editor from 'vue2-ace-bind'
@@ -711,7 +661,6 @@ export default {
       checkStatusEnabled: false,
       editBuildConfigName: false,
       showCheckStatusAdvanced: {},
-      allApps: [],
       allCodeHosts: [],
       allHost: [],
       allHostLabels: [],
@@ -1314,12 +1263,6 @@ export default {
           })
         })
       }
-      getAllAppsAPI().then((res) => {
-        const apps = this.$utils.sortVersion(res, 'name', 'asc')
-        this.allApps = apps.map((app) => {
-          return { name: app.name, version: app.version, id: app.name + app.version }
-        })
-      })
       getCodeSourceMaskedAPI().then((res) => {
         this.allCodeHosts = res
       })

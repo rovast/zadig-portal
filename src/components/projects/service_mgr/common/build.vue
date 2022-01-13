@@ -198,58 +198,6 @@
           <BuildEnv v-show="!isSelectedBuild" :initFlag="configDataLoading" :pre_build="buildConfig.pre_build"  :isCreate="!isEdit" mini></BuildEnv>
         </el-form>
         <div v-show="!isSelectedBuild" class="section">
-          <el-form
-                  ref="buildApp"
-                  :inline="true"
-                  :model="buildConfig"
-                  class="form-style1 section"
-                  label-position="top"
-                  label-width="80px">
-            <span class="item-title">应用列表</span>
-            <el-button v-if="buildConfig.pre_build.installs.length===0"
-                      style="padding: 0;"
-                      @click="addFirstBuildApp()"
-                      size="mini"
-                      type="text">新增</el-button>
-            <div class="divider item"></div>
-            <el-row v-for="(app,build_app_index) in buildConfig.pre_build.installs"
-                    :key="build_app_index">
-              <el-col :span="12">
-                <el-form-item
-                              :prop="'pre_build.installs.' + build_app_index + '.name'"
-                              :rules="{required: true, message: '应用名不能为空', trigger: 'blur'}">
-                  <el-select style="width: 100%;"
-                            v-model="buildConfig.pre_build.installs[build_app_index]"
-                            placeholder="请选择应用"
-                            size="mini"
-                            value-key="id"
-                            filterable>
-                    <el-option v-for="(app, index) in allApps"
-                              :key="index"
-                              :label="`${app.name} ${app.version} `"
-                              :value="{'name':app.name,'version':app.version,'id':app.name+app.version}">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item>
-                  <div class="app-operation">
-                    <el-button v-if="buildConfig.pre_build.installs.length >= 1"
-                              @click="deleteBuildApp(build_app_index)"
-                              type="danger"
-                              size="mini"
-                              plain>删除</el-button>
-                    <el-button v-if="build_app_index===buildConfig.pre_build.installs.length-1"
-                              @click="addBuildApp(build_app_index)"
-                              type="primary"
-                              size="mini"
-                              plain>新增</el-button>
-                  </div>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
           <repo-select :config="buildConfig"
                       ref="repoSelect"
                       class="section"
@@ -504,7 +452,7 @@
 </template>
 <script>
 import BuildEnv from '@/components/projects/build/build_env.vue'
-import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkins, queryJenkinsJob, queryJenkinsParams, getBuildConfigsAPI, saveBuildConfigTargetsAPI } from '@api'
+import { getBuildConfigDetailAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkins, queryJenkinsJob, queryJenkinsParams, getBuildConfigsAPI, saveBuildConfigTargetsAPI } from '@api'
 import qs from 'qs'
 import Editor from 'vue2-ace-bind'
 import Resize from '@/components/common/resize.vue'
@@ -581,7 +529,6 @@ export default {
       binary_enabled: false,
       post_script_enabled: false,
       showDockerfile: false,
-      allApps: [],
       allRegistry: [],
       serviceTargets: [],
       allCodeHosts: [],
@@ -975,12 +922,6 @@ export default {
         this.$set(this.buildConfig, 'name', hasBuild ? '' : this.defaultBuildName)
         this.$set(this.jenkinsBuild, 'name', hasBuild ? '' : this.defaultBuildName)
       }
-      getAllAppsAPI().then((response) => {
-        const apps = this.$utils.sortVersion(response, 'name', 'asc')
-        this.allApps = apps.map((app, index) => {
-          return { name: app.name, version: app.version, id: app.name + app.version }
-        })
-      })
       getDockerfileTemplatesAPI().then((res) => {
         this.dockerfileTemplates = res.dockerfile_template
       })

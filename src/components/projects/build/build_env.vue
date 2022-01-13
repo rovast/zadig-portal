@@ -3,7 +3,7 @@
     <span v-if="title" class="item-title">{{title}}</span>
     <div v-if="title" class="divider item"></div>
     <el-row :gutter="20">
-      <el-col :span="12">
+      <el-col :span="24">
         <el-form-item label="构建系统" label-width="inherit" required>
           <el-select size="small" v-model="pre_build.image_id" placeholder="请选择" @change="changeImage('id', $event)">
             <el-option v-for="(sys,index) in systems" :key="index" :label="sys.label" :value="sys.id">
@@ -18,6 +18,63 @@
           </el-select>
         </el-form-item>
       </el-col>
+    </el-row>
+    <el-row :gutter="20">
+      <el-col :span="24">
+        <el-form-item label="应用列表" style="width: 80px;">
+          <el-button v-if="pre_build.installs.length===0" style="padding: 0;" @click="addFirstApp()" type="text">新增</el-button>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row v-for="(app,appIndex) in pre_build.installs" :key="appIndex" :gutter="20">
+      <el-col :span="10">
+        <el-form-item
+          :prop="`${propPre}.installs.${appIndex}.name`"
+          :rules="{required: true, message: '应用名不能为空', trigger: 'blur'}"
+          label-width="0"
+        >
+          <el-select style="width: 100%;" v-model="pre_build.installs[appIndex]" placeholder="请选择应用" size="small" value-key="id" filterable>
+            <el-option
+              v-for="(app, index) in allApps"
+              :key="index"
+              :label="`${app.name} ${app.version} `"
+              :value="{'name':app.name,'version':app.version,'id':app.name+app.version}"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <div class="app-operation">
+          <el-button v-if="pre_build.installs.length >= 1" @click="deleteApp(appIndex)" type="danger" size="mini" plain>删除</el-button>
+          <el-button v-if="appIndex===pre_build.installs.length-1" @click="addApp(appIndex)" type="primary" size="mini" plain>新增</el-button>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-button style="padding: 0;" @click="showAdvanced=!showAdvanced" type="text">
+          高级配置
+          <i :class="showAdvanced?'el-icon-arrow-left':'el-icon-arrow-right'"></i>
+        </el-button>
+      </el-col>
+    </el-row>
+    <el-row v-if="showAdvanced" :gutter="20">
+      <el-col :span="12">
+        <el-form-item label="集群名称" label-width="inherit" :prop="`${propPre}.cluster_id`" required :show-message="false">
+          <el-select v-model="pre_build.cluster_id" placeholder="选择集群名称" size="small" @change="changeNamespaces">
+            <el-option v-for="cluster in clusters" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="命名空间" label-width="inherit" :prop="`${propPre}.namespace`" required :show-message="false">
+          <el-select v-model="pre_build.namespace" placeholder="选择命名空间" size="small" filterable>
+            <el-option v-for="namespace in namespaces" :key="namespace.name" :label="namespace.name" :value="namespace.name"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row v-if="showAdvanced" :gutter="20">
       <el-col :span="12">
         <el-form-item label="资源规格" label-width="inherit" required>
           <el-select size="small" v-model="pre_build.res_req" placeholder="请选择">
@@ -50,22 +107,6 @@
         </el-form-item>
       </el-col>
     </el-row>
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <el-form-item label="集群名称" label-width="inherit" :prop="`${propPre}.cluster_id`" required :show-message="false">
-          <el-select v-model="pre_build.cluster_id" placeholder="选择集群名称" size="small" @change="changeNamespaces">
-            <el-option v-for="cluster in clusters" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="命名空间" label-width="inherit" :prop="`${propPre}.namespace`" required :show-message="false">
-          <el-select v-model="pre_build.namespace" placeholder="选择命名空间" size="small" filterable>
-            <el-option v-for="namespace in namespaces" :key="namespace.name" :label="namespace.name" :value="namespace.name"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-    </el-row>
   </div>
 </template>
 
@@ -73,6 +114,7 @@
 import {
   getImgListAPI,
   getClusterListAPI,
+  getAllAppsAPI,
   productHostingNamespaceAPI
 } from '@api'
 export default {
@@ -123,7 +165,9 @@ export default {
     return {
       systems: [],
       clusters: [],
-      namespaces: []
+      namespaces: [],
+      allApps: [],
+      showAdvanced: false
     }
   },
   computed: {
@@ -132,9 +176,38 @@ export default {
     }
   },
   methods: {
+    addApp (index) {
+      this.pre_build.installs.push({
+        name: '',
+        version: '',
+        id: ''
+      })
+    },
+    addFirstApp () {
+      this.pre_build.installs.push({
+        name: '',
+        version: '',
+        id: ''
+      })
+    },
+    deleteApp (index) {
+      this.pre_build.installs.splice(index, 1)
+    },
+    getApps () {
+      return getAllAppsAPI().then(res => {
+        const apps = this.$utils.sortVersion(res, 'name', 'asc')
+        this.allApps = apps.map(app => {
+          return {
+            name: app.name,
+            version: app.version,
+            id: app.name + app.version
+          }
+        })
+      })
+    },
     getImgList () {
-      return getImgListAPI().then(response => {
-        this.systems = response
+      return getImgListAPI().then(res => {
+        this.systems = res
       })
     },
     getClusterList () {
@@ -166,10 +239,12 @@ export default {
         const local = this.clusters.find(cluster => cluster.local)
         if (local) {
           this.pre_build.cluster_id = local.id
-          this.getProductHostingNamespace(this.pre_build.cluster_id).then(() => {
-            const ns = this.namespaces.find(ns => ns.current)
-            this.pre_build.namespace = ns ? ns.name : ''
-          })
+          this.getProductHostingNamespace(this.pre_build.cluster_id).then(
+            () => {
+              const ns = this.namespaces.find(ns => ns.current)
+              this.pre_build.namespace = ns ? ns.name : ''
+            }
+          )
         }
       }
 
@@ -234,7 +309,11 @@ export default {
   },
   created () {
     // data before initialization must be obtained first
-    Promise.all([this.getClusterList(), this.getImgList()]).then(() => {
+    Promise.all([
+      this.getClusterList(),
+      this.getImgList(),
+      this.getApps()
+    ]).then(() => {
       // if the build data has not been requested, it cannot be initialized
       if (!this.initFlag) {
         this.paddingData()
@@ -247,6 +326,21 @@ export default {
 <style lang="less" scoped>
 .item-title {
   font-size: 15px;
+}
+
+.item-desc {
+  color: #606266;
+  font-size: 14px;
+}
+
+/deep/ .el-form-item {
+  margin-bottom: 10px;
+}
+
+.app-operation {
+  position: relative;
+  font-size: 14px;
+  line-height: 40px;
 }
 
 .divider {

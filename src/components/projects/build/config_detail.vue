@@ -191,56 +191,9 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="isCreate"></BuildEnv>
-        </el-form>
-
-        <el-form ref="buildApp"
-                 :inline="true"
-                 :model="buildConfig"
-                 class="form-bottom-0"
-                 label-position="top"
-                 label-width="80px">
-
-          <span class="item-title">应用列表</span>
-          <el-button v-if="buildConfig.pre_build.installs.length===0"
-                     style="padding: 0;"
-                     @click="addFirstBuildApp()"
-                     type="text">新增</el-button>
-          <div class="divider item"></div>
-          <el-row v-for="(app,build_app_index) in buildConfig.pre_build.installs"
-                  :key="build_app_index">
-            <el-col :span="5">
-              <el-form-item :prop="'pre_build.installs.' + build_app_index + '.name'"
-                            :rules="{required: true, message: '应用名不能为空', trigger: 'blur'}">
-                <el-select style="width: 100%;"
-                           v-model="buildConfig.pre_build.installs[build_app_index]"
-                           placeholder="请选择应用"
-                           size="small"
-                           value-key="id"
-                           filterable>
-                  <el-option v-for="(app, index) in allApps"
-                             :key="index"
-                             :label="`${app.name} ${app.version} `"
-                             :value="{'name':app.name,'version':app.version,'id':app.name+app.version}">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="5">
-              <el-form-item>
-                <div class="app-operation">
-                  <el-button v-if="buildConfig.pre_build.installs.length >= 1"
-                             @click="deleteBuildApp(build_app_index)"
-                             type="danger"
-                             size="small"
-                             plain>删除</el-button>
-                  <el-button v-if="build_app_index===buildConfig.pre_build.installs.length-1"
-                             @click="addBuildApp(build_app_index)"
-                             type="primary"
-                             size="small"
-                             plain>新增</el-button>
-                </div>
-              </el-form-item>
+          <el-row>
+            <el-col :span="12">
+             <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="isCreate"></BuildEnv>
             </el-col>
           </el-row>
         </el-form>
@@ -259,7 +212,7 @@
         <el-form ref="cacheDir"
                  :inline="true"
                  :model="buildConfig"
-                 class="form-bottom-0"
+                 class="form-container"
                  label-position="left"
                  label-width="130px">
           <span class="item-title">缓存策略</span>
@@ -526,7 +479,7 @@
 </template>
 <script>
 import BuildEnv from '@/components/projects/build/build_env.vue'
-import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkins, queryJenkinsJob, queryJenkinsParams } from '@api'
+import { getBuildConfigDetailAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkins, queryJenkinsJob, queryJenkinsParams } from '@api'
 import Editor from 'vue2-ace-bind'
 import bus from '@utils/eventBus'
 import Codemirror from '@/components/projects/common/codemirror.vue'
@@ -609,7 +562,6 @@ export default {
       binary_enabled: false,
       post_script_enabled: false,
       showDockerfile: false,
-      allApps: [],
       allRegistry: [],
       serviceTargets: [],
       allCodeHosts: [],
@@ -676,29 +628,6 @@ export default {
     },
     deleteCacheDir (index) {
       this.buildConfig.caches.splice(index, 1)
-    },
-    addBuildApp (index) {
-      this.$refs.buildApp.validate((valid) => {
-        if (valid) {
-          this.buildConfig.pre_build.installs.push({
-            name: '',
-            version: '',
-            id: ''
-          })
-        } else {
-          return false
-        }
-      })
-    },
-    addFirstBuildApp () {
-      this.buildConfig.pre_build.installs.push({
-        name: '',
-        version: '',
-        id: ''
-      })
-    },
-    deleteBuildApp (index) {
-      this.buildConfig.pre_build.installs.splice(index, 1)
     },
     addExtra (command) {
       if (command === 'docker') {
@@ -906,12 +835,6 @@ export default {
       }
       this.jenkinsConfigs = await queryJenkins().catch(error => console.log(error))
       this.configDataLoading = false
-      getAllAppsAPI().then((response) => {
-        const apps = this.$utils.sortVersion(response, 'name', 'asc')
-        this.allApps = apps.map((app, index) => {
-          return { name: app.name, version: app.version, id: app.name + app.version }
-        })
-      })
       getDockerfileTemplatesAPI().then((res) => {
         this.dockerfileTemplates = res.dockerfile_template
       })
@@ -1125,15 +1048,21 @@ export default {
       font-size: 15px;
     }
 
+    .item-desc {
+      color: #606266;
+      font-size: 14px;
+    }
+
     .variable {
       color: #409eff;
       font-size: 13px;
     }
   }
 
-  .form-bottom-0 {
+  .form-container {
     .el-form-item {
       margin-bottom: 0;
+      padding-bottom: 15px;
     }
   }
 

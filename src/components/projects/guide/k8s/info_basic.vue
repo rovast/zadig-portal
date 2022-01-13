@@ -81,7 +81,7 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import step from '../common/step.vue'
 export default {
   data () {

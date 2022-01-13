@@ -130,7 +130,7 @@
   </span>
 </template>
 <script>
-import { wordTranslate, colorTranslate } from '@utils/word_translate'
+import { wordTranslate, colorTranslate } from '@utils/wordTranslate'
 import { getNotificationAPI, deleteNotificationAPI, markNotiReadAPI } from '@api'
 export default {
   props: {},

@@ -115,7 +115,7 @@
 
 <script>
 import { workflowTaskDetailAPI, workflowTaskDetailSSEAPI, restartTestTaskAPI, cancelTestTaskAPI } from '@api'
-import { wordTranslate, colorTranslate } from '@utils/word_translate.js'
+import { wordTranslate, colorTranslate } from '@utils/wordTranslate.js'
 import deployIcons from '@/components/common/deploy_icons'
 import artifactDownload from '@/components/common/artifact_download.vue'
 import taskDetailTest from './container/task_detail_test.vue'

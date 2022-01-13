@@ -5,7 +5,7 @@
 <script>
 import K8sDetail from './k8s/detail.vue'
 import HelmDetail from './helm/detail.vue'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

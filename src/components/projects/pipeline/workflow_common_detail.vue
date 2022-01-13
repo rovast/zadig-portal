@@ -105,8 +105,8 @@ import {
   deleteCommonWorkflowAPI,
   getCommonWorkflowTasksAPI
 } from '@api'
-import RunCommonWorkflow from './common/run_common_workflow.vue'
-import bus from '@utils/event_bus'
+import RunCommonWorkflow from './common/runCommonWorkflow.vue'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

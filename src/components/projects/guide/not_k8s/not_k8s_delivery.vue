@@ -125,9 +125,9 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import step from './container/step_not_k8s.vue'
-import { wordTranslate } from '@utils/word_translate.js'
+import { wordTranslate } from '@utils/wordTranslate.js'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
 import { getProductWorkflowsInProjectAPI, getWorkflowDetailAPI } from '@api'
 export default {

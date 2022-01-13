@@ -3,7 +3,7 @@
 </template>
 <script>
 import { getSingleProjectAPI } from '@/api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 
 export default {
   name: 'service',

@@ -204,7 +204,7 @@
 
 <script>
 import { getArtifactsDetailAPI, addArtifactActivitiesAPI } from '@api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/yaml/yaml.js'

@@ -57,7 +57,7 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import AddRoleBind from './add-role-bind.vue'
 import {
   queryRoleBindingsAPI,

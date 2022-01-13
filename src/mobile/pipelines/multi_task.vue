@@ -111,7 +111,7 @@
 import { Col, Collapse, CollapseItem, Row, NavBar, Tag, Panel, Loading, Button, Notify, Tab, Tabs, Cell, CellGroup, Icon, Divider, ActionSheet } from 'vant'
 import taskDetailBuild from './task_detail_build.vue'
 import taskDetailDeploy from './task_detail_deploy.vue'
-import { wordTranslate, colorTranslate } from '@utils/word_translate.js'
+import { wordTranslate, colorTranslate } from '@utils/wordTranslate.js'
 import {
   workflowTaskDetailAPI, workflowTaskDetailSSEAPI, restartWorkflowAPI, cancelWorkflowAPI
 } from '@api'

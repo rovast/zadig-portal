@@ -27,7 +27,7 @@
 </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { mapState } from 'vuex'
 import step from './common/step.vue'
 import Code from '../service_mgr/helm/code'

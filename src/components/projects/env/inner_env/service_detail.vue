@@ -428,8 +428,8 @@ import containerLog from '../service_detail/container_log.vue'
 import { restartPodAPI, restartServiceAPI, scaleServiceAPI, scaleEventAPI, podEventAPI, exportYamlAPI, imagesAPI, updateServiceImageAPI, getServiceInfo, listProductAPI } from '@api'
 import moment from 'moment'
 import Editor from 'vue2-ace-bind'
-import bus from '@utils/event_bus'
-import { fullScreen } from '@/utilities/full_screen'
+import bus from '@utils/eventBus'
+import { fullScreen } from '@/utilities/fullScreen'
 export default {
   data () {
     return {

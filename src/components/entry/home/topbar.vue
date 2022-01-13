@@ -177,7 +177,7 @@
 <script>
 import notification from './common/notification.vue'
 import mixin from '@/mixin/topbarMixin'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { mapState } from 'vuex'
 export default {
   data () {

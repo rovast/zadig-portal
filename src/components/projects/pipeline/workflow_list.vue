@@ -88,11 +88,11 @@
 <script>
 import VirtualListItem from './workflow_list/virtual_list_item'
 import RunProductWorkflow from './common/run_workflow.vue'
-import RunCommonWorkflow from './common/run_common_workflow.vue'
+import RunCommonWorkflow from './common/runCommonWorkflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'
 import { getProductWorkflowsAPI, getProductWorkflowsInProjectAPI, getWorkflowDetailAPI, deleteProductWorkflowAPI, copyWorkflowAPI, getCommonWorkflowListAPI, getCommonWorkflowListInProjectAPI, deleteCommonWorkflowAPI } from '@api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { mapGetters } from 'vuex'
 import { orderBy } from 'lodash'
 

@@ -68,7 +68,7 @@
 </template>
 
 <script type="text/javascript">
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { testDetailAPI } from '@api'
 
 export default {

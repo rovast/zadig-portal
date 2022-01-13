@@ -78,7 +78,7 @@
 </template>
 <script>
 import HelmEnvTemplate from '@/components/projects/env/env_detail/components/updateHelmEnvTemp.vue'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import step from '../common/step.vue'
 import {
   createHelmEnvAPI,

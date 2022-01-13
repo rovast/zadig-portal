@@ -268,11 +268,11 @@
 </template>
 <script>
 import { getProjectInfoAPI, productEnvInfoAPI, queryUserBindingsAPI, deleteProjectAPI, getProductWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
-import { translateEnvStatus } from '@utils/word_translate'
-import { wordTranslate } from '@utils/word_translate.js'
-import { whetherOnboarding } from '@utils/onboarding_route'
+import { translateEnvStatus } from '@utils/wordTranslate'
+import { wordTranslate } from '@utils/wordTranslate.js'
+import { whetherOnboarding } from '@utils/onboardingRoute'
 import { get } from 'lodash'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import store from 'storejs'
 export default {
   data () {

@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { getVersionListAPI, getVersionServiceListAPI, deleteVersionAPI } from '@api'
 export default {
   data () {

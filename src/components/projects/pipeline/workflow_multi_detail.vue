@@ -140,7 +140,7 @@
 <script>
 import { getWorkflowDetailAPI, deleteProductWorkflowAPI, workflowTaskListAPI } from '@api'
 import runWorkflow from './common/run_workflow.vue'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

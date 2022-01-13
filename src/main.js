@@ -9,7 +9,7 @@ import store from './store'
 import sse from './common/vue_sse'
 import VueClipboard from 'vue-clipboard2'
 import utils from '@utils/utilities'
-import translate from '@utils/word_translate'
+import translate from '@utils/wordTranslate'
 
 // Mixin
 import goBackMixin from '@/mixin/goBackMixin'

@@ -78,7 +78,7 @@
 import ProductWorkflowRow from './pipeline_row.vue'
 import CommonWorkflowRow from './common_row.vue'
 import mixins from '@/mixin/virtualScrollListMixin'
-import { wordTranslate } from '@utils/word_translate.js'
+import { wordTranslate } from '@utils/wordTranslate.js'
 import { getWorkflowDetailAPI, updateWorkflowAPI } from '@api'
 export default {
   name: 'workflow-list-item',

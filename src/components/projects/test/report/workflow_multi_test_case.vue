@@ -73,7 +73,7 @@
 import functionTestCase from '@/components/projects/test/common/function_test_case.vue'
 import functionTestSummary from '@/components/projects/test/common/function_test_summary.vue'
 import { getTestReportAPI } from '@api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

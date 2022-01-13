@@ -44,7 +44,7 @@
 
 <script>
 import InitEnvDialog from './components/initEnvDialog.vue'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { getNewCollaborationAPI, initializeCollaborationAPI } from '@api'
 export default {
   data () {

@@ -29,13 +29,13 @@
 
 <script>
 import Policy from './policy.vue'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { cloneDeep } from 'lodash'
 import {
   usersAPI,
   queryPolicyDefinitionsAPI,
-  getWorkflowsInProjectAPI,
-  getCommonWorkflowListAPI,
+  getProductWorkflowsInProjectAPI,
+  getCommonWorkflowListInProjectAPI,
   listProductAPI,
   getAllCollaborationAPI
 } from '@api'
@@ -165,11 +165,11 @@ export default {
     },
     async getWorkflows () {
       let res = []
-      res = await getWorkflowsInProjectAPI(this.projectName).catch(err => {
+      res = await getProductWorkflowsInProjectAPI(this.projectName).catch(err => {
         console.log(err)
         return []
       })
-      const workflowList = await getCommonWorkflowListAPI(
+      const workflowList = await getCommonWorkflowListInProjectAPI(
         this.projectName
       ).catch(err => {
         console.log(err)

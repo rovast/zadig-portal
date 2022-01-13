@@ -1,5 +1,5 @@
-import store from '@/store'
-import { permissionCheckingLogic } from '@utils/checkPermission'
+// import store from '@/store'
+// import { permissionCheckingLogic } from '@utils/checkPermission'
 export default {
   async inserted (el, binding) {
     // ToDo: disable this checkPermission function

@@ -42,8 +42,12 @@
         <el-table-column label="配置">
           <template slot-scope="{ row }">
             <el-radio-group v-model="row.collaboration_type">
-              <el-radio label="new">新建</el-radio>
-              <el-radio label="share">共享</el-radio>
+              <el-tooltip effect="dark" content="成员基于此基准工作流新建一个工作流" placement="top">
+                <el-radio label="new">新建</el-radio>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="成员共享一个基准工作流" placement="top">
+                <el-radio label="share">共享</el-radio>
+              </el-tooltip>
             </el-radio-group>
           </template>
         </el-table-column>
@@ -97,8 +101,12 @@
         <el-table-column label="配置">
           <template slot-scope="{ row }">
             <el-radio-group v-model="row.collaboration_type">
-              <el-radio label="new">新建</el-radio>
-              <el-radio label="share">共享</el-radio>
+              <el-tooltip effect="dark" content="成员基于此基准环境新建一个环境" placement="top">
+                <el-radio label="new">新建</el-radio>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="成员共享一个基准环境" placement="top">
+                <el-radio label="share">共享</el-radio>
+              </el-tooltip>
             </el-radio-group>
           </template>
         </el-table-column>

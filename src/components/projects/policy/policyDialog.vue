@@ -41,6 +41,7 @@
           </div>
         </div>
       </div>
+      <div class="title">请确认！</div>
     </div>
     <div slot="footer">
       <el-button size="small" @click="dialogVisible = false" :disabled="loading">取 消</el-button>
@@ -81,6 +82,9 @@ export default {
         return this.visible
       },
       set (val) {
+        if (!val) {
+          this.loading = false
+        }
         this.$emit('update:visible', val)
       }
     }
@@ -109,7 +113,7 @@ export default {
           payload = cloneDeep(this.collaborationData)
           delete payload.initName
           await createCollaborationAPI(this.projectName, payload).then(() => {
-            this.$message.success(`您成功生成了 ${payload.name} 的协作模式！`)
+            this.$message.success(`您成功生成了 ${payload.name} 协作模式！`)
             this.updateCollaboration(payload)
           })
           console.log('---', payload, this.collaborationData)
@@ -123,14 +127,14 @@ export default {
             this.collaborationData.initName,
             payload
           ).then(() => {
-            this.$message.success(`您成功更新了 ${payload.name} 的协作模式！`)
+            this.$message.success(`您成功更新了 ${payload.name} 协作模式！`)
             this.updateCollaboration(payload)
           })
           break
         case 'deleted':
           const name = this.collaborationData.initName
           await deleteCollaborationAPI(this.projectName, name).then(() => {
-            this.$message.success(`您成功删除了 ${name} 的协作模式！`)
+            this.$message.success(`您成功删除了 ${name} 协作模式！`)
             delete this.collaborationData.initCollaboration
             this.deleteMode(name)
           })

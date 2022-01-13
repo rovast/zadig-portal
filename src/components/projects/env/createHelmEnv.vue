@@ -172,7 +172,7 @@ export default {
       },
       projectEnvNames: [],
       projectChartNames: [],
-      chartNames: null,
+      chartNames: null, // envNames and envName || chartNames
       envNames: [],
       envName: '',
       envScene: 'createEnv', // updateRenderSet

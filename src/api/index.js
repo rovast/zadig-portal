@@ -105,7 +105,7 @@ http.interceptors.response.use(
     } else if (response.data.code === 10000) {
       const currentRoute = Router.history.current
       if (currentRoute.fullPath.startsWith(userInitEnvRoute)) {
-        return
+        return response.data
       }
       Router.push(`${userInitEnvRoute}${currentRoute.params.project_name}`)
     } else {

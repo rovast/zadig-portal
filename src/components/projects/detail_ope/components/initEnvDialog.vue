@@ -6,14 +6,13 @@
         v-else-if="deployType === 'helm'"
         class="chart-value"
         ref="helmEnvTemplateRef"
-        :envNames="envInfos.envNames"
-        :baseEnvObj="envInfos.baseEnvObj"
-        :handledEnv="currentEnv"
         :envScene="`updateRenderSet`"
+        :chartNames="chartNames"
+        :currentEnvValue="currentEnvValue"
       ></HelmEnvTemplate>
     </div>
     <div slot="footer">
-      <el-button size="small" type="primary" @click="dialogVisible = false">确 定</el-button>
+      <el-button size="small" type="primary" @click="getEnvInfo">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -21,16 +20,19 @@
 <script>
 import VarList from '@/components/projects/env/k8sPmEnv/varList.vue'
 import HelmEnvTemplate from '@/components/projects/env/env_detail/components/updateHelmEnvTemp.vue'
+import { cloneDeep } from 'lodash'
 
 export default {
   props: {
     visible: Boolean,
     currentEnv: String,
-    envObj: Array
+    currentInfo: Object
   },
   data () {
     return {
-      variables: []
+      variables: [],
+      chartNames: [],
+      currentEnvValue: undefined
     }
   },
   computed: {
@@ -38,9 +40,8 @@ export default {
       get () {
         return this.visible
       },
-      set (val) {
-        console.log('为false时，需要做些数据处理')
-        this.$emit('update:visible', val)
+      set () {
+        this.$emit('resetVisible', false)
       }
     },
     deployType () {
@@ -49,39 +50,49 @@ export default {
         project => project.name === projectName
       )
       return project ? project.deployType : ''
-    },
-    envInfos () {
-      const envNames = []
-      const envObj = {}
-      this.envObj.forEach(env => {
-        // new environment can initialize environment variable
-        if (env.collaboration_type === 'new') {
-          envNames.push(env.name, env.base_name)
-          envObj[env.name] = env.base_name
-        }
-      })
-      return {
-        envNames: [...new Set(envNames)],
-        baseEnvObj: envObj
-      }
     }
   },
   watch: {
     currentEnv: async function (nVal, oVal) {
-      console.log('如果是k8s，使用 vars，如果是helm，组件自己请求数据')
-      if (deployType === 'k8s') {
-        this.variables = this.envObj.find(obj => obj.name === nVal).vars
+      if (!nVal) {
+        this.variables = []
+        this.chartNames = []
+        this.currentEnvValue = undefined
+        return
+      }
+      if (this.deployType === 'k8s') {
+        this.variables = cloneDeep(this.currentInfo.vars)
+      } else {
+        this.chartNames = cloneDeep(
+          this.currentInfo.chartValues || [
+            {
+              chartVersion: '0.1.0',
+              envName: 'dev',
+              overrideValues: [],
+              overrideYaml:
+                'registryConf: "eyJodHRwczovL2Njci5jY3MudGVuY2VudHl1bi5jb20iOnsidXNlcm5hbWUiOiIxMDAwMTQ5Mjk5NjMiLCJwYXNzd29yZCI6Im5DbWZUQStZamhGMipDNUoiLCJlbWFpbCI6ImJvdEBrb2Rlcm92ZXIuY29tIn19"',
+              serviceName: 'service1'
+            } // will deleted
+          ]
+        )
+        this.currentEnvValue = this.currentInfo.defaultValues || ''
       }
     }
   },
   methods: {
     getEnvInfo () {
-      if (!this.$refs.helmEnvTemplateRef) {
-        console.log('env info has not')
-        return
+      if (this.deployType === 'k8s') {
+        this.currentInfo.vars = cloneDeep(this.variables)
+      } else {
+        const {
+          envInfo,
+          chartInfo
+        } = this.$refs.helmEnvTemplateRef.getAllInfo()
+        this.currentInfo.defaultValues = envInfo.DEFAULT || ''
+        this.currentInfo.chartValues = chartInfo
       }
-      const { envInfo, chartInfo } = this.$refs.helmEnvTemplateRef.getAllInfo()
-      console.log('env info', envInfo, chartInfo)
+      console.log('allInfo', this.currentInfo)
+      this.dialogVisible = false
     }
   },
   components: {

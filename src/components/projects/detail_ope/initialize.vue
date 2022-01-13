@@ -1,41 +1,44 @@
 <template>
   <div class="init-resource">
-    <header>项目资源</header>
+    <header>资源确认</header>
     <section>
-      <div class="desc">您将获取以下资源</div>
-      <article>
+      <article v-if="collaborationData.workflow.length">
         <div class="title">
           <i class="iconfont icongongzuoliucheng"></i>工作流
         </div>
         <div v-for="(workflow, index) in collaborationData.workflow" :key="index" class="detail-item">
-          <div class="item-name">{{workflow.name}}</div>
-          <div class="item-desc">{{workflow.description || placeholder}}</div>
+          <div class="item-name">
+            {{ workflow.name }}
+            <el-tag effect="plain" size="mini">{{ workflow.collaboration_type === 'share' ? '共享' : '新建' }}</el-tag>
+          </div>
         </div>
       </article>
-      <article>
+      <article v-if="collaborationData.product.length">
         <div class="title">
           <i class="iconfont iconrongqi"></i>环境
         </div>
         <div v-for="(env, index) in collaborationData.product" :key="index" class="detail-item display-flex">
           <div>
-            <div class="item-name">{{env.name}}</div>
-            <div class="item-desc">{{env.description || placeholder}}</div>
+            <div class="item-name">
+              {{ env.name }}
+              <el-tag effect="plain" size="mini">{{ env.collaboration_type === 'share' ? '共享' : '新建' }}</el-tag>
+            </div>
           </div>
-          <el-button
-            v-if="env.collaboration_type === 'new'"
-            type="primary"
-            plain
-            size="small"
-            @click="dialogVisible=true; currentEnv=env.name;"
-          >环境变量</el-button>
+          <el-button v-if="env.collaboration_type === 'new'" type="primary" plain size="small" @click="editEnvInfo(env)">环境变量</el-button>
         </div>
       </article>
     </section>
     <footer>
-      <el-button type="text" size="small" icon="el-icon-finished" @click="createEnvAndWorkflow">确认</el-button>
+      <el-button type="primary" size="small" icon="el-icon-finished" @click="createEnvAndWorkflow">确认</el-button>
     </footer>
 
-    <InitEnvDialog ref="envDialogRef" :visible.sync="dialogVisible" :currentEnv="currentEnv" :envObj="collaborationData.product"></InitEnvDialog>
+    <InitEnvDialog
+      ref="envDialogRef"
+      :visible="dialogVisible"
+      @resetVisible="initEnvInfo"
+      :currentEnv="currentEnv"
+      :currentInfo="currentInfo"
+    ></InitEnvDialog>
   </div>
 </template>
 
@@ -47,44 +50,12 @@ export default {
   data () {
     return {
       collaborationData: {
-        workflow: [
-          {
-            name: 'workflow1',
-            description: ''
-          },
-          {
-            name: 'workflow2',
-            description: 'xxxx'
-          }
-        ],
-        product: [
-          {
-            name: 'environment1-dev',
-            base_name: 'dev',
-            description: 'xxxx'
-          },
-          {
-            collaboration_type: 'new',
-            name: 'environment2-dev',
-            base_name: 'dev',
-            description: 'xxxx'
-          },
-          {
-            name: 'environment3-qa',
-            base_name: 'qa',
-            description: 'xxxx'
-          },
-          {
-            collaboration_type: 'new',
-            name: 'environment4-qa',
-            base_name: 'qa',
-            description: 'xxxx'
-          }
-        ]
+        workflow: [],
+        product: []
       },
-      placeholder: 'There is no description.',
       dialogVisible: false,
-      currentEnv: ''
+      currentEnv: '',
+      currentInfo: null
     }
   },
   computed: {
@@ -94,18 +65,39 @@ export default {
   },
   methods: {
     createEnvAndWorkflow () {
-      console.log('确定')
-      this.$refs.envDialogRef.getEnvInfo()
-      const payload = this.collaborationData
-      // initializeCollaborationAPI(this.projectName, payload).then(res => {
-      //   this.$message.success(`用户初始环境创建成功！`)
-      this.$router.go(-1)
-      // })
+      const payload = this.collaborationData.product.filter(
+        product => product.collaboration_type === 'new'
+      )
+      console.log('payload', payload)
+      initializeCollaborationAPI(this.projectName, payload).then(res => {
+        this.$message.success(`用户初始环境创建成功！`)
+        this.$router.go(-1)
+      })
     },
     getNewCollaboration () {
       getNewCollaborationAPI(this.projectName).then(res => {
+        res.product.forEach(product => {
+          if (
+            product.collaboration_type === 'new' &&
+            product.deploy_type === 'helm'
+          ) {
+            product.chartValues.forEach(chart => {
+              chart.envName = product.name
+            })
+          }
+        })
         this.collaborationData = res
       })
+    },
+    editEnvInfo (env) {
+      this.dialogVisible = true
+      this.currentEnv = env.name
+      this.currentInfo = env
+    },
+    initEnvInfo () {
+      this.dialogVisible = false
+      this.currentEnv = ''
+      this.currentInfo = null
     }
   },
   created () {
@@ -139,18 +131,16 @@ export default {
   background-color: #f5f7f7;
 
   header {
-    font-size: 18px;
+    margin-bottom: 25px;
+    color: black;
+    font-size: 15px;
     text-align: center;
   }
 
   section {
-    .desc {
-      color: #8a8a8a;
-      text-align: center;
-    }
-
     article {
       .title {
+        margin: 12px 0 8px;
         font-size: 15px;
 
         .iconfont {
@@ -162,11 +152,16 @@ export default {
       .detail-item {
         margin-bottom: 1px;
         padding: 8px 20px;
-        line-height: 1.7;
         background-color: #fff;
 
         .item-name {
           color: #5e6d82;
+          font-weight: 200;
+          line-height: 3;
+
+          /deep/.el-tag {
+            margin-left: 5px;
+          }
         }
 
         .item-desc {
@@ -187,13 +182,8 @@ export default {
     right: 0;
     bottom: 0;
     left: 0;
-    padding: 12px 60px;
+    padding: 20px 60px;
     text-align: right;
-    background-color: #fff;
-
-    /deep/.el-button {
-      font-size: 16px;
-    }
   }
 }
 </style>

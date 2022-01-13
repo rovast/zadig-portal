@@ -91,6 +91,7 @@ export default {
       default: () => null
     },
     envNames: {
+      // when envName is different from initEnvNames, the envNames is all name
       // 环境列表
       type: Array,
       required: false,
@@ -122,6 +123,7 @@ export default {
       required: true
     },
     baseEnvObj: {
+      // used for envNames is different from initEnvNames(which used to request api)
       type: Object,
       default: () => null // {envName: baseEvnName}
     }
@@ -242,7 +244,7 @@ export default {
       const chartValues = []
       const serviceNames = Object.keys(this.allChartNameInfo)
       const chartNameInfo = this.allChartNameInfo
-      const envNames = this.envNames.length ? this.envNames : ['DEFAULT']
+      const envNames = this.envNames.length ? this.envNames : [this.selectedEnv]
       for (const serviceName in chartNameInfo) {
         if (!serviceNames.includes(serviceName)) {
           continue
@@ -273,16 +275,18 @@ export default {
     resetAllChartNameInfo () {
       this.allChartNameInfo = {}
     },
-    initAllChartNameInfo (envName = 'DEFAULT') {
+    initAllChartNameInfo (envName = '') {
       if (!this.chartNames) {
         return
       }
       this.chartNames.forEach(chart => {
         const envInfos = {}
+        envName = envName || chart.envName || 'DEFAULT' // priority: envName -> chart.envName -> 'DEFAULT'
         envInfos[envName] = {
           ...cloneDeep(chartInfoTemp),
-          ...chart,
-          envName: envName === 'DEFAULT' ? '' : envName
+          ...cloneDeep(chart),
+          envName: envName === 'DEFAULT' ? '' : envName,
+          yamlSource: chart.overrideYaml ? 'freeEdit' : 'default'
         }
         this.$set(this.allChartNameInfo, chart.serviceName, {
           ...this.allChartNameInfo[chart.serviceName],
@@ -400,6 +404,9 @@ export default {
     chartNames: {
       handler (newV, oldV) {
         if (newV) {
+          if (newV[0] && newV[0].envName) {
+            this.selectedEnv = newV[0].envName
+          }
           this.initAllChartNameInfo()
         }
       },

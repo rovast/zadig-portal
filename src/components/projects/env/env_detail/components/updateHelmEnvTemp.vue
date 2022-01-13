@@ -1,12 +1,7 @@
 <template>
   <el-collapse class="helm-env-template" v-model="activeName" @change="collapseChange" accordion>
     <el-collapse-item title="默认环境变量" name="env">
-      <EnvValues
-        ref="envValuesRef"
-        :envName="handledEnv"
-        :baseEnvObj="baseEnvObj"
-        :defaultEnvsValues="defaultEnvsValues"
-      ></EnvValues>
+      <EnvValues ref="envValuesRef" :envName="handledEnv" :baseEnvObj="baseEnvObj" :defaultEnvsValues="defaultEnvsValues"></EnvValues>
     </el-collapse-item>
     <el-collapse-item :title="`${serviceVariableTitle}变量`" name="service">
       <ChartValues
@@ -70,6 +65,11 @@ export default {
     baseEnvObj: {
       type: Object,
       default: () => null // {envName: baseEvnName}
+    },
+    currentEnvValue: {
+      // current env yaml
+      type: String,
+      required: false
     }
   },
   computed: {
@@ -79,6 +79,15 @@ export default {
         envName,
         defaultValues: this.defaultEnvsValues[envName]
       }
+    }
+  },
+  watch: {
+    currentEnvValue: {
+      handler (val) {
+        this.$set(this.defaultEnvsValues, 'DEFAULT', val || '')
+        this.$refs.envValuesRef && this.$refs.envValuesRef.initEnvVariableInfo()
+      },
+      immediate: true
     }
   },
   methods: {

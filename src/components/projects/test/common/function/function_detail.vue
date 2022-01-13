@@ -217,7 +217,8 @@
               class="notification"
               :editMode="isEdit"
               :notify="test.notify_ctl"
-              :showTitle="false"></Notify>
+              :showTitle="false"
+              :fromWorkflow="false"></Notify>
       <div class="divider">
       </div>
       <label class="title">

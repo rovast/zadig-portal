@@ -114,29 +114,29 @@ import bus from '@utils/event_bus'
 
 export default {
   data () {
-    this.notifyType = [
-      {
-        label: 'passed',
-        desc: '任务成功'
-      },
-      {
-        label: 'failed',
-        desc: '任务失败'
-      },
-      {
-        label: 'timeout',
-        desc: '任务超时'
-      },
-      {
-        label: 'cancelled',
-        desc: '任务取消'
-      },
-      {
-        label: 'update',
-        desc: '状态变更'
-      }
-    ]
     return {
+      notifyType: [
+        {
+          label: 'passed',
+          desc: '任务成功'
+        },
+        {
+          label: 'failed',
+          desc: '任务失败'
+        },
+        {
+          label: 'timeout',
+          desc: '任务超时'
+        },
+        {
+          label: 'cancelled',
+          desc: '任务取消'
+        },
+        {
+          label: 'changed',
+          desc: '状态变更'
+        }
+      ],
       isIndeterminate: true,
       notifyRules: {
         webhook_type: [
@@ -242,6 +242,10 @@ export default {
     showTitle: {
       type: Boolean,
       default: true
+    },
+    fromWorkflow: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -251,6 +255,9 @@ export default {
         bus.$emit('receive-tab-check:notify', valid)
       })
     })
+    if (this.fromWorkflow) {
+      this.notifyType.pop()
+    }
   },
   beforeDestroy () {
     bus.$off('check-tab:notify')

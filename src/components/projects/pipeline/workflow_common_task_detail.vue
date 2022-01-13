@@ -133,7 +133,7 @@
             </el-col>
             <el-col :span="6">
               <div class="item-title">
-                <i class="iconfont iconinfo"></i> 构建信息
+                <i class="iconfont iconinfo"></i> 代码信息
               </div>
             </el-col>
             <el-col :span="6">
@@ -291,7 +291,7 @@
 
 <script>
 import QrcodeVue from 'qrcode.vue'
-import { wordTranslate, colorTranslate } from '@utils/word_translate.js'
+import { wordTranslate, colorTranslate } from '@utils/wordTranslate.js'
 import {
   getCommonWorkflowTaskDetailSSEAPI,
   getCommonWorkflowTaskDetailAPI,
@@ -299,7 +299,7 @@ import {
   cancelCommonWorkflowTaskAPI,
   getCommonWorkflowHistoryLogAPI
 } from '@api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { get } from 'lodash'
 export default {
   data () {

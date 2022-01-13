@@ -1,5 +1,5 @@
 <template>
-  <div class="projects-not-k8s-config-container">
+  <div class="projects-pm-service-container">
     <UpdateEnv ref="updateEnv"/>
     <div class="config-container-pm">
       <ServiceList
@@ -100,12 +100,11 @@ export default {
   }
 }
 
-.projects-not-k8s-config-container {
+.projects-pm-service-container {
   position: relative;
   flex: 1;
   height: 100%;
   overflow: auto;
-  background-color: #f5f7f7;
 
   .config-container-pm {
     position: relative;

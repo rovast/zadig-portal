@@ -75,7 +75,7 @@ export default {
   },
   computed: {
     ...mapState({
-      chartNames: state => state.service_manage.chartNames
+      chartNames: state => state.serviceManage.chartNames
     }),
     updateHelmEnvDialogVisible: {
       get: function () {

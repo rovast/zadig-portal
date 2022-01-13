@@ -122,7 +122,7 @@
 <script>
 
 import { getImgListAPI, addImgAPI, deleteImgAPI, updateImgAPI } from '@api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

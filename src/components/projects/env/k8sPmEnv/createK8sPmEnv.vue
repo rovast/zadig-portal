@@ -56,7 +56,7 @@
             <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns.name" :value="ns.name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库" prop="registry_id">
+        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small" @change="getImages">
             <el-option
               v-for="registry in imageRegistry"
@@ -137,17 +137,22 @@
                   <div v-for="service in typeServiceMap" :key="`${service.service_name}-${service.type}`" class="service-block">
                     <div v-if="service.type==='pm'" class="container-images">
                       <el-form-item label="请关联主机资源：">
-                        <el-button v-if="allHost.length===0" @click="createHost" type="text">创建主机</el-button>
+                        <el-button v-if="allHost.length === 0" @click="createHost" type="text">创建主机</el-button>
                         <el-select
                           v-else
-                          v-model="service.host_ids"
+                          v-model="service.host_with_labels"
                           :disabled="rollbackMode"
                           filterable
                           multiple
+                          @change="addHost(service)"
                           placeholder="请选择要关联的主机"
-                          size="small"
-                        >
-                          <el-option v-for="(host,index) in  allHost" :key="index" :label="`${host.name}-${host.ip}`" :value="host.id"></el-option>
+                          size="small">
+                          <el-option-group label="主机标签">
+                            <el-option v-for="(item,index) in allHostLabels" :key="index" :label="`${item}`" :value="item"></el-option>
+                          </el-option-group>
+                          <el-option-group label="主机列表">
+                            <el-option v-for="(host,index) in  allHost" :key="index" :label="`${host.name}-${host.ip}`" :value="host.id"></el-option>
+                          </el-option-group>
                         </el-select>
                       </el-form-item>
                     </div>
@@ -201,11 +206,12 @@ import {
   createProductAPI,
   getSingleProjectAPI,
   getHostListAPI,
+  getHostLabelListAPI,
   getRegistryWhenBuildAPI
 } from '@api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { uniq, cloneDeep } from 'lodash'
-import { serviceTypeMap } from '@utils/word_translate'
+import { serviceTypeMap } from '@utils/wordTranslate'
 
 const validateEnvName = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {
@@ -257,13 +263,6 @@ export default {
         ],
         namespace: [
           { required: true, trigger: 'change', message: '请选择命名空间' }
-        ],
-        registry_id: [
-          {
-            required: true,
-            trigger: ['change', 'blur'],
-            message: '请选择镜像仓库'
-          }
         ],
         defaultNamespace: [
           { required: true, trigger: 'change', message: '命名空间不能为空' }
@@ -343,6 +342,27 @@ export default {
           return element.status === 'normal' && !element.production
         })
       }
+    },
+    getHosts () {
+      getHostLabelListAPI().then((res) => {
+        this.allHostLabels = res
+      })
+      getHostListAPI().then((res) => {
+        this.allHost = res
+      })
+    },
+    addHost (service) {
+      const allHostIds = this.allHost.map(item => {
+        return item.id
+      })
+      const labels = service.host_with_labels.filter(item => {
+        return (allHostIds.indexOf(item) < 0)
+      })
+      const hostIds = service.host_with_labels.filter(item => {
+        return (allHostIds.indexOf(item) >= 0)
+      })
+      service.host_ids = hostIds
+      service.labels = labels
     },
     async checkProjectFeature () {
       const projectName = this.projectName
@@ -616,16 +636,23 @@ export default {
                 ser.env_configs = [
                   {
                     env_name: this.projectConfig.env_name,
-                    host_ids: ser.host_ids
+                    host_ids: ser.host_ids,
+                    labels: ser.labels
                   }
                 ]
                 delete ser.host_ids
+                delete ser.labels
+                delete ser.host_with_labels
+                delete ser.picked
               }
             }
           }
           picked2D.push(picked1D)
           const payload = this.$utils.cloneObj(this.projectConfig)
           payload.source = 'spock'
+          if (this.projectInfo.product_feature && this.projectInfo.product_feature.basic_facility === 'cloud_host') {
+            payload.source = 'pm'
+          }
           payload.namespace = payload.defaultNamespace
           const envType = 'test'
           this.startDeployLoading = true
@@ -660,7 +687,7 @@ export default {
       this.$router.back()
     },
     createHost () {
-      this.$router('/v1/system/host')
+      this.$router.push('/v1/system/host')
     },
     quickInitImage () {
       const select = this.quickSelection
@@ -704,13 +731,12 @@ export default {
     this.projectConfig.product_name = this.projectName
     this.checkProjectFeature()
     this.getCluster()
-    getHostListAPI().then(res => {
-      this.allHost = res
-    })
+    this.getHosts()
     getRegistryWhenBuildAPI(this.projectName).then(res => {
       this.imageRegistry = res
       if (!this.projectConfig.registry_id) {
-        this.projectConfig.registry_id = res.find(reg => reg.is_default).id
+        const defaultRegistry = res.find(reg => reg.is_default)
+        this.projectConfig.registry_id = defaultRegistry ? defaultRegistry.id : ''
       }
       this.getTemplateAndImg()
     })

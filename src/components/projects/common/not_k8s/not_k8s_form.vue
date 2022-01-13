@@ -1,25 +1,13 @@
 <template>
-  <div class="not-k8s-config-container" v-loading="loading"
+  <div class="pm-service-config-container" v-loading="loading"
        @scroll="onScroll">
-    <el-drawer :visible.sync="dialogHostCreateFormVisible" custom-class="host-drawer">
-      <AddHost ref="add-host"></AddHost>
-      <div class="drawer-footer">
-        <el-button size="small"
-                   @click="dialogHostCreateFormVisible = false">取 消</el-button>
-        <el-button :plain="true"
-                   size="small"
-                   type="success"
-                   @click="addHostOperation">保存</el-button>
-      </div>
-    </el-drawer>
-    <!--Host-create-dialog-->
     <div class="anchor-container">
       <el-tabs v-model="anchorTab"
                @tab-click="goToAnchor"
                tab-position="right">
         <el-tab-pane label="基本信息"></el-tab-pane>
         <el-tab-pane label="构建脚本"></el-tab-pane>
-        <el-tab-pane label="资源配置"></el-tab-pane>
+        <el-tab-pane v-if="isOnboarding" label="资源配置"></el-tab-pane>
         <el-tab-pane label="部署配置"></el-tab-pane>
         <el-tab-pane label="探活配置"></el-tab-pane>
       </el-tabs>
@@ -31,7 +19,6 @@
                :rules="createRules"
                label-position="left"
                label-width="90px">
-
         <el-row>
           <el-col :span="7">
             <el-form-item prop="service_name"
@@ -43,9 +30,7 @@
                         :disabled="isEdit"
                         auto-complete="off"></el-input>
             </el-form-item>
-
           </el-col>
-
           <el-col :span="8" style="margin-left: 10px;">
             <el-form-item label="构建超时">
               <el-input-number size="mini"
@@ -80,7 +65,7 @@
       <el-form ref="buildApp"
                :inline="true"
                :model="buildConfig"
-               class="form-bottom-0"
+               class="config-form"
                label-position="top"
                label-width="80px">
         <span class="item-title">应用列表</span>
@@ -89,14 +74,14 @@
                    @click="addFirstBuildApp()"
                    type="text">新增</el-button>
         <div class="divider item"></div>
-        <el-row v-for="(app,build_app_index) in buildConfig.pre_build.installs"
-                :key="build_app_index">
+        <el-row v-for="(app,buildAppIndex) in buildConfig.pre_build.installs"
+                :key="buildAppIndex">
           <el-col :span="6">
             <el-form-item
-                          :prop="'pre_build.installs.' + build_app_index + '.name'"
+                          :prop="'pre_build.installs.' + buildAppIndex + '.name'"
                           :rules="{required: true, message: '应用名不能为空', trigger: 'blur'}">
               <el-select style="width: 100%;"
-                         v-model="buildConfig.pre_build.installs[build_app_index]"
+                         v-model="buildConfig.pre_build.installs[buildAppIndex]"
                          placeholder="请选择应用"
                          size="small"
                          value-key="id"
@@ -113,12 +98,12 @@
             <el-form-item >
               <div class="app-operation">
                 <el-button v-if="buildConfig.pre_build.installs.length >= 1"
-                           @click="deleteBuildApp(build_app_index)"
+                           @click="deleteBuildApp(buildAppIndex)"
                            type="danger"
                            size="small"
                            plain>删除</el-button>
-                <el-button v-if="build_app_index===buildConfig.pre_build.installs.length-1"
-                           @click="addBuildApp(build_app_index)"
+                <el-button v-if="buildAppIndex === buildConfig.pre_build.installs.length-1"
+                           @click="addBuildApp(buildAppIndex)"
                            type="primary"
                            size="small"
                            plain>新增</el-button>
@@ -138,7 +123,7 @@
       <el-form ref="buildEnv"
                :inline="true"
                :model="buildConfig"
-               class="form-bottom-0"
+               class="config-form"
                label-position="top"
                label-width="80px">
         <span class="item-title">环境变量</span>
@@ -147,29 +132,29 @@
                    @click="addFirstBuildEnv()"
                    type="text">新增</el-button>
         <div class="divider item"></div>
-        <el-row v-for="(app,build_env_index) in buildConfig.pre_build.envs"
-                :key="build_env_index">
+        <el-row v-for="(app,envIndex) in buildConfig.pre_build.envs"
+                :key="envIndex">
           <el-col :span="4">
             <el-form-item
-                          :prop="'pre_build.envs.' + build_env_index + '.key'"
+                          :prop="'pre_build.envs.' + envIndex + '.key'"
                           :rules="{required: true, message: '键 不能为空', trigger: 'blur'}">
-              <el-input placeholder="键" v-model="buildConfig.pre_build.envs[build_env_index].key"
+              <el-input placeholder="键" v-model="buildConfig.pre_build.envs[envIndex].key"
                         size="small">
               </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item
-                          :prop="'pre_build.envs.' + build_env_index + '.value'"
+                          :prop="'pre_build.envs.' + envIndex + '.value'"
                           :rules="{required: true, message: '值 不能为空', trigger: 'blur'}">
-              <el-input placeholder="值" v-model="buildConfig.pre_build.envs[build_env_index].value"
+              <el-input placeholder="值" v-model="buildConfig.pre_build.envs[envIndex].value"
                         size="small">
               </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3">
             <el-form-item prop="is_credential">
-              <el-checkbox v-model="buildConfig.pre_build.envs[build_env_index].is_credential">
+              <el-checkbox v-model="buildConfig.pre_build.envs[envIndex].is_credential">
                 敏感信息
                 <el-tooltip effect="dark"
                             content="在日志中将被隐藏"
@@ -183,12 +168,12 @@
             <el-form-item >
               <div class="app-operation">
                 <el-button v-if="buildConfig.pre_build.envs.length >= 1"
-                           @click="deleteBuildEnv(build_env_index)"
+                           @click="deleteBuildEnv(envIndex)"
                            type="danger"
                            size="small"
                            plain>删除</el-button>
-                <el-button v-if="build_env_index===buildConfig.pre_build.envs.length-1"
-                           @click="addBuildEnv(build_env_index)"
+                <el-button v-if="envIndex===buildConfig.pre_build.envs.length-1"
+                           @click="addBuildEnv(envIndex)"
                            type="primary"
                            size="small"
                            plain>新增</el-button>
@@ -204,9 +189,8 @@
       <el-form ref="cacheDir"
                :inline="true"
                :model="buildConfig"
-               class="form-bottom-0"
-               label-position="left"
-               label-width="130px">
+               class="config-form"
+               label-position="left">
         <span class="item-title">缓存策略</span>
         <div class="divider item"></div>
         <el-row>
@@ -262,48 +246,49 @@
     </div>
     <div id="构建脚本"
          class="section scroll">
-      <el-form ref="buildScript"
-               :model="buildConfig"
-               label-position="left"
-               label-width="80px">
-        <span class="item-title">构建脚本</span>
-         <el-tooltip effect="dark"  placement="top-start">
-              <div slot="content">
-                当前可用环境变量如下，可在构建脚本中进行引用<br>
-                $WORKSPACE&nbsp;&nbsp;工作目录<br>
-                $TASK_ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工作流任务 ID<br>
-                $IMAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;输出镜像名称<br>
-                $SERVICE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建的服务名称<br>
-                $DIST_DIR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建出的 Tar 包的目的目录<br>
-                $PKG_FILE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建出的 Tar 包名称<br>
-                $ENV_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;执行的环境名称<br>
-                $BUILD_URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建任务的 URL<br>
-                $CI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                值恒等于 true，表示当前环境是 CI/CD 环境<br>
-                $ZADIG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值恒等于
-                true，表示在 Zadig 系统上执行脚本<br>
-                &lt;REPONAME&gt;_PR 构建过程中指定代码仓库使用的 Pull Request 信息<br>
-                &lt;REPONAME&gt;_BRANCH 构建过程中指定代码仓库使用的分支信息<br>
-                &lt;REPONAME&gt;_TAG 构建过程中指定代码仓库使用 Tag 信息<br>
-                &lt;REPONAME&gt;_COMMIT_ID 构建过程中指定代码的 commit 信息
-              </div>
-          <span class="variable">变量</span>
-        </el-tooltip>
-        <div class="divider item"></div>
-        <el-row>
-          <el-col :span="24"
-                  class="deploy-script">
-            <Resize :height="'150px'">
-              <Editor v-model="buildConfig.scripts"
-                    lang="sh"
-                    theme="xcode"
-                    width="100%"
-                    height="100%"></Editor>
-            </Resize>
-          </el-col>
-        </el-row>
-      </el-form>
-      <el-form v-if="docker_enabled"
+        <el-form ref="buildScript"
+                :model="buildConfig"
+                label-position="left"
+                label-width="80px">
+          <span class="item-title">构建脚本</span>
+          <el-tooltip effect="dark"  placement="top-start">
+                <div slot="content">
+                  当前可用环境变量如下，可在构建脚本中进行引用<br>
+                  $WORKSPACE&nbsp;&nbsp;工作目录<br>
+                  $TASK_ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工作流任务 ID<br>
+                  $IMAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;输出镜像名称<br>
+                  $SERVICE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建的服务名称<br>
+                  $DIST_DIR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建出的 Tar 包的目的目录<br>
+                  $PKG_FILE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建出的 Tar 包名称<br>
+                  $ENV_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;执行的环境名称<br>
+                  $BUILD_URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建任务的 URL<br>
+                  $CI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  值恒等于 true，表示当前环境是 CI/CD 环境<br>
+                  $ZADIG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值恒等于
+                  true，表示在 Zadig 系统上执行脚本<br>
+                  &lt;REPONAME&gt;_PR 构建过程中指定代码仓库使用的 Pull Request 信息<br>
+                  &lt;REPONAME&gt;_BRANCH 构建过程中指定代码仓库使用的分支信息<br>
+                  &lt;REPONAME&gt;_TAG 构建过程中指定代码仓库使用 Tag 信息<br>
+                  &lt;REPONAME&gt;_COMMIT_ID 构建过程中指定代码的 commit 信息
+                </div>
+            <span class="variable">变量</span>
+          </el-tooltip>
+          <div class="divider item"></div>
+          <el-row>
+            <el-col :span="24"
+                    class="deploy-script">
+              <Resize :height="'150px'">
+                <Editor v-model="buildConfig.scripts"
+                      lang="sh"
+                      theme="xcode"
+                      width="100%"
+                      height="100%"></Editor>
+              </Resize>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
+      <el-form v-if="dockerEnabled"
                :model="buildConfig.post_build.docker_build"
                :rules="docker_rules"
                ref="docker_build"
@@ -312,7 +297,7 @@
         <div class="extra-build-container">
           <span class="title">镜像构建
             <el-button type="text"
-                       @click="removeDocker"
+                       @click="removeDockerBuild"
                        icon="el-icon-delete"></el-button>
           </span>
           <el-form-item label="镜像构建目录："
@@ -343,7 +328,7 @@
         </div>
 
       </el-form>
-      <el-form v-if="binary_enabled"
+      <el-form v-if="binaryEnabled"
                :model="buildConfig.post_build.file_archive"
                :rules="file_archive_rules"
                ref="file_archive"
@@ -352,7 +337,7 @@
         <div class="extra-build-container">
           <span class="title">二进制包归档
             <el-button type="text"
-                       @click="removeBinary"
+                       @click="removeBinaryArchive"
                        icon="el-icon-delete"></el-button>
           </span>
           <el-form-item label="二进制包存放路径："
@@ -374,14 +359,14 @@
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="docker"
-                              :disabled="docker_enabled">镜像构建</el-dropdown-item>
+                              :disabled="dockerEnabled">镜像构建</el-dropdown-item>
             <el-dropdown-item command="binary"
-                              :disabled="binary_enabled">二进制包归档</el-dropdown-item>
+                              :disabled="binaryEnabled">二进制包归档</el-dropdown-item>
 
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <div id="资源配置"
+      <div v-show="isOnboarding" id="资源配置"
            class="section scroll">
         <el-form :model="pmService"
                  :inline="true"
@@ -465,7 +450,7 @@
         <el-form ref="deploy-env"
                  :inline="true"
                  :model="buildConfig"
-                 class="form-bottom-0"
+                 class="config-form"
                  label-position="left"
                  label-width="80px">
           <span class="item-title">部署配置</span>
@@ -520,20 +505,20 @@
         <el-form ref="deploy"
                  :inline="true"
                  :model="pmService"
-                 class="form-bottom-0"
+                 class="config-form"
                  label-position="left"
                  label-width="80px">
           <el-row>
             <el-col :span="4">
               <el-form-item label="探活配置">
-                <el-switch @change="checkEnvConfig"
-                           v-model="check_status_enabled"
+                <el-switch
+                           v-model="checkStatusEnabled"
                            active-color="#409EFF">
                 </el-switch>
               </el-form-item>
             </el-col>
           </el-row>
-          <template v-if="check_status_enabled">
+          <template v-if="checkStatusEnabled">
             <el-form :model="pmService"
                      :inline="true"
                      ref="healthCheck"
@@ -676,21 +661,19 @@
           </template>
         </el-form>
       </div>
-    </div>
     <div class="save-btn">
-      <el-button type="primary" @click="savePmService">
+      <el-button type="primary" size="small" @click="savePmService">
           保存
        </el-button>
     </div>
   </div>
 </template>
 <script>
-import BuildEnv from '@/components/projects/build/build_env.vue'
 import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getAllAppsAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
+import BuildEnv from '@/components/projects/build/build_env.vue'
 import Editor from 'vue2-ace-bind'
-import ValidateSubmit from '@utils/validate_async'
+import ValidateSubmit from '@utils/validateAsync'
 import Resize from '@/components/common/resize.vue'
-import AddHost from './add_host.vue'
 const validateServiceName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入服务名称'))
@@ -739,7 +722,6 @@ export default {
       builds: [],
       useSshKey: false,
       dialogServiceListVisible: false,
-      dialogHostCreateFormVisible: false,
       host: {
         name: '',
         label: '',
@@ -785,16 +767,15 @@ export default {
         pm_deploy_scripts: pm_deploy_scripts,
         sshs: null
       },
-      stcov_enabled: false,
-      docker_enabled: false,
-      binary_enabled: false,
-      check_status_enabled: false,
+      dockerEnabled: false,
+      binaryEnabled: false,
+      checkStatusEnabled: false,
       editBuildConfigName: false,
       showCheckStatusAdvanced: {},
       allApps: [],
       allCodeHosts: [],
       allHost: [],
-      allHostLabels: ['dev'],
+      allHostLabels: [],
       envNameList: [],
       codeInfo: {},
       createRules: {
@@ -937,8 +918,8 @@ export default {
     },
     syncBuildConfig (buildName, projectName) {
       this.configDataLoading = true
-      getBuildConfigDetailAPI(buildName, projectName).then((response) => {
-        response.pre_build.installs.forEach(element => {
+      getBuildConfigDetailAPI(buildName, projectName).then((res) => {
+        res.pre_build.installs.forEach(element => {
           element.id = element.name + element.version
         })
         let originServiceName = ''
@@ -947,7 +928,7 @@ export default {
         } else if (this.isEdit) {
           originServiceName = this.pmService.service_name
         }
-        this.buildConfig = response
+        this.buildConfig = res
         if (originServiceName) {
           this.$set(this.buildConfig, 'service_name', originServiceName)
         }
@@ -955,14 +936,14 @@ export default {
           this.$set(this.buildConfig, time_out, 0)
         }
         if (this.buildConfig.post_build.docker_build) {
-          this.docker_enabled = true
+          this.dockerEnabled = true
         } else {
-          this.docker_enabled = false
+          this.dockerEnabled = false
         }
         if (this.buildConfig.post_build.file_archive) {
-          this.binary_enabled = true
+          this.binaryEnabled = true
         } else {
-          this.binary_enabled = false
+          this.binaryEnabled = false
         }
         if (this.buildConfig.sshs && (this.buildConfig.sshs.length !== 0 || this.buildConfig.sshs === [])) {
           this.useSshKey = true
@@ -1127,7 +1108,7 @@ export default {
         this.buildConfig.caches.push('')
       }
     },
-    addCacheDir (index) {
+    addCacheDir () {
       this.$refs.cacheDir.validate((valid) => {
         if (valid) {
           this.buildConfig.caches.push('')
@@ -1139,7 +1120,7 @@ export default {
     deleteCacheDir (index) {
       this.buildConfig.caches.splice(index, 1)
     },
-    addBuildApp (index) {
+    addBuildApp () {
       this.$refs.buildApp.validate((valid) => {
         if (valid) {
           this.buildConfig.pre_build.installs.push({
@@ -1162,7 +1143,7 @@ export default {
     deleteBuildApp (index) {
       this.buildConfig.pre_build.installs.splice(index, 1)
     },
-    addBuildEnv (index) {
+    addBuildEnv () {
       this.$refs.buildEnv.validate((valid) => {
         if (valid) {
           this.buildConfig.pre_build.envs.push({
@@ -1187,7 +1168,7 @@ export default {
     },
     addExtra (command) {
       if (command === 'docker') {
-        this.docker_enabled = true
+        this.dockerEnabled = true
         if (!this.buildConfig.post_build) {
           this.$set(this.buildConfig, 'post_build', {})
         }
@@ -1197,11 +1178,8 @@ export default {
           build_args: ''
         })
       }
-      if (command === 'stcov') {
-        this.stcov_enabled = true
-      }
       if (command === 'binary') {
-        this.binary_enabled = true
+        this.binaryEnabled = true
         if (!this.buildConfig.post_build) {
           this.$set(this.buildConfig, 'post_build', {})
         }
@@ -1211,16 +1189,12 @@ export default {
       }
       this.$nextTick(this.$utils.scrollToBottom)
     },
-    removeStcov () {
-      this.stcov_enabled = false
-      delete this.buildConfig.main_file
-    },
-    removeDocker () {
-      this.docker_enabled = false
+    removeDockerBuild () {
+      this.dockerEnabled = false
       delete this.buildConfig.post_build.docker_build
     },
-    removeBinary () {
-      this.binary_enabled = false
+    removeBinaryArchive () {
+      this.binaryEnabled = false
       delete this.buildConfig.post_build.file_archive
     },
     savePmService () {
@@ -1401,15 +1375,15 @@ export default {
         healthy_threshold: null,
         unhealthy_threshold: null
       }]
-      this.check_status_enabled = false
+      this.checkStatusEnabled = false
       this.pmService.env_configs.forEach(item => {
         item.host_ids = []
       })
-      this.removeBinary()
+      this.removeBinaryArchive()
     },
     loadPage () {
       const projectName = this.projectName
-      getBuildConfigsAPI(this.projectName).then((res) => {
+      getBuildConfigsAPI(projectName).then((res) => {
         this.builds = res
       })
       if (!this.isEdit) {
@@ -1424,15 +1398,14 @@ export default {
           })
         })
       }
-
-      getAllAppsAPI().then((response) => {
-        const apps = this.$utils.sortVersion(response, 'name', 'asc')
-        this.allApps = apps.map((app, index) => {
+      getAllAppsAPI().then((res) => {
+        const apps = this.$utils.sortVersion(res, 'name', 'asc')
+        this.allApps = apps.map((app) => {
           return { name: app.name, version: app.version, id: app.name + app.version }
         })
       })
-      getCodeSourceMaskedAPI().then((response) => {
-        this.allCodeHosts = response
+      getCodeSourceMaskedAPI().then((res) => {
+        this.allCodeHosts = res
       })
       getHostLabelListAPI().then((res) => {
         this.allHostLabels = res
@@ -1456,7 +1429,8 @@ export default {
     },
     async serviceName (value) {
       if (value) {
-        this.loading = true
+        // TODO: the reason of page show error is uncertain
+        // this.loading = true
         const pmServiceName = this.serviceName
         const projectName = this.projectName
         const env_configs = []
@@ -1476,9 +1450,9 @@ export default {
         if (res) {
           this.pmService = res
           if (this.pmService.health_checks && this.pmService.health_checks.length > 0) {
-            this.check_status_enabled = true
+            this.checkStatusEnabled = true
           } else if (!this.pmService.health_checks) {
-            this.check_status_enabled = false
+            this.checkStatusEnabled = false
             this.$set(this.pmService, 'health_checks', [{
               protocol: 'http',
               path: '',
@@ -1487,11 +1461,6 @@ export default {
               healthy_threshold: null,
               unhealthy_threshold: null
             }])
-          }
-          if (this.pmService.build_name) {
-            this.syncBuildConfig(this.pmService.build_name, projectName)
-          } else {
-            this.$set(this.buildConfig, 'service_name', this.pmService.service_name)
           }
           if (res.env_configs && res.env_configs.length > 0) {
             this.pmService.env_configs.forEach(confItem => {
@@ -1517,7 +1486,12 @@ export default {
             })
             this.$set(this.pmService, 'env_configs', env_configs)
           }
-          this.loading = false
+          if (this.pmService.build_name) {
+            this.syncBuildConfig(this.pmService.build_name, projectName)
+          } else {
+            this.$set(this.buildConfig, 'service_name', this.pmService.service_name)
+          }
+          // this.loading = false
         }
       };
     }
@@ -1545,19 +1519,14 @@ export default {
   components: {
     Editor,
     Resize,
-    AddHost,
     BuildEnv
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 @import url("~@assets/css/common/scroll-bar.less");
 
-.el-input-group {
-  vertical-align: middle;
-}
-
-.not-k8s-config-container {
+.pm-service-config-container {
   width: calc(~"100% - 250px");
   padding: 45px 15px 30px 15px;
   overflow-x: hidden;
@@ -1576,23 +1545,6 @@ export default {
     }
   }
 
-  .project-name {
-    color: #1989fa;
-  }
-
-  .breadcrumb {
-    .el-breadcrumb {
-      font-size: 16px;
-      line-height: 1.35;
-
-      .el-breadcrumb__item__inner a:hover,
-      .el-breadcrumb__item__inner:hover {
-        color: #1989fa;
-        cursor: pointer;
-      }
-    }
-  }
-
   .anchor-container {
     position: absolute;
     right: 10px;
@@ -1601,6 +1553,12 @@ export default {
 
   .section {
     margin-bottom: 15px;
+
+    .config-form {
+      .el-form-item {
+        margin-bottom: 0;
+      }
+    }
   }
 
   .el-form {
@@ -1615,24 +1573,9 @@ export default {
     }
   }
 
-  .form-bottom-0 {
-    .el-form-item {
-      margin-bottom: 0;
-    }
-  }
-
   .app-operation {
     .el-button + .el-button {
       margin-left: 0;
-    }
-  }
-
-  .operation-container {
-    margin: 20px 0;
-
-    .text {
-      margin-right: 25px;
-      color: #8d9199;
     }
   }
 
@@ -1679,40 +1622,9 @@ export default {
     margin-top: 10px;
   }
 
-  .env-config {
-    .env-name {
-      color: #606266;
-    }
-
-    margin-top: 5px;
-
-    .el-form-item {
-      margin-bottom: 10px !important;
-    }
+  .save-btn {
+    position: absolute;
+    bottom: 20px;
   }
-
-  .dialog-style {
-    .el-dialog__body {
-      padding: 0 20px;
-    }
-
-    .el-form-item {
-      margin-bottom: 15px;
-    }
-  }
-}
-
-/deep/ .host-drawer {
-  padding: 10px 15px;
-  font-size: 13px;
-
-  .drawer-footer {
-    padding-top: 20px;
-  }
-}
-
-.save-btn {
-  position: absolute;
-  bottom: 20px;
 }
 </style>

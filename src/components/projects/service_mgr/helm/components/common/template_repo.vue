@@ -94,7 +94,7 @@ export default {
   },
   computed: {
     ...mapState({
-      currentService: state => state.service_manage.currentService
+      currentService: state => state.serviceManage.currentService
     })
 
   },
@@ -189,7 +189,8 @@ export default {
         )
         this.commitDialogVisible(false)
         this.$store.dispatch('queryService', {
-          projectName: this.$route.params.project_name
+          projectName: this.$route.params.project_name,
+          showServiceName: payload.name
         })
 
         this.$store.commit('UPDATE_ENV_BUTTON', true)
@@ -225,7 +226,8 @@ export default {
         this.$message.success(`导入模板成功`)
         this.commitDialogVisible(false)
         this.$store.dispatch('queryService', {
-          projectName: this.$route.params.project_name
+          projectName: this.$route.params.project_name,
+          showServiceName: res.successServices[0]
         })
 
         this.$store.commit('UPDATE_ENV_BUTTON', true)

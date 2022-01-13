@@ -254,7 +254,7 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="交付清单">
+      <!-- <el-tab-pane label="交付清单">
         <div class="el-card box-card task-process is-always-shadow">
           <div class="el-card__header">
             <div class="clearfix"><span>交付清单</span>
@@ -384,7 +384,7 @@
             </el-table>
           </div>
         </div>
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane v-if="showArtifactDeployBtn"
                    disabled>
         <span @click="runWorkflowFromVersion"
@@ -582,7 +582,8 @@ export default {
       return this.$route.params.id
     },
     showArtifactDeployBtn () {
-      if (this.currentVersionDetail.deployInfo.length !== 0 && this.currentVersionDetail.buildInfo.length === 0) {
+      // Compatible with historical data: buildInfo exists and is empty
+      if (this.currentVersionDetail.deployInfo.length !== 0 && (!this.currentVersionDetail.buildInfo || this.currentVersionDetail.buildInfo.length === 0)) {
         return true
       } else {
         return false

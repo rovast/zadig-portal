@@ -53,12 +53,12 @@
     </div>
 </template>
 <script>
-import mixin from '@utils/service_module_mixin'
+import mixin from '@/mixin/serviceModuleMixin'
 import FileAside from './file_aside.vue'
 import FileEditor from './file_editor.vue'
 import FileTree from './file_tree.vue'
 import { sortBy } from 'lodash'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import {
   getKubernetesTemplatesAPI, getKubernetesAPI
 } from '@api'

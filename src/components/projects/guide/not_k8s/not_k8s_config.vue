@@ -1,5 +1,5 @@
 <template>
-  <div class="projects-not-k8s-config-container">
+  <div class="projects-pm-service-container">
     <div class="guide-container">
       <step :activeStep="1">
       </step>
@@ -41,7 +41,7 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import step from './container/step_not_k8s.vue'
 import ServiceList from '@/components/projects/common/not_k8s/service_list.vue'
 import Build from '@/components/projects/common/not_k8s/not_k8s_form.vue'
@@ -121,12 +121,11 @@ export default {
   background: #409eff57;
 }
 
-.projects-not-k8s-config-container {
+.projects-pm-service-container {
   position: relative;
   flex: 1;
   height: 100%;
   overflow: auto;
-  background-color: #f5f7f7;
 
   .page-title-container {
     display: flex;

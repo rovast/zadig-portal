@@ -10,7 +10,10 @@
       custom-class="add-trigger-dialog"
       center
     >
-      <el-form :model="webhookSwap" ref="triggerForm" label-position="left" label-width="80px" :rules="rules">
+    <div class="trigger-mode">
+      <el-button type="text" @click="switchMode">{{ webhookSwap.is_yaml ? 'GUI 方式' : 'YAML 方式' }}</el-button>
+    </div>
+      <el-form :model="webhookSwap" ref="triggerForm" label-position="left" label-width="120px" :rules="rules">
         <el-form-item label="名称" prop="name" class="bottom-22">
           <el-input size="small" autofocus ref="webhookNamedRef" v-model="webhookSwap.name" placeholder="请输入名称"></el-input>
         </el-form-item>
@@ -33,170 +36,177 @@
             <el-option v-for="(repo,index) in webhookRepos" :key="index" :label="repo.repo_owner+'/'+repo.repo_name" :value="repo"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item
-          v-if="checkGitRepo"
-          label="目标分支"
-          prop="repo.branch"
-          :rules="[
-          { required: true, message: webhookSwap.repo.is_regular ? '请输入正则表达式配置' : '请选择目标分支', trigger: ['blur', 'change'] }
-        ]"
-        >
-          <el-input style="width: 100%;" v-if="webhookSwap.repo.is_regular"  v-model="webhookSwap.repo.branch" placeholder="请输入正则表达式配置" size="small"></el-input>
-          <el-select
-            v-else
-            style="width: 100%;"
-            v-model="webhookSwap.repo.branch"
-            size="small"
-            filterable
-            clearable
-            placeholder="请选择分支"
+        <div v-if="!webhookSwap.is_yaml">
+          <el-form-item
+            v-if="checkGitRepo"
+            label="目标分支"
+            prop="repo.branch"
+            :rules="[
+            { required: true, message: webhookSwap.repo.is_regular ? '请输入正则表达式配置' : '请选择目标分支', trigger: ['blur', 'change'] }
+          ]"
           >
-            <el-option
-              v-for="(branch,index) in webhookBranches[webhookSwap.repo.repo_name]"
-              :key="index"
-              :label="branch.name"
-              :value="branch.name"
-            ></el-option>
-          </el-select>
-          <el-switch v-model="webhookSwap.repo.is_regular" active-text="正则表达式配置" @change="webhookSwap.repo.branch = '';matchedBranchNames=null;"></el-switch>
-          <div v-show="webhookSwap.repo.is_regular">
-            <span v-show="matchedBranchNames">当前正则匹配到的分支：{{matchedBranchNames && matchedBranchNames.length === 0 ? '无': ''}}</span>
-            <span style="display: inline-block; padding-right: 10px;" v-for="branch in matchedBranchNames" :key="branch">{{ branch }}</span>
-          </div>
-        </el-form-item>
-        <el-form-item
-          v-else
-          label="目标分支"
-          prop="repo.branch"
-          :rules="[
-          { required: true, message: '请选择目标分支', trigger: ['blur', 'change'] }
-        ]"
-        >
-          <el-select
-            style="width: 100%;"
-            v-model="webhookSwap.repo.branch"
-            size="small"
-            filterable
-            clearable
-            placeholder="请选择分支"
-          >
-            <el-option
-              v-for="(branch,index) in webhookBranches[webhookSwap.repo.repo_name]"
-              :key="index"
-              :label="branch.name"
-              :value="branch.name"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="部署环境" prop="namespace">
-          <el-select
-            style="width: 100%;"
-            v-model="webhookSwap.namespace"
-            multiple
-            filterable
-            @change="changeNamespace"
-            size="small"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="pro of projectEnvs"
-              :key="`${pro.projectName} / ${pro.name}`"
-              :label="`${pro.projectName} / ${pro.name}（${pro.production?'生产':'测试'}）`"
-              :value="`${pro.name}`"
+            <el-input style="width: 100%;" v-if="webhookSwap.repo.is_regular"  v-model="webhookSwap.repo.branch" placeholder="请输入正则表达式配置" size="small"></el-input>
+            <el-select
+              v-else
+              style="width: 100%;"
+              v-model="webhookSwap.repo.branch"
+              size="small"
+              filterable
+              clearable
+              placeholder="请选择分支"
             >
-              <span>
-                {{`${pro.projectName} / ${pro.name}`}}
-                <el-tag v-if="pro.is_prod" type="danger" size="mini" effect="dark">生产</el-tag>
-              </span>
-            </el-option>
-          </el-select>
-          <el-button @click="showEnvUpdatePolicy = !showEnvUpdatePolicy" class="env-open-button" size="mini" plain>
-            环境更新策略
-            <i class="el-icon-arrow-left"></i>
-          </el-button>
-        </el-form-item>
-        <div class="env-update-list" v-show="showEnvUpdatePolicy">
-          <p>环境更新策略</p>
-          <el-radio-group v-model="webhookSwap.env_update_policy">
-            <el-tooltip content="目前一个触发任务仅支持更新单个环境，部署环境指定单个环境时可选" placement="right">
-              <el-radio label="all" :disabled="!(webhookSwap.namespace.length===1)">更新指定环境</el-radio>
-            </el-tooltip>
-            <el-tooltip content="动态选择一套“没有工作流任务正在更新”的环境进行验证" placement="right">
-              <el-radio label="single">动态选择空闲环境更新</el-radio>
-            </el-tooltip>
-            <el-tooltip v-if="isK8sEnv && webhookSwap.repo.source==='gitlab'" content="基于基准环境版本生成一套临时测试环境做 PR 级验证" placement="right">
-              <el-radio label="base" :disabled="!(webhookSwap.namespace.length===1 && webhookSwap.repo.source==='gitlab')">设置指定环境为基准环境</el-radio>
-            </el-tooltip>
-          </el-radio-group>
-        </div>
-        <el-form-item
-          v-if="webhookSwap.env_update_policy === 'base' && webhookSwap.repo.source==='gitlab' && showEnvUpdatePolicy"
-          label="销毁策略"
-        >
-          <el-select style="width: 100%;" v-model="webhookSwap.env_recycle_policy" size="small" placeholder="请选择销毁策略">
-            <el-option label="工作流成功之后销毁" value="success"></el-option>
-            <el-option label="每次销毁" value="always"></el-option>
-            <el-option label="每次保留" value="never"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="部署服务" prop="targets">
-          <el-select style="width: 100%;" v-model="webhookSwap.targets" multiple filterable value-key="key" size="small" placeholder="请选择">
-            <el-option
-              v-for="(target,index) in webhookTargets"
-              :key="index"
-              :label="`${target.name}(${target.service_name})`"
-              :value="target"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="webhookSwap.repo.source==='gerrit'" label="触发事件" prop="events">
-          <el-checkbox-group v-model="webhookSwap.events">
-            <el-checkbox style="display: block;" label="change-merged"></el-checkbox>
-            <el-checkbox style="display: block;" label="patchset-created">
-              <template v-if="webhookSwap.events.includes('patchset-created')">
-                <span>patchset-created</span>
-                <span style="color: #606266;">评分标签</span>
-                <el-input size="mini" style="width: 250px;" v-model="webhookSwap.repo.label" placeholder="Code-Review"></el-input>
-              </template>
+              <el-option
+                v-for="(branch,index) in webhookBranches[webhookSwap.repo.repo_name]"
+                :key="index"
+                :label="branch.name"
+                :value="branch.name"
+              ></el-option>
+            </el-select>
+            <el-switch v-model="webhookSwap.repo.is_regular" active-text="正则表达式配置" @change="webhookSwap.repo.branch = '';matchedBranchNames=null;"></el-switch>
+            <div v-show="webhookSwap.repo.is_regular">
+              <span v-show="matchedBranchNames">当前正则匹配到的分支：{{matchedBranchNames && matchedBranchNames.length === 0 ? '无': ''}}</span>
+              <span style="display: inline-block; padding-right: 10px;" v-for="branch in matchedBranchNames" :key="branch">{{ branch }}</span>
+            </div>
+          </el-form-item>
+          <el-form-item
+            v-else
+            label="目标分支"
+            prop="repo.branch"
+            :rules="[
+            { required: true, message: '请选择目标分支', trigger: ['blur', 'change'] }
+          ]"
+          >
+            <el-select
+              style="width: 100%;"
+              v-model="webhookSwap.repo.branch"
+              size="small"
+              filterable
+              clearable
+              placeholder="请选择分支"
+            >
+              <el-option
+                v-for="(branch,index) in webhookBranches[webhookSwap.repo.repo_name]"
+                :key="index"
+                :label="branch.name"
+                :value="branch.name"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="部署环境" prop="namespace">
+            <el-select
+              style="width: 100%;"
+              v-model="webhookSwap.namespace"
+              multiple
+              filterable
+              @change="changeNamespace"
+              size="small"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="pro of projectEnvs"
+                :key="`${pro.projectName} / ${pro.name}`"
+                :label="`${pro.projectName} / ${pro.name}（${pro.production?'生产':'测试'}）`"
+                :value="`${pro.name}`"
+              >
+                <span>
+                  {{`${pro.projectName} / ${pro.name}`}}
+                  <el-tag v-if="pro.is_prod" type="danger" size="mini" effect="dark">生产</el-tag>
+                </span>
+              </el-option>
+            </el-select>
+            <el-button @click="showEnvUpdatePolicy = !showEnvUpdatePolicy" class="env-open-button" size="mini" plain>
+              环境更新策略
+              <i class="el-icon-arrow-left"></i>
+            </el-button>
+          </el-form-item>
+          <el-form-item label="环境更新策略" class="env-update-list" v-show="showEnvUpdatePolicy">
+            <el-radio-group v-model="webhookSwap.env_update_policy">
+              <el-tooltip content="目前一个触发任务仅支持更新单个环境，部署环境指定单个环境时可选" placement="right">
+                <el-radio label="all" :disabled="!(webhookSwap.namespace.length===1)">更新指定环境</el-radio>
+              </el-tooltip>
+              <el-tooltip content="动态选择一套“没有工作流任务正在更新”的环境进行验证" placement="right">
+                <el-radio label="single">动态选择空闲环境更新</el-radio>
+              </el-tooltip>
+              <el-tooltip v-if="isK8sEnv && webhookSwap.repo.source==='gitlab'" content="基于基准环境版本生成一套临时测试环境做 PR 级验证" placement="right">
+                <el-radio label="base" :disabled="!(webhookSwap.namespace.length===1 && webhookSwap.repo.source==='gitlab')">设置指定环境为基准环境</el-radio>
+              </el-tooltip>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item
+            v-if="webhookSwap.env_update_policy === 'base' && webhookSwap.repo.source==='gitlab' && showEnvUpdatePolicy"
+            label="销毁策略"
+          >
+            <el-select style="width: 100%;" v-model="webhookSwap.env_recycle_policy" size="small" placeholder="请选择销毁策略">
+              <el-option label="工作流成功之后销毁" value="success"></el-option>
+              <el-option label="每次销毁" value="always"></el-option>
+              <el-option label="每次保留" value="never"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="部署服务" prop="targets">
+            <el-select style="width: 100%;" v-model="webhookSwap.targets" multiple filterable value-key="key" size="small" placeholder="请选择">
+              <el-option
+                v-for="(target,index) in webhookTargets"
+                :key="index"
+                :label="`${target.name}(${target.service_name})`"
+                :value="target"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="webhookSwap.repo.source==='gerrit'" label="触发事件" prop="events">
+            <el-checkbox-group v-model="webhookSwap.events">
+              <el-checkbox style="display: block;" label="change-merged"></el-checkbox>
+              <el-checkbox style="display: block;" label="patchset-created">
+                <template v-if="webhookSwap.events.includes('patchset-created')">
+                  <span>patchset-created</span>
+                  <span style="color: #606266;">评分标签</span>
+                  <el-input size="mini" style="width: 250px;" v-model="webhookSwap.repo.label" placeholder="Code-Review"></el-input>
+                </template>
+              </el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item v-else-if="webhookSwap.repo.source!=='gerrit'" label="触发事件" prop="events">
+            <el-checkbox-group v-model="webhookSwap.events">
+              <el-checkbox label="push"></el-checkbox>
+              <el-checkbox label="pull_request"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="触发策略">
+            <el-checkbox v-model="webhookSwap.auto_cancel">
+              <span>自动取消</span>
+              <el-tooltip effect="dark" content="如果您希望只构建最新的提交，则使用这个选项会自动取消队列中的任务" placement="top">
+                <i class="el-icon-question"></i>
+              </el-tooltip>
             </el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item v-else-if="webhookSwap.repo.source!=='gerrit'" label="触发事件" prop="events">
-          <el-checkbox-group v-model="webhookSwap.events">
-            <el-checkbox label="push"></el-checkbox>
-            <el-checkbox label="pull_request"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="触发策略">
-          <el-checkbox v-model="webhookSwap.auto_cancel">
-            <span>自动取消</span>
-            <el-tooltip effect="dark" content="如果您希望只构建最新的提交，则使用这个选项会自动取消队列中的任务" placement="top">
-              <i class="el-icon-question"></i>
-            </el-tooltip>
-          </el-checkbox>
-          <el-checkbox v-if="webhookSwap.repo.source==='gerrit'" v-model="webhookSwap.check_patch_set_change">
-            <span>代码无变化时不触发工作流</span>
-            <el-tooltip effect="dark" content="例外情况说明：当目标代码仓配置为 Gerrit 的情况下，受限于其 API 的能力，当单行代码有变化时也不被触发" placement="top">
-              <i class="el-icon-question"></i>
-            </el-tooltip>
-          </el-checkbox>
-        </el-form-item>
-        <el-form-item v-if="webhookSwap.repo.source!=='gerrit' && webhookSwap.repo.source!=='codehub'" label="文件目录" prop="match_folders">
-          <el-input
-            :autosize="{ minRows: 4, maxRows: 10}"
-            type="textarea"
-            v-model="webhookSwap.match_folders"
-            placeholder="输入目录时，多个目录请用回车换行分隔"
-          ></el-input>
-        </el-form-item>
-        <ul v-if="webhookSwap.repo.source!=='gerrit' && webhookSwap.repo.source!=='codehub'" style="padding-left: 80px;">
-          <li>"/" 表示代码库中的所有文件</li>
-          <li>用 "!" 符号开头可以排除相应的文件</li>
-        </ul>
+            <el-checkbox v-if="webhookSwap.repo.source==='gerrit'" v-model="webhookSwap.check_patch_set_change">
+              <span>代码无变化时不触发工作流</span>
+              <el-tooltip effect="dark" content="例外情况说明：当目标代码仓配置为 Gerrit 的情况下，受限于其 API 的能力，当单行代码有变化时也不被触发" placement="top">
+                <i class="el-icon-question"></i>
+              </el-tooltip>
+            </el-checkbox>
+          </el-form-item>
+          <el-form-item v-if="webhookSwap.repo.source!=='gerrit' && webhookSwap.repo.source!=='codehub'" label="文件目录" prop="match_folders">
+            <el-input
+              :autosize="{ minRows: 4, maxRows: 10}"
+              type="textarea"
+              v-model="webhookSwap.match_folders"
+              placeholder="输入目录时，多个目录请用回车换行分隔"
+            ></el-input>
+          </el-form-item>
+          <ul v-if="webhookSwap.repo.source!=='gerrit' && webhookSwap.repo.source!=='codehub'" style="padding-left: 120px;">
+            <li>"/" 表示代码库中的所有文件</li>
+            <li>用 "!" 符号开头可以排除相应的文件</li>
+          </ul>
+        </div>
+        <div v-else>
+          <el-form-item label="YAML 文件路径" prop="yaml_path">
+            <el-input v-model="webhookSwap.yaml_path" size="small"></el-input>
+            <!-- <el-button type="text">预览</el-button> -->
+          </el-form-item>
+        </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" round @click="webhookAddMode?webhookAddMode=false:webhookEditMode=false">取 消</el-button>
-        <el-button size="small" round type="primary" @click="validateForm(webhookAddMode?'addWebhook':'saveWebhook')">确定</el-button>
+        <el-button size="small" round type="primary" @click="validateForm('updateWebhook', webhookAddMode?'add':'save')">确定</el-button>
       </div>
     </el-dialog>
     <!--end of edit webhook dialog -->
@@ -227,7 +237,7 @@
                   :key="indexWork*(testInfos.length+1)"
                   :workflowName="workflowToRun.name"
                   :workflowMeta="workflowToRun"
-                  :targetProduct="workflowToRun.product_tmpl_name"
+                  :targetProject="workflowToRun.product_tmpl_name"
                   :forcedUserInput="orgsObject || {}"
                   :testInfos="testInfos"
                   whichSave="outside"
@@ -256,52 +266,52 @@
             <el-button @click="addWebhookBtn" type="text">添加配置</el-button>
             <el-table class="add-border" :data="webhook.items" style="width: 100%;">
               <el-table-column label="名称">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.name?scope.row.main_repo.name:'' }}</span>
+                <template slot-scope="{ row }">
+                  <span>{{ row.main_repo.name?row.main_repo.name:'' }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="描述">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.description?scope.row.main_repo.description:'' }}</span>
+                <template slot-scope="{ row }">
+                  <span>{{ row.main_repo.description?row.main_repo.description:'N/A' }}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="代码库拥有者">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.repo_owner }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column label="代码库">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.repo_name }}</span>
+              <el-table-column label="代码库拥有者/代码库" min-width="160px">
+                <template slot-scope="{ row }">
+                  <span>{{ row.main_repo.repo_owner }}/{{ row.main_repo.repo_name }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="目标分支">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.branch }}</span>
+                <template slot-scope="{ row }">
+                  <span>{{ row.main_repo.branch || 'N/A' }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="部署环境">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.workflow_args.namespace }}</span>
+                <template slot-scope="{ row }">
+                  <span>{{ row.workflow_args.namespace || 'N/A' }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="触发方式">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.main_repo.events.join() }}</span>
+                <template slot-scope="{ row }">
+                  <span>{{ row.main_repo.events.join() || 'N/A' }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="文件目录">
-                <template slot-scope="scope">
+                <template slot-scope="{ row }">
                   <span
-                    v-if="scope.row.main_repo.source!=='gerrit' && scope.row.main_repo.source!=='codehub'"
-                  >{{ scope.row.main_repo.match_folders.join() }}</span>
+                    v-if="row.main_repo.source!=='gerrit' && row.main_repo.source!=='codehub'"
+                  >{{ row.main_repo.match_folders ? row.main_repo.match_folders.join() : 'N/A' }}</span>
                   <span v-else>N/A</span>
                 </template>
               </el-table-column>
+              <el-table-column label="YAML 文件路径" min-width="120px">
+                <template slot-scope="{ row }">
+                  <span>{{ row.yaml_path || 'N/A' }}</span>
+                </template>
+              </el-table-column>
               <el-table-column label="操作">
-                <template slot-scope="scope">
-                  <el-button @click.native.prevent="editWebhook(scope.$index)" type="text" size="small">编辑</el-button>
-                  <el-button @click.native.prevent="deleteWebhook(scope.$index)" type="text" size="small">移除</el-button>
+                <template slot-scope="{ $index }">
+                  <el-button @click.native.prevent="editWebhook($index)" type="text" size="small">编辑</el-button>
+                  <el-button @click.native.prevent="deleteWebhook($index)" type="text" size="small">移除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -313,7 +323,7 @@
 </template>
 
 <script type="text/javascript">
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import workflowArgs from '../container/workflow_args.vue'
 import {
   listProductAPI,
@@ -322,7 +332,24 @@ import {
   getAllBranchInfoAPI,
   checkRegularAPI
 } from '@api'
-import { uniqBy, get, debounce } from 'lodash'
+import { uniqBy, get, debounce, cloneDeep } from 'lodash'
+
+const webhookSwapInfo = {
+  is_yaml: false,
+  yaml_path: '',
+  name: '',
+  description: '',
+  repo: {},
+  events: [],
+  targets: [],
+  namespace: '',
+  env_update_policy: 'all',
+  auto_cancel: false,
+  check_patch_set_change: false,
+  base_namespace: '',
+  env_recycle_policy: 'success',
+  match_folders: '/\n!.md'
+}
 export default {
   data () {
     const validateName = (rule, value, callback) => {
@@ -374,7 +401,12 @@ export default {
           message: '请输入文件目录',
           trigger: ['blur', 'change']
         }
-      ]
+      ],
+      yaml_path: {
+        required: true,
+        message: '请输入 YAML 文件路径',
+        trigger: ['blur', 'change']
+      }
     }
 
     return {
@@ -383,18 +415,7 @@ export default {
       currentForcedUserInput: {},
       projectEnvs: [],
       webhookBranches: {},
-      webhookSwap: {
-        repo: {},
-        events: [],
-        targets: [],
-        namespace: '',
-        env_update_policy: 'all',
-        auto_cancel: false,
-        check_patch_set_change: false,
-        base_namespace: '',
-        env_recycle_policy: 'success',
-        match_folders: '/\n!.md'
-      },
+      webhookSwap: cloneDeep(webhookSwapInfo),
       currenteditWebhookIndex: null,
       webhookEditMode: false,
       webhookAddMode: false,
@@ -442,10 +463,10 @@ export default {
         that.matchedBranchNames = res || []
       })
     }, 500),
-    validateForm (fn) {
+    validateForm (fnName, action) {
       this.$refs.triggerForm.validate(valid => {
         if (valid) {
-          this[fn]()
+          this[fnName](action)
         }
       })
     },
@@ -643,6 +664,8 @@ export default {
         )
       }
       this.webhookSwap = {
+        is_yaml: webhookSwap.is_yaml || false,
+        yaml_path: webhookSwap.yaml_path || '',
         name: webhookSwap.main_repo.name,
         description: webhookSwap.main_repo.description,
         repo: Object.assign(
@@ -652,7 +675,7 @@ export default {
           },
           webhookSwap.main_repo
         ),
-        namespace: webhookSwap.workflow_args.namespace.split(','),
+        namespace: webhookSwap.workflow_args.namespace ? webhookSwap.workflow_args.namespace.split(',') : [],
         env_update_policy: webhookSwap.workflow_args.env_update_policy
           ? webhookSwap.workflow_args.env_update_policy
           : webhookSwap.workflow_args.base_namespace
@@ -667,23 +690,13 @@ export default {
           element.key = element.name + '/' + element.service_name
           return element
         }),
-        match_folders: webhookSwap.main_repo.match_folders.join('\n')
+        match_folders: webhookSwap.main_repo.match_folders ? webhookSwap.main_repo.match_folders.join('\n') : '/\n!.md'
       }
     },
     addWebhookBtn () {
       this.webhookSwap = {
-        name: `trigger${this.webhook.items.length + 1}`,
-        description: '',
-        repo: {},
-        events: [],
-        targets: [],
-        namespace: [],
-        env_update_policy: 'all',
-        auto_cancel: false,
-        check_patch_set_change: false,
-        base_namespace: '',
-        env_recycle_policy: 'success',
-        match_folders: '/\n!.md'
+        ...cloneDeep(webhookSwapInfo),
+        name: `trigger${this.webhook.items.length + 1}`
       }
       this.webhookAddMode = true
       this.$nextTick(() => {
@@ -691,89 +704,68 @@ export default {
         this.$refs.triggerForm.clearValidate()
       })
     },
-    addWebhook () {
+    updateWebhook (action) {
       const webhookSwap = this.$utils.cloneObj(this.webhookSwap)
-      webhookSwap.repo.match_folders = webhookSwap.match_folders.split('\n')
-      webhookSwap.repo.events = webhookSwap.events
-      webhookSwap.repo.name = webhookSwap.name
-      webhookSwap.repo.description = webhookSwap.description
-      webhookSwap.targets.map(item => {
-        item.product_name = this.projectName
-        return item
-      })
-      this.webhook.items.push({
-        main_repo: webhookSwap.repo,
-        auto_cancel: webhookSwap.auto_cancel,
-        check_patch_set_change: webhookSwap.check_patch_set_change,
-        workflow_args: {
-          namespace: webhookSwap.namespace.toString(),
-          base_namespace:
-            webhookSwap.env_update_policy === 'base'
-              ? webhookSwap.namespace.toString()
-              : '',
-          env_update_policy: webhookSwap.env_update_policy,
-          env_recycle_policy: webhookSwap.env_recycle_policy,
-          targets: webhookSwap.targets
-        }
-      })
-      this.webhookSwap = {
-        name: '',
-        description: '',
-        repo: {},
-        events: [],
-        targets: [],
-        namespace: '',
-        env_update_policy: 'all',
-        auto_cancel: false,
-        check_patch_set_change: false,
-        base_namespace: '',
-        env_recycle_policy: 'success',
-        match_folders: '/\n!.md'
-      }
-      this.webhookAddMode = false
-    },
-    saveWebhook () {
-      const index = this.currenteditWebhookIndex
-      const webhookSwap = this.$utils.cloneObj(this.webhookSwap)
-      webhookSwap.repo.match_folders = webhookSwap.match_folders.split('\n')
-      webhookSwap.repo.events = webhookSwap.events
-      webhookSwap.repo.name = webhookSwap.name
-      webhookSwap.repo.description = webhookSwap.description
-      webhookSwap.targets.map(item => {
-        item.product_name = this.projectName
-        return item
-      })
-      this.$set(this.webhook.items, index, {
-        main_repo: webhookSwap.repo,
-        auto_cancel: webhookSwap.auto_cancel,
-        check_patch_set_change: webhookSwap.check_patch_set_change,
-        workflow_args: {
-          namespace: webhookSwap.namespace.toString(),
-          base_namespace:
-            webhookSwap.env_update_policy === 'base'
-              ? webhookSwap.namespace.toString()
-              : '',
-          env_update_policy: webhookSwap.env_update_policy,
-          env_recycle_policy: webhookSwap.env_recycle_policy,
-          targets: webhookSwap.targets
-        }
-      })
 
-      this.webhookSwap = {
-        name: '',
-        description: '',
-        repo: {},
-        events: [],
-        targets: [],
-        namespace: '',
-        env_update_policy: 'all',
-        auto_cancel: false,
-        check_patch_set_change: false,
-        base_namespace: '',
-        env_recycle_policy: 'success',
-        match_folders: '/\n!.md'
+      webhookSwap.repo.name = webhookSwap.name
+      webhookSwap.repo.description = webhookSwap.description
+
+      let repoInfo = {}
+      if (webhookSwap.is_yaml) {
+        webhookSwap.repo.events = []
+        webhookSwap.repo.branch = ''
+        repoInfo = {
+          is_yaml: true,
+          yaml_path: webhookSwap.yaml_path,
+          main_repo: webhookSwap.repo,
+          auto_cancel: false,
+          check_patch_set_change: false,
+          workflow_args: {
+            namespace: '',
+            base_namespace: '',
+            env_update_policy: 'all',
+            env_recycle_policy: 'success',
+            targets: []
+          }
+        }
+      } else {
+        webhookSwap.repo.match_folders = webhookSwap.match_folders.split('\n')
+        webhookSwap.repo.events = webhookSwap.events
+        webhookSwap.targets.map(item => {
+          item.product_name = this.projectName
+          return item
+        })
+        repoInfo = {
+          is_yaml: false,
+          yaml_path: '',
+          main_repo: webhookSwap.repo,
+          auto_cancel: webhookSwap.auto_cancel,
+          check_patch_set_change: webhookSwap.check_patch_set_change,
+          workflow_args: {
+            namespace: webhookSwap.namespace.toString(),
+            base_namespace:
+            webhookSwap.env_update_policy === 'base'
+              ? webhookSwap.namespace.toString()
+              : '',
+            env_update_policy: webhookSwap.env_update_policy,
+            env_recycle_policy: webhookSwap.env_recycle_policy,
+            targets: webhookSwap.targets
+          }
+        }
       }
-      this.webhookEditMode = false
+
+      if (action === 'add') {
+        this.webhook.items.push(repoInfo)
+        this.webhookAddMode = false
+      } else if (action === 'save') {
+        this.$set(this.webhook.items, this.currenteditWebhookIndex, repoInfo)
+        this.webhookEditMode = false
+      }
+
+      this.webhookSwap = cloneDeep(webhookSwapInfo)
+      this.$nextTick(() => {
+        this.$refs.triggerForm.clearValidate()
+      })
     },
     deleteWebhook (index) {
       this.webhook.items.splice(index, 1)
@@ -805,16 +797,20 @@ export default {
         currentRepo.repo_owner,
         currentRepo.repo_name
       )
+    },
+    switchMode () {
+      this.webhookSwap.is_yaml = !this.webhookSwap.is_yaml
+      this.$refs.triggerForm.clearValidate()
     }
   },
   computed: {
     showWebhookDialog: {
       get: function () {
-        const flag = this.webhookAddMode ? this.webhookAddMode : this.webhookEditMode
-        if (!flag) {
+        const mode = this.webhookAddMode ? this.webhookAddMode : this.webhookEditMode
+        if (!mode) {
           this.matchedBranchNames = null
         }
-        return flag
+        return mode
       },
       set: function (newValue) {
         this.webhookAddMode
@@ -909,6 +905,11 @@ export default {
 
 <style lang="less">
 .add-trigger-dialog {
+  .trigger-mode {
+    margin-top: -30px;
+    text-align: right;
+  }
+
   .el-form {
     .el-form-item {
       margin-bottom: 8px;
@@ -926,8 +927,6 @@ export default {
 
     .env-update-list {
       .el-radio-group {
-        margin-top: -1rem;
-        margin-left: 80px;
         padding: 5px 0;
 
         .el-radio {

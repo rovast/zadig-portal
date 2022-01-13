@@ -96,7 +96,7 @@
         </div>
       </div>
       <div class="controls__wrap">
-          <div class="controls__right">
+          <div v-hasPermi="{projectName: projectName, action: 'config_environment'}" class="controls__right">
             <el-button type="primary"
                        size="small"
                        class="save-btn"
@@ -108,7 +108,7 @@
     </div>
 </template>
 <script>
-import mixin from '@utils/service_module_mixin'
+import mixin from '@/mixin/serviceModuleMixin'
 import serviceAsideK8s from './k8s/service_aside.vue'
 import serviceEditorK8s from './k8s/service_editor.vue'
 import serviceTree from './common/service_tree.vue'

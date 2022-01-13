@@ -36,7 +36,8 @@
                   description="定义服务组件的构建方式以及构建依赖">
         </el-alert>
         <div class="create-buildconfig">
-          <router-link :to="`/v1/projects/detail/${projectName}/builds/create`">
+          <router-link v-hasPermi="{projectName: projectName, action: 'create_build'}"
+                       :to="`/v1/projects/detail/${projectName}/builds/create`">
             <el-button plain
                        size="small"
                        type="primary">添加</el-button>
@@ -80,7 +81,7 @@
                     </el-tooltip>
                   </div>
                 </template>
-                <span class="change-serviceTarget"><i @click="changeServiceTargets(scope.row)"
+                <span v-hasPermi="{projectName: projectName, action: 'edit_build'}" class="change-serviceTarget"><i @click="changeServiceTargets(scope.row)"
                      class="el-icon-edit"></i></span>
               </template>
             </el-table-column>
@@ -97,13 +98,13 @@
             <el-table-column label="操作"
                              width="240">
               <template slot-scope="scope">
-                <router-link
+                <router-link v-hasPermi="{projectName: projectName, action: 'edit_build'}"
                              :to="`/v1/projects/detail/${scope.row.productName}/builds/detail/${scope.row.name}`">
                   <el-button type="primary"
                              size="mini"
                              plain>编辑</el-button>
                 </router-link>
-                <el-button @click="removeBuildConfig(scope.row)"
+                <el-button v-hasPermi="{projectName: projectName, action: 'delete_build'}" @click="removeBuildConfig(scope.row)"
                            type="danger"
                            size="mini"
                            plain>删除</el-button>
@@ -119,7 +120,7 @@
 <script>
 import { getBuildConfigsAPI, deleteBuildConfigAPI, saveBuildConfigTargetsAPI, getServiceTargetsAPI } from '@api'
 import { flattenDeep } from 'lodash'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

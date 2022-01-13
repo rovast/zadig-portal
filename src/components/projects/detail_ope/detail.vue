@@ -23,43 +23,44 @@
                     <el-dropdown-item command="windows"> Windows </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-                <router-link :to="`/v1/projects/edit/${projectName}`">
+                <template v-if="isProjectAdmin">
+                  <router-link :to="`/v1/projects/edit/${projectName}`">
+                    <button type="button"
+                            class="display-btn">
+                      <i class="el-icon-edit-outline"></i>
+                      <span class="add-filter-value-title">修改</span>
+                    </button>
+                  </router-link>
                   <button type="button"
+                          @click="deleteProject"
                           class="display-btn">
-                    <i class="el-icon-edit-outline"></i>
-                    <span class="add-filter-value-title">修改</span>
+                    <i class="el-icon-delete"></i>
+                    <span class="add-filter-value-title">删除</span>
                   </button>
-                </router-link>
-                <button type="button"
-                        @click="deleteProject"
-                        class="display-btn">
-                  <i class="el-icon-delete"></i>
-                  <span class="add-filter-value-title">删除</span>
-                </button>
-                <router-link v-if="isProjectAdmin"
-                             :to="`/v1/projects/detail/${projectName}/rbac`">
-                  <button type="button"
-                          class="display-btn">
-                    <i class="el-icon-lock"></i>
-                    <span class="add-filter-value-title">权限</span>
-                  </button>
-                </router-link>
-                <router-link v-if="isProjectAdmin"
-                             :to="`/v1/projects/detail/${projectName}/policy`">
-                  <button type="button"
-                          class="display-btn">
-                    <i class="el-icon-s-operation"></i>
-                    <span class="add-filter-value-title">协作模式</span>
-                  </button>
-                </router-link>
-                <router-link :to="`/v1/projects/initialize/${projectName}`">
-                  <button type="button"
-                          class="display-btn">
-                    <span class="add-filter-value-title">初始化测试</span>
-                  </button>
-                </router-link>
+                  <router-link v-if="isProjectAdmin"
+                              :to="`/v1/projects/detail/${projectName}/policy`">
+                    <button type="button"
+                            class="display-btn">
+                      <i class="el-icon-s-operation"></i>
+                      <span class="add-filter-value-title">协作模式</span>
+                    </button>
+                  </router-link>
+                  <router-link :to="`/v1/projects/initialize/${projectName}`">
+                    <button type="button"
+                            class="display-btn">
+                      <span class="add-filter-value-title">初始化测试</span>
+                    </button>
+                  </router-link>
+                  <router-link
+                              :to="`/v1/projects/detail/${projectName}/rbac`">
+                    <button type="button"
+                            class="display-btn">
+                      <i class="el-icon-lock"></i>
+                      <span class="add-filter-value-title">权限</span>
+                    </button>
+                  </router-link>
+                </template>
               </div>
-
             </div>
           </div>
         </div>
@@ -72,9 +73,8 @@
               基本信息
             </h4>
             <div class="info-list">
-              <el-row type="flex"
-                      justify="space-between">
-                <el-col :span="4">
+              <el-row type="flex" :gutter="20">
+                <el-col v-hasPermi="{projectName: projectName, action: 'get_workflow'}" :span="4">
                   <router-link :to="`/v1/projects/detail/${projectName}/pipelines`">
                     <div class="card">
                       <div class="flex">
@@ -96,7 +96,7 @@
                     </div>
                   </router-link>
                 </el-col>
-                <el-col :span="4">
+                <el-col v-hasPermi="{projectName: projectName, action: 'get_environment'}" :span="4">
                   <router-link :to="`/v1/projects/detail/${projectName}/envs`">
                     <div class="card">
 
@@ -119,7 +119,7 @@
                     </div>
                   </router-link>
                 </el-col>
-                <el-col :span="4">
+                <el-col v-hasPermi="{projectName: projectName, action: 'get_service'}" :span="4">
                   <router-link :to="`/v1/projects/detail/${projectName}/services`">
                     <div class="card">
                       <div class="flex">
@@ -140,7 +140,7 @@
                     </div>
                   </router-link>
                 </el-col>
-                <el-col :span="4">
+                <el-col v-hasPermi="{projectName: projectName, action: 'get_build'}" :span="4">
                   <router-link :to="`/v1/projects/detail/${projectName}/builds`">
                     <div class="card">
 
@@ -163,7 +163,7 @@
                     </div>
                   </router-link>
                 </el-col>
-                <el-col :span="4">
+                <el-col v-hasPermi="{projectName: projectName, action: 'get_test'}" :span="4">
                   <router-link :to="`/v1/projects/detail/${projectName}/test`">
                     <div class="card">
 
@@ -190,7 +190,7 @@
           </div>
         </section>
         <section class="status">
-          <div class="env">
+          <div v-hasPermi="{projectName: projectName, action: 'get_environment'}" class="env">
             <h4 class="section-title">环境信息</h4>
             <div class="env-list">
               <el-table :data="envList"
@@ -231,7 +231,7 @@
               </el-table>
             </div>
           </div>
-          <div class="workflow">
+          <div v-hasPermi="{projectName: projectName, action: 'get_workflow'}" class="workflow">
             <h4 class="section-title">工作流信息</h4>
             <div class="workflow-info-list">
               <el-table :data="workflows"
@@ -279,11 +279,12 @@
   </div>
 </template>
 <script>
-import { getProjectInfoAPI, productEnvInfoAPI, queryUserBindingsAPI, deleteProjectAPI, getWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
-import { getProductStatus } from '@utils/word_translate'
-import { wordTranslate } from '@utils/word_translate.js'
-import { whetherOnboarding } from '@utils/onboarding_route'
-import bus from '@utils/event_bus'
+import { getProjectInfoAPI, productEnvInfoAPI, queryUserBindingsAPI, deleteProjectAPI, getProductWorkflowsInProjectAPI, listProductAPI, getServiceTemplatesAPI, getBuildConfigsAPI, downloadDevelopCLIAPI } from '@api'
+import { translateEnvStatus } from '@utils/wordTranslate'
+import { wordTranslate } from '@utils/wordTranslate.js'
+import { whetherOnboarding } from '@utils/onboardingRoute'
+import { get } from 'lodash'
+import bus from '@utils/eventBus'
 import store from 'storejs'
 export default {
   data () {
@@ -297,10 +298,10 @@ export default {
   },
   methods: {
     getProdStatus (status, updateble) {
-      return getProductStatus(status, updateble)
+      return translateEnvStatus(status, updateble)
     },
     async getWorkflows (projectName) {
-      const res = await getWorkflowsInProjectAPI(projectName)
+      const res = await getProductWorkflowsInProjectAPI(projectName)
       if (res) {
         this.workflows = res.filter(item => item.projectName === projectName)
       }
@@ -318,7 +319,7 @@ export default {
     },
     async deleteProject () {
       const projectName = this.projectName
-      const externalFlag = this.currentProject.product_feature.create_env_type
+      const externalFlag = get(this.currentProject, 'product_feature.create_env_type', '')
       const workflows = this.workflows.map((element) => { return element.name })
       const envNames = this.envList.map((element) => { return element.name })
       const result = await Promise.all([getServiceTemplatesAPI(projectName), getBuildConfigsAPI(projectName)])

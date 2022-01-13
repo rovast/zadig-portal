@@ -4,7 +4,7 @@
 
 <script>
 import TestCase from '@/components/projects/test/common/report/test_case.vue'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

@@ -31,6 +31,7 @@
             :changeExpandFileList="changeExpandFileList"
             :deleteServer="deleteServer"
             :openRepoModal="openRepoModal"
+            :autoShowValuesYaml="autoShowValuesYaml"
           />
           <div class="bottom">
             <el-input v-model="searchService" placeholder="搜索服务" suffix-icon="el-icon-search" size="small"></el-input>
@@ -181,6 +182,9 @@ export default {
       this.$store.dispatch('queryFilePath', params).then(res => {
         this.expandKey.push(data.id)
         data.children = res
+        if (typeof data.parent === 'undefined') {
+          this.autoShowValuesYaml(data)
+        }
       })
     },
     setData (obj, data) {
@@ -366,6 +370,13 @@ export default {
     },
     update () {
       this.updateHelmEnvDialogVisible = true
+    },
+    autoShowValuesYaml (node) {
+      const data =
+        node.children.filter(
+          node => node.label === 'values.yaml'
+        )[0] || node.children[0]
+      this.$refs.folder.addExpandFileList(data)
     }
   },
   watch: {
@@ -381,11 +392,13 @@ export default {
         // }
         // this.changeExpandFileList('add', item)
       } else {
-        const data =
-          this.nodeData[0].children.filter(
-            node => node.label === 'values.yaml'
-          )[0] || this.nodeData[0].children[0]
-        this.$refs.folder.addExpandFileList(data)
+        const serviceName = this.$route.query.service_name
+        const node = this.nodeData.find(node => node.label === serviceName)
+        if (node) {
+          this.loadData(node)
+        } else {
+          this.autoShowValuesYaml(this.nodeData[0])
+        }
       }
     }
   },
@@ -408,10 +421,10 @@ export default {
       return envNameList
     },
     ...mapState({
-      service: state => state.service_manage.serviceList,
-      dialogVisible: state => state.service_manage.serviceDialogVisible,
-      currentService: state => state.service_manage.currentService,
-      updateEnv: state => state.service_manage.updateEnv
+      service: state => state.serviceManage.serviceList,
+      dialogVisible: state => state.serviceManage.serviceDialogVisible,
+      currentService: state => state.serviceManage.currentService,
+      updateEnv: state => state.serviceManage.updateEnv
     }),
     filteredNodeData () {
       return this.nodeData.filter(node => {

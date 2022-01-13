@@ -151,7 +151,7 @@ import {
   checkRegistrationAPI,
   changeRegistrationAPI
 } from '@api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import EditUserRole from './editUserInfo.vue'
 import { sortBy } from 'lodash'
 export default {

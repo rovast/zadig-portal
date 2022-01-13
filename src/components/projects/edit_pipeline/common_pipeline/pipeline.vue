@@ -23,7 +23,7 @@ import TabMenu from './tab_menu.vue'
 import BasicInfo from './switch_tab/basic_info.vue'
 import Build from './switch_tab/build.vue'
 import External from './switch_tab/external.vue'
-import ValidateSubmit from '@utils/validate_async'
+import ValidateSubmit from '@utils/validateAsync'
 
 import { mapGetters, mapState } from 'vuex'
 import { cloneDeep, get } from 'lodash'
@@ -41,7 +41,7 @@ export default {
   computed: {
     ...mapGetters(['currentTab', 'selectedTabs']),
     ...mapState({
-      commonInfo: state => state.common_workflow.commonInfo
+      commonInfo: state => state.commonWorkflow.commonInfo
     }),
     isComp () {
       let res = BasicInfo

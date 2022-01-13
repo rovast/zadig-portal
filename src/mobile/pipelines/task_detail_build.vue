@@ -33,7 +33,7 @@
         </van-row>
         <van-row v-if="buildv2.job_ctx.builds">
           <div>
-            <span>构建信息</span>
+            <span>代码信息</span>
           </div>
         </van-row>
         <van-row :gutter="0"
@@ -165,7 +165,7 @@
 </template>
 
 <script>
-import mixin from '@utils/task_detail_mixin'
+import mixin from '@/mixin/killSSELogMixin'
 import { NoticeBar, Col, Row, Divider, Notify } from 'vant'
 import { getWorkflowHistoryBuildLogAPI } from '@api'
 

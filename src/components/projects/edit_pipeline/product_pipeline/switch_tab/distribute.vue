@@ -111,7 +111,7 @@
 </template>
 
 <script type="text/javascript">
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { getStorageListAPI, imageReposAPI } from '@api'
 import _ from 'lodash'
 export default {

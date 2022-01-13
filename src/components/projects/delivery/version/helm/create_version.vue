@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 
 import Info from './create_version/info.vue'
 import Config from './create_version/config.vue'

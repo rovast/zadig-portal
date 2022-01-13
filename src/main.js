@@ -9,20 +9,21 @@ import store from './store'
 import sse from './common/vue_sse'
 import VueClipboard from 'vue-clipboard2'
 import utils from '@utils/utilities'
-import mobileGoback from '@utils/goback_mixin'
-import onboardingStatusMixin from '@utils/save_onboarding_status_mixin'
-import translate from '@utils/word_translate'
+import translate from '@utils/wordTranslate'
+
+// Mixin
+import goBackMixin from '@/mixin/goBackMixin'
+import onboardingStatusMixin from '@/mixin/onboardingStatusMixin'
+import permissionMixin from '@/mixin/permissionMixin'
+
 import '@utils/traversal'
+import directive from '@/directive'
 
 import App from './App.vue'
-import VueIntro from 'vue-introjs'
-import 'intro.js/introjs.css'
 import { analyticsRequestAPI } from '@api'
 import { JSEncrypt } from 'jsencrypt'
 import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill'
 global.EventSource = EventSourcePolyfill || NativeEventSource
-
-Vue.use(VueIntro)
 
 Vue.prototype.$utils = utils
 Vue.prototype.$translate = translate
@@ -31,8 +32,10 @@ Vue.use(sse)
 Vue.config.debug = true
 Vue.use(VueClipboard)
 Vue.use(Element)
-Vue.mixin(mobileGoback)
+Vue.use(directive)
+Vue.mixin(goBackMixin)
 Vue.mixin(onboardingStatusMixin)
+Vue.mixin(permissionMixin)
 Vue.mixin({
   beforeDestroy () {
     const arr = window.__spockEventSources[this._uid]
@@ -87,7 +90,13 @@ const analyticsRequest = (to, from) => {
   }
 }
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  // disable permission temporary
+  // if (to.params.project_name) {
+  //   console.log('Enter:', to.params.project_name)
+  //   const projectName = to.params.project_name
+  //   await store.dispatch('checkingPermission', projectName)
+  // }
   if (to.meta.title) {
     document.title = to.meta.title
   } else {

@@ -22,7 +22,7 @@ import EditHostService from './editHosService.vue'
 import RunWorkflow from '@/components/projects/common/hosting/runWorkflow'
 
 export default {
-  name: 'editExteranlConfig',
+  name: 'editExternalConfig',
   data () {
     return {
       componentsList: [EditHostService, ServiceBuild, RunWorkflow],

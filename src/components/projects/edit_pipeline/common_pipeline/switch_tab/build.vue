@@ -195,7 +195,7 @@ import { getAllAppsAPI, getImgListAPI } from '@api'
 import Editor from 'vue2-ace-bind'
 import Resize from '@/components/common/resize.vue'
 import Codemirror from '@/components/projects/common/codemirror.vue'
-import ValidateSubmit from '@utils/validate_async'
+import ValidateSubmit from '@utils/validateAsync'
 import { mapState } from 'vuex'
 import { cloneDeep } from 'lodash'
 
@@ -344,7 +344,7 @@ export default {
   },
   computed: {
     ...mapState({
-      commonInfo: state => state.common_workflow.commonInfo
+      commonInfo: state => state.commonWorkflow.commonInfo
     })
   },
   created () {

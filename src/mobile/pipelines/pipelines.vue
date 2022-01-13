@@ -1,5 +1,5 @@
 <template>
-  <div class="mobile-pipelines-list">
+  <div class="mobile-workflow-list">
     <van-nav-bar fixed>
       <template #title>
         工作流列表
@@ -16,17 +16,14 @@
                 center
                 border
                 :key="index"
-                :to="`/mobile/pipelines/project/${workflow.product_tmpl_name}/multi/${workflow.name}`">
+                :to="`/mobile/pipelines/project/${workflow.projectName}/multi/${workflow.name}`">
         <template #title>
           <span class="workflow-name">{{`${workflow.name}`}}</span>
         </template>
         <template #label>
-          <van-tag v-if="!$utils.isEmpty(workflow.build_stage) && workflow.build_stage.enabled"
-                   type="primary">构建部署</van-tag>
-          <van-tag v-if="!$utils.isEmpty(workflow.artifact_stage) && workflow.artifact_stage.enabled"
-                   type="primary">交付物部署</van-tag>
-          <van-tag v-if="!$utils.isEmpty(workflow.distribute_stage) &&  workflow.distribute_stage.enabled"
-                   type="primary">分发</van-tag>
+          <span v-for="(stage,index) in workflow.enabledStages" :key="index" class="stage-tag">
+            <van-tag type="primary">{{wordTranslation(stage,'workflowStage')}}</van-tag>
+          </span>
         </template>
         <template #default>
           <van-icon @click.stop.prevent="showAction(workflow)"
@@ -50,7 +47,7 @@
       <run-workflow v-if="taskDialogVisible"
                     :workflowName="workflowToRun.name"
                     :workflowMeta="workflowToRun"
-                    :targetProduct="workflowToRun.product_tmpl_name"
+                    :targetProject="workflowToRun.product_tmpl_name"
                     @success="hideTaskDialog"></run-workflow>
     </el-dialog>
   </div>
@@ -58,6 +55,8 @@
 <script>
 import { NavBar, Tag, Panel, Loading, Button, Notify, Tab, Tabs, Cell, CellGroup, Icon, Empty, Search, Toast, ActionSheet } from 'vant'
 import qs from 'qs'
+import { getProductWorkflowsAPI } from '@api'
+import { wordTranslate } from '@utils/wordTranslate.js'
 import runWorkflow from './run_workflow.vue'
 export default {
   components: {
@@ -90,13 +89,11 @@ export default {
       currentAction: {
         show: false,
         workflow_name: ''
-      }
+      },
+      workflows: []
     }
   },
   computed: {
-    workflows () {
-      return this.$store.getters.workflowList
-    },
     filteredWorkflows () {
       this.$router.replace({
         query: Object.assign(
@@ -119,11 +116,16 @@ export default {
         this.taskDialogVisible = true
       }
     },
-    getWorkflows () {
+    wordTranslation (word, category, subitem) {
+      return wordTranslate(word, category, subitem)
+    },
+    async getWorkflows () {
       this.loading = true
-      this.$store.dispatch('getWorkflowList').then(() => {
-        this.loading = false
+      this.workflows = await getProductWorkflowsAPI().catch(err => {
+        console.log(err)
+        return []
       })
+      this.loading = false
     },
     showAction (workflow) {
       this.workflowToRun = workflow
@@ -140,8 +142,12 @@ export default {
 }
 </script>
 <style lang="less">
-.mobile-pipelines-list {
+.mobile-workflow-list {
   padding-top: 46px;
   padding-bottom: 50px;
+
+  .stage-tag {
+    margin-right: 4px;
+  }
 }
 </style>

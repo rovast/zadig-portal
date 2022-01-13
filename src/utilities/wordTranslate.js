@@ -95,7 +95,7 @@ export function calcTaskStatusColor (status) {
   return colorTranslate(status, 'pipeline', 'task')
 }
 
-export function getProductStatus (status, updateble) {
+export function translateEnvStatus (status, updateble) {
   if (status === 'Running' && updateble) {
     return '环境可更新'
   } else if (status === 'Creating') {

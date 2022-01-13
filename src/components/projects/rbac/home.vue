@@ -15,7 +15,7 @@
 import Member from './member.vue'
 import Role from './role.vue'
 import Policy from './Policy'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 
 export default {
   name: 'rbac',

@@ -4,7 +4,7 @@
 
 <script>
 import FunctionTest from '@/components/projects/test/common/function/function.vue'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

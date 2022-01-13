@@ -38,7 +38,7 @@
                 <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="镜像仓库：" prop="registry_id">
+            <el-form-item label="镜像仓库：">
               <el-select class="select" v-model.trim="currentInfo.registry_id" placeholder="请选择镜像仓库" size="small">
                 <el-option
                   v-for="registry in imageRegistry"
@@ -78,7 +78,7 @@
 </template>
 <script>
 import HelmEnvTemplate from '@/components/projects/env/env_detail/components/updateHelmEnvTemp.vue'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import step from '../common/step.vue'
 import {
   createHelmEnvAPI,
@@ -89,14 +89,7 @@ import {
 export default {
   data () {
     this.rules = {
-      clusterID: [{ required: true, trigger: 'change', message: '请选择集群' }],
-      registry_id: [
-        {
-          required: true,
-          trigger: ['change', 'blur'],
-          message: '请选择镜像仓库'
-        }
-      ]
+      clusterID: [{ required: true, trigger: 'change', message: '请选择集群' }]
     }
     return {
       envInfos: [
@@ -250,7 +243,8 @@ export default {
       })
       getRegistryWhenBuildAPI(this.projectName).then(res => {
         this.imageRegistry = res
-        this.defaultInfo.registry_id = res.find(reg => reg.is_default).id || ''
+        const defaultRegistry = res.find(reg => reg.is_default)
+        this.defaultInfo.registry_id = defaultRegistry ? defaultRegistry.id : ''
       })
     }
   },

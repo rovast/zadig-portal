@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import _ from 'lodash'
 export default {
   data () {
@@ -84,7 +84,7 @@ export default {
       subSidebarOpened: false,
       backTitle: '',
       backUrl: '/v1/status',
-      enterpriseMenu: [
+      userManagementMenu: [
         {
           category_name: '用户管理',
           items: [
@@ -217,23 +217,23 @@ export default {
               url: 'tests'
             }
           ]
-        },
-        {
-          category_name: '设置',
-          items: [
-            {
-              name: '用户管理',
-              icon: 'iconfont icongeren',
-              url: 'users/account/manage'
-            },
-            {
-              name: '系统设置',
-              icon: 'iconfont iconicon_jichengguanli',
-              url: 'system'
-            }
-          ]
         }
-      ]
+      ],
+      adminMenu: [{
+        category_name: '设置',
+        items: [
+          {
+            name: '用户管理',
+            icon: 'iconfont icongeren',
+            url: 'users/account/manage'
+          },
+          {
+            name: '系统设置',
+            icon: 'iconfont iconicon_jichengguanli',
+            url: 'system'
+          }
+        ]
+      }]
     }
   },
   methods: {
@@ -256,16 +256,6 @@ export default {
     }
   },
   computed: {
-    navList () {
-      const path = this.$route.path
-      if (path.includes('/v1/users')) {
-        return this.enterpriseMenu
-      } else if (path.includes('/v1/system')) {
-        return this.systemMenu
-      } else {
-        return this.defaultMenu
-      }
-    },
     showBackPath () {
       const path = this.$route.path
       if (path.includes('/v1/users')) {
@@ -276,6 +266,25 @@ export default {
         return true
       } else {
         return false
+      }
+    },
+    isAdmin () {
+      if (this.$store.state.login.role.includes('admin')) {
+        return true
+      } else {
+        return false
+      }
+    },
+    navList () {
+      const path = this.$route.path
+      if (path.includes('/v1/users')) {
+        return this.userManagementMenu
+      } else if (path.includes('/v1/system')) {
+        return this.systemMenu
+      } else if (this.isAdmin) {
+        return this.defaultMenu.concat(this.adminMenu)
+      } else {
+        return this.defaultMenu
       }
     }
   },

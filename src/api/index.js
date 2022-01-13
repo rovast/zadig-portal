@@ -119,7 +119,7 @@ http.interceptors.response.use(
       }
       return Promise.reject('CANCEL')
     }
-    // 不暴露上报 API 错误
+    // Don't expose analysis API errors
     if (
       error.response &&
       error.response.config.url !== analyticsReq &&
@@ -314,6 +314,10 @@ export function updatePmServiceAPI (projectName, payload) {
   return http.put(`/api/aslan/service/pm/${projectName}?projectName=${projectName}`, payload)
 }
 
+export function addHostToPmEnvAPI (projectName, data) {
+  return http.put(`/api/aslan/service/pm/healthCheckUpdate?projectName=${projectName}`, data)
+}
+
 export function getHelmChartProjectChartsAPI (project, projectName = '') {
   return http.get(`/api/aslan/service/harbor/project/${project}/charts?projectName=${projectName}`)
 }
@@ -472,11 +476,11 @@ export function getWorkflowBindAPI (projectName, testName) {
   return http.get(`/api/v1/picket/workflows/testName/${testName}?projectName=${projectName}`)
 }
 
-export function getWorkflowsAPI (projectName) {
+export function getProductWorkflowsAPI (projectName) {
   return http.get(`/api/v1/picket/workflows?projectName=${projectName || ''}`)
 }
 
-export function getWorkflowsInProjectAPI (projectName) {
+export function getProductWorkflowsInProjectAPI (projectName) {
   return http.get(`/api/aslan/workflow/workflow?projectName=${projectName || ''}`)
 }
 
@@ -487,6 +491,7 @@ export function setFavoriteAPI (payload) {
 export function deleteFavoriteAPI (projectName, workflowName, type) {
   return http.delete(`/api/aslan/workflow/favorite/${projectName}/${workflowName}/${type}?projectName=${projectName}`)
 }
+
 export function getWorkflowDetailAPI (projectName, name) {
   return http.get(`/api/aslan/workflow/workflow/find/${name}?projectName=${projectName}`)
 }
@@ -575,8 +580,12 @@ export function updateCommonWorkflowAPI (projectName = '', id, payload) {
   return http.put(`/api/aslan/workflow/v3/${id}?projectName=${projectName}`, payload)
 }
 
-export function getCommonWorkflowListAPI (projectName = '', pageNum = 1, pageSize = 999) {
+export function getCommonWorkflowListInProjectAPI (projectName = '', pageNum = 1, pageSize = 999) {
   return http.get(`/api/aslan/workflow/v3?project_name=${projectName}&projectName=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
+}
+
+export function getCommonWorkflowListAPI (projectName = '', pageNum = 1, pageSize = 999) {
+  return http.get(`/api/v1/picket/workflows/v3?project_name=${projectName}&projectName=${projectName}&page_num=${pageNum}&page_size=${pageSize}`)
 }
 
 export function getCommonBuildArgsAPI (projectName, id) {
@@ -612,7 +621,6 @@ export function getCommonWorkflowHistoryLogAPI (projectName = '', workflowName, 
 }
 
 // Test
-
 export function testsAPI (projectName = '', testType = '') {
   return http.get(`/api/aslan/testing/test?projectName=${projectName}&testType=${testType}`)
 }
@@ -658,7 +666,6 @@ export function getTestReportAPI (projectName, workflowName, taskID, testJobName
 }
 
 // User Management
-
 export function usersAPI (payload, projectName = '') {
   return http.post(`/api/v1/users/search?projectName=${projectName}`, payload)
 }
@@ -761,7 +768,6 @@ export function deleteGithubAppAPI (id) {
 }
 
 // Account
-
 export function getConnectorsAPI () {
   return http.get(`/api/v1/connectors`)
 }
@@ -786,12 +792,15 @@ export function syncLDAPAPI (id) {
 export function getJiraAPI () {
   return http.get(`/api/v1/jira`)
 }
+
 export function updateJiraAPI (payload) {
   return http.patch(`/api/v1/jira`, payload)
 }
+
 export function deleteJiraAPI () {
   return http.delete(`/api/v1/jira`)
 }
+
 export function createJiraAPI (payload) {
   return http.post(`/api/v1/jira`, payload)
 }
@@ -800,15 +809,19 @@ export function createJiraAPI (payload) {
 export function addJenkins (payload) {
   return http.post('/api/aslan/system/jenkins/integration', payload)
 }
+
 export function editJenkins (payload) {
   return http.put(`/api/aslan/system/jenkins/integration/${payload.id}`, payload)
 }
+
 export function deleteJenkins (payload) {
   return http.delete(`/api/aslan/system/jenkins/integration/${payload.id}`, payload)
 }
+
 export function queryJenkins () {
   return http.get('/api/aslan/system/jenkins/integration')
 }
+
 export function jenkinsConnection (payload) {
   return http.post('/api/aslan/system/jenkins/user/connection', payload)
 }
@@ -821,8 +834,7 @@ export function queryJenkinsParams (jobName) {
   return http.get(`/api/aslan/system/jenkins/buildArgs/${jobName}`)
 }
 
-// other
-
+// External System
 export function createExternalSystemAPI (payload) {
   return http.post(`/api/aslan/system/external`, payload)
 }
@@ -880,30 +892,39 @@ export function updateEmailServiceAPI (payload) {
 export function getAllAppsAPI () {
   return http.get('/api/aslan/system/install?available=true')
 }
+
 export function createAppAPI (data) {
   return http.post('/api/aslan/system/install', data)
 }
+
 export function updateAppAPI (data) {
   return http.put('/api/aslan/system/install', data)
 }
+
 export function deleteAppAPI (data) {
   return http.put('/api/aslan/system/install/delete', data)
 }
+
 export function getAuditLogAPI (payload) {
   return http.get(`/api/aslan/system/operation`, { params: payload })
 }
+
 export function getAnnouncementsAPI () {
   return http.get(`/api/aslan/system/announcement`)
 }
+
 export function createAnnouncementAPI (payload) {
   return http.post(`/api/aslan/system/announcement`, payload)
 }
+
 export function updateAnnouncementAPI (payload) {
   return http.put(`/api/aslan/system/announcement/update`, payload)
 }
+
 export function getAnnouncementListAPI () {
   return http.get(`/api/aslan/system/announcement/all`)
 }
+
 export function deleteAnnouncementAPI (id) {
   return http.delete(`/api/aslan/system/announcement/${id}`)
 }
@@ -923,12 +944,15 @@ export function updateImgAPI (id, payload) {
 export function checkProxyAPI (payload) {
   return http.post('/api/aslan/system/proxyManage/connectionTest', payload)
 }
+
 export function getProxyConfigAPI () {
   return http.get('/api/aslan/system/proxyManage')
 }
+
 export function createProxyConfigAPI (payload) {
   return http.post('/api/aslan/system/proxyManage', payload)
 }
+
 export function updateProxyConfigAPI (id, payload) {
   return http.put(`/api/aslan/system/proxyManage/${id}`, payload)
 }
@@ -937,6 +961,7 @@ export function updateProxyConfigAPI (id, payload) {
 export function getCapacityAPI (target) {
   return http.get(`/api/aslan/system/capacity/target/${target}`)
 }
+
 export function setCapacityAPI (payload) {
   return http.post(`/api/aslan/system/capacity`, payload)
 }
@@ -945,6 +970,7 @@ export function setCapacityAPI (payload) {
 export function cleanCacheAPI () {
   return http.post('/api/aslan/system/cleanCache/oneClick')
 }
+
 export function getCleanCacheStatusAPI () {
   return http.get('/api/aslan/system/cleanCache/state')
 }
@@ -1072,7 +1098,6 @@ export function importHostAPI (payload) {
 }
 
 // Delivery Center
-
 export function getArtifactsAPI (per_page, page, name = '', type = '', image = '', repoName = '', branch = '') {
   return http.get(`/api/aslan/delivery/artifacts?per_page=${per_page}&page=${page}&name=${name}&type=${type}&image=${image}&repoName=${repoName}&branch=${branch}`)
 }
@@ -1086,7 +1111,6 @@ export function addArtifactActivitiesAPI (id, payload) {
 }
 
 // Project
-
 export function getSingleProjectAPI (projectName) {
   return http.get(`/api/aslan/project/products/${projectName}/services?projectName=${projectName}`)
 }
@@ -1220,7 +1244,6 @@ export function checkRegistrationAPI () {
 }
 
 // Profile
-
 export function getCurrentUserInfoAPI (uid) {
   return http.get(`/api/v1/users/${uid}/personal`)
 }
@@ -1246,7 +1269,6 @@ export function updateServiceImageAPI (payload, type, projectName, envType = '')
 }
 
 // Notification
-
 export function getNotificationAPI () {
   return http.get('/api/aslan/system/notification')
 }
@@ -1260,7 +1282,6 @@ export function markNotiReadAPI (payload) {
 }
 
 // Onboarding
-
 export function saveOnboardingStatusAPI (projectName, status) {
   return http.put(`/api/aslan/project/products/${projectName}/${status}?projectName=${projectName}`)
 }
@@ -1282,7 +1303,6 @@ export function getProjectIngressAPI (projectName) {
 }
 
 // Delivery
-
 export function getVersionListAPI (workflowName = '', projectName = '', taskId = '', serviceName = '', verbosity = 'detailed') {
   return http.get(`/api/aslan/delivery/releases?workflowName=${workflowName}&projectName=${projectName}&taskId=${taskId}&serviceName=${serviceName}&verbosity=${verbosity}`)
 }
@@ -1328,7 +1348,6 @@ export function getChartLastVersionAPI (projectName, chartRepoName, chartName) {
 }
 
 // Forgot password
-
 export function retrievePasswordAPI (account) {
   return http.get(`/api/v1/retrieve?account=${account}`)
 }
@@ -1338,7 +1357,6 @@ export function changePasswordAPI (payload) {
 }
 
 // Template Helm
-
 export function getChartTemplatesAPI () {
   return http.get(`/api/aslan/template/charts`)
 }
@@ -1380,7 +1398,6 @@ export function saveHelmTemplateVariableAPI (name, payload) {
 }
 
 // Template Dockerfile
-
 export function getDockerfileTemplatesAPI () {
   return http.get(`/api/aslan/template/dockerfile?page_num=1&page_size=9999`)
 }
@@ -1410,7 +1427,6 @@ export function getDockerfileTemplateBuildReferenceAPI (id) {
 }
 
 // Template Kubernetes
-
 export function getKubernetesTemplatesAPI () {
   return http.get(`/api/aslan/template/yaml?page_num=1&page_size=9999`)
 }
@@ -1447,7 +1463,7 @@ export function reloadServiceFromKubernetesTemplateAPI (payload) {
   return http.post(`/api/aslan/service/template/reload`, payload)
 }
 
-// helm env and service
+// Helm env and service
 export function getChartValuesYamlAPI (projectName, envName, serviceName = []) {
   return http.get(`/api/aslan/environment/rendersets/renderchart?projectName=${projectName}&envName=${envName}&serviceName=${serviceName.join(',')}`)
 }
@@ -1500,7 +1516,7 @@ export function getValuesYamlFromGitAPI ({ codehostID, owner, repo, branch, valu
   })
 }
 
-// Exteranl
+// External
 export function queryWorkloads (projectName, clusterId, namespace, page) {
   return http.get(`/api/aslan/environment/kube/workloads?projectName=${projectName}&namespace=${namespace}&clusterId=${clusterId}&perPage=1200&page=${page}`)
 }
@@ -1522,60 +1538,64 @@ export function queryPolicyDefinitionsAPI (projectName) {
   return http.get(`/api/v1/policy-definitions?projectName=${projectName}`)
 }
 
-export function addRoleAPI (payload) { // 项目下添加角色
+export function addRoleAPI (payload) {
   return http.post(`/api/v1/roles?projectName=${payload.projectName}`, payload)
 }
 
-export function updateRoleAPI (payload) { // 项目下添加角色
+export function updateRoleAPI (payload) {
   return http.put(`/api/v1/roles/${payload.name}?projectName=${payload.projectName}`, payload)
 }
 
-export function queryRoleAPI (projectName) { // 查询项目中的角色
+export function queryRoleAPI (projectName) {
   return http.get(`/api/v1/roles?projectName=${projectName}`)
 }
 
-export function queryRoleDetailAPI (name, projectName) { // 查询项目中的某个角色详情
+export function queryRoleDetailAPI (name, projectName) {
   return http.get(`/api/v1/roles/${name}?projectName=${projectName}`)
 }
 
-export function addPublicRoleAPI (payload, projectName) { // 添加公共角色
+export function addPublicRoleAPI (payload, projectName) {
   return http.post(`/api/v1/public-roles?projectName=${projectName}`, payload)
 }
 
-export function deletePublicRoleAPI (name, projectName) { // 删除公共角色
+export function deletePublicRoleAPI (name, projectName) {
   return http.delete(`/api/v1/public-roles/${name}?projectName=${projectName}`)
 }
 
-export function queryPublicRoleAPI (projectName) { // 查询公共的角色
+export function queryPublicRoleAPI (projectName) {
   return http.get(`/api/v1/public-roles?projectName=${projectName}`)
 }
 
-export function queryPublicRoleDetailAPI (name, projectName) { // 查询某个公共的角色
+export function queryPublicRoleDetailAPI (name, projectName) {
   return http.get(`/api/v1/public-roles/${name}?projectName=${projectName}`)
 }
 
-export function updatePublicRoleAPI (payload, projectName) { // 修改某个公共的角色
+export function updatePublicRoleAPI (payload, projectName) {
   return http.put(`/api/v1/public-roles/${payload.name}?projectName=${projectName}`, payload)
 }
 
-export function deleteRoleAPI (name, projectName) { // 删除项目中的角色
+export function deleteRoleAPI (name, projectName) {
   return http.delete(`/api/v1/roles/${name}?projectName=${projectName}`)
 }
 
-export function addRoleBindingsAPI (payload, projectName) { // 项目中用户添加角色
+export function addRoleBindingsAPI (payload, projectName) {
   return http.post(`/api/v1/rolebindings?projectName=${projectName}&bulk=true`, payload)
 }
 
-export function deleteRoleBindingsAPI (name, projectName) { // 删除项目中的角色绑带
+export function deleteRoleBindingsAPI (name, projectName) {
   return http.delete(`/api/v1/rolebindings/${name}?projectName=${projectName}`)
 }
 
-export function queryRoleBindingsAPI (projectName) { // 查询项目中的角色
+export function queryRoleBindingsAPI (projectName) {
   return http.get(`/api/v1/picket/rolebindings?projectName=${projectName}`)
 }
 
-export function queryUserBindingsAPI (uid, projectName = '') { // 查询用户所有绑定的角色，传 projectName 是项目绑定，不传是系统绑定
+export function queryUserBindingsAPI (uid, projectName = '') { // Query all binding roles of the user, pass projectName for project binding, default is system binding
   return http.get(`/api/v1/userbindings?uid=${uid}&projectName=${projectName}`)
+}
+
+export function getProjectPermissionAPI (projectName = '', uid) {
+  return http.get(`/api/v1/policy/permission/${uid}?projectName=${projectName}`)
 }
 
 export function getArtifactFileAPI (payload, id) {

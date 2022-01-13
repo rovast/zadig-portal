@@ -245,13 +245,13 @@ export default {
   methods: {
     async filterProducts () {
       const prodProducts = this.products.filter(element => {
-        if (element.product_name === this.targetProduct && element.is_prod) {
+        if (element.product_name === this.targetProject && element.is_prod) {
           return element
         }
         return false
       })
       const testProducts = this.products.filter(element => {
-        if (element.product_name === this.targetProduct && !element.is_prod) {
+        if (element.product_name === this.targetProject && !element.is_prod) {
           return element
         }
         return false
@@ -384,7 +384,7 @@ export default {
       runWorkflowAPI(this.runner.product_tmpl_name, clone).then(res => {
         Notify({ type: 'success', message: '任务创建成功' })
         this.$emit('success')
-        this.$router.push(`/mobile/pipelines/project/${this.targetProduct}/multi/${res.pipeline_name}/${res.task_id}?status=running`)
+        this.$router.push(`/mobile/pipelines/project/${this.targetProject}/multi/${res.pipeline_name}/${res.task_id}?status=running`)
       }).catch(error => {
         if (error.response && error.response.data.code === 6168) {
           const projectName = error.response.data.extra.productName
@@ -432,9 +432,9 @@ export default {
         return true
       } else {
         if (invalidRepo.length > 0) {
-          Notify({ type: 'warning', message: invalidRepo.join(',') + ' 代码库不存在 Release Tag,请重新选择构建方式' })
+          Notify({ type: 'warning', message: invalidRepo.join(',') + ' 代码库不存在 Release Tag，请重新选择构建方式' })
         } else if (emptyValue.length > 0) {
-          Notify({ type: 'warning', message: emptyValue.join(',') + ' 代码库尚未选择构建信息' })
+          Notify({ type: 'warning', message: emptyValue.join(',') + ' 代码库尚未选择信息' })
         }
         return false
       }
@@ -463,7 +463,7 @@ export default {
       type: String,
       required: true
     },
-    targetProduct: {
+    targetProject: {
       type: String,
       required: true
     },

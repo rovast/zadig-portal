@@ -1,6 +1,6 @@
 <template>
   <div class="workflow-build-rows">
-    <el-table :data="buildV2" v-if="buildV2.length > 0"
+    <el-table :data="zadigBuild" v-if="zadigBuild.length > 0"
               empty-text="无"
               class="service-deploy-table">
       <el-table-column prop="name"
@@ -270,12 +270,22 @@ import deployIcons from './deploy_icons'
 export default {
   data () {
     return {
-      buildV2: [],
+      zadigBuild: [],
       jenkinsBuild: []
     }
   },
   methods: {
     changeReleaseMethod (repo) {
+      if (repo.releaseMethod === 'tag') {
+        repo.showTag = true
+      } else {
+        repo.showTag = false
+      }
+      if (repo.releaseMethod === 'branch') {
+        repo.showBranch = true
+      } else {
+        repo.showBranch = false
+      }
       repo.tag = ''
       repo.branch = ''
     }
@@ -292,7 +302,7 @@ export default {
   watch: {
     pickedTargets: {
       handler (value) {
-        this.buildV2 = value.filter(item => !item.jenkins_build_args)
+        this.zadigBuild = value.filter(item => !item.jenkins_build_args)
         this.jenkinsBuild = value.filter(item => item.jenkins_build_args)
       },
       immediate: true

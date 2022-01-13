@@ -103,12 +103,17 @@
               <el-radio :label="false">否</el-radio>
             </el-radio-group>
           </el-form-item>
-          <div v-if="isEdit">
-            <el-button type="text" @click="advancedConfig">高级配置<i :class="{'el-icon-arrow-right': !cluster.advanced_config.strategy,'el-icon-arrow-down': cluster.advanced_config.strategy}"></i></el-button>
-            <div v-if="cluster.advanced_config.strategy">
-              <h4>调度策略</h4>
+          <el-button type="text" @click="expandAdvanced = !expandAdvanced">高级配置<i :class="{'el-icon-arrow-right': !expandAdvanced,'el-icon-arrow-down': expandAdvanced}"></i></el-button>
+          <template v-if="expandAdvanced">
+            <el-form-item label="指定项目范围" prop="advanced_config.project_names" class="project-scoped">
+              <el-select v-model="cluster.advanced_config.project_names" placeholder="请选择项目" size="small" style="width: 100%;" filterable multiple clearable collapse-tags>
+                <el-option v-for="name in projectNames" :key="name" :label="name" :value="name"></el-option>
+              </el-select>
+              <el-button size="mini" plain @click="cluster.advanced_config.project_names = []">清空所有</el-button>
+            </el-form-item>
+            <div v-if="isEdit">
               <el-form-item prop="advanced_config.strategy" required>
-                 <span slot="label">选择策略
+                 <span slot="label">调度策略
                   <el-tooltip effect="dark" placement="top-start">
                     <div slot="content" style="line-height: 1.5;">
                       <div>随机调度：工作流任务被随机调度到集群的可用节点上</div>
@@ -137,8 +142,7 @@
                 </div>
               </el-form-item>
             </div>
-          </div>
-
+          </template>
         </el-form>
         <div slot="footer"
              class="dialog-footer">
@@ -245,8 +249,8 @@
 
 <script>
 import { getClusterListAPI, createClusterAPI, updateClusterAPI, deleteClusterAPI, recoverClusterAPI, disconnectClusterAPI, getClusterNodeInfo } from '@api'
-import { wordTranslate } from '@utils/word_translate'
-import bus from '@utils/event_bus'
+import { wordTranslate } from '@utils/wordTranslate'
+import bus from '@utils/eventBus'
 import { cloneDeep } from 'lodash'
 const validateClusterName = (rule, value, callback) => {
   if (value === '') {
@@ -265,11 +269,12 @@ const clusterInfo = {
   provider: null,
   production: false,
   description: '',
-  namespace: ''
-  // advanced_config: { // 编辑的时候有这个数据
-  //   strategy: '',
-  //   node_labels: []
-  // }
+  namespace: '',
+  advanced_config: {
+    project_names: [],
+    strategy: 'normal',
+    node_labels: []
+  }
 }
 export default {
   data () {
@@ -326,13 +331,18 @@ export default {
           required: true,
           message: '请选择标签',
           type: 'array'
+        },
+        'advanced_config.project_names': {
+          required: true,
+          message: '请选择项目',
+          type: 'array'
         }
       },
       clusterNodes: {
         labels: [],
         data: [] // {labels, ready, ip}
-      }
-
+      },
+      expandAdvanced: false
     }
   },
   computed: {
@@ -346,30 +356,26 @@ export default {
           return data.labels.includes(label)
         }).length
       })
+    },
+    projectNames () {
+      return this.$store.getters.projectList.map(project => project.name)
     }
   },
   watch: {
     dialogClusterFormVisible (nVal, oldV) {
       if (!nVal) {
+        this.expandAdvanced = false
         this.clearValidate()
         this.clusterNodes = {
           labels: [],
           data: []
         }
+      } else if (!this.isEdit) {
+        this.cluster.advanced_config.project_names = cloneDeep(this.projectNames)
       }
     }
   },
   methods: {
-    advancedConfig () {
-      if (!this.cluster.advanced_config.strategy) {
-        this.cluster.advanced_config.strategy = 'normal'
-      } else {
-        this.cluster.advanced_config = {
-          strategy: '',
-          node_labels: []
-        }
-      }
-    },
     getClusterNode (clusterId) {
       getClusterNodeInfo(clusterId).then(res => {
         this.clusterNodes = res
@@ -395,7 +401,7 @@ export default {
       if (operate === 'add') {
         this.$refs.cluster.validate(valid => {
           if (valid) {
-            const payload = this.cluster
+            const payload = cloneDeep(this.cluster)
             this.dialogClusterFormVisible = false
             this.addCluster(payload)
           } else {
@@ -403,7 +409,7 @@ export default {
           }
         })
       } else if (operate === 'access') {
-        this.accessCluster = this.$utils.cloneObj(current_cluster)
+        this.accessCluster = cloneDeep(current_cluster)
         this.dialogClusterAccessVisible = true
       } else if (operate === 'disconnect') {
         this.$confirm(`确定要断开 ${current_cluster.name} 的连接?`, '确认', {
@@ -417,13 +423,14 @@ export default {
         this.recoverCluster(current_cluster.id)
       } else if (operate === 'edit') {
         this.getClusterNode(current_cluster.id)
-        this.cluster = this.$utils.cloneObj(current_cluster)
+        this.cluster = cloneDeep(current_cluster)
+        this.expandAdvanced = true
         this.dialogClusterFormVisible = true
       } else if (operate === 'update') {
         this.$refs.cluster.validate(valid => {
           if (valid) {
             const id = this.cluster.id
-            const payload = this.cluster
+            const payload = cloneDeep(this.cluster)
             this.dialogClusterFormVisible = false
             this.updateCluster(id, payload)
           } else {
@@ -497,12 +504,7 @@ export default {
           this.$message.error(`未找到本地集群！`)
         }
         this.allCluster = res.map(re => {
-          if (!re.advanced_config) {
-            re.advanced_config = {
-              strategy: '',
-              node_labels: []
-            }
-          } else if (!re.advanced_config.node_labels) {
+          if (!re.advanced_config.node_labels) {
             re.advanced_config.node_labels = []
           }
           return re
@@ -653,6 +655,17 @@ export default {
       font-size: 13px;
       line-height: 20px;
       background: #303133;
+    }
+
+    .project-scoped {
+      position: relative;
+
+      .el-button {
+        position: absolute;
+        right: 1px;
+        bottom: 6px;
+        z-index: 1;
+      }
     }
   }
 

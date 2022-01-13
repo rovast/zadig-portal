@@ -73,8 +73,8 @@
                 <!-- <tr>
                   <td>
                     <span>Kube Config</span>
-                    <support-doc :inline="true"
-                                 :keyword="{location:'个人中心',key:'KubeConfig'}"></support-doc>
+                    <HelpLink :inline="true"
+                                 :keyword="{location:'个人中心',key:'KubeConfig'}"></HelpLink>
                   </td>
                   <td class="">
                     <el-button @click="downloadConfig()"
@@ -95,8 +95,8 @@
                 <tr>
                   <td>
                     <span>API Token</span>
-                    <support-doc :inline="true"
-                                 :keyword="{location:'个人中心',key:'APIToken'}"></support-doc>
+                    <HelpLink :inline="true"
+                                 :keyword="{location:'个人中心',key:'APIToken'}"></HelpLink>
                   </td>
                   <td v-if="jwtToken">
                     <span class="token">
@@ -126,7 +126,7 @@
                     </span>
                   </td>
                   <td>
-                    <el-checkbox v-model="pipelineNoti.pipelinestatus"
+                    <el-checkbox v-model="workflowNoti.pipelinestatus"
                                  @change="saveSubscribe()"
                                  true-label="*"
                                  false-label="">工作流状态变更</el-checkbox>
@@ -145,9 +145,9 @@
 </template>
 
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import store from 'storejs'
-import supportDoc from './common/support_doc.vue'
+import HelpLink from './common/helpLink.vue'
 import { getCurrentUserInfoAPI, updateCurrentUserInfoAPI, getSubscribeAPI, saveSubscribeAPI, downloadConfigAPI } from '@api'
 import { mapState } from 'vuex'
 
@@ -183,7 +183,7 @@ export default {
       loading: false,
       modifiedPwdDialogVisible: false,
       sysNoti: {},
-      pipelineNoti: {},
+      workflowNoti: {},
       rules: {
         oldPassword: [{ required: true, message: '请输入旧密码', trigger: 'blur' }],
         newPassword: [
@@ -278,7 +278,7 @@ export default {
       })
     },
     saveSubscribe () {
-      const payload = this.pipelineNoti
+      const payload = this.workflowNoti
       payload.type = 2
       saveSubscribeAPI(payload).then((res) => {
         this.$message({
@@ -292,7 +292,7 @@ export default {
       if (info.length !== 0) {
         info.forEach(element => {
           if (element.type === 2) {
-            this.pipelineNoti = element
+            this.workflowNoti = element
           } else if (element.type === 1) {
             this.sysNoti = element
           }
@@ -317,7 +317,7 @@ export default {
     this.getCurrentUserInfo()
   },
   components: {
-    supportDoc
+    HelpLink
   }
 }
 </script>

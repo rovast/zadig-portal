@@ -41,15 +41,15 @@
       <RunWorkflow v-if="taskDialogVisible"
                     :workflowName="workflow.name"
                     :workflowMeta="workflow"
-                    :targetProduct="workflow.product_tmpl_name"
+                    :targetProject="workflow.product_tmpl_name"
                     @success="hideAfterSuccess"></RunWorkflow>
     </el-dialog>
   </div>
 </template>
 <script>
-import { wordTranslate } from '@utils/word_translate.js'
+import { wordTranslate } from '@utils/wordTranslate.js'
 import RunWorkflow from '../../pipeline/common/run_workflow.vue'
-import { getProjectIngressAPI, getWorkflowDetailAPI, getWorkflowsInProjectAPI, generatePipeAPI } from '@api'
+import { getProjectIngressAPI, getWorkflowDetailAPI, getProductWorkflowsInProjectAPI, generatePipeAPI } from '@api'
 
 export default {
   name: 'runWorkflow',
@@ -65,7 +65,7 @@ export default {
     async getWorkflows () {
       this.loading = true
       const projectName = this.projectName
-      const workflows = await getWorkflowsInProjectAPI(projectName)
+      const workflows = await getProductWorkflowsInProjectAPI(projectName)
       const ingresses = await getProjectIngressAPI(projectName)
       if (workflows && ingresses) {
         this.loading = false

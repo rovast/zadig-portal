@@ -136,13 +136,8 @@
                        width="180"
                        label="操作">
         <template slot-scope="scope">
-            <el-button @click="rerun(scope.row)" v-if="scope.row.workflow_args"
-                       type="default"
-                       icon="el-icon-copy-document"
-                       size="mini">
-              克隆任务
-            </el-button>
-            <el-button @click="rerun(scope.row)" v-else-if="scope.row.task_args"
+            <el-button v-hasPermi="{projectName: projectName, action: 'run_workflow'}"
+                       @click="rerun(scope.row)" v-if="scope.row.workflow_args || scope.row.task_args"
                        type="default"
                        icon="el-icon-copy-document"
                        size="mini">
@@ -162,7 +157,7 @@
 </template>
 
 <script>
-import { wordTranslate } from '@utils/word_translate.js'
+import { wordTranslate } from '@utils/wordTranslate.js'
 import moment from 'moment'
 import { get, orderBy } from 'lodash'
 export default {

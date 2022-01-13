@@ -33,7 +33,7 @@
                            :disabled="!isCreate"
                            value-key="key"
                            filterable>
-                  <el-option v-for="(item,index) in orginOptions"
+                  <el-option v-for="(item,index) in originOptions"
                              :key="index"
                              :label="item.label"
                              :value="item.value">
@@ -143,7 +143,7 @@
                            value-key="key"
                            :disabled="!isCreate"
                            filterable>
-                  <el-option v-for="(item,index) in orginOptions"
+                  <el-option v-for="(item,index) in originOptions"
                              :key="index"
                              :label="item.label"
                              :value="item.value">
@@ -592,9 +592,9 @@ import BuildEnv from '@/components/projects/build/build_env.vue'
 
 import { getBuildConfigDetailAPI, getAllAppsAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkinsJob, queryJenkinsParams } from '@api'
 import Editor from 'vue2-ace-bind'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import Codemirror from '@/components/projects/common/codemirror.vue'
-import ValidateSubmit from '@utils/validate_async'
+import ValidateSubmit from '@utils/validateAsync'
 import Resize from '@/components/common/resize.vue'
 const validateBuildConfigName = (rule, value, callback) => {
   if (value === '') {
@@ -612,7 +612,7 @@ export default {
     return {
       source: 'zadig',
       dockerfileTemplate: {},
-      orginOptions: [{
+      originOptions: [{
         value: 'zadig',
         label: 'Zadig 构建'
       },

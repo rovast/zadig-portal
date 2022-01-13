@@ -16,7 +16,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

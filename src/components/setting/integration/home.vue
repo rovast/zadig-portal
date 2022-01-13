@@ -32,7 +32,7 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import Code from './code.vue'
 import GitHubApp from './github_app.vue'
 import Account from './account.vue'

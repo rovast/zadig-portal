@@ -27,7 +27,7 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import AddRole from './components/add-role.vue'
 import { queryRoleAPI, deleteRoleAPI, deletePublicRoleAPI } from '@/api'
 

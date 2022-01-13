@@ -27,7 +27,7 @@
 </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { mapState } from 'vuex'
 import step from './common/step.vue'
 import Code from '../service_mgr/helm/code'
@@ -56,7 +56,7 @@ export default {
       return this.$route.params.project_name
     },
     ...mapState({
-      showNext: (state) => state.service_manage.showNext
+      showNext: (state) => state.serviceManage.showNext
     }),
     serviceName () {
       return this.$route.query.service_name

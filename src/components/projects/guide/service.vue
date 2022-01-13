@@ -90,8 +90,8 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
-import mixin from '@utils/service_module_mixin'
+import bus from '@utils/eventBus'
+import mixin from '@/mixin/serviceModuleMixin'
 import step from './common/step.vue'
 import addCode from '../service_mgr/common/add_code.vue'
 import serviceAsideK8s from '../service_mgr/k8s/service_aside.vue'

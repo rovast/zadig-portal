@@ -74,8 +74,8 @@
       </div>
       <div class="info-body fundamental-ops">
         <template>
-          <router-link
-                       :to="`/v1/projects/detail/${this.projectName}/envs/detail/${this.serviceName}/config${window.location.search}`">
+          <router-link v-hasPermi="{projectName: projectName, action: 'manage_environment'}"
+                       :to="`/v1/projects/detail/${projectName}/envs/detail/${serviceName}/config${window.location.search}`">
             <el-button icon="iconfont iconshare1"
                        type="primary"
                        size="small"
@@ -83,14 +83,14 @@
               配置管理
             </el-button>
           </router-link>
-          <el-button @click="showExport"
+          <el-button v-hasPermi="{projectName: projectName, action: 'manage_environment'}" @click="showExport"
                      icon="iconfont iconcloud icon-bold"
                      type="primary"
                      size="small"
                      plain>
             Yaml 导出
           </el-button>
-          <router-link
+          <router-link v-hasPermi="{projectName: projectName, action: 'get_service'}"
                        :to="`/v1/projects/detail/${originProjectName}/services?service_name=${serviceName}&rightbar=var`">
             <el-button icon="iconfont iconlink1 icon-bold"
                        type="primary"
@@ -143,7 +143,7 @@
                                 placement="top">
                       <span class="service-image">{{splitImg(item.image) }}</span>
                     </el-tooltip>
-                    <el-button @click="showEditImage(item)"
+                    <el-button v-hasPermi="{projectName: projectName, action: 'manage_environment'}" @click="showEditImage(item)"
                                type="primary"
                                plain
                                size="mini"
@@ -182,7 +182,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column props="replicas"
+            <el-table-column v-hasPermi="{projectName: projectName, action: 'manage_environment'}" props="replicas"
                              width="125px"
                              label="副本数量">
               <template slot-scope="scope">
@@ -193,7 +193,7 @@
                                  v-model="scope.row.replicas"></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="操作"
+            <el-table-column v-hasPermi="{projectName: projectName, action: 'manage_environment'}" label="操作"
                              width="220px">
               <template slot-scope="scope">
                 <el-button @click="restartService(scope.row.name,scope.row.type)"
@@ -238,10 +238,10 @@
                         </el-col>
                         <el-col :span="6"
                                 class="op-buttons">
-                          <el-button @click="restartPod(activePod[scope.$index])"
+                          <el-button v-hasPermi="{projectName: projectName, action: 'manage_environment'}" @click="restartPod(activePod[scope.$index])"
                                      :disabled="!activePod[scope.$index].canOperate"
                                      size="small">重启</el-button>
-                          <el-button @click="showPodEvents(activePod[scope.$index])"
+                          <el-button v-hasPermi="{projectName: projectName, action: 'manage_environment'}" @click="showPodEvents(activePod[scope.$index])"
                                      size="small">查看事件</el-button>
                         </el-col>
                       </el-row>
@@ -274,11 +274,11 @@
                         </el-col>
                         <el-col :span="5"
                                 class="op-buttons">
-                          <el-button @click="showContainerExec(activePod[scope.$index].name,container.name)"
+                          <el-button v-hasPermi="{projectName: projectName, action: 'manage_environment'}" @click="showContainerExec(activePod[scope.$index].name,container.name)"
                                      :disabled="!activePod[scope.$index].canOperate"
                                      icon="iconfont iconTerminal"
                                      size="small"> 调试</el-button>
-                          <el-button @click="showContainerLog(activePod[scope.$index].name,container.name)"
+                          <el-button v-hasPermi="{projectName: projectName, action: 'manage_environment'}" @click="showContainerLog(activePod[scope.$index].name,container.name)"
                                      :disabled="!activePod[scope.$index].canOperate"
                                      icon="el-icon-document"
                                      size="small">实时日志</el-button>
@@ -428,8 +428,8 @@ import containerLog from '../service_detail/container_log.vue'
 import { restartPodAPI, restartServiceAPI, scaleServiceAPI, scaleEventAPI, podEventAPI, exportYamlAPI, imagesAPI, updateServiceImageAPI, getServiceInfo, listProductAPI } from '@api'
 import moment from 'moment'
 import Editor from 'vue2-ace-bind'
-import bus from '@utils/event_bus'
-import { fullScreen } from '@/utilities/full_screen'
+import bus from '@utils/eventBus'
+import { fullScreen } from '@/utilities/fullScreen'
 export default {
   data () {
     return {

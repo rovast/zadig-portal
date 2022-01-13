@@ -49,18 +49,18 @@
             </el-form-item>
             <el-form-item v-if="versionList.length > 0 && taskDetail.status==='passed'"
                           label="交付清单">
-              <router-link :to="`/v1/delivery/version/${versionList[0].versionInfo.id}`">
+              <router-link :to="`/v1/delivery/version/${projectName}/${versionList[0].versionInfo.id}?deployType=k8s&version=${versionList[0].versionInfo.version}`">
                 <span class="version-link">{{ $utils.tailCut(versionList[0].versionInfo.id,8,'#')+
             versionList[0].versionInfo.version }}</span>
               </router-link>
             </el-form-item>
-            <el-form-item v-if="showOperation()"
+            <el-form-item v-hasPermi="{projectName: projectName, action: 'run_workflow'}" v-if="showOperation()"
                           label="操作">
                 <el-button v-if="taskDetail.status==='failed' || taskDetail.status==='cancelled' || taskDetail.status==='timeout'"
                            @click="rerun"
                            type="text"
                            size="medium">失败重试</el-button>
-                <el-button v-if="taskDetail.status==='running'||taskDetail.status==='created'"
+                <el-button v-hasPermi="{projectName: projectName, action: 'run_workflow'}" v-if="taskDetail.status==='running'||taskDetail.status==='created'"
                            @click="cancel"
                            type="text"
                            size="medium">取消任务</el-button>
@@ -553,14 +553,14 @@
 import {
   workflowTaskDetailAPI, workflowTaskDetailSSEAPI, restartWorkflowAPI, cancelWorkflowAPI, getVersionListAPI
 } from '@api'
-import { wordTranslate, colorTranslate } from '@utils/word_translate.js'
+import { wordTranslate, colorTranslate } from '@utils/wordTranslate.js'
 import deployIcons from '@/components/common/deploy_icons'
 import artifactDownload from '@/components/common/artifact_download.vue'
 import taskDetailBuild from './workflow_multi_task_detail/task_detail_build.vue'
 import taskDetailDeploy from './workflow_multi_task_detail/task_detail_deploy.vue'
 import taskDetailArtifactDeploy from './workflow_multi_task_detail/task_detail_artifact_deploy.vue'
 import taskDetailTest from './workflow_multi_task_detail/task_detail_test.vue'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import Etable from '@/components/common/etable'
 import _ from 'lodash'
 

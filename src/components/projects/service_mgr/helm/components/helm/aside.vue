@@ -34,12 +34,6 @@
                 </el-tooltip>
                 <el-button type="text" size="small" @click="updateMatchRuleFlag = true">更新匹配规则</el-button>
               </h4>
-              <!-- <div v-if="allRegistry.length === 0"
-                   class="registry-alert">
-                <el-alert title="私有镜像仓库未集成，请联系系统管理员前往「系统设置 -> 镜像仓库」进行集成"
-                          type="warning">
-                </el-alert>
-              </div> -->
               <el-table :data="serviceModules"
                         stripe
                         style="width: 100%;">
@@ -68,15 +62,6 @@
               </el-table>
             </section>
          </div>
-          <!-- <div class="pipeline-workflow-box__content" v-if="showBuild">
-            <build ref="buildRef"
-                   :serviceName="serviceName"
-                   :name="name"
-                   :buildName="buildName"
-                   :isEdit="isEdit"
-                   :getServiceModules="getServiceModules"
-                   ></build>
-          </div> -->
         </div>
         <div v-else-if="selected === 'help'"
              class="pipelines__aside--variables">
@@ -94,7 +79,7 @@
 </template>
 <script>
 import qs from 'qs'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { mapState } from 'vuex'
 import help from './help.vue'
 import MatchRule from './match_rule.vue'
@@ -158,7 +143,7 @@ export default {
       return this.$route.params.project_name
     },
     ...mapState({
-      serviceModules: (state) => state.service_manage.serviceModules
+      serviceModules: (state) => state.serviceManage.serviceModules
     }),
     serviceType () {
       return this.service.type

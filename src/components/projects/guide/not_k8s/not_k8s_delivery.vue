@@ -119,17 +119,17 @@
       <run-workflow v-if="taskDialogVisible"
                     :workflowName="workflow.name"
                     :workflowMeta="workflow"
-                    :targetProduct="workflow.product_tmpl_name"
+                    :targetProject="workflow.product_tmpl_name"
                     @success="hideAfterSuccess"></run-workflow>
     </el-dialog>
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import step from './container/step_not_k8s.vue'
-import { wordTranslate } from '@utils/word_translate.js'
+import { wordTranslate } from '@utils/wordTranslate.js'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
-import { getWorkflowsInProjectAPI, getWorkflowDetailAPI } from '@api'
+import { getProductWorkflowsInProjectAPI, getWorkflowDetailAPI } from '@api'
 export default {
   data () {
     return {
@@ -144,7 +144,7 @@ export default {
     async getWorkflows () {
       this.loading = true
       const projectName = this.projectName
-      const workflows = await getWorkflowsInProjectAPI(projectName)
+      const workflows = await getProductWorkflowsInProjectAPI(projectName)
       if (workflows) {
         this.loading = false
         const w1 = 'workflow-qa'

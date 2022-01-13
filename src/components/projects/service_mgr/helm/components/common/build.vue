@@ -136,7 +136,7 @@
           label-position="left"
           label-width="80px"
         >
-          <el-form-item v-if="jenkinsConfigs.length > 0" label="构建来源">
+          <el-form-item v-if="jenkinsEnabled" label="构建来源">
             <el-select style="width: 100%;"
                       v-model="source"
                       size="small"
@@ -626,7 +626,7 @@ import {
   updateBuildConfigAPI,
   getServiceTargetsAPI,
   getRegistryWhenBuildAPI,
-  queryJenkins,
+  checkJenkinsConfigExistsAPI,
   queryJenkinsJob,
   queryJenkinsParams,
   getBuildConfigsAPI,
@@ -666,7 +666,7 @@ export default {
         label: 'Jenkins 构建'
       }],
       jenkinsJobList: [],
-      jenkinsConfigs: [],
+      jenkinsEnabled: false,
       jenkinsBuild: {
         version: 'stable',
         name: '',
@@ -1113,7 +1113,7 @@ export default {
       const hasBuild = this.buildNames.includes(this.defaultBuildName)
       this.$set(this.buildConfig, 'name', hasBuild ? '' : this.defaultBuildName)
       this.$set(this.jenkinsBuild, 'name', hasBuild ? '' : this.defaultBuildName)
-      this.jenkinsConfigs = await queryJenkins().catch(error => console.log(error))
+      this.jenkinsEnabled = (await checkJenkinsConfigExistsAPI().catch(error => console.log(error))).exists
       this.configDataLoading = false
       getDockerfileTemplatesAPI().then((res) => {
         this.dockerfileTemplates = res.dockerfile_template

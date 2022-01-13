@@ -810,6 +810,10 @@ export function deleteJenkins (payload) {
   return http.delete(`/api/aslan/system/jenkins/integration/${payload.id}`, payload)
 }
 
+export function checkJenkinsConfigExistsAPI () {
+  return http.get('/api/aslan/system/jenkins/exist')
+}
+
 export function queryJenkins () {
   return http.get('/api/aslan/system/jenkins/integration')
 }

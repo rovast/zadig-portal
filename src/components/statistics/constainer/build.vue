@@ -1,0 +1,180 @@
+<template>
+  <div class="auto-build">
+    <h4>自动化构建</h4>
+    <div class="chart-container">
+      <el-row>
+        <el-col :span="14">
+          <div class="chart">
+            <BarChart :subtext="subText" :xData="xData" :ySuccessData="ySuccessData" :yFailureData="yFailureData"/>
+          </div>
+        </el-col>
+        <el-col :span="10">
+          <div class="number">
+            <el-row :gutter="0" class="auto-build-number-container">
+              <el-col class="auto-build-container-block" :span="12">
+                <div>
+                  <h2>
+                    <ICountUp :delay="delay" :endVal="total" class="counter-number" :options="options" />
+                  </h2>
+                  <span class="desc">总次数</span>
+                </div>
+              </el-col>
+              <el-col class="auto-build-container-block" :span="12">
+                <div>
+                  <h2 v-if="total !==0">
+                    <ICountUp
+                      :delay="delay"
+                      :endVal="successRate"
+                      class="counter-number"
+                      :class="checkRateColor(successRate)"
+                      :options="percentageOptions"
+                    />
+                  </h2>
+                  <h2 v-else>N/A</h2>
+                  <span class="desc">成功率</span>
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+  </div>
+</template>
+<script>
+import BarChart from '../common/barChart.vue'
+import ICountUp from 'vue-countup-v2'
+import { getBuildStatisticsAPI } from '@api'
+import { ceil } from 'lodash'
+export default {
+  data () {
+    return {
+      xData: [],
+      ySuccessData: [],
+      yFailureData: [],
+      total: 0,
+      success: 0,
+      successRate: 0,
+      subText: '近 30 天构建情况',
+      delay: 1000,
+      percentageOptions: {
+        useEasing: true,
+        useGrouping: true,
+        separator: '',
+        decimal: '.',
+        decimalPlaces: 2,
+        prefix: '',
+        suffix: '%'
+      },
+      options: {
+        useEasing: true,
+        useGrouping: true,
+        separator: '',
+        decimal: '',
+        prefix: '',
+        suffix: ''
+      }
+    }
+  },
+  methods: {
+    checkRateColor (rate) {
+      if (rate >= 60) {
+        return 'status-good'
+      } else if (rate < 60 && rate > 0) {
+        return 'status-bad'
+      }
+    },
+    async getBuildStatistics () {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      const startTime = Math.floor(start.getTime() / 1000)
+      const endTime = Math.floor(end.getTime() / 1000)
+      const { data, total, success } = await getBuildStatisticsAPI(startTime, endTime)
+      this.total = total
+      this.success = success
+      this.successRate = ceil(success / total * 100)
+      this.xData = data.xData
+      this.ySuccessData = data.ySuccessData
+      this.yFailureData = data.yFailureData
+    }
+  },
+  components: {
+    BarChart,
+    ICountUp
+  },
+  mounted () {
+    this.getBuildStatistics()
+  }
+}
+</script>
+<style lang="less">
+.auto-build {
+  h4 {
+    margin: 10px 0;
+    padding: 0;
+    font-weight: 300;
+  }
+
+  .chart-container {
+    height: 175px;
+    padding: 0 25px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+    .chart {
+      width: 100%;
+      height: 175px;
+    }
+
+    .number {
+      .auto-build-container-block {
+        padding: 45px 20px;
+        text-align: center;
+
+        h2,
+        .counter-number {
+          display: inline-block;
+          color: #333;
+          font-weight: 200;
+          font-size: 50px;
+          line-height: 50px;
+          letter-spacing: 0;
+        }
+
+        .status-good {
+          color: #52c41a;
+        }
+
+        .status-bad {
+          color: #f5222d;
+        }
+
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+          margin: 0;
+          padding: 0;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        p {
+          display: inline-block;
+          color: #969799;
+          font-size: 25px;
+          letter-spacing: 0;
+        }
+
+        span.desc {
+          display: block;
+          margin-top: 10px;
+          color: #a3a3a3;
+        }
+      }
+    }
+  }
+}
+</style>

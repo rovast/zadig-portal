@@ -10,6 +10,7 @@ const routes = [
     component: onboarding_home,
     meta: {},
     children: [
+      { path: 'statistics', component: () => import(/* webpackChunkName: "statistics" */ '@/components/statistics/view.vue'), meta: { title: '数据统计' } },
       {
         path: 'status',
         component: () => import('@/components/projects/status/status.vue'),

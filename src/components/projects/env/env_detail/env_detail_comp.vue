@@ -554,7 +554,7 @@
 </template>
 
 <script>
-import { translateEnvStatus, serviceTypeMap } from '@utils/word_translate'
+import { translateEnvStatus, serviceTypeMap } from '@utils/wordTranslate'
 import {
   envRevisionsAPI, productEnvInfoAPI, productServicesAPI, serviceTemplateAfterRenderAPI, listProductAPI,
   updateServiceAPI, updateK8sEnvAPI, restartPmServiceAPI, restartServiceOriginAPI, deleteProductEnvAPI, getSingleProjectAPI, getServicePipelineAPI, initSource, rmSource,

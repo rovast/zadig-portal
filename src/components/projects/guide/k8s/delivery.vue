@@ -107,10 +107,10 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import step from '../common/step.vue'
 import runWorkflow from '../../pipeline/common/run_workflow.vue'
-import { wordTranslate } from '@utils/word_translate.js'
+import { wordTranslate } from '@utils/wordTranslate.js'
 import { getProductWorkflowsInProjectAPI, getProjectIngressAPI, getWorkflowDetailAPI } from '@api'
 export default {
   data () {

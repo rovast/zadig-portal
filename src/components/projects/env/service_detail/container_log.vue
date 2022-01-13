@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import { wordTranslate } from '@utils/word_translate'
+import { wordTranslate } from '@utils/wordTranslate'
 export default {
   data () {
     return {

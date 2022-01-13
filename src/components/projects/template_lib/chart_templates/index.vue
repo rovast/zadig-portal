@@ -51,7 +51,7 @@ import {
   getTemplateFileContentAPI
 } from '@api'
 import { keyBy } from 'lodash'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 
 function tree ({ chartName, files }) {
   const result = []

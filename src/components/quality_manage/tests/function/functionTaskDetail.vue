@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import FunctionTaskDetail from '@/components/projects/test/common/function/function_task_detail.vue'
-import bus from '@utils/event_bus'
+import FunctionTaskDetail from '@/components/projects/test/common/function/functionTaskDetail.vue'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

@@ -109,7 +109,7 @@ import {
   getEnvironmentsAPI,
   getRegistryWhenBuildAPI
 } from '@api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { cloneDeep } from 'lodash'
 import HelmEnvTemplate from './env_detail/components/updateHelmEnvTemp.vue'
 

@@ -233,7 +233,7 @@
 
 import Editor from 'vue2-ace-bind'
 import { getAllAppsAPI, createAppAPI, updateAppAPI, deleteAppAPI, getProxyConfigAPI, updateProxyConfigAPI } from '@api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

@@ -672,7 +672,7 @@
 import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getAllAppsAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
 import BuildEnv from '@/components/projects/build/build_env.vue'
 import Editor from 'vue2-ace-bind'
-import ValidateSubmit from '@utils/validate_async'
+import ValidateSubmit from '@utils/validateAsync'
 import Resize from '@/components/common/resize.vue'
 const validateServiceName = (rule, value, callback) => {
   if (value === '') {

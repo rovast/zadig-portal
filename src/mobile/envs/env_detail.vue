@@ -101,7 +101,7 @@
 </template>
 <script>
 import { Col, Collapse, CollapseItem, Row, NavBar, Tag, Panel, Loading, Button, Notify, Tab, Tabs, Cell, CellGroup, Icon, Divider, ActionSheet, List } from 'vant'
-import { translateEnvStatus, serviceTypeMap } from '@utils/word_translate'
+import { translateEnvStatus, serviceTypeMap } from '@utils/wordTranslate'
 import { envRevisionsAPI, productEnvInfoAPI, productServicesAPI, listProductAPI } from '@api'
 import _ from 'lodash'
 export default {

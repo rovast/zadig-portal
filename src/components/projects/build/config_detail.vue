@@ -481,7 +481,7 @@
 </template>
 <script>
 import BuildEnv from '@/components/projects/build/build_env.vue'
-import { getBuildConfigDetailAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, queryJenkins, queryJenkinsJob, queryJenkinsParams } from '@api'
+import { getBuildConfigDetailAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, checkJenkinsConfigExistsAPI, queryJenkinsJob, queryJenkinsParams } from '@api'
 import Editor from 'vue2-ace-bind'
 import bus from '@utils/eventBus'
 import Codemirror from '@/components/projects/common/codemirror.vue'
@@ -513,7 +513,7 @@ export default {
         label: 'Jenkins 构建'
       }],
       jenkinsJobList: [],
-      jenkinsConfigs: [],
+      jenkinsEnabled: false,
       jenkinsBuild: {
         name: '',
         desc: '',
@@ -835,7 +835,7 @@ export default {
           })
         })
       }
-      this.jenkinsConfigs = await queryJenkins().catch(error => console.log(error))
+      this.jenkinsEnabled = (await checkJenkinsConfigExistsAPI().catch(error => console.log(error))).exists
       this.configDataLoading = false
       getDockerfileTemplatesAPI().then((res) => {
         this.dockerfileTemplates = res.dockerfile_template

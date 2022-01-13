@@ -98,6 +98,15 @@ export default {
       this.dialogVisible = false
       this.currentEnv = ''
       this.currentInfo = null
+    },
+    closeSubSide () {
+      // other page will trigger sub side after the page
+      setTimeout(() => {
+        bus.$emit('set-sub-sidebar-title', {
+          title: '',
+          routerList: []
+        })
+      }, 80)
     }
   },
   created () {
@@ -114,6 +123,7 @@ export default {
       title: '',
       routerList: []
     })
+    this.closeSubSide()
     this.getNewCollaboration()
   },
   components: {

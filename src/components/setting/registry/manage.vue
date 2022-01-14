@@ -297,7 +297,7 @@ export default {
           secret_key: '',
           reg_provider: val,
           region: '',
-          is_default: false
+          is_default: this.registry.is_default
         }
         this.$refs.registry.clearValidate()
       })

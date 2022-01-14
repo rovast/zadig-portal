@@ -263,11 +263,6 @@ export default {
   },
   methods: {
     addRegistryBtn () {
-      if (this.allRegistry.length === 0) {
-        this.registry.is_default = true
-      } else {
-        this.registry.is_default = false
-      }
       this.registry = {
         namespace: '',
         reg_addr: '',
@@ -275,7 +270,7 @@ export default {
         secret_key: '',
         reg_provider: '',
         region: '',
-        is_default: false
+        is_default: this.allRegistry.length === 0
       }
       this.mode = 'create'
       this.dialogRegistryFormVisible = true
@@ -297,7 +292,7 @@ export default {
           secret_key: '',
           reg_provider: val,
           region: '',
-          is_default: false
+          is_default: this.registry.is_default
         }
         this.$refs.registry.clearValidate()
       })

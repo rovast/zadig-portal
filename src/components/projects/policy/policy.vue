@@ -130,6 +130,7 @@
                   </el-checkbox>
                 </el-checkbox-group>
               </div>
+              <el-button type="primary" slot="reference" size="mini" plain style="margin-right: 10px;">权限</el-button>
             </el-popover>
             <el-popover ref="recoverPopoverRef" placement="right" width="300" trigger="click">
               <div class="auth-list">
@@ -137,20 +138,19 @@
                 <div class="content">
                   <div>
                     环境将在
-                    <el-input-number v-model="row.recycleDay" size="small" :min="0"></el-input-number>天后自动回收
+                    <el-input-number v-model="row.recycle_day" size="small" :min="0"></el-input-number>天后自动回收
                   </div>
                   <div class="tooltip">默认设置为 0 永久不回收</div>
                 </div>
               </div>
+              <el-button
+                :type="row.collaboration_type === 'share' ? '' : 'primary'"
+                slot="reference"
+                size="mini"
+                plain
+                :disabled="row.collaboration_type === 'share'"
+              >回收策略</el-button>
             </el-popover>
-            <el-button type="primary" v-popover:envPopoverRef size="mini" plain>权限</el-button>
-            <el-button
-              :type="row.collaboration_type === 'share' ? '' : 'primary'"
-              v-popover:recoverPopoverRef
-              size="mini"
-              plain
-              :disabled="row.collaboration_type === 'share'"
-            >回收策略</el-button>
           </template>
         </el-table-column>
         <el-table-column width="90px">
@@ -273,7 +273,7 @@ export default {
         this.collaborationData.products.push({
           name: '',
           collaboration_type: 'share',
-          recycleDay: 0,
+          recycle_day: 0,
           verbs: this.policy.environment.map(data => data.action)
         })
       })

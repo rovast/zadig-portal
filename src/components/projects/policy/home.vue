@@ -45,7 +45,7 @@ const collaborationInfo = {
   deploy_type: '',
   members: [],
   workflows: [], // name, collaboration_type, verbs=[]
-  products: [] // name, collaboration_type, recycleDay, verbs=[]
+  products: [] // name, collaboration_type, recycle_day, verbs=[]
 }
 export default {
   data () {

@@ -1,19 +1,29 @@
 <template>
   <el-dialog title="策略详情" :visible.sync="policyDialog" width="50%">
-    <section class="policy-content">
+    <section class="policy-content" v-loading="loading">
       <div>
         <span class="info-title">策略名称</span>
-        <span>{{}}</span>
+        <span>{{ policyInfo.name }}</span>
       </div>
-      <div>
+      <div style="margin-bottom: 10px;">
         <span class="info-title">描述信息</span>
-        <span>{{}}</span>
+        <span>{{ policyInfo.describe || '无' }}</span>
       </div>
-      <el-table :data="policyInfo">
-        <el-table-column prop="prop" label="模块名称"></el-table-column>
-        <el-table-column prop="prop" label="权限项"></el-table-column>
-        <el-table-column prop="prop" label="过滤规则"></el-table-column>
-        <el-table-column prop="prop" label="关联资源"></el-table-column>
+      <el-table :data="policyInfo.labels || []">
+        <el-table-column prop="resource_type" label="模块名称"></el-table-column>
+        <el-table-column label="权限项">
+          <template slot-scope="{ row }">
+            <div v-for="permission in row.permissions" :key="permission">{{ permission }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="过滤规则">
+          <template slot-scope="{ row }">{{ row.label.key }}={{ row.label.value }}</template>
+        </el-table-column>
+        <el-table-column label="关联资源">
+          <template slot-scope="{ row }">
+            <div v-for="resource in row.resources" :key="resource">{{ resource }}</div>
+          </template>
+        </el-table-column>
       </el-table>
     </section>
     <div slot="footer">
@@ -23,22 +33,56 @@
 </template>
 
 <script>
+import { getPolicyByIdAPI } from '@api'
 export default {
   props: {
     dialogFlag: Boolean,
     policyInfo: Object
   },
   data () {
-    return {}
+    return {
+      loading: false
+    }
   },
   computed: {
     policyDialog: {
       get () {
-        return this.dialogFlag
+        const visible = this.dialogFlag
+        if (visible) {
+          this.getPolicy()
+        }
+        return visible
       },
       set (val) {
-        this.$emit('update:policyDialog', val)
+        this.loading = false
+        this.$emit('update:dialogFlag', val)
       }
+    },
+    projectName () {
+      return this.$route.params.project_name
+    }
+  },
+  methods: {
+    getPolicy () {
+      if (this.policyInfo.labels) {
+        return
+      }
+      this.loading = true
+      getPolicyByIdAPI(this.projectName, this.policyInfo.id).then(res => {
+        this.loading = false
+        // this.$set(this.policyInfo, 'labels', res.labels)
+        this.$set(this.policyInfo, 'labels', [
+          {
+            resource_type: 'workflow',
+            permissions: ['create', 'edit', 'get', 'management'],
+            label: {
+              key: 'user',
+              value: 'zhangsan'
+            },
+            resources: ['workflow1', 'workflow2']
+          }
+        ])
+      })
     }
   }
 }
@@ -49,6 +93,7 @@ export default {
   padding-top: 10px;
 
   .policy-content {
+    margin: auto 10px;
     color: #777;
 
     .info-title {

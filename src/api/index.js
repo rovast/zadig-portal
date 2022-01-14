@@ -1626,3 +1626,11 @@ export function updateNewCollaborationAPI (projectName, name, payload) {
 export function deleteCollaborationAPI (projectName, name) {
   return http.delete(`/api/aslan/collaboration/collaborations/${name}?projectName=${projectName}`)
 }
+
+export function getAllPolicyAPI (projectName) {
+  return http.get(`/api/v1/policys?projectName=${projectName}`)
+}
+
+export function getPolicyByIdAPI (projectName, id) {
+  return http.get(`/api/v1/policy/${id}?projectName=${projectName}`)
+}

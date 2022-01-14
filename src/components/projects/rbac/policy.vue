@@ -44,15 +44,14 @@ export default {
     },
     getAllPolicy () {
       getAllPolicyAPI(this.projectName).then(res => {
-        // this.policies = res.policies
-        this.policies = [
+        this.policies = res.policies || [
           {
             id: '112121',
             name: 'policy1',
             describe: 'developers user1 的权限',
             update_time: 1642131791
           }
-        ]
+        ] // will delete
       })
     }
   },

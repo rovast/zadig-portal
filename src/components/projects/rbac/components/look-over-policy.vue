@@ -16,9 +16,9 @@
             <div v-for="permission in row.permissions" :key="permission">{{ permission }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="过滤规则">
+        <!-- <el-table-column label="过滤规则">
           <template slot-scope="{ row }">{{ row.label.key }}={{ row.label.value }}</template>
-        </el-table-column>
+        </el-table-column>-->
         <el-table-column label="关联资源">
           <template slot-scope="{ row }">
             <div v-for="resource in row.resources" :key="resource">{{ resource }}</div>
@@ -70,8 +70,7 @@ export default {
       this.loading = true
       getPolicyByIdAPI(this.projectName, this.policyInfo.id).then(res => {
         this.loading = false
-        // this.$set(this.policyInfo, 'labels', res.labels)
-        this.$set(this.policyInfo, 'labels', [
+        this.$set(this.policyInfo, 'labels', res.labels || [
           {
             resource_type: 'workflow',
             permissions: ['create', 'edit', 'get', 'management'],
@@ -81,7 +80,7 @@ export default {
             },
             resources: ['workflow1', 'workflow2']
           }
-        ])
+        ]) // will delete
       })
     }
   }

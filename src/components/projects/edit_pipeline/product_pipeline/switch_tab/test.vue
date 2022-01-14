@@ -29,7 +29,15 @@
                                    label="Key"></el-table-column>
                   <el-table-column label="Value">
                     <template slot-scope="{ row }">
-                      <el-input v-model="row.value"></el-input>
+                      <el-select
+                        v-if="row.type==='choice'"
+                        v-model="row.value"
+                        placeholder="默认值"
+                        size="small"
+                      >
+                        <el-option v-for="option in row.choice_option" :key="option" :label="option" :value="option"></el-option>
+                      </el-select>
+                      <el-input v-else v-model="row.value"></el-input>
                     </template>
                   </el-table-column>
                 </el-table>

@@ -295,106 +295,7 @@
             shortDescription
             showFirstLine
           ></repo-select>
-          <el-form
-            ref="buildEnv"
-            :inline="true"
-            :model="buildConfig"
-            class="form-style1 section form-bottom-0"
-            label-position="top"
-            label-width="120px"
-          >
-            <span class="item-title">环境变量</span>
-            <el-button
-              v-if="buildConfig.pre_build.envs.length === 0"
-              style="padding: 0;"
-              size="mini"
-              @click="addFirstBuildEnv()"
-              type="text"
-              >新增</el-button
-            >
-            <div class="divider item"></div>
-            <el-row
-              v-for="(app, build_env_index) in buildConfig.pre_build.envs"
-              :key="build_env_index"
-            >
-              <el-col :span="5">
-                <el-form-item
-                  :prop="'pre_build.envs.' + build_env_index + '.key'"
-                  :rules="{
-                    required: true,
-                    message: '键不能为空',
-                    trigger: 'blur',
-                  }"
-                >
-                  <el-input
-                    placeholder="键"
-                    v-model="buildConfig.pre_build.envs[build_env_index].key"
-                    size="mini"
-                  >
-                  </el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="5">
-                <el-form-item
-                  :prop="'pre_build.envs.' + build_env_index + '.value'"
-                  :rules="{
-                    required: true,
-                    message: '值不能为空',
-                    trigger: 'blur',
-                  }"
-                >
-                  <el-input
-                    placeholder="值"
-                    v-model="buildConfig.pre_build.envs[build_env_index].value"
-                    size="mini"
-                  >
-                  </el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="5">
-                <el-form-item prop="is_credential">
-                  <el-checkbox
-                    v-model="
-                      buildConfig.pre_build.envs[build_env_index].is_credential
-                    "
-                  >
-                    敏感信息
-                    <el-tooltip
-                      effect="dark"
-                      content="在日志中将被隐藏"
-                      placement="top"
-                    >
-                      <i class="el-icon-question"></i>
-                    </el-tooltip>
-                  </el-checkbox>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item>
-                  <div class="app-operation">
-                    <el-button
-                      v-if="buildConfig.pre_build.envs.length >= 1"
-                      @click="deleteBuildEnv(build_env_index)"
-                      type="danger"
-                      size="mini"
-                      plain
-                      >删除</el-button
-                    >
-                    <el-button
-                      v-if="
-                        build_env_index === buildConfig.pre_build.envs.length - 1
-                      "
-                      @click="addBuildEnv(build_env_index)"
-                      type="primary"
-                      size="mini"
-                      plain
-                      >新增</el-button
-                    >
-                  </div>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
+          <EnvVariable :preEnvs="buildConfig.pre_build" :narrowWidth="true"></EnvVariable>
           <el-form
             ref="cacheDir"
             :inline="true"
@@ -795,6 +696,7 @@
 </template>
 <script>
 import BuildEnv from '@/components/projects/build/build_env.vue'
+import EnvVariable from '@/components/projects/build/env_variable.vue'
 import {
   getBuildConfigDetailAPI,
   getAllAppsAPI,
@@ -1021,29 +923,6 @@ export default {
     },
     deleteBuildApp (index) {
       this.buildConfig.pre_build.installs.splice(index, 1)
-    },
-    addBuildEnv (index) {
-      this.$refs.buildEnv.validate((valid) => {
-        if (valid) {
-          this.buildConfig.pre_build.envs.push({
-            key: '',
-            value: '',
-            is_credential: true
-          })
-        } else {
-          return false
-        }
-      })
-    },
-    addFirstBuildEnv () {
-      this.buildConfig.pre_build.envs.push({
-        key: '',
-        value: '',
-        is_credential: true
-      })
-    },
-    deleteBuildEnv (index) {
-      this.buildConfig.pre_build.envs.splice(index, 1)
     },
     addExtra (command) {
       if (command === 'docker') {
@@ -1403,7 +1282,8 @@ export default {
     Editor,
     Resize,
     Codemirror,
-    BuildEnv
+    BuildEnv,
+    EnvVariable
   }
 }
 </script>

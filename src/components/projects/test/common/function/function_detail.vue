@@ -107,59 +107,7 @@
       <div class="divider">
       </div>
 
-      <el-form-item label-width="0px"
-                    class="repo">
-        <label class="title">
-          <slot name="label">
-            <span> 环境变量</span>
-            <el-button size="small"
-                       v-if="test.pre_test.envs.length===0"
-                       @click="addEnv()"
-                       type="text">添加</el-button>
-          </slot>
-        </label>
-        <el-row v-for="(_env,index) in test.pre_test.envs"
-                :key="index">
-          <el-form :model="_env"
-                   :rules="env_refs_rules"
-                   ref="env_ref"
-                   :inline="true"
-                   class="env-form-inline">
-            <el-form-item prop="key">
-              <el-input size="small"
-                        v-model="_env.key"
-                        placeholder="key"></el-input>
-            </el-form-item>
-            <el-form-item prop="value">
-              <el-input size="small"
-                        v-model="_env.value"
-                        placeholder="value"></el-input>
-            </el-form-item>
-            <el-form-item prop="is_credential">
-              <el-checkbox v-model="_env.is_credential">
-                敏感信息
-                <el-tooltip effect="dark"
-                            content="在日志中将被隐藏"
-                            placement="top">
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-              </el-checkbox>
-            </el-form-item>
-            <el-form-item>
-              <el-button size="small"
-                         v-if="index===test.pre_test.envs.length-1"
-                         type="primary"
-                         @click="addEnv(index)"
-                         plain>添加</el-button>
-              <el-button size="small"
-                         v-if="index!==0 || index===0&&test.pre_test.envs.length>=1"
-                         @click="deleteEnv(index)"
-                         type="danger"
-                         plain>删除</el-button>
-            </el-form-item>
-          </el-form>
-        </el-row>
-      </el-form-item>
+      <EnvVariable :preEnvs="test.pre_test" :isTest="true"></EnvVariable>
       <div class="divider">
       </div>
 
@@ -350,6 +298,7 @@
 
 <script>
 import BuildEnv from '@/components/projects/build/build_env.vue'
+import EnvVariable from '@/components/projects/build/env_variable.vue'
 import testTrigger from '@/components/common/test_trigger.vue'
 import bus from '@utils/eventBus'
 import ValidateSubmit from '@utils/validateAsync'
@@ -582,14 +531,8 @@ export default {
     addTimer () {
       this.$refs.timer.addTimerBtn()
     },
-    addEnv (index) {
-      this.test.pre_test.envs.push(this.makeEmptyEnv())
-    },
     addArtifactPath (index) {
       this.test.artifact_paths.push('')
-    },
-    deleteEnv (index) {
-      this.test.pre_test.envs.splice(index, 1)
     },
     deleteArtifactPath (index) {
       this.test.artifact_paths.splice(index, 1)
@@ -628,13 +571,6 @@ export default {
           this.$router.push(`/v1/${this.basePath}/detail/${this.projectName}/test/function`)
         })
       })
-    },
-    makeEmptyEnv () {
-      return {
-        key: '',
-        value: '',
-        is_credential: true
-      }
     },
 
     makeMapOfArray (arr, namePropName) {
@@ -719,7 +655,8 @@ export default {
   components: {
     Editor,
     testTrigger,
-    BuildEnv
+    BuildEnv,
+    EnvVariable
   }
 }
 </script>

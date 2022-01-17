@@ -4,7 +4,8 @@
     <el-tabs type="card" v-model="activeName">
       <el-tab-pane v-for="mode in allCollaboration" :key="mode.initName" :name="mode.initName">
         <span slot="label" class="policy-title">
-          <el-input v-model="mode.name" placeholder="协作模式名称" size="small"></el-input>
+          <el-input v-show="activeName === mode.initName" v-model="mode.name" placeholder="协作模式名称" size="small"></el-input>
+          <span v-show="activeName !== mode.initName" class="mode-name">{{ mode.name }}</span>
           <i class="el-icon-delete icon" @click.stop="deleteMode(mode.initName)"></i>
         </span>
       </el-tab-pane>
@@ -264,6 +265,10 @@ export default {
     .el-tabs__item {
       padding: 0 10px;
 
+      &:nth-child(2) {
+        padding-left: 10px;
+      }
+
       &:last-child {
         padding: 0 15px;
       }
@@ -275,6 +280,12 @@ export default {
 
         .el-input {
           width: calc(~'100% - 25px');
+        }
+
+        .mode-name {
+          display: inline-block;
+          width: 161px;
+          padding-left: 15px;
         }
 
         .icon {

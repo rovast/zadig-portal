@@ -55,7 +55,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="narrowWidth ? 8 : 5">
-          <el-form-item>
+          <el-form-item style="margin-right: 0;">
             <div class="app-operation">
               <el-button v-if="preEnvs.envs.length >= 1" @click="deleteBuildEnv(build_env_index)" type="danger" size="small" plain>删除</el-button>
               <el-button v-if="build_env_index===preEnvs.envs.length-1" @click="addBuildEnv()" type="primary" size="small" plain>新增</el-button>

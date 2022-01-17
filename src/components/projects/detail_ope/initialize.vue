@@ -46,6 +46,7 @@
 import InitEnvDialog from './components/initEnvDialog.vue'
 import bus from '@utils/eventBus'
 import { getNewCollaborationAPI, initializeCollaborationAPI } from '@api'
+import { uniqBy } from 'lodash'
 export default {
   data () {
     return {
@@ -86,6 +87,11 @@ export default {
             })
           }
         })
+        const fn = obj => {
+          return `${obj.name}/${obj.collaboration_type}`
+        }
+        res.product = uniqBy(res.product, fn)
+        res.workflow = uniqBy(res.workflow, fn)
         this.collaborationData = res
       })
     },

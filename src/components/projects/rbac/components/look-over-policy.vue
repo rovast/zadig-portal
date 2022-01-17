@@ -9,19 +9,23 @@
         <span class="info-title">描述信息</span>
         <span>{{ policyInfo.describe || '无' }}</span>
       </div>
-      <el-table :data="policyInfo.labels || []">
-        <el-table-column prop="resource_type" label="模块名称"></el-table-column>
+      <el-table :data="policyInfo.rules || []">
+        <el-table-column label="模块名称">
+          <template slot-scope="{ row }">{{ getPolicyDesc(row.resources) }}</template>
+        </el-table-column>
         <el-table-column label="权限项">
           <template slot-scope="{ row }">
-            <div v-for="permission in row.permissions" :key="permission">{{ permission }}</div>
+            <div v-for="verb in row.verbs" :key="verb">{{ getPolicyDesc(verb) }}</div>
           </template>
         </el-table-column>
         <!-- <el-table-column label="过滤规则">
-          <template slot-scope="{ row }">{{ row.label.key }}={{ row.label.value }}</template>
+          <template slot-scope="{ row }">
+            <div v-for="(attribute, index) in row.match_attributes" :key="index">{{ attribute.key }}={{ attribute.value }}</div>
+          </template>
         </el-table-column>-->
         <el-table-column label="关联资源">
           <template slot-scope="{ row }">
-            <div v-for="resource in row.resources" :key="resource">{{ resource }}</div>
+            <div v-for="resource in row.relatedResources" :key="resource">{{ resource }}</div>
           </template>
         </el-table-column>
       </el-table>
@@ -33,11 +37,11 @@
 </template>
 
 <script>
-import { getPolicyByIdAPI } from '@api'
 export default {
   props: {
     dialogFlag: Boolean,
-    policyInfo: Object
+    policyInfo: Object,
+    policyMap: Object
   },
   data () {
     return {
@@ -47,11 +51,7 @@ export default {
   computed: {
     policyDialog: {
       get () {
-        const visible = this.dialogFlag
-        if (visible) {
-          this.getPolicy()
-        }
-        return visible
+        return this.dialogFlag
       },
       set (val) {
         this.loading = false
@@ -63,25 +63,8 @@ export default {
     }
   },
   methods: {
-    getPolicy () {
-      if (this.policyInfo.labels) {
-        return
-      }
-      this.loading = true
-      getPolicyByIdAPI(this.projectName, this.policyInfo.id).then(res => {
-        this.loading = false
-        this.$set(this.policyInfo, 'labels', res.labels || [
-          {
-            resource_type: 'workflow',
-            permissions: ['create', 'edit', 'get', 'management'],
-            label: {
-              key: 'user',
-              value: 'zhangsan'
-            },
-            resources: ['workflow1', 'workflow2']
-          }
-        ]) // will delete
-      })
+    getPolicyDesc (action) {
+      return this.policyMap[action] || action
     }
   }
 }

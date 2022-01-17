@@ -17,19 +17,20 @@
       </el-table-column>
     </el-table>
 
-    <LookOverPolicy :dialogFlag.sync="dialogFlag" :policyInfo="policyInfo"></LookOverPolicy>
+    <LookOverPolicy :dialogFlag.sync="dialogFlag" :policyInfo="policyInfo" :policyMap="policyMap"></LookOverPolicy>
   </div>
 </template>
 
 <script>
 import LookOverPolicy from './components/look-over-policy.vue'
-import { getAllPolicyAPI } from '@api'
+import { getAllPolicyAPI, queryPolicyDefinitionsAPI } from '@api'
 export default {
   data () {
     return {
       policies: [],
       dialogFlag: false,
-      policyInfo: {}
+      policyInfo: {},
+      policyMap: {}
     }
   },
   computed: {
@@ -46,13 +47,53 @@ export default {
       getAllPolicyAPI(this.projectName).then(res => {
         this.policies = res.policies || [
           {
-            id: '112121',
             name: 'policy1',
             describe: 'developers user1 的权限',
-            update_time: 1642131791
+            update_time: 121212121,
+            rules: [
+              {
+                verbs: [
+                  'get_workflow',
+                  'edit_workflow',
+                  'create_workflow',
+                  'delete_workflow',
+                  'run_workflow'
+                ],
+                resources: [
+                  'Workflow'
+                ],
+                match_attributes: [
+                  {
+                    key: 'production',
+                    value: 'false'
+                  },
+                  {
+                    key: 'tag',
+                    value: '项目名:协作模式名:用户来源:用户名'
+                  }
+                ],
+                relatedResources: ['zhangsan-workflow'],
+                kind: 'resource'
+              }
+            ]
           }
         ] // will delete
       })
+    },
+    async getPolicyDefinitions () {
+      const res = await queryPolicyDefinitionsAPI(
+        this.projectName
+      ).catch(error => console.log(error))
+      if (res) {
+        const policyMap = {}
+        res.forEach(re => {
+          policyMap[re.resource] = re.alias
+          re.rules.forEach(rule => {
+            policyMap[rule.action] = rule.alias
+          })
+        })
+        this.policyMap = policyMap
+      }
     }
   },
   components: {
@@ -60,6 +101,7 @@ export default {
   },
   created () {
     this.getAllPolicy()
+    this.getPolicyDefinitions()
   }
 }
 </script>

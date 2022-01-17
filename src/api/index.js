@@ -1628,7 +1628,7 @@ export function deleteCollaborationAPI (projectName, name) {
 }
 
 export function getAllPolicyAPI (projectName) {
-  return http.get(`/api/v1/policys?projectName=${projectName}`)
+  return http.get(`/api/v1/policies?projectName=${projectName}`)
 }
 
 export function getPolicyByIdAPI (projectName, id) {

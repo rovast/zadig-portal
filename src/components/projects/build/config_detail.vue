@@ -183,6 +183,16 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item label="构建超时">
+                <el-input-number size="mini"
+                                 :min="1"
+                                 v-model="buildConfig.timeout"></el-input-number>
+                <span>分钟</span>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-row>
             <el-col :span="12">
              <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="isCreate"></BuildEnv>

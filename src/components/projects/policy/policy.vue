@@ -439,7 +439,7 @@ export default {
       }
       a1.forEach(data => {
         const d = data[key] || data
-        const id = a2.findIndex(data => data[key] || data === d)
+        const id = a2.findIndex(data => (data[key] || data) === d)
         if (id !== -1) {
           const del = a2.splice(id, 1)[0]
           if (key) {

@@ -30,6 +30,7 @@
                   <el-table-column label="Value">
                     <template slot-scope="{ row }">
                       <el-select
+                        style="width: 100%;"
                         v-if="row.type==='choice'"
                         v-model="row.value"
                         placeholder="默认值"
@@ -37,7 +38,7 @@
                       >
                         <el-option v-for="option in row.choice_option" :key="option" :label="option" :value="option"></el-option>
                       </el-select>
-                      <el-input v-else v-model="row.value"></el-input>
+                      <el-input v-else v-model="row.value" size="small"></el-input>
                     </template>
                   </el-table-column>
                 </el-table>

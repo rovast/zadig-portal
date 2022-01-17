@@ -213,7 +213,7 @@
                     type="text">{{test.notify_ctl.enabled ? '删除': '添加'}}</el-button>
       </label>
       <Notify v-if="test.notify_ctl.enabled"
-              ref="notify"
+              ref="notifyComp"
               class="notification"
               :editMode="isEdit"
               :notify="test.notify_ctl"
@@ -628,7 +628,7 @@ export default {
       const refs = [this.$refs['test-form']]
         .concat(this.$refs.install_items_ref)
         .concat(this.$refs.env_ref)
-        .concat(this.$refs.notify && this.$refs.notify.$refs.notify)
+        .concat(this.$refs.notifyComp && this.$refs.notifyComp.$refs.notify)
         .filter(r => r)
       const res = await this.validObj.validateAll()
       if (!res[1]) {

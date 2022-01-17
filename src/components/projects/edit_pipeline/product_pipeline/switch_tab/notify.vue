@@ -255,6 +255,7 @@ export default {
         bus.$emit('receive-tab-check:notify', valid)
       })
     })
+    // workflow don't show status changed
     if (this.fromWorkflow) {
       this.notifyType.pop()
     }

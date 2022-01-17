@@ -390,10 +390,10 @@
                 值恒等于 true，表示当前环境是 CI/CD 环境<br>
                 $ZADIG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值恒等于
                 true，表示在 Zadig 系统上执行脚本<br>
-                &lt;REPONAME&gt;_PR 构建过程中指定代码仓库使用的 Pull Request 信息<br>
-                &lt;REPONAME&gt;_BRANCH 构建过程中指定代码仓库使用的分支信息<br>
-                &lt;REPONAME&gt;_TAG 构建过程中指定代码仓库使用 Tag 信息<br>
-                &lt;REPONAME&gt;_COMMIT_ID 构建过程中指定代码的 commit 信息
+                &lt;REPO&gt;_PR 构建过程中指定代码仓库使用的 Pull Request 信息<br>
+                &lt;REPO&gt;_BRANCH 构建过程中指定代码仓库使用的分支信息<br>
+                &lt;REPO&gt;_TAG 构建过程中指定代码仓库使用 Tag 信息<br>
+                &lt;REPO&gt;_COMMIT_ID 构建过程中指定代码的 commit 信息
               </div>
               <span class="variable">变量</span>
             </el-tooltip>

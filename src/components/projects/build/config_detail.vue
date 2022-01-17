@@ -132,7 +132,7 @@
         <el-form ref="addConfigForm"
                  :model="buildConfig"
                  :rules="createRules"
-                 label-position="left"
+                 label-position="right"
                  label-width="80px">
           <el-row :gutter="20">
             <el-col v-if="jenkinsEnabled" :span="8">
@@ -194,8 +194,8 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="12">
-             <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="isCreate"></BuildEnv>
+            <el-col :span="24">
+             <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="isCreate"/>
             </el-col>
           </el-row>
         </el-form>

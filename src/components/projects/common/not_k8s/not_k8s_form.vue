@@ -17,8 +17,8 @@
       <el-form ref="addConfigForm"
                :model="buildConfig"
                :rules="createRules"
-               label-position="left"
-               label-width="90px">
+               label-position="right"
+               label-width="80px">
         <el-row>
           <el-col :span="7">
             <el-form-item prop="service_name"
@@ -60,7 +60,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit"></BuildEnv>
+        <BuildEnv class="section" :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit"></BuildEnv>
       </el-form>
     </div>
     <div class="section">

@@ -27,13 +27,13 @@
       </el-col>
     </el-row>
     <el-row v-for="(app,appIndex) in pre_build.installs" :key="appIndex" :gutter="20">
-      <el-col :span="10">
+      <el-col :span="24">
         <el-form-item
           :prop="`${propPre}.installs.${appIndex}.name`"
           :rules="{required: true, message: '应用名不能为空', trigger: 'blur'}"
-          label-width="0"
+          :label-width="fullScreen?'80px':0"
         >
-          <el-select style="width: 100%;" v-model="pre_build.installs[appIndex]" placeholder="请选择应用" size="small" value-key="id" filterable>
+          <el-select v-model="pre_build.installs[appIndex]" placeholder="请选择应用" size="small" value-key="id" filterable>
             <el-option
               v-for="(app, index) in allApps"
               :key="index"
@@ -41,18 +41,16 @@
               :value="{'name':app.name,'version':app.version,'id':app.name+app.version}"
             ></el-option>
           </el-select>
+          <span :class="mini?'app-operation':''">
+           <el-button v-if="pre_build.installs.length >= 1" @click="deleteApp(appIndex)" type="danger" size="mini" plain>删除</el-button>
+           <el-button v-if="appIndex===pre_build.installs.length-1" @click="addApp(appIndex)" type="primary" size="mini" plain>新增</el-button>
+          </span>
         </el-form-item>
       </el-col>
-      <el-col :span="12">
-        <div class="app-operation">
-          <el-button v-if="pre_build.installs.length >= 1" @click="deleteApp(appIndex)" type="danger" size="mini" plain>删除</el-button>
-          <el-button v-if="appIndex===pre_build.installs.length-1" @click="addApp(appIndex)" type="primary" size="mini" plain>新增</el-button>
-        </div>
-      </el-col>
     </el-row>
-    <el-row :gutter="20">
+    <el-row :gutter="20" style="margin: 5px 0;">
       <el-col :span="12">
-        <el-button style="padding: 0;" @click="showAdvanced=!showAdvanced" type="text">
+        <el-button style="width: 75px; padding: 0;" @click="showAdvanced=!showAdvanced" type="text">
           高级配置
           <i :class="showAdvanced?'el-icon-arrow-left':'el-icon-arrow-right'"></i>
         </el-button>
@@ -338,9 +336,7 @@ export default {
 }
 
 .app-operation {
-  position: relative;
-  font-size: 14px;
-  line-height: 40px;
+  margin-left: 15px;
 }
 
 .divider {

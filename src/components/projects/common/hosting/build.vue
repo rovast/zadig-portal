@@ -43,16 +43,6 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <el-form-item label="构建超时">
-                  <el-input-number size="mini"
-                                  :min="1"
-                                  v-model="jenkinsBuild.timeout"></el-input-number>
-                  <span>分钟</span>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
                 <el-form-item label="构建名称"
                               prop="name" :rules="[{ required: true, message: '构建名称不能为空' }]">
                   <el-input v-model="jenkinsBuild.name"
@@ -79,6 +69,16 @@
                         :value="service">
                     </el-option>
                   </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="24">
+                <el-form-item label="构建超时">
+                  <el-input-number size="mini"
+                                  :min="1"
+                                  v-model="jenkinsBuild.timeout"></el-input-number>
+                  <span>分钟</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -134,7 +134,7 @@
             ref="addConfigForm"
             :model="buildConfig"
             :rules="createRules"
-            label-position="left"
+            label-position="right"
             label-width="80px"
           >
             <el-row v-if="jenkinsEnabled">
@@ -152,16 +152,6 @@
                         :value="item.value">
                     </el-option>
                   </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-form-item label="构建超时">
-                  <el-input-number size="mini"
-                                  :min="1"
-                                  v-model="buildConfig.timeout"></el-input-number>
-                  <span>分钟</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -201,7 +191,17 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit" mini></BuildEnv>
+            <el-row>
+              <el-col :span="24">
+                <el-form-item label="构建超时">
+                  <el-input-number size="mini"
+                                  :min="1"
+                                  v-model="buildConfig.timeout"></el-input-number>
+                  <span>分钟</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit"></BuildEnv>
           </el-form>
         </div>
         <div class="section">

@@ -133,7 +133,7 @@
           ref="addConfigForm"
           :model="buildConfig"
           :rules="createRules"
-          label-position="left"
+          label-position="right"
           label-width="80px"
         >
           <el-form-item v-if="jenkinsEnabled" label="构建来源">
@@ -151,14 +151,6 @@
             </el-select>
           </el-form-item>
           <el-form-item label="构建名称" prop="name">
-            <!-- <el-input
-              v-model="buildConfig.name"
-              placeholder="构建名称"
-              autofocus
-              size="mini"
-              :disabled="isEdit"
-              auto-complete="off"
-            ></el-input> -->
             <el-select style="width: 100%;"
                       v-model="buildConfig.name"
                       placeholder="构建名称" :disabled="isEdit"
@@ -203,7 +195,7 @@
                             v-model="buildConfig.timeout"></el-input-number>
             <span>分钟</span>
           </el-form-item>
-          <BuildEnv v-show="!isSelectedBuild" :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit" mini></BuildEnv>
+          <BuildEnv class="section" v-show="!isSelectedBuild" :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit" mini/>
         </el-form>
         <div v-show="!isSelectedBuild" class="section">
           <repo-select

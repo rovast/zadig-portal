@@ -4,8 +4,8 @@
              :model="test"
              ref="test-form"
              :rules="rules"
-             label-width="120px"
-             label-position="left">
+             label-width="80px"
+             label-position="right">
       <el-form-item prop="name"
                     label="测试名称"
                     class="fixed-width">
@@ -29,7 +29,7 @@
       <div class="title">运行时环境</div>
       <el-row>
        <el-col :span="12">
-        <BuildEnv :initFlag="configDataLoading" :pre_build="test.pre_test" :isCreate="!isEdit" :title="``" :propPre="`pre_test`"></BuildEnv>
+        <BuildEnv :initFlag="configDataLoading" :pre_build="test.pre_test" :isCreate="!isEdit" :title="``" :propPre="`pre_test`"/>
         </el-col>
       </el-row>
       <div class="divider">
@@ -41,10 +41,8 @@
                        hidePrimary></repo-select>
         </div>
       </el-form-item>
-      <div class="divider">
-      </div>
-
-      <EnvVariable :preEnvs="test.pre_test" :isTest="true"></EnvVariable>
+      <div class="divider"></div>
+         <EnvVariable :preEnvs="test.pre_test" :isTest="true"></EnvVariable>
       <div class="divider">
       </div>
 
@@ -109,15 +107,6 @@
       <label class="title">
         <slot name="label">
           <span>测试报告</span>
-          <!-- <el-tooltip effect="dark"
-                            placement="top">
-                  <div slot="content">设置一个或者多个文件目录，构建完成后可以在工作流详情页面进行下载，通常用于测试日志等文件的导出<br /></div>
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-                <el-button size="small"
-                           v-if="test.artifact_paths.length===0"
-                           @click="addArtifactPath()"
-                           type="text">添加</el-button> -->
         </slot>
       </label>
       <el-form-item label-width="160px"

@@ -20,7 +20,7 @@
         <div class="section">
           <el-form ref="jenkinsForm"
                   :model="jenkinsBuild"
-                  label-position="left"
+                  label-position="right"
                   label-width="100px">
             <el-row>
               <el-col :span="24">
@@ -130,7 +130,7 @@
         <el-form ref="addConfigForm"
                 :model="buildConfig"
                 :rules="createRules"
-                label-position="left"
+                label-position="right"
                 label-width="80px">
           <el-form-item v-if="jenkinsEnabled" label="构建来源">
             <el-select style="width: 100%;"
@@ -148,12 +148,6 @@
           </el-form-item>
           <el-form-item label="构建名称"
                         prop="name">
-            <!-- <el-input v-model="buildConfig.name"
-                      placeholder="构建名称"
-                      autofocus
-                      size="mini"
-                      :disabled="isEdit"
-                      auto-complete="off"></el-input> -->
             <el-select style="width: 100%;"
                        v-model="buildConfig.name"
                        placeholder="构建名称" :disabled="isEdit"
@@ -195,7 +189,7 @@
                             v-model="buildConfig.timeout"></el-input-number>
             <span>分钟</span>
           </el-form-item>
-          <BuildEnv v-show="!isSelectedBuild" :initFlag="configDataLoading" :pre_build="buildConfig.pre_build"  :isCreate="!isEdit" mini></BuildEnv>
+          <BuildEnv v-show="!isSelectedBuild"  class="section" :initFlag="configDataLoading" :pre_build="buildConfig.pre_build"  :isCreate="!isEdit" mini />
         </el-form>
         <div v-show="!isSelectedBuild" class="section">
           <repo-select :config="buildConfig"
@@ -451,10 +445,10 @@
     </div>
 </template>
 <script>
-import BuildEnv from '@/components/projects/build/build_env.vue'
 import { getBuildConfigDetailAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, checkJenkinsConfigExistsAPI, queryJenkinsJob, queryJenkinsParams, getBuildConfigsAPI, saveBuildConfigTargetsAPI } from '@api'
 import qs from 'qs'
 import Editor from 'vue2-ace-bind'
+import BuildEnv from '@/components/projects/build/build_env.vue'
 import Resize from '@/components/common/resize.vue'
 import EnvVariable from '@/components/projects/build/env_variable.vue'
 import Codemirror from '@/components/projects/common/codemirror.vue'

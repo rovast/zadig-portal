@@ -553,14 +553,14 @@
 import {
   workflowTaskDetailAPI, workflowTaskDetailSSEAPI, restartWorkflowAPI, cancelWorkflowAPI, getVersionListAPI
 } from '@api'
-import { wordTranslate, colorTranslate } from '@utils/word_translate.js'
+import { wordTranslate, colorTranslate } from '@utils/wordTranslate.js'
 import deployIcons from '@/components/common/deploy_icons'
 import artifactDownload from '@/components/common/artifact_download.vue'
 import taskDetailBuild from './workflow_multi_task_detail/task_detail_build.vue'
 import taskDetailDeploy from './workflow_multi_task_detail/task_detail_deploy.vue'
 import taskDetailArtifactDeploy from './workflow_multi_task_detail/task_detail_artifact_deploy.vue'
 import taskDetailTest from './workflow_multi_task_detail/task_detail_test.vue'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import Etable from '@/components/common/etable'
 import _ from 'lodash'
 

@@ -289,9 +289,9 @@ import {
   getHostLabelListAPI,
   getRegistryWhenBuildAPI
 } from '@api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { uniq, cloneDeep } from 'lodash'
-import { serviceTypeMap } from '@utils/word_translate'
+import { serviceTypeMap } from '@utils/wordTranslate'
 
 const validateKey = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {

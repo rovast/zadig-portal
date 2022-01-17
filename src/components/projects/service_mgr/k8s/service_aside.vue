@@ -260,7 +260,7 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { serviceTemplateWithConfigAPI, getSingleProjectAPI, updateEnvTemplateAPI, getRegistryWhenBuildAPI, getCodeProviderAPI } from '@api'
 import build from '../common/build.vue'
 import help from './container/help.vue'

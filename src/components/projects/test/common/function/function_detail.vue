@@ -365,8 +365,8 @@
 <script>
 import BuildEnv from '@/components/projects/build/build_env.vue'
 import testTrigger from '@/components/common/test_trigger.vue'
-import bus from '@utils/event_bus'
-import ValidateSubmit from '@utils/validate_async'
+import bus from '@utils/eventBus'
+import ValidateSubmit from '@utils/validateAsync'
 import Editor from 'vue2-ace-bind'
 import Notify from '@/components/projects/edit_pipeline/product_pipeline/switch_tab/notify.vue'
 

@@ -41,7 +41,7 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import step from './container/step_not_k8s.vue'
 import ServiceList from '@/components/projects/common/not_k8s/service_list.vue'
 import Build from '@/components/projects/common/not_k8s/not_k8s_form.vue'

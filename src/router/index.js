@@ -424,7 +424,7 @@ const routes = [
       },
       {
         path: 'projects/detail/:project_name/test/detail/function/:test_name/:task_id',
-        component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function_task_detail.vue'),
+        component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/functionTaskDetail.vue'),
         meta: {
           requiresAuth: true,
           title: '功能测试-任务详情'
@@ -506,7 +506,7 @@ const routes = [
           },
           {
             path: 'detail/function/:test_name/:task_id',
-            component: () => import(/* webpackChunkName: "quality-manage" */ '@/components/quality_manage/tests/function/function_task_detail.vue'),
+            component: () => import(/* webpackChunkName: "quality-manage" */ '@/components/quality_manage/tests/function/functionTaskDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试-任务详情'

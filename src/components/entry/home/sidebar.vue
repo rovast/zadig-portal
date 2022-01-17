@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import _ from 'lodash'
 export default {
   data () {

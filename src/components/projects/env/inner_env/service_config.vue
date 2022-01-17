@@ -161,7 +161,7 @@
 import Editor from 'vue2-ace-bind'
 import moment from 'moment'
 import qs from 'qs'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { getConfigmapAPI, updateConfigmapAPI, rollbackConfigmapAPI } from '@api'
 import _ from 'lodash'
 const jsdiff = require('diff')

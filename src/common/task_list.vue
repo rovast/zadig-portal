@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import { wordTranslate } from '@utils/word_translate.js'
+import { wordTranslate } from '@utils/wordTranslate.js'
 import moment from 'moment'
 import { get, orderBy } from 'lodash'
 export default {

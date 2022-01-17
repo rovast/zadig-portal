@@ -56,7 +56,7 @@
 import { NavBar, Tag, Panel, Loading, Button, Notify, Tab, Tabs, Cell, CellGroup, Icon, Empty, Search, Toast, ActionSheet } from 'vant'
 import qs from 'qs'
 import { getProductWorkflowsAPI } from '@api'
-import { wordTranslate } from '@utils/word_translate.js'
+import { wordTranslate } from '@utils/wordTranslate.js'
 import runWorkflow from './run_workflow.vue'
 export default {
   components: {

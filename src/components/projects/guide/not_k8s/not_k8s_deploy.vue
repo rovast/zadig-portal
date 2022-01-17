@@ -121,7 +121,7 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import step from './container/step_not_k8s.vue'
 import { generateEnvAPI, generatePipeAPI } from '@api'
 export default {

@@ -47,7 +47,7 @@
   </div>
 </template>
 <script>
-import { wordTranslate } from '@utils/word_translate.js'
+import { wordTranslate } from '@utils/wordTranslate.js'
 import RunWorkflow from '../../pipeline/common/run_workflow.vue'
 import { getProjectIngressAPI, getWorkflowDetailAPI, getProductWorkflowsInProjectAPI, generatePipeAPI } from '@api'
 

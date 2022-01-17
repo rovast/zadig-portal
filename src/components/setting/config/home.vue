@@ -31,7 +31,7 @@ import Quota from './quota.vue'
 import Proxy from './proxy.vue'
 import Cache from './cache.vue'
 import Link from './link.vue'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 
 export default {
   name: 'config',

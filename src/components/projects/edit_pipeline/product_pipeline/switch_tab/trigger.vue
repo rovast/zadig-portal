@@ -323,7 +323,7 @@
 </template>
 
 <script type="text/javascript">
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import workflowArgs from '../container/workflow_args.vue'
 import {
   listProductAPI,

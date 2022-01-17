@@ -249,8 +249,8 @@
 
 <script>
 import { getClusterListAPI, createClusterAPI, updateClusterAPI, deleteClusterAPI, recoverClusterAPI, disconnectClusterAPI, getClusterNodeInfo } from '@api'
-import { wordTranslate } from '@utils/word_translate'
-import bus from '@utils/event_bus'
+import { wordTranslate } from '@utils/wordTranslate'
+import bus from '@utils/eventBus'
 import { cloneDeep } from 'lodash'
 const validateClusterName = (rule, value, callback) => {
   if (value === '') {

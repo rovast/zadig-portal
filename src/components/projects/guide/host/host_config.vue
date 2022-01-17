@@ -25,7 +25,7 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import Step from './components/step.vue'
 import HostEnvConfig from './components/host_env_config.vue'
 import ServiceBuild from './components/service_build.vue'

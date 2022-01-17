@@ -114,7 +114,7 @@
 import AddHost from '@/components/projects/common/not_k8s/add_host.vue'
 import ImportHosts from './importHosts.vue'
 import { getHostListAPI, deleteHostAPI } from '@api'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 export default {
   data () {
     return {

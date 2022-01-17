@@ -183,7 +183,7 @@
   </div>
 </template>
 <script>
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { getProductWorkflowsInProjectAPI, getBuildConfigsAPI, getSingleProjectAPI, getServiceTemplatesAPI, deleteProjectAPI } from '@api'
 import { mapGetters } from 'vuex'
 import { get } from 'lodash'

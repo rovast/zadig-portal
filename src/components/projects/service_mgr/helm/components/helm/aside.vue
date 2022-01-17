@@ -79,7 +79,7 @@
 </template>
 <script>
 import qs from 'qs'
-import bus from '@utils/event_bus'
+import bus from '@utils/eventBus'
 import { mapState } from 'vuex'
 import help from './help.vue'
 import MatchRule from './match_rule.vue'

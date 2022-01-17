@@ -427,7 +427,7 @@ export default {
         padding-top: 8px;
         color: #f1f1f1;
         font-size: 12px;
-        font-family: Monaco, monospace;
+        font-family: Monaco, Consolas, monospace;
         line-height: 18px;
         white-space: pre-wrap;
         word-wrap: break-word;

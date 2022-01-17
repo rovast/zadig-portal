@@ -187,7 +187,7 @@ export default {
   overflow: hidden;
   color: #f56c6c;
   font-size: 13px;
-  font-family: Monaco, monospace;
+  font-family: Monaco, Consolas, monospace;
   white-space: pre-wrap;
   word-wrap: break-word;
   background-color: #fafafa;

@@ -105,7 +105,7 @@ export default {
     this.term.clear()
   },
   mounted () {
-    const term = new Terminal({ fontSize: '12', padding: '15', fontFamily: 'Monaco,monospace,Microsoft YaHei,Arial', disableStdin: true, scrollback: 9999999, cursorStyle: null })
+    const term = new Terminal({ fontSize: '12', padding: '15', fontFamily: 'Monaco,Consolas,monospace,Microsoft YaHei,Arial', disableStdin: true, scrollback: 9999999, cursorStyle: null })
     const fitAddon = new FitAddon()
     const searchAddon = new SearchAddon()
     term.loadAddon(searchAddon)

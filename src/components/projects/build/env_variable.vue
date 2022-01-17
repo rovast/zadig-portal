@@ -10,7 +10,7 @@
             <el-input placeholder="键" v-model="preEnvs.envs[build_env_index].key" size="small"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="narrowWidth ? 4 : 3">
+        <el-col :span="narrowWidth ? 4 : 4">
           <el-form-item class="display-flex">
             <el-select
               v-model="preEnvs.envs[build_env_index].type"
@@ -26,7 +26,7 @@
             <i
               v-show="preEnvs.envs[build_env_index].type === 'choice'"
               class="el-icon-edit"
-              style="cursor: pointer;"
+              style=" color: #409eff; cursor: pointer;"
               @click="updateParams(build_env_index)"
             ></i>
           </el-form-item>
@@ -38,6 +38,7 @@
               v-model="preEnvs.envs[build_env_index].value"
               placeholder="默认值"
               size="small"
+              style="max-width: 176px;"
             >
               <el-option v-for="option in preEnvs.envs[build_env_index].choice_option" :key="option" :label="option" :value="option"></el-option>
             </el-select>

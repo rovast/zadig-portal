@@ -734,13 +734,13 @@ export function getRepoNameByIdAPI (id, type, repo_owner, key = '', project_uuid
   }
 }
 
-export function getBranchInfoByIdAPI (id, repo_owner, repo_name, repo_uuid = '') {
-  const repoOwner = repo_owner.includes('/') ? encodeURIComponent(encodeURIComponent(repo_owner)) : repo_owner
-  const repoName = repo_name.includes('/') ? encodeURIComponent(encodeURIComponent(repo_name)) : repo_name
-  if (repo_uuid) {
-    return http.get(`/api/aslan/code/codehost/${id}/namespaces/${repoOwner}/projects/${repo_uuid}/branches`)
+export function getBranchInfoByIdAPI (id, repoOwner, repoName, repoUUID = '', page = 1, perPage = 200, key = '') {
+  const encodeRepoOwner = repoOwner.includes('/') ? encodeURIComponent(encodeURIComponent(repoOwner)) : repoOwner
+  const encodeRepoName = repoName.includes('/') ? encodeURIComponent(encodeURIComponent(repoName)) : repoName
+  if (repoUUID) {
+    return http.get(`/api/aslan/code/codehost/${id}/namespaces/${encodeRepoOwner}/projects/${repoUUID}/branches`)
   } else {
-    return http.get(`/api/aslan/code/codehost/${id}/namespaces/${repoOwner}/projects/${repoName}/branches`)
+    return http.get(`/api/aslan/code/codehost/${id}/namespaces/${encodeRepoOwner}/projects/${encodeRepoName}/branches?page=${page}&perPage=${perPage}&key=${key}`)
   }
 }
 

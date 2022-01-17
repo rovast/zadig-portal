@@ -91,6 +91,9 @@
                          placeholder="请选择"
                          size="small"
                          filterable
+                         remote
+                         :remote-method="(query)=>{searchBranch(repo_index,query)}"
+                         @clear="searchBranch(repo_index,'')"
                          allow-create
                          :loading="codeInfo[repo_index].loading.branch"
                          clearable>
@@ -399,7 +402,7 @@ export default {
       this.config.repos[index].repo_name = ''
       this.config.repos[index].branch = ''
     },
-    getBranchInfoById (index, id, repo_owner, repo_name) {
+    getBranchInfoById (index, id, repo_owner, repo_name, key = '') {
       if (!repo_name) {
         return
       }
@@ -413,7 +416,7 @@ export default {
       if (repo_owner && repo_name) {
         this.codeInfo[index].branches = []
         this.setLoadingState(index, 'branch', true)
-        getBranchInfoByIdAPI(id, repo_owner, repo_name, repoUUID).then((res) => {
+        getBranchInfoByIdAPI(id, repo_owner, repo_name, repoUUID, 1, 200, key).then((res) => {
           this.$set(this.codeInfo[index], 'branches', res || [])
           this.setLoadingState(index, 'branch', false)
         })
@@ -483,6 +486,20 @@ export default {
         this.config.repos[index].branch = ''
       } else {
         this.getRepoNameById(index, id, repo_owner, query)
+      }
+    },
+    searchBranch (index, query) {
+      const id = this.config.repos[index].codehost_id
+      const repoOwner = this.config.repos[index].repo_owner
+      const repoName = this.config.repos[index].repo_name
+      const codehostType = (this.allCodeHosts.find(item => { return item.id === id })).type
+      if (codehostType === 'gitlab') {
+        this.getBranchInfoById(index, id, repoOwner, repoName, query)
+      } else {
+        const items = this.$utils.filterObjectArrayByKey('name', query, this.codeInfo[index].origin_repos)
+        this.$set(this.codeInfo[index], 'repos', items)
+        this.config.repos[index].repo_name = ''
+        this.config.repos[index].branch = ''
       }
     },
     changeToPrimaryRepo (index, val) {

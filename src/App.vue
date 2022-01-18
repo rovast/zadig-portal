@@ -3,10 +3,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;">
-    <router-view style="height: 100%;">
-    </router-view>
+    <router-view style="height: 100%;"></router-view>
   </div>
-
 </template>
 
 <script>
@@ -36,9 +34,17 @@ export default {
       if (this.processEnv.COMMIT_ID) {
         buildInfo.push(`${this.processEnv.COMMIT_ID.substring(0, 7)}`)
       }
-      console.log(`%cBuild:${buildInfo.join(' ')}`, 'color: #e20382;font-size: 13px;')
+      console.log(
+        `%cBuild:${buildInfo.join(' ')}`,
+        'color: #e20382;font-size: 13px;'
+      )
       if (this.processEnv.BUILD_TIME) {
-        console.log(`%cTime:${moment.unix(this.processEnv.BUILD_TIME).format('YYYYMMDDHHmm')}`, 'color: #e20382;font-size: 13px;')
+        console.log(
+          `%cTime:${moment
+            .unix(this.processEnv.BUILD_TIME)
+            .format('YYYYMMDDHHmm')}`,
+          'color: #e20382;font-size: 13px;'
+        )
       }
     }
   }
@@ -46,12 +52,14 @@ export default {
 </script>
 
 <style lang="less">
-@import url("~@assets/css/common/color.less");
-@import url("~@assets/css/common/icon.less");
-@import url("~@assets/css/common/common.less");
-@import url("~@assets/css/common/scroll-bar.less");
+@import url('~@assets/css/common/color.less');
+@import url('~@assets/css/common/icon.less');
+@import url('~@assets/css/common/common.less');
+@import url('~@assets/css/common/scroll-bar.less');
+
 // Todo: Try to use perfect-scrollbar
 .scrollBar();
+
 a {
   text-decoration: none;
 }

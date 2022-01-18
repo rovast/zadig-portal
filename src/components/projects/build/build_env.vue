@@ -19,10 +19,10 @@
         </el-form-item>
       </el-col>
     </el-row>
-    <el-row :gutter="20">
+    <el-row v-if="pre_build.installs.length===0" :gutter="20">
       <el-col :span="24">
         <el-form-item label="应用列表" style="width: 80px;">
-          <el-button v-if="pre_build.installs.length===0" style="padding: 0;" @click="addFirstApp()" type="text">新增</el-button>
+          <el-button  style="padding: 0;" @click="addFirstApp()" type="text">新增</el-button>
         </el-form-item>
       </el-col>
     </el-row>
@@ -30,7 +30,8 @@
       <el-col :span="24">
         <el-form-item
           :prop="`${propPre}.installs.${appIndex}.name`"
-          :rules="{required: true, message: '应用名不能为空', trigger: 'blur'}"
+          :rules="{required: false, message: '应用名不能为空', trigger: 'blur'}"
+          :label="appIndex === 0 ? `应用列表` : ''"
           :label-width="fullScreen?'80px':0"
         >
           <el-select v-model="pre_build.installs[appIndex]" placeholder="请选择应用" size="small" value-key="id" filterable>
@@ -41,7 +42,7 @@
               :value="{'name':app.name,'version':app.version,'id':app.name+app.version}"
             ></el-option>
           </el-select>
-          <span :class="mini?'app-operation':''">
+          <span :class="mini?'':'app-operation'">
            <el-button v-if="pre_build.installs.length >= 1" @click="deleteApp(appIndex)" type="danger" size="mini" plain>删除</el-button>
            <el-button v-if="appIndex===pre_build.installs.length-1" @click="addApp(appIndex)" type="primary" size="mini" plain>新增</el-button>
           </span>
@@ -351,6 +352,7 @@ export default {
 }
 
 .define-resource {
+  margin-top: 10px;
   margin-left: 10px;
   color: #606266;
 

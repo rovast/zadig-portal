@@ -98,8 +98,9 @@
                       label="触发事件"
                       prop="events">
           <el-checkbox-group v-model="webhookSwap.events">
-            <el-checkbox label="push"></el-checkbox>
-            <el-checkbox label="pull_request"></el-checkbox>
+            <el-checkbox label="push">Push commits</el-checkbox>
+            <el-checkbox label="pull_request">Pull requests</el-checkbox>
+            <el-checkbox label="tag">Push tags</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="自动取消">

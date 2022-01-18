@@ -46,7 +46,7 @@
                          remote
                          :remote-method="(query)=>{searchNamespace(repo_index,query)}"
                          @clear="searchNamespace(repo_index,'')"
-                         loading-text="加载中，支持输入创建"
+                         loading-text="加载中，支持手动创建"
                          allow-create
                          clearable
                          size="small"
@@ -70,7 +70,7 @@
                          remote
                          :remote-method="(query)=>{searchProject(repo_index,query)}"
                          @clear="searchProject(repo_index,'')"
-                         loading-text="加载中，支持输入创建"
+                         loading-text="加载中，支持手动创建"
                          allow-create
                          clearable
                          size="small"
@@ -92,7 +92,7 @@
               <el-select v-model.trim="config.repos[repo_index].branch"
                          placeholder="请选择"
                          size="small"
-                         loading-text="加载中，支持输入创建"
+                         loading-text="加载中，支持手动创建"
                          filterable
                          remote
                          :remote-method="(query)=>{searchBranch(repo_index,query)}"

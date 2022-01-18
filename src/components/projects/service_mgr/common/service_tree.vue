@@ -206,7 +206,7 @@
               </el-button>
             </el-tooltip>
             <el-tooltip effect="dark"
-                        content="仓库托管"
+                        content="仓库导入"
                         placement="top">
               <el-button v-if="deployType==='k8s'"
                          size="mini"
@@ -766,28 +766,29 @@ export default {
       }
     },
     inputServiceNameDoneWhenBlur () {
-      this.$refs.newServiceNameForm.validate((valid) => {
-        if (valid) {
-          const val = this.service.newServiceName
-          this.previousNodeKey = val
-          // const node = this.$refs.serviceTree.getNode(val)
-          // if (!node) {
-          const data = {
-            label: val,
-            status: 'named',
-            service_name: val,
-            type: this.deployType ? this.deployType : 'k8s',
-            visibility: 'private'
+      if (this.service.newServiceName === '') {
+        this.showNewServiceInput = false
+      } else {
+        this.$refs.newServiceNameForm.validate((valid) => {
+          if (valid) {
+            const val = this.service.newServiceName
+            this.previousNodeKey = val
+            const data = {
+              label: val,
+              status: 'named',
+              service_name: val,
+              type: this.deployType ? this.deployType : 'k8s',
+              visibility: 'private'
+            }
+            this.services.push(data)
+            this.setServiceSelected(data.service_name)
+            this.$router.replace({ query: { service_name: data.service_name, rightbar: 'help' } })
+            this.$emit('onSelectServiceChange', data)
+            this.showNewServiceInput = false
+            this.service.newServiceName = ''
           }
-          this.services.push(data)
-          this.setServiceSelected(data.service_name)
-          this.$router.replace({ query: { service_name: data.service_name, rightbar: 'help' } })
-          this.$emit('onSelectServiceChange', data)
-          this.showNewServiceInput = false
-          this.service.newServiceName = ''
-          // }
-        }
-      })
+        })
+      }
     },
     reEditServiceName (node, data) {
       const service = this.$utils.cloneObj(data)

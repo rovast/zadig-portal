@@ -2,7 +2,7 @@
   <div class="function-test-list">
     <el-table :data="testList">
       <el-table-column prop="name"
-                       label="测试用例集名称">
+                       label="名称">
         <template slot-scope="scope">
           <router-link :to="`${jobPrefix}/${scope.row.name}-job`">
             <span class="link">{{scope.row.name}}</span>

@@ -16,9 +16,9 @@
             会自动生成以下资源：</span>
         </div>
         <div class="account-integrations cf-block__list">
-          <div class="cf-block__item">
-            <div class="account-box-item">
-              <div class="account-box-item__info integration-card">
+          <div class="info-block">
+            <div class="info-block-item">
+              <div class="account-box-item__info info-block-item-card">
                 <div class="integration-card__image">
                   <el-button type="success"
                              icon="el-icon-check"
@@ -35,9 +35,9 @@
               </div>
             </div>
           </div>
-          <div class="cf-block__item">
-            <div class="account-box-item">
-              <div class="account-box-item__info integration-card">
+          <div class="info-block">
+            <div class="info-block-item">
+              <div class="account-box-item__info info-block-item-card">
                 <div class="integration-card__image">
                   <el-button type="success"
                              icon="el-icon-check"
@@ -170,8 +170,8 @@ export default {
         background-color: inherit;
         -webkit-box-flex: 1;
 
-        .cf-block__item {
-          .account-box-item {
+        .info-block {
+          .info-block-item {
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
@@ -188,7 +188,7 @@ export default {
             -webkit-box-pack: justify;
             -ms-flex-pack: justify;
 
-            .integration-card {
+            .info-block-item-card {
               display: -webkit-box;
               display: -ms-flexbox;
               display: flex;
@@ -221,7 +221,7 @@ export default {
               }
             }
 
-            .integration-card > * {
+            .info-block-item-card > * {
               -ms-flex: 0 0 auto;
               flex: 0 0 auto;
               -webkit-box-flex: 0;

@@ -810,6 +810,10 @@ export function deleteJenkins (payload) {
   return http.delete(`/api/aslan/system/jenkins/integration/${payload.id}`, payload)
 }
 
+export function checkJenkinsConfigExistsAPI () {
+  return http.get('/api/aslan/system/jenkins/exist')
+}
+
 export function queryJenkins () {
   return http.get('/api/aslan/system/jenkins/integration')
 }
@@ -1286,7 +1290,7 @@ export function generateEnvAPI (projectName, envType = '') {
   return http.post(`/api/aslan/environment/environments?auto=true&projectName=${projectName}&envType=${envType}`)
 }
 
-export function generatePipeAPI (projectName) {
+export function generateWorkflowAPI (projectName) {
   return http.post(`/api/aslan/workflow/workflow/${projectName}/auto?projectName=${projectName}`)
 }
 

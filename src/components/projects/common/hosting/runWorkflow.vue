@@ -49,7 +49,7 @@
 <script>
 import { wordTranslate } from '@utils/wordTranslate.js'
 import RunWorkflow from '../../pipeline/common/run_workflow.vue'
-import { getProjectIngressAPI, getWorkflowDetailAPI, getProductWorkflowsInProjectAPI, generatePipeAPI } from '@api'
+import { getProjectIngressAPI, getWorkflowDetailAPI, getProductWorkflowsInProjectAPI, generateWorkflowAPI } from '@api'
 
 export default {
   name: 'runWorkflow',
@@ -102,7 +102,7 @@ export default {
     }
   },
   async created () {
-    await generatePipeAPI(this.projectName)
+    await generateWorkflowAPI(this.projectName)
     this.getWorkflows()
   },
   components: {

@@ -21,11 +21,11 @@
       </div>
     </div>
     <div v-else>
-      <el-form label-width="200px" ref="create-env-ref" :model="projectConfig" :rules="rules">
-        <el-form-item label="环境名称：" prop="env_name">
+      <el-form label-width="80px" label-position="right" ref="create-env-ref" :model="projectConfig" :rules="rules">
+        <el-form-item label="环境名称" prop="env_name">
           <el-input @input="changeEnvName" v-model="projectConfig.env_name" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="命名空间：" v-if="projectConfig.source==='system' && $utils.isEmpty(pmServiceMap)" prop="defaultNamespace">
+        <el-form-item label="命名空间" v-if="projectConfig.source==='system' && $utils.isEmpty(pmServiceMap)" prop="defaultNamespace">
           <el-input style="width: 250px;" :disabled="editButtonDisabled" v-model="projectConfig.defaultNamespace" size="small"></el-input>
           <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">{{editButtonDisabled? '编辑' : '完成'}}</span>
         </el-form-item>
@@ -46,7 +46,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="集群：" prop="cluster_id">
+        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="集群" prop="cluster_id">
           <el-select class="select" filterable @change="changeCluster" v-model="projectConfig.cluster_id" size="small" placeholder="请选择集群">
             <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
           </el-select>
@@ -188,7 +188,7 @@
               </span>
             </div>
 
-            <el-form class="service-form" label-width="190px">
+            <el-form class="service-form" label-width="190px" label-position="left">
               <div class="group" v-for="(typeServiceMap, serviceName) in containerMap" :key="serviceName">
                 <el-tag>{{ serviceName }}</el-tag>
                 <div class="service">
@@ -1113,7 +1113,7 @@ export default {
   }
 
   .el-form-item__label {
-    text-align: left;
+    // text-align: left;
   }
 
   .env-form {

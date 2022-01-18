@@ -43,16 +43,6 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <el-form-item label="构建超时">
-                  <el-input-number size="mini"
-                                  :min="1"
-                                  v-model="jenkinsBuild.timeout"></el-input-number>
-                  <span>分钟</span>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
                 <el-form-item label="构建名称"
                               prop="name" :rules="[{ required: true, message: '构建名称不能为空' }]">
                   <el-input v-model="jenkinsBuild.name"
@@ -79,6 +69,16 @@
                         :value="service">
                     </el-option>
                   </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="24">
+                <el-form-item label="构建超时">
+                  <el-input-number size="mini"
+                                  :min="1"
+                                  v-model="jenkinsBuild.timeout"></el-input-number>
+                  <span>分钟</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -134,10 +134,10 @@
             ref="addConfigForm"
             :model="buildConfig"
             :rules="createRules"
-            label-position="left"
+            label-position="right"
             label-width="80px"
           >
-            <el-row>
+            <el-row v-if="jenkinsEnabled">
               <el-col :span="24">
                 <el-form-item label="构建来源">
                   <el-select style="width: 100%;"
@@ -152,16 +152,6 @@
                         :value="item.value">
                     </el-option>
                   </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-form-item label="构建超时">
-                  <el-input-number size="mini"
-                                  :min="1"
-                                  v-model="buildConfig.timeout"></el-input-number>
-                  <span>分钟</span>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -201,87 +191,17 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit" mini></BuildEnv>
-          </el-form>
-          <el-form
-            ref="buildApp"
-            :inline="true"
-            :model="buildConfig"
-            class="form-bottom-0"
-            label-position="top"
-            label-width="80px"
-          >
-            <span class="item-title">应用列表</span>
-            <el-button
-              v-if="buildConfig.pre_build.installs.length === 0"
-              style="padding: 0;"
-              @click="addFirstBuildApp()"
-              size="mini"
-              type="text"
-              >新增</el-button
-            >
-            <div class="divider item"></div>
-            <el-row
-              v-for="(app, build_app_index) in buildConfig.pre_build.installs"
-              :key="build_app_index"
-            >
-              <el-col :span="12">
-                <el-form-item
-                  :prop="'pre_build.installs.' + build_app_index + '.name'"
-                  :rules="{
-                    required: true,
-                    message: '应用名不能为空',
-                    trigger: 'blur',
-                  }"
-                >
-                  <el-select
-                    style="width: 100%;"
-                    v-model="buildConfig.pre_build.installs[build_app_index]"
-                    placeholder="请选择应用"
-                    size="mini"
-                    value-key="id"
-                    filterable
-                  >
-                    <el-option
-                      v-for="(app, index) in allApps"
-                      :key="index"
-                      :label="`${app.name} ${app.version} `"
-                      :value="{
-                        name: app.name,
-                        version: app.version,
-                        id: app.name + app.version,
-                      }"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item>
-                  <div class="app-operation">
-                    <el-button
-                      v-if="buildConfig.pre_build.installs.length >= 1"
-                      @click="deleteBuildApp(build_app_index)"
-                      type="danger"
-                      size="mini"
-                      plain
-                      >删除</el-button
-                    >
-                    <el-button
-                      v-if="
-                        build_app_index ===
-                        buildConfig.pre_build.installs.length - 1
-                      "
-                      @click="addBuildApp(build_app_index)"
-                      type="primary"
-                      size="mini"
-                      plain
-                      >新增</el-button
-                    >
-                  </div>
+            <el-row>
+              <el-col :span="24">
+                <el-form-item label="构建超时">
+                  <el-input-number size="mini"
+                                  :min="1"
+                                  v-model="buildConfig.timeout"></el-input-number>
+                  <span>分钟</span>
                 </el-form-item>
               </el-col>
             </el-row>
+            <BuildEnv :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit"></BuildEnv>
           </el-form>
         </div>
         <div class="section">
@@ -696,7 +616,6 @@ import BuildEnv from '@/components/projects/build/build_env.vue'
 import EnvVariable from '@/components/projects/build/env_variable.vue'
 import {
   getBuildConfigDetailAPI,
-  getAllAppsAPI,
   getDockerfileTemplatesAPI,
   getDockerfileAPI,
   getCodeSourceMaskedAPI,
@@ -704,7 +623,9 @@ import {
   updateBuildConfigAPI,
   getServiceTargetsAPI,
   getRegistryWhenBuildAPI,
-  queryJenkinsJob, queryJenkinsParams
+  checkJenkinsConfigExistsAPI,
+  queryJenkinsJob,
+  queryJenkinsParams
 } from '@api'
 import Editor from 'vue2-ace-bind'
 import Resize from '@/components/common/resize.vue'
@@ -739,6 +660,7 @@ export default {
         label: 'Jenkins 构建'
       }],
       jenkinsJobList: [],
+      jenkinsEnabled: false,
       jenkinsBuild: {
         name: '',
         desc: '',
@@ -785,7 +707,6 @@ export default {
       post_script_enabled: false,
       showDockerfile: false,
       paramsBuildDialogVisible: false,
-      allApps: [],
       allRegistry: [],
       serviceTargets: [],
       allCodeHosts: [],
@@ -1145,17 +1066,8 @@ export default {
         this.$set(this.buildConfig, 'targets', target)
         this.$set(this.jenkinsBuild, 'targets', target)
       }
+      this.jenkinsEnabled = (await checkJenkinsConfigExistsAPI().catch(error => console.log(error))).exists
       this.configDataLoading = false
-      getAllAppsAPI().then((response) => {
-        const apps = this.$utils.sortVersion(response, 'name', 'asc')
-        this.allApps = apps.map((app, index) => {
-          return {
-            name: app.name,
-            version: app.version,
-            id: app.name + app.version
-          }
-        })
-      })
       getDockerfileTemplatesAPI().then((res) => {
         this.dockerfileTemplates = res.dockerfile_template
       })
@@ -1307,19 +1219,6 @@ export default {
     }
   }
 
-  .breadcrumb {
-    .el-breadcrumb {
-      font-size: 16px;
-      line-height: 1.35;
-
-      .el-breadcrumb__item__inner a:hover,
-      .el-breadcrumb__item__inner:hover {
-        color: #1989fa;
-        cursor: pointer;
-      }
-    }
-  }
-
   .section {
     margin-bottom: 15px;
   }
@@ -1339,12 +1238,6 @@ export default {
   .form-bottom-0 {
     .el-form-item {
       margin-bottom: 0;
-    }
-  }
-
-  .app-operation {
-    .el-button + .el-button {
-      margin-left: 0;
     }
   }
 

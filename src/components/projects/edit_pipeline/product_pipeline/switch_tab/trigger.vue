@@ -192,7 +192,8 @@
               placeholder="输入目录时，多个目录请用回车换行分隔"
             ></el-input>
           </el-form-item>
-          <ul v-if="webhookSwap.repo.source!=='gerrit' && webhookSwap.repo.source!=='codehub'" style="padding-left: 120px;">
+          <ul v-if="webhookSwap.repo.source!=='gerrit' && webhookSwap.repo.source!=='codehub'" style="padding-left: 120px; color: #909399; font-size: 12px; line-height: 20px;">
+            <li>输入目录时，多个目录请用回车换行分隔</li>
             <li>"/" 表示代码库中的所有文件</li>
             <li>用 "!" 符号开头可以排除相应的文件</li>
           </ul>
@@ -912,7 +913,7 @@ export default {
 
   .el-form {
     .el-form-item {
-      margin-bottom: 8px;
+      margin-bottom: 15px;
 
       &.bottom-22 {
         margin-bottom: 22px;

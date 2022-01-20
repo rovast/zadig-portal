@@ -32,7 +32,10 @@
           </el-form-item>
         </el-col>
         <el-col :span="narrowWidth ? 4 : 4">
-          <el-form-item :prop="'envs.' + build_env_index + '.value'" :rules="{required: true, message: '值 不能为空', trigger: ['blur', 'change']}">
+          <el-form-item
+            :prop="'envs.' + build_env_index + '.value'"
+            :rules="{required: true, message: '值 不能为空', trigger: ['blur', 'change']}"
+          >
             <el-select
               v-if="preEnvs.envs[build_env_index].type==='choice'"
               v-model="preEnvs.envs[build_env_index].value"
@@ -156,9 +159,12 @@ export default {
     saveVariable () {
       this.dialogVisible = false
       const index = this.currentVars.index
-      this.preEnvs.envs[
-        index
-      ].choice_option = this.currentVars.choice_option.split(',')
+      const env = this.preEnvs.envs[index]
+      const choice_option = this.currentVars.choice_option.split(',')
+      env.choice_option = choice_option
+      if (!choice_option.includes(env.value)) {
+        env.value = ''
+      }
     }
   },
   watch: {

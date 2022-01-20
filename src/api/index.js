@@ -543,12 +543,16 @@ export function cancelWorkflowAPI (projectName, workflowName, taskID) {
   return http.delete(`/api/aslan/workflow/workflowtask/id/${taskID}/pipelines/${workflowName}?projectName=${projectName}`)
 }
 
-export function workflowTaskListAPI (projectName, name, start, max, workflowType = '') {
-  return http.get(`/api/aslan/workflow/workflowtask/max/${max}/start/${start}/pipelines/${name}?projectName=${projectName}&workflowType=${workflowType}`)
+export function workflowTaskListAPI (projectName, name, start, max, workflowType = '', queryType = '', filters = '') {
+  return http.get(`/api/aslan/workflow/workflowtask/max/${max}/start/${start}/pipelines/${name}?projectName=${projectName}&workflowType=${workflowType}&queryType=${queryType}&filters=${filters}`)
 }
 
 export function workflowTaskDetailAPI (projectName, workflowName, taskID, workflowType = '') {
   return http.get(`/api/aslan/workflow/workflowtask/id/${taskID}/pipelines/${workflowName}?projectName=${projectName}&workflowType=${workflowType}`)
+}
+
+export function getWorkflowFilterListAPI (projectName, name, queryType, workflowType = 'workflow') {
+  return http.get(`/api/aslan/workflow/workflowtask/filters/pipelines/${name}?projectName=${projectName}&queryType=${queryType}&workflowType=${workflowType}`)
 }
 
 export function workflowTaskDetailSSEAPI (projectName, workflowName, taskID, workflowType = '') {

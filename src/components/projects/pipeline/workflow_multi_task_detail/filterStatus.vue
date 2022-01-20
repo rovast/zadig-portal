@@ -1,6 +1,6 @@
 <template>
   <div class="filter-status">
-    <el-popover ref="popoverRef" placement="bottom" :offset="filterInfo.type ? 70 : 0" trigger="click">
+    <el-popover ref="popoverRef" placement="bottom" :offset="filterInfo.type ? 90 : 0" trigger="click">
       <div class="filter-content">
         <div class="content left">
           <el-radio-group v-model="filterInfo.type" @change="updateFilter">
@@ -86,7 +86,7 @@ export default {
       console.log('value', value)
       if (!this.filterList[value]) {
         console.log('请求列表数据')
-        const res = await getFilterList({ type: value })
+        const res = await this.getFilterList({ type: value })
         this.$set(this.filterList, value, res)
       }
       this.filterInfo.search = ''

@@ -299,7 +299,7 @@ export default {
     getFilterList ({ type }) {
       return getWorkflowFilterListAPI(this.projectName, this.workflowName, type)
         .then(res => {
-          return res[type]
+          return res
         })
         .catch(err => {
           console.log(err)

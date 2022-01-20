@@ -83,9 +83,7 @@ export default {
   },
   methods: {
     async updateFilter (value) {
-      console.log('value', value)
       if (!this.filterList[value]) {
-        console.log('请求列表数据')
         const res = await this.getFilterList({ type: value })
         this.$set(this.filterList, value, res)
       }

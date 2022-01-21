@@ -219,78 +219,32 @@
         </div>
 
         <div class="section">
-          <el-form
-            ref="cacheDir"
-            :inline="true"
-            :model="buildConfig"
-            class="form-bottom-0"
-            label-position="left"
-            label-width="130px"
-          >
-            <span class="item-title">缓存策略</span>
-            <div class="divider item"></div>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="使用工作空间缓存">
-                  <el-switch v-model="useWorkspaceCache" active-color="#409EFF">
-                  </el-switch>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <template>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="缓存自定义目录">
-                    <el-button
-                      v-if="
-                        !this.buildConfig.caches ||
-                        this.buildConfig.caches.length === 0
-                      "
-                      style="padding: 0;"
-                      @click="addFirstCacheDir()"
-                      type="text"
-                      >新增</el-button
-                    >
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row v-for="(dir, index) in buildConfig.caches" :key="index">
-                <el-col :span="14">
-                  <el-form-item :label="index === 0 ? '' : ''">
-                    <el-input
-                      v-model="buildConfig.caches[index]"
-                      style="width: 100%;"
-                      size="mini"
-                    >
-                      <template slot="prepend">$WORKSPACE/</template>
+        <el-form ref="cacheDir"
+                 :inline="true"
+                 :model="buildConfig"
+                 class="form-container"
+                 label-position="left">
+          <span class="item-title">缓存策略</span>
+          <div class="divider item"></div>
+          <el-row>
+            <el-col :span="5">
+              <el-form-item label="开启缓存">
+                <el-switch v-model="cache.enable"
+                           active-color="#409EFF">
+                </el-switch>
+              </el-form-item>
+                <el-radio-group v-if="cache.enable" v-model="cache.type">
+                  <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
+                  <el-radio label="custom">自定义目录
+                    <el-input v-model="cache.dir"
+                            style="width: 100%;"
+                            size="mini">
                     </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="10">
-                  <el-form-item :label="index === 0 ? '' : ''">
-                    <div class="app-operation">
-                      <el-button
-                        v-if="buildConfig.caches.length >= 1"
-                        @click="deleteCacheDir(index)"
-                        type="danger"
-                        size="mini"
-                        plain
-                        >删除</el-button
-                      >
-                      <el-button
-                        v-if="index === buildConfig.caches.length - 1"
-                        @click="addCacheDir(index)"
-                        type="primary"
-                        size="mini"
-                        plain
-                        >新增</el-button
-                      >
-                    </div>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </template>
-          </el-form>
+                  </el-radio>
+                </el-radio-group>
+            </el-col>
+          </el-row>
+        </el-form>
         </div>
         <div class="section">
           <el-form
@@ -680,6 +634,7 @@ export default {
         timeout: 60,
         name: '',
         desc: '',
+        caches: '',
         repos: [],
         pre_build: {
           clean_workspace: false,
@@ -700,6 +655,11 @@ export default {
         scripts: '#!/bin/bash\nset -e',
         main_file: '',
         post_build: {}
+      },
+      cache: {
+        enable: true,
+        type: 'workspace',
+        dir: ''
       },
       stcov_enabled: false,
       docker_enabled: false,
@@ -779,47 +739,6 @@ export default {
       return services.filter(element => {
         return (!(flattenDeep(existServices).includes(element.service_name)))
       })
-    },
-    addFirstCacheDir () {
-      if (!this.buildConfig.caches || this.buildConfig.caches.length === 0) {
-        this.$set(this.buildConfig, 'caches', [])
-        this.buildConfig.caches.push('')
-      }
-    },
-    addCacheDir (index) {
-      this.$refs.cacheDir.validate((valid) => {
-        if (valid) {
-          this.buildConfig.caches.push('')
-        } else {
-          return false
-        }
-      })
-    },
-    deleteCacheDir (index) {
-      this.buildConfig.caches.splice(index, 1)
-    },
-    addBuildApp (index) {
-      this.$refs.buildApp.validate((valid) => {
-        if (valid) {
-          this.buildConfig.pre_build.installs.push({
-            name: '',
-            version: '',
-            id: ''
-          })
-        } else {
-          return false
-        }
-      })
-    },
-    addFirstBuildApp () {
-      this.buildConfig.pre_build.installs.push({
-        name: '',
-        version: '',
-        id: ''
-      })
-    },
-    deleteBuildApp (index) {
-      this.buildConfig.pre_build.installs.splice(index, 1)
     },
     addExtra (command) {
       if (command === 'docker') {
@@ -950,6 +869,16 @@ export default {
       }
       payload.product_name = this.projectName
       payload.source = this.source
+      // Cache
+      if (this.cache.enable) {
+        if (this.cache.type === 'workspace') {
+          payload.pre_build.clean_workspace = false
+        } else if (this.cache.type === 'custom') {
+          payload.caches = this.cache.dir
+        }
+      } else {
+        payload.pre_build.clean_workspace = true
+      }
       const valid = await this.$refs[formName].validate()
       if (valid) {
         const res = await createBuildConfigAPI(payload)
@@ -982,6 +911,16 @@ export default {
       }
       payload.source = this.source
       payload.productName = this.projectName
+      // Cache
+      if (this.cache.enable) {
+        if (this.cache.type === 'workspace') {
+          payload.pre_build.clean_workspace = false
+        } else if (this.cache.type === 'custom') {
+          payload.caches = this.cache.dir
+        }
+      } else {
+        payload.pre_build.clean_workspace = true
+      }
       const res = await updateBuildConfigAPI(payload)
       if (res) {
         this.$message({
@@ -1039,6 +978,17 @@ export default {
             }
           }
 
+          // Cache
+          if (this.buildConfig.caches || this.buildConfig.pre_build.clean_workspace === false) {
+            this.cache.enable = true
+            if (this.buildConfig.caches) {
+              this.cache.type = 'custom'
+              this.cache.dir = this.buildConfig.caches
+            } else if (this.buildConfig.caches === '' && this.buildConfig.pre_build.clean_workspace === true) {
+              this.cache.enable = false
+            }
+          }
+
           const targets = this.buildConfig.targets.map(element => {
             element.key = element.service_name + '/' + element.service_module
             return element
@@ -1091,14 +1041,6 @@ export default {
     },
     serviceName () {
       return this.$route.query.service_name
-    },
-    useWorkspaceCache: {
-      get () {
-        return !this.buildConfig.pre_build.clean_workspace
-      },
-      set (val) {
-        this.buildConfig.pre_build.clean_workspace = !val
-      }
     }
   },
   watch: {

@@ -117,7 +117,7 @@
               <el-button size="mini" plain @click="cluster.advanced_config.project_names = []">清空所有</el-button>
             </el-form-item>
           </section>
-          <div v-if="isEdit">
+          <div>
             <section>
               <h4>
                 调度策略
@@ -129,10 +129,11 @@
                   </div>
                   <i class="el-icon-question"></i>
                 </el-tooltip>
+                <span v-if="!isEdit" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可选择调度策略</span>
               </h4>
               <el-form-item prop="advanced_config.strategy" required>
                 <span slot="label">选择策略</span>
-                <el-select v-model="cluster.advanced_config.strategy" placeholder="请选择策略" style="width: 100%;" size="small" required>
+                <el-select v-model="cluster.advanced_config.strategy" placeholder="请选择策略" style="width: 100%;" size="small" required :disabled="!isEdit">
                   <el-option label="随机调度" value="normal"></el-option>
                   <el-option label="强制调度" value="required"></el-option>
                   <el-option label="优先调度" value="preferred"></el-option>
@@ -173,10 +174,10 @@
               <span slot="label">选择存储介质</span>
               <el-radio-group v-model="cluster.cache.medium_type">
                 <el-radio label="object">对象存储</el-radio>
-                <el-radio label="cluster">集群存储</el-radio>
+                <el-radio :disabled="!isEdit" label="cluster">集群存储 <span v-if="!isEdit" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可使用集群资源</span></el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="cluster.cache.medium_type === 'object'" prop="cache.object_properties">
+            <el-form-item v-if="cluster.cache.medium_type === 'object'" prop="cache.object_properties" required>
               <span slot="label">选择对象存储</span>
               <el-select v-model="cluster.cache.object_properties.id" placeholder="请选择对象存储" style="width: 100%;" size="small">
                 <template v-if="allStorage.length > 0">
@@ -519,8 +520,6 @@ export default {
           this.cluster.cache.object_properties.id = defaultStorage.id
         }
         this.dialogClusterFormVisible = true
-        this.allStorageClass = await getClusterStorageClassAPI()
-        this.allPvc = await getClusterPvcAPI()
       } else if (operate === 'add') {
         this.$refs.cluster.validate(valid => {
           if (valid) {
@@ -545,6 +544,7 @@ export default {
       } else if (operate === 'recover') {
         this.recoverCluster(currentCluster.id)
       } else if (operate === 'edit') {
+        const namesapce = currentCluster.local ? 'unknown' : 'kodorover-agent'
         this.getClusterNode(currentCluster.id)
         this.cluster = cloneDeep(currentCluster)
         this.cluster.storage = {
@@ -554,9 +554,9 @@ export default {
         this.expandAdvanced = true
         if (this.cluster.cache.medium_type === 'object') {
           this.allStorage = await getStorageListAPI()
-        } else {
-          this.allStorageClass = await getClusterStorageClassAPI()
-          this.allPvc = await getClusterPvcAPI()
+        } else if (this.cluster.cache.medium_type === 'cluster') {
+          this.allStorageClass = await getClusterStorageClassAPI(currentCluster.id, namesapce)
+          this.allPvc = await getClusterPvcAPI(currentCluster.id, namesapce)
         }
         this.dialogClusterFormVisible = true
       } else if (operate === 'update') {

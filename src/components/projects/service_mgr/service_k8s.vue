@@ -49,7 +49,8 @@
                            @onRefreshService="getServices"
                            @onRefreshSharedService="getSharedServices"
                            @onSelectServiceChange="onSelectServiceChange"
-                           @updateYaml="updateYaml($event)"></serviceTree>
+                           @updateYaml="updateYaml($event)"
+                           :envDialogVisible.sync="updateEnvDialogVisible"></serviceTree>
             </div>
             <template v-if="service.service_name  &&  services.length >0">
               <template v-if="service.type==='k8s'">

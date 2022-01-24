@@ -1,7 +1,6 @@
 <template>
   <div class="insight-service">
-    <el-row class="row-container"
-            :gutter="20">
+    <el-row class="row-container" :gutter="20">
       <el-col :span="12">
         <div class="chart-wrapper">
           <div class="chart-container">
@@ -9,9 +8,7 @@
               <span class="head">微服务健康度</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <Health :startTime="selectedDuration[0]"
-                           :endTime="selectedDuration[1]"
-                           :selectedProjects="selectedProjects"/>
+            <Health :selectedDuration="selectedDuration" :selectedProjects="selectedProjects" />
           </div>
         </div>
       </el-col>
@@ -22,15 +19,12 @@
               <span class="head">微服务周部署频次</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <Deploy :startTime="selectedDuration[0]"
-                           :endTime="selectedDuration[1]"
-                           :selectedProjects="selectedProjects"/>
+            <Deploy :selectedDuration="selectedDuration" :selectedProjects="selectedProjects" />
           </div>
         </div>
       </el-col>
     </el-row>
-    <el-row class="row-container"
-            :gutter="20">
+    <el-row class="row-container" :gutter="20">
       <el-col :span="12">
         <div class="chart-wrapper">
           <div class="chart-container">
@@ -38,9 +32,7 @@
               <span class="head">Top 5 微服务部署统计</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <DeploySummary :startTime="selectedDuration[0]"
-                                  :endTime="selectedDuration[1]"
-                                  :selectedProjects="selectedProjects"/>
+            <DeploySummary :selectedDuration="selectedDuration" :selectedProjects="selectedProjects" />
           </div>
         </div>
       </el-col>
@@ -51,9 +43,7 @@
               <span class="head">Top 5 微服务部署失败统计</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <ServiceFailure :startTime="selectedDuration[0]"
-                            :endTime="selectedDuration[1]"
-                            :selectedProjects="selectedProjects"/>
+            <ServiceFailure :selectedDuration="selectedDuration" :selectedProjects="selectedProjects" />
           </div>
         </div>
       </el-col>
@@ -84,13 +74,13 @@ export default {
   },
   computed: {
     getSetTime () {
-      const start = moment(this.selectedDuration[0], 'X').format('YYYY/MM/DD')
-      const end = moment(this.selectedDuration[1], 'X').format('YYYY/MM/DD')
+      const start = moment(Math.floor(this.selectedDuration[0] / 1000), 'X').format('YYYY/MM/DD')
+      const end = moment(Math.floor(this.selectedDuration[1] / 1000), 'X').format('YYYY/MM/DD')
       return `${start} - ${end}`
     }
   }
 }
 </script>
 <style lang="less">
-@import "~@assets/css/component/insight-charts.less";
+@import '~@assets/css/component/insight-charts.less';
 </style>

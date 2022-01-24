@@ -94,8 +94,8 @@ export default {
   },
   methods: {
     getTestHealth () {
-      const startTime = Math.floor(this.startTime.getTime() / 1000)
-      const endTime = Math.floor(this.endTime.getTime() / 1000)
+      const startTime = Math.floor(this.selectedDuration[0] / 1000)
+      const endTime = Math.floor(this.selectedDuration[1] / 1000)
       const selectedProjects = this.selectedProjects
       getTestHealthAPI({
         startDate: startTime,
@@ -116,21 +116,24 @@ export default {
     'v-chart': ECharts
   },
   watch: {
-    startTime (val, old_val) {
-      this.getTestHealth()
+    selectedDuration: {
+      handler () {
+        this.getTestHealth()
+      },
+      immediate: false
     },
-    endTime (val, old_val) {
-      this.getTestHealth()
-    },
-    selectedProjects (val, old_val) {
-      this.getTestHealth()
+    selectedProjects: {
+      handler () {
+        this.getTestHealth()
+      },
+      immediate: false
     }
   },
+  mounted () {
+    this.getTestHealth()
+  },
   props: {
-    startTime: {
-      required: true
-    },
-    endTime: {
+    selectedDuration: {
       required: true
     },
     selectedProjects: {

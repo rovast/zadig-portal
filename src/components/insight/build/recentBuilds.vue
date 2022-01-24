@@ -58,13 +58,16 @@ export default {
       return wordTranslate(word, category, subitem)
     }
   },
+  watch: {
+    selectedProjects: {
+      handler () {
+        this.getLatestBuilds()
+      },
+      immediate: false
+    }
+  },
   mounted () {
     this.getLatestBuilds()
-  },
-  watch: {
-    'selectedProjects' (val, old_val) {
-      this.getLatestBuilds()
-    }
   },
   props: {
     selectedProjects: {

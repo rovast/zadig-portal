@@ -9,8 +9,7 @@
               <span class="head">构建趋势(周)</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <BuildTrend :startTime="selectedDuration[0]"
-                        :endTime="selectedDuration[1]"
+            <BuildTrend :selectedDuration="selectedDuration"
                         :selectedProjects="selectedProjects"/>
           </div>
         </div>
@@ -22,8 +21,7 @@
               <span class="head">构建健康度</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <Health :startTime="selectedDuration[0]"
-                         :endTime="selectedDuration[1]"
+            <Health :selectedDuration="selectedDuration"
                          :selectedProjects="selectedProjects"/>
           </div>
         </div>
@@ -48,8 +46,7 @@
               <span class="head">日构建频次</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <DaliyBuildFeq :startTime="selectedDuration[0]"
-                           :endTime="selectedDuration[1]"
+            <DaliyBuildFeq :selectedDuration="selectedDuration"
                            :selectedProjects="selectedProjects"/>
           </div>
         </div>
@@ -61,8 +58,7 @@
               <span class="head">平均构建时长</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <AverageBuildDuration :startTime="selectedDuration[0]"
-                                  :endTime="selectedDuration[1]"
+            <AverageBuildDuration :selectedDuration="selectedDuration"
                                   :selectedProjects="selectedProjects"/>
 
           </div>
@@ -75,8 +71,7 @@
               <span class="head">Top 10 耗时较长的构建</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <LongestBuild :startTime="selectedDuration[0]"
-                          :endTime="selectedDuration[1]"
+            <LongestBuild :selectedDuration="selectedDuration"
                           :selectedProjects="selectedProjects"/>
 
           </div>
@@ -112,8 +107,8 @@ export default {
   },
   computed: {
     getSetTime () {
-      const start = moment(this.selectedDuration[0], 'X').format('YYYY/MM/DD')
-      const end = moment(this.selectedDuration[1], 'X').format('YYYY/MM/DD')
+      const start = moment(Math.floor(this.selectedDuration[0] / 1000), 'X').format('YYYY/MM/DD')
+      const end = moment(Math.floor(this.selectedDuration[1] / 1000), 'X').format('YYYY/MM/DD')
       return `${start} - ${end}`
     }
   }

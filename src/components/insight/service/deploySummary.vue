@@ -79,8 +79,8 @@ export default {
   },
   methods: {
     getServiceDeploySummary () {
-      const startTime = Math.floor(this.startTime.getTime() / 1000)
-      const endTime = Math.floor(this.endTime.getTime() / 1000)
+      const startTime = Math.floor(this.selectedDuration[0] / 1000)
+      const endTime = Math.floor(this.selectedDuration[1] / 1000)
       const selectedProjects = this.selectedProjects
       getServiceDeploySummaryAPI({ startDate: startTime, endDate: endTime, projectNames: selectedProjects }).then((res) => {
         this.option.yAxis.data = res.map((element, index) => {
@@ -107,22 +107,25 @@ export default {
     'v-chart': ECharts
   },
   watch: {
-    'startTime' (val, old_val) {
-      this.getServiceDeploySummary()
+    selectedDuration: {
+      handler () {
+        this.getServiceDeploySummary()
+      },
+      immediate: false
     },
-    'endTime' (val, old_val) {
-      this.getServiceDeploySummary()
-    },
-    'selectedProjects' (val, old_val) {
-      this.getServiceDeploySummary()
+    selectedProjects: {
+      handler () {
+        this.getServiceDeploySummary()
+      },
+      immediate: false
     }
 
   },
+  mounted () {
+    this.getServiceDeploySummary()
+  },
   props: {
-    startTime: {
-      required: true
-    },
-    endTime: {
+    selectedDuration: {
       required: true
     },
     selectedProjects: {

@@ -71,8 +71,8 @@ export default {
   },
   methods: {
     getAverageTestsDuration () {
-      const startTime = Math.floor(this.startTime.getTime() / 1000)
-      const endTime = Math.floor(this.endTime.getTime() / 1000)
+      const startTime = Math.floor(this.selectedDuration[0] / 1000)
+      const endTime = Math.floor(this.selectedDuration[1] / 1000)
       const selectedProjects = this.selectedProjects
       getAverageTestsDurationAPI({
         startDate: startTime,
@@ -95,21 +95,24 @@ export default {
     'v-chart': ECharts
   },
   watch: {
-    startTime (val, old_val) {
-      this.getAverageTestsDuration()
+    selectedDuration: {
+      handler () {
+        this.getAverageTestsDuration()
+      },
+      immediate: false
     },
-    endTime (val, old_val) {
-      this.getAverageTestsDuration()
-    },
-    selectedProjects (val, old_val) {
-      this.getAverageTestsDuration()
+    selectedProjects: {
+      handler () {
+        this.getAverageTestsDuration()
+      },
+      immediate: false
     }
   },
+  mounted () {
+    this.getAverageTestsDuration()
+  },
   props: {
-    startTime: {
-      required: true
-    },
-    endTime: {
+    selectedDuration: {
       required: true
     },
     selectedProjects: {

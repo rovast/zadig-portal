@@ -19,6 +19,7 @@
           size="small"
           unlink-panels
           range-separator="-"
+          value-format="timestamp"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           :picker-options="pickerOptions"
@@ -74,7 +75,7 @@ export default {
           }
         ]
       },
-      selectedDuration: [new Date(), new Date()],
+      selectedDuration: [new Date().getTime() - 3600 * 1000 * 24 * 30, new Date().getTime()],
       selectedProjects: [],
       projects: [],
       activeTab: 'build'
@@ -100,10 +101,10 @@ export default {
     }
   },
   mounted () {
-    const end = new Date()
-    const start = new Date()
-    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-    this.$set(this, 'selectedDuration', [start, end])
+    // const end = new Date()
+    // const start = new Date()
+    // start.setTime(start)
+    // this.$set(this, 'selectedDuration', [start, end])
     this.getProjects()
     bus.$emit(`show-sidebar`, true)
     bus.$emit(`set-topbar-title`, { title: 'DevOps 洞察', breadcrumb: [] })

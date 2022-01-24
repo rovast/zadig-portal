@@ -75,8 +75,8 @@ export default {
   },
   methods: {
     getTestDeploy () {
-      const startTime = Math.floor(this.startTime.getTime() / 1000)
-      const endTime = Math.floor(this.endTime.getTime() / 1000)
+      const startTime = Math.floor(this.selectedDuration[0] / 1000)
+      const endTime = Math.floor(this.selectedDuration[1] / 1000)
       const selectedProjects = this.selectedProjects
       getTestDeployAPI({
         startDate: startTime,
@@ -103,21 +103,24 @@ export default {
     'v-chart': ECharts
   },
   watch: {
-    startTime (val, old_val) {
-      this.getTestDeploy()
+    selectedDuration: {
+      handler () {
+        this.getTestDeploy()
+      },
+      immediate: false
     },
-    endTime (val, old_val) {
-      this.getTestDeploy()
-    },
-    selectedProjects (val, old_val) {
-      this.getTestDeploy()
+    selectedProjects: {
+      handler () {
+        this.getTestDeploy()
+      },
+      immediate: false
     }
   },
+  mounted () {
+    this.getTestDeploy()
+  },
   props: {
-    startTime: {
-      required: true
-    },
-    endTime: {
+    selectedDuration: {
       required: true
     },
     selectedProjects: {

@@ -74,8 +74,8 @@ export default {
   },
   methods: {
     getTestCases () {
-      const startTime = Math.floor(this.startTime.getTime() / 1000)
-      const endTime = Math.floor(this.endTime.getTime() / 1000)
+      const startTime = Math.floor(this.selectedDuration[0] / 1000)
+      const endTime = Math.floor(this.selectedDuration[1] / 1000)
       const selectedProjects = this.selectedProjects
       getTestCasesAPI({ startDate: startTime, endDate: endTime, projectNames: selectedProjects }).then((res) => {
         this.option.xAxis.data = (res.map(element => {
@@ -94,22 +94,25 @@ export default {
     'v-chart': ECharts
   },
   watch: {
-    'startTime' (val, old_val) {
-      this.getTestCases()
+    selectedDuration: {
+      handler () {
+        this.getTestCases()
+      },
+      immediate: false
     },
-    'endTime' (val, old_val) {
-      this.getTestCases()
-    },
-    'selectedProjects' (val, old_val) {
-      this.getTestCases()
+    selectedProjects: {
+      handler () {
+        this.getTestCases()
+      },
+      immediate: false
     }
 
   },
+  mounted () {
+    this.getTestCases()
+  },
   props: {
-    startTime: {
-      required: true
-    },
-    endTime: {
+    selectedDuration: {
       required: true
     },
     selectedProjects: {

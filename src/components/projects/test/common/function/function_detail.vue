@@ -46,11 +46,33 @@
       <div class="divider">
       </div>
 
-      <div class="title">缓存策略</div>
-      <el-form-item label-width="130px"
-                    label="使用工作空间缓存">
-        <el-switch v-model="useWorkspaceCache"></el-switch>
-      </el-form-item>
+      <div class="section">
+        <el-form ref="cacheDir"
+                 :inline="true"
+                 :model="test"
+                 class="form-container"
+                 label-position="left">
+          <span class="item-title">缓存策略</span>
+          <el-row>
+            <el-col :span="4">
+              <el-form-item label="开启缓存" style="margin-bottom: 0;">
+                <el-switch v-model="cache.enable"
+                           active-color="#409EFF">
+                </el-switch>
+              </el-form-item>
+                <el-radio-group v-if="cache.enable" v-model="cache.type">
+                  <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
+                  <el-radio label="custom">自定义目录
+                    <el-input v-model="cache.dir"
+                            style="width: 100%;"
+                            size="mini">
+                    </el-input>
+                  </el-radio>
+                </el-radio-group>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
       <div class="divider">
       </div>
       <div class="trigger">
@@ -259,13 +281,18 @@ const validateTestName = (rule, value, callback) => {
 export default {
   data () {
     return {
-      productTemplates: [],
       allCodeHosts: [],
+      cache: {
+        enable: true,
+        type: 'workspace',
+        dir: ''
+      },
       test: {
         name: '',
         product_name: '',
         desc: '',
         repos: [],
+        caches: '',
         timeout: 60,
         hook_ctl: {
           enabled: false,
@@ -432,23 +459,9 @@ export default {
         this.test.post_test.stcov = this.test.post_test.stcov || {}
         this.test.post_test.stcov.enable = val
       }
-    },
-    useWorkspaceCache: {
-      get () {
-        return !this.test.pre_test.clean_workspace
-      },
-      set (val) {
-        this.test.pre_test.clean_workspace = !val
-      }
     }
   },
   methods: {
-    decodeCampaign (c) {
-      return c.enabled === true
-    },
-    encodeCampaign (b) {
-      return !!b
-    },
     addTrigger () {
       this.test.repos.forEach(repo => {
         this.allCodeHosts.forEach(codehost => {
@@ -494,7 +507,17 @@ export default {
               repo.source = codehost.type
             }
           })
-        });
+        })
+        // Cache
+        if (this.cache.enable) {
+          if (this.cache.type === 'workspace') {
+            this.test.pre_test.clean_workspace = false
+          } else if (this.cache.type === 'custom') {
+            this.test.caches = this.cache.dir
+          }
+        } else {
+          this.test.pre_test.clean_workspace = true
+        }
         (this.isEdit ? updateTestAPI : createTestAPI)(this.projectName, this.test).then(res => {
           this.$message({
             message: '保存成功',
@@ -577,6 +600,16 @@ export default {
             i.id = `${i.name}${i.version}`
             return i
           })
+        }
+        // Cache
+        if (this.test.caches || this.test.pre_test.clean_workspace === false) {
+          this.cache.enable = true
+          if (this.test.caches) {
+            this.cache.type = 'custom'
+            this.cache.dir = this.test.caches
+          } else if (this.test.caches === '' && this.test.pre_test.clean_workspace === true) {
+            this.cache.enable = false
+          }
         }
         this.configDataLoading = false
       })

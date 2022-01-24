@@ -17,8 +17,9 @@
           <el-checkbox-group v-model="checkedEnvList">
             <el-checkbox v-for="(env,index) in envNameList"
                          :key="index"
-                         :label="env.envName"></el-checkbox>
+                         :label="env">{{env.name}}</el-checkbox>
           </el-checkbox-group>
+          <div v-show="checkedEnvList.find(env => env.is_existed)" class="tip-desc">由 Zadig 接管的服务将覆盖所选命名空间中的同名服务，请慎重操作！</div>
         </div>
         <span slot="footer"
               class="dialog-footer">
@@ -224,7 +225,7 @@ export default {
     },
     autoUpgradeEnv () {
       const payload = {
-        env_names: this.checkedEnvList
+        env_names: this.checkedEnvList.map(env => env.name)
       }
       const projectName = this.projectName
       const force = false
@@ -254,7 +255,7 @@ export default {
         type: 'warning'
       }).then(() => {
         const payload = {
-          env_names: this.checkedEnvList
+          env_names: this.checkedEnvList.map(env => env.name)
         }
         const force = true
         const projectName = this.projectName
@@ -273,11 +274,13 @@ export default {
     async getEnvNameList () {
       const projectName = this.projectName
       const envNameList = await listProductAPI(projectName)
-      envNameList.forEach(element => {
-        element.envName = element.name
-      })
       if (envNameList.length) {
-        this.envNameList = envNameList
+        this.envNameList = envNameList.map(env => {
+          return {
+            name: env.name,
+            is_existed: env.is_existed || false
+          }
+        })
       }
     }
   },

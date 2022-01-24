@@ -62,7 +62,7 @@
             <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns" :value="ns"></el-option>
           </el-select>
           <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">{{editButtonDisabled? '编辑' : '完成'}}</span>
-          <span class="ns-desc" v-show="hostingNamespace.includes(projectConfig.defaultNamespace)">由 Zadig 接管的服务将覆盖所选命名空间中的同名服务，请慎重操作！</span>
+          <span class="ns-desc" v-show="nsIsExisted">由 Zadig 接管的服务将覆盖所选命名空间中的同名服务，请慎重操作！</span>
         </el-form-item>
         <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small" @change="getImages">
@@ -431,6 +431,9 @@ export default {
         this.$utils.isEmpty(this.pmServiceMap) &&
         this.projectConfig.source !== 'external'
       )
+    },
+    nsIsExisted () {
+      return this.hostingNamespace.includes(this.projectConfig.defaultNamespace)
     }
   },
   methods: {
@@ -438,7 +441,7 @@ export default {
       if (
         this.projectConfig.source === 'system' &&
         this.$utils.isEmpty(this.pmServiceMap) &&
-        !this.hostingNamespace.includes(this.projectConfig.defaultNamespace)
+        !this.nsIsExisted
       ) {
         this.projectConfig.defaultNamespace = this.projectName + '-env-' + value
       }
@@ -812,6 +815,7 @@ export default {
             payload.source = 'pm'
           }
           payload.namespace = payload.defaultNamespace
+          payload.is_existed = this.nsIsExisted
           const envType = 'test'
           this.startDeployLoading = true
           function sleep (time) {

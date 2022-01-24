@@ -1612,60 +1612,60 @@ export function getArtifactFileAPI (payload, id) {
 
 // Insight
 export function getLatestBuildsAPI ({ projectName }) {
-  return http.post(`/api/aslan/quality/stat/buildLatestTenMeasure`, { projectName })
+  return http.post(`/api/aslan/stat/quality/buildLatestTenMeasure`, { projectName })
 }
 
 export function getLongestBuildsAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/buildTenDurationMeasure`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/buildTenDurationMeasure`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getBuildHealthAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/buildHealthMeasure`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/buildHealthMeasure`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getAverageBuildsDurationAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/buildAverageMeasure`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/buildAverageMeasure`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getDaliyBuildsFeqAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/buildDailyMeasure`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/buildDailyMeasure`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getBuildTrendAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/buildTrend`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/buildTrend`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getTestHealthAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/testHealthMeasure`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/testHealthMeasure`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getAverageTestsDurationAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/testAverageMeasure`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/testAverageMeasure`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getTestTrendAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/testTrend`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/testTrend`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getTestCasesAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/testCaseMeasure`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/testCaseMeasure`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getTestDeployAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/testDeliveryDeploy`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/testDeliveryDeploy`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getServiceHealthAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/deployHealthMeasure`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/deployHealthMeasure`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getServiceDeployAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/deployWeeklyMeasure`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/deployWeeklyMeasure`, { startDate, endDate, productNames: projectNames })
 }
 export function getServiceDeploySummaryAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/deployTopFiveHigherMeasure`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/deployTopFiveHigherMeasure`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getServiceFailureAPI ({ startDate, endDate, projectNames }) {
-  return http.post(`/api/aslan/quality/stat/deployTopFiveFailureMeasure`, { startDate, endDate, productNames: projectNames })
+  return http.post(`/api/aslan/stat/quality/deployTopFiveFailureMeasure`, { startDate, endDate, productNames: projectNames })
 }

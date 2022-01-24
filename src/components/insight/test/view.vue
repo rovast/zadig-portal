@@ -66,7 +66,7 @@ import moment from 'moment'
 import Trend from './trend.vue'
 import Health from './health.vue'
 import AverageTestDuration from './averageDuration.vue'
-import TestCases from './TestCases.vue'
+import TestCases from './testCases.vue'
 import Deploy from './deploy.vue'
 export default {
   components: {

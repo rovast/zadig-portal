@@ -172,9 +172,9 @@
             </h4>
             <el-form-item prop="cache.medium_type">
               <span slot="label">选择存储介质</span>
-              <el-radio-group v-model="cluster.cache.medium_type">
+              <el-radio-group v-model="cluster.cache.medium_type" @change="changeMediumType">
                 <el-radio label="object">对象存储</el-radio>
-                <el-radio :disabled="!isEdit" label="cluster">集群存储 <span v-if="!isEdit" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可使用集群资源</span></el-radio>
+                <el-radio :disabled="!isEdit" label="nfs">集群存储 <span v-if="!isEdit" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可使用集群资源</span></el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item v-if="cluster.cache.medium_type === 'object'" prop="cache.object_properties" required>
@@ -188,7 +188,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <template v-else-if="cluster.cache.medium_type === 'cluster'">
+            <template v-else-if="cluster.cache.medium_type === 'nfs'">
               <el-form-item prop="cache.nfs_properties.provision_type">
                 <span slot="label">选择存储资源</span>
                 <el-radio-group v-model="cluster.cache.nfs_properties.provision_type">
@@ -228,7 +228,7 @@
                     >帮助</el-link>
                   </span>
                   <el-select v-model="cluster.cache.nfs_properties.pvc" placeholder="请选择" style="width: 100%;" size="small">
-                    <el-option v-for="(item,index) in allPvc" :key="index" :label="item" value="item"></el-option>
+                    <el-option v-for="(item,index) in allPvc" :key="index" :label="`${item.name} ${$utils.formatBytes(item.storage_size_in_bytes)}`" :value="item.name"></el-option>
                   </el-select>
                 </el-form-item>
               </template>
@@ -554,7 +554,7 @@ export default {
         this.expandAdvanced = true
         if (this.cluster.cache.medium_type === 'object') {
           this.allStorage = await getStorageListAPI()
-        } else if (this.cluster.cache.medium_type === 'cluster') {
+        } else if (this.cluster.cache.medium_type === 'nfs') {
           this.allStorageClass = await getClusterStorageClassAPI(currentCluster.id, namesapce)
           this.allPvc = await getClusterPvcAPI(currentCluster.id, namesapce)
         }
@@ -585,6 +585,20 @@ export default {
             })
           })
         })
+      }
+    },
+    async changeMediumType (type) {
+      this.$message({
+        message: '修改后，之前的缓存将不再生效',
+        type: 'info'
+      })
+      const namesapce = this.cluster.local ? 'unknown' : 'kodorover-agent'
+      const id = this.cluster.id
+      if (type === 'object') {
+        this.allStorage = await getStorageListAPI()
+      } else if (type === 'nfs') {
+        this.allPvc = await getClusterPvcAPI(id, namesapce)
+        this.allStorageClass = await getClusterStorageClassAPI(id, namesapce)
       }
     },
     addCluster (payload) {

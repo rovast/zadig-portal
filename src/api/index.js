@@ -1323,8 +1323,8 @@ export function getVersionProductListAPI () {
   return http.get(`/api/v1/picket/projects?ignoreNoVersions=false&verbosity=detailed`)
 }
 
-export function productHostingNamespaceAPI (clusterId) {
-  return http.get(`/api/aslan/environment/kube/available_namespaces?clusterId=${clusterId}`)
+export function productHostingNamespaceAPI (clusterId, type = '') {
+  return http.get(`/api/aslan/environment/kube/available_namespaces?clusterId=${clusterId}&type=${type}`)
 }
 
 export function getHelmReleaseListAPI (projectName, envName) {

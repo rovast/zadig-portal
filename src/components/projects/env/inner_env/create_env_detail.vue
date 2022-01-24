@@ -25,10 +25,6 @@
         <el-form-item label="环境名称" prop="env_name">
           <el-input @input="changeEnvName" v-model="projectConfig.env_name" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="命名空间" v-if="projectConfig.source==='system' && $utils.isEmpty(pmServiceMap)" prop="defaultNamespace">
-          <el-input style="width: 250px;" :disabled="editButtonDisabled" v-model="projectConfig.defaultNamespace" size="small"></el-input>
-          <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">{{editButtonDisabled? '编辑' : '完成'}}</span>
-        </el-form-item>
         <el-form-item label="创建方式" prop="source" v-if="$utils.isEmpty(pmServiceMap)">
           <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
             <el-option label="系统创建" value="system"></el-option>
@@ -51,10 +47,22 @@
             <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="projectConfig.source==='external'" label="命名空间" prop="namespace">
-          <el-select class="select" v-model.trim="projectConfig.namespace" size="small" placeholder="请选择命名空间" allow-create filterable>
-            <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns.name" :value="ns.name"></el-option>
+        <el-form-item label="命名空间" v-if="projectConfig.source==='system' && $utils.isEmpty(pmServiceMap)" prop="defaultNamespace">
+          <el-select
+            v-model="projectConfig.defaultNamespace"
+            :disabled="editButtonDisabled"
+            style="width: 250px;"
+            size="small"
+            placeholder="选择已有或自定义命名空间"
+            filterable
+            allow-create
+            clearable
+          >
+            <el-option :value="`${projectName}-env-${projectConfig.env_name}`">{{ projectName }}-env-{{ projectConfig.env_name }}</el-option>
+            <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns" :value="ns"></el-option>
           </el-select>
+          <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">{{editButtonDisabled? '编辑' : '完成'}}</span>
+          <span class="ns-desc" v-show="hostingNamespace.includes(projectConfig.defaultNamespace)">由 Zadig 接管的服务将覆盖所选命名空间中的同名服务，请慎重操作！</span>
         </el-form-item>
         <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small" @change="getImages">
@@ -227,7 +235,8 @@
                           multiple
                           @change="addHost(service)"
                           placeholder="请选择要关联的主机"
-                          size="small">
+                          size="small"
+                        >
                           <el-option-group label="主机标签">
                             <el-option v-for="(item,index) in allHostLabels" :key="index" :label="`${item}`" :value="item"></el-option>
                           </el-option-group>
@@ -428,7 +437,8 @@ export default {
     changeEnvName (value) {
       if (
         this.projectConfig.source === 'system' &&
-        this.$utils.isEmpty(this.pmServiceMap)
+        this.$utils.isEmpty(this.pmServiceMap) &&
+        !this.hostingNamespace.includes(this.projectConfig.defaultNamespace)
       ) {
         this.projectConfig.defaultNamespace = this.projectName + '-env-' + value
       }
@@ -452,12 +462,15 @@ export default {
           return element.status === 'normal' && !element.production
         })
       }
+      if (this.projectConfig.cluster_id) {
+        this.changeCluster(this.projectConfig.cluster_id)
+      }
     },
     getHosts () {
-      getHostLabelListAPI().then((res) => {
+      getHostLabelListAPI().then(res => {
         this.allHostLabels = res
       })
-      getHostListAPI().then((res) => {
+      getHostListAPI().then(res => {
         this.allHost = res
       })
     },
@@ -466,10 +479,10 @@ export default {
         return item.id
       })
       const labels = service.host_with_labels.filter(item => {
-        return (allHostIds.indexOf(item) < 0)
+        return allHostIds.indexOf(item) < 0
       })
       const hostIds = service.host_with_labels.filter(item => {
-        return (allHostIds.indexOf(item) >= 0)
+        return allHostIds.indexOf(item) >= 0
       })
       service.host_ids = hostIds
       service.labels = labels
@@ -691,12 +704,9 @@ export default {
       }
     },
     changeCluster (clusterId) {
-      const source = this.projectConfig.source
-      if (source === 'external') {
-        productHostingNamespaceAPI(clusterId).then(res => {
-          this.hostingNamespace = res
-        })
-      }
+      productHostingNamespaceAPI(clusterId, 'create').then(res => {
+        this.hostingNamespace = res.map(ns => ns.name)
+      })
     },
     changeCreateMethodWhenServiceEmpty () {
       this.projectConfig.source = 'external'
@@ -709,9 +719,7 @@ export default {
       }
       this.selection = ''
       if (source === 'external') {
-        productHostingNamespaceAPI(clusterId).then(res => {
-          this.hostingNamespace = res
-        })
+        this.changeCluster(clusterId)
       }
     },
     loadHosting () {
@@ -797,7 +805,10 @@ export default {
           picked2D.push(picked1D)
           const payload = this.$utils.cloneObj(this.projectConfig)
           payload.source = 'spock'
-          if (this.projectInfo.product_feature && this.projectInfo.product_feature.basic_facility === 'cloud_host') {
+          if (
+            this.projectInfo.product_feature &&
+            this.projectInfo.product_feature.basic_facility === 'cloud_host'
+          ) {
             payload.source = 'pm'
           }
           payload.namespace = payload.defaultNamespace
@@ -883,7 +894,9 @@ export default {
       this.imageRegistry = res
       if (!this.projectConfig.registry_id) {
         const defaultRegistry = res.find(reg => reg.is_default)
-        this.projectConfig.registry_id = defaultRegistry ? defaultRegistry.id : ''
+        this.projectConfig.registry_id = defaultRegistry
+          ? defaultRegistry.id
+          : ''
       }
       this.getTemplateAndImg()
     })
@@ -898,6 +911,13 @@ export default {
   padding: 15px 20px;
   overflow: auto;
   font-size: 13px;
+
+  .ns-desc {
+    display: inline-block;
+    margin-left: 8px;
+    color: #e6a23c;
+    font-size: 13px;
+  }
 
   .module-title h1 {
     margin-bottom: 30px;

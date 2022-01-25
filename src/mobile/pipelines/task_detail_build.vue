@@ -48,9 +48,9 @@
                     class="link">
                 <a v-if="build.source==='github' || build.source==='gitlab'"
                    :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tags/${build.tag}`"
-                   target="_blank">{{build.tag}}
+                   target="_blank">{{"Tag-"+build.tag}}
                 </a>
-                <span v-if="build.source==='gerrit'">{{build.tag}}</span>
+                <span v-if="build.source==='gerrit'">{{"Tag-"+build.tag}}</span>
               </span>
             </el-tooltip>
             <el-tooltip :content="build.source==='gerrit'?`暂不支持在 gerrit 上查看 Branch`:`在 ${build.source} 上查看 Branch`"
@@ -60,13 +60,13 @@
                     class="link">
                 <a v-if="build.source==='github'||build.source==='gitlab'"
                    :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tree/${build.branch}`"
-                   target="_blank">{{build.branch}}
+                   target="_blank">{{"Branch-"+build.branch}}
                 </a>
-                <span v-if="build.source==='gerrit'">{{build.branch}}
+                <span v-if="build.source==='gerrit'">{{"Branch-"+build.branch}}
                 </span>
                 <a v-if="!build.source"
                    :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tree/${build.branch}`"
-                   target="_blank">{{build.branch}}
+                   target="_blank">{{"Branch-"+build.branch}}
                 </a>
               </span>
             </el-tooltip>

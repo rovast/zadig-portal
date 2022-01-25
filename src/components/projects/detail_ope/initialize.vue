@@ -66,9 +66,11 @@ export default {
   },
   methods: {
     createEnvAndWorkflow () {
-      const payload = this.collaborationData.product.filter(
-        product => product.collaboration_type === 'new'
-      )
+      const payload = {
+        products: this.collaborationData.product.filter(
+          product => product.collaboration_type === 'new'
+        )
+      }
       console.log('payload', payload)
       initializeCollaborationAPI(this.projectName, payload).then(res => {
         this.$message.success(`用户初始环境创建成功！`)

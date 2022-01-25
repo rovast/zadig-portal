@@ -96,6 +96,10 @@ export default {
         name: '',
         enabled: true,
         product_tmpl_name: '',
+        env_name: '',
+        is_parallel: false,
+        reset_image: false,
+        reset_image_policy: '',
         team: '',
         description: '',
         notify_ctl: {
@@ -286,6 +290,9 @@ export default {
     if (this.editMode) {
       getWorkflowDetailAPI(this.projectName, this.pipelineName).then(res => {
         this.pipelineInfo = res
+        if (typeof this.pipelineInfo.reset_image_policy === 'undefined') {
+          this.$set(this.pipelineInfo, 'reset_image_policy', this.pipelineInfo.reset_image ? 'taskCompleted' : '')
+        }
         if (!this.pipelineInfo.schedules) {
           this.$set(this.pipelineInfo, 'schedules', {
             enabled: false,

@@ -32,6 +32,7 @@
           :prop="`${propPre}.installs.${appIndex}.name`"
           :rules="{required: false, message: '应用名不能为空', trigger: 'blur'}"
           :label="appIndex === 0 ? `应用列表` : ''"
+          :label-width="fullScreen?'80px':0"
         >
           <el-select v-model="pre_build.installs[appIndex]" placeholder="请选择应用" size="small" value-key="id" filterable>
             <el-option
@@ -59,8 +60,15 @@
     <el-row v-if="showAdvanced" :gutter="20">
       <el-col :span="12">
         <el-form-item label="集群名称" label-width="inherit" :prop="`${propPre}.cluster_id`" required :show-message="false">
-          <el-select v-model="pre_build.cluster_id" placeholder="选择集群名称" size="small">
+          <el-select v-model="pre_build.cluster_id" placeholder="选择集群名称" size="small" @change="changeNamespaces">
             <el-option v-for="cluster in clusters" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="命名空间" label-width="inherit" :prop="`${propPre}.namespace`" required :show-message="false">
+          <el-select v-model="pre_build.namespace" placeholder="选择命名空间" size="small" filterable>
+            <el-option v-for="namespace in namespaces" :key="namespace.name" :label="namespace.name" :value="namespace.name"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
@@ -105,7 +113,8 @@
 import {
   getImgListAPI,
   getClusterListAPI,
-  getAllAppsAPI
+  getAllAppsAPI,
+  productHostingNamespaceAPI
 } from '@api'
 export default {
   props: {
@@ -155,6 +164,7 @@ export default {
     return {
       systems: [],
       clusters: [],
+      namespaces: [],
       allApps: [],
       showAdvanced: false
     }
@@ -204,14 +214,36 @@ export default {
         this.clusters = res.filter(element => element.status === 'normal')
       })
     },
+    changeNamespaces (id) {
+      this.pre_build.namespace = ''
+      this.getProductHostingNamespace(id).then(() => {
+        const ns = this.namespaces.find(ns => ns.current)
+        this.pre_build.namespace = ns ? ns.name : ''
+      })
+    },
+    getProductHostingNamespace (id) {
+      this.namespaces = []
+      return productHostingNamespaceAPI(id).then(res => {
+        this.namespaces = res
+      })
+    },
+
     // init information should handle in the home page after get build data
     // the method must callback after init data requested
     paddingData () {
       const initNs = () => {
         this.$set(this.pre_build, 'cluster_id', '')
+        this.$set(this.pre_build, 'namespace', '')
+
         const local = this.clusters.find(cluster => cluster.local)
         if (local) {
           this.pre_build.cluster_id = local.id
+          this.getProductHostingNamespace(this.pre_build.cluster_id).then(
+            () => {
+              const ns = this.namespaces.find(ns => ns.current)
+              this.pre_build.namespace = ns ? ns.name : ''
+            }
+          )
         }
       }
 
@@ -232,6 +264,9 @@ export default {
         // compatible with old data: use the local and zadig namespace by default
         if (!this.pre_build.cluster_id) {
           initNs()
+        } else {
+          // request namespaces of current cluster
+          this.getProductHostingNamespace(this.pre_build.cluster_id)
         }
       }
     },

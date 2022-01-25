@@ -221,19 +221,19 @@
           <el-row>
             <el-col :span="4">
               <el-form-item label="开启缓存">
-                <el-switch v-model="cache.enable"
+                <el-switch v-model="buildConfig.cache_enable"
                            active-color="#409EFF">
                 </el-switch>
               </el-form-item>
-                <el-radio-group v-if="cache.enable" v-model="cache.type">
-                  <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
-                  <el-radio label="custom">自定义目录
-                    <el-input v-model="cache.dir"
-                            style="width: 100%;"
-                            size="mini">
-                    </el-input>
-                  </el-radio>
-                </el-radio-group>
+              <el-radio-group v-if="buildConfig.cache_enable" v-model="buildConfig.cache_dir_type">
+                <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
+                <el-radio label="user_defined">自定义目录
+                  <el-input v-model="buildConfig.cache_user_dir"
+                          style="width: 100%;"
+                          size="mini">
+                  </el-input>
+                </el-radio>
+              </el-radio-group>
             </el-col>
           </el-row>
         </el-form>
@@ -499,11 +499,12 @@ export default {
       buildConfig: {
         name: '',
         desc: '',
-        caches: '',
         repos: [],
         timeout: 60,
+        cache_enable: false,
+        cache_dir_type: '',
+        cache_user_dir: '',
         pre_build: {
-          clean_workspace: false,
           res_req: 'low', // high 、medium、low、min、define
           res_req_spec: {
             cpu_limit: 1000,
@@ -520,11 +521,6 @@ export default {
         scripts: '#!/bin/bash\nset -e',
         post_build: {
         }
-      },
-      cache: {
-        enable: true,
-        type: 'workspace',
-        dir: ''
       },
       docker_enabled: false,
       binary_enabled: false,
@@ -656,16 +652,6 @@ export default {
       }
       payload.source = this.source
       payload.product_name = this.projectName
-      // Cache
-      if (this.cache.enable) {
-        if (this.cache.type === 'workspace') {
-          payload.pre_build.clean_workspace = false
-        } else if (this.cache.type === 'custom') {
-          payload.caches = this.cache.dir
-        }
-      } else {
-        payload.pre_build.clean_workspace = true
-      }
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.saveLoading = true
@@ -715,16 +701,6 @@ export default {
       this.saveLoading = true
       payload.source = this.source
       payload.productName = this.projectName
-      // Cache
-      if (this.cache.enable) {
-        if (this.cache.type === 'workspace') {
-          payload.pre_build.clean_workspace = false
-        } else if (this.cache.type === 'custom') {
-          payload.caches = this.cache.dir
-        }
-      } else {
-        payload.pre_build.clean_workspace = true
-      }
       updateBuildConfigAPI(payload).then((response) => {
         this.saveLoading = false
         this.$router.push(`/v1/projects/detail/${this.projectName}/builds`)
@@ -792,16 +768,6 @@ export default {
           }
           if (this.buildConfig.post_build.scripts) {
             this.post_script_enabled = true
-          }
-          // Cache
-          if (this.buildConfig.caches || this.buildConfig.pre_build.clean_workspace === false) {
-            this.cache.enable = true
-            if (this.buildConfig.caches) {
-              this.cache.type = 'custom'
-              this.cache.dir = this.buildConfig.caches
-            } else if (this.buildConfig.caches === '' && this.buildConfig.pre_build.clean_workspace === true) {
-              this.cache.enable = false
-            }
           }
         }
       } else {

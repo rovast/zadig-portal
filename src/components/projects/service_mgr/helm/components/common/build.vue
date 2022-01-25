@@ -219,15 +219,15 @@
             <div class="divider item"></div>
             <el-row>
               <el-col :span="12">
-              <el-form-item label="开启缓存">
-                <el-switch v-model="cache.enable"
-                           active-color="#409EFF">
-                </el-switch>
-              </el-form-item>
-                <el-radio-group v-if="cache.enable" v-model="cache.type">
+                <el-form-item label="开启缓存">
+                  <el-switch v-model="buildConfig.cache_enable"
+                              active-color="#409EFF">
+                  </el-switch>
+                </el-form-item>
+                <el-radio-group v-if="buildConfig.cache_enable" v-model="buildConfig.cache_dir_type">
                   <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
-                  <el-radio label="custom">自定义目录
-                    <el-input v-model="cache.dir"
+                  <el-radio label="user_defined">自定义目录
+                    <el-input v-model="buildConfig.cache_user_dir"
                             style="width: 100%;"
                             size="mini">
                     </el-input>
@@ -636,10 +636,11 @@ export default {
         version: 'stable',
         name: '',
         desc: '',
-        caches: '',
         repos: [],
+        cache_enable: false,
+        cache_dir_type: '',
+        cache_user_dir: '',
         pre_build: {
-          clean_workspace: false,
           res_req: 'low', // high 、medium、low、min、define
           res_req_spec: {
             cpu_limit: 1000,
@@ -657,11 +658,6 @@ export default {
         scripts: '#!/bin/bash\nset -e',
         main_file: '',
         post_build: {}
-      },
-      cache: {
-        enable: true,
-        type: 'workspace',
-        dir: ''
       },
       stcov_enabled: false,
       docker_enabled: false,
@@ -903,16 +899,6 @@ export default {
       }
       payload.product_name = this.projectName
       payload.source = this.source
-      // Cache
-      if (this.cache.enable) {
-        if (this.cache.type === 'workspace') {
-          payload.pre_build.clean_workspace = false
-        } else if (this.cache.type === 'custom') {
-          payload.caches = this.cache.dir
-        }
-      } else {
-        payload.pre_build.clean_workspace = true
-      }
       this.$refs[formName].validate((valid) => {
         if (valid) {
           createBuildConfigAPI(payload).then(() => {
@@ -948,16 +934,6 @@ export default {
       }
       payload.source = this.source
       payload.productName = this.projectName
-      // Cache
-      if (this.cache.enable) {
-        if (this.cache.type === 'workspace') {
-          payload.pre_build.clean_workspace = false
-        } else if (this.cache.type === 'custom') {
-          payload.caches = this.cache.dir
-        }
-      } else {
-        payload.pre_build.clean_workspace = true
-      }
       updateBuildConfigAPI(payload).then((response) => {
         this.$message({
           message: '保存构建成功',
@@ -1032,16 +1008,6 @@ export default {
         if (this.buildConfig.post_build.file_archive) {
           this.binary_enabled = true
         }
-        // Cache
-        if (this.buildConfig.caches || this.buildConfig.pre_build.clean_workspace === false) {
-          this.cache.enable = true
-          if (this.buildConfig.caches) {
-            this.cache.type = 'custom'
-            this.cache.dir = this.buildConfig.caches
-          } else if (this.buildConfig.caches === '' && this.buildConfig.pre_build.clean_workspace === true) {
-            this.cache.enable = false
-          }
-        }
       } else {
         const item = this.serviceTargets.find(
           (item) => item.service_module === this.name
@@ -1090,14 +1056,6 @@ export default {
     },
     serviceName () {
       return this.$route.query.service_name
-    },
-    useWorkspaceCache: {
-      get () {
-        return !this.buildConfig.pre_build.clean_workspace
-      },
-      set (val) {
-        this.buildConfig.pre_build.clean_workspace = !val
-      }
     },
     isSelectedBuild () {
       return this.buildNames.includes(this.buildConfig.name)

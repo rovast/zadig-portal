@@ -55,20 +55,20 @@
           <span class="item-title">缓存策略</span>
           <el-row>
             <el-col :span="4">
-              <el-form-item label="开启缓存" style="margin-bottom: 0;">
-                <el-switch v-model="cache.enable"
+              <el-form-item label="开启缓存">
+                <el-switch v-model="buildConfig.cache_enable"
                            active-color="#409EFF">
                 </el-switch>
               </el-form-item>
-                <el-radio-group v-if="cache.enable" v-model="cache.type">
-                  <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
-                  <el-radio label="custom">自定义目录
-                    <el-input v-model="cache.dir"
-                            style="width: 100%;"
-                            size="mini">
-                    </el-input>
-                  </el-radio>
-                </el-radio-group>
+              <el-radio-group v-if="buildConfig.cache_enable" v-model="buildConfig.cache_dir_type">
+                <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
+                <el-radio label="user_defined">自定义目录
+                  <el-input v-model="buildConfig.cache_user_dir"
+                          style="width: 100%;"
+                          size="mini">
+                  </el-input>
+                </el-radio>
+              </el-radio-group>
             </el-col>
           </el-row>
         </el-form>
@@ -282,18 +282,15 @@ export default {
   data () {
     return {
       allCodeHosts: [],
-      cache: {
-        enable: true,
-        type: 'workspace',
-        dir: ''
-      },
       test: {
         name: '',
         product_name: '',
         desc: '',
         repos: [],
-        caches: '',
         timeout: 60,
+        cache_enable: false,
+        cache_dir_type: '',
+        cache_user_dir: '',
         hook_ctl: {
           enabled: false,
           items: []
@@ -309,7 +306,6 @@ export default {
         },
         pre_test: {
           enable_proxy: false,
-          clean_workspace: false,
           build_os: 'xenial',
           image_from: '',
           image_id: '',
@@ -508,17 +504,8 @@ export default {
             }
           })
         })
-        // Cache
-        if (this.cache.enable) {
-          if (this.cache.type === 'workspace') {
-            this.test.pre_test.clean_workspace = false
-          } else if (this.cache.type === 'custom') {
-            this.test.caches = this.cache.dir
-          }
-        } else {
-          this.test.pre_test.clean_workspace = true
-        }
-        (this.isEdit ? updateTestAPI : createTestAPI)(this.projectName, this.test).then(res => {
+        const fn = this.isEdit ? updateTestAPI : createTestAPI
+        fn(this.projectName, this.test).then(res => {
           this.$message({
             message: '保存成功',
             type: 'success'
@@ -600,16 +587,6 @@ export default {
             i.id = `${i.name}${i.version}`
             return i
           })
-        }
-        // Cache
-        if (this.test.caches || this.test.pre_test.clean_workspace === false) {
-          this.cache.enable = true
-          if (this.test.caches) {
-            this.cache.type = 'custom'
-            this.cache.dir = this.test.caches
-          } else if (this.test.caches === '' && this.test.pre_test.clean_workspace === true) {
-            this.cache.enable = false
-          }
         }
         this.configDataLoading = false
       })

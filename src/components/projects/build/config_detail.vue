@@ -207,7 +207,7 @@
                      showDivider></repo-select>
       </div>
       <div class="section">
-        <EnvVariable :preEnvs="buildConfig.pre_build"></EnvVariable>
+        <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj"></EnvVariable>
       </div>
 
       <div class="section">

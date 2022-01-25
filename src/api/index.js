@@ -210,6 +210,24 @@ export function analyticsRequestAPI (payload) {
   return http.post(analyticsReq, payload)
 }
 
+// Statistics
+
+export function getStatisticsOverviewAPI () {
+  return http.get('/api/aslan/stat/dashboard/overview')
+}
+
+export function getBuildStatisticsAPI (start, end) {
+  return http.get(`/api/aslan/stat/dashboard/build?startDate=${start}&endDate=${end}`)
+}
+
+export function getDeployStatisticsAPI (start, end) {
+  return http.get(`/api/aslan/stat/dashboard/deploy?startDate=${start}&endDate=${end}`)
+}
+
+export function getTestStatisticsAPI (start, end) {
+  return http.get(`/api/aslan/stat/dashboard/test?startDate=${start}&endDate=${end}`)
+}
+
 // Status
 export function taskRunningSSEAPI () {
   return makeEventSource('/api/aslan/workflow/sse/tasks/running')

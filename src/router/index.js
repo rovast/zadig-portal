@@ -11,6 +11,40 @@ const routes = [
     meta: {},
     children: [
       {
+        path: '/v1/insight',
+        component: () => import(/* webpackChunkName: "insight" */ '@/components/insight/home.vue'),
+        meta: {
+          requiresAuth: true,
+          title: 'DevOps 洞察'
+        },
+        children: [
+          {
+            path: 'build',
+            component: () => import(/* webpackChunkName: "insight-build" */ '@/components/insight/build/view.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '构建洞察'
+            }
+          },
+          {
+            path: 'test',
+            component: () => import(/* webpackChunkName: "insight-test" */ '@/components/insight/test/view.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '测试洞察'
+            }
+          },
+          {
+            path: 'service',
+            component: () => import(/* webpackChunkName: "insight-service" */ '@/components/insight/service/view.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '持续交付洞察'
+            }
+          }
+        ]
+      },
+      {
         path: 'status',
         component: () => import('@/components/projects/status/status.vue'),
         meta: {

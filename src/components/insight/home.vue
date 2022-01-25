@@ -9,7 +9,7 @@
         </el-select>
       </div>
       <div class="date-container">
-        <el-select style="width: 350px;" v-model="selectedProjects" size="small" multiple placeholder="请选择项目">
+        <el-select style="width: 350px;" v-model="selectedProjects" size="small" multiple placeholder="筛选项目">
           <el-option v-for="item in projects" :key="item.name" :label="item.name" :value="item.name"></el-option>
         </el-select>
         <el-date-picker

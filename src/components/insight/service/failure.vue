@@ -1,12 +1,7 @@
 <template>
   <div style="width: 100%; height: 250px;">
-    <el-table :data="tableData"
-              v-loading="loading"
-              height="250"
-              :show-header="true"
-              class="service-table">
-      <el-table-column prop="serviceName"
-                       label="服务名">
+    <el-table :data="serviceData" v-loading="loading" height="250" :show-header="true" class="service-table">
+      <el-table-column prop="serviceName" label="服务名">
         <template slot-scope="scope">
           <router-link :to="`/v1/projects/detail/${scope.row.productName}/services?name=${scope.row.serviceName}`">
             <span class="service-name">{{scope.row.serviceName}}</span>
@@ -14,8 +9,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="totalFailure"
-                       label="失败次数">
+      <el-table-column prop="totalFailure" label="失败次数">
         <template slot-scope="scope">
           <span>{{scope.row.totalFailure}}</span>
         </template>
@@ -28,8 +22,7 @@ import { getServiceFailureAPI } from '@api'
 export default {
   data () {
     return {
-      tableData: [
-      ],
+      serviceData: [],
       loading: true
     }
   },
@@ -39,8 +32,12 @@ export default {
       const startTime = Math.floor(this.selectedDuration[0] / 1000)
       const endTime = Math.floor(this.selectedDuration[1] / 1000)
       const selectedProjects = this.selectedProjects
-      getServiceFailureAPI({ startDate: startTime, endDate: endTime, projectNames: selectedProjects }).then((res) => {
-        this.tableData = res
+      getServiceFailureAPI({
+        startDate: startTime,
+        endDate: endTime,
+        projectNames: selectedProjects
+      }).then(res => {
+        this.serviceData = res
         this.loading = false
       })
     },
@@ -77,20 +74,20 @@ export default {
 </script>
 
 <style lang="less">
-.service-name {
-  overflow: hidden;
-  color: #1989fa;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
 .service-table {
   width: 100%;
   font-size: 14px;
 
+  .service-name {
+    overflow: hidden;
+    color: #1989fa;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   th,
   tr {
-    background-color: #f5f7f7 !important;
+    background-color: #fff !important;
   }
 
   &.el-table {

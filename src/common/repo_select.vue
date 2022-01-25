@@ -421,7 +421,6 @@ export default {
         this.setLoadingState(index, 'branch', true)
         getBranchInfoByIdAPI(id, repo_owner, repo_name, repoUUID, 1, 200, key).then((res) => {
           this.$set(this.codeInfo[index], 'branches', res || [])
-          this.$set(this.codeInfo[index], 'origin_branches', res || [])
           this.setLoadingState(index, 'branch', false)
         })
       }
@@ -475,7 +474,6 @@ export default {
           })
           getBranchInfoByIdAPI(codehostId, repoOwner, repoName, uuid).then((res) => {
             this.$set(this.codeInfo[index], 'branches', res || [])
-            this.$set(this.codeInfo[index], 'origin_branches', res || [])
           })
         }
       })
@@ -501,8 +499,10 @@ export default {
       if (codehostType === 'gitlab') {
         this.getBranchInfoById(index, id, repoOwner, repoName, query)
       } else {
-        const items = this.$utils.filterObjectArrayByKey('name', query, this.codeInfo[index].origin_branches)
-        this.$set(this.codeInfo[index], 'branches', items)
+        const items = this.$utils.filterObjectArrayByKey('name', query, this.codeInfo[index].origin_repos)
+        this.$set(this.codeInfo[index], 'repos', items)
+        this.config.repos[index].repo_name = ''
+        this.config.repos[index].branch = ''
       }
     },
     changeToPrimaryRepo (index, val) {

@@ -270,7 +270,7 @@ export default {
         secret_key: '',
         reg_provider: '',
         region: '',
-        is_default: this.allRegistry.length === 0
+        is_default: this.allRegistry.filter(registry => registry.is_default).length === 0
       }
       this.mode = 'create'
       this.dialogRegistryFormVisible = true
@@ -328,6 +328,13 @@ export default {
         })
       } else if (action === 'delete') {
         const id = registry.id
+        if (registry.is_default) {
+          this.$alert(`默认镜像仓库 ${registry.namespace} 不可被删除！`, '取消', {
+            confirmButtonText: '取消',
+            type: 'warning'
+          })
+          return
+        }
         this.$confirm(`确定要删除 ${registry.namespace} ?`, '确认', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

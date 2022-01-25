@@ -217,7 +217,7 @@
         </div>
       </el-card>
       <!--end of basic info-->
-      <el-card v-if="(envSource==='external'||envSource==='helm') && ingressList.length > 0"
+      <el-card v-if="(envSource==='external'||envSource==='helm') && ingressList && ingressList.length > 0"
                class="box-card-stack"
                :body-style="{ padding: '0px', margin: '15px 0 0 0' }">
         <div slot="header"
@@ -668,7 +668,8 @@ export default {
       return this.productInfo.namespace
     },
     envSource () {
-      return this.productInfo.source || ''
+      const env = this.envNameList.find(env => env.envName === this.envName)
+      return env ? env.source : this.productInfo.source || ''
     },
     projectName () {
       return this.$route.params.project_name
@@ -765,8 +766,8 @@ export default {
       this.$refs.recycleDialog.openDialog()
     },
     searchServicesByKeyword () {
-      this.initPageInfo()
-      this.getEnvServices('search')
+      this.initPageInfo(true)
+      this.getEnvServices()
     },
     onScroll (event) {
       if (!this.scrollGetFlag) {
@@ -784,7 +785,7 @@ export default {
       this.initPageInfo()
       this.getEnvServices()
     },
-    initPageInfo () {
+    async initPageInfo (isSearch = false) {
       this.removeListener()
       this.page = 1
       this.envTotal = 0
@@ -792,6 +793,9 @@ export default {
       this.scrollFinish = false
       this.containerServiceList = []
       this.pmServiceList = []
+      if (!isSearch) {
+        await this.getProductEnvInfo(this.projectName, this.envName)
+      }
     },
     addListener () {
       this.$refs.envContainer && this.$refs.envContainer.addEventListener('scroll', this.onScroll)
@@ -818,9 +822,9 @@ export default {
     fetchAllData () {
       try {
         this.editImageRegistry = false
-        this.initPageInfo()
-        this.getEnvNameList()
-        this.getEnvServices()
+        Promise.race([this.initPageInfo(), this.getEnvNameList()]).then(() => {
+          this.getEnvServices()
+        })
         this.fetchEnvRevision()
         this.checkProjectFeature()
       } catch (err) {
@@ -860,14 +864,11 @@ export default {
         }
       })
     },
-    async getEnvServices (flag) {
+    async getEnvServices () {
       const projectName = this.projectName
       const envName = this.envName
       try {
         let serviceGroup = []
-        if (this.page === 1 && flag !== 'search') {
-          await this.getProductEnvInfo(projectName, envName)
-        }
         this.scrollGetFlag = false
         if (this.page === 1) {
           this.addListener()

@@ -203,20 +203,20 @@
                 <span slot="label">选择存储资源</span>
                 <el-radio-group v-model="cluster.cache.nfs_properties.provision_type">
                   <el-radio label="dynamic">动态生成资源</el-radio>
-                  <el-radio label="useexist">使用现有存储资源</el-radio>
+                  <el-radio label="static">使用现有存储资源</el-radio>
                 </el-radio-group>
               </el-form-item>
               <template v-if="cluster.cache.nfs_properties.provision_type === 'dynamic'">
                 <el-form-item prop="cache.nfs_properties.storage_class">
                   <span slot="label">选择 Storage Class</span>
                   <el-select v-model="cluster.cache.nfs_properties.storage_class" placeholder="请选择" style="width: 100%;" size="small">
-                    <el-option v-for="(item,index) in allStorageClass" :key="index" :label="item" value="item"></el-option>
+                    <el-option v-for="(item,index) in allStorageClass" :key="index" :label="item" :value="item"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item prop="cache.nfs_properties.storage_size_in_gib">
                   <span slot="label">存储空间大小</span>
                   <el-input
-                    v-model="cluster.cache.nfs_properties.storage_size_in_gib"
+                    v-model.number="cluster.cache.nfs_properties.storage_size_in_gib"
                     style="width: 100%; vertical-align: baseline;"
                     size="small"
                     placeholder="请输入存储空间大小"
@@ -225,7 +225,7 @@
                   </el-input>
                 </el-form-item>
               </template>
-              <template v-else-if="cluster.cache.nfs_properties.provision_type === 'useexist'">
+              <template v-else-if="cluster.cache.nfs_properties.provision_type === 'static'">
                 <el-form-item prop="cache.nfs_properties.pvc">
                   <span slot="label">
                     指定 PVC
@@ -447,7 +447,7 @@ export default {
           }
         ],
         'advanced_config.node_labels': {
-          required: true,
+          required: false,
           message: '请选择标签',
           type: 'array'
         },
@@ -562,10 +562,6 @@ export default {
         const namesapce = currentCluster.local ? 'unknown' : 'kodorover-agent'
         this.getClusterNode(currentCluster.id)
         this.cluster = cloneDeep(currentCluster)
-        this.cluster.storage = {
-          type: 'object',
-          strategy: 'default'
-        }
         if (this.cluster.cache.medium_type === 'object') {
           this.allStorage = await getStorageListAPI()
         } else if (this.cluster.cache.medium_type === 'nfs') {

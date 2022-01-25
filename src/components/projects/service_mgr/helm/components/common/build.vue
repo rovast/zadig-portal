@@ -224,12 +224,12 @@
                               active-color="#409EFF">
                   </el-switch>
                 </el-form-item>
-                <el-radio-group v-if="buildConfig.cache_enable" v-model="buildConfig.cache_dir_type">
+                <el-radio-group v-if="buildConfig.cache_enable" v-model="buildConfig.cache_dir_type" class="radio-group">
                   <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
                   <el-radio label="user_defined">自定义目录
                     <el-input v-model="buildConfig.cache_user_dir"
-                            style="width: 100%;"
-                            size="mini">
+                              placeholder="请手动输入"
+                              size="mini">
                     </el-input>
                   </el-radio>
                 </el-radio-group>
@@ -1251,6 +1251,19 @@ export default {
     bottom: 20px;
     color: #fff;
     background-color: #409eff;
+  }
+}
+
+.radio-group {
+  margin: -8px 0 0 10px;
+
+  /deep/.el-radio {
+    padding: 5px 0;
+    font-weight: 400;
+
+    .el-input {
+      margin-left: 8px;
+    }
   }
 }
 </style>

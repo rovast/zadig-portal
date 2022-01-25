@@ -215,7 +215,7 @@
           ></repo-select>
         </div>
         <div class="section">
-          <EnvVariable :preEnvs="buildConfig.pre_build" :narrowWidth="true"></EnvVariable>
+          <EnvVariable ref="envVariable" :preEnvs="buildConfig.pre_build" :narrowWidth="true"></EnvVariable>
         </div>
 
         <div class="section">
@@ -829,7 +829,7 @@ export default {
     },
     async updateBuildConfig () {
       if (this.source === 'zadig') {
-        const validate = await this.$refs.repoSelect.validateForm()
+        const validate = await Promise.all([this.$refs.repoSelect.validateForm(), this.$refs.envVariable.validate()])
         if (validate) {
           if (this.isEdit) {
             return await this.saveBuildConfig()

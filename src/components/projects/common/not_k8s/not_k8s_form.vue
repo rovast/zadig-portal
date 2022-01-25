@@ -70,7 +70,7 @@
                    showFirstLine></repo-select>
     </div>
     <div class="section">
-      <EnvVariable :preEnvs="buildConfig.pre_build"/>
+      <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj"/>
     </div>
 
     <div class="section">

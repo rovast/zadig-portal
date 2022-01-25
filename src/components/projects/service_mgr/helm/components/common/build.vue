@@ -207,7 +207,7 @@
             shortDescription
             showFirstLine
           ></repo-select>
-          <EnvVariable :preEnvs="buildConfig.pre_build" :narrowWidth="true"></EnvVariable>
+          <EnvVariable ref="envVariable" :preEnvs="buildConfig.pre_build" :narrowWidth="true"></EnvVariable>
           <el-form
             ref="cacheDir"
             :inline="true"
@@ -863,7 +863,7 @@ export default {
           })
           this.getServiceModules()
         } else {
-          this.$refs.repoSelect.validateForm().then(res => {
+          Promise.all([this.$refs.repoSelect.validateForm(), this.$refs.envVariable.validate()]).then(res => {
             if (this.isEdit) {
               this.saveBuildConfig()
             } else {

@@ -166,9 +166,7 @@
           </el-form-item>
           <el-form-item v-else-if="webhookSwap.repo.source!=='gerrit'" label="触发事件" prop="events">
             <el-checkbox-group v-model="webhookSwap.events">
-              <el-checkbox label="push">Push commits</el-checkbox>
-              <el-checkbox label="pull_request">Pull requests</el-checkbox>
-              <el-checkbox label="tag">Push tags</el-checkbox>
+              <el-checkbox v-for="tri in triggerMethods" :key="tri.label" :label="tri.label">{{ tri.text }}</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="触发策略">
@@ -292,9 +290,14 @@
                   <span>{{ row.workflow_args.namespace || 'N/A' }}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="触发方式">
+              <el-table-column label="触发方式" width="110px">
                 <template slot-scope="{ row }">
-                  <span>{{ row.main_repo.events.join() || 'N/A' }}</span>
+                  <div v-if="row.main_repo.events.length">
+                    <div v-for="event in row.main_repo.events" :key="event">
+                      {{ triggerMethods.find(tri => tri.label === event).text }}
+                    </div>
+                  </div>
+                  <span v-else>{{ 'N/A' }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="文件目录">
@@ -410,6 +413,19 @@ export default {
         trigger: ['blur', 'change']
       }
     }
+
+    this.triggerMethods = [
+      {
+        label: 'push',
+        text: 'Push commits'
+      }, {
+        label: 'pull_request',
+        text: 'Pull requests'
+      }, {
+        label: 'tag',
+        text: 'Push tags'
+      }
+    ]
 
     return {
       testInfos: [],

@@ -179,7 +179,7 @@
             </h4>
             <el-form-item prop="cache.medium_type">
               <span slot="label">选择存储介质</span>
-              <el-radio-group v-model="cluster.cache.medium_type" @change="changeMediumType">
+              <el-radio-group v-model="cluster.cache.medium_type" @change="changeMediumType" class="storage-medium">
                 <el-radio label="object">对象存储</el-radio>
                 <el-radio :disabled="!isEdit" label="nfs">
                   集群存储
@@ -191,7 +191,7 @@
               <span slot="label">选择对象存储</span>
               <el-select v-model="cluster.cache.object_properties.id" placeholder="请选择对象存储" style="width: 100%;" size="small">
                 <template v-if="allStorage.length > 0">
-                  <el-option v-for="(item,index) in allStorage" :key="index" :label="item.bucket" :value="item.id"></el-option>
+                  <el-option v-for="(item,index) in allStorage" :key="index" :label="`${item.endpoint}/${item.bucket}`" :value="item.id"></el-option>
                 </template>
                 <el-option v-if="allStorage.length === 0" value="NEWCUSTOM">
                   <router-link to="/v1/system/storage" style="color: #606266;">集成对象存储</router-link>
@@ -825,6 +825,12 @@ export default {
         right: 1px;
         bottom: 6px;
         z-index: 1;
+      }
+    }
+
+    .storage-medium {
+      .el-radio {
+        padding: 5px 0;
       }
     }
   }

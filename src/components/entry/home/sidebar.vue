@@ -218,30 +218,19 @@ export default {
             }
           ]
         }, {
-          category_name: '质效中心',
+          category_name: '数据分析',
           items: [
             {
-              name: 'DevOps 洞察',
+              name: '数据概览',
+              icon: 'iconfont iconxiaonengjiancha',
+              url: 'statistics'
+            },
+            {
+              name: '效能洞察',
               icon: 'iconfont iconshujudongcha',
-              url: 'statistics',
-              hasSubItem: true,
-              isOpened: false,
-              subItems: [{
-                name: '构建洞察',
-                url: 'insight/build',
-                icon: 'iconfont icongoujiandongcha'
-              },
-              {
-                name: '测试洞察',
-                url: 'insight/test',
-                icon: 'iconfont iconceshidongcha'
-              },
-              {
-                name: '持续交付洞察',
-                url: 'insight/service',
-                icon: 'iconfont iconyijiaofu'
-              }]
-            }]
+              url: 'insight/build'
+            }
+          ]
         }
       ],
       adminMenu: [{

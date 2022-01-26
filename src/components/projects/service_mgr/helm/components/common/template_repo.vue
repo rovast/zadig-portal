@@ -184,9 +184,13 @@ export default {
       )
       this.importLoading = false
       if (res) {
-        this.$message.success(
-          `${this.isUpdate ? '更新' : '新建'}服务 ${payload.name} 成功`
-        )
+        if (res.successServices.length) {
+          this.$message.success(
+            `${this.isUpdate ? '更新' : '新建'}服务 ${payload.name} 成功`
+          )
+        } else {
+          this.$message.error(res.failedServices[0].error)
+        }
         this.commitDialogVisible(false)
         this.$store.dispatch('queryService', {
           projectName: this.$route.params.project_name,
@@ -194,12 +198,12 @@ export default {
         })
 
         this.$store.commit('UPDATE_ENV_BUTTON', true)
-        this.$store.commit('CHART_NAMES', [
-          {
-            serviceName: payload.name,
-            type: this.isUpdate ? 'update' : 'create'
+        this.$store.commit('CHART_NAMES', res.successServices.map(service => {
+          return {
+            serviceName: service,
+            type: 'create'
           }
-        ])
+        }))
       }
     },
     async createTemplateMultiService () {

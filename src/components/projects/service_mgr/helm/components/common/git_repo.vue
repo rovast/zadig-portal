@@ -313,12 +313,16 @@ export default {
         this.workSpaceModalVisible = true
       })
     },
-    closeFileTree (successServices) {
+    closeFileTree ({ successServices, failedServices }) {
       this.$store.commit('SERVICE_DIALOG_VISIBLE', false)
-      this.$store.dispatch('queryService', {
-        projectName: this.$route.params.project_name,
-        showServiceName: successServices[0]
-      })
+      if (successServices.length) {
+        this.$store.dispatch('queryService', {
+          projectName: this.$route.params.project_name,
+          showServiceName: successServices[0]
+        })
+      } else {
+        this.$message.error(failedServices[0].error)
+      }
       const services = successServices.map(service => {
         return {
           serviceName: service,
@@ -371,7 +375,7 @@ export default {
         payload
       ).catch(error => console.log(error))
       if (res) {
-        this.closeFileTree(res.successServices || [])
+        this.closeFileTree(res)
       }
       this.loading = false
     },

@@ -56,14 +56,14 @@
           <el-row>
             <el-col :span="4">
               <el-form-item label="开启缓存">
-                <el-switch v-model="buildConfig.cache_enable"
+                <el-switch v-model="test.cache_enable"
                            active-color="#409EFF">
                 </el-switch>
               </el-form-item>
-              <el-radio-group v-if="buildConfig.cache_enable" v-model="buildConfig.cache_dir_type" class="radio-group">
+              <el-radio-group v-if="test.cache_enable" v-model="test.cache_dir_type" class="radio-group">
                 <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
                 <el-radio label="user_defined">自定义目录
-                  <el-input v-model="buildConfig.cache_user_dir"
+                  <el-input v-model="test.cache_user_dir"
                             placeholder="请手动输入"
                             size="mini">
                   </el-input>

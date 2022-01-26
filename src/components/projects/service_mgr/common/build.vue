@@ -1109,7 +1109,7 @@ export default {
 }
 
 .radio-group {
-  margin: -8px 0 0 10px;
+  margin-left: 10px;
 
   /deep/.el-radio {
     padding: 5px 0;

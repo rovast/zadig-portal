@@ -49,7 +49,7 @@ export default {
       const project = this.$store.getters.projectList.find(
         project => project.name === projectName
       )
-      return project ? project.deployType : ''
+      return project ? project.deployType : 'k8s'
     }
   },
   watch: {

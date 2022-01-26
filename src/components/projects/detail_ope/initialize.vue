@@ -88,6 +88,9 @@ export default {
               chart.envName = product.name
             })
           }
+          if (product.deploy_type !== 'helm') {
+            product.deploy_type = 'k8s'
+          }
         })
         const fn = obj => {
           return `${obj.name}/${obj.collaboration_type}`

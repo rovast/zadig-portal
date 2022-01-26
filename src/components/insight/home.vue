@@ -107,7 +107,7 @@ export default {
     // this.$set(this, 'selectedDuration', [start, end])
     this.getProjects()
     bus.$emit(`show-sidebar`, true)
-    bus.$emit(`set-topbar-title`, { title: 'DevOps 洞察', breadcrumb: [] })
+    bus.$emit(`set-topbar-title`, { title: '效能洞察', breadcrumb: [] })
     bus.$emit(`set-sub-sidebar-title`, {
       title: '',
       routerList: []

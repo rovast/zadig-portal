@@ -8,11 +8,6 @@
         </el-breadcrumb>
       </div>
       <div class="kr-top-bar-end">
-        <router-link class="system-statistics" to="/v1/statistics">
-          <span>
-            <i class="icon iconfont iconqushi"></i>数据统计
-          </span>
-        </router-link>
         <el-popover placement="bottom" popper-class="help-droplist" trigger="click">
           <ul class="dropdown-menu" uib-dropdown-menu>
             <li>

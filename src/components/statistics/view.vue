@@ -126,7 +126,7 @@ export default {
     ICountUp
   },
   mounted () {
-    bus.$emit(`set-topbar-title`, { title: '数据统计', breadcrumb: [] })
+    bus.$emit(`set-topbar-title`, { title: '数据概览', breadcrumb: [] })
     bus.$emit(`set-sub-sidebar-title`, {
       title: '',
       routerList: []

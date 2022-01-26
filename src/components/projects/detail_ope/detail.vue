@@ -37,7 +37,7 @@
                     <i class="el-icon-delete"></i>
                     <span class="add-filter-value-title">删除</span>
                   </button>
-                  <router-link v-if="isProjectAdmin"
+                  <router-link v-if="showCollaboration"
                               :to="`/v1/projects/detail/${projectName}/policy`">
                     <button type="button"
                             class="display-btn">
@@ -421,6 +421,15 @@ export default {
       } else {
         return false
       }
+    },
+    showCollaboration () {
+      if (this.currentProject && this.currentProject.product_feature) {
+        const feature = this.currentProject.product_feature
+        if (feature.basic_facility === 'kubernetes' && feature.create_env_type === 'system') {
+          return true
+        }
+      }
+      return false
     }
   },
   mounted () {

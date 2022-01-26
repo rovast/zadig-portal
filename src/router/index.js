@@ -10,13 +10,13 @@ const routes = [
     component: onboarding_home,
     meta: {},
     children: [
-      { path: 'statistics', component: () => import(/* webpackChunkName: "statistics" */ '@/components/statistics/view.vue'), meta: { title: '数据统计' } },
+      { path: 'statistics', component: () => import(/* webpackChunkName: "statistics" */ '@/components/statistics/view.vue'), meta: { title: '数据概览' } },
       {
         path: '/v1/insight',
         component: () => import(/* webpackChunkName: "insight" */ '@/components/insight/home.vue'),
         meta: {
           requiresAuth: true,
-          title: 'DevOps 洞察'
+          title: '效能洞察'
         },
         children: [
           {

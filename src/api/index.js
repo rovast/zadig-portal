@@ -1241,7 +1241,7 @@ export function getServiceInfo (projectName, serviceName, envName = '', envType 
 }
 
 export function autoUpgradeEnvAPI (projectName, payload, force = '') {
-  return http.put(`/api/aslan/environment/environments?auto=true&projectName=${projectName}&force=${force}`, payload)
+  return http.put(`/api/aslan/environment/environments?projectName=${projectName}&force=${force}`, payload)
 }
 
 // Login
@@ -1309,7 +1309,7 @@ export function validateYamlAPI (projectName, payload) {
 }
 
 export function generateEnvAPI (projectName, envType = '') {
-  return http.post(`/api/aslan/environment/environments?auto=true&projectName=${projectName}&envType=${envType}`)
+  return http.post(`/api/aslan/environment/environments?projectName=${projectName}&envType=${envType}`)
 }
 
 export function generateWorkflowAPI (projectName) {
@@ -1341,8 +1341,8 @@ export function getVersionProductListAPI () {
   return http.get(`/api/v1/picket/projects?ignoreNoVersions=false&verbosity=detailed`)
 }
 
-export function productHostingNamespaceAPI (clusterId) {
-  return http.get(`/api/aslan/environment/kube/available_namespaces?clusterId=${clusterId}`)
+export function productHostingNamespaceAPI (clusterId, type = '') {
+  return http.get(`/api/aslan/environment/kube/available_namespaces?clusterId=${clusterId}&type=${type}`)
 }
 
 export function getHelmReleaseListAPI (projectName, envName) {

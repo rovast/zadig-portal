@@ -1,25 +1,5 @@
 <template>
   <div class="service-container">
-    <el-dialog title="是否更新对应环境？"
-               :append-to-body="true"
-               v-if="envNameList.length"
-               :visible.sync="updateEnvDialogVisible"
-               width="40%">
-      <el-checkbox-group v-model="selectedEnvs">
-        <el-checkbox v-for="(env,index) in envNameList"
-                     :key="index"
-                     :label="env.envName"></el-checkbox>
-      </el-checkbox-group>
-      <span slot="footer"
-            class="dialog-footer">
-        <el-button size="small"
-                   type="primary"
-                   @click="autoUpgradeEnv">确 定</el-button>
-        <el-button size="small"
-                   @click="updateEnvDialogVisible = false">跳过</el-button>
-
-      </span>
-    </el-dialog>
     <!--start of workspace-tree-dialog-->
     <el-dialog :append-to-body="true"
                :visible.sync="workSpaceModalVisible"
@@ -402,8 +382,7 @@
 
 <script>
 import gitfileTree from '@/components/common/gitfile_tree.vue'
-import { deleteServiceTemplateAPI, autoUpgradeEnvAPI, getSingleProjectAPI, updateEnvTemplateAPI, getCodeSourceMaskedAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI, loadRepoServiceAPI, validPreloadService, getCodeProviderAPI, updateServicesOrchestrationAPI } from '@api'
-import { mapGetters } from 'vuex'
+import { deleteServiceTemplateAPI, getSingleProjectAPI, updateEnvTemplateAPI, getCodeSourceMaskedAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI, loadRepoServiceAPI, validPreloadService, getCodeProviderAPI, updateServicesOrchestrationAPI } from '@api'
 export default {
   props: {
     services: {
@@ -436,7 +415,8 @@ export default {
     yamlChange: {
       type: Boolean,
       required: true
-    }
+    },
+    envDialogVisible: Boolean
   },
   data () {
     return {
@@ -448,8 +428,6 @@ export default {
       searchService: '',
       serviceGroup: [],
       allCodeHosts: [],
-      selectedEnvs: [],
-      updateEnvDialogVisible: false,
       importLoading: false,
       searchRepoNameLoading: false,
       searchRepoOwnerLoading: false,
@@ -593,13 +571,10 @@ export default {
           this.$emit('update:showNext', true)
           this.$message.success('共享服务移除成功')
           if (!this.guideMode) {
-            this.updateEnvDialogVisible = true
+            this.$emit('update:envDialogVisible', true)
           };
         })
       })
-    },
-    async getProducts () {
-      await this.$store.dispatch('getProjectList')
     },
     getServiceGroup () {
       this.serviceGroup = []
@@ -963,7 +938,8 @@ export default {
           deleteServiceTemplateAPI(data.service_name, data.type, this.projectName, data.visibility).then(() => {
             this.$message.success('删除成功')
             if (!this.guideMode) {
-              this.updateEnvDialogVisible = true
+              this.$emit('update:showNext', true)
+              this.$emit('update:envDialogVisible', true)
             };
             this.$emit('onRefreshService')
             this.$emit('onRefreshSharedService')
@@ -1032,19 +1008,6 @@ export default {
         this.$refs.serviceTree.setCurrentKey(key)
       })
     },
-    autoUpgradeEnv () {
-      const payload = {
-        env_names: this.selectedEnvs
-      }
-      const projectName = this.projectName
-      autoUpgradeEnvAPI(projectName, payload).then((res) => {
-        this.updateEnvDialogVisible = false
-        this.$message({
-          message: '更新环境成功',
-          type: 'success'
-        })
-      })
-    },
     listenResize () {
       window.screenHeight = document.body.clientHeight
       const serviceTree = this.$refs.serviceTree
@@ -1063,22 +1026,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'projectList'
-    ]),
-    envNameList () {
-      const envNameList = []
-      this.projectList.forEach(element => {
-        if (element.name === this.projectName) {
-          element.envs.forEach(envName => {
-            envNameList.push({
-              envName
-            })
-          })
-        }
-      })
-      return envNameList
-    },
     deployType () {
       return 'k8s'
     },
@@ -1170,7 +1117,6 @@ export default {
     }
   },
   created () {
-    this.getProducts()
     this.getServiceGroup()
   },
   mounted () {

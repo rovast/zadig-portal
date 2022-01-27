@@ -565,10 +565,7 @@ export default {
         if (this.cluster.cache.medium_type === 'object') {
           this.allStorage = await getStorageListAPI()
         } else if (this.cluster.cache.medium_type === 'nfs') {
-          this.allStorageClass = await getClusterStorageClassAPI(
-            currentCluster.id,
-            namesapce
-          )
+          this.allStorageClass = await getClusterStorageClassAPI(currentCluster.id)
           this.allPvc = await getClusterPvcAPI(currentCluster.id, namesapce)
         }
         this.dialogClusterFormVisible = true
@@ -611,7 +608,7 @@ export default {
         this.allStorage = await getStorageListAPI()
       } else if (type === 'nfs') {
         this.allPvc = await getClusterPvcAPI(id, namesapce)
-        this.allStorageClass = await getClusterStorageClassAPI(id, namesapce)
+        this.allStorageClass = await getClusterStorageClassAPI(id)
       }
     },
     addCluster (payload) {

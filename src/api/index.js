@@ -1621,8 +1621,8 @@ export function getArtifactFileAPI (payload, id) {
 }
 
 // Insight
-export function getLatestBuildsAPI ({ projectName }) {
-  return http.post(`/api/aslan/stat/quality/buildLatestTenMeasure`, { projectName })
+export function getLatestBuildsAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/buildLatestTenMeasure`, { startDate, endDate, productNames: projectNames })
 }
 
 export function getLongestBuildsAPI ({ startDate, endDate, projectNames }) {

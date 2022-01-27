@@ -4,8 +4,8 @@
              :model="test"
              ref="test-form"
              :rules="rules"
-             label-width="120px"
-             label-position="left">
+             label-width="80px"
+             label-position="right">
       <el-form-item prop="name"
                     label="测试名称"
                     class="fixed-width">
@@ -27,76 +27,13 @@
       <div class="divider"></div>
 
       <div class="title">运行时环境</div>
-      <BuildEnv :initFlag="configDataLoading" :pre_build="test.pre_test" :isCreate="!isEdit" :title="``" :propPre="`pre_test`"></BuildEnv>
-
+      <el-row>
+       <el-col :span="12">
+        <BuildEnv :initFlag="configDataLoading" :pre_build="test.pre_test" :isCreate="!isEdit" :title="``" :propPre="`pre_test`"/>
+        </el-col>
+      </el-row>
       <div class="divider">
       </div>
-
-      <div class="repo dashed-container">
-        <span class="title">应用列表 <el-button v-if="test.pre_test.installs.length===0"
-                     @click="addInstall"
-                     type="text">添加</el-button></span>
-        <el-row v-for="(app, installIndex) in test.pre_test.installs"
-                :key="installIndex"
-                :gutter="10">
-          <el-form :model="app"
-                   :rules="install_items_rules"
-                   ref="install_items_ref"
-                   class="install-form"
-                   label-position="top">
-            <el-col :span="4">
-              <el-form-item prop="name"
-                            :label="installIndex===0?'名称':''">
-                <el-select size="small"
-                           @change="clearAppVersion(app)"
-                           v-model="app.name"
-                           placeholder="请选择应用"
-                           filterable>
-                  <el-option v-for="(arr, name) in allApps"
-                             :key="name"
-                             :label="name"
-                             :value="name">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item prop="version"
-                            :label="installIndex===0?'版本':''">
-                <el-select size="small"
-                           v-model="app.version"
-                           placeholder="请选择版本"
-                           filterable>
-                  <el-option v-for="(app_info, idx) in allApps[app.name]"
-                             :key="idx"
-                             :label="app_info.version"
-                             :value="app_info.version">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item :label="installIndex===0?'操作':''">
-                <div>
-                  <el-button size="small"
-                             v-if="installIndex===test.pre_test.installs.length-1"
-                             @click="addInstall"
-                             type="primary"
-                             plain>新增</el-button>
-                  <el-button size="small"
-                             v-if="test.pre_test.installs.length >= 1"
-                             @click="removeInstall(installIndex)"
-                             type="danger"
-                             plain>删除</el-button>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-form>
-        </el-row>
-      </div>
-      <div class="divider">
-      </div>
-
       <el-form-item label-width="0px">
         <div class="repo dashed-container">
           <repo-select :config="test"
@@ -104,10 +41,8 @@
                        hidePrimary></repo-select>
         </div>
       </el-form-item>
-      <div class="divider">
-      </div>
-
-      <EnvVariable :preEnvs="test.pre_test" :isTest="true"></EnvVariable>
+      <div class="divider"></div>
+         <EnvVariable :preEnvs="test.pre_test" :isTest="true" :validObj="validObj"></EnvVariable>
       <div class="divider">
       </div>
 
@@ -172,15 +107,6 @@
       <label class="title">
         <slot name="label">
           <span>测试报告</span>
-          <!-- <el-tooltip effect="dark"
-                            placement="top">
-                  <div slot="content">设置一个或者多个文件目录，构建完成后可以在工作流详情页面进行下载，通常用于测试日志等文件的导出<br /></div>
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-                <el-button size="small"
-                           v-if="test.artifact_paths.length===0"
-                           @click="addArtifactPath()"
-                           type="text">添加</el-button> -->
         </slot>
       </label>
       <el-form-item label-width="160px"
@@ -318,10 +244,7 @@ import bus from '@utils/eventBus'
 import ValidateSubmit from '@utils/validateAsync'
 import Editor from 'vue2-ace-bind'
 import Notify from '@/components/projects/edit_pipeline/product_pipeline/switch_tab/notify.vue'
-
-import {
-  getAllAppsAPI, getCodeSourceMaskedAPI, createTestAPI, updateTestAPI, singleTestAPI
-} from '@api'
+import { getCodeSourceMaskedAPI, createTestAPI, updateTestAPI, singleTestAPI } from '@api'
 const validateTestName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入测试名称'))
@@ -337,7 +260,6 @@ export default {
   data () {
     return {
       productTemplates: [],
-      allApps: {},
       allCodeHosts: [],
       test: {
         name: '',
@@ -527,18 +449,6 @@ export default {
     encodeCampaign (b) {
       return !!b
     },
-    clearAppVersion (obj) {
-      obj.version = ''
-    },
-    addInstall () {
-      this.test.pre_test.installs.push({
-        name: '',
-        version: ''
-      })
-    },
-    removeInstall (index) {
-      this.test.pre_test.installs.splice(index, 1)
-    },
     addTrigger () {
       this.test.repos.forEach(repo => {
         this.allCodeHosts.forEach(codehost => {
@@ -608,9 +518,6 @@ export default {
     }
   },
   created () {
-    getAllAppsAPI().then(res => {
-      this.allApps = this.makeMapOfArray(this.$utils.sortVersion(res, 'version', 'asc'), 'name')
-    })
     getCodeSourceMaskedAPI().then((response) => {
       this.allCodeHosts = response
     })
@@ -664,6 +571,12 @@ export default {
         }
         if (this.test.artifact_paths.length === 0) {
           this.addArtifactPath()
+        }
+        if (this.test.pre_test.installs) {
+          this.test.pre_test.installs = this.test.pre_test.installs.map(i => {
+            i.id = `${i.name}${i.version}`
+            return i
+          })
         }
         this.configDataLoading = false
       })
@@ -844,17 +757,6 @@ export default {
     border-radius: 4px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-  }
-
-  .el-breadcrumb {
-    font-size: 16px;
-    line-height: 1.35;
-
-    .el-breadcrumb__item__inner a:hover,
-    .el-breadcrumb__item__inner:hover {
-      color: #1989fa;
-      cursor: pointer;
-    }
   }
 
   .text {

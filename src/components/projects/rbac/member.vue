@@ -137,6 +137,7 @@ export default {
           title: this.projectName,
           url: `/v1/projects/detail/${this.projectName}`
         },
+        { title: '权限', url: '' },
         { title: '成员管理', url: '' }
       ]
     })

@@ -81,10 +81,7 @@
                 <el-tooltip v-hasPermi="{projectName: projectName, action: 'edit_workflow'}" effect="dark"
                             content="编辑工作流"
                             placement="top">
-                  <router-link :to="`/workflows/product/edit/${workflowName}?projectName=${projectName}`"
-                               class="not-anchor">
-                    <i class="el-icon-edit-outline edit-pipeline"></i>
-                  </router-link>
+                  <i @click="$router.push(`/workflows/product/edit/${workflowName}?projectName=${projectName}`)" class="el-icon-edit-outline edit-pipeline"></i>
                 </el-tooltip>
                 <el-tooltip v-hasPermi="{projectName: projectName, action: 'delete_workflow'}" effect="dark"
                             content="删除工作流"
@@ -104,11 +101,18 @@
              :body-style="{ padding: '0px', margin: '15px 0 30px 0' }">
       <div slot="header"
            class="block-title">
-        历史任务
+        <span>历史任务</span>
+        <FilterStatus ref="filterStatusRef"
+                      :filteredItems="filteredItems"
+                      :defaultFilterList="defaultFilterList"
+                      :getFilterList="getFilterList"
+                      @updateFilter="updateFilter">
+        </FilterStatus>
       </div>
       <task-list :taskList="workflowTasks"
                  :total="total"
                  :pageSize="pageSize"
+                 :currentPage="currentPage"
                  :projectName="projectName"
                  :baseUrl="`/v1/projects/detail/${projectName}/pipelines/multi/${workflowName}`"
                  :workflowName="workflowName"
@@ -138,12 +142,40 @@
 </template>
 
 <script>
-import { getWorkflowDetailAPI, deleteProductWorkflowAPI, workflowTaskListAPI, getProductWorkflowsInProjectAPI } from '@api'
+import { getWorkflowDetailAPI, deleteProductWorkflowAPI, workflowTaskListAPI, getProductWorkflowsInProjectAPI, getWorkflowFilterListAPI } from '@api'
 import runWorkflow from './common/run_workflow.vue'
+import FilterStatus from './workflow_multi_task_detail/filterStatus.vue'
 import bus from '@utils/eventBus'
 export default {
   data () {
+    this.filterInfo = { type: '', list: '' }
     return {
+      filteredItems: [
+        {
+          value: 'creator',
+          text: '执行人'
+        },
+        {
+          value: 'serviceName',
+          text: '服务名称'
+        },
+        {
+          value: 'committer',
+          text: 'committer'
+        },
+        {
+          value: 'taskStatus',
+          text: '状态'
+        }
+      ],
+      defaultFilterList: {
+        taskStatus: [
+          { text: '失败', value: 'failed' },
+          { text: '成功', value: 'passed' },
+          { text: '超时', value: 'timeout' },
+          { text: '取消', value: 'cancelled' }
+        ]
+      },
       workflow: {},
       workflowTasks: [],
       total: 0,
@@ -152,6 +184,7 @@ export default {
       durationSet: {},
       forcedUserInput: {},
       pageStart: 0,
+      currentPage: 1,
       timerId: null,
       timeTimeoutFinishFlag: false,
       usedInPolicy: [] // whether used in policy
@@ -180,10 +213,7 @@ export default {
   },
   methods: {
     async refreshHistoryTask () {
-      const res = await workflowTaskListAPI(this.projectName, this.workflowName, this.pageStart, this.pageSize)
-      this.processTestData(res)
-      this.workflowTasks = res.data
-      this.total = res.total
+      await this.fetchHistory(this.pageStart, this.pageSize)
       if (!this.timeTimeoutFinishFlag) {
         this.timerId = setTimeout(this.refreshHistoryTask, 3000)// 保证内存中只有一个定时器
       }
@@ -218,7 +248,9 @@ export default {
       })
     },
     fetchHistory (start, max) {
-      workflowTaskListAPI(this.projectName, this.workflowName, start, max).then(res => {
+      const queryType = this.filterInfo.type
+      const filters = this.filterInfo.list
+      workflowTaskListAPI(this.projectName, this.workflowName, start, max, '', queryType, filters).then(res => {
         this.processTestData(res)
         this.workflowTasks = res.data
         this.total = res.total
@@ -227,6 +259,7 @@ export default {
     changeTaskPage (val) {
       const start = (val - 1) * this.pageSize
       this.pageStart = start
+      this.currentPage = val
       this.fetchHistory(start, this.pageSize)
     },
     hideAndFetchHistory () {
@@ -278,6 +311,25 @@ export default {
       if (res) {
         this.usedInPolicy = res.find(re => re.name === this.workflowName).base_refs || []
       }
+    },
+    getFilterList ({ type }) {
+      return getWorkflowFilterListAPI(this.projectName, this.workflowName, type)
+        .then(res => {
+          return res
+        })
+        .catch(err => {
+          console.log(err)
+          return []
+        })
+    },
+    updateFilter ({ type, list }) {
+      this.filterInfo = {
+        type,
+        list: list.map(li => li.value || li).join(',')
+      }
+      this.currentPage = 1
+      this.pageStart = 0
+      this.fetchHistory(this.pageStart, this.pageSize)
     }
   },
   beforeDestroy () {
@@ -310,7 +362,8 @@ export default {
     })
   },
   components: {
-    runWorkflow
+    runWorkflow,
+    FilterStatus
   }
 }
 </script>
@@ -354,6 +407,8 @@ export default {
   }
 
   .block-title {
+    display: flex;
+    align-items: center;
     color: #999;
     font-size: 16px;
     line-height: 20px;

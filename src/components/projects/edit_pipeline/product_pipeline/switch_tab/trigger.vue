@@ -166,8 +166,7 @@
           </el-form-item>
           <el-form-item v-else-if="webhookSwap.repo.source!=='gerrit'" label="触发事件" prop="events">
             <el-checkbox-group v-model="webhookSwap.events">
-              <el-checkbox label="push"></el-checkbox>
-              <el-checkbox label="pull_request"></el-checkbox>
+              <el-checkbox v-for="tri in triggerMethods" :key="tri.label" :label="tri.label">{{ tri.text }}</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="触发策略">
@@ -192,7 +191,8 @@
               placeholder="输入目录时，多个目录请用回车换行分隔"
             ></el-input>
           </el-form-item>
-          <ul v-if="webhookSwap.repo.source!=='gerrit' && webhookSwap.repo.source!=='codehub'" style="padding-left: 120px;">
+          <ul v-if="webhookSwap.repo.source!=='gerrit' && webhookSwap.repo.source!=='codehub'" style="padding-left: 120px; color: #909399; font-size: 12px; line-height: 20px;">
+            <li>输入目录时，多个目录请用回车换行分隔</li>
             <li>"/" 表示代码库中的所有文件</li>
             <li>用 "!" 符号开头可以排除相应的文件</li>
           </ul>
@@ -290,9 +290,14 @@
                   <span>{{ row.workflow_args.namespace || 'N/A' }}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="触发方式">
+              <el-table-column label="触发方式" width="110px">
                 <template slot-scope="{ row }">
-                  <span>{{ row.main_repo.events.join() || 'N/A' }}</span>
+                  <div v-if="row.main_repo.events.length">
+                    <div v-for="event in row.main_repo.events" :key="event">
+                      {{ triggerMethods.find(tri => tri.label === event).text }}
+                    </div>
+                  </div>
+                  <span v-else>{{ 'N/A' }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="文件目录">
@@ -408,6 +413,19 @@ export default {
         trigger: ['blur', 'change']
       }
     }
+
+    this.triggerMethods = [
+      {
+        label: 'push',
+        text: 'Push commits'
+      }, {
+        label: 'pull_request',
+        text: 'Pull requests'
+      }, {
+        label: 'tag',
+        text: 'Push tags'
+      }
+    ]
 
     return {
       testInfos: [],
@@ -912,7 +930,7 @@ export default {
 
   .el-form {
     .el-form-item {
-      margin-bottom: 8px;
+      margin-bottom: 15px;
 
       &.bottom-22 {
         margin-bottom: 22px;

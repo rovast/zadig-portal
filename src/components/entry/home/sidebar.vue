@@ -217,6 +217,20 @@ export default {
               url: 'tests'
             }
           ]
+        }, {
+          category_name: '数据分析',
+          items: [
+            {
+              name: '数据概览',
+              icon: 'iconfont iconxiaonengjiancha',
+              url: 'statistics'
+            },
+            {
+              name: '效能洞察',
+              icon: 'iconfont iconshujudongcha',
+              url: 'insight/build'
+            }
+          ]
         }
       ],
       adminMenu: [{

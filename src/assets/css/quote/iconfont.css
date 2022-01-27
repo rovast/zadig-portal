@@ -1,11 +1,11 @@
 @font-face {
   font-family: "iconfont"; /* Project id 1282370 */
-  src: url('~@assets/fonts/iconfont.eot?t=1642073246674'); /* IE9 */
-  src: url('~@assets/fonts/iconfont.eot?t=1642073246674#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('~@assets/fonts/iconfont.woff2?t=1642073246674') format('woff2'),
-       url('~@assets/fonts/iconfont.woff?t=1642073246674') format('woff'),
-       url('~@assets/fonts/iconfont.ttf?t=1642073246674') format('truetype'),
-       url('~@assets/icons/font/iconfont.svg?t=1642073246674#iconfont') format('svg');
+  src: url('~@assets/fonts/iconfont.eot?t=1643282044266'); /* IE9 */
+  src: url('~@assets/fonts/iconfont.eot?t=1643282044266#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('~@assets/fonts/iconfont.woff2?t=1643282044266') format('woff2'),
+       url('~@assets/fonts/iconfont.woff?t=1643282044266') format('woff'),
+       url('~@assets/fonts/iconfont.ttf?t=1643282044266') format('truetype'),
+       url('~@assets/icons/font/iconfont.svg?t=1643282044266#iconfont') format('svg');
 }
 
 .iconfont {
@@ -14,6 +14,22 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.iconsystem1:before {
+  content: "\e6ea";
+}
+
+.iconhuanjing:before {
+  content: "\e628";
+}
+
+.iconxiaonengjiancha:before {
+  content: "\e63b";
+}
+
+.iconxitong-system:before {
+  content: "\e634";
 }
 
 .iconaws:before {

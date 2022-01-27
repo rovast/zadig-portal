@@ -146,7 +146,7 @@ export default {
       },
       templateOption: {
         tabSize: 2,
-        readOnly: true,
+        readOnly: 'nocursor',
         theme: 'neo',
         mode: 'text/x-dockerfile',
         lineNumbers: false,
@@ -392,7 +392,7 @@ export default {
             (val.visibility === 'public' &&
               val.product_name !== this.projectName)
           ) {
-            this.cmOptions.readOnly = true
+            this.cmOptions.readOnly = 'nocursor'
           } else {
             this.cmOptions.readOnly = false
           }

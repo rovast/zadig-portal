@@ -280,7 +280,6 @@ export default {
 
         img {
           height: 60px;
-          margin-bottom: 15px;
         }
 
         h3 {
@@ -359,7 +358,7 @@ export default {
         }
 
         .login-btn {
-          margin-bottom: 18px;
+          margin-bottom: 8px;
         }
 
         .login-loading {

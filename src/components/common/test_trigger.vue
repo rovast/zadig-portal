@@ -98,8 +98,7 @@
                       label="触发事件"
                       prop="events">
           <el-checkbox-group v-model="webhookSwap.events">
-            <el-checkbox label="push"></el-checkbox>
-            <el-checkbox label="pull_request"></el-checkbox>
+            <el-checkbox v-for="tri in triggerMethods" :key="tri.label" :label="tri.label">{{ tri.text }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="自动取消">
@@ -164,7 +163,7 @@
             </el-table-column>
             <el-table-column label="触发方式">
               <template slot-scope="scope">
-                <span>{{ scope.row.main_repo.events.join() }}</span>
+                <div v-for="event in scope.row.main_repo.events" :key="event">{{ triggerMethods.find(tri => tri.label === event).text }}</div>
               </template>
             </el-table-column>
             <el-table-column label="文件目录">
@@ -223,6 +222,18 @@ export default {
         }
       ]
     }
+    this.triggerMethods = [
+      {
+        label: 'push',
+        text: 'Push commits'
+      }, {
+        label: 'pull_request',
+        text: 'Pull requests'
+      }, {
+        label: 'tag',
+        text: 'Push tags'
+      }
+    ]
     return {
       showTriggerParamsDialog: false,
       webhookBranches: {},

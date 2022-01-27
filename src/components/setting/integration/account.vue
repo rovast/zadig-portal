@@ -1,8 +1,8 @@
 <template>
   <div class="integration-account-container">
-    <el-dialog title="用户账户管理-添加" :close-on-click-modal="false" custom-class="user-form-dialog" :visible.sync="dialogUserAccountFormVisible">
+    <el-dialog title="账号系统管理-添加" :close-on-click-modal="false" custom-class="user-form-dialog" :visible.sync="dialogUserAccountFormVisible">
       <el-form :model="userAccount" @submit.native.prevent :rules="userAccountRules" status-icon ref="userAccountForm">
-        <el-form-item label="账户类型" prop="type">
+        <el-form-item label="账号系统类型" prop="type">
           <el-select v-model="userAccount.name" @change="clearValidate('userAccountForm')" :disabled="userAccount.mode ==='edit'">
             <el-option label="Microsoft Active Directory" value="Microsoft Active Directory"></el-option>
             <el-option label="OpenLDAP" value="OpenLDAP"></el-option>
@@ -291,18 +291,18 @@
           :rules="userAccountCustomRules"
           ref="userAccountCustomForm"
           label-position="left"
-          label-width="105px"
+          label-width="110px"
         >
           <!-- <el-alert type="info" :closable="false" style="margin-bottom: 15px;">
             <slot>
               <span class="tips">{{`请参考文档获取帮助`}}</span>
             </slot>
           </el-alert> -->
-          <el-form-item label="账户类型" prop="type">
-            <el-input v-model="userAccountCustom.type" :disabled="userAccount.mode ==='edit'" placeholder="输入自定义账户类型" autofocus clearable auto-complete="off"></el-input>
+          <el-form-item label="账号系统类型" prop="type">
+            <el-input v-model="userAccountCustom.type" :disabled="userAccount.mode ==='edit'" placeholder="输入自定义账号系统类型" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="账户名称" prop="name">
-            <el-input v-model="userAccountCustom.name" placeholder="输入账户名称" autofocus clearable auto-complete="off"></el-input>
+          <el-form-item label="账号系统名称" prop="name">
+            <el-input v-model="userAccountCustom.name" placeholder="输入账号系统名称" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="YAML 配置" prop="yaml">
           </el-form-item>
@@ -339,11 +339,11 @@
       <template>
         <el-alert type="info" :closable="false">
           <template>
-            为系统定义用户来源，默认支持 OpenLDAP、Microsoft Active Directory、以及 OAuth 集成，详情可参考
+            为系统定义用户来源，默认支持 Microsoft Active Directory、OpenLDAP、GitHub 以及 OAuth 集成，详情可参考
             <el-link
               style="font-size: 14px; vertical-align: baseline;"
               type="primary"
-              :href="`https://docs.koderover.com/zadig/settings/account/`"
+              :href="`https://docs.koderover.com/zadig/settings/account/ldap`"
               :underline="false"
               target="_blank"
             >帮助文档</el-link>。
@@ -354,7 +354,7 @@
         <el-button size="small" type="primary" plain @click="addAccount()">添加</el-button>
       </div>
       <el-table :data="accounts" style="width: 100%;">
-        <el-table-column label="账户名称">
+        <el-table-column label="账号系统名称">
           <template slot-scope="scope">{{scope.row.name}}</template>
         </el-table-column>
         <el-table-column label="操作" width="300">
@@ -542,7 +542,7 @@ export default {
       userAccountCustomRules: {
         type: {
           required: true,
-          message: '请填写自定义账户类型',
+          message: '请填写自定义账号系统类型',
           trigger: ['blur', 'change']
         },
         name: {
@@ -924,7 +924,7 @@ export default {
       this.dialogUserAccountFormVisible = false
     },
     handleUserAccountDelete (row) {
-      this.$confirm(`确定要删除 ${row.name} 这个账户吗？`, '确认', {
+      this.$confirm(`确定要删除 ${row.name} 这个账号系统吗？`, '确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -972,7 +972,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '账户数据添加成功',
+                message: '账号系统添加成功',
                 type: 'success'
               })
             })
@@ -992,7 +992,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '账户数据添加成功',
+                message: '账号系统添加成功',
                 type: 'success'
               })
             })
@@ -1009,7 +1009,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '账户数据添加成功',
+                message: '账号系统添加成功',
                 type: 'success'
               })
             })
@@ -1027,7 +1027,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '账户数据添加成功',
+                message: '账号系统添加成功',
                 type: 'success'
               })
             })
@@ -1046,7 +1046,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '账户数据添加成功',
+                message: '账号系统添加成功',
                 type: 'success'
               })
             })
@@ -1068,7 +1068,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '账户数据修改成功',
+                message: '账号系统修改成功',
                 type: 'success'
               })
             })
@@ -1086,7 +1086,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '账户数据修改成功',
+                message: '账号系统修改成功',
                 type: 'success'
               })
             })
@@ -1103,7 +1103,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '账户数据修改成功',
+                message: '账号系统修改成功',
                 type: 'success'
               })
             })
@@ -1126,7 +1126,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '账户数据修改成功',
+                message: '账号系统修改成功',
                 type: 'success'
               })
             })
@@ -1144,7 +1144,7 @@ export default {
               this.getAccountConfig()
               this.handleUserAccountCancel()
               this.$message({
-                message: '账户数据修改成功',
+                message: '账号系统修改成功',
                 type: 'success'
               })
             })

@@ -119,10 +119,7 @@
 
       <el-table-column width="120"
                        prop="status"
-                       label="状态"
-                       :filters="[{ text: '失败', value: 'failed' }, { text: '成功', value: 'passed' },{ text: '超时', value: 'timeout' },{ text: '取消', value: 'cancelled' }]"
-                       :filter-method="filterStatusTag"
-                       filter-placement="bottom-end">
+                       label="状态">
         <template slot-scope="scope">
           <el-tag :type="$utils.taskElTagType(scope.row.status)"
                   size="small"
@@ -149,6 +146,7 @@
     <div class="pagination">
       <el-pagination layout="prev, pager, next"
                      @current-change="changeTaskPage"
+                     :current-page="currentPage"
                      :page-size="pageSize"
                      :total="total">
       </el-pagination>
@@ -194,9 +192,6 @@ export default {
     },
     wordTranslation (word, category, subitem) {
       return wordTranslate(word, category, subitem)
-    },
-    filterStatusTag (value, row) {
-      return row.status === value
     },
     taskDuration (task_id, started) {
       const refresh = () => {
@@ -272,8 +267,12 @@ export default {
       required: false,
       default: 50,
       type: Number
+    },
+    currentPage: {
+      required: false,
+      default: 1,
+      type: Number
     }
-
   }
 }
 </script>

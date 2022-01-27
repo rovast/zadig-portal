@@ -12,7 +12,7 @@
             <GitHubApp v-if="currentTab === 'githubapp'" />
           </keep-alive>
         </el-tab-pane>
-        <el-tab-pane name="account" label="用户账户集成">
+        <el-tab-pane name="account" label="账号系统集成">
           <keep-alive>
             <Account v-if="currentTab === 'account'" />
           </keep-alive>

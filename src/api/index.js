@@ -218,6 +218,24 @@ export function analyticsRequestAPI (payload) {
   return http.post(analyticsReq, payload)
 }
 
+// Statistics
+
+export function getStatisticsOverviewAPI () {
+  return http.get('/api/aslan/stat/dashboard/overview')
+}
+
+export function getBuildStatisticsAPI (start, end) {
+  return http.get(`/api/aslan/stat/dashboard/build?startDate=${start}&endDate=${end}`)
+}
+
+export function getDeployStatisticsAPI (start, end) {
+  return http.get(`/api/aslan/stat/dashboard/deploy?startDate=${start}&endDate=${end}`)
+}
+
+export function getTestStatisticsAPI (start, end) {
+  return http.get(`/api/aslan/stat/dashboard/test?startDate=${start}&endDate=${end}`)
+}
+
 // Status
 export function taskRunningSSEAPI () {
   return makeEventSource('/api/aslan/workflow/sse/tasks/running')
@@ -551,12 +569,16 @@ export function cancelWorkflowAPI (projectName, workflowName, taskID) {
   return http.delete(`/api/aslan/workflow/workflowtask/id/${taskID}/pipelines/${workflowName}?projectName=${projectName}`)
 }
 
-export function workflowTaskListAPI (projectName, name, start, max, workflowType = '') {
-  return http.get(`/api/aslan/workflow/workflowtask/max/${max}/start/${start}/pipelines/${name}?projectName=${projectName}&workflowType=${workflowType}`)
+export function workflowTaskListAPI (projectName, name, start, max, workflowType = '', queryType = '', filters = '') {
+  return http.get(`/api/aslan/workflow/workflowtask/max/${max}/start/${start}/pipelines/${name}?projectName=${projectName}&workflowType=${workflowType}&queryType=${queryType}&filters=${filters}`)
 }
 
 export function workflowTaskDetailAPI (projectName, workflowName, taskID, workflowType = '') {
   return http.get(`/api/aslan/workflow/workflowtask/id/${taskID}/pipelines/${workflowName}?projectName=${projectName}&workflowType=${workflowType}`)
+}
+
+export function getWorkflowFilterListAPI (projectName, name, queryType, workflowType = 'workflow') {
+  return http.get(`/api/aslan/workflow/workflowtask/filters/pipelines/${name}?projectName=${projectName}&queryType=${queryType}&workflowType=${workflowType}`)
 }
 
 export function workflowTaskDetailSSEAPI (projectName, workflowName, taskID, workflowType = '') {
@@ -740,13 +762,13 @@ export function getRepoNameByIdAPI (id, type, repo_owner, key = '', project_uuid
   }
 }
 
-export function getBranchInfoByIdAPI (id, repo_owner, repo_name, repo_uuid = '') {
-  const repoOwner = repo_owner.includes('/') ? encodeURIComponent(encodeURIComponent(repo_owner)) : repo_owner
-  const repoName = repo_name.includes('/') ? encodeURIComponent(encodeURIComponent(repo_name)) : repo_name
-  if (repo_uuid) {
-    return http.get(`/api/aslan/code/codehost/${id}/namespaces/${repoOwner}/projects/${repo_uuid}/branches`)
+export function getBranchInfoByIdAPI (id, repoOwner, repoName, repoUUID = '', page = 1, perPage = 200, key = '') {
+  const encodeRepoOwner = repoOwner.includes('/') ? encodeURIComponent(encodeURIComponent(repoOwner)) : repoOwner
+  const encodeRepoName = repoName.includes('/') ? encodeURIComponent(encodeURIComponent(repoName)) : repoName
+  if (repoUUID) {
+    return http.get(`/api/aslan/code/codehost/${id}/namespaces/${encodeRepoOwner}/projects/${repoUUID}/branches`)
   } else {
-    return http.get(`/api/aslan/code/codehost/${id}/namespaces/${repoOwner}/projects/${repoName}/branches`)
+    return http.get(`/api/aslan/code/codehost/${id}/namespaces/${encodeRepoOwner}/projects/${encodeRepoName}/branches?page=${page}&perPage=${perPage}&key=${key}`)
   }
 }
 
@@ -816,6 +838,10 @@ export function editJenkins (payload) {
 
 export function deleteJenkins (payload) {
   return http.delete(`/api/aslan/system/jenkins/integration/${payload.id}`, payload)
+}
+
+export function checkJenkinsConfigExistsAPI () {
+  return http.get('/api/aslan/system/jenkins/exist')
 }
 
 export function queryJenkins () {
@@ -1223,7 +1249,7 @@ export function getServiceInfo (projectName, serviceName, envName = '', envType 
 }
 
 export function autoUpgradeEnvAPI (projectName, payload, force = '') {
-  return http.put(`/api/aslan/environment/environments?auto=true&projectName=${projectName}&force=${force}`, payload)
+  return http.put(`/api/aslan/environment/environments?projectName=${projectName}&force=${force}`, payload)
 }
 
 // Login
@@ -1291,10 +1317,10 @@ export function validateYamlAPI (projectName, payload) {
 }
 
 export function generateEnvAPI (projectName, envType = '') {
-  return http.post(`/api/aslan/environment/environments?auto=true&projectName=${projectName}&envType=${envType}`)
+  return http.post(`/api/aslan/environment/environments?projectName=${projectName}&envType=${envType}`)
 }
 
-export function generatePipeAPI (projectName) {
+export function generateWorkflowAPI (projectName) {
   return http.post(`/api/aslan/workflow/workflow/${projectName}/auto?projectName=${projectName}`)
 }
 
@@ -1323,8 +1349,8 @@ export function getVersionProductListAPI () {
   return http.get(`/api/v1/picket/projects?ignoreNoVersions=false&verbosity=detailed`)
 }
 
-export function productHostingNamespaceAPI (clusterId) {
-  return http.get(`/api/aslan/environment/kube/available_namespaces?clusterId=${clusterId}`)
+export function productHostingNamespaceAPI (clusterId, type = '') {
+  return http.get(`/api/aslan/environment/kube/available_namespaces?clusterId=${clusterId}&type=${type}`)
 }
 
 export function getHelmReleaseListAPI (projectName, envName) {
@@ -1633,4 +1659,64 @@ export function getAllPolicyAPI (projectName) {
 
 export function getPolicyByIdAPI (projectName, id) {
   return http.get(`/api/v1/policy/${id}?projectName=${projectName}`)
+}
+
+// Insight
+export function getLatestBuildsAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/buildLatestTenMeasure`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getLongestBuildsAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/buildTenDurationMeasure`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getBuildHealthAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/buildHealthMeasure`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getAverageBuildsDurationAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/buildAverageMeasure`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getDaliyBuildsFeqAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/buildDailyMeasure`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getBuildTrendAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/buildTrend`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getTestHealthAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/testHealthMeasure`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getAverageTestsDurationAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/testAverageMeasure`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getTestTrendAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/testTrend`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getTestCasesAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/testCaseMeasure`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getTestDeployAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/testDeliveryDeploy`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getServiceHealthAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/deployHealthMeasure`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getServiceDeployAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/deployWeeklyMeasure`, { startDate, endDate, productNames: projectNames })
+}
+export function getServiceDeploySummaryAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/deployTopFiveHigherMeasure`, { startDate, endDate, productNames: projectNames })
+}
+
+export function getServiceFailureAPI ({ startDate, endDate, projectNames }) {
+  return http.post(`/api/aslan/stat/quality/deployTopFiveFailureMeasure`, { startDate, endDate, productNames: projectNames })
 }

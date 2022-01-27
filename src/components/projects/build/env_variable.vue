@@ -32,7 +32,10 @@
           </el-form-item>
         </el-col>
         <el-col :span="narrowWidth ? 4 : 4">
-          <el-form-item :prop="'envs.' + build_env_index + '.value'" :rules="{required: true, message: '值 不能为空', trigger: ['blur', 'change']}">
+          <el-form-item
+            :prop="'envs.' + build_env_index + '.value'"
+            :rules="{required: true, message: '值 不能为空', trigger: ['blur', 'change']}"
+          >
             <el-select
               v-if="preEnvs.envs[build_env_index].type==='choice'"
               v-model="preEnvs.envs[build_env_index].value"
@@ -94,6 +97,11 @@ export default {
     narrowWidth: {
       type: Boolean,
       default: false
+    },
+    validObj: {
+      required: false,
+      type: Object,
+      default: null
     }
   },
   data () {
@@ -116,18 +124,17 @@ export default {
         is_credential: true
       })
     },
+    validate () {
+      return this.$refs.buildEnv.validate()
+    },
     addBuildEnv () {
-      this.$refs.buildEnv.validate(valid => {
-        if (valid) {
-          this.preEnvs.envs.push({
-            key: '',
-            value: '',
-            type: 'string',
-            is_credential: true
-          })
-        } else {
-          return false
-        }
+      this.validate().then(valid => {
+        this.preEnvs.envs.push({
+          key: '',
+          value: '',
+          type: 'string',
+          is_credential: true
+        })
       })
     },
     deleteBuildEnv (index) {
@@ -156,9 +163,12 @@ export default {
     saveVariable () {
       this.dialogVisible = false
       const index = this.currentVars.index
-      this.preEnvs.envs[
-        index
-      ].choice_option = this.currentVars.choice_option.split(',')
+      const env = this.preEnvs.envs[index]
+      const choice_option = this.currentVars.choice_option.split(',')
+      env.choice_option = choice_option
+      if (!choice_option.includes(env.value)) {
+        env.value = ''
+      }
     }
   },
   watch: {
@@ -169,6 +179,12 @@ export default {
         }
       })
     }
+  },
+  created () {
+    this.validObj.addValidate({
+      name: 'envVariable',
+      valid: this.validate
+    })
   }
 }
 </script>

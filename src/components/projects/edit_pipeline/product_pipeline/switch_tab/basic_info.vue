@@ -7,8 +7,8 @@
                  ref="pipelineInfo"
                  label-position="top"
                  label-width="80px">
-          <el-row>
-            <el-col :span="5">
+          <el-row :gutter="20">
+            <el-col :span="8">
               <el-form-item prop="name"
                             label="工作流名称">
                 <el-input v-model="pipelineInfo.name"
@@ -17,7 +17,7 @@
                           placeholder="请输入工作流名称"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="5">
+            <el-col :span="8">
               <el-form-item prop="product_tmpl_name"
                             label="选择项目">
                 <el-select v-model="pipelineInfo.product_tmpl_name"
@@ -32,7 +32,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="5">
+            <el-col :span="8">
               <el-form-item prop="env_name">
                 <template slot="label">
                   <span>指定环境</span>
@@ -61,30 +61,45 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="5">
-              <el-form-item prop="reset_image"
-                            label="镜像版本回退">
-                <el-checkbox v-model="pipelineInfo.reset_image"></el-checkbox>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item prop="is_parallel">
-                <template slot="label">
-                  <span>并发运行 </span>
-                  <el-tooltip effect="dark"
-                              content="当更新不同服务时触发该工作流，产生的多个任务将会并发执行以提升构建、部署、测试效率"
-                              placement="top">
-                    <i class="pointer el-icon-question"></i>
-                  </el-tooltip>
-                </template>
-                <el-checkbox v-model="pipelineInfo.is_parallel"></el-checkbox>
-              </el-form-item>
-            </el-col>
           </el-row>
           <el-form-item label="描述">
-            <el-input type="textarea"
+            <el-input type="input"
                       style="width: 100%;"
                       v-model="pipelineInfo.description"></el-input>
+          </el-form-item>
+        </el-form>
+        <div class="policy-title">运行策略</div>
+        <el-form :model="pipelineInfo"
+                 :rules="rules"
+                 ref="pipelineInfoPolicy"
+                 label-position="left"
+                 label-width="120px">
+          <el-form-item prop="is_parallel">
+            <template slot="label">
+              <span>并发运行 </span>
+              <el-tooltip effect="dark"
+                          content="当同时更新多个不同服务时，产生的多个任务将会并发执行，以提升工作流运行效率"
+                          placement="top">
+                <i class="pointer el-icon-question"></i>
+              </el-tooltip>
+            </template>
+            <el-switch v-model="pipelineInfo.is_parallel"></el-switch>
+          </el-form-item>
+          <el-form-item prop="reset_image">
+            <template slot="label">
+              <span>镜像版本回退 </span>
+              <el-tooltip effect="dark"
+                          content="当任务运行状态和测试结果满足回退策略的设定，镜像版本将自动回退到上一个版本"
+                          placement="top">
+                <i class="pointer el-icon-question"></i>
+              </el-tooltip>
+            </template>
+            <el-switch v-model="pipelineInfo.reset_image" @change="pipelineInfo.reset_image_policy = ''"></el-switch>
+          </el-form-item>
+          <el-form-item prop="reset_image_policy" label="设置回退策略" v-if="pipelineInfo.reset_image">
+            <el-radio-group v-model="pipelineInfo.reset_image_policy">
+              <el-radio v-for="policy in resetPolicy" :key="policy.label" :label="policy.label">{{ policy.text }}</el-radio>
+            </el-radio-group>
           </el-form-item>
         </el-form>
       </div>
@@ -99,6 +114,16 @@ import { templatesAPI, listProductAPI } from '@api'
 export default {
   data () {
     return {
+      resetPolicy: [{
+        label: 'taskCompleted',
+        text: '任务执行完成'
+      }, {
+        label: 'deployFailed',
+        text: '部署结果失败'
+      }, {
+        label: 'testFailed',
+        text: '测试结果失败'
+      }],
       projects: [],
       projectList: [],
       filteredEnvs: [],
@@ -118,7 +143,13 @@ export default {
             message: '请选择项目',
             trigger: 'blur'
           }
-        ]
+        ],
+        reset_image_policy: {
+          type: 'string',
+          required: true,
+          message: '请选择回退策略',
+          trigger: 'blur'
+        }
       }
     }
   },
@@ -162,7 +193,7 @@ export default {
         }
         const projectName = this.pipelineInfo.product_tmpl_name
         bus.$on('check-tab:basicInfo', () => {
-          this.$refs.pipelineInfo.validate(valid => {
+          Promise.all([this.$refs.pipelineInfo.validate(), this.$refs.pipelineInfoPolicy.validate()]).then(valid => {
             bus.$emit('receive-tab-check:basicInfo', valid)
           })
         })
@@ -199,6 +230,12 @@ export default {
           margin-left: 0 !important;
         }
       }
+    }
+
+    .policy-title {
+      margin: 30px 0 10px;
+      font-weight: 500;
+      font-size: 16px;
     }
 
     .divider {

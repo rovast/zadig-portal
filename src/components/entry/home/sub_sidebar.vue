@@ -161,7 +161,6 @@ export default {
             color: #bebebe;
             font-weight: bold;
             font-size: 14px;
-            text-transform: uppercase;
 
             .cf-registry-selector__text {
               display: inline-block;

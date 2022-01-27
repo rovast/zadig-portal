@@ -41,8 +41,14 @@ export default {
   methods: {
     getLatestBuilds () {
       this.loading = true
+      const startTime = Math.floor(this.selectedDuration[0] / 1000)
+      const endTime = Math.floor(this.selectedDuration[1] / 1000)
       const selectedProjects = this.selectedProjects
-      getLatestBuildsAPI({ selectedProjects: selectedProjects }).then(res => {
+      getLatestBuildsAPI({
+        startDate: startTime,
+        endDate: endTime,
+        projectNames: selectedProjects
+      }).then(res => {
         this.tableData = res
         this.loading = false
       })
@@ -57,6 +63,12 @@ export default {
         this.getLatestBuilds()
       },
       immediate: false
+    },
+    selectedDuration: {
+      handler () {
+        this.getLatestBuilds()
+      },
+      immediate: false
     }
   },
   mounted () {
@@ -64,6 +76,9 @@ export default {
   },
   props: {
     selectedProjects: {
+      required: true
+    },
+    selectedDuration: {
       required: true
     }
   }

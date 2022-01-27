@@ -445,7 +445,7 @@ export default {
   methods: {
     runWorkflowFromVersion () {
       this.runWorkflowFromVersionDialogVisible = true
-      this.workflowToRun.projectName = this.currentVersionDetail.versionInfo.projectName
+      this.workflowToRun.projectName = this.currentVersionDetail.versionInfo.productName
       this.workflowToRun.version = this.currentVersionDetail.versionInfo.version
       this.workflowToRun.workflowName = this.currentVersionDetail.versionInfo.workflowName
     },

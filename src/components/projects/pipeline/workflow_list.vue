@@ -60,8 +60,8 @@
       <div class="type-content">
         <el-radio v-model="selectWorkflowType" label="product">产品-工作流</el-radio>
         <div class="type-desc">具有对项目环境构建、部署、测试和服务版本交付的能力</div>
-        <el-radio v-model="selectWorkflowType" label="common">通用-工作流</el-radio>
-        <div class="type-desc">可自定义工作流程，内置构建、K8s 部署、小程序发版等步骤</div>
+        <!-- <el-radio v-model="selectWorkflowType" label="common">通用-工作流</el-radio>
+        <div class="type-desc">可自定义工作流程，内置构建、K8s 部署、小程序发版等步骤</div> -->
       </div>
       <div slot="footer">
         <el-button size="small" @click="showSelectWorkflowType = false">取 消</el-button>

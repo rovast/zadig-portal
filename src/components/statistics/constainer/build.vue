@@ -5,7 +5,7 @@
       <el-row>
         <el-col :span="14">
           <div class="chart">
-            <BarChart :subtext="subText" :xData="xData" :ySuccessData="ySuccessData" :yFailureData="yFailureData"/>
+            <BarChart v-if="xData.length" :subtext="subText" :xData="xData" :ySuccessData="ySuccessData" :yFailureData="yFailureData"/>
           </div>
         </el-col>
         <el-col :span="10">
@@ -94,9 +94,9 @@ export default {
       this.total = total
       this.success = success
       this.successRate = ceil(success / total * 100)
-      this.xData = data.xData
-      this.ySuccessData = data.ySuccessData
-      this.yFailureData = data.yFailureData
+      this.xData = data.map(da => da.date)
+      this.ySuccessData = data.map(da => da.success)
+      this.yFailureData = data.map(da => da.failure)
     }
   },
   components: {

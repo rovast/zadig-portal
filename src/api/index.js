@@ -1090,6 +1090,14 @@ export function getClusterNodeInfo (clusterId = '') {
   return http.get(`/api/aslan/environment/kube/nodes?clusterId=${clusterId}`)
 }
 
+export function getClusterStorageClassAPI (clusterId) {
+  return http.get(`/api/aslan/cluster/${clusterId}/storageclasses`)
+}
+
+export function getClusterPvcAPI (clusterId, namespace) {
+  return http.get(`/api/aslan/cluster/${clusterId}/${namespace}/pvcs`)
+}
+
 // Host
 export function getHostListAPI () {
   return http.get(`/api/aslan/system/privateKey`)

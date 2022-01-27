@@ -214,71 +214,27 @@
             :model="buildConfig"
             class="form-style1 section form-bottom-0"
             label-position="left"
-            label-width="130px"
           >
             <span class="item-title">缓存策略</span>
             <div class="divider item"></div>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="使用工作空间缓存">
-                  <el-switch v-model="useWorkspaceCache" active-color="#409EFF">
+                <el-form-item label="开启缓存">
+                  <el-switch v-model="buildConfig.cache_enable"
+                              active-color="#409EFF">
                   </el-switch>
                 </el-form-item>
+                <el-radio-group v-if="buildConfig.cache_enable" v-model="buildConfig.cache_dir_type" class="radio-group">
+                  <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
+                  <el-radio label="user_defined">自定义目录
+                    <el-input v-model="buildConfig.cache_user_dir"
+                              placeholder="请手动输入"
+                              size="mini">
+                    </el-input>
+                  </el-radio>
+                </el-radio-group>
               </el-col>
             </el-row>
-            <template>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="缓存自定义目录">
-                    <el-button
-                      v-if="
-                        !this.buildConfig.caches ||
-                        this.buildConfig.caches.length === 0
-                      "
-                      style="padding: 0;"
-                      @click="addFirstCacheDir()"
-                      type="text"
-                      >新增</el-button
-                    >
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row v-for="(dir, index) in buildConfig.caches" :key="index">
-                <el-col :span="14">
-                  <el-form-item :label="index === 0 ? '' : ''">
-                    <el-input
-                      v-model="buildConfig.caches[index]"
-                      style="width: 100%;"
-                      size="mini"
-                    >
-                      <template slot="prepend">$WORKSPACE/</template>
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="10">
-                  <el-form-item :label="index === 0 ? '' : ''">
-                    <div class="app-operation">
-                      <el-button
-                        v-if="buildConfig.caches.length >= 1"
-                        @click="deleteCacheDir(index)"
-                        type="danger"
-                        size="mini"
-                        plain
-                        >删除</el-button
-                      >
-                      <el-button
-                        v-if="index === buildConfig.caches.length - 1"
-                        @click="addCacheDir(index)"
-                        type="primary"
-                        size="mini"
-                        plain
-                        >新增</el-button
-                      >
-                    </div>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </template>
           </el-form>
           <el-form
             ref="buildScript"
@@ -681,8 +637,10 @@ export default {
         name: '',
         desc: '',
         repos: [],
+        cache_enable: false,
+        cache_dir_type: '',
+        cache_user_dir: '',
         pre_build: {
-          clean_workspace: false,
           res_req: 'low', // high 、medium、low、min、define
           res_req_spec: {
             cpu_limit: 1000,
@@ -795,47 +753,6 @@ export default {
       setTimeout(() => {
         this.$store.dispatch('queryServiceModule', params)
       }, 3000)
-    },
-    addFirstCacheDir () {
-      if (!this.buildConfig.caches || this.buildConfig.caches.length === 0) {
-        this.$set(this.buildConfig, 'caches', [])
-        this.buildConfig.caches.push('')
-      }
-    },
-    addCacheDir (index) {
-      this.$refs.cacheDir.validate((valid) => {
-        if (valid) {
-          this.buildConfig.caches.push('')
-        } else {
-          return false
-        }
-      })
-    },
-    deleteCacheDir (index) {
-      this.buildConfig.caches.splice(index, 1)
-    },
-    addBuildApp (index) {
-      this.$refs.buildApp.validate((valid) => {
-        if (valid) {
-          this.buildConfig.pre_build.installs.push({
-            name: '',
-            version: '',
-            id: ''
-          })
-        } else {
-          return false
-        }
-      })
-    },
-    addFirstBuildApp () {
-      this.buildConfig.pre_build.installs.push({
-        name: '',
-        version: '',
-        id: ''
-      })
-    },
-    deleteBuildApp (index) {
-      this.buildConfig.pre_build.installs.splice(index, 1)
     },
     addExtra (command) {
       if (command === 'docker') {
@@ -1140,14 +1057,6 @@ export default {
     serviceName () {
       return this.$route.query.service_name
     },
-    useWorkspaceCache: {
-      get () {
-        return !this.buildConfig.pre_build.clean_workspace
-      },
-      set (val) {
-        this.buildConfig.pre_build.clean_workspace = !val
-      }
-    },
     isSelectedBuild () {
       return this.buildNames.includes(this.buildConfig.name)
     },
@@ -1342,6 +1251,19 @@ export default {
     bottom: 20px;
     color: #fff;
     background-color: #409eff;
+  }
+}
+
+.radio-group {
+  margin-left: 10px;
+
+  /deep/.el-radio {
+    padding: 5px 0;
+    font-weight: 400;
+
+    .el-input {
+      margin-left: 8px;
+    }
   }
 }
 </style>

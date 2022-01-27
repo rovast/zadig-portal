@@ -45,39 +45,7 @@ export default {
     },
     getAllPolicy () {
       getAllPolicyAPI(this.projectName).then(res => {
-        this.policies = res.policies || [
-          {
-            name: 'policy1',
-            describe: 'developers user1 的权限',
-            update_time: 121212121,
-            rules: [
-              {
-                verbs: [
-                  'get_workflow',
-                  'edit_workflow',
-                  'create_workflow',
-                  'delete_workflow',
-                  'run_workflow'
-                ],
-                resources: [
-                  'Workflow'
-                ],
-                match_attributes: [
-                  {
-                    key: 'production',
-                    value: 'false'
-                  },
-                  {
-                    key: 'tag',
-                    value: '项目名:协作模式名:用户来源:用户名'
-                  }
-                ],
-                relatedResources: ['zhangsan-workflow'],
-                kind: 'resource'
-              }
-            ]
-          }
-        ] // will delete
+        this.policies = res.policies || []
       })
     },
     async getPolicyDefinitions () {

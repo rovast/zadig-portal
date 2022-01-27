@@ -51,7 +51,6 @@
 </template>
 
 <script>
-// 删除 更新 新建
 import {
   createCollaborationAPI,
   updateNewCollaborationAPI,
@@ -116,7 +115,6 @@ export default {
             this.$message.success(`您成功生成了 ${payload.name} 协作模式！`)
             this.updateCollaboration(payload)
           })
-          console.log('---', payload, this.collaborationData)
           break
         case 'updated':
           payload = cloneDeep(this.collaborationData)

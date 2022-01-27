@@ -63,18 +63,7 @@ export default {
       if (this.deployType === 'k8s') {
         this.variables = cloneDeep(this.currentInfo.vars)
       } else {
-        this.chartNames = cloneDeep(
-          this.currentInfo.chartValues || [
-            {
-              chartVersion: '0.1.0',
-              envName: 'dev',
-              overrideValues: [],
-              overrideYaml:
-                'registryConf: "eyJodHRwczovL2Njci5jY3MudGVuY2VudHl1bi5jb20iOnsidXNlcm5hbWUiOiIxMDAwMTQ5Mjk5NjMiLCJwYXNzd29yZCI6Im5DbWZUQStZamhGMipDNUoiLCJlbWFpbCI6ImJvdEBrb2Rlcm92ZXIuY29tIn19"',
-              serviceName: 'service1'
-            } // will deleted
-          ]
-        )
+        this.chartNames = cloneDeep(this.currentInfo.chartValues || [])
         this.currentEnvValue = this.currentInfo.defaultValues || ''
       }
     }
@@ -91,7 +80,6 @@ export default {
         this.currentInfo.defaultValues = envInfo.DEFAULT || ''
         this.currentInfo.chartValues = chartInfo
       }
-      console.log('allInfo', this.currentInfo)
       this.dialogVisible = false
     }
   },

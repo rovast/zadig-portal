@@ -71,7 +71,6 @@ export default {
           product => product.collaboration_type === 'new'
         )
       }
-      console.log('payload', payload)
       initializeCollaborationAPI(this.projectName, payload).then(res => {
         this.$message.success(`用户初始环境创建成功！`)
         this.$router.go(-1)

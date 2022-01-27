@@ -287,7 +287,6 @@ export default {
         return
       }
       this.validate().then(() => {
-        console.log('确定生成', this.collaborationData)
         const data = this.collaborationData
         if (!data.workflows.length && !data.products.length) {
           this.$message({
@@ -303,7 +302,6 @@ export default {
       return this.$refs.policyFormRef.validate()
     },
     checkDifferent (current, initial) {
-      console.log('check', current, initial)
       this.changedInfo = {}
       let changedInfo = {} //  added: {}, deleted: {}, updated: {}
 
@@ -469,12 +467,8 @@ export default {
         : a2
       res.length = res.intersection.length + res.left.length + res.right.length
       res.all = [].concat(res.intersection, res.left, res.right)
-      console.log('!!!', res)
       return res
     }
-  },
-  created () {
-    console.log('created', this.collaborationData)
   },
   components: {
     PolicyDialog

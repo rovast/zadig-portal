@@ -58,6 +58,17 @@
               target="_blank"
             >帮助</el-link>查看 Agent 部署样例
           </span>
+          <span class="tip-item">
+            - 如需配置工作流任务的“调度策略”和“缓存资源配置”，请在集群正常接入后进行配置，请参阅
+            <el-link
+              style="font-size: 14px; vertical-align: baseline;"
+              type="primary"
+              :href="`https://docs.koderover.com/zadig/pages/cluster_manage/`"
+              :underline="false"
+              target="_blank"
+            >帮助</el-link>
+            查看具体的配置。
+          </span>
         </slot>
       </el-alert>
       <el-form ref="cluster" :rules="rules" label-width="130px" label-position="left" :model="cluster">
@@ -98,70 +109,68 @@
           高级配置
           <i :class="{'el-icon-arrow-right': !expandAdvanced,'el-icon-arrow-down': expandAdvanced}"></i>
         </el-button>
-        <section>
-          <h4>指定项目范围</h4>
-          <el-form-item label="选择项目" prop="advanced_config.project_names" class="project-scoped">
-            <el-select
-              v-model="cluster.advanced_config.project_names"
-              placeholder="请选择项目"
-              size="small"
-              style="width: 100%;"
-              filterable
-              multiple
-              clearable
-              collapse-tags
-            >
-              <el-option v-for="name in projectNames" :key="name" :label="name" :value="name"></el-option>
-            </el-select>
-            <el-button size="mini" plain @click="cluster.advanced_config.project_names = []">清空所有</el-button>
-          </el-form-item>
-        </section>
         <template v-if="expandAdvanced">
-          <div>
-            <section>
-              <h4>
-                调度策略
-                <el-tooltip effect="dark" placement="top">
-                  <div slot="content" style="line-height: 1.5;">
-                    <div>随机调度：工作流任务被随机调度到集群的可用节点上</div>
-                    <div>强制调度：工作流任务被强制调度到对应节点上，如果节点有问题，任务可能调度不成功</div>
-                    <div>优先调度：工作流任务被优先调度到对应节点上，如果节点有问题，会调度到其他可用节点上</div>
-                  </div>
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-                <span v-if="!isEdit" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可选择调度策略</span>
-              </h4>
-              <el-form-item prop="advanced_config.strategy" >
-                <span slot="label">选择策略</span>
-                <el-select
-                  v-model="cluster.advanced_config.strategy"
-                  placeholder="请选择策略"
-                  style="width: 100%;"
-                  size="small"
-                  required
-                  :disabled="!isEdit"
-                >
-                  <el-option label="随机调度" value="normal"></el-option>
-                  <el-option label="强制调度" value="required"></el-option>
-                  <el-option label="优先调度" value="preferred"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item v-if="cluster.advanced_config.strategy !== 'normal'" prop="advanced_config.node_labels" label="选择标签">
-                <el-select v-model="cluster.advanced_config.node_labels" placeholder="请选择" multiple style="width: 100%;" size="small">
-                  <el-option v-for="node in clusterNodes.labels" :key="node" :label="node" :value="node"></el-option>
-                </el-select>
-                <span style="color: #e6a23c; font-size: 12px;" v-if="clusterNodes.labels.length == 0">请先在对应节点上打上标签</span>
-                <div class="list-host">
-                  <div v-for="host in  matchedHost" :key="host.ip">
-                    {{host.ip}} &nbsp;&nbsp;-&nbsp;&nbsp;
-                    <span
-                      :style="{color: host.ready ? '#67c23a' : '#f56c6c'}"
-                    >{{host.ready ? 'Ready' : 'Not Ready'}}</span>
-                  </div>
+          <section>
+            <h4>指定项目范围</h4>
+            <el-form-item label="选择项目" prop="advanced_config.project_names" class="project-scoped">
+              <el-select
+                v-model="cluster.advanced_config.project_names"
+                placeholder="请选择项目"
+                size="small"
+                style="width: 100%;"
+                filterable
+                multiple
+                clearable
+                collapse-tags
+              >
+                <el-option v-for="name in projectNames" :key="name" :label="name" :value="name"></el-option>
+              </el-select>
+              <el-button size="mini" plain @click="cluster.advanced_config.project_names = []">清空所有</el-button>
+            </el-form-item>
+          </section>
+          <section>
+            <h4>
+              调度策略
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content" style="line-height: 1.5;">
+                  <div>随机调度：工作流任务被随机调度到集群的可用节点上</div>
+                  <div>强制调度：工作流任务被强制调度到对应节点上，如果节点有问题，任务可能调度不成功</div>
+                  <div>优先调度：工作流任务被优先调度到对应节点上，如果节点有问题，会调度到其他可用节点上</div>
                 </div>
-              </el-form-item>
-            </section>
-          </div>
+                <i class="el-icon-question"></i>
+              </el-tooltip>
+              <span v-if="!isEdit" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可选择调度策略</span>
+            </h4>
+            <el-form-item prop="advanced_config.strategy" >
+              <span slot="label">选择策略</span>
+              <el-select
+                v-model="cluster.advanced_config.strategy"
+                placeholder="请选择策略"
+                style="width: 100%;"
+                size="small"
+                required
+                :disabled="!isEdit"
+              >
+                <el-option label="随机调度" value="normal"></el-option>
+                <el-option label="强制调度" value="required"></el-option>
+                <el-option label="优先调度" value="preferred"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="cluster.advanced_config.strategy !== 'normal'" prop="advanced_config.node_labels" label="选择标签">
+              <el-select v-model="cluster.advanced_config.node_labels" placeholder="请选择" multiple style="width: 100%;" size="small">
+                <el-option v-for="node in clusterNodes.labels" :key="node" :label="node" :value="node"></el-option>
+              </el-select>
+              <span style="color: #e6a23c; font-size: 12px;" v-if="clusterNodes.labels.length == 0">请先在对应节点上打上标签</span>
+              <div class="list-host">
+                <div v-for="host in  matchedHost" :key="host.ip">
+                  {{host.ip}} &nbsp;&nbsp;-&nbsp;&nbsp;
+                  <span
+                    :style="{color: host.ready ? '#67c23a' : '#f56c6c'}"
+                  >{{host.ready ? 'Ready' : 'Not Ready'}}</span>
+                </div>
+              </div>
+            </el-form-item>
+          </section>
           <section>
             <h4>
               缓存资源配置

@@ -22,7 +22,7 @@
               <span class="duration">{{getSetTime}}</span>
             </div>
             <Health :selectedDuration="selectedDuration"
-                         :selectedProjects="selectedProjects"/>
+                    :selectedProjects="selectedProjects"/>
           </div>
         </div>
       </el-col>
@@ -32,7 +32,8 @@
             <div class="chart-title">
               <span class="head">最近 10 次构建</span>
             </div>
-            <RecentBuild :selectedProjects="selectedProjects"/>
+            <RecentBuild :selectedDuration="selectedDuration"
+                         :selectedProjects="selectedProjects"/>
           </div>
         </div>
       </el-col>

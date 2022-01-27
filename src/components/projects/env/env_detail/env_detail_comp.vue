@@ -658,6 +658,10 @@ export default {
     isProd () {
       return this.productInfo.is_prod
     },
+    nsIsExisted () {
+      const env = this.envNameList.find(env => env.name === this.envName)
+      return env ? env.is_existed : false
+    },
     filteredProducts () {
       return _.uniqBy(_.orderBy(this.projectList, ['product_name', 'is_prod']), 'product_name')
     },
@@ -997,9 +1001,11 @@ export default {
       return envStatus.updatable
     },
     updateK8sEnv (envInfo) {
-      this.$confirm('更新环境, 是否继续?', '更新', {
+      const content = `<p>更新环境, 是否继续?</p>${this.nsIsExisted ? '<p style="color: #f56c6c; font-size: 13px;">由 Zadig 接管的服务将覆盖所选命名空间中的同名服务，请慎重操作！' : ''}</p>`
+      this.$confirm(content, '更新', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        dangerouslyUseHTMLString: true,
         type: 'warning'
       })
         .then(() => {

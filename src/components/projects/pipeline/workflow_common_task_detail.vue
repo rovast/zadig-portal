@@ -139,7 +139,7 @@
             <el-col :span="6">
               <el-tooltip :content="`在 ${build.source} 上查看 Release`" placement="top" effect="dark">
                 <span v-if="build.tag" class="link">
-                  <a :href="`${build.address}/${build.repo_owner}/${build.repo_name}/releases/tag/${build.tag}`" target="_blank">{{build.tag}}</a>
+                  <a :href="`${build.address}/${build.repo_owner}/${build.repo_name}/releases/tag/${build.tag}`" target="_blank">{{"Tag-"+build.tag}}</a>
                 </span>
               </el-tooltip>
               <el-tooltip :content="`在 ${build.source} 上查看 Branch`" placement="top" effect="dark">

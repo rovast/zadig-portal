@@ -2,82 +2,65 @@
   <div class="kr-top-bar">
     <div class="top-bar-content">
       <div class="kr-top-bar-start">
-        <span v-if="content.title"
-              class="kr-topbar-title">{{content.title}}</span>
-        <el-breadcrumb v-if="content.breadcrumb && content.breadcrumb.length > 0"
-                       separator=">">
-          <el-breadcrumb-item v-for="(item,index) in content.breadcrumb"
-                              :to="item.url"
-                              :key="index">{{item.title}}</el-breadcrumb-item>
+        <span v-if="content.title" class="kr-topbar-title">{{content.title}}</span>
+        <el-breadcrumb v-if="content.breadcrumb && content.breadcrumb.length > 0" separator=">">
+          <el-breadcrumb-item v-for="(item,index) in content.breadcrumb" :to="item.url" :key="index">{{item.title}}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
       <div class="kr-top-bar-end">
-        <el-popover placement="bottom"
-                    popper-class="help-droplist"
-                    trigger="click">
-          <ul class="dropdown-menu"
-              uib-dropdown-menu="">
+        <el-popover placement="bottom" popper-class="help-droplist" trigger="click">
+          <ul class="dropdown-menu" uib-dropdown-menu>
             <li>
-              <a href="https://docs.koderover.com/zadig/"
-                 target="_blank">
+              <a href="https://docs.koderover.com/zadig/" target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>文档站</span>
               </a>
             </li>
             <li>
-              <a href="https://docs.koderover.com/zadig/quick-start/introduction/"
-                 target="_blank">
+              <a href="https://docs.koderover.com/zadig/quick-start/introduction/" target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>入门</span>
               </a>
             </li>
             <li>
-              <a href="https://www.koderover.com/tutorials/"
-                 target="_blank">
+              <a href="https://www.koderover.com/tutorials/" target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>最佳实践</span>
               </a>
             </li>
             <li>
-              <a href="https://docs.koderover.com/zadig/workflow/trigger/"
-                 target="_blank">
+              <a href="https://docs.koderover.com/zadig/workflow/trigger/" target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>工作流</span>
               </a>
             </li>
             <li>
-              <a href="https://docs.koderover.com/zadig/env/service/"
-                 target="_blank">
+              <a href="https://docs.koderover.com/zadig/env/service/" target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>集成环境</span>
               </a>
             </li>
             <li>
-              <a href="https://docs.koderover.com/zadig/project/service/"
-                 target="_blank">
+              <a href="https://docs.koderover.com/zadig/project/service/" target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>项目管理</span>
               </a>
             </li>
             <li>
-              <a href="https://docs.koderover.com/zadig/delivery/artifact/"
-                 target="_blank">
+              <a href="https://docs.koderover.com/zadig/delivery/artifact/" target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>交付中心</span>
               </a>
             </li>
-            <li role="separator"
-                class="divider"></li>
+            <li role="separator" class="divider"></li>
             <li>
-              <a href="https://docs.koderover.com/zadig/settings/codehost/gitlab/"
-                 target="_blank">
+              <a href="https://docs.koderover.com/zadig/settings/codehost/gitlab/" target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>系统设置</span>
               </a>
             </li>
             <li>
-              <a href="https://docs.koderover.com/zadig/api/usage/"
-                 target="_blank">
+              <a href="https://docs.koderover.com/zadig/api/usage/" target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>开发者中心</span>
               </a>
@@ -88,22 +71,20 @@
                 <i class="icon el-icon-link"></i>
                 <span>术语表</span>
               </a>
-            </li> -->
+            </li>-->
           </ul>
-          <span slot="reference"
-                class="help">
-            <i class="el-icon-question"></i>
-            <span class="text">文档</span></span>
+          <span slot="reference" class="help">
+            <span class="text">
+              <i class="el-icon-question"></i>文档
+            </span>
+          </span>
         </el-popover>
         <span>
           <notification class="icon notify"></notification>
         </span>
 
         <div class="nav nav-item-bottom user-profile">
-          <el-popover placement="bottom"
-                      width="240"
-                      popper-class="dropdown-menu"
-                      trigger="click">
+          <el-popover placement="bottom" width="240" popper-class="dropdown-menu" trigger="click">
             <div class="flex">
               <div class="profile-menu__list">
                 <ul class="profile-list profile-list__with-icon">
@@ -115,21 +96,13 @@
                     <ul class="content profile-list">
                       <li class="profile-list__item active">
                         <span>{{userName}}</span>
-                        <el-tag v-if="role.includes('admin')"
-                                size="mini"
-                                type="primary"
-                                effect="plain"
-                                >管理员</el-tag>
-                        <el-tag v-else
-                                size="mini"
-                                type="primary"
-                                effect="plain">普通用户</el-tag>
+                        <el-tag v-if="role.includes('admin')" size="mini" type="primary" effect="plain">管理员</el-tag>
+                        <el-tag v-else size="mini" type="primary" effect="plain">普通用户</el-tag>
                       </li>
                     </ul>
                   </li>
                 </ul>
-                <ul v-if="role.includes('admin')"
-                    class="profile-list profile-list__with-icon user-settings">
+                <ul v-if="role.includes('admin')" class="profile-list profile-list__with-icon user-settings">
                   <router-link to="/v1/users/account/manage">
                     <li class="profile-list__item">
                       <i class="iconfont icongeren"></i>
@@ -152,17 +125,13 @@
                   </router-link>
                   <li class="profile-list__item profile-list__with-icon">
                     <i class="iconfont icondengchu"></i>
-                    <span @click="logOut"
-                          class="profile-list__text logout">登出账号</span>
+                    <span @click="logOut" class="profile-list__text logout">登出账号</span>
                   </li>
                 </ul>
               </div>
             </div>
-            <div slot="reference"
-                 class="dropdown-menu-reference">
-              <img src="@assets/icons/others/profile.png"
-                   class="menu-avatar"
-                   alt="">
+            <div slot="reference" class="dropdown-menu-reference">
+              <img src="@assets/icons/others/profile.png" class="menu-avatar" alt />
               <span class="username">
                 <span>{{userName}}</span>
                 <i class="el-icon-arrow-down el-icon--right"></i>
@@ -191,8 +160,8 @@ export default {
   },
   computed: {
     ...mapState({
-      role: (state) => state.login.role,
-      userInfo: (state) => state.login.userinfo
+      role: state => state.login.role,
+      userInfo: state => state.login.userinfo
     }),
     userName () {
       // 系统用户
@@ -201,7 +170,7 @@ export default {
           return `${this.userInfo.name}(${this.userInfo.account})`
         } else {
           return this.userInfo.account
-        }// 第三方登录
+        } // 第三方登录
       } else if (this.userInfo.preferred_username) {
         return `${this.userInfo.name}(${this.userInfo.preferred_username})`
       } else {
@@ -224,7 +193,7 @@ export default {
     }
   },
   created () {
-    bus.$on('set-topbar-title', (params) => {
+    bus.$on('set-topbar-title', params => {
       this.changeTitle(params)
     })
   },
@@ -437,7 +406,7 @@ export default {
 
       .icon {
         color: #4c4c4c;
-        font-size: 20px;
+        font-size: 18px;
         cursor: pointer;
 
         &:hover {
@@ -450,9 +419,9 @@ export default {
         line-height: 60px;
       }
 
-      .system-summary {
+      .system-statistics {
         margin-right: 30px;
-        line-height: 15px;
+        line-height: 60px;
       }
 
       .help {
@@ -467,16 +436,16 @@ export default {
         }
       }
 
-      .system-summary,
+      .system-statistics,
       .help {
         color: #4c4c4c;
-        font-size: 15px;
+        font-size: 14px;
 
         i {
           display: inline-block;
           margin-right: 5px;
           color: rgba(0, 0, 0, 0.19);
-          font-size: 20px;
+          font-size: 14px;
           line-height: 60px;
         }
 

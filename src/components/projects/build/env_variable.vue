@@ -97,6 +97,11 @@ export default {
     narrowWidth: {
       type: Boolean,
       default: false
+    },
+    validObj: {
+      required: false,
+      type: Object,
+      default: null
     }
   },
   data () {
@@ -119,18 +124,17 @@ export default {
         is_credential: true
       })
     },
+    validate () {
+      return this.$refs.buildEnv.validate()
+    },
     addBuildEnv () {
-      this.$refs.buildEnv.validate(valid => {
-        if (valid) {
-          this.preEnvs.envs.push({
-            key: '',
-            value: '',
-            type: 'string',
-            is_credential: true
-          })
-        } else {
-          return false
-        }
+      this.validate().then(valid => {
+        this.preEnvs.envs.push({
+          key: '',
+          value: '',
+          type: 'string',
+          is_credential: true
+        })
       })
     },
     deleteBuildEnv (index) {
@@ -175,6 +179,12 @@ export default {
         }
       })
     }
+  },
+  created () {
+    this.validObj.addValidate({
+      name: 'envVariable',
+      valid: this.validate
+    })
   }
 }
 </script>

@@ -42,7 +42,7 @@
         </div>
       </el-form-item>
       <div class="divider"></div>
-         <EnvVariable :preEnvs="test.pre_test" :isTest="true"></EnvVariable>
+         <EnvVariable :preEnvs="test.pre_test" :isTest="true" :validObj="validObj"></EnvVariable>
       <div class="divider">
       </div>
 

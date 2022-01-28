@@ -568,7 +568,7 @@ export default {
       } else if (operate === 'recover') {
         this.recoverCluster(currentCluster.id)
       } else if (operate === 'edit') {
-        const namesapce = currentCluster.local ? 'unknown' : 'kodorover-agent'
+        const namesapce = currentCluster.local ? 'unknown' : 'koderover-agent'
         this.getClusterNode(currentCluster.id)
         this.cluster = cloneDeep(currentCluster)
         if (this.cluster.cache.medium_type === 'object') {
@@ -611,7 +611,7 @@ export default {
         message: '修改后，之前的缓存将不再生效',
         type: 'info'
       })
-      const namesapce = this.cluster.local ? 'unknown' : 'kodorover-agent'
+      const namesapce = this.cluster.local ? 'unknown' : 'koderover-agent'
       const id = this.cluster.id
       if (type === 'object') {
         this.allStorage = await getStorageListAPI()

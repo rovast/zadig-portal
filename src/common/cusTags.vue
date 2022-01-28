@@ -26,6 +26,7 @@ export default {
   display: inline-block;
   color: @tagColor;
   font-size: 12px;
+  white-space: nowrap;
   border: 1px solid @borderGray;
   border-radius: 4px;
 

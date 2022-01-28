@@ -7,7 +7,10 @@
             <div class="container">
               <div class="function-container">
                 <div class="btn-container">
-                  <el-dropdown @command="sortWorkflow">
+                  <button type="button" :class="{'active':showFavorite}" @click="showFavorite=!showFavorite" class="display-btn">
+                    <i class="el-icon-star-off favorite"></i>
+                  </button>
+                  <el-dropdown @command="sortWorkflow" placement="bottom">
                     <button type="button" class="display-btn">
                       <i class="el-icon-sort sort"></i>
                     </button>
@@ -18,11 +21,8 @@
                       <el-dropdown-item command="time-desc">按创建时间降序</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-                  <button type="button" :class="{'active':showFavorite}" @click="showFavorite=!showFavorite" class="display-btn">
-                    <i class="el-icon-star-off favorite"></i>
-                  </button>
-                  <el-input v-model="keyword" placeholder="搜索工作流" class="search-workflow" prefix-icon="el-icon-search" clearable></el-input>
                 </div>
+                <el-input v-model="keyword" placeholder="搜索工作流" class="search-workflow" prefix-icon="el-icon-search" clearable></el-input>
               </div>
             </div>
           </div>
@@ -45,7 +45,7 @@
             :data-key="'name'"
             :data-sources="availableWorkflows"
             :keeps="20"
-            :estimate-size="72"
+            :estimate-size="82"
             :data-component="itemComponent"
           ></VirtualList>
           <div v-if="availableWorkflows.length === 0" class="no-product">
@@ -462,7 +462,6 @@ export default {
 .workflow-list {
   position: relative;
   flex: 1;
-  padding-left: 1.07143rem;
   overflow-y: hidden;
   background-color: #f5f7f7;
 
@@ -522,13 +521,14 @@ export default {
 
       .container {
         margin: 0;
-        padding: 10px 20px;
+        padding: 10px 12px;
         font-size: 13px;
 
         .function-container {
           display: flex;
-          flex-wrap: wrap;
-          justify-content: flex-end;
+          flex-wrap: nowrap;
+          align-items: center;
+          justify-content: space-between;
           min-height: 50px;
 
           .btn-container {
@@ -536,10 +536,6 @@ export default {
             display: flex;
             align-items: center;
             margin-right: 5px;
-
-            .search-workflow {
-              width: auto;
-            }
 
             .display-btn {
               margin-right: 5px;
@@ -572,6 +568,10 @@ export default {
               }
             }
           }
+
+          .search-workflow {
+            width: auto;
+          }
         }
       }
     }
@@ -593,10 +593,12 @@ export default {
 
   .pipeline-loading {
     height: calc(~'100vh - 150px');
+    margin: 0 12px;
 
     .virtual-list-container {
       height: 100%;
       overflow-y: auto;
+      border-radius: 6px;
     }
 
     .no-product {
@@ -616,12 +618,6 @@ export default {
         color: #606266;
         font-size: 15px;
       }
-    }
-
-    .button-exec {
-      margin-right: 10px;
-      padding: 8px 12px 8px 10px;
-      font-size: 16px;
     }
   }
 

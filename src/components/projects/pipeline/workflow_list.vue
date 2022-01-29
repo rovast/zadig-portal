@@ -540,7 +540,7 @@ export default {
             .display-btn {
               margin-right: 5px;
               padding: 10px 10px;
-              color: #1989fa;
+              color: @themeColor;
               font-size: 13px;
               text-decoration: none;
               background-color: #fff;
@@ -556,15 +556,15 @@ export default {
               }
 
               &:hover {
-                color: #1989fa;
+                color: @themeLightColor;
                 background-color: #fff;
-                border-color: #1989fa;
+                border-color: @themeLightColor;
               }
 
               &.active {
                 color: #fff;
-                background-color: #1989fa;
-                border-color: #1989fa;
+                background-color: @themeLightColor;
+                border-color: @themeLightColor;
               }
             }
           }

@@ -18,13 +18,14 @@
     @refreshWorkflow="refreshWorkflow"
   >
     <template v-if="workflow.type === 'common'" slot="operations">
-      <button
+      <el-button
+        type="primary"
         v-hasPermi="{projectName: workflow.projectName, action: 'run_workflow'}"
         class="button-exec"
         @click="startCommonWorkflowBuild(workflow)"
       >
         <span class="iconfont iconzhixing">&nbsp;执行</span>
-      </button>
+      </el-button>
       <router-link
         v-hasPermi="{projectName: workflow.project_name, action: 'edit_workflow'}"
         :to="`/workflows/common/edit/${workflow.name}?projectName=${workflow.project_name}&id=${workflow.id}`"
@@ -41,13 +42,14 @@
       </el-dropdown>
     </template>
     <template v-else slot="operations">
-      <button
+      <el-button
+        type="primary"
         v-hasPermi="{projectName: workflow.projectName, action: 'run_workflow'}"
         class="button-exec"
         @click="startProductWorkflowBuild(workflow)"
       >
         <span class="iconfont iconzhixing">&nbsp;执行</span>
-      </button>
+      </el-button>
       <router-link
         v-hasPermi="{projectName: workflow.projectName, action: 'edit_workflow'}"
         :to="`/workflows/product/edit/${workflow.name}?projectName=${workflow.projectName}`"
@@ -197,18 +199,9 @@ export default {
 
 <style lang="less" scoped>
 .button-exec {
-  padding: 0 12px 0 10px;
-  color: #fff;
+  padding: 0 12px;
+  font-weight: 400;
   font-size: 18px;
   line-height: 40px;
-  background: @themeColor;
-  border-width: 0;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s;
-
-  &:hover {
-    background: #7272f7;
-  }
 }
 </style>

@@ -81,7 +81,7 @@
 
     <el-card class="box-card full" :body-style="{ padding: '0px', margin: '15px 0 30px 0' }">
       <div slot="header" class="block-title">历史任务</div>
-      <task-list
+      <TaskList
         :taskList="workflowTasks"
         :total="total"
         :pageSize="pageSize"
@@ -90,7 +90,7 @@
         :workflowName="workflowName"
         :workflowID="workflowID"
         @currentChange="changeTaskPage"
-      ></task-list>
+      ></TaskList>
     </el-card>
 
     <el-dialog :visible.sync="taskDialogVisible" title="运行 通用-工作流" custom-class="run-workflow" width="60%" class="dialog">
@@ -105,6 +105,7 @@ import {
   deleteCommonWorkflowAPI,
   getCommonWorkflowTasksAPI
 } from '@api'
+import TaskList from '@/components/projects/common/task_list.vue'
 import RunCommonWorkflow from './common/runCommonWorkflow.vue'
 import bus from '@utils/eventBus'
 export default {
@@ -268,7 +269,8 @@ export default {
     })
   },
   components: {
-    RunCommonWorkflow
+    RunCommonWorkflow,
+    TaskList
   }
 }
 </script>

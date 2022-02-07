@@ -109,7 +109,7 @@
                       @updateFilter="updateFilter">
         </FilterStatus>
       </div>
-      <task-list :taskList="workflowTasks"
+      <TaskList :taskList="workflowTasks"
                  :total="total"
                  :pageSize="pageSize"
                  :currentPage="currentPage"
@@ -123,7 +123,7 @@
                  showTestReport
                  showServiceNames
                  showOperation>
-      </task-list>
+      </TaskList>
     </el-card>
 
     <el-dialog :visible.sync="taskDialogVisible"
@@ -145,6 +145,7 @@
 import { getWorkflowDetailAPI, deleteProductWorkflowAPI, workflowTaskListAPI, getWorkflowFilterListAPI } from '@api'
 import runWorkflow from './common/run_workflow.vue'
 import FilterStatus from './workflow_multi_task_detail/filterStatus.vue'
+import TaskList from '@/components/projects/common/task_list.vue'
 import bus from '@utils/eventBus'
 export default {
   data () {
@@ -346,7 +347,8 @@ export default {
   },
   components: {
     runWorkflow,
-    FilterStatus
+    FilterStatus,
+    TaskList
   }
 }
 </script>

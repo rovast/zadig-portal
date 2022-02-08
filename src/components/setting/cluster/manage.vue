@@ -470,7 +470,8 @@ export default {
         labels: [],
         data: [] // {labels, ready, ip}
       },
-      expandAdvanced: false
+      expandAdvanced: false,
+      hasNotified: false
     }
   },
   computed: {
@@ -583,6 +584,7 @@ export default {
           this.allPvc = await getClusterPvcAPI(currentCluster.id, namesapce)
         }
         this.dialogClusterFormVisible = true
+        this.hasNotified = false
       } else if (operate === 'update') {
         this.$refs.cluster.validate(valid => {
           if (valid) {
@@ -612,10 +614,13 @@ export default {
       }
     },
     async changeMediumType (type) {
-      this.$message({
-        message: '修改后，之前的缓存将不再生效',
-        type: 'info'
-      })
+      if (!this.hasNotified) {
+        this.$message({
+          message: '修改后，之前的缓存将不再生效',
+          type: 'info'
+        })
+      }
+      this.hasNotified = true
       const namesapce = this.cluster.local ? 'unknown' : 'koderover-agent'
       const id = this.cluster.id
       if (type === 'object') {

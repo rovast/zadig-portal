@@ -426,11 +426,6 @@ export default {
     width: 600px;
     background-color: #fff;
 
-    .task-id,
-    .report-link {
-      color: #1989fa;
-    }
-
     .pagination {
       display: flex;
       align-items: center;

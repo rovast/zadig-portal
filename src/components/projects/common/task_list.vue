@@ -344,6 +344,11 @@ export default {
   .column-gray {
     color: @fontLightGray;
   }
+
+  .task-id,
+  .report-link {
+    color: @themeColor;
+  }
 }
 </style>
 

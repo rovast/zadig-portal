@@ -338,11 +338,6 @@ export default {
       }
     }
 
-    .task-id,
-    .report-link {
-      color: #1989fa;
-    }
-
     .pagination {
       display: flex;
       align-items: center;

@@ -362,11 +362,6 @@ export default {
       }
     }
 
-    .task-id,
-    .report-link {
-      color: #1989fa;
-    }
-
     .process {
       line-height: 24px;
 

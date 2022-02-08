@@ -265,8 +265,9 @@ export default {
     white-space: nowrap;
 
     .value {
+      margin-top: 4px;
       color: #4a4a4a;
-      line-height: 28px;
+      line-height: 22px;
       cursor: auto;
     }
   }

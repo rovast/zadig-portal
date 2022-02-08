@@ -139,7 +139,7 @@
                 </div>
                 <i class="el-icon-question"></i>
               </el-tooltip>
-              <span v-if="!isEdit" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可选择调度策略</span>
+              <span v-if="!isEdit || !canConfig" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可选择调度策略</span>
             </h4>
             <el-form-item prop="advanced_config.strategy" >
               <span slot="label">选择策略</span>
@@ -149,7 +149,7 @@
                 style="width: 100%;"
                 size="small"
                 required
-                :disabled="!isEdit"
+                :disabled="!isEdit || !canConfig"
               >
                 <el-option label="随机调度" value="normal"></el-option>
                 <el-option label="强制调度" value="required"></el-option>
@@ -190,9 +190,9 @@
               <span slot="label">选择存储介质</span>
               <el-radio-group v-model="cluster.cache.medium_type" @change="changeMediumType" class="storage-medium">
                 <el-radio label="object">对象存储</el-radio>
-                <el-radio :disabled="!isEdit" label="nfs">
+                <el-radio :disabled="!isEdit || !canConfig" label="nfs">
                   集群存储
-                  <span v-if="!isEdit" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可使用集群资源</span>
+                  <span v-if="!isEdit || !canConfig" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可使用集群资源</span>
                 </el-radio>
               </el-radio-group>
             </el-form-item>
@@ -477,6 +477,9 @@ export default {
     isEdit () {
       return !!this.cluster.id
     },
+    canConfig () {
+      return this.cluster.id && this.cluster.status === 'normal'
+    },
     matchedHost () {
       const labels = this.cluster.advanced_config.node_labels
       return this.clusterNodes.data.filter(data => {
@@ -569,8 +572,10 @@ export default {
         this.recoverCluster(currentCluster.id)
       } else if (operate === 'edit') {
         const namesapce = currentCluster.local ? 'unknown' : 'koderover-agent'
-        this.getClusterNode(currentCluster.id)
         this.cluster = cloneDeep(currentCluster)
+        if (this.canConfig) {
+          this.getClusterNode(currentCluster.id)
+        }
         if (this.cluster.cache.medium_type === 'object') {
           this.allStorage = await getStorageListAPI()
         } else if (this.cluster.cache.medium_type === 'nfs') {

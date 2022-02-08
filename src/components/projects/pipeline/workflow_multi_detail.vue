@@ -362,18 +362,20 @@ export default {
   .workflow-basic-info {
     margin-bottom: 26px;
     box-shadow: unset;
+
     .el-card__body {
-      padding: 0 24px;
-      height: 80px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      height: 80px;
+      padding: 0 24px;
       color: #4a4a4a;
 
       .left,
       .right {
         flex: 0 0 auto;
       }
+
       .middle {
         flex: 1 1 auto;
         margin-left: 18px;
@@ -381,10 +383,11 @@ export default {
 
         .edit-setting {
           display: inline-block;
+          padding: 8px;
+          font-size: 20px;
           border: 1px solid @borderGray;
           border-radius: 5px;
-          font-size: 20px;
-          padding: 8px;
+
           &:hover {
             box-shadow: 0 0 2px @borderGray;
           }
@@ -393,16 +396,19 @@ export default {
 
       .item {
         display: inline-block;
+
         &:not(:last-child) {
           margin-right: 18px;
         }
+
         &.left {
           margin-right: 3px;
-          color: #a0a0a0;
+          color: @fontLightGray;
         }
       }
     }
   }
+
   .block-title {
     display: flex;
     align-items: center;
@@ -412,7 +418,7 @@ export default {
 
     .title-icon {
       margin-right: 8px;
-      color: #a0a0a0;
+      color: @fontLightGray;
     }
   }
 
@@ -444,16 +450,17 @@ export default {
     width: 65%;
   }
 
-  .full {
-    width: 100%;
-    .el-card__header {
-      padding: 16px 0;
-    }
-  }
-
   .el-card__header {
     padding-left: 0;
     border-bottom-width: 0;
+  }
+
+  .full {
+    width: 100%;
+
+    .el-card__header {
+      padding: 16px 0;
+    }
   }
 
   .el-row {

@@ -2,34 +2,40 @@
   <li class="product-workflow-row" :class="recentTaskStatus">
     <section @click="setFavorite(projectName,name,type)" class="favorite el-icon-star-on" :class="{'liked':isFavorite}"></section>
     <section class="product-header">
-      <router-link :to="pipelineLink">{{ name }}</router-link>
-      <el-tag v-if="type === 'common'" size="mini">通用</el-tag>
+      <div>
+        <router-link :to="pipelineLink">{{ name }}</router-link>
+        <el-tag v-if="type === 'common'" size="mini">通用</el-tag>
+      </div>
+      <div class="gray-desc" style="margin-top: 4px;">
+        <span style="display: inline-block; margin-right: 10px;">
+          最近成功
+          <router-link v-if="recentSuccessID" :to="recentSuccessLink" class="passed">
+            <i class="icon el-icon-success"></i>
+            {{ recentSuccessID }}
+          </router-link>
+          <span v-else class="passed">*</span>
+        </span>
+        <span>
+          最近失败
+          <router-link v-if="recentFailID" :to="recentFailLink" class="failed">
+            <i class="icon el-icon-warning"></i>
+            {{ recentFailID }}
+          </router-link>
+          <span v-else class="failed">*</span>
+        </span>
+      </div>
     </section>
     <section class="stages">
       <CusTags :values="stages"></CusTags>
     </section>
     <section class="desc">{{ description }}</section>
-    <section class="recent-task">
-      <el-tooltip effect="dark" content="最近成功" placement="top">
-        <div v-if="recentSuccessID">
-          <i class="icon el-icon-success passed"></i>
-          <router-link v-if="recentSuccessID" :to="recentSuccessLink" class="passed">{{ recentSuccessID }}</router-link>
-        </div>
-      </el-tooltip>
-      <el-tooltip effect="dark" content="最近失败" placement="top">
-        <div v-if="recentFailID">
-          <i class="icon el-icon-warning failed"></i>
-          <router-link :to="recentFailLink" class="failed">{{ recentFailID }}</router-link>
-        </div>
-      </el-tooltip>
+    <section class="time-rate">
+      <div class="gray-desc">平均执行时间</div>
+      <div class="value">{{ avgRuntime || '*' }}</div>
     </section>
     <section class="time-rate">
-      <el-tooltip effect="dark" content="平均执行时间" placement="top">
-        <div class="value">{{ avgRuntime }}</div>
-      </el-tooltip>
-      <el-tooltip effect="dark" content="成功率" placement="top">
-        <div class="value">{{avgSuccessRate}}</div>
-      </el-tooltip>
+      <div class="gray-desc">成功率</div>
+      <div class="value">{{ avgSuccessRate || '*' }}</div>
     </section>
     <section class="operations">
       <slot name="operations"></slot>
@@ -162,8 +168,6 @@ export default {
 </script>
 
 <style lang="less">
-@startColor: #ff2868;
-
 .product-workflow-row {
   display: flex;
   flex-flow: row nowrap;
@@ -171,10 +175,10 @@ export default {
   align-items: center;
   justify-content: space-between;
   height: 80px;
-  margin-bottom: -1px;
+  margin-bottom: 8px;
   font-size: 14px;
   line-height: 22px;
-  border: 1px solid @borderGray;
+  background: #fff;
   border-left: 6px solid #77797d;
 
   &.running,
@@ -203,6 +207,12 @@ export default {
     margin-right: 15px;
   }
 
+  .gray-desc {
+    color: @fontLightGray;
+    font-size: 12px;
+    line-height: 22px;
+  }
+
   .favorite {
     display: inline-block;
     flex: 0 0 30px;
@@ -214,36 +224,21 @@ export default {
 
     &.liked,
     &:hover {
-      color: @startColor;
+      color: @themeColor;
     }
   }
 
   .product-header {
-    flex: 0 0 15%;
+    flex: 0 0 20%;
 
     a {
       color: @themeColor;
       font-weight: 500;
     }
-  }
-
-  .stages {
-    flex: 0 0 18%;
-  }
-
-  .desc {
-    flex: 1 0 20%;
-    color: #a0a0a0;
-  }
-
-  .recent-task {
-    flex: 0 0 80px;
-    line-height: 28px;
-    white-space: nowrap;
 
     .icon {
-      margin-right: 4px;
-      font-size: 15px;
+      margin-left: 2px;
+      font-size: 12px;
     }
 
     .failed {
@@ -255,23 +250,24 @@ export default {
     }
   }
 
+  .stages {
+    flex: 0 0 18%;
+  }
+
+  .desc {
+    flex: 1 0 20%;
+    color: @fontLightGray;
+  }
+
   .time-rate {
     flex: 0 0 80px;
     margin-right: 20px;
     white-space: nowrap;
 
     .value {
-      padding: 0 10px;
       color: #4a4a4a;
       line-height: 28px;
-      text-align: center;
-      background: #f8f8f8;
-      border-radius: 4px;
       cursor: auto;
-
-      &:first-child {
-        margin-bottom: 4px;
-      }
     }
   }
 

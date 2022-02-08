@@ -302,32 +302,33 @@ export default {
 
 <style lang="less" scoped>
 @columnColor: #4a4a4a;
-@columnGray: #A0A0A0;
+
 .pagination {
   display: flex;
   justify-content: center;
 }
 
 .task-list-container {
-  /deep/.el-table{
+  /deep/.el-table {
     color: @columnColor;
   }
 
   .repo-list {
     .repo-detail-icon {
-      margin-left: -12px;
       margin-right: 8px;
+      margin-left: -12px;
       color: @themeColor;
       cursor: pointer;
     }
 
     .repo-info {
       display: inline-block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      vertical-align: bottom;
       box-sizing: border-box;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      vertical-align: bottom;
+
       &:not(:last-child) {
         padding-right: 10px;
       }
@@ -341,7 +342,7 @@ export default {
   }
 
   .column-gray {
-    color: @columnGray;
+    color: @fontLightGray;
   }
 }
 </style>
@@ -358,8 +359,8 @@ export default {
   .repo-detail {
     .repo-detail-item {
       &:not(:last-child) {
-        padding-bottom: 8px;
         margin-bottom: 8px;
+        padding-bottom: 8px;
         border-bottom: 1px solid @borderGray;
       }
     }

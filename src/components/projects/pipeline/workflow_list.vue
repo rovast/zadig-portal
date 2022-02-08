@@ -8,7 +8,7 @@
               <div class="function-container">
                 <div class="btn-container">
                   <button type="button" :class="{'active':showFavorite}" @click="showFavorite=!showFavorite" class="display-btn">
-                    <i class="el-icon-star-off favorite"></i>
+                    <i class="el-icon-star-on favorite"></i>
                   </button>
                   <el-dropdown @command="sortWorkflow" placement="bottom">
                     <button type="button" class="display-btn">
@@ -514,14 +514,13 @@ export default {
     display: flex;
     align-items: stretch;
     justify-content: flex-start;
-    background-color: #f5f7f7;
 
     .header-start {
       flex: 1;
 
       .container {
         margin: 0;
-        padding: 10px 12px;
+        padding: 16px 12px;
         font-size: 13px;
 
         .function-container {
@@ -529,7 +528,7 @@ export default {
           flex-wrap: nowrap;
           align-items: center;
           justify-content: space-between;
-          min-height: 50px;
+          min-height: 30px;
 
           .btn-container {
             position: relative;
@@ -539,7 +538,7 @@ export default {
 
             .display-btn {
               margin-right: 5px;
-              padding: 10px 10px;
+              padding: 8px;
               color: @themeColor;
               font-size: 13px;
               text-decoration: none;
@@ -598,7 +597,6 @@ export default {
     .virtual-list-container {
       height: 100%;
       overflow-y: auto;
-      border-radius: 6px;
     }
 
     .no-product {
@@ -625,7 +623,6 @@ export default {
     margin: 0;
     padding: 0;
     list-style: none;
-    background: #fff;
 
     .start-build {
       color: #000;

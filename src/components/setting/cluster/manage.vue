@@ -128,7 +128,7 @@
               <el-button size="mini" plain @click="cluster.advanced_config.project_names = []">清空所有</el-button>
             </el-form-item>
           </section>
-          <section>
+          <section v-show="isEdit">
             <h4>
               调度策略
               <el-tooltip effect="dark" placement="top">
@@ -139,7 +139,7 @@
                 </div>
                 <i class="el-icon-question"></i>
               </el-tooltip>
-              <span v-if="!isEdit || !canConfig" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可选择调度策略</span>
+              <span v-if="!canConfig" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可选择调度策略</span>
             </h4>
             <el-form-item prop="advanced_config.strategy" >
               <span slot="label">选择策略</span>
@@ -149,7 +149,7 @@
                 style="width: 100%;"
                 size="small"
                 required
-                :disabled="!isEdit || !canConfig"
+                :disabled="!canConfig"
               >
                 <el-option label="随机调度" value="normal"></el-option>
                 <el-option label="强制调度" value="required"></el-option>
@@ -171,7 +171,7 @@
               </div>
             </el-form-item>
           </section>
-          <section>
+          <section v-show="isEdit">
             <h4>
               缓存资源配置
               <el-tooltip effect="dark" placement="top">
@@ -190,9 +190,9 @@
               <span slot="label">选择存储介质</span>
               <el-radio-group v-model="cluster.cache.medium_type" @change="changeMediumType" class="storage-medium">
                 <el-radio label="object">对象存储</el-radio>
-                <el-radio :disabled="!isEdit || !canConfig" label="nfs">
+                <el-radio :disabled="!canConfig" label="nfs">
                   集群存储
-                  <span v-if="!isEdit || !canConfig" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可使用集群资源</span>
+                  <span v-if="!canConfig" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可使用集群资源</span>
                 </el-radio>
               </el-radio-group>
             </el-form-item>

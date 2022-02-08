@@ -19,7 +19,7 @@
         <template slot-scope="scope">
           <span :class="[`status-${$utils.taskElTagType(scope.row.status)}`]">
             <!-- <i class="el-icon-orange"></i> -->
-            <span class="status-icon"></span>
+            <!-- <span class="status-icon"></span> -->
             &nbsp;{{ wordTranslation(scope.row.status,'pipeline','task') }}
           </span>
         </template>
@@ -313,14 +313,14 @@ export default {
   /deep/.el-table {
     color: @columnColor;
 
-    .status-icon {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      margin-bottom: -2px;
-      border: 2px solid;
-      border-radius: 50%;
-    }
+    // .status-icon {
+    //   display: inline-block;
+    //   width: 10px;
+    //   height: 10px;
+    //   margin-bottom: -2px;
+    //   border: 2px solid;
+    //   border-radius: 50%;
+    // }
   }
 
   .repo-list {

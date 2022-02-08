@@ -5,7 +5,7 @@
               style="width: 100%;">
       <el-table-column prop="task_id"
                        label="ID"
-                       width="80"
+                       min-width="80"
                        sortable>
         <template slot-scope="scope">
           <router-link :to="`${baseUrl}/${scope.row.task_id}?status=${scope.row.status}&id=${workflowID}`"
@@ -13,17 +13,18 @@
             {{ '#' +scope.row.task_id }}</router-link>
         </template>
       </el-table-column>
-      <el-table-column width="100"
+      <el-table-column min-width="100"
                        prop="status"
                        label="运行状态">
         <template slot-scope="scope">
           <span :class="[`status-${$utils.taskElTagType(scope.row.status)}`]">
-            <i class="el-icon-orange"></i>
+            <!-- <i class="el-icon-orange"></i> -->
+            <span class="status-icon"></span>
             &nbsp;{{ wordTranslation(scope.row.status,'pipeline','task') }}
           </span>
         </template>
       </el-table-column>
-       <el-table-column width="120"
+       <el-table-column min-width="120"
                        label="持续时间">
         <template slot-scope="scope">
           <el-icon name="time"></el-icon>
@@ -44,14 +45,14 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="执行人">
+      <el-table-column label="执行人" min-width="120">
         <template slot-scope="{ row }">
           <div class="common-column" :class="[['webhook', 'timer'].includes(row.task_creator) ? 'column-gray' : '']">{{ row.task_creator }}</div>
           <div class="common-column column-gray">{{ convertTimestamp(row.create_time) }}</div>
         </template>
       </el-table-column>
       <el-table-column v-if="showServiceNames"
-                       width="180"
+                       min-width="180"
                        label="服务名称"
                        show-overflow-tooltip>
         <template slot-scope="{ row }">
@@ -61,7 +62,7 @@
           <div v-else class="common-column">N/A</div>
         </template>
       </el-table-column>
-      <el-table-column width="280" label="代码信息" v-if="showServiceNames && workflowType === 'buildv2'">
+      <el-table-column min-width="280" label="代码信息" v-if="showServiceNames && workflowType === 'buildv2'">
         <template slot-scope="{ row }">
           <div v-for="(item,index) in getRepo(row)" :key="index" class="common-column repo-list">
             <div v-if="item.builds.length > 0" effect="light"  :open-delay="250" placement="right">
@@ -93,7 +94,7 @@
         </template>
       </el-table-column>
       <el-table-column v-if="showEnv"
-                       width="100"
+                       min-width="100"
                        label="集成环境">
         <template slot-scope="scope">
           <span v-if="scope.row.workflow_args">
@@ -106,7 +107,7 @@
       </el-table-column>
       <el-table-column v-if="showTestReport"
                        label="测试结果"
-                       width="100">
+                       min-width="100">
         <template slot-scope="scope">
           <template v-if="scope.row.test_reports">
             <div v-for="(item,testIndex) in scope.row.testSummary"
@@ -311,6 +312,15 @@ export default {
 .task-list-container {
   /deep/.el-table {
     color: @columnColor;
+
+    .status-icon {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-bottom: -2px;
+      border: 2px solid;
+      border-radius: 50%;
+    }
   }
 
   .repo-list {

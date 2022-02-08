@@ -174,7 +174,7 @@ export default {
   margin-bottom: -1px;
   font-size: 14px;
   line-height: 22px;
-  border: 1px solid #d2d7dc;
+  border: 1px solid @borderGray;
   border-left: 6px solid #77797d;
 
   &.running,

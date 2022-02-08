@@ -46,11 +46,8 @@
       </el-table-column>
       <el-table-column label="执行人">
         <template slot-scope="{ row }">
-          <div style="color: #a0a0a0;">
-            <span>{{ row.task_creator }}</span>
-            <br>
-            <span>{{ convertTimestamp(row.create_time) }}</span>
-          </div>
+          <div class="common-column" :class="[['webhook', 'timer'].includes(row.task_creator) ? 'column-gray' : '']">{{ row.task_creator }}</div>
+          <div class="common-column column-gray">{{ convertTimestamp(row.create_time) }}</div>
         </template>
       </el-table-column>
       <el-table-column v-if="showServiceNames"
@@ -58,38 +55,40 @@
                        label="服务名称"
                        show-overflow-tooltip>
         <template slot-scope="{ row }">
-          <div v-for="(item,index) in getRepo(row)" :key="index">
-            <el-tooltip v-if="item.builds.length > 0" class="item" effect="light"  :open-delay="250" placement="right">
-              <div slot="content">
-                <div v-for="(build,buildIndex) in item.builds" :key="buildIndex">
-                  <span v-if="build.repo_name">{{build.repo_name }}</span>
-                  <span v-if="build.tag">Tag-{{build.tag }}</span>
-                  <span v-if="build.branch">Branch-{{ build.branch }}</span>
-                  <span v-if="build.pr">PR-{{ build.pr }}</span>
-                  <span v-if="build.commit_id">{{build.commit_id.substring(0, 7)}}</span>
-                </div>
-              </div>
-              <span class="service-name pointer">{{item.service_name}}</span>
-            </el-tooltip>
-             <span v-else class="service-name">{{item.service_name}}</span>
-          </div>
+          <template v-if="row.build_services && row.build_services.length > 0">
+            <div  v-for="item in row.build_services.slice().sort()" :key="item" class="common-column hover-color">{{item}}</div>
+          </template>
+          <div v-else class="common-column">N/A</div>
         </template>
       </el-table-column>
-      <el-table-column width="230" label="代码信息">
+      <el-table-column width="280" label="代码信息" v-if="showServiceNames && workflowType === 'buildv2'">
         <template slot-scope="{ row }">
-          <div v-for="(item,index) in getRepo(row)" :key="index">
-            <div v-if="item.builds.length > 0" class="item" effect="light"  :open-delay="250" placement="right">
+          <div v-for="(item,index) in getRepo(row)" :key="index" class="common-column repo-list">
+            <div v-if="item.builds.length > 0" effect="light"  :open-delay="250" placement="right">
               <div slot="content">
-                <div v-for="(build,buildIndex) in item.builds" :key="buildIndex">
-                      <span v-if="build.commit_message">{{ build.commit_message.substring(0, 14) }}...</span>
-                      <span v-if="build.author_name"><i class="el-icon-orange"></i>{{ build.author_name }}</span>
-                      <!-- <span v-if="build.tag">Tag-{{build.tag }}</span>
-                      <span v-if="build.branch">Branch-{{ build.branch }}</span>
-                      <span v-if="build.pr">PR-{{ build.pr }}</span>
-                      <span v-if="build.commit_id">commit_id: {{build.commit_id.substring(0, 7)}}</span> -->
-                   </div>
+                <el-popover
+                    placement="right-start"
+                    width="240"
+                    trigger="click"
+                    popper-class="repo-detail-popover">
+                    <i slot="reference" class="repo-detail-icon el-icon-d-caret"></i>
+                    <div class="repo-detail">
+                      <div v-for="(build,buildIndex) in item.builds" :key="buildIndex" class="repo-detail-item">
+                        <div class="common-column">{{ build.commit_message }}</div>
+                        <div class="common-column color-theme">
+                          <RepoJump :build="build" :showCommit="false" showIcon></RepoJump>
+                        </div>
+                        <div class="common-column"><i class="el-icon-user" style="margin-right: 4px;"></i>{{ build.author_name }}</div>
+                      </div>
+                    </div>
+                  </el-popover>
+                <span class="hover-color">
+                  <span v-if="item.builds[0].commit_message" class="repo-info" style="width: 140px;">{{ item.builds[0].commit_message }}</span>
+                  <span v-if="item.builds[0].author_name" class="repo-info" style="width: 100px;"><i class="el-icon-user" style="margin-right: 4px;"></i>{{ item.builds[0].author_name }}</span>
+                </span>
               </div>
             </div>
+            <div v-else class="common-column">N/A</div>
           </div>
         </template>
       </el-table-column>
@@ -106,11 +105,13 @@
         </template>
       </el-table-column>
       <el-table-column v-if="showTestReport"
-                       label="测试结果">
+                       label="测试结果"
+                       width="100">
         <template slot-scope="scope">
           <template v-if="scope.row.test_reports">
             <div v-for="(item,testIndex) in scope.row.testSummary"
-                 :key="testIndex">
+                 :key="testIndex"
+                 class="common-column">
               <el-popover v-if="item.type==='function'"
                           trigger="hover"
                           placement="top">
@@ -118,12 +119,12 @@
                 <p><span>总测试用例：{{item.total}}</span></p>
                 <p><span>成功用例：{{item.success}}</span></p>
                 <p><span>测试用时：{{$utils.timeFormat(parseInt(item.time))}}</span></p>
-                <div slot="reference">
+                <span slot="reference">
                   <router-link :to="`${functionTestBaseUrl}/${scope.row.task_id}/test/${workflowName}-${scope.row.task_id}-test?is_workflow=1&service_name=${item.name}&test_type=${item.type}`">
                     <span class="report-link"><i class="iconfont iconzidong"></i>
                       {{item.success}}/{{item.total}}</span>
                   </router-link>
-                </div>
+                </span>
               </el-popover>
               <router-link v-else-if="item.type==='performance'"
                            style="display: block;"
@@ -141,17 +142,18 @@
           <span v-else>N/A</span>
         </template>
       </el-table-column>
-
       <el-table-column v-if="showOperation"
-                       width="180"
-                       label="操作">
+                       width="90"
+                       label="操作"
+                       align="center">
         <template slot-scope="scope">
             <el-button v-hasPermi="{projectName: projectName, action: 'run_workflow'}"
                        @click="rerun(scope.row)" v-if="scope.row.workflow_args || scope.row.task_args"
-                       type="default"
+                       type="text"
                        icon="el-icon-copy-document"
-                       size="mini">
-              克隆任务
+                       size="mini"
+                       class="common-font">
+              clone
             </el-button>
         </template>
       </el-table-column>
@@ -168,6 +170,7 @@
 </template>
 
 <script>
+import RepoJump from '@/components/projects/pipeline/common/repoJump.vue'
 import { wordTranslate } from '@utils/wordTranslate.js'
 import moment from 'moment'
 import { get, orderBy } from 'lodash'
@@ -251,6 +254,10 @@ export default {
       default: false,
       type: Boolean
     },
+    workflowType: {
+      default: '',
+      type: String
+    },
     workflowName: {
       required: false,
       default: '',
@@ -286,24 +293,80 @@ export default {
       default: 1,
       type: Number
     }
+  },
+  components: {
+    RepoJump
   }
 }
 </script>
 
 <style lang="less" scoped>
+@columnColor: #4a4a4a;
+@columnGray: #A0A0A0;
 .pagination {
   display: flex;
   justify-content: center;
 }
 
 .task-list-container {
-  .service-name {
-    color: #000;
-    font-weight: 500;
+  /deep/.el-table{
+    color: @columnColor;
+  }
 
-    &.pointer {
+  .repo-list {
+    .repo-detail-icon {
+      margin-left: -12px;
+      margin-right: 8px;
+      color: @themeColor;
       cursor: pointer;
     }
+
+    .repo-info {
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: bottom;
+      box-sizing: border-box;
+      &:not(:last-child) {
+        padding-right: 10px;
+      }
+    }
+  }
+
+  .hover-color {
+    &:hover {
+      color: @themeColor;
+    }
+  }
+
+  .column-gray {
+    color: @columnGray;
+  }
+}
+</style>
+
+<style lang="less">
+.el-popover.repo-detail-popover {
+  margin-left: 8px;
+  border-color: @themeColor;
+
+  &[x-placement^=right] .popper__arrow {
+    border-right-color: @themeColor;
+  }
+
+  .repo-detail {
+    .repo-detail-item {
+      &:not(:last-child) {
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+        border-bottom: 1px solid @borderGray;
+      }
+    }
+  }
+
+  .color-theme {
+    color: @themeColor;
   }
 }
 </style>

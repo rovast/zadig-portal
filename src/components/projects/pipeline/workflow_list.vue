@@ -631,12 +631,6 @@ export default {
       color: #000;
     }
 
-    .more-operation {
-      color: #000;
-      font-size: 20px;
-      cursor: pointer;
-    }
-
     .step-arrow {
       color: #409eff;
     }

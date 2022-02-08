@@ -31,3 +31,48 @@
 .status-primary {
   color: @themeColor;
 }
+
+// table
+.el-table {
+  .caret-wrapper {
+    height: 22px;
+    margin-top: -2px;
+
+    .sort-caret.ascending {
+      top: 0;
+    }
+
+    .sort-caret.descending {
+      bottom: 0;
+    }
+  }
+
+  th.el-table__cell {
+    padding: 8px 0;
+    background: #eaeaea;
+
+    &.is-leaf {
+      border-block-width: 0;
+    }
+
+    .cell {
+      height: 22px;
+      line-height: 22px;
+    }
+  }
+}
+
+// common font style
+.common-column {
+  line-height: 22px;
+
+  &:not(:last-child) {
+    margin-bottom: 8px;
+  }
+}
+
+// common font size and line-height
+.common-font {
+  font-size: 14px;
+  line-height: 22px;
+}

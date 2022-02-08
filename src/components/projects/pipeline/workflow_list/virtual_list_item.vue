@@ -30,11 +30,11 @@
         v-hasPermi="{projectName: workflow.project_name, action: 'edit_workflow'}"
         :to="`/workflows/common/edit/${workflow.name}?projectName=${workflow.project_name}&id=${workflow.id}`"
       >
-        <span class="menu-item el-icon-setting start-build"></span>
+        <span class="menu-item iconfont icondeploy"></span>
       </router-link>
       <el-dropdown v-hasPermi="{projectName: workflow.projectName, action:'delete_workflow'}">
         <span class="el-dropdown-link">
-          <i class="el-icon-s-operation more-operation"></i>
+          <i class="iconfont iconmorelist more-operation"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="deleteCommonWorkflow(workflow)">删除</el-dropdown-item>
@@ -54,14 +54,14 @@
         v-hasPermi="{projectName: workflow.projectName, action: 'edit_workflow'}"
         :to="`/workflows/product/edit/${workflow.name}?projectName=${workflow.projectName}`"
       >
-        <span class="menu-item el-icon-setting start-build"></span>
+        <span class="menu-item iconfont icondeploy"></span>
       </router-link>
       <el-dropdown
         v-hasPermi="{projectName: workflow.projectName, logic:{operator: 'or', actions: ['create_workflow','delete_workflow', 'edit_workflow']}}"
         @visible-change="(status) => fnShowTimer(status, index, workflow)"
       >
         <span class="el-dropdown-link">
-          <i class="el-icon-s-operation more-operation"></i>
+          <i class="iconfont iconmorelist more-operation"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item
@@ -203,5 +203,25 @@ export default {
   font-weight: 400;
   font-size: 18px;
   line-height: 40px;
+}
+
+.menu-item {
+  display: inline-block;
+  border-radius: 5px;
+  font-size: 20px;
+  padding: 8px;
+  color: @fontGray;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  &:hover {
+    border-color: @borderGray;
+  }
+}
+
+.more-operation {
+  color: @fontGray;
+  font-size: 20px;
+  cursor: pointer;
+  margin: 0 8px 0 -5px;
 }
 </style>

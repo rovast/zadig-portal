@@ -1099,7 +1099,6 @@ export default {
     }
 
     .link a {
-      color: #1989fa;
       cursor: pointer;
     }
 

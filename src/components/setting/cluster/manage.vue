@@ -71,7 +71,7 @@
           </span>
         </slot>
       </el-alert>
-      <el-form ref="cluster" :rules="rules" label-width="130px" label-position="left" :model="cluster">
+      <el-form ref="cluster" :rules="rules" label-width="140px" label-position="left" :model="cluster">
         <el-form-item label="名称" prop="name">
           <el-input size="small" v-model="cluster.name" placeholder="请输入集群名称"></el-input>
         </el-form-item>
@@ -156,7 +156,7 @@
                 <el-option label="优先调度" value="preferred"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item v-if="cluster.advanced_config.strategy !== 'normal'" prop="advanced_config.node_labels" label="选择标签">
+            <el-form-item v-if="cluster.advanced_config.strategy && cluster.advanced_config.strategy !== 'normal'" prop="advanced_config.node_labels" label="选择标签">
               <el-select v-model="cluster.advanced_config.node_labels" placeholder="请选择" multiple style="width: 100%;" size="small">
                 <el-option v-for="node in clusterNodes.labels" :key="node" :label="node" :value="node"></el-option>
               </el-select>
@@ -196,7 +196,7 @@
                 </el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="cluster.cache.medium_type === 'object'" prop="cache.object_properties">
+            <el-form-item v-if="cluster.cache.medium_type === 'object'" prop="cache.object_properties.id">
               <span slot="label">选择对象存储</span>
               <el-select v-model="cluster.cache.object_properties.id" placeholder="请选择对象存储" style="width: 100%;" size="small">
                 <template v-if="allStorage.length > 0">
@@ -464,6 +464,31 @@ export default {
           required: false,
           message: '请选择项目',
           type: 'array'
+        },
+        'cache.object_properties.id': {
+          required: true,
+          message: '请选择对象存储',
+          type: 'string'
+        },
+        'cache.nfs_properties.provision_type': {
+          required: true,
+          message: '请选择存储资源',
+          type: 'string'
+        },
+        'cache.nfs_properties.storage_class': {
+          required: true,
+          message: '请选择 Storage Class',
+          type: 'string'
+        },
+        'cache.nfs_properties.storage_size_in_gib': {
+          required: true,
+          message: '请输入存储空间大小',
+          type: 'number'
+        },
+        'cache.nfs_properties.pvc': {
+          required: true,
+          message: '请选择 PVC',
+          type: 'string'
         }
       },
       clusterNodes: {

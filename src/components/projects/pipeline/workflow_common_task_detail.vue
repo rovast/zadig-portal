@@ -638,7 +638,7 @@ export default {
   }
 
   .issue-url {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 }
@@ -656,7 +656,7 @@ export default {
 
     .el-breadcrumb__item__inner a:hover,
     .el-breadcrumb__item__inner:hover {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
   }
@@ -674,7 +674,7 @@ export default {
       cursor: pointer;
 
       &:hover {
-        color: #1989fa;
+        color: @themeColor;
       }
     }
 
@@ -716,7 +716,7 @@ export default {
     .item-desc {
       .start-build,
       .edit-pipeline {
-        color: #1989fa;
+        color: @themeColor;
         font-size: 13px;
         cursor: pointer;
       }
@@ -743,7 +743,7 @@ export default {
     }
 
     .color-running {
-      color: #1989fa;
+      color: @themeColor;
       font-weight: 500;
     }
 
@@ -764,7 +764,7 @@ export default {
     }
 
     .deploy_env {
-      color: #1989fa;
+      color: @themeColor;
     }
 
     .error-color {
@@ -776,12 +776,12 @@ export default {
       cursor: pointer;
 
       &:hover {
-        color: #1989fa;
+        color: @themeColor;
       }
     }
 
     .show-test-result {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
 
@@ -818,12 +818,12 @@ export default {
   }
   // .link {
   //   a {
-  //     color: #1989fa;
+  //     color: @themeColor;
   //     cursor: pointer;
   //   }
   // }
   a.item-desc {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 
@@ -841,7 +841,7 @@ export default {
         left: 0;
         width: 25px;
         height: 25px;
-        background-color: #1989fa;
+        background-color: @themeColor;
       }
     }
   }

@@ -480,7 +480,7 @@ export default {
         text-align: center;
 
         i {
-          color: #1989fa;
+          color: @themeColor;
           font-size: 19px;
         }
       }
@@ -534,7 +534,7 @@ export default {
 
   .cf-side-bar-header__icon {
     float: left;
-    color: #1989fa;
+    color: @themeColor;
     font-weight: normal;
     font-size: 16px;
   }
@@ -607,7 +607,7 @@ export default {
     max-width: 62px;
     margin: 0;
     padding: 0;
-    color: #1989fa;
+    color: @themeColor;
     font-size: 22px;
     text-align: center;
     -webkit-box-flex: 0;

@@ -136,7 +136,7 @@ export default {
   }
 
   .env-link {
-    color: #1989fa;
+    color: @themeColor;
   }
 }
 </style>

@@ -259,7 +259,7 @@ export default {
   padding-bottom: 50px;
 
   .task-id {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .status,

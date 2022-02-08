@@ -980,7 +980,7 @@ export default {
   }
 
   .issue-url {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 }
@@ -1028,7 +1028,7 @@ export default {
 
   .version-link,
   .download-artifact-link {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 
@@ -1071,7 +1071,7 @@ export default {
 
   .show-test-result {
     a {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
   }
@@ -1089,7 +1089,7 @@ export default {
 
     a {
       margin-right: 4px;
-      color: #1989fa;
+      color: @themeColor;
     }
   }
 

@@ -346,7 +346,7 @@ export default {
   }
 
   .artifact-link {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .repo {

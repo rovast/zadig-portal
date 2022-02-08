@@ -456,7 +456,7 @@ export default {
           width: 8px;
           height: 8px;
           margin-right: 4px;
-          background-color: #1989fa;
+          background-color: @themeColor;
           border-radius: 100%;
           animation: sk-bouncedelay 1.4s infinite ease-in-out both;
         }
@@ -513,7 +513,7 @@ export default {
 .editButton {
   display: inline-block;
   margin-left: 10px;
-  color: #1989fa;
+  color: @themeColor;
   cursor: pointer;
 }
 </style>

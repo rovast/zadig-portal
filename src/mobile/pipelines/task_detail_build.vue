@@ -349,7 +349,7 @@ export default {
   color: #303133;
 
   a {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .mobile-log-container {

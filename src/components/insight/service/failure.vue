@@ -80,7 +80,7 @@ export default {
 
   .service-name {
     overflow: hidden;
-    color: #1989fa;
+    color: @themeColor;
     white-space: nowrap;
     text-overflow: ellipsis;
   }

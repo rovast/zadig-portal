@@ -1326,7 +1326,7 @@ export default {
 }
 
 .add-host {
-  color: #1989fa;
+  color: @themeColor;
   cursor: pointer;
 }
 </style>

@@ -174,7 +174,7 @@ export default {
                   color: #888;
 
                   &:hover {
-                    color: #1989fa;
+                    color: @themeColor;
                   }
                 }
               }

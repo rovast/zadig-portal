@@ -330,7 +330,7 @@ export default {
 
             .display-btn {
               padding: 13px 17px;
-              color: #1989fa;
+              color: @themeColor;
               font-size: 13px;
               text-decoration: none;
               background-color: #fff;
@@ -342,15 +342,15 @@ export default {
               cursor: pointer;
 
               &:hover {
-                color: #1989fa;
+                color: @themeColor;
                 background-color: #fff;
-                border-color: #1989fa;
+                border-color: @themeColor;
               }
 
               &.active {
                 color: #fff;
-                background-color: #1989fa;
-                border-color: #1989fa;
+                background-color: @themeColor;
+                border-color: @themeColor;
               }
 
               &.round {
@@ -371,8 +371,8 @@ export default {
         color: #fff;
         font-size: 13px;
         text-decoration: none;
-        background-color: #1989fa;
-        border: 1px solid #1989fa;
+        background-color: @themeColor;
+        border: 1px solid @themeColor;
         cursor: pointer;
       }
     }
@@ -400,7 +400,7 @@ export default {
         color: #606266;
 
         &:hover {
-          color: #1989fa;
+          color: @themeColor;
         }
       }
     }

@@ -532,14 +532,14 @@ export default {
   }
 
   .create-btn {
-    color: #1989fa;
+    color: @themeColor;
     background: #fff;
-    border-color: #1989fa;
+    border-color: @themeColor;
 
     &:hover {
       color: #fff;
-      background: #1989fa;
-      border-color: #1989fa;
+      background: @themeColor;
+      border-color: @themeColor;
     }
   }
 

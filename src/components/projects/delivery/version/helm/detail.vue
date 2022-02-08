@@ -228,7 +228,7 @@ export default {
         float: right;
 
         .version-push {
-          color: #1989fa;
+          color: @themeColor;
           cursor: pointer;
         }
       }

@@ -195,7 +195,7 @@ export default {
 
   .version-link {
     a {
-      color: #1989fa;
+      color: @themeColor;
     }
   }
 

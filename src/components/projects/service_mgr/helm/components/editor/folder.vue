@@ -212,13 +212,13 @@ export default {
 
       .icon {
         margin-left: 10px;
-        color: #1989fa;
+        color: @themeColor;
         font-size: 12px;
       }
     }
 
     /deep/ .iconColor {
-      color: #1989fa;
+      color: @themeColor;
     }
   }
 

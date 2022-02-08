@@ -101,9 +101,11 @@ export default {
 <style lang="less" scoped>
 .repo-jump-container {
   color: @themeColor;
+
   .repo-icon {
     margin-right: 3px;
     vertical-align: bottom;
+
     &:not(:first-child) {
       margin-left: 6px;
     }

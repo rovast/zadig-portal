@@ -207,21 +207,22 @@ export default {
 
 .menu-item {
   display: inline-block;
-  border-radius: 5px;
-  font-size: 20px;
+  box-sizing: border-box;
   padding: 8px;
   color: @fontGray;
-  box-sizing: border-box;
+  font-size: 20px;
   border: 1px solid transparent;
+  border-radius: 5px;
+
   &:hover {
     border-color: @borderGray;
   }
 }
 
 .more-operation {
+  margin: 0 8px 0 -5px;
   color: @fontGray;
   font-size: 20px;
   cursor: pointer;
-  margin: 0 8px 0 -5px;
 }
 </style>

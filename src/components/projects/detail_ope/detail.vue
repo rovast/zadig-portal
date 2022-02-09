@@ -6,44 +6,20 @@
     element-loading-spinner="iconfont iconfont-loading iconxiangmu"
   >
     <div class="project-header">
-      <div class="header-start">
-        <div class="container">
-          <div class="display-mode">
-            <div class="btn-container">
-              <el-dropdown placement="bottom" @command="selectSystemToDownloadCLI">
-                <button type="button" class="display-btn">
-                  下载开发者 CLI
-                  <i class="el-icon-arrow-down el-icon--right"></i>
-                </button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item disabled>选择使用的系统</el-dropdown-item>
-                  <el-dropdown-item command="mac">Mac</el-dropdown-item>
-                  <el-dropdown-item command="linux">Linux</el-dropdown-item>
-                  <el-dropdown-item command="windows">Windows</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-              <template v-if="isProjectAdmin">
-                <router-link :to="`/v1/projects/edit/${projectName}`">
-                  <button type="button" class="display-btn">
-                    <i class="el-icon-edit-outline"></i>
-                    <span class="add-filter-value-title">修改</span>
-                  </button>
-                </router-link>
-                <button type="button" @click="deleteProject" class="display-btn">
-                  <i class="el-icon-delete"></i>
-                  <span class="add-filter-value-title">删除</span>
-                </button>
-                <router-link :to="`/v1/projects/detail/${projectName}/rbac`">
-                  <button type="button" class="display-btn">
-                    <i class="el-icon-lock"></i>
-                    <span class="add-filter-value-title">权限</span>
-                  </button>
-                </router-link>
-              </template>
-            </div>
-          </div>
-        </div>
-      </div>
+      <template v-if="isProjectAdmin">
+        <el-dropdown placement="bottom" trigger="click">
+          <button type="button" class="display-btn">
+            <i class="el-icon-s-operation el-icon--left"></i>
+            配置
+            <i class="el-icon-caret-bottom el-icon--right"></i>
+          </button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item icon="el-icon-edit-outline" @click.native="$router.push(`/v1/projects/edit/${projectName}`)">修改</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-delete" @click.native="deleteProject">删除</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-lock" @click.native="$router.push(`/v1/projects/detail/${projectName}/rbac`)">权限</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </template>
     </div>
     <section class="projects-detail">
       <div v-hasPermi="{projectName: projectName, action: 'get_environment'}" class="env">
@@ -138,8 +114,7 @@ import {
   getProductWorkflowsInProjectAPI,
   listProductAPI,
   getServiceTemplatesAPI,
-  getBuildConfigsAPI,
-  downloadDevelopCLIAPI
+  getBuildConfigsAPI
 } from '@api'
 import { translateEnvStatus } from '@utils/wordTranslate'
 import { wordTranslate } from '@utils/wordTranslate.js'
@@ -314,18 +289,6 @@ export default {
         })
         this.detailLoading = false
       }
-    },
-    selectSystemToDownloadCLI (check) {
-      downloadDevelopCLIAPI(check).then(res => {
-        const aEle = document.createElement('a')
-        if (aEle.download !== undefined) {
-          aEle.setAttribute('href', res)
-          aEle.setAttribute('download', true)
-          document.body.appendChild(aEle)
-          aEle.click()
-          document.body.removeChild(aEle)
-        }
-      })
     }
   },
   computed: {
@@ -372,59 +335,20 @@ export default {
 
   .project-header {
     display: flex;
-    align-items: stretch;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 40px;
+    padding: 10px 20px 0 20px;
 
-    .header-start {
-      flex: 1;
-
-      .container {
-        min-height: 40px;
-        margin: 0;
-        padding: 5px 20px 0 20px;
-        font-size: 13px;
-
-        .display-mode {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: baseline;
-          justify-content: flex-end;
-          min-height: 46px;
-
-          .btn-container {
-            position: relative;
-            height: 44px;
-            margin-top: 1px;
-            margin-right: 5px;
-
-            .display-btn {
-              padding: 13px 17px;
-              color: @themeColor;
-              font-size: 13px;
-              text-decoration: none;
-              background-color: #fff;
-              border: none;
-              border-color: #fff;
-              border-style: none;
-              border-radius: 2px;
-              box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
-              cursor: pointer;
-
-              &:hover {
-                color: @themeColor;
-                background-color: #fff;
-                border-color: @themeColor;
-              }
-
-              &.active {
-                color: #fff;
-                background-color: @themeColor;
-                border-color: @themeColor;
-              }
-            }
-          }
-        }
-      }
+    .display-btn {
+      padding: 10px 15px;
+      color: @themeColor;
+      font-size: 14px;
+      background-color: #fff;
+      border: 1px solid @themeColor;
+      border-radius: 6px;
+      box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
     }
 
     .header-end {

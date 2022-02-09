@@ -228,7 +228,7 @@ export default {
             {
               name: '效能洞察',
               icon: 'iconfont iconshujudongcha',
-              url: 'insight/build'
+              url: 'insight'
             }
           ]
         }

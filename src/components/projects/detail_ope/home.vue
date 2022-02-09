@@ -5,23 +5,8 @@
         <div class="container">
           <div class="display-mode">
             <div class="btn-container">
-              <button type="button" @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'?true:false}" class="display-btn">
-                <i class="el-icon-s-grid"></i>
-                <span class="add-filter-value-title">网格视图</span>
-              </button>
-              <button type="button" @click="currentTab = 'list'" :class="{'active':currentTab==='list'?true:false}" class="display-btn">
-                <i class="el-icon-s-fold"></i>
-                <span class="add-filter-value-title">列表视图</span>
-              </button>
-              <button
-                type="button"
-                @click="$router.push(`/v1/projects/template`)"
-                style="margin-left: 10px; border-radius: 20px;"
-                class="display-btn"
-              >
-                <i class="iconfont iconicon-repertory" style="font-size: 13px;"></i>
-                <span class="add-filter-value-title">模板库</span>
-              </button>
+              <span @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'?true:false}" class="display-btn"><i class="el-icon-menu"></i></span>
+              <span @click="currentTab = 'list'" :class="{'active':currentTab==='list'?true:false}" class="display-btn"><i class="el-icon-s-fold"></i></span>
             </div>
           </div>
         </div>
@@ -56,7 +41,7 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </span>
-            <div @click="toProject(project)" class="content-container">
+            <div @click="toProject(project)" class="card-content-container">
               <div class="content">
                 <div class="card-header">
                   <div class="quickstart-icon">
@@ -289,7 +274,7 @@ export default {
   position: relative;
   flex: 1;
   overflow: auto;
-  background-color: #f5f7f7;
+  background-color: #f6f6f6;
 
   .no-product {
     display: flex;
@@ -314,6 +299,8 @@ export default {
     display: flex;
     align-items: stretch;
     justify-content: flex-start;
+    margin-bottom: 15px;
+    background-color: #fff;
 
     .header-start {
       flex: 1;
@@ -332,42 +319,49 @@ export default {
           min-height: 46px;
 
           .btn-container {
-            position: relative;
-            height: 44px;
-            margin-top: 1px;
-            margin-right: 5px;
-
-            .display-btn {
-              padding: 13px 17px;
-              color: #1989fa;
-              font-size: 13px;
-              text-decoration: none;
-              background-color: #fff;
-              border: none;
-              border-color: #fff;
-              border-style: none;
-              border-radius: 2px;
-              box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
-              cursor: pointer;
-
-              &:hover {
-                color: #1989fa;
-                background-color: #fff;
-                border-color: #1989fa;
-              }
-
-              &.active {
-                color: #fff;
-                background-color: #1989fa;
-                border-color: #1989fa;
-              }
-
-              &.round {
-                margin-left: 20px;
-                border-radius: 20px;
-              }
-            }
+            box-sizing: border-box;
+            padding: 7px 15px;
+            color: #c4c4c4;
+            border: 1px solid rgba(118, 122, 200, 0.25);
+            border-radius: 4px;
           }
+          // .btn-container {
+          //   position: relative;
+          //   height: 44px;
+          //   margin-top: 1px;
+          //   margin-right: 5px;
+
+          //   .display-btn {
+          //     padding: 13px 17px;
+          //     color: #1989fa;
+          //     font-size: 13px;
+          //     text-decoration: none;
+          //     background-color: #fff;
+          //     border: none;
+          //     border-color: #fff;
+          //     border-style: none;
+          //     border-radius: 2px;
+          //     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
+          //     cursor: pointer;
+
+          //     &:hover {
+          //       color: #1989fa;
+          //       background-color: #fff;
+          //       border-color: #1989fa;
+          //     }
+
+          //     &.active {
+          //       color: #fff;
+          //       background-color: #1989fa;
+          //       border-color: #1989fa;
+          //     }
+
+          //     &.round {
+          //       margin-left: 20px;
+          //       border-radius: 20px;
+          //     }
+          //   }
+          // }
         }
       }
     }
@@ -502,7 +496,7 @@ export default {
           }
         }
 
-        .content-container {
+        .card-content-container {
           flex: 1;
           height: calc(~'100% - 55px');
           padding: 15px 15px 0 15px;

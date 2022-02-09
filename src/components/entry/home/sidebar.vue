@@ -1,25 +1,21 @@
 <template>
-  <div @mouseenter="enterSidebar" @mouseleave="leaveSidebar" class="cf-side-bar full-h" :class="{ 'small-sidebar': !showSidebar }">
+  <div @mouseenter="enterSidebar" @mouseleave="leaveSidebar" class="sidebar full-h" :class="{ 'small-sidebar': !showSidebar }">
     <a @click="changeSidebar" class="sidebar-size-toggler">
       <i :class="showSidebar?'el-icon-arrow-right':'el-icon-arrow-left'"></i>
     </a>
 
-    <div class="cf-side-bar-header">
-      <router-link to="/v1/status">
-        <img v-if="showSidebar&&!showBackPath" class="logo" src="@assets/icons/logo/default-logo.png" />
-        <img v-if="!showSidebar&&!showBackPath" class="logo" :class="{'small':!showSidebar}" src="@assets/icons/logo/small-logo.png" />
-      </router-link>
-      <router-link class="cf-side-bar-header back-to" v-if="showSidebar&&showBackPath" :to="backUrl">
-        <div class="cf-side-bar-header__icon">
+    <div class="sidebar-header">
+      <router-link class="sidebar-header back-to" v-if="showSidebar&&showBackPath" :to="backUrl">
+        <div class="sidebar-header__icon">
           <i class="icon el-icon-back"></i>
         </div>
-        <div class="cf-side-bar-header__info">
+        <div class="sidebar-header__info">
           <div class="logo-title">{{backTitle}}</div>
           <div class="logo-title logo-title_subtitle">返回上一层</div>
         </div>
       </router-link>
-      <router-link class="cf-side-bar-header" v-if="!showSidebar&&showBackPath" :to="backUrl">
-        <div class="cf-side-bar-header__icon">
+      <router-link class="sidebar-header" v-if="!showSidebar&&showBackPath" :to="backUrl">
+        <div class="sidebar-header__icon">
           <i class="icon el-icon-back"></i>
         </div>
       </router-link>
@@ -178,34 +174,23 @@ export default {
           },
           {
             name: '项目',
-            icon: 'iconfont iconxiangmu',
+            icon: 'iconfont iconxiangmuloading',
             url: 'projects'
           },
           {
-            name: '工作流',
-            icon: 'iconfont icongongzuoliucheng',
-            url: 'pipelines'
+            name: '模板库',
+            icon: 'iconfont iconxiangmuloading',
+            url: 'projects/template'
           },
           {
-            name: '集成环境',
-            icon: 'iconfont iconrongqi',
-            url: 'envs'
+            name: '版本管理',
+            url: 'delivery/version',
+            icon: 'iconfont iconxiangmuloading'
           },
           {
-            name: '交付中心',
-            icon: 'iconfont iconjiaofu',
-            hasSubItem: true,
-            isOpened: false,
-            subItems: [{
-              name: '版本管理',
-              url: 'delivery/version',
-              icon: 'iconfont iconbanben'
-            },
-            {
-              name: '交付物追踪',
-              url: 'delivery/artifacts',
-              icon: 'iconfont iconbaoguanli'
-            }]
+            name: '交付物追踪',
+            url: 'delivery/artifacts',
+            icon: 'iconfont iconxiangmuloading'
           }]
         },
         {
@@ -236,11 +221,6 @@ export default {
       adminMenu: [{
         category_name: '设置',
         items: [
-          {
-            name: '用户管理',
-            icon: 'iconfont icongeren',
-            url: 'users/account/manage'
-          },
           {
             name: '系统设置',
             icon: 'iconfont iconicon_jichengguanli',
@@ -324,7 +304,7 @@ export default {
 </script>
 
 <style lang="less">
-.cf-side-bar {
+.sidebar {
   position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -334,9 +314,10 @@ export default {
   align-items: left;
   justify-content: space-between;
   width: 196px;
+  height: 100%;
   margin-right: 0;
   font-size: 12px;
-  background-color: #f5f7fa;
+  background-color: rgba(118, 122, 200, 0.1);
   border-right: 1px solid #e6e9f0;
   transition: width 350ms, margin-width 230ms;
   -webkit-box-align: left;
@@ -375,9 +356,9 @@ export default {
       margin-top: 0;
       margin-bottom: 10px;
       padding-left: 20px;
-      color: #000;
-      font-weight: bold;
-      font-size: 14px;
+      color: #8a8a8a;
+      font-weight: 400;
+      font-size: 18px;
       text-align: left;
       text-transform: uppercase;
 
@@ -480,7 +461,7 @@ export default {
         text-align: center;
 
         i {
-          color: #1989fa;
+          color: #55f;
           font-size: 19px;
         }
       }
@@ -500,10 +481,10 @@ export default {
   }
 
   &.small-sidebar {
-    width: 66px;
+    width: 60px;
 
     .category-wrapper {
-      max-width: 66px;
+      max-width: 60px;
       padding: 25px 0 30px;
     }
 
@@ -532,14 +513,14 @@ export default {
     }
   }
 
-  .cf-side-bar-header__icon {
+  .sidebar-header__icon {
     float: left;
-    color: #1989fa;
+    color: #55f;
     font-weight: normal;
     font-size: 16px;
   }
 
-  .cf-side-bar-header__info {
+  .sidebar-header__info {
     padding: 20px 0;
 
     .logo-title {
@@ -563,7 +544,7 @@ export default {
     }
   }
 
-  .cf-side-bar-header {
+  .sidebar-header {
     display: flex;
     justify-content: center;
     width: 100%;
@@ -574,11 +555,11 @@ export default {
       justify-content: flex-start;
       margin-left: 15px;
 
-      .cf-side-bar-header__info {
+      .sidebar-header__info {
         padding: 0;
       }
 
-      .cf-side-bar-header__icon {
+      .sidebar-header__icon {
         width: 35px;
       }
     }
@@ -607,7 +588,7 @@ export default {
     max-width: 62px;
     margin: 0;
     padding: 0;
-    color: #1989fa;
+    color: #55f;
     font-size: 22px;
     text-align: center;
     -webkit-box-flex: 0;
@@ -630,9 +611,10 @@ export default {
     justify-content: flex-start;
     width: 100%;
     min-width: 246px;
-    padding: 4px 0 4px 0;
+    padding: 12px 0 12px 0;
     overflow: hidden;
-    border-left: 4px solid #f5f7fa;
+    // border-left: 12px solid rgba(118, 122, 200, 0.1);
+    // border-right:12px solid rgba(118, 122, 200, 0.1);
     outline: none;
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -648,9 +630,9 @@ export default {
       max-width: 186px;
       padding-right: 37px;
       padding-left: 0;
-      color: #434548;
+      color: #4a4a4a;
       font-size: 14px;
-      line-height: 2.2;
+      line-height: 22px;
       white-space: nowrap;
       text-align: left;
       -webkit-transition: color 200ms ease-in;
@@ -670,8 +652,11 @@ export default {
   .nav-item.active,
   .nav-item:hover {
     padding-left: 0;
-    background-color: #e1edfa;
-    border-left: 4px solid #1989fa;
+    background-color: rgba(160, 160, 255, 0.15);
+
+    .nav-item-label {
+      color: #55f;
+    }
   }
 
   .category-wrapper:first-child {

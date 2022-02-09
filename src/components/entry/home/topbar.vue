@@ -1,88 +1,16 @@
 <template>
-  <div class="kr-top-bar">
-    <div class="top-bar-content">
-      <div class="kr-top-bar-start">
-        <span v-if="content.title" class="kr-topbar-title">{{content.title}}</span>
+  <div class="topbar-container">
+    <div class="topbar-content">
+      <div class="topbar-container-start">
+        <!-- <span v-if="content.title" class="kr-topbar-title">{{content.title}}</span> -->
         <el-breadcrumb v-if="content.breadcrumb && content.breadcrumb.length > 0" separator=">">
           <el-breadcrumb-item v-for="(item,index) in content.breadcrumb" :to="item.url" :key="index">{{item.title}}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <div class="kr-top-bar-end">
-        <el-popover placement="bottom" popper-class="help-droplist" trigger="click">
-          <ul class="dropdown-menu" uib-dropdown-menu>
-            <li>
-              <a href="https://docs.koderover.com/zadig/" target="_blank">
-                <i class="icon el-icon-link"></i>
-                <span>文档站</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.koderover.com/zadig/quick-start/introduction/" target="_blank">
-                <i class="icon el-icon-link"></i>
-                <span>入门</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://www.koderover.com/tutorials/" target="_blank">
-                <i class="icon el-icon-link"></i>
-                <span>最佳实践</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.koderover.com/zadig/workflow/trigger/" target="_blank">
-                <i class="icon el-icon-link"></i>
-                <span>工作流</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.koderover.com/zadig/env/service/" target="_blank">
-                <i class="icon el-icon-link"></i>
-                <span>集成环境</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.koderover.com/zadig/project/service/" target="_blank">
-                <i class="icon el-icon-link"></i>
-                <span>项目管理</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.koderover.com/zadig/delivery/artifact/" target="_blank">
-                <i class="icon el-icon-link"></i>
-                <span>交付中心</span>
-              </a>
-            </li>
-            <li role="separator" class="divider"></li>
-            <li>
-              <a href="https://docs.koderover.com/zadig/settings/codehost/gitlab/" target="_blank">
-                <i class="icon el-icon-link"></i>
-                <span>系统设置</span>
-              </a>
-            </li>
-            <li>
-              <a href="https://docs.koderover.com/zadig/api/usage/" target="_blank">
-                <i class="icon el-icon-link"></i>
-                <span>开发者中心</span>
-              </a>
-            </li>
-            <!-- <li>
-              <a href="https://docs.koderover.com/zadig/glossary/"
-                 target="_blank">
-                <i class="icon el-icon-link"></i>
-                <span>术语表</span>
-              </a>
-            </li>-->
-          </ul>
-          <span slot="reference" class="help">
-            <span class="text">
-              <i class="el-icon-question"></i>文档
-            </span>
-          </span>
-        </el-popover>
+      <div class="topbar-container-end">
         <span>
-          <notification class="icon notify"></notification>
+          <Notification class="icon notify"/>
         </span>
-
         <div class="nav nav-item-bottom user-profile">
           <el-popover placement="bottom" width="240" popper-class="dropdown-menu" trigger="click">
             <div class="flex">
@@ -144,7 +72,7 @@
   </div>
 </template>
 <script>
-import notification from './common/notification.vue'
+import Notification from './common/notification.vue'
 import mixin from '@/mixin/topbarMixin'
 import bus from '@utils/eventBus'
 import { mapState } from 'vuex'
@@ -198,7 +126,7 @@ export default {
     })
   },
   components: {
-    notification
+    Notification
   },
   mixins: [mixin]
 }
@@ -331,19 +259,19 @@ export default {
   }
 }
 
-.kr-top-bar {
+.topbar-container {
   top: 0;
   right: 0;
   left: 66px;
   z-index: 1010;
-  height: 60px;
+  height: 40px;
   padding: 0 20px;
   color: #44504f;
   font-size: 14px;
   background-color: #fff;
   border-bottom: 1px solid #ebedef;
 
-  .top-bar-content {
+  .topbar-content {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -356,7 +284,7 @@ export default {
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
 
-    .kr-top-bar-start {
+    .topbar-container-start {
       display: flex;
       flex: 0 1 auto;
       flex-basis: auto;
@@ -384,7 +312,7 @@ export default {
       }
     }
 
-    .kr-top-bar-end {
+    .topbar-container-end {
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
@@ -417,45 +345,6 @@ export default {
       .notify {
         font-size: 20px;
         line-height: 60px;
-      }
-
-      .system-statistics {
-        margin-right: 30px;
-        line-height: 60px;
-      }
-
-      .help {
-        display: block;
-        margin-right: 45px;
-        line-height: 60px;
-        cursor: pointer;
-
-        .text {
-          display: inline-block;
-          line-height: 60px;
-        }
-      }
-
-      .system-statistics,
-      .help {
-        color: #4c4c4c;
-        font-size: 14px;
-
-        i {
-          display: inline-block;
-          margin-right: 5px;
-          color: rgba(0, 0, 0, 0.19);
-          font-size: 14px;
-          line-height: 60px;
-        }
-
-        &:hover {
-          color: #1989fa;
-
-          i {
-            color: #1989fa;
-          }
-        }
       }
 
       .user-profile {

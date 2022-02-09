@@ -436,7 +436,7 @@ export default {
   position: relative;
   flex: 1;
   overflow: auto;
-  background-color: #f5f7f7;
+  background-color: #f6f6f6;
 
   .projects-detail-sub {
     min-height: 100%;

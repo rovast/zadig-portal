@@ -2,37 +2,16 @@
   <div class="project-home-container">
     <div class="project-header">
       <div class="header-start">
-        <div class="container">
-          <div class="display-mode">
-            <div class="btn-container">
-              <button type="button" @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'?true:false}" class="display-btn">
-                <i class="el-icon-s-grid"></i>
-                <span class="add-filter-value-title">网格视图</span>
-              </button>
-              <button type="button" @click="currentTab = 'list'" :class="{'active':currentTab==='list'?true:false}" class="display-btn">
-                <i class="el-icon-s-fold"></i>
-                <span class="add-filter-value-title">列表视图</span>
-              </button>
-              <button
-                type="button"
-                @click="$router.push(`/v1/projects/template`)"
-                style="margin-left: 10px; border-radius: 20px;"
-                class="display-btn"
-              >
-                <i class="iconfont iconicon-repertory" style="font-size: 13px;"></i>
-                <span class="add-filter-value-title">模板库</span>
-              </button>
-            </div>
-          </div>
-        </div>
+        <i class="el-icon-s-grid display-btn" @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'}"></i>
+        <i class="el-icon-s-fold display-btn" @click="currentTab = 'list'" :class="{'active':currentTab==='list'}"></i>
       </div>
       <div class="header-end">
-        <router-link v-if="$utils.roleCheck('admin')" to="/v1/projects/create">
-          <button type="button" class="add-project-btn">
-            <i class="el-icon-plus"></i>
-            新建项目
-          </button>
-        </router-link>
+        <el-button type="primary" @click="$router.push(`/v1/projects/template`)" plain>
+          <i class="iconfont iconicon-repertory"></i>模板库
+        </el-button>
+        <el-button type="primary" v-if="$utils.roleCheck('admin')" @click="$router.push(`/v1/projects/create`)" plain>
+          <i class="el-icon-plus"></i>新建项目
+        </el-button>
       </div>
     </div>
     <div
@@ -58,14 +37,12 @@
             </div>
             <div @click="toProject(project)" class="content-container">
               <h4 class="project-name">
-                {{project.alias?project.alias:project.name}}&nbsp;
+                <span class="name">{{project.alias?project.alias:project.name}}</span>
                 <el-tooltip v-if="!project.public" effect="dark" content="私有项目" placement="top">
                   <i class="icon iconfont iconprivate"></i>
                 </el-tooltip>
               </h4>
-              <div class="info">
-                <span class="project-desc">{{project.desc}}</span>
-              </div>
+              <div class="project-desc">{{project.desc}}</div>
             </div>
             <div class="footer">
               <el-tooltip effect="dark" content="工作流" placement="top">
@@ -274,7 +251,7 @@ export default {
 </script>
 
 <style lang="less" >
-@iconColor: #A0A0FF;
+@iconColor: #a0a0ff;
 
 .project-home-container {
   position: relative;
@@ -303,77 +280,43 @@ export default {
 
   .project-header {
     display: flex;
-    align-items: stretch;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: space-between;
+    margin: 15px 20px;
 
     .header-start {
-      flex: 1;
+      flex: 0 0 auto;
+      padding: 5px 10px;
+      font-size: 20px;
+      background-color: #fff;
+      border: 1px solid @borderGray;
+      border-radius: 4px;
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
 
-      .container {
-        min-height: 50px;
-        margin: 0;
-        padding: 10px 20px;
-        font-size: 13px;
+      .display-btn {
+        color: @fontGray;
+        cursor: pointer;
 
-        .display-mode {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: baseline;
-          justify-content: flex-start;
-          min-height: 46px;
+        &:not(:last-child) {
+          margin-right: 8px;
+        }
 
-          .btn-container {
-            position: relative;
-            height: 44px;
-            margin-top: 1px;
-            margin-right: 5px;
-
-            .display-btn {
-              padding: 13px 17px;
-              color: @themeColor;
-              font-size: 13px;
-              text-decoration: none;
-              background-color: #fff;
-              border: none;
-              border-color: #fff;
-              border-style: none;
-              border-radius: 2px;
-              box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
-              cursor: pointer;
-
-              &:hover {
-                color: @themeColor;
-                background-color: #fff;
-                border-color: @themeColor;
-              }
-
-              &.active {
-                color: #fff;
-                background-color: @themeColor;
-                border-color: @themeColor;
-              }
-
-              &.round {
-                margin-left: 20px;
-                border-radius: 20px;
-              }
-            }
-          }
+        &:hover,
+        &.active {
+          color: @themeColor;
         }
       }
     }
 
     .header-end {
-      .add-project-btn {
-        width: 165px;
-        height: 100%;
+      .el-button {
         padding: 10px 17px;
-        color: #fff;
         font-size: 13px;
-        text-decoration: none;
-        background-color: @themeColor;
-        border: 1px solid @themeColor;
-        cursor: pointer;
+
+        i {
+          margin-right: 4px;
+          font-size: 14px;
+        }
       }
     }
   }
@@ -502,8 +445,15 @@ export default {
             font-weight: 400;
             font-size: 18px;
             line-height: 22px;
-            text-overflow: ellipsis;
             cursor: pointer;
+
+            .name {
+              display: inline-block;
+              max-width: calc(100% - 20px);
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
 
             .iconprivate::before {
               color: #c8c9cc;
@@ -511,16 +461,14 @@ export default {
           }
 
           .icon {
-            margin-right: 15px;
+            vertical-align: top;
           }
 
-          .info {
-            .project-desc {
-              display: inline-block;
-              margin-top: 10px;
-              font-size: 12px;
-              line-height: 22px;
-            }
+          .project-desc {
+            max-height: calc(100% - 32px);
+            overflow: hidden;
+            font-size: 12px;
+            line-height: 22px;
           }
         }
       }

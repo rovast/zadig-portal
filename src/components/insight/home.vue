@@ -98,13 +98,26 @@ export default {
         this.activeTab = 'service'
         this.$router.push(`/v1/insight/service`)
       }
+    },
+    setActiveTab () {
+      if (this.$route.path === '/v1/insight/build') {
+        this.activeTab = 'build'
+      } else if (this.$route.path === '/v1/insight/test') {
+        this.activeTab = 'test'
+      } else if (this.$route.path === '/v1/insight/service') {
+        this.activeTab = 'service'
+      } else {
+        this.$router.push(`/v1/insight/build`)
+      }
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      this.setActiveTab()
     }
   },
   mounted () {
-    // const end = new Date()
-    // const start = new Date()
-    // start.setTime(start)
-    // this.$set(this, 'selectedDuration', [start, end])
+    this.setActiveTab()
     this.getProjects()
     bus.$emit(`show-sidebar`, true)
     bus.$emit(`set-topbar-title`, { title: '效能洞察', breadcrumb: [] })

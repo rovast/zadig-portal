@@ -1098,6 +1098,14 @@ export function getClusterNodeInfo (clusterId = '') {
   return http.get(`/api/aslan/environment/kube/nodes?clusterId=${clusterId}`)
 }
 
+export function getClusterStorageClassAPI (clusterId) {
+  return http.get(`/api/aslan/cluster/${clusterId}/storageclasses`)
+}
+
+export function getClusterPvcAPI (clusterId, namespace) {
+  return http.get(`/api/aslan/cluster/${clusterId}/${namespace}/pvcs`)
+}
+
 // Host
 export function getHostListAPI () {
   return http.get(`/api/aslan/system/privateKey`)
@@ -1249,7 +1257,7 @@ export function getServiceInfo (projectName, serviceName, envName = '', envType 
 }
 
 export function autoUpgradeEnvAPI (projectName, payload, force = '') {
-  return http.put(`/api/aslan/environment/environments?projectName=${projectName}&force=${force}`, payload)
+  return http.put(`/api/aslan/environment/environments?auto=true&projectName=${projectName}&force=${force}`, payload)
 }
 
 // Login
@@ -1317,7 +1325,7 @@ export function validateYamlAPI (projectName, payload) {
 }
 
 export function generateEnvAPI (projectName, envType = '') {
-  return http.post(`/api/aslan/environment/environments?projectName=${projectName}&envType=${envType}`)
+  return http.post(`/api/aslan/environment/environments?auto=true&projectName=${projectName}&envType=${envType}`)
 }
 
 export function generateWorkflowAPI (projectName) {

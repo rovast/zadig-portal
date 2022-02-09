@@ -81,6 +81,18 @@ export function colorTranslate (word, category, subitem = '') {
           timeout: 'color-timeout',
           cancelled: 'color-cancelled'
         }
+      },
+      environment: {
+        status: {
+          Running: 'status-running',
+          Creating: 'status-primary',
+          Updating: 'status-primary',
+          Succeeded: 'status-success',
+          Unstable: 'status-warning',
+          Deleting: 'status-warning',
+          Error: 'status-danger',
+          Unknown: 'status-info'
+        }
       }
     }
     if (word !== '' && subitem === '') {
@@ -93,6 +105,10 @@ export function colorTranslate (word, category, subitem = '') {
 
 export function calcTaskStatusColor (status) {
   return colorTranslate(status, 'pipeline', 'task')
+}
+
+export function calcEnvStatusColor (status) {
+  return colorTranslate(status, 'environment', 'status')
 }
 
 export function translateEnvStatus (status, updateble) {
@@ -140,6 +156,7 @@ export default {
 
   colorTranslate,
   calcTaskStatusColor,
+  calcEnvStatusColor,
 
   translateServiceType,
   translateSubTaskType

@@ -1,4 +1,3 @@
-
 .el-alert {
   padding: 8px 0;
 
@@ -10,26 +9,6 @@
 
 .el-tag--mini {
   line-height: 18px;
-}
-
-.status-success {
-  color: @success;
-}
-
-.status-danger {
-  color: @danger;
-}
-
-.status-warning {
-  color: @warning;
-}
-
-.status-info {
-  color: @info;
-}
-
-.status-primary {
-  color: @themeColor;
 }
 
 // table
@@ -47,19 +26,34 @@
     }
   }
 
+  .el-table__cell {
+    color: #4a4a4a;
+
+    .cell {
+      min-height: 22px;
+      line-height: 22px;
+    }
+  }
+
   th.el-table__cell {
     padding: 8px 0;
+    color: #4a4a4a;
+    font-weight: 300;
     background: #eaeaea;
 
     &.is-leaf {
       border-block-width: 0;
     }
-
-    .cell {
-      height: 22px;
-      line-height: 22px;
-    }
   }
+
+  // .el-table__empty-block {
+  //   min-height: 46px;
+
+  //   .el-table__empty-text {
+  //     height: 46px;
+  //     line-height: 46px;
+  //   }
+  // }
 }
 
 // common font style

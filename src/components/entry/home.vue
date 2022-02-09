@@ -17,8 +17,7 @@
                       v-if="isAdmin && SMTPDisabled"
                       :content="htmlTemplate"></announcement>
         <topbar></topbar>
-        <router-view>
-        </router-view>
+        <router-view class="content-detail"></router-view>
         <FloatLink class="main-float"></FloatLink>
       </div>
     </div>
@@ -183,6 +182,10 @@ body {
           right: 20px;
           bottom: 20px;
           z-index: 1;
+        }
+
+        .content-detail {
+          flex: 1;
         }
       }
     }

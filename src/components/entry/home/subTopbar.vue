@@ -91,7 +91,7 @@ export default {
           padding: 9px 12px;
           color: #000;
           font-weight: 300;
-          font-size: 18px;
+          font-size: 16px;
           line-height: 22px;
           cursor: pointer;
 

@@ -189,18 +189,18 @@ export default {
             },
             {
               name: '模板库',
-              icon: 'iconfont iconxiangmuloading',
+              icon: 'iconfont iconicon-repertory',
               url: 'projects/template'
             },
             {
               name: '版本管理',
               url: 'delivery/version',
-              icon: 'iconfont iconxiangmuloading'
+              icon: 'iconfont iconbanben1'
             },
             {
               name: '交付物追踪',
               url: 'delivery/artifacts',
-              icon: 'iconfont iconxiangmuloading'
+              icon: 'iconfont iconbaoguanli'
             }
           ]
         },
@@ -360,7 +360,7 @@ export default {
       padding-left: 20px;
       color: #8a8a8a;
       font-weight: 400;
-      font-size: 18px;
+      font-size: 16px;
       text-align: left;
       text-transform: uppercase;
 

@@ -33,7 +33,7 @@
     <el-card class="box-card full" :body-style="{ padding: '0px', margin: '15px 0 30px 0' }">
       <div slot="header" class="block-title">
         <span>
-          <i class="el-icon-tickets title-icon"></i>历史任务
+          <i class="iconfont iconhistory title-icon"></i>历史任务
         </span>
         <FilterStatus
           ref="filterStatusRef"
@@ -372,12 +372,16 @@ export default {
       color: #4a4a4a;
 
       .left,
-      .right {
+      .middle {
         flex: 0 0 auto;
       }
 
+      .right {
+        flex: 1 0 auto;
+        text-align: right;
+      }
+
       .middle {
-        flex: 1 1 auto;
         margin-left: 18px;
         color: @fontGray;
 
@@ -419,6 +423,7 @@ export default {
     .title-icon {
       margin-right: 8px;
       color: @fontLightGray;
+      font-size: 20px;
     }
   }
 

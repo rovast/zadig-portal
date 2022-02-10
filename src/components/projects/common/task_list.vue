@@ -84,7 +84,7 @@
                     </div>
                   </el-popover>
                 <span class="hover-color">
-                  <span v-if="item.builds[0].commit_message" class="repo-info" style="width: 140px;">{{ item.builds[0].commit_message }}</span>
+                  <span v-if="item.builds[0].commit_message" class="repo-info" style="width: 143px;">{{ item.builds[0].commit_message }}</span>
                   <span v-if="item.builds[0].author_name" class="repo-info" style="width: 100px;"><i class="el-icon-user" style="margin-right: 4px;"></i>{{ item.builds[0].author_name }}</span>
                 </span>
               </div>

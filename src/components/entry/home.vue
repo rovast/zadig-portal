@@ -135,7 +135,7 @@ body {
       overflow: hidden;
 
       .topbar-wrap {
-        z-index: 10000000;
+        z-index: 1000;
         width: 100%;
         height: 40px;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);

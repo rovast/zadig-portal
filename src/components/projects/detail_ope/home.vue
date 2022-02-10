@@ -22,7 +22,7 @@
       class="projects-grid"
     >
       <el-row :gutter="12">
-        <el-col v-for="(project,index) in projectList" :key="index" :span="6">
+        <el-col v-for="(project,index) in projectList" :key="index" :xs="12" :sm="8" :md="6" :lg="6" :xl="4">
           <el-card shadow="hover" class="project-card">
             <div class="operations">
               <el-dropdown @command="handleCommand" trigger="click">
@@ -354,7 +354,7 @@ export default {
     padding: 0 20px;
 
     .project-card {
-      height: 128px;
+      height: 142px;
       margin-bottom: 15px;
       border: 2px solid #fff;
       border-radius: 6px;

@@ -190,7 +190,7 @@ export default {
             {
               name: '模板库',
               icon: 'iconfont iconicon-repertory',
-              url: 'projects/template'
+              url: 'template'
             },
             {
               name: '版本管理',

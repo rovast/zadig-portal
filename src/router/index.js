@@ -316,7 +316,7 @@ const routes = [
         }
       },
       {
-        path: 'projects/template',
+        path: 'template',
         component: () => import(/* webpackChunkName: "template-lib" */ '@/components/projects/template_lib/index.vue'),
         meta: {
           title: '模板库'

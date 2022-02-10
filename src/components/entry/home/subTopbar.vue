@@ -75,14 +75,6 @@ export default {
       .nav-item-list {
         display: flex;
 
-        a {
-          margin-right: 16px;
-
-          &.active {
-            box-shadow: inset 0 -2px 0 #55f;
-          }
-        }
-
         .nav-item {
           display: inline-flex;
           align-items: center;
@@ -99,6 +91,18 @@ export default {
             margin-right: 18px;
             color: #d2d2d2;
             font-size: 22px;
+          }
+        }
+
+        a {
+          margin-right: 16px;
+
+          &.active {
+            box-shadow: inset 0 -2px 0 #55f;
+
+            .icon {
+              color: #55f;
+            }
           }
         }
       }

@@ -70,3 +70,49 @@
   font-size: 14px;
   line-height: 22px;
 }
+
+// Form label validation icon
+// You should add the label-icon class to the el-form-item component when you want to add an icon to the right of the label component
+.el-form {
+  .el-form-item__label {
+    position: relative;
+    padding-right: 22px;
+  }
+
+  .label-icon {
+    .el-form-item__label {
+      i {
+        position: absolute;
+        top: calc(~'50% - 7px');
+        right: 8px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label,
+  .el-form-item.is-required:not(.is-no-asterisk) .el-form-item__label-wrap > .el-form-item__label {
+    &::before {
+      margin-right: 0;
+      content: '';
+    }
+
+    &::after {
+      position: absolute;
+      top: calc(~'50% - 3px');
+      right: 12px;
+      width: 6px;
+      height: 6px;
+      background: #f00000;
+      border-radius: 50%;
+      content: '';
+    }
+  }
+
+  .label-icon.el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label,
+  .label-icon.el-form-item.is-required:not(.is-no-asterisk) .el-form-item__label-wrap > .el-form-item__label {
+    &::after {
+      background: transparent;
+    }
+  }
+}

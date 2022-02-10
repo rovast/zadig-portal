@@ -6,7 +6,7 @@
         <el-form-item label="项目名称" prop="project_name">
           <el-input @keyup.native="()=>projectForm.project_name=projectForm.project_name.trim()" v-model="projectForm.project_name"></el-input>
         </el-form-item>
-        <el-form-item label="项目主键" prop="product_name">
+        <el-form-item label="项目主键" prop="product_name" class="label-icon">
           <span slot="label">
             项目标识
             <el-tooltip effect="dark" content="项目标识是该项目资源的全局唯一标识符，用于该项目下所有资源的引用与更新，默认自动生成，同时支持手动指定，创建后不可更改" placement="top">
@@ -18,12 +18,10 @@
             <i :class="[editProjectName ? 'el-icon-finished' : 'el-icon-edit-outline']"></i>
           </span>
         </el-form-item>
-        <el-form-item prop="desc">
-          <span slot="label">&nbsp;&nbsp;&nbsp;&nbsp;描述信息</span>
+        <el-form-item prop="desc" label="描述信息">
           <el-input type="textarea" :rows="2" placeholder="请输入描述信息" v-model="projectForm.desc"></el-input>
         </el-form-item>
-        <el-form-item v-if="!isEdit">
-          <span slot="label">&nbsp;&nbsp;&nbsp;&nbsp;项目类型</span>
+        <el-form-item v-if="!isEdit" label="项目类型">
           <div class="project-type">
             <div class="project-type-item" @click="switchType('k8s')" :class="{selected: projectType === 'k8s'}">
               <i class="icon" :class="[projectType === 'k8s' ? 'el-icon-success' : 'iconfont iconk8s']"></i>

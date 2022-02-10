@@ -1,24 +1,7 @@
 <template>
   <div class="project-home-container">
     <div class="project-header">
-      <div class="header-start">
-        <div class="container">
-          <div class="display-mode">
-            <div class="btn-container">
-              <span @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'?true:false}" class="display-btn"><i class="el-icon-menu"></i></span>
-              <span @click="currentTab = 'list'" :class="{'active':currentTab==='list'?true:false}" class="display-btn"><i class="el-icon-s-fold"></i></span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="header-end">
-        <router-link v-if="$utils.roleCheck('admin')" to="/v1/projects/create">
-          <button type="button" class="add-project-btn">
-            <i class="el-icon-plus"></i>
-            新建项目
-          </button>
-        </router-link>
-      </div>
+      <SubTopbar/>
     </div>
     <div
       v-if="currentTab==='grid'"
@@ -145,8 +128,11 @@ import {
 } from '@api'
 import { mapGetters } from 'vuex'
 import { get } from 'lodash'
-
+import SubTopbar from '../../entry/home/subTopbar.vue'
 export default {
+  components: {
+    SubTopbar
+  },
   data () {
     return {
       loading: false,
@@ -325,58 +311,7 @@ export default {
             border: 1px solid rgba(118, 122, 200, 0.25);
             border-radius: 4px;
           }
-          // .btn-container {
-          //   position: relative;
-          //   height: 44px;
-          //   margin-top: 1px;
-          //   margin-right: 5px;
-
-          //   .display-btn {
-          //     padding: 13px 17px;
-          //     color: #1989fa;
-          //     font-size: 13px;
-          //     text-decoration: none;
-          //     background-color: #fff;
-          //     border: none;
-          //     border-color: #fff;
-          //     border-style: none;
-          //     border-radius: 2px;
-          //     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
-          //     cursor: pointer;
-
-          //     &:hover {
-          //       color: #1989fa;
-          //       background-color: #fff;
-          //       border-color: #1989fa;
-          //     }
-
-          //     &.active {
-          //       color: #fff;
-          //       background-color: #1989fa;
-          //       border-color: #1989fa;
-          //     }
-
-          //     &.round {
-          //       margin-left: 20px;
-          //       border-radius: 20px;
-          //     }
-          //   }
-          // }
         }
-      }
-    }
-
-    .header-end {
-      .add-project-btn {
-        width: 165px;
-        height: 100%;
-        padding: 10px 17px;
-        color: #fff;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: #1989fa;
-        border: 1px solid #1989fa;
-        cursor: pointer;
       }
     }
   }

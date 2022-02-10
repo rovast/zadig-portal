@@ -23,9 +23,9 @@
           <router-view></router-view>
         </div>
       </div>
-      <div class="bottom-bar-wrap">
+      <!-- <div class="bottom-bar-wrap">
         <BottomBar/>
-      </div>
+      </div> -->
     </div>
   </div>
 
@@ -149,7 +149,7 @@ body {
 
       .content-wrap {
         display: flex;
-        height: calc(~'100% - 40px - 32px');
+        height: calc(~'100% - 40px');
 
         .sidebar-container {
           height: 100%;

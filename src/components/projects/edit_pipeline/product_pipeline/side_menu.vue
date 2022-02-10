@@ -115,7 +115,7 @@ export default {
     }
 
     a.title:hover {
-      color: #1989fa;
+      color: @themeColor;
     }
   }
 }

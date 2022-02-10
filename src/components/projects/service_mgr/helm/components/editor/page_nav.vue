@@ -81,7 +81,7 @@ export default {
 
     .iconColor {
       margin-right: 5px;
-      color: #1989fa;
+      color: @themeColor;
     }
 
     .right {

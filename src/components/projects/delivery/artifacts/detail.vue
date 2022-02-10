@@ -328,7 +328,7 @@ export default {
 
   .artifact-link,
   .link {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .image-layers {
@@ -388,7 +388,7 @@ export default {
                 font-size: 15px;
 
                 .link {
-                  color: #1989fa;
+                  color: @themeColor;
                 }
               }
             }

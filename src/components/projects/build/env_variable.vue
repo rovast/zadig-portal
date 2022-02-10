@@ -52,7 +52,7 @@
           <el-form-item prop="is_credential">
             <el-checkbox v-model="preEnvs.envs[build_env_index].is_credential">
               敏感信息
-              <el-tooltip effect="dark" content="在日志中将被隐藏" placement="top">
+              <el-tooltip effect="dark" content="设置为敏感信息变量后，系统会将变量进行加密，使用时进行解密，同时在工作流运行日志里不可见" placement="top">
                 <i class="el-icon-question"></i>
               </el-tooltip>
             </el-checkbox>

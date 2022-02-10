@@ -32,7 +32,7 @@
                      :key="ingress_index">
                   <div v-for="(item,host_index) in scope.row.ingress_infos[ingress_index]['host_info']"
                        :key="host_index">
-                    <a style="color: #1989fa;"
+                    <a style="color: @themeColor;"
                        :href="`http://${item.host}`"
                        target="_blank">{{item.host}}</a>
                   </div>

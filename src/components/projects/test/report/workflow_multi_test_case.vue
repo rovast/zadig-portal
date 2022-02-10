@@ -198,7 +198,7 @@ export default {
 
     .el-breadcrumb__item__inner a:hover,
     .el-breadcrumb__item__inner:hover {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
   }
@@ -267,7 +267,7 @@ export default {
   cursor: pointer;
 
   &:hover {
-    color: #1989fa;
+    color: @themeColor;
   }
 }
 </style>

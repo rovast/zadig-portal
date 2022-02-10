@@ -687,7 +687,7 @@ export default {
       }
 
       .add {
-        color: #1989fa;
+        color: @themeColor;
       }
     }
   }
@@ -795,7 +795,7 @@ export default {
       cursor: pointer;
 
       &:hover {
-        color: #1989fa;
+        color: @themeColor;
       }
     }
 
@@ -870,14 +870,14 @@ export default {
     border-radius: 4px;
 
     .btn-primary {
-      color: #1989fa;
+      color: @themeColor;
       background-color: rgba(25, 137, 250, 0.04);
       border-color: rgba(25, 137, 250, 0.4);
 
       &:hover {
         color: #fff;
-        background-color: #1989fa;
-        border-color: #1989fa;
+        background-color: @themeColor;
+        border-color: @themeColor;
       }
     }
 

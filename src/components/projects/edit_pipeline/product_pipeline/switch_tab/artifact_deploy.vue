@@ -185,7 +185,7 @@ export default {
 
       .service-link {
         a {
-          color: #1989fa;
+          color: @themeColor;
         }
       }
     }

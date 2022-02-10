@@ -1,87 +1,38 @@
 <template>
   <div class="common-workflow-detail">
-    <el-card class="box-card wide" :body-style="{ padding: '0px', margin: '15px 0 0 0' }">
-      <div slot="header" class="block-title">基本信息</div>
-      <div class="text item">
-        <!-- <el-row :gutter="0">
-          <el-col :span="4">
-            <div class="grid-content item-title">
-              <i class="el-icon-user-solid"></i> 修改人
-            </div>
-          </el-col>
-          <el-col :span="4">
-            <div class="grid-content item-desc">{{ workflow.update_by }}</div>
-          </el-col>
-        </el-row> -->
-        <el-row v-if="workflow.description" :gutter="0">
-          <el-col :span="4">
-            <div class="grid-content item-title">
-              <i class="el-icon-chat-line-square"></i> 描述
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="grid-content item-desc">{{ workflow.description }}</div>
-          </el-col>
-        </el-row>
-        <!-- <el-row :gutter="0">
-          <el-col :span="4">
-            <div class="grid-content item-title">
-              <i class="el-icon-time"></i> 更新时间
-            </div>
-          </el-col>
-          <el-col :span="6">
-            <div class="grid-content item-desc">{{ $utils.convertTimestamp(workflow.update_time) }}</div>
-          </el-col>
-        </el-row> -->
-        <el-row :gutter="0">
-          <el-col :span="4">
-            <div class="grid-content item-title process">
-              <i class="el-icon-finished"></i> 流程
-            </div>
-          </el-col>
-          <el-col :span="20">
-            <div class="grid-content process">
-              <ul>
-                <span v-if="checkStage('buildv3')">
-                  <el-tag size="small">构建</el-tag>
-                </span>
-                <span v-if="checkStage('trigger')">
-                  <el-tag size="small">扩展</el-tag>
-                </span>
-              </ul>
-            </div>
-          </el-col>
-        </el-row>
-        <el-row :gutter="0">
-          <el-col :span="4">
-            <div class="grid-content item-title operation">
-              <i class="el-icon-s-operation"></i> 操作
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="grid-content item-desc">
-              <el-tooltip effect="dark" content="执行" placement="top">
-                <i @click="startTask" class="el-icon-video-play start-build"></i>
-              </el-tooltip>
-              <template>
-                <el-tooltip effect="dark" content="编辑工作流" placement="top">
-                  <router-link :to="`/workflows/common/edit/${workflowName}?projectName=${projectName}&id=${workflowID}`" class="not-anchor">
-                    <i class="el-icon-edit-outline edit-pipeline"></i>
-                  </router-link>
-                </el-tooltip>
-                <el-tooltip effect="dark" content="删除工作流" placement="top">
-                  <i @click="removeWorkflow" class="el-icon-delete edit-pipeline"></i>
-                </el-tooltip>
-              </template>
-            </div>
-          </el-col>
-        </el-row>
+    <el-card class="workflow-basic-info">
+      <el-button
+        type="primary"
+        v-hasPermi="{projectName: projectName, action: 'run_workflow'}"
+        effect="dark"
+        @click="startTask"
+        class="left"
+      >
+        <span class="iconfont iconzhixing">&nbsp;执行</span>
+      </el-button>
+      <router-link
+        v-hasPermi="{projectName: workflow.projectName, action: 'edit_workflow'}"
+        :to="`/workflows/common/edit/${workflowName}?projectName=${projectName}&id=${workflowID}`"
+        class="middle"
+      >
+        <span class="iconfont icondeploy edit-setting"></span>
+      </router-link>
+      <div class="right">
+        <CusTags :values="stages" class="item"></CusTags>
+        <span class="item">
+          <span class="item left">修改人</span>
+          {{ workflow.update_by || '*' }}
+        </span>
+        <span class="item">
+          <span class="item left">更新时间</span>
+          {{ $utils.convertTimestamp(workflow.update_time) }}
+        </span>
       </div>
     </el-card>
 
     <el-card class="box-card full" :body-style="{ padding: '0px', margin: '15px 0 30px 0' }">
       <div slot="header" class="block-title">历史任务</div>
-      <task-list
+      <TaskList
         :taskList="workflowTasks"
         :total="total"
         :pageSize="pageSize"
@@ -90,7 +41,7 @@
         :workflowName="workflowName"
         :workflowID="workflowID"
         @currentChange="changeTaskPage"
-      ></task-list>
+      ></TaskList>
     </el-card>
 
     <el-dialog :visible.sync="taskDialogVisible" title="运行 通用-工作流" custom-class="run-workflow" width="60%" class="dialog">
@@ -105,6 +56,7 @@ import {
   deleteCommonWorkflowAPI,
   getCommonWorkflowTasksAPI
 } from '@api'
+import TaskList from '@/components/projects/common/task_list.vue'
 import RunCommonWorkflow from './common/runCommonWorkflow.vue'
 import bus from '@utils/eventBus'
 export default {
@@ -119,7 +71,8 @@ export default {
       pageStart: 0,
       timerId: null,
       timeTimeoutFinishFlag: false,
-      commonToRun: {}
+      commonToRun: {},
+      stages: []
     }
   },
   computed: {
@@ -204,19 +157,18 @@ export default {
       this.taskDialogVisible = true
       this.forcedUserInput = task.workflow_args
     },
-    checkStage (stage) {
-      if (stage && this.workflow.sub_tasks) {
-        const result = this.workflow.sub_tasks.find(item => {
-          return item.type === stage
-        })
-        if (result) {
-          return true
-        } else {
-          return false
-        }
-      } else {
-        return false
+    fetchStages (workflow) {
+      if (!workflow.sub_tasks) {
+        return
       }
+      const stages = []
+      if (workflow.sub_tasks.find(item => item.type === 'buildv3')) {
+        stages.push('构建')
+      }
+      if (workflow.sub_tasks.find(item => item.type === 'trigger')) {
+        stages.push('扩展')
+      }
+      this.stages = stages
     }
   },
   beforeDestroy () {
@@ -229,6 +181,7 @@ export default {
     const workflowName = this.workflowName
     getCommonWorkflowAPI(projectName, workflowID).then(res => {
       this.workflow = res
+      this.fetchStages(res)
     })
     this.autoRefreshHistoryTask()
     bus.$emit('set-topbar-title', {
@@ -268,7 +221,8 @@ export default {
     })
   },
   components: {
-    RunCommonWorkflow
+    RunCommonWorkflow,
+    TaskList
   }
 }
 </script>
@@ -277,38 +231,59 @@ export default {
 .common-workflow-detail {
   position: relative;
   flex: 1;
-  padding: 0 30px;
+  padding: 24px 30px 0;
   overflow: auto;
   font-size: 13px;
   background-color: #fff;
 
-  .text {
-    font-size: 13px;
-  }
+  .workflow-basic-info {
+    margin-bottom: 26px;
+    box-shadow: unset;
 
-  .item {
-    padding: 10px 0;
-    padding-left: 1px;
+    .el-card__body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 80px;
+      padding: 0 24px;
+      color: #4a4a4a;
 
-    .icon-color {
-      color: #9ea3a9;
-      cursor: pointer;
+      .left,
+      .right {
+        flex: 0 0 auto;
+      }
 
-      &:hover {
-        color: #1989fa;
+      .middle {
+        flex: 1 1 auto;
+        margin-left: 18px;
+        color: @fontGray;
+
+        .edit-setting {
+          display: inline-block;
+          padding: 8px;
+          font-size: 20px;
+          border: 1px solid @borderGray;
+          border-radius: 5px;
+
+          &:hover {
+            box-shadow: 0 0 2px @borderGray;
+          }
+        }
+      }
+
+      .item {
+        display: inline-block;
+
+        &:not(:last-child) {
+          margin-right: 18px;
+        }
+
+        &.left {
+          margin-right: 3px;
+          color: @fontLightGray;
+        }
       }
     }
-
-    .icon-color-cancel {
-      color: #ff4949;
-      cursor: pointer;
-    }
-  }
-
-  .clearfix::before,
-  .clearfix::after {
-    display: table;
-    content: '';
   }
 
   .block-title {
@@ -317,120 +292,12 @@ export default {
     line-height: 20px;
   }
 
-  .clearfix::after {
-    clear: both;
-  }
-
   .box-card {
     width: 600px;
-    background-color: #fff;
-
-    .item-title {
-      color: #8d9199;
-    }
-
-    .operation {
-      line-height: 18px;
-    }
-
-    .item-desc {
-      .start-build,
-      .edit-pipeline {
-        margin-right: 0.3em;
-        font-size: 1.3rem;
-        cursor: pointer;
-
-        &:hover {
-          color: #1989fa;
-        }
-      }
-
-      .favorite {
-        display: inline-block;
-        color: #69696bb3;
-        cursor: pointer;
-
-        &.liked {
-          color: #f4e118;
-        }
-
-        &:hover {
-          color: #f4e118;
-        }
-      }
-    }
-
-    .task-id,
-    .report-link {
-      color: #1989fa;
-    }
-
-    .process {
-      line-height: 24px;
-
-      ul {
-        margin: 0;
-        padding: 0;
-        line-height: 1;
-
-        li {
-          display: inline-block;
-          line-height: 24px;
-          list-style: none;
-          cursor: pointer;
-        }
-
-        .step-arrow {
-          color: #409eff;
-        }
-      }
-
-      .dot {
-        width: 12px;
-        height: 12px;
-        vertical-align: middle;
-        background: #d1d9e5;
-        border-radius: 50%;
-      }
-
-      .active {
-        background-color: #1989fa;
-      }
-
-      .build {
-        background-color: #fa4c7e;
-      }
-
-      .deploy {
-        background-color: #fdd243;
-      }
-
-      .test {
-        background-color: #78da59;
-      }
-
-      .distribution {
-        background-color: #166cd6;
-      }
-    }
-
-    .pagination {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 20px;
-    }
-  }
-
-  .box-card,
-  .box-card-stack {
     margin-top: 15px;
+    background-color: #fff;
     border: none;
     box-shadow: none;
-  }
-
-  .wide {
-    width: 65%;
   }
 
   .full {

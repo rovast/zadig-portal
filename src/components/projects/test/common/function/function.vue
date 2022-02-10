@@ -220,7 +220,7 @@ export default {
   }
 
   .link {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .delete-connection {
@@ -229,7 +229,7 @@ export default {
   }
 
   .add-connection {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 
@@ -249,7 +249,7 @@ export default {
 
       .el-breadcrumb__item__inner a:hover,
       .el-breadcrumb__item__inner:hover {
-        color: #1989fa;
+        color: @themeColor;
         cursor: pointer;
       }
     }

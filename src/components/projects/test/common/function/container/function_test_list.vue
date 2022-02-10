@@ -150,7 +150,7 @@ export default {
 <style lang="less">
 .function-test-list {
   .link {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .desc {
@@ -164,7 +164,7 @@ export default {
   }
 
   .add-connection {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 

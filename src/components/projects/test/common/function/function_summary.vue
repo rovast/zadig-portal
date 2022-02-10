@@ -89,7 +89,7 @@
              class="block-title">
           历史任务
         </div>
-        <task-list :taskList="workflowTasks"
+        <TaskList :taskList="workflowTasks"
                    :total="total"
                    :pageSize="pageSize"
                    :projectName="projectName"
@@ -98,13 +98,14 @@
                    :functionTestBaseUrl="`/v1/${basePath}/detail/${projectName}/test/testcase/function/${workflowName}`"
                    @currentChange="changeTaskPage"
                    showTestReport>
-        </task-list>
+        </TaskList>
       </el-card>
     </div>
 </template>
 
 <script>
 import functionTestCase from '@/components/projects/test/common/function_test_case.vue'
+import TaskList from '@/components/projects/common/task_list.vue'
 import { getLatestTestReportAPI, workflowTaskListAPI } from '@api'
 export default {
   data () {
@@ -240,7 +241,8 @@ export default {
     this.fetchHistory(0, this.pageSize)
   },
   components: {
-    functionTestCase
+    functionTestCase,
+    TaskList
   }
 }
 </script>
@@ -267,7 +269,7 @@ export default {
       cursor: pointer;
 
       &:hover {
-        color: #1989fa;
+        color: @themeColor;
       }
     }
 
@@ -317,7 +319,7 @@ export default {
         cursor: pointer;
 
         &:hover {
-          color: #1989fa;
+          color: @themeColor;
         }
       }
 
@@ -334,11 +336,6 @@ export default {
           color: #f4e118;
         }
       }
-    }
-
-    .task-id,
-    .report-link {
-      color: #1989fa;
     }
 
     .pagination {

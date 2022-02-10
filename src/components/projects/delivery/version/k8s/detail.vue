@@ -613,7 +613,7 @@ export default {
   }
 
   .issue-url {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 }
@@ -631,7 +631,7 @@ export default {
   }
 
   .img-link {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .module-title h1 {
@@ -653,7 +653,7 @@ export default {
       cursor: pointer;
 
       &:hover {
-        color: #1989fa;
+        color: @themeColor;
       }
     }
 
@@ -695,7 +695,7 @@ export default {
             float: right;
 
             span {
-              color: #1989fa;
+              color: @themeColor;
               cursor: pointer;
             }
           }
@@ -714,7 +714,7 @@ export default {
     .item-desc {
       .start-build,
       .edit-pipeline {
-        color: #1989fa;
+        color: @themeColor;
         font-size: 13px;
         cursor: pointer;
       }
@@ -762,7 +762,7 @@ export default {
     }
 
     .deploy_env {
-      color: #1989fa;
+      color: @themeColor;
     }
 
     .error-color {
@@ -774,12 +774,12 @@ export default {
       cursor: pointer;
 
       &:hover {
-        color: #1989fa;
+        color: @themeColor;
       }
     }
 
     .show-test-result {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
 
@@ -825,7 +825,7 @@ export default {
     display: block;
 
     a {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
   }
@@ -841,13 +841,13 @@ export default {
   }
 
   a.item-desc {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 
   .test-report-link {
     a {
-      color: #1989fa;
+      color: @themeColor;
     }
   }
 
@@ -896,7 +896,7 @@ export default {
 
     .el-breadcrumb__item__inner a:hover,
     .el-breadcrumb__item__inner:hover {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
   }

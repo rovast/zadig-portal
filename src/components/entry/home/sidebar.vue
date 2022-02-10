@@ -461,7 +461,7 @@ export default {
         text-align: center;
 
         i {
-          color: #55f;
+          color: @themeColor;
           font-size: 19px;
         }
       }
@@ -515,7 +515,7 @@ export default {
 
   .sidebar-header__icon {
     float: left;
-    color: #55f;
+    color: @themeColor;
     font-weight: normal;
     font-size: 16px;
   }
@@ -588,7 +588,7 @@ export default {
     max-width: 62px;
     margin: 0;
     padding: 0;
-    color: #55f;
+    color: @themeColor;
     font-size: 22px;
     text-align: center;
     -webkit-box-flex: 0;

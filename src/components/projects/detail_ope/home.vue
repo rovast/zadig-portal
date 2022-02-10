@@ -11,9 +11,9 @@
       class="projects-grid"
     >
       <el-row :gutter="12">
-        <el-col v-for="(project,index) in projectList" :key="index" :span="6">
+        <el-col v-for="(project,index) in projectList" :key="index" :xs="12" :sm="8" :md="6" :lg="6" :xl="4">
           <el-card shadow="hover" class="project-card">
-            <span class="operations">
+            <div class="operations">
               <el-dropdown @command="handleCommand" trigger="click">
                 <span class="el-dropdown-link">
                   <i class="el-icon-more"></i>
@@ -23,42 +23,29 @@
                   <el-dropdown-item :command="{action:'delete',projectName:project.name}">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-            </span>
-            <div @click="toProject(project)" class="card-content-container">
-              <div class="content">
-                <div class="card-header">
-                  <div class="quickstart-icon">
-                    <span>{{project.name.slice(0, 1).toUpperCase()}}</span>
-                  </div>
-                  <div class="card-text">
-                    <h4 class="project-name">
-                      {{project.alias?project.alias:project.name}}&nbsp;
-                      <el-tooltip v-if="!project.public" effect="dark" content="私有项目" placement="top">
-                        <i class="icon iconfont iconprivate"></i>
-                      </el-tooltip>
-                    </h4>
-                  </div>
-                  <div class="info">
-                    <span class="project-desc">{{project.desc}}</span>
-                  </div>
-                </div>
-              </div>
+            </div>
+            <div @click="toProject(project)" class="content-container">
+              <h4 class="project-name">
+                <span class="name">{{project.alias?project.alias:project.name}}</span>
+                <el-tooltip v-if="!project.public" effect="dark" content="私有项目" placement="top">
+                  <i class="icon iconfont iconprivate"></i>
+                </el-tooltip>
+              </h4>
+              <div class="project-desc">{{project.desc}}</div>
             </div>
             <div class="footer">
-              <div class="module">
-                <el-tooltip effect="dark" content="工作流" placement="top">
-                  <span @click="$router.push(`/v1/projects/detail/${project.name}/pipelines`)" class="icon iconfont icongongzuoliucheng"></span>
-                </el-tooltip>
-                <el-tooltip effect="dark" content="构建管理" placement="top">
-                  <span @click="$router.push(`/v1/projects/detail/${project.name}/builds`)" class="icon iconfont icongoujianzhong"></span>
-                </el-tooltip>
-                <el-tooltip effect="dark" content="测试管理" placement="top">
-                  <span @click="$router.push(`/v1/projects/detail/${project.name}/test`)" class="icon iconfont icontest"></span>
-                </el-tooltip>
-                <el-tooltip effect="dark" content="查看服务" placement="top">
-                  <span @click="$router.push(`/v1/projects/detail/${project.name}/services`)" class="icon iconfont iconrongqifuwu"></span>
-                </el-tooltip>
-              </div>
+              <el-tooltip effect="dark" content="工作流" placement="top">
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/pipelines`)" class="icon iconfont icongongzuoliucheng"></span>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="构建管理" placement="top">
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/builds`)" class="icon iconfont icongoujianzhong"></span>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="测试管理" placement="top">
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/test`)" class="icon iconfont icontest"></span>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="查看服务" placement="top">
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/services`)" class="icon iconfont iconrongqifuwu"></span>
+              </el-tooltip>
             </div>
           </el-card>
         </el-col>
@@ -256,6 +243,8 @@ export default {
 </script>
 
 <style lang="less" >
+@iconColor: #a0a0ff;
+
 .project-home-container {
   position: relative;
   flex: 1;
@@ -283,34 +272,42 @@ export default {
 
   .project-header {
     display: flex;
-    align-items: stretch;
-    justify-content: flex-start;
-    margin-bottom: 15px;
-    background-color: #fff;
+    align-items: center;
+    justify-content: space-between;
+    margin: 15px 20px;
 
     .header-start {
-      flex: 1;
+      flex: 0 0 auto;
+      padding: 5px 10px;
+      font-size: 20px;
+      background-color: #fff;
+      border: 1px solid @borderGray;
+      border-radius: 4px;
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
 
-      .container {
-        min-height: 50px;
-        margin: 0;
-        padding: 10px 20px;
+      .display-btn {
+        color: @fontGray;
+        cursor: pointer;
+
+        &:not(:last-child) {
+          margin-right: 8px;
+        }
+
+        &:hover,
+        &.active {
+          color: @themeColor;
+        }
+      }
+    }
+
+    .header-end {
+      .el-button {
+        padding: 10px 17px;
         font-size: 13px;
 
-        .display-mode {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: baseline;
-          justify-content: flex-start;
-          min-height: 46px;
-
-          .btn-container {
-            box-sizing: border-box;
-            padding: 7px 15px;
-            color: #c4c4c4;
-            border: 1px solid rgba(118, 122, 200, 0.25);
-            border-radius: 4px;
-          }
+        i {
+          margin-right: 4px;
+          font-size: 14px;
         }
       }
     }
@@ -321,14 +318,11 @@ export default {
     padding: 0 20px;
 
     .el-table {
-      tr {
-        height: 71px;
-      }
-
       .project-name {
-        color: #4c4c4c;
+        color: #44447e;
         font-weight: 400;
         font-size: 16px;
+        line-height: 22px;
         text-align: left;
 
         .iconprivate::before {
@@ -341,7 +335,7 @@ export default {
         color: #606266;
 
         &:hover {
-          color: #1989fa;
+          color: @themeColor;
         }
       }
     }
@@ -352,27 +346,24 @@ export default {
     padding: 0 20px;
 
     .project-card {
-      height: 135px;
+      height: 142px;
       margin-bottom: 15px;
       border: 2px solid #fff;
-      border-radius: 3px;
-      box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      box-shadow: unset;
 
       &:hover {
-        border-color: #1989fa;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         cursor: pointer;
-
-        .quickstart-icon span {
-          background-color: #1989fa !important;
-        }
       }
 
       .el-card__body {
         position: relative;
         display: flex;
         flex-direction: column;
+        box-sizing: border-box;
         height: 100%;
-        padding: 0;
+        padding: 15px;
 
         &.add {
           font-size: 30px;
@@ -411,19 +402,14 @@ export default {
           align-self: flex-end;
           justify-content: flex-end;
           width: 100%;
-          height: 35px;
-          border-top: 1px solid #ebeef5;
+          height: 28px;
 
           .icon {
             margin: 0 5px;
-            color: #606266;
-            font-size: 25px;
+            color: @iconColor;
+            font-size: 18px;
             line-height: 35px;
             cursor: pointer;
-
-            &:hover {
-              color: #1989fa;
-            }
           }
 
           .operation {
@@ -433,71 +419,48 @@ export default {
 
         .card-content-container {
           flex: 1;
-          height: calc(~'100% - 55px');
-          padding: 15px 15px 0 15px;
+          height: calc(~'100% - 35px');
+          padding-right: 15px;
 
-          .content {
-            display: flex;
-            flex-direction: row;
-            height: 100%;
+          .divider {
+            width: 278px;
+            height: 1px;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            background-color: #ccc;
+          }
 
-            .card-header {
-              .quickstart-icon {
-                display: inline-block;
-                margin-bottom: 15px;
+          .project-name {
+            margin: 0;
+            padding: 0;
+            color: #4c4c4c;
+            font-weight: 400;
+            font-size: 18px;
+            line-height: 22px;
+            cursor: pointer;
 
-                span {
-                  display: inline-block;
-                  width: 18px;
-                  height: 18px;
-                  color: #fff;
-                  font-size: 18px;
-                  line-height: 18px;
-                  text-align: center;
-                  background-color: #999;
-                  border-radius: 50%;
-                }
-              }
-
-              .card-text {
-                display: inline-block;
-                margin-left: 4px;
-              }
-
-              .divider {
-                width: 278px;
-                height: 1px;
-                margin-top: 14px;
-                margin-bottom: 8px;
-                background-color: #ccc;
-              }
-
-              .project-name {
-                margin: 0;
-                padding: 0;
-                color: #4c4c4c;
-                font-weight: 500;
-                font-size: 20px;
-                text-overflow: ellipsis;
-                cursor: pointer;
-
-                .iconprivate::before {
-                  color: #c8c9cc;
-                }
-              }
+            .name {
+              display: inline-block;
+              max-width: calc(100% - 20px);
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
             }
 
-            .icon {
-              margin-right: 15px;
+            .iconprivate::before {
+              color: #c8c9cc;
             }
+          }
 
-            .info {
-              .project-desc {
-                display: inline-block;
-                margin-top: 12px;
-                font-size: 14px;
-              }
-            }
+          .icon {
+            vertical-align: top;
+          }
+
+          .project-desc {
+            max-height: calc(100% - 32px);
+            overflow: hidden;
+            font-size: 12px;
+            line-height: 22px;
           }
         }
       }

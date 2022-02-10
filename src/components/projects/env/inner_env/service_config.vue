@@ -619,7 +619,7 @@ export default {
     cursor: pointer;
 
     &:hover {
-      color: #1989fa;
+      color: @themeColor;
     }
   }
 
@@ -651,7 +651,7 @@ export default {
       cursor: pointer;
 
       &:hover {
-        color: #1989fa;
+        color: @themeColor;
       }
     }
   }

@@ -187,7 +187,7 @@ export default {
         background-color: #f5f5f5;
 
         & > a {
-          color: #1989fa;
+          color: @themeColor;
         }
       }
     }
@@ -225,7 +225,7 @@ export default {
 
         &:hover {
           .profile-list__text {
-            color: #1989fa;
+            color: @themeColor;
           }
         }
 
@@ -338,7 +338,7 @@ export default {
         cursor: pointer;
 
         &:hover {
-          color: #1989fa;
+          color: @themeColor;
         }
       }
 

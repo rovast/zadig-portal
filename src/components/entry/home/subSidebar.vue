@@ -56,7 +56,6 @@ export default {
         bus.$emit('show-sidebar', false)
         bus.$emit('sub-sidebar-opened', true)
       } else if (this.content.routerList.length === 0) {
-        bus.$emit('show-sidebar', true)
         bus.$emit('sub-sidebar-opened', false)
       }
     }
@@ -69,7 +68,6 @@ export default {
           bus.$emit('sub-sidebar-opened', true)
           return true
         } else if (this.content.routerList.length === 0) {
-          bus.$emit('show-sidebar', true)
           bus.$emit('sub-sidebar-opened', false)
           return false
         }

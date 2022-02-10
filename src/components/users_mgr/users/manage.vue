@@ -364,10 +364,7 @@ export default {
   },
   created () {
     bus.$emit('set-topbar-title', { title: '用户管理', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
+
     this.getUsers(this.userPageSize, this.currentPageList, this.searchUser)
     this.checkRegistration()
   }

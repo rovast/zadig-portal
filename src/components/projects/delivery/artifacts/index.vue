@@ -291,12 +291,8 @@ export default {
     }
   },
   created () {
-    bus.$emit('show-sidebar', true)
     bus.$emit('set-topbar-title', { title: '交付物追踪', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
+
     if (this.$route.query.image) {
       this.filterKey = 'image_tag'
       this.filterKeyword = this.$route.query.image.split('/')[2]

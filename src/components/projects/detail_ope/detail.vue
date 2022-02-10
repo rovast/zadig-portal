@@ -305,10 +305,26 @@ export default {
       }
     }
   },
+  watch: {
+    projectName () {
+      this.getProject(this.projectName)
+      this.getWorkflows(this.projectName)
+      this.getEnvList()
+      bus.$emit(`show-sidebar`, false)
+      bus.$emit('set-topbar-title', {
+        title: '',
+        breadcrumb: [
+          { title: '项目', url: '/v1/projects' },
+          { title: this.projectName, url: '' }
+        ]
+      })
+    }
+  },
   mounted () {
     this.getProject(this.projectName)
     this.getWorkflows(this.projectName)
     this.getEnvList()
+    bus.$emit(`show-sidebar`, false)
     bus.$emit('set-topbar-title', {
       title: '',
       breadcrumb: [

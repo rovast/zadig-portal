@@ -67,10 +67,6 @@ export default {
   },
   mounted () {
     this.querytHelmChartService()
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
   },
   onboardingStatus: 2
 }

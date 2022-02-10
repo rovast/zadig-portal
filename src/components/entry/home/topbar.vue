@@ -5,6 +5,16 @@
         <div class="logo-container">
           <img class="logo" src="@assets/icons/logo/small-logo.png" />
         </div>
+        <div v-if="showProjectSwitcher" class="project-switcher-container">
+          <el-dropdown placement="bottom" @command="changeProject">
+            <span class="icon-switcher">
+              <i class="el-icon-caret-bottom"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-for="(item,index) in projectList" :key="index" :command="item.name">{{item.alias}}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
         <div class="breadcrumb-container">
           <div class="project-switcher"></div>
           <!-- <span v-if="content.title" class="kr-topbar-title">{{content.title}}</span> -->
@@ -81,7 +91,7 @@
 import Notification from './common/notification.vue'
 import mixin from '@/mixin/topbarMixin'
 import bus from '@utils/eventBus'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 export default {
   data () {
     return {
@@ -93,10 +103,14 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['projectList']),
     ...mapState({
       role: state => state.login.role,
       userInfo: state => state.login.userinfo
     }),
+    showProjectSwitcher () {
+      return this.$route.path.includes('/v1/projects/detail/')
+    },
     userName () {
       // 系统用户
       if (this.userInfo.identityType === 'system') {
@@ -116,6 +130,9 @@ export default {
     async logOut () {
       await this.$store.dispatch('LOGINOUT')
       this.$router.push('/signin')
+    },
+    changeProject (projectName) {
+      this.$router.push(`/v1/projects/detail/${projectName}/detail`)
     },
     handleCommand (command) {
       if (command === 'logOut') {
@@ -312,6 +329,17 @@ export default {
           width: 18.5px;
           height: 21px;
           margin-right: 10px;
+        }
+      }
+
+      .project-switcher-container {
+        margin-right: 30px;
+
+        .icon-switcher {
+          i {
+            color: #a0a0ff;
+            cursor: pointer;
+          }
         }
       }
 

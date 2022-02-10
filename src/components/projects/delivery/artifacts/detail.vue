@@ -293,12 +293,8 @@ export default {
     }
   },
   created () {
-    bus.$emit('show-sidebar', true)
     bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '交付物追踪', url: '/v1/delivery/artifacts' }, { title: this.serviceName, url: '' }] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
+
     this.getArtifactsDetail(this.id)
   },
   components: {

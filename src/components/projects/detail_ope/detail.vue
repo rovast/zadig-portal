@@ -5,8 +5,9 @@
     element-loading-text="加载中..."
     element-loading-spinner="iconfont iconfont-loading iconxiangmu"
   >
+    <SubTopbar />
     <div class="project-header">
-      <template v-if="isProjectAdmin">
+      <!-- <template v-if="isProjectAdmin">
         <el-dropdown placement="bottom" trigger="click">
           <button type="button" class="display-btn">
             <i class="el-icon-s-operation el-icon--left"></i>
@@ -19,7 +20,7 @@
             <el-dropdown-item icon="el-icon-lock" @click.native="$router.push(`/v1/projects/detail/${projectName}/rbac`)">权限</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-      </template>
+      </template>-->
     </div>
     <section class="projects-detail">
       <div v-hasPermi="{projectName: projectName, action: 'get_environment'}" class="env">
@@ -119,6 +120,7 @@ import {
 import { translateEnvStatus } from '@utils/wordTranslate'
 import { wordTranslate } from '@utils/wordTranslate.js'
 import { whetherOnboarding } from '@utils/onboardingRoute'
+import SubTopbar from '../../entry/home/subTopbar.vue'
 import { get } from 'lodash'
 import bus from '@utils/eventBus'
 import store from 'storejs'
@@ -131,6 +133,9 @@ export default {
       userBindings: [],
       detailLoading: true
     }
+  },
+  components: {
+    SubTopbar
   },
   methods: {
     getProdStatus (status, updateble) {
@@ -330,6 +335,7 @@ export default {
 
 .projects-detail-container {
   position: relative;
+  height: 100%;
   overflow: auto;
   background-color: #f6f6f6;
 

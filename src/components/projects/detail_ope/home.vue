@@ -1,7 +1,18 @@
 <template>
   <div class="project-home-container">
     <div class="project-header">
-      <SubTopbar/>
+      <div class="header-start">
+        <i class="el-icon-s-grid display-btn" @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'}"></i>
+        <i class="el-icon-s-fold display-btn" @click="currentTab = 'list'" :class="{'active':currentTab==='list'}"></i>
+      </div>
+      <div class="header-end">
+        <el-button type="primary" @click="$router.push(`/v1/projects/template`)" plain>
+          <i class="iconfont iconicon-repertory"></i>模板库
+        </el-button>
+        <el-button type="primary" v-if="$utils.roleCheck('admin')" @click="$router.push(`/v1/projects/create`)" plain>
+          <i class="el-icon-plus"></i>新建项目
+        </el-button>
+      </div>
     </div>
     <div
       v-if="currentTab==='grid'"
@@ -115,11 +126,8 @@ import {
 } from '@api'
 import { mapGetters } from 'vuex'
 import { get } from 'lodash'
-import SubTopbar from '../../entry/home/subTopbar.vue'
+
 export default {
-  components: {
-    SubTopbar
-  },
   data () {
     return {
       loading: false,
@@ -249,7 +257,7 @@ export default {
   position: relative;
   flex: 1;
   overflow: auto;
-  background-color: #f6f6f6;
+  background-color: #f5f7f7;
 
   .no-product {
     display: flex;
@@ -417,7 +425,7 @@ export default {
           }
         }
 
-        .card-content-container {
+        .content-container {
           flex: 1;
           height: calc(~'100% - 35px');
           padding-right: 15px;

@@ -88,110 +88,123 @@ export default {
               name: '用户管理',
               icon: 'iconfont icongeren',
               url: 'users/account/manage'
-            }]
+            }
+          ]
         }
       ],
       systemMenu: [
         {
           category_name: '第三方集成',
-          items: [{
-            name: '集成管理',
-            icon: 'iconfont iconicon_jichengguanli',
-            url: 'system/integration'
-          },
-          {
-            name: '应用设置',
-            icon: 'iconfont iconyingyongshezhi',
-            url: 'system/apps'
-          },
-          {
-            name: '构建镜像管理',
-            icon: 'iconfont iconjingxiang',
-            url: 'system/imgs'
-          }]
+          items: [
+            {
+              name: '集成管理',
+              icon: 'iconfont iconicon_jichengguanli',
+              url: 'system/integration'
+            },
+            {
+              name: '应用设置',
+              icon: 'iconfont iconyingyongshezhi',
+              url: 'system/apps'
+            },
+            {
+              name: '构建镜像管理',
+              icon: 'iconfont iconjingxiang',
+              url: 'system/imgs'
+            }
+          ]
         },
         {
           category_name: '基础组件',
-          items: [{
-            name: '镜像仓库',
-            icon: 'iconfont icondocker',
-            url: 'system/registry'
-          },
-          {
-            name: '对象存储',
-            icon: 'iconfont iconduixiangcunchu',
-            url: 'system/storage'
-          },
-          {
-            name: 'HELM 仓库',
-            icon: 'iconfont iconhelmrepo',
-            url: 'system/helm',
-            features: 'helm'
-          }]
+          items: [
+            {
+              name: '镜像仓库',
+              icon: 'iconfont icondocker',
+              url: 'system/registry'
+            },
+            {
+              name: '对象存储',
+              icon: 'iconfont iconduixiangcunchu',
+              url: 'system/storage'
+            },
+            {
+              name: 'HELM 仓库',
+              icon: 'iconfont iconhelmrepo',
+              url: 'system/helm',
+              features: 'helm'
+            }
+          ]
         },
         {
           category_name: '资源管理',
-          items: [{
-            name: '集群管理',
-            icon: 'iconfont iconjiqun',
-            url: 'system/cluster'
-          },
-          {
-            name: '主机管理',
-            icon: 'iconfont iconzhuji',
-            url: 'system/host'
-          }]
+          items: [
+            {
+              name: '集群管理',
+              icon: 'iconfont iconjiqun',
+              url: 'system/cluster'
+            },
+            {
+              name: '主机管理',
+              icon: 'iconfont iconzhuji',
+              url: 'system/host'
+            }
+          ]
         },
         {
           category_name: '系统配置',
-          items: [{
-            name: '系统配置',
-            icon: 'iconfont iconfuwupeizhi',
-            url: 'system/config'
-          }]
+          items: [
+            {
+              name: '系统配置',
+              icon: 'iconfont iconfuwupeizhi',
+              url: 'system/config'
+            }
+          ]
         },
         {
           category_name: '公告与审计',
-          items: [{
-            name: '公告管理',
-            icon: 'iconfont icongonggao',
-            url: 'system/announcement'
-          },
-          {
-            name: '操作日志',
-            icon: 'iconfont iconiconlog',
-            url: 'system/auditlog'
-          }]
+          items: [
+            {
+              name: '公告管理',
+              icon: 'iconfont icongonggao',
+              url: 'system/announcement'
+            },
+            {
+              name: '操作日志',
+              icon: 'iconfont iconiconlog',
+              url: 'system/auditlog'
+            }
+          ]
         }
       ],
       defaultMenu: [
         {
           category_name: '产品交付',
-          items: [{
-            name: '运行状态',
-            icon: 'iconfont iconyunhangzhuangtai',
-            url: 'status'
-          },
-          {
-            name: '项目',
-            icon: 'iconfont iconxiangmuloading',
-            url: 'projects'
-          },
-          {
-            name: '模板库',
-            icon: 'iconfont iconxiangmuloading',
-            url: 'projects/template'
-          },
-          {
-            name: '版本管理',
-            url: 'delivery/version',
-            icon: 'iconfont iconxiangmuloading'
-          },
-          {
-            name: '交付物追踪',
-            url: 'delivery/artifacts',
-            icon: 'iconfont iconxiangmuloading'
-          }]
+          items: [
+            {
+              name: '运行状态',
+              icon: 'iconfont iconyunhangzhuangtai',
+              url: 'status'
+            },
+            {
+              name: '项目',
+              icon: 'iconfont iconxiangmuloading',
+              url: 'projects'
+            },
+            {
+              name: '模板库',
+              icon: 'iconfont iconxiangmuloading',
+              url: 'projects/template'
+            },
+            {
+              name: '版本管理',
+              url: 'delivery/version',
+              icon: 'iconfont iconxiangmuloading'
+            },
+            {
+              name: '交付物追踪',
+              url: 'delivery/artifacts',
+              icon: 'iconfont iconxiangmuloading'
+            }
+          ]
         },
         {
           category_name: '质量管理',
@@ -202,7 +215,8 @@ export default {
               url: 'tests'
             }
           ]
-        }, {
+        },
+        {
           category_name: '数据分析',
           items: [
             {
@@ -218,16 +232,18 @@ export default {
           ]
         }
       ],
-      adminMenu: [{
-        category_name: '设置',
-        items: [
-          {
-            name: '系统设置',
-            icon: 'iconfont iconicon_jichengguanli',
-            url: 'system'
-          }
-        ]
-      }]
+      adminMenu: [
+        {
+          category_name: '设置',
+          items: [
+            {
+              name: '系统设置',
+              icon: 'iconfont iconicon_jichengguanli',
+              url: 'system'
+            }
+          ]
+        }
+      ]
     }
   },
   methods: {
@@ -288,13 +304,13 @@ export default {
     }
   },
   created () {
-    bus.$on('show-sidebar', (params) => {
+    bus.$on('show-sidebar', params => {
       this.showSidebar = params
     })
-    bus.$on('sub-sidebar-opened', (params) => {
+    bus.$on('sub-sidebar-opened', params => {
       this.subSidebarOpened = params
     })
-    bus.$on('sub-sidebar-opened', (params) => {
+    bus.$on('sub-sidebar-opened', params => {
       this.subSideBar = params
       this.showSidebar = !params
       this.$emit('sidebar-width', true)
@@ -333,14 +349,14 @@ export default {
     bottom: 10px;
     z-index: 1;
     display: block;
-    width: 33px;
-    height: 30px;
+    width: 12px;
+    height: 48px;
     color: #fff;
-    line-height: 30px;
+    line-height: 48px;
     text-align: center;
     text-decoration: none;
     background-color: #c0c4cc;
-    border-radius: 10px 0 0 10px;
+    border-radius: 4px 0 0 4px;
     cursor: pointer;
 
     i {

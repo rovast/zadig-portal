@@ -76,8 +76,6 @@ export default {
   data () {
     return {
       showSidebar: true,
-      subSideBar: false,
-      subSidebarOpened: false,
       backTitle: '',
       backUrl: '/v1/status',
       userManagementMenu: [
@@ -248,18 +246,14 @@ export default {
   },
   methods: {
     enterSidebar: _.debounce(function () {
-      if (this.subSidebarOpened) {
-        this.showSidebar = true
-      }
+      // this.showSidebar = true
     }, 300),
     leaveSidebar: _.debounce(function () {
-      if (this.subSidebarOpened) {
-        this.showSidebar = false
-      }
+      // this.showSidebar = false
     }, 100),
     changeSidebar () {
       this.showSidebar = !this.showSidebar
-      this.$emit('sidebar-width', this.showSidebar || this.subSideBar)
+      this.$emit('sidebar-width', this.showSidebar)
     },
     collapseMenu (nav) {
       nav.isOpened = !nav.isOpened
@@ -306,14 +300,6 @@ export default {
   created () {
     bus.$on('show-sidebar', params => {
       this.showSidebar = params
-    })
-    bus.$on('sub-sidebar-opened', params => {
-      this.subSidebarOpened = params
-    })
-    bus.$on('sub-sidebar-opened', params => {
-      this.subSideBar = params
-      this.showSidebar = !params
-      this.$emit('sidebar-width', true)
     })
   }
 }

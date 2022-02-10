@@ -243,10 +243,7 @@ export default {
   created () {
     this.getHost()
     bus.$emit(`set-topbar-title`, { title: '主机管理', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.addHostData = this.host = this.$utils.cloneObj(this.initHost)
   },
   components: {

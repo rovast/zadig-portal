@@ -5,8 +5,7 @@
         <Topbar/>
       </div>
       <div class="content-wrap">
-        <div class="side-bar-container"
-            :style="{width: sideWide? '196px':'60px'}">
+        <div class="side-bar-container">
           <Sidebar class="side-bar-component"
                   @sidebar-width="sideWide = $event"/>
         </div>

@@ -55,11 +55,215 @@ const routes = [
       },
       {
         path: 'projects',
-        component: () => import(/* webpackChunkName: "project" */ '@/components/projects/detail_ope/home.vue'),
+        component: () => import(/* webpackChunkName: "project-list" */ '@/components/projects/detail_ope/home.vue'),
         meta: {
           requiresAuth: true,
           title: '项目列表'
         }
+      },
+      {
+        path: 'projects/detail/:project_name',
+        component: () => import(/* webpackChunkName: "project-view" */ '@/components/projects/detail_ope/view.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '项目'
+        },
+        children: [
+          {
+            path: 'detail',
+            component: () => import(/* webpackChunkName: "project-detail" */ '@/components/projects/detail_ope/detail.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '项目详情'
+            }
+          },
+          {
+            path: 'pipelines',
+            component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_list.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '工作流'
+            }
+          },
+          {
+            path: 'pipelines/multi/:workflow_name',
+            component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_multi_detail.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '工作流详情'
+            }
+          },
+          {
+            path: 'pipelines/multi/:workflow_name/:task_id',
+            component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_multi_task_detail.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '任务详情'
+            }
+          },
+          {
+            path: 'pipelines/multi/testcase/:workflow_name/:task_id/:test_name/:test_job_name',
+            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/report/workflow_multi_test_case.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '测试报告'
+            }
+          },
+          {
+            path: 'pipelines/common/:workflow_name',
+            component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_common_detail.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '工作流详情'
+            }
+          },
+          {
+            path: 'pipelines/common/:workflow_name/:task_id',
+            component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_common_task_detail.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '任务详情'
+            }
+          },
+          {
+            path: 'services',
+            component: () => import(/* webpackChunkName: "project-service" */ '@/components/projects/service_mgr/service.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '服务管理'
+            }
+          },
+          {
+            path: 'builds',
+            component: () => import(/* webpackChunkName: "project-build" */ '@/components/projects/build/config.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '构建'
+            }
+          },
+          {
+            path: 'test',
+            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '功能测试'
+            }
+          },
+          {
+            path: 'test/function',
+            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '功能测试'
+            }
+          },
+          {
+            path: 'test/function/:test_name',
+            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function_detail.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '功能测试'
+            }
+          },
+          {
+            path: 'test/add/function',
+            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function_detail.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '功能测试-添加'
+            }
+          },
+          {
+            path: 'test/detail/function/:test_name',
+            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function_summary.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '功能测试-详情统计'
+            }
+          },
+          {
+            path: 'test/detail/function/:test_name/:task_id',
+            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/functionTaskDetail.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '功能测试-任务详情'
+            }
+          },
+          {
+            path: 'test/testcase/function/:workflow_name/:task_id/:test_name',
+            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/report/test_case.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '功能测试-测试报告'
+            }
+          },
+          {
+            path: 'test/testcase/function/:workflow_name/:task_id/test/:test_name',
+            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/report/test_case.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '功能测试-测试报告'
+            }
+          },
+          {
+            path: 'envs',
+            component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/home.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '集成环境'
+            },
+            children: [
+              {
+                path: 'create',
+                component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/createEnv.vue'),
+                meta: {
+                  requiresAuth: true,
+                  title: '创建环境'
+                }
+              },
+              {
+                path: 'detail',
+                component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/env_detail.vue'),
+                meta: {
+                  requiresAuth: true,
+                  title: '集成环境'
+                }
+              },
+              {
+                path: 'externalConfig',
+                component: () => import(/* webpackChunkName: "project-external-env" */ '@/components/projects/env/hostEnv/editExternalConfig.vue'),
+                meta: {
+                  requiresAuth: true,
+                  title: '配置托管环境'
+                }
+              },
+              {
+                path: 'detail/:service_name',
+                component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/service_detail.vue'),
+                meta: {
+                  requiresAuth: true,
+                  title: '服务详情'
+                }
+              },
+              {
+                path: 'detail/:service_name/pm',
+                component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/pm_service_detail.vue'),
+                meta: {
+                  requiresAuth: true,
+                  title: '服务详情'
+                }
+              },
+              {
+                path: 'detail/:service_name/config',
+                component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/service_config.vue'),
+                meta: {
+                  requiresAuth: true,
+                  title: '配置详情'
+                }
+              }
+            ]
+          }
+        ]
       },
       {
         path: 'envs',
@@ -264,14 +468,6 @@ const routes = [
         }
       },
       {
-        path: 'projects/detail/:project_name',
-        component: () => import(/* webpackChunkName: "project" */ '@/components/projects/detail_ope/detail.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '项目详情'
-        }
-      },
-      {
         path: 'projects/detail/:project_name/pipelines',
         component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_list.vue'),
         meta: {
@@ -376,111 +572,8 @@ const routes = [
           requiresAuth: true,
           title: '权限管理'
         }
-      },
-      {
-        path: 'projects/detail/:project_name/pipelines/multi/:workflow_name',
-        component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_multi_detail.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '工作流详情'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/pipelines/multi/:workflow_name/:task_id',
-        component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_multi_task_detail.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '任务详情'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/pipelines/multi/testcase/:workflow_name/:task_id/:test_name/:test_job_name',
-        component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/report/workflow_multi_test_case.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '测试报告'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/pipelines/common/:workflow_name',
-        component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_common_detail.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '工作流详情'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/pipelines/common/:workflow_name/:task_id',
-        component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_common_task_detail.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '任务详情'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/test',
-        component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '功能测试'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/test/function',
-        component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '功能测试'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/test/function/:test_name',
-        component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function_detail.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '功能测试'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/test/add/function',
-        component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function_detail.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '功能测试-添加'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/test/detail/function/:test_name',
-        component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function_summary.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '功能测试-详情统计'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/test/detail/function/:test_name/:task_id',
-        component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/functionTaskDetail.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '功能测试-任务详情'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/test/testcase/function/:workflow_name/:task_id/:test_name',
-        component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/report/test_case.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '功能测试-测试报告'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/test/testcase/function/:workflow_name/:task_id/test/:test_name',
-        component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/report/test_case.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '功能测试-测试报告'
-        }
       }
+
     ]
   },
   {

@@ -12,16 +12,18 @@
         </ul>
       </div>
     </div>
-    <div class="operation">
-
-    </div>
+    <div class="operation"></div>
   </div>
 </template>
 <script>
 export default {
   data () {
-    return {
-      projectName: 'proxy'
+    return {}
+  },
+  props: {
+    projectName: {
+      type: String,
+      required: true
     }
   },
   computed: {
@@ -75,6 +77,10 @@ export default {
 
         a {
           margin-right: 16px;
+
+          &.active {
+            box-shadow: inset 0 -2px 0 #55f;
+          }
         }
 
         .nav-item {
@@ -88,10 +94,6 @@ export default {
           font-size: 18px;
           line-height: 22px;
           cursor: pointer;
-
-          &.active {
-            box-shadow: inset 0 -2px 0 #55f;
-          }
 
           .icon {
             margin-right: 18px;

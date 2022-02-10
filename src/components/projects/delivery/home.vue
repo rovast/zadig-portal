@@ -68,7 +68,6 @@ export default {
     this.getVersionProductList()
     bus.$emit(`set-topbar-title`, { title: '版本管理', breadcrumb: [] })
     bus.$emit(`show-sidebar`, true)
-    bus.$emit(`sub-sidebar-opened`, false)
   }
 }
 </script>

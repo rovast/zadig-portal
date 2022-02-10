@@ -61,7 +61,7 @@
           </el-card>
         </el-col>
       </el-row>
-      <div v-if="projectList.length === 0" class="no-product">
+      <div v-if="projectList.length === 0" class="empty-list">
         <img src="@assets/icons/illustration/product.svg" alt />
         <p>暂无可展示的项目，请手动添加项目</p>
       </div>
@@ -108,7 +108,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div v-if="projectList.length === 0" class="no-product">
+      <div v-if="projectList.length === 0" class="empty-list">
         <img src="@assets/icons/illustration/product.svg" alt />
         <p>暂无可展示的项目，请手动添加项目</p>
       </div>
@@ -136,7 +136,7 @@ export default {
   },
   methods: {
     toProject (project) {
-      this.$router.push(`/v1/projects/detail/${project.name}`)
+      this.$router.push(`/v1/projects/detail/${project.name}/detail`)
     },
     handleCommand (command) {
       if (command.action === 'delete') {
@@ -240,12 +240,7 @@ export default {
   },
   mounted () {
     this.$store.dispatch('getProjectList')
-    bus.$emit('show-sidebar', true)
     bus.$emit('set-topbar-title', { title: '项目', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
   }
 }
 </script>
@@ -256,10 +251,11 @@ export default {
 .project-home-container {
   position: relative;
   flex: 1;
+  height: 100%;
   overflow: auto;
   background-color: #f5f7f7;
 
-  .no-product {
+  .empty-list {
     display: flex;
     flex-direction: column;
     align-content: center;

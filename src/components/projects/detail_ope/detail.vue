@@ -5,7 +5,6 @@
     element-loading-text="加载中..."
     element-loading-spinner="iconfont iconfont-loading iconxiangmu"
   >
-    <SubTopbar />
     <div class="project-header">
       <!-- <template v-if="isProjectAdmin">
         <el-dropdown placement="bottom" trigger="click">
@@ -120,7 +119,6 @@ import {
 import { translateEnvStatus } from '@utils/wordTranslate'
 import { wordTranslate } from '@utils/wordTranslate.js'
 import { whetherOnboarding } from '@utils/onboardingRoute'
-import SubTopbar from '../../entry/home/subTopbar.vue'
 import { get } from 'lodash'
 import bus from '@utils/eventBus'
 import store from 'storejs'
@@ -133,9 +131,6 @@ export default {
       userBindings: [],
       detailLoading: true
     }
-  },
-  components: {
-    SubTopbar
   },
   methods: {
     getProdStatus (status, updateble) {
@@ -268,7 +263,7 @@ export default {
         }
         bus.$emit('set-sub-sidebar-title', {
           title: this.projectName,
-          url: `/v1/projects/detail/${this.projectName}`,
+          url: `/v1/projects/detail/${this.projectName}/detail`,
           routerList: [
             {
               name: '工作流',
@@ -314,17 +309,12 @@ export default {
     this.getProject(this.projectName)
     this.getWorkflows(this.projectName)
     this.getEnvList()
-    bus.$emit('show-sidebar', true)
     bus.$emit('set-topbar-title', {
       title: '',
       breadcrumb: [
         { title: '项目', url: '/v1/projects' },
         { title: this.projectName, url: '' }
       ]
-    })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
     })
   }
 }

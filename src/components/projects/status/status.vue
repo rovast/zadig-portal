@@ -82,12 +82,7 @@ export default {
   mounted () {
     this.showTaskList('running')
     this.showTaskList('queue')
-    bus.$emit('show-sidebar', true)
     bus.$emit('set-topbar-title', { title: '运行状态', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
   },
   components: {
     ProductWorkflowStatus, TestStatus, CommonWorkflowStatus

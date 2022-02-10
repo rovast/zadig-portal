@@ -6,9 +6,6 @@
         <i class="el-icon-s-fold display-btn" @click="currentTab = 'list'" :class="{'active':currentTab==='list'}"></i>
       </div>
       <div class="header-end">
-        <el-button type="primary" @click="$router.push(`/v1/projects/template`)" plain>
-          <i class="iconfont iconicon-repertory"></i>模板库
-        </el-button>
         <el-button type="primary" v-if="$utils.roleCheck('admin')" @click="$router.push(`/v1/projects/create`)" plain>
           <i class="el-icon-plus"></i>新建项目
         </el-button>

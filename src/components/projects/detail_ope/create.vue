@@ -2,15 +2,11 @@
   <el-dialog :fullscreen="true" custom-class="create-project" :before-close="handleClose" :visible.sync="dialogVisible">
     <header class="project-contexts-modal__header">{{isEdit?'修改项目信息':'新建项目'}}</header>
     <section class="project-contexts-modal__content">
-      <el-tabs style="width: 100%;" v-if="isEdit" v-model="activeName">
-        <el-tab-pane label="基本信息" name="base"></el-tab-pane>
-        <el-tab-pane label="高级配置" name="advance"></el-tab-pane>
-      </el-tabs>
       <el-form :model="projectForm" :rules="rules" label-position="left" ref="projectForm" label-width="120px" class="demo-projectForm">
-        <el-form-item label="项目名称" v-show="activeName !=='advance'" prop="project_name">
+        <el-form-item label="项目名称" prop="project_name">
           <el-input @keyup.native="()=>projectForm.project_name=projectForm.project_name.trim()" v-model="projectForm.project_name"></el-input>
         </el-form-item>
-        <el-form-item label="项目主键" v-show="activeName !=='advance'" prop="product_name">
+        <el-form-item label="项目主键" prop="product_name">
           <span slot="label">
             项目标识
             <el-tooltip effect="dark" content="项目标识是该项目资源的全局唯一标识符，用于该项目下所有资源的引用与更新，默认自动生成，同时支持手动指定，创建后不可更改" placement="top">
@@ -22,26 +18,11 @@
             <i :class="[editProjectName ? 'el-icon-finished' : 'el-icon-edit-outline']"></i>
           </span>
         </el-form-item>
-        <el-form-item label="项目管理员" v-if="!isEdit" prop="admins">
-          <el-select v-model="projectForm.admins" filterable multiple remote :loading="loading" placeholder="请输入用户名搜索用户">
-            <el-option
-              v-for="(user,index) in users"
-              :key="index"
-              :label="user.name ? `${user.account}(${user.name})` : user.account"
-              :value="user.uid"
-            >
-              <span v-if="user.identity_type">
-                <i class="iconfont" :class="'icon'+user.identity_type"></i>
-                <span>{{user.name ? `${user.account}(${user.name})` : user.account}}</span>
-              </span>
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-show="activeName !=='advance'" prop="desc">
+        <el-form-item prop="desc">
           <span slot="label">&nbsp;&nbsp;&nbsp;&nbsp;描述信息</span>
           <el-input type="textarea" :rows="2" placeholder="请输入描述信息" v-model="projectForm.desc"></el-input>
         </el-form-item>
-        <el-form-item v-if="!isEdit" v-show="activeName !=='advance'">
+        <el-form-item v-if="!isEdit">
           <span slot="label">&nbsp;&nbsp;&nbsp;&nbsp;项目类型</span>
           <div class="project-type">
             <div class="project-type-item" @click="switchType('k8s')" :class="{selected: projectType === 'k8s'}">
@@ -87,108 +68,47 @@
             >支持的基础设施列表</el-link>
           </div>
         </el-form-item>
-        <div v-show="activeName !=='advance'">
-          <div>
-            <el-button type="text" @click="showAdvanced = !showAdvanced">
-              高级配置
-              <i :class="{'el-icon-arrow-right': !showAdvanced, 'el-icon-arrow-down': showAdvanced }"></i>
-            </el-button>
-          </div>
-          <div v-show="showAdvanced">
-            <el-form-item label="访问权限" prop="public">
-              <el-select v-model="projectForm.public" popper-class="access-permission">
-                <el-option label="私有" :value="false">
-                  <div class="title">私有</div>
-                  <div class="desc">该项目对系统普通用户默认不可见，项目管理员可通过添加成员对特定用户添加相应权限。</div>
-                </el-option>
-                <el-option label="公开" :value="true">
-                  <div class="title">公开</div>
-                  <div class="desc">用户默认享有公开权限，可查看项目中的工作流、集成环境、服务、构建、测试等资源。</div>
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item v-if="!isEdit" label="指定集群资源" prop="cluster_ids">
-              <el-select filterable multiple clearable v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源">
-                <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
-              </el-select>
-            </el-form-item>
-          </div>
+        <div v-if="!isEdit">
+          <el-button type="text" @click="showAdvanced = !showAdvanced">
+            高级配置
+            <i :class="{'el-icon-arrow-right': !showAdvanced, 'el-icon-arrow-down': showAdvanced }"></i>
+          </el-button>
+        </div>
+        <div v-show="showAdvanced || isEdit">
+          <el-form-item label="访问权限" prop="public">
+            <el-select v-model="projectForm.public" popper-class="access-permission">
+              <el-option label="私有" :value="false">
+                <div class="title">私有</div>
+                <div class="desc">该项目对系统普通用户默认不可见，项目管理员可通过添加成员对特定用户添加相应权限。</div>
+              </el-option>
+              <el-option label="公开" :value="true">
+                <div class="title">公开</div>
+                <div class="desc">用户默认享有公开权限，可查看项目中的工作流、集成环境、服务、构建、测试等资源。</div>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="项目管理员" v-if="!isEdit" prop="admins">
+            <el-select v-model="projectForm.admins" filterable multiple remote :loading="loading" placeholder="请输入用户名搜索用户">
+              <el-option
+                v-for="(user,index) in users"
+                :key="index"
+                :label="user.name ? `${user.account}(${user.name})` : user.account"
+                :value="user.uid"
+              >
+                <span v-if="user.identity_type">
+                  <i class="iconfont" :class="'icon'+user.identity_type"></i>
+                  <span>{{user.name ? `${user.account}(${user.name})` : user.account}}</span>
+                </span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="!isEdit" label="指定集群资源" prop="cluster_ids">
+            <el-select filterable multiple clearable v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源">
+              <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
+            </el-select>
+          </el-form-item>
         </div>
       </el-form>
-      <div v-if="isEdit" v-show="activeName==='advance'">
-        <el-form :model="projectForm" label-position="top">
-          <el-form-item label="服务部署超时（分钟）" prop="timeout" class="label-top">
-            <el-input v-model.number="projectForm.timeout"></el-input>
-          </el-form-item>
-          <el-form-item label="自定义交付物名称" class="label-top">
-            <span slot="label">
-              自定义交付物名称
-              <el-tooltip effect="dark" placement="top">
-                <div slot="content">
-                  镜像和 TAR 包规则可以通过变量和常量组装生成：
-                  <br />
-                  <span class="tooltip-key" v-html="'{{.TIMESTAMP}}'"></span> 时间戳
-                  <br />
-                  <span class="tooltip-key" v-html="'{{.TASK_ID}}'"></span> 工作流任务 ID
-                  <br />
-                  <span class="tooltip-key" v-html="'{{.REPO_BRANCH}}'"></span> 代码分支名称
-                  <br />
-                  <span class="tooltip-key" v-html="'{{.REPO_PR}}'"></span> 代码 PR ID
-                  <br />
-                  <span class="tooltip-key" v-html="'{{.REPO_TAG}}'"></span> 代码 TAG
-                  <br />
-                  <span class="tooltip-key" v-html="'{{.REPO_COMMIT_ID}}'"></span> 代码 Commit ID
-                  <br />
-                  <span class="tooltip-key" v-html="'{{.PROJECT}}'"></span> 项目名称
-                  <br />
-                  <span class="tooltip-key" v-html="'{{.SERVICE}}'"></span> 服务名称
-                  <br />
-                  <span class="tooltip-key" v-html="'{{.ENV_NAME}}'">${ENV_NAME}</span> 环境名称
-                  <br />注意：常量字符只能是大小写字母、数字、中划线、下划线和点，即 [a-zA-Z0-9_.-]，首个字符不能是&nbsp;.&nbsp;或&nbsp;-。不能超过 127 个字符
-                </div>
-                <i class="el-icon-question"></i>
-              </el-tooltip>
-            </span>
-            <CusDeliverable
-              v-show="activeName==='advance'"
-              :customImageRule="projectForm.custom_image_rule"
-              :customTarRule="projectForm.custom_tar_rule"
-              ref="cusDeliverable"
-              v-if="isEdit"
-            />
-          </el-form-item>
-          <el-form-item v-if="isHelm">
-            <span slot="label">
-              版本交付 hook 配置
-              <el-tooltip effect="dark" content="完成配置后，交付中心-创建版本可 hook 外部系统" placement="top">
-                <i class="el-icon-question"></i>
-              </el-tooltip>
-              <el-switch v-model="projectForm.delivery_version_hook.enable" style="margin-left: 10px;"></el-switch>
-            </span>
-            <el-row :gutter="10" v-if="projectForm.delivery_version_hook.enable">
-              <el-col :span="3" style="text-align: right;">* URL</el-col>
-              <el-col :span="10">
-                <el-form-item prop="delivery_version_hook.hook_host">
-                  <el-select
-                    v-model="projectForm.delivery_version_hook.hook_host"
-                    placeholder="选择外部系统"
-                    size="small"
-                    clearable
-                    style="width: 100%;"
-                  >
-                    <el-option v-for="external in externalList" :key="external.id" :label="external.server" :value="external.server"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="10">
-                <el-form-item prop="delivery_version_hook.path">
-                  <el-input v-model="projectForm.delivery_version_hook.path" placeholder="输入访问路径" size="small"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form-item>
-        </el-form>
-      </div>
     </section>
     <footer class="project-contexts-modal__footer">
       <el-button type="primary" @click="submitForm('projectForm')">{{isEdit?'确认修改':'立即新建'}}</el-button>
@@ -201,7 +121,6 @@ import {
   createProjectAPI,
   getSingleProjectAPI,
   updateSingleProjectAPI,
-  getExternalSystemsAPI,
   getClusterListAPI
 } from '@api'
 import CusDeliverable from './components/cusDeliverable.vue'
@@ -218,25 +137,12 @@ const validateProductName = (rule, value, callback) => {
     }
   }
 }
-const validateDeployTimeout = (rule, value, callback) => {
-  const reg = /^[0-9]+.?[0-9]*/
-  if (!reg.test(value)) {
-    callback(new Error('时间应为数字'))
-  } else {
-    if (value > 0) {
-      callback()
-    } else {
-      callback(new Error('请输入正确的时间范围'))
-    }
-  }
-}
 export default {
   components: {
     CusDeliverable
   },
   data () {
     return {
-      activeName: 'base',
       dialogVisible: true,
       users: [],
       loading: false,
@@ -247,7 +153,6 @@ export default {
         product_name: '',
         admins: [],
         cluster_ids: [],
-        timeout: null,
         desc: '',
         enabled: true,
         public: false,
@@ -288,28 +193,10 @@ export default {
             trigger: 'change'
           }
         ],
-        timeout: [
-          {
-            required: true,
-            trigger: 'change',
-            validator: validateDeployTimeout
-          }
-        ],
         public: [
           { required: true, message: '项目权限不能为空', trigger: 'blur' }
-        ],
-        'delivery_version_hook.hook_host': {
-          required: true,
-          message: '请选择外部系统',
-          trigger: 'blur'
-        },
-        'delivery_version_hook.path': {
-          required: true,
-          message: '请输入访问路径',
-          trigger: 'blur'
-        }
+        ]
       },
-      externalList: [],
       allCluster: [],
       showAdvanced: false
     }
@@ -410,21 +297,6 @@ export default {
         if (res.team_id === 0) {
           this.projectForm.team_id = null
         }
-        if (!res.timeout) {
-          this.$set(this.projectForm, 'timeout', 10)
-        }
-        if (this.isHelm) {
-          getExternalSystemsAPI().then(res => {
-            this.externalList = res.external_system
-          })
-          if (!this.projectForm.delivery_version_hook) {
-            this.$set(this.projectForm, 'delivery_version_hook', {
-              enable: false,
-              hook_host: '',
-              path: ''
-            })
-          }
-        }
       })
     },
     submitForm (formName) {
@@ -432,14 +304,11 @@ export default {
         if (valid) {
           if (this.isEdit) {
             this.$refs.cusDeliverable.saveConfig()
-            this.projectForm.custom_image_rule = this.$refs.cusDeliverable.custom_image_rule
-            this.projectForm.custom_tar_rule = this.$refs.cusDeliverable.custom_tar_rule
             this.updateSingleProject(
               this.projectForm.product_name,
               this.projectForm
             )
           } else {
-            this.projectForm.timeout = 10
             if (
               this.projectForm.product_feature.basic_facility === 'cloud_host'
             ) {
@@ -490,12 +359,6 @@ export default {
       } else {
         return false
       }
-    },
-    isHelm () {
-      return (
-        this.projectForm.product_feature &&
-        this.projectForm.product_feature.deploy_type === 'helm'
-      )
     },
     projectType () {
       const feature = this.projectForm.product_feature

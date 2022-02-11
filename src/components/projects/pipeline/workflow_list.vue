@@ -200,34 +200,6 @@ export default {
             { title: '工作流', url: '' }
           ]
         })
-        bus.$emit('set-sub-sidebar-title', {
-          title: this.projectName,
-          url: `/v1/projects/detail/${this.projectName}/detail`,
-          routerList: [
-            {
-              name: '工作流',
-              url: `/v1/projects/detail/${this.projectName}/pipelines`
-            },
-            {
-              name: '集成环境',
-              url: `/v1/projects/detail/${this.projectName}/envs`
-            },
-            {
-              name: '服务',
-              url: `/v1/projects/detail/${this.projectName}/services`
-            },
-            {
-              name: '构建',
-              url: `/v1/projects/detail/${this.projectName}/builds`
-            },
-            {
-              name: '测试',
-              url: `/v1/projects/detail/${this.projectName}/test`
-            }
-          ]
-        })
-      } else {
-        bus.$emit('set-topbar-title', { title: '工作流', breadcrumb: [] })
       }
     },
     $route (val) {
@@ -411,32 +383,6 @@ export default {
           { title: '工作流', url: '' }
         ]
       })
-      bus.$emit('set-sub-sidebar-title', {
-        title: this.projectName,
-        url: `/v1/projects/detail/${this.projectName}/detail`,
-        routerList: [
-          {
-            name: '工作流',
-            url: `/v1/projects/detail/${this.projectName}/pipelines`
-          },
-          {
-            name: '集成环境',
-            url: `/v1/projects/detail/${this.projectName}/envs`
-          },
-          {
-            name: '服务',
-            url: `/v1/projects/detail/${this.projectName}/services`
-          },
-          {
-            name: '构建',
-            url: `/v1/projects/detail/${this.projectName}/builds`
-          },
-          { name: '测试', url: `/v1/projects/detail/${this.projectName}/test` }
-        ]
-      })
-    } else {
-      this.getWorkflows()
-      bus.$emit(`set-topbar-title`, { title: '工作流', breadcrumb: [] })
     }
   },
   components: {

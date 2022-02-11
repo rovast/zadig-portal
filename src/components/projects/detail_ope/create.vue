@@ -2,7 +2,7 @@
   <el-dialog :fullscreen="true" custom-class="create-project" :before-close="handleClose" :visible.sync="dialogVisible">
     <header class="project-contexts-modal__header">{{isEdit?'修改项目信息':'新建项目'}}</header>
     <section class="project-contexts-modal__content">
-      <el-form :model="projectForm" :rules="rules" label-position="left" ref="projectForm" label-width="120px" class="demo-projectForm">
+      <el-form :model="projectForm" :rules="rules" label-position="right" ref="projectForm" label-width="100px" class="demo-projectForm">
         <el-form-item label="项目名称" prop="project_name">
           <el-input @keyup.native="()=>projectForm.project_name=projectForm.project_name.trim()" v-model="projectForm.project_name"></el-input>
         </el-form-item>
@@ -23,36 +23,18 @@
         </el-form-item>
         <el-form-item v-if="!isEdit" label="项目类型">
           <div class="project-type">
-            <div class="project-type-item" @click="switchType('k8s')" :class="{selected: projectType === 'k8s'}">
-              <i class="icon" :class="[projectType === 'k8s' ? 'el-icon-success' : 'iconfont iconk8s']"></i>
+            <div
+              class="project-type-item"
+              v-for="typeItem in projectTypeList"
+              :key="typeItem.type"
+              @click="switchType(typeItem.type)"
+              :class="{selected: projectType === typeItem.type}"
+            >
+              <i class="icon" :class="[projectType === typeItem.type ? 'el-icon-success' : typeItem.icon]"></i>
               <div class="project-type-item__desc">
-                <div class="title">K8s YAML 项目</div>
-                <div class="desc">基础设施使用 Kubernetes</div>
-                <div class="desc">使用 Kubernetes YAML 管理和部署服务</div>
-              </div>
-            </div>
-            <div class="project-type-item" @click="switchType('helm')" :class="{selected: projectType === 'helm'}">
-              <i class="icon" :class="[projectType === 'helm' ? 'el-icon-success' : 'iconfont iconhelmrepo']"></i>
-              <div class="project-type-item__desc">
-                <div class="title">K8s Helm Chart 项目</div>
-                <div class="desc">基础设施使用 Kubernetes</div>
-                <div class="desc">使用 Helm Chart 管理和部署服务</div>
-              </div>
-            </div>
-            <div class="project-type-item" @click="switchType('external')" :class="{selected: projectType === 'external'}">
-              <i class="icon" :class="[projectType === 'external' ? 'el-icon-success' : 'iconfont iconjiaofu']"></i>
-              <div class="project-type-item__desc">
-                <div class="title">K8s 托管项目</div>
-                <div class="desc">托管现有 Kubernetes 集群中的资源</div>
-                <div class="desc">支持服务镜像的更新</div>
-              </div>
-            </div>
-            <div class="project-type-item" @click="switchType('host')" :class="{selected: projectType === 'host'}">
-              <i class="icon" :class="[projectType === 'host' ? 'el-icon-success' : 'iconfont iconzhuji']"></i>
-              <div class="project-type-item__desc">
-                <div class="title">主机项目</div>
-                <div class="desc">基础设施使用主机</div>
-                <div class="desc">使用自定义脚本部署升级服务</div>
+                <div class="title">{{ typeItem.title }}</div>
+                <div class="desc">{{ typeItem.firstDesc }}</div>
+                <div class="desc">{{ typeItem.secondDesc }}</div>
               </div>
             </div>
           </div>
@@ -100,7 +82,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="!isEdit" label="指定集群资源" prop="cluster_ids">
+          <el-form-item v-if="!isEdit" label="指定集群" prop="cluster_ids">
             <el-select filterable multiple clearable v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源">
               <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
             </el-select>
@@ -196,7 +178,37 @@ export default {
         ]
       },
       allCluster: [],
-      showAdvanced: false
+      showAdvanced: false,
+      projectTypeList: [
+        {
+          type: 'k8s', // can't be modified
+          title: 'K8s YAML 项目',
+          firstDesc: '基础设施使用 Kubernetes',
+          secondDesc: '使用 Kubernetes YAML 管理和部署服务',
+          icon: 'iconfont iconk8s'
+        },
+        {
+          type: 'helm',
+          title: 'K8s Helm Chart 项目',
+          firstDesc: '基础设施使用 Kubernetes',
+          secondDesc: '使用 Helm Chart 管理和部署服务',
+          icon: 'iconfont iconhelmrepo'
+        },
+        {
+          type: 'external',
+          title: 'K8s 托管项目',
+          firstDesc: '托管现有 Kubernetes 集群中的资源',
+          secondDesc: '支持服务镜像的更新',
+          icon: 'iconfont iconjiaofu'
+        },
+        {
+          type: 'host',
+          title: '主机项目',
+          firstDesc: '基础设施使用主机',
+          secondDesc: '使用自定义脚本部署升级服务',
+          icon: 'iconfont iconzhuji'
+        }
+      ]
     }
   },
   methods: {

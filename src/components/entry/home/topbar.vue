@@ -20,7 +20,7 @@
                   @click="changeProject(item.name)"
                 >
                   <div class="project-icon">
-                    <i class="iconfont iconxiangmuloading"></i>
+                    <i class="iconfont" :class="projectIconMap[item.deployType]"></i>
                   </div>
                   <div class="name">{{item.alias}}</div>
                 </div>
@@ -116,7 +116,12 @@ export default {
         title: '',
         breadcrumb: []
       },
-      searchProject: ''
+      searchProject: '',
+      projectIconMap: {
+        k8s: 'iconyaml',
+        helm: 'iconhelmrepo',
+        pm: 'iconwuliji'
+      }
     }
   },
   computed: {

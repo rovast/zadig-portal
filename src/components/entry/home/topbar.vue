@@ -6,14 +6,31 @@
           <img class="logo" src="@assets/icons/logo/small-logo.png" />
         </div>
         <div v-if="showProjectSwitcher" class="project-switcher-container">
-          <el-dropdown placement="bottom" @command="changeProject">
-            <span class="icon-switcher">
+          <el-popover placement="bottom" width="300" trigger="hover" popper-class="project-list-popover" @show="searchProject=''">
+            <div class="project-list-container">
+              <div class="search-container">
+                <el-input placeholder="搜索" v-model.trim="searchProject" size="small" />
+              </div>
+              <div class="list-container">
+                <div
+                  v-for="(item,index) in filteredProjectList"
+                  :key="index"
+                  class="project-item"
+                  :class="{'active':item.name === projectName}"
+                  @click="changeProject(item.name)"
+                >
+                  <div class="project-icon">
+                    <i class="iconfont" :class="projectIconMap[item.deployType]"></i>
+                  </div>
+                  <div class="name">{{item.alias}}</div>
+                </div>
+              </div>
+            </div>
+
+            <span slot="reference" class="icon-switcher">
               <i class="el-icon-caret-bottom"></i>
             </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="(item,index) in projectList" :key="index" :command="item.name">{{item.alias}}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          </el-popover>
         </div>
         <div class="breadcrumb-container">
           <div class="project-switcher"></div>
@@ -97,8 +114,13 @@ export default {
     return {
       content: {
         title: '',
-        breadcrumb: [],
-        projectList: []
+        breadcrumb: []
+      },
+      searchProject: '',
+      projectIconMap: {
+        k8s: 'iconyaml',
+        helm: 'iconhelmrepo',
+        pm: 'iconwuliji'
       }
     }
   },
@@ -108,6 +130,11 @@ export default {
       role: state => state.login.role,
       userInfo: state => state.login.userinfo
     }),
+    filteredProjectList () {
+      return this.projectList.filter(item => {
+        return item.name.indexOf(this.searchProject) > -1
+      })
+    },
     showProjectSwitcher () {
       return this.$route.path.includes('/v1/projects/detail/')
     },
@@ -124,6 +151,9 @@ export default {
       } else {
         return this.userInfo.name
       }
+    },
+    projectName () {
+      return this.$route.params.project_name
     }
   },
   methods: {
@@ -176,49 +206,49 @@ export default {
   }
 }
 
-.help-droplist {
-  .dropdown-menu {
-    margin: 0 2px;
-    padding: 8px 0;
-    list-style: none;
+// .help-droplist {
+//   .dropdown-menu {
+//     margin: 0 2px;
+//     padding: 8px 0;
+//     list-style: none;
 
-    .divider {
-      height: 1px;
-      margin: 9px 0;
-      overflow: hidden;
-      background-color: #e5e5e5;
-    }
+//     .divider {
+//       height: 1px;
+//       margin: 9px 0;
+//       overflow: hidden;
+//       background-color: #e5e5e5;
+//     }
 
-    li {
-      & > a {
-        display: block;
-        clear: both;
-        padding: 3px 20px;
-        padding: 4px 0 4px 5px;
-        color: #333;
-        font-weight: normal;
-        line-height: 1.42857143;
-        white-space: nowrap;
+//     li {
+//       & > a {
+//         display: block;
+//         clear: both;
+//         padding: 3px 20px;
+//         padding: 4px 0 4px 5px;
+//         color: #333;
+//         font-weight: normal;
+//         line-height: 1.42857143;
+//         white-space: nowrap;
 
-        .icon {
-          position: relative;
-          margin-right: 5px;
-          font-size: 16px;
-        }
-      }
+//         .icon {
+//           position: relative;
+//           margin-right: 5px;
+//           font-size: 16px;
+//         }
+//       }
 
-      &:hover {
-        color: #262626;
-        text-decoration: none;
-        background-color: #f5f5f5;
+//       &:hover {
+//         color: #262626;
+//         text-decoration: none;
+//         background-color: #f5f5f5;
 
-        & > a {
-          color: @themeColor;
-        }
-      }
-    }
-  }
-}
+//         & > a {
+//           color: @themeColor;
+//         }
+//       }
+//     }
+//   }
+// }
 
 .flex {
   display: flex;
@@ -425,28 +455,51 @@ export default {
   }
 }
 
-.el-select-dropdown.el-popper {
-  .el-scrollbar {
-    .el-select-dropdown__item {
-      .k8s-product-option {
-        position: relative;
+.project-list-popover {
+  ::-webkit-scrollbar-track {
+    width: 5px;
+    height: 5px;
+    background-color: #fff;
+    border-radius: 6px;
+  }
 
-        span {
-          padding-right: 20px;
-        }
+  .project-list-container {
+    .search-container {
+      margin-bottom: 10px;
+    }
 
-        i {
-          position: absolute;
-          right: 0;
-          padding-left: 8px;
-          line-height: 34px;
-          visibility: hidden;
-          cursor: pointer;
-        }
+    .list-container {
+      display: flex;
+      flex-direction: column;
+      height: 300px;
+      overflow: auto;
 
-        &:hover {
+      .project-item {
+        display: flex;
+        padding: 10px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+
+        .project-icon {
           i {
-            visibility: visible;
+            color: #55f;
+            font-size: 24px;
+          }
+        }
+
+        .name {
+          display: flex;
+          align-items: center;
+          margin-left: 10px;
+          font-size: 16px;
+        }
+
+        &:hover,
+        &.active {
+          background: rgba(160, 160, 255, 0.15);
+
+          .name {
+            color: #55f;
           }
         }
       }

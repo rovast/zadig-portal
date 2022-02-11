@@ -16,6 +16,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.iconyaml:before {
+  content: "\e639";
+}
+
 .iconhistory:before {
   content: "\e674";
 }
@@ -531,4 +535,3 @@
 .iconjiaofu1:before {
   content: "\e694";
 }
-

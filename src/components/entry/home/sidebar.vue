@@ -193,29 +193,14 @@ export default {
               url: 'template'
             },
             {
-              name: '版本管理',
-              url: 'delivery/version',
-              icon: 'iconfont iconbanben1'
-            },
-            {
-              name: '交付物追踪',
-              url: 'delivery/artifacts',
-              icon: 'iconfont iconbaoguanli'
-            }
-          ]
-        },
-        {
-          category_name: '质量管理',
-          items: [
-            {
               name: '测试管理',
-              icon: 'iconfont icontest',
-              url: 'tests'
+              url: 'tests',
+              icon: 'iconfont icontest'
             }
           ]
         },
         {
-          category_name: '数据分析',
+          category_name: '数据视图',
           items: [
             {
               name: '数据概览',

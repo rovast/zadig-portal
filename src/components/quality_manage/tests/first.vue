@@ -39,10 +39,6 @@ export default {
         return { name: element.name, url: `/v1/tests/detail/${element.name}/test` }
       })
       bus.$emit(`set-topbar-title`, { title: '测试管理', breadcrumb: [] })
-      bus.$emit(`set-sub-sidebar-title`, {
-        title: '项目列表',
-        routerList: routerList
-      })
       this.loading = false
       if (routerList.length > 0) {
         if (!this.projectName) {

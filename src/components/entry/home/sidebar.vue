@@ -1,25 +1,21 @@
 <template>
-  <div @mouseenter="enterSidebar" @mouseleave="leaveSidebar" class="cf-side-bar full-h" :class="{ 'small-sidebar': !showSidebar }">
+  <div @mouseenter="enterSidebar" @mouseleave="leaveSidebar" class="sidebar full-h" :class="{ 'small-sidebar': !showSidebar }">
     <a @click="changeSidebar" class="sidebar-size-toggler">
       <i :class="showSidebar?'el-icon-arrow-right':'el-icon-arrow-left'"></i>
     </a>
 
-    <div class="cf-side-bar-header">
-      <router-link to="/v1/status">
-        <img v-if="showSidebar&&!showBackPath" class="logo" src="@assets/icons/logo/default-logo.png" />
-        <img v-if="!showSidebar&&!showBackPath" class="logo" :class="{'small':!showSidebar}" src="@assets/icons/logo/small-logo.png" />
-      </router-link>
-      <router-link class="cf-side-bar-header back-to" v-if="showSidebar&&showBackPath" :to="backUrl">
-        <div class="cf-side-bar-header__icon">
+    <div class="sidebar-header">
+      <router-link class="sidebar-header back-to" v-if="showSidebar&&showBackPath" :to="backUrl">
+        <div class="sidebar-header__icon">
           <i class="icon el-icon-back"></i>
         </div>
-        <div class="cf-side-bar-header__info">
+        <div class="sidebar-header__info">
           <div class="logo-title">{{backTitle}}</div>
           <div class="logo-title logo-title_subtitle">返回上一层</div>
         </div>
       </router-link>
-      <router-link class="cf-side-bar-header" v-if="!showSidebar&&showBackPath" :to="backUrl">
-        <div class="cf-side-bar-header__icon">
+      <router-link class="sidebar-header" v-if="!showSidebar&&showBackPath" :to="backUrl">
+        <div class="sidebar-header__icon">
           <i class="icon el-icon-back"></i>
         </div>
       </router-link>
@@ -80,8 +76,6 @@ export default {
   data () {
     return {
       showSidebar: true,
-      subSideBar: false,
-      subSidebarOpened: false,
       backTitle: '',
       backUrl: '/v1/status',
       userManagementMenu: [
@@ -92,121 +86,123 @@ export default {
               name: '用户管理',
               icon: 'iconfont icongeren',
               url: 'users/account/manage'
-            }]
+            }
+          ]
         }
       ],
       systemMenu: [
         {
           category_name: '第三方集成',
-          items: [{
-            name: '集成管理',
-            icon: 'iconfont iconicon_jichengguanli',
-            url: 'system/integration'
-          },
-          {
-            name: '应用设置',
-            icon: 'iconfont iconyingyongshezhi',
-            url: 'system/apps'
-          },
-          {
-            name: '构建镜像管理',
-            icon: 'iconfont iconjingxiang',
-            url: 'system/imgs'
-          }]
+          items: [
+            {
+              name: '集成管理',
+              icon: 'iconfont iconicon_jichengguanli',
+              url: 'system/integration'
+            },
+            {
+              name: '应用设置',
+              icon: 'iconfont iconyingyongshezhi',
+              url: 'system/apps'
+            },
+            {
+              name: '构建镜像管理',
+              icon: 'iconfont iconjingxiang',
+              url: 'system/imgs'
+            }
+          ]
         },
         {
           category_name: '基础组件',
-          items: [{
-            name: '镜像仓库',
-            icon: 'iconfont icondocker',
-            url: 'system/registry'
-          },
-          {
-            name: '对象存储',
-            icon: 'iconfont iconduixiangcunchu',
-            url: 'system/storage'
-          },
-          {
-            name: 'HELM 仓库',
-            icon: 'iconfont iconhelmrepo',
-            url: 'system/helm',
-            features: 'helm'
-          }]
+          items: [
+            {
+              name: '镜像仓库',
+              icon: 'iconfont icondocker',
+              url: 'system/registry'
+            },
+            {
+              name: '对象存储',
+              icon: 'iconfont iconduixiangcunchu',
+              url: 'system/storage'
+            },
+            {
+              name: 'HELM 仓库',
+              icon: 'iconfont iconhelmrepo',
+              url: 'system/helm',
+              features: 'helm'
+            }
+          ]
         },
         {
           category_name: '资源管理',
-          items: [{
-            name: '集群管理',
-            icon: 'iconfont iconjiqun',
-            url: 'system/cluster'
-          },
-          {
-            name: '主机管理',
-            icon: 'iconfont iconzhuji',
-            url: 'system/host'
-          }]
+          items: [
+            {
+              name: '集群管理',
+              icon: 'iconfont iconjiqun',
+              url: 'system/cluster'
+            },
+            {
+              name: '主机管理',
+              icon: 'iconfont iconzhuji',
+              url: 'system/host'
+            }
+          ]
         },
         {
           category_name: '系统配置',
-          items: [{
-            name: '系统配置',
-            icon: 'iconfont iconfuwupeizhi',
-            url: 'system/config'
-          }]
+          items: [
+            {
+              name: '系统配置',
+              icon: 'iconfont iconfuwupeizhi',
+              url: 'system/config'
+            }
+          ]
         },
         {
           category_name: '公告与审计',
-          items: [{
-            name: '公告管理',
-            icon: 'iconfont icongonggao',
-            url: 'system/announcement'
-          },
-          {
-            name: '操作日志',
-            icon: 'iconfont iconiconlog',
-            url: 'system/auditlog'
-          }]
+          items: [
+            {
+              name: '公告管理',
+              icon: 'iconfont icongonggao',
+              url: 'system/announcement'
+            },
+            {
+              name: '操作日志',
+              icon: 'iconfont iconiconlog',
+              url: 'system/auditlog'
+            }
+          ]
         }
       ],
       defaultMenu: [
         {
           category_name: '产品交付',
-          items: [{
-            name: '运行状态',
-            icon: 'iconfont iconyunhangzhuangtai',
-            url: 'status'
-          },
-          {
-            name: '项目',
-            icon: 'iconfont iconxiangmu',
-            url: 'projects'
-          },
-          {
-            name: '工作流',
-            icon: 'iconfont icongongzuoliucheng',
-            url: 'pipelines'
-          },
-          {
-            name: '集成环境',
-            icon: 'iconfont iconrongqi',
-            url: 'envs'
-          },
-          {
-            name: '交付中心',
-            icon: 'iconfont iconjiaofu',
-            hasSubItem: true,
-            isOpened: false,
-            subItems: [{
+          items: [
+            {
+              name: '运行状态',
+              icon: 'iconfont iconyunhangzhuangtai',
+              url: 'status'
+            },
+            {
+              name: '项目',
+              icon: 'iconfont iconxiangmuloading',
+              url: 'projects'
+            },
+            {
+              name: '模板库',
+              icon: 'iconfont iconicon-repertory',
+              url: 'template'
+            },
+            {
               name: '版本管理',
               url: 'delivery/version',
-              icon: 'iconfont iconbanben'
+              icon: 'iconfont iconbanben1'
             },
             {
               name: '交付物追踪',
               url: 'delivery/artifacts',
               icon: 'iconfont iconbaoguanli'
-            }]
-          }]
+            }
+          ]
         },
         {
           category_name: '质量管理',
@@ -217,7 +213,8 @@ export default {
               url: 'tests'
             }
           ]
-        }, {
+        },
+        {
           category_name: '数据分析',
           items: [
             {
@@ -233,37 +230,30 @@ export default {
           ]
         }
       ],
-      adminMenu: [{
-        category_name: '设置',
-        items: [
-          {
-            name: '用户管理',
-            icon: 'iconfont icongeren',
-            url: 'users/account/manage'
-          },
-          {
-            name: '系统设置',
-            icon: 'iconfont iconicon_jichengguanli',
-            url: 'system'
-          }
-        ]
-      }]
+      adminMenu: [
+        {
+          category_name: '设置',
+          items: [
+            {
+              name: '系统设置',
+              icon: 'iconfont iconicon_jichengguanli',
+              url: 'system'
+            }
+          ]
+        }
+      ]
     }
   },
   methods: {
     enterSidebar: _.debounce(function () {
-      if (this.subSidebarOpened) {
-        this.showSidebar = true
-      }
+      // this.showSidebar = true
     }, 300),
     leaveSidebar: _.debounce(function () {
-      if (this.subSidebarOpened) {
-        this.showSidebar = false
-      }
+      // this.showSidebar = false
     }, 100),
     changeSidebar () {
       this.showSidebar = !this.showSidebar
-      this.$emit('sidebar-width', this.showSidebar || this.subSideBar)
+      this.$emit('sidebar-width', this.showSidebar)
     },
     collapseMenu (nav) {
       nav.isOpened = !nav.isOpened
@@ -308,23 +298,15 @@ export default {
     }
   },
   created () {
-    bus.$on('show-sidebar', (params) => {
+    bus.$on('show-sidebar', params => {
       this.showSidebar = params
-    })
-    bus.$on('sub-sidebar-opened', (params) => {
-      this.subSidebarOpened = params
-    })
-    bus.$on('sub-sidebar-opened', (params) => {
-      this.subSideBar = params
-      this.showSidebar = !params
-      this.$emit('sidebar-width', true)
     })
   }
 }
 </script>
 
 <style lang="less">
-.cf-side-bar {
+.sidebar {
   position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -334,9 +316,10 @@ export default {
   align-items: left;
   justify-content: space-between;
   width: 196px;
+  height: 100%;
   margin-right: 0;
   font-size: 12px;
-  background-color: #f5f7fa;
+  background-color: rgba(118, 122, 200, 0.1);
   border-right: 1px solid #e6e9f0;
   transition: width 350ms, margin-width 230ms;
   -webkit-box-align: left;
@@ -352,14 +335,14 @@ export default {
     bottom: 10px;
     z-index: 1;
     display: block;
-    width: 33px;
-    height: 30px;
+    width: 12px;
+    height: 48px;
     color: #fff;
-    line-height: 30px;
+    line-height: 48px;
     text-align: center;
     text-decoration: none;
     background-color: #c0c4cc;
-    border-radius: 10px 0 0 10px;
+    border-radius: 4px 0 0 4px;
     cursor: pointer;
 
     i {
@@ -375,9 +358,9 @@ export default {
       margin-top: 0;
       margin-bottom: 10px;
       padding-left: 20px;
-      color: #000;
-      font-weight: bold;
-      font-size: 14px;
+      color: #8a8a8a;
+      font-weight: 400;
+      font-size: 16px;
       text-align: left;
       text-transform: uppercase;
 
@@ -500,10 +483,10 @@ export default {
   }
 
   &.small-sidebar {
-    width: 66px;
+    width: 60px;
 
     .category-wrapper {
-      max-width: 66px;
+      max-width: 60px;
       padding: 25px 0 30px;
     }
 
@@ -532,14 +515,14 @@ export default {
     }
   }
 
-  .cf-side-bar-header__icon {
+  .sidebar-header__icon {
     float: left;
     color: @themeColor;
     font-weight: normal;
     font-size: 16px;
   }
 
-  .cf-side-bar-header__info {
+  .sidebar-header__info {
     padding: 20px 0;
 
     .logo-title {
@@ -563,7 +546,7 @@ export default {
     }
   }
 
-  .cf-side-bar-header {
+  .sidebar-header {
     display: flex;
     justify-content: center;
     width: 100%;
@@ -574,11 +557,11 @@ export default {
       justify-content: flex-start;
       margin-left: 15px;
 
-      .cf-side-bar-header__info {
+      .sidebar-header__info {
         padding: 0;
       }
 
-      .cf-side-bar-header__icon {
+      .sidebar-header__icon {
         width: 35px;
       }
     }
@@ -630,9 +613,10 @@ export default {
     justify-content: flex-start;
     width: 100%;
     min-width: 246px;
-    padding: 4px 0 4px 0;
+    padding: 12px 0 12px 0;
     overflow: hidden;
-    border-left: 4px solid #f5f7fa;
+    // border-left: 12px solid rgba(118, 122, 200, 0.1);
+    // border-right:12px solid rgba(118, 122, 200, 0.1);
     outline: none;
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -648,9 +632,9 @@ export default {
       max-width: 186px;
       padding-right: 37px;
       padding-left: 0;
-      color: #434548;
+      color: #4a4a4a;
       font-size: 14px;
-      line-height: 2.2;
+      line-height: 22px;
       white-space: nowrap;
       text-align: left;
       -webkit-transition: color 200ms ease-in;
@@ -670,8 +654,11 @@ export default {
   .nav-item.active,
   .nav-item:hover {
     padding-left: 0;
-    background-color: #e1edfa;
-    border-left: 4px solid #1989fa;
+    background-color: rgba(160, 160, 255, 0.15);
+
+    .nav-item-label {
+      color: #55f;
+    }
   }
 
   .category-wrapper:first-child {

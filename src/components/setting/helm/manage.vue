@@ -226,10 +226,7 @@ export default {
   computed: {},
   mounted () {
     bus.$emit(`set-topbar-title`, { title: 'HELM 仓库', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getHelmRepo()
   }
 }

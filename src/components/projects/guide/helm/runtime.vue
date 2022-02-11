@@ -278,10 +278,7 @@ export default {
         { title: this.projectName, url: '' }
       ]
     })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getProducts()
     this.getClusterAndRegistry()
   },

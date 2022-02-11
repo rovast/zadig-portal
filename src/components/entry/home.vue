@@ -1,25 +1,30 @@
 <template>
-  <div class="onborading-main-container">
-    <div class="main-view large-sidebar">
-      <div class="side-bar-container"
-           :style="{width: sideWide? '196px':'66px'}">
-        <sidebar class="side-bar-component"
-                 @sidebar-width="sideWide = $event"></sidebar>
-        <subSidebar class="cf-sub-side-bar"></subSidebar>
+  <div class="main-home-container">
+    <div class="main-view">
+      <div class="topbar-wrap">
+        <Topbar/>
       </div>
       <div class="content-wrap">
-        <announcement v-for="(ann,index) in announcements"
-                      :key="index"
-                      :title="ann.content.title"
-                      :content="ann.content.content"></announcement>
-        <announcement title="系统提示"
-                      isHtml
-                      v-if="isAdmin && SMTPDisabled"
-                      :content="htmlTemplate"></announcement>
-        <topbar></topbar>
-        <router-view class="content-detail"></router-view>
-        <FloatLink class="main-float"></FloatLink>
+        <div class="side-bar-container">
+          <Sidebar class="side-bar-component"
+                  @sidebar-width="sideWide = $event"/>
+        </div>
+        <div class="content-container">
+            <Announcement v-for="(ann,index) in announcements"
+                          :key="index"
+                          :title="ann.content.title"
+                          :content="ann.content.content"/>
+            <Announcement title="系统提示"
+                          isHtml
+                          v-if="isAdmin && SMTPDisabled"
+                          :content="htmlTemplate"/>
+            <!-- <FloatLink class="main-float"/> -->
+          <router-view></router-view>
+        </div>
       </div>
+      <!-- <div class="bottom-bar-wrap">
+        <BottomBar/>
+      </div> -->
     </div>
   </div>
 
@@ -27,11 +32,11 @@
 
 <script>
 import { getAnnouncementsAPI, getEmailHostAPI } from '@api'
-import sidebar from './home/sidebar.vue'
-import subSidebar from './home/sub_sidebar.vue'
-import topbar from './home/topbar.vue'
-import announcement from './home/announcement.vue'
-import FloatLink from './home/float_link.vue'
+import Sidebar from './home/sidebar.vue'
+import Topbar from './home/topbar.vue'
+import BottomBar from './home/bottomBar.vue'
+import Announcement from './home/announcement.vue'
+import FloatLink from './home/floatLink.vue'
 export default {
   data () {
     return {
@@ -77,10 +82,10 @@ export default {
     }
   },
   components: {
-    sidebar,
-    topbar,
-    subSidebar,
-    announcement,
+    Sidebar,
+    Topbar,
+    BottomBar,
+    Announcement,
     FloatLink
   },
   created () {
@@ -109,11 +114,7 @@ body {
   overflow-y: auto;
   background-color: #fff;
 
-  .el-card {
-    background: #fff;
-  }
-
-  .onborading-main-container {
+  .main-home-container {
     width: 100vw;
     min-width: 768px;
     height: 100vh;
@@ -127,76 +128,36 @@ body {
       }
 
       display: flex;
+      flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
       height: 100%;
       overflow: hidden;
 
-      .side-bar-container {
-        position: relative;
-        background-color: #f5f7fa;
-        transition: width 350ms;
+      .topbar-wrap {
+        z-index: 1000;
+        width: 100%;
+        height: 40px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+      }
 
-        .side-bar-component {
-          position: absolute;
-          z-index: 2;
-          display: flex;
-          -ms-flex-direction: column;
-          flex-direction: column;
-          align-items: center;
-          justify-content: stretch;
-          height: 100%;
-          -webkit-box-orient: vertical;
-          -webkit-box-direction: normal;
-        }
-
-        .cf-sub-side-bar {
-          position: absolute;
-          left: 66px;
-          z-index: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: stretch;
-          height: 100%;
-          -webkit-box-orient: vertical;
-        }
+      .bottom-bar-wrap {
+        width: 100%;
+        height: 32px;
+        color: blue;
       }
 
       .content-wrap {
-        position: relative;
         display: flex;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        flex-grow: 1;
-        flex-shrink: 1;
-        align-items: stretch;
-        justify-content: flex-start;
-        height: 100%;
-        overflow: auto;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
+        height: calc(~'100% - 40px');
 
-        .main-float {
-          position: fixed;
-          right: 20px;
-          bottom: 20px;
-          z-index: 1;
+        .sidebar-container {
+          height: 100%;
         }
 
-        .content-detail {
-          flex: 1;
-        }
-      }
-    }
-  }
-
-  .el-message-box__wrapper {
-    .el-message-box {
-      .el-message-box__header {
-        .el-message-box__title {
-          padding-right: 26px;
-          line-height: 1.4;
+        .content-container {
+          width: 100%;
+          height: 100%;
         }
       }
     }

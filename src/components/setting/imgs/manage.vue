@@ -224,10 +224,7 @@ export default {
   },
   created () {
     bus.$emit(`set-topbar-title`, { title: '构建镜像管理', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getImgList()
   },
   components: {

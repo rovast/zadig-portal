@@ -6,7 +6,7 @@
     element-loading-spinner="iconfont iconfont-loading iconxiangmu"
   >
     <div class="project-header">
-      <template v-if="isProjectAdmin">
+      <!-- <template v-if="isProjectAdmin">
         <el-dropdown placement="bottom" trigger="click">
           <button type="button" class="display-btn">
             <i class="el-icon-s-operation el-icon--left"></i>
@@ -19,7 +19,7 @@
             <el-dropdown-item icon="el-icon-lock" @click.native="$router.push(`/v1/projects/detail/${projectName}/rbac`)">权限</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-      </template>
+      </template>-->
     </div>
     <section class="projects-detail">
       <div v-hasPermi="{projectName: projectName, action: 'get_environment'}" class="env">
@@ -263,7 +263,7 @@ export default {
         }
         bus.$emit('set-sub-sidebar-title', {
           title: this.projectName,
-          url: `/v1/projects/detail/${this.projectName}`,
+          url: `/v1/projects/detail/${this.projectName}/detail`,
           routerList: [
             {
               name: '工作流',
@@ -305,21 +305,32 @@ export default {
       }
     }
   },
+  watch: {
+    projectName () {
+      this.getProject(this.projectName)
+      this.getWorkflows(this.projectName)
+      this.getEnvList()
+      bus.$emit(`show-sidebar`, false)
+      bus.$emit('set-topbar-title', {
+        title: '',
+        breadcrumb: [
+          { title: '项目', url: '/v1/projects' },
+          { title: this.projectName, url: '' }
+        ]
+      })
+    }
+  },
   mounted () {
     this.getProject(this.projectName)
     this.getWorkflows(this.projectName)
     this.getEnvList()
-    bus.$emit('show-sidebar', true)
+    bus.$emit(`show-sidebar`, false)
     bus.$emit('set-topbar-title', {
       title: '',
       breadcrumb: [
         { title: '项目', url: '/v1/projects' },
         { title: this.projectName, url: '' }
       ]
-    })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
     })
   }
 }
@@ -330,8 +341,9 @@ export default {
 
 .projects-detail-container {
   position: relative;
+  height: 100%;
   overflow: auto;
-  background-color: #f5f7f7;
+  background-color: #f6f6f6;
 
   .project-header {
     display: flex;

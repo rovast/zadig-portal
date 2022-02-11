@@ -209,12 +209,8 @@ export default {
     this.getServices()
     this.getSharedServices()
     this.checkProjectFeature()
-    bus.$emit('show-sidebar', true)
+
     bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
   },
   beforeDestroy () {
     bus.$off('refresh-service')

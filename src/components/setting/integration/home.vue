@@ -70,10 +70,7 @@ export default {
   computed: {},
   mounted () {
     bus.$emit('set-topbar-title', { title: '集成管理', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
+
     this.showCurrentTab()
   }
 }

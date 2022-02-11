@@ -437,10 +437,7 @@ export default {
   },
   created () {
     bus.$emit('set-topbar-title', { title: '对象存储', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
+
     this.getStorage()
   }
 }

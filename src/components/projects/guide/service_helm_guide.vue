@@ -27,7 +27,6 @@
 </div>
 </template>
 <script>
-import bus from '@utils/eventBus'
 import { mapState } from 'vuex'
 import step from './common/step.vue'
 import Code from '../service_mgr/helm/code'
@@ -67,10 +66,6 @@ export default {
   },
   mounted () {
     this.querytHelmChartService()
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
   },
   onboardingStatus: 2
 }

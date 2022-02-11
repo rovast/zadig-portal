@@ -458,7 +458,7 @@ export default {
         title: '',
         breadcrumb: [
           { title: '项目', url: '/v1/projects' },
-          { title: this.projectName, url: `/v1/projects/detail/${this.projectName}` },
+          { title: this.projectName, url: `/v1/projects/detail/${this.projectName}/detail` },
           { title: '集成环境', url: `/v1/projects/detail/${this.projectName}/envs/detail?envName=${this.envName}` },
           { title: this.envName, url: `/v1/projects/detail/${this.projectName}/envs/detail?envName=${this.envName}` },
           { title: this.serviceName, url: `/v1/projects/detail/${this.projectName}/envs/detail/${this.serviceName}${window.location.search}` },

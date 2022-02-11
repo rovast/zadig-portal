@@ -372,10 +372,7 @@ export default {
   },
   created () {
     bus.$emit(`set-topbar-title`, { title: '镜像仓库', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getRegistry()
   }
 }

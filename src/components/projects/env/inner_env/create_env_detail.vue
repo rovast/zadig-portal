@@ -880,10 +880,10 @@ export default {
     bus.$emit('set-topbar-title', {
       title: '',
       breadcrumb: [
-        { title: '项目', url: `/v1/projects/detail/${this.projectName}` },
+        { title: '项目', url: `/v1/projects/detail/${this.projectName}/detail` },
         {
           title: `${this.projectName}`,
-          url: `/v1/projects/detail/${this.projectName}`
+          url: `/v1/projects/detail/${this.projectName}/detail`
         },
         { title: '集成环境', url: '' },
         { title: '创建', url: '' }

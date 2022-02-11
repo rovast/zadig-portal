@@ -195,14 +195,14 @@ export default {
             { title: '项目', url: '/v1/projects' },
             {
               title: this.projectName,
-              url: `/v1/projects/detail/${this.projectName}`
+              url: `/v1/projects/detail/${this.projectName}/detail`
             },
             { title: '工作流', url: '' }
           ]
         })
         bus.$emit('set-sub-sidebar-title', {
           title: this.projectName,
-          url: `/v1/projects/detail/${this.projectName}`,
+          url: `/v1/projects/detail/${this.projectName}/detail`,
           routerList: [
             {
               name: '工作流',
@@ -227,12 +227,7 @@ export default {
           ]
         })
       } else {
-        bus.$emit('show-sidebar', true)
         bus.$emit('set-topbar-title', { title: '工作流', breadcrumb: [] })
-        bus.$emit('set-sub-sidebar-title', {
-          title: '',
-          routerList: []
-        })
       }
     },
     $route (val) {
@@ -411,14 +406,14 @@ export default {
           { title: '项目', url: '/v1/projects' },
           {
             title: this.projectName,
-            url: `/v1/projects/detail/${this.projectName}`
+            url: `/v1/projects/detail/${this.projectName}/detail`
           },
           { title: '工作流', url: '' }
         ]
       })
       bus.$emit('set-sub-sidebar-title', {
         title: this.projectName,
-        url: `/v1/projects/detail/${this.projectName}`,
+        url: `/v1/projects/detail/${this.projectName}/detail`,
         routerList: [
           {
             name: '工作流',
@@ -441,12 +436,7 @@ export default {
       })
     } else {
       this.getWorkflows()
-      bus.$emit(`show-sidebar`, true)
       bus.$emit(`set-topbar-title`, { title: '工作流', breadcrumb: [] })
-      bus.$emit(`set-sub-sidebar-title`, {
-        title: '',
-        routerList: []
-      })
     }
   },
   components: {

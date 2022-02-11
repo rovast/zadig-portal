@@ -544,7 +544,7 @@ export default {
         { title: '项目', url: '/v1/projects' },
         {
           title: this.projectName,
-          url: `/v1/projects/detail/${this.projectName}`
+          url: `/v1/projects/detail/${this.projectName}/detail`
         },
         {
           title: '工作流',
@@ -559,7 +559,7 @@ export default {
     })
     bus.$emit(`set-sub-sidebar-title`, {
       title: this.projectName,
-      url: `/v1/projects/detail/${this.projectName}`,
+      url: `/v1/projects/detail/${this.projectName}/detail`,
       routerList: [
         {
           name: '工作流',

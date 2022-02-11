@@ -226,10 +226,7 @@ export default {
   },
   created () {
     bus.$emit(`set-topbar-title`, { title: '操作日志', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getAuditLog('init', this.logPageSize, this.currentPageList)
   }
 }

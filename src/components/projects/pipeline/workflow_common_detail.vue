@@ -199,26 +199,6 @@ export default {
         { title: workflowName, url: '' }
       ]
     })
-    bus.$emit('set-sub-sidebar-title', {
-      title: projectName,
-      url: `/v1/projects/detail/${projectName}`,
-      routerList: [
-        {
-          name: '工作流',
-          url: `/v1/projects/detail/${projectName}/pipelines`
-        },
-        {
-          name: '集成环境',
-          url: `/v1/projects/detail/${projectName}/envs`
-        },
-        {
-          name: '服务',
-          url: `/v1/projects/detail/${projectName}/services`
-        },
-        { name: '构建', url: `/v1/projects/detail/${projectName}/builds` },
-        { name: '测试', url: `/v1/projects/detail/${projectName}/test` }
-      ]
-    })
   },
   components: {
     RunCommonWorkflow,

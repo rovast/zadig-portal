@@ -2,32 +2,24 @@
   <div class="main-home-container">
     <div class="main-view">
       <div class="topbar-wrap">
-        <Topbar/>
+        <Topbar />
       </div>
       <div class="content-wrap">
         <div class="side-bar-container">
-          <Sidebar class="side-bar-component"
-                  @sidebar-width="sideWide = $event"/>
+          <Sidebar class="side-bar-component" @sidebar-width="sideWide = $event" />
         </div>
         <div class="content-container">
-            <Announcement v-for="(ann,index) in announcements"
-                          :key="index"
-                          :title="ann.content.title"
-                          :content="ann.content.content"/>
-            <Announcement title="系统提示"
-                          isHtml
-                          v-if="isAdmin && SMTPDisabled"
-                          :content="htmlTemplate"/>
-            <!-- <FloatLink class="main-float"/> -->
-          <router-view></router-view>
+          <Announcement v-for="(ann,index) in announcements" :key="index" :title="ann.content.title" :content="ann.content.content" />
+          <Announcement title="系统提示" isHtml v-if="isAdmin && SMTPDisabled" :content="htmlTemplate" />
+          <!-- <FloatLink class="main-float"/> -->
+          <router-view class="content-detail"></router-view>
         </div>
       </div>
       <!-- <div class="bottom-bar-wrap">
         <BottomBar/>
-      </div> -->
+      </div>-->
     </div>
   </div>
-
 </template>
 
 <script>
@@ -43,12 +35,13 @@ export default {
       announcements: [],
       sideWide: true,
       SMTPDisabled: false,
-      htmlTemplate: '管理员请及时配置 <a href="/v1/system/integration?currentTab=mail">SMTP 邮箱服务器</a> 以便于用户密码丢失找回'
+      htmlTemplate:
+        '管理员请及时配置 <a href="/v1/system/integration?currentTab=mail">SMTP 邮箱服务器</a> 以便于用户密码丢失找回'
     }
   },
   methods: {
     getAnnouncements () {
-      getAnnouncementsAPI().then((res) => {
+      getAnnouncementsAPI().then(res => {
         this.announcements = res
       })
     },
@@ -74,7 +67,7 @@ export default {
     isAdmin: {
       handler (val, oldVal) {
         if (val) {
-        // 检查 SMTP 配置
+          // 检查 SMTP 配置
           this.checkSMTP()
         }
       },
@@ -97,6 +90,9 @@ export default {
 </script>
 
 <style lang="less">
+@contentTopBackground: #fcfcff;
+@contentTopHeight: 60px;
+
 a {
   color: @themeColor;
   text-decoration: none;
@@ -158,6 +154,41 @@ body {
         .content-container {
           width: 100%;
           height: 100%;
+
+          .content-detail {
+            position: relative;
+            overflow: hidden;
+
+            .content-top {
+              position: absolute;
+              top: 0;
+              right: 0;
+              left: 0;
+              z-index: 1;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              height: @contentTopHeight;
+              padding: 0 20px;
+              background-color: @contentTopBackground;
+
+              .top-left {
+                flex: 1 0 auto;
+              }
+
+              .top-right {
+                flex: 0 0 auto;
+              }
+
+              & + * {
+                box-sizing: border-box;
+                max-height: calc(~'100% - 80px');
+                margin-top: @contentTopHeight;
+                padding-top: 16px;
+                overflow: auto;
+              }
+            }
+          }
         }
       }
     }

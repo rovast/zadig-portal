@@ -1,11 +1,13 @@
 <template>
   <div class="project-home-container">
-    <div class="project-header">
-      <div class="header-start">
-        <i class="el-icon-s-grid display-btn" @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'}"></i>
-        <i class="el-icon-s-fold display-btn" @click="currentTab = 'list'" :class="{'active':currentTab==='list'}"></i>
+    <div class="content-top project-header">
+      <div class="top-left">
+        <span class="header-start">
+          <i class="el-icon-s-grid display-btn" @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'}"></i>
+          <i class="el-icon-s-fold display-btn" @click="currentTab = 'list'" :class="{'active':currentTab==='list'}"></i>
+        </span>
       </div>
-      <div class="header-end">
+      <div class="top-right header-end">
         <el-button type="primary" v-if="$utils.roleCheck('admin')" @click="$router.push(`/v1/projects/create`)" plain>
           <i class="el-icon-plus"></i>新建项目
         </el-button>
@@ -272,13 +274,8 @@ export default {
   }
 
   .project-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 15px 20px;
-
     .header-start {
-      flex: 0 0 auto;
+      display: inline-block;
       padding: 5px 10px;
       font-size: 20px;
       background-color: #fff;

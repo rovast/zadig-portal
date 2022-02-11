@@ -157,6 +157,7 @@ body {
 
           .content-detail {
             position: relative;
+            height: 100%;
             overflow: hidden;
 
             .content-top {

@@ -21,12 +21,12 @@
            :key="repo_index">
         <el-row class="repo-select">
           <el-col :span="showAdvanced || showTrigger ?4:5">
-            <el-form-item :label="repo_index === 0 ? (shortDescription?'平台':'托管平台') : ''"
+            <el-form-item :label="repo_index === 0 ? (shortDescription?'平台':'代码源') : ''"
                           :prop="'repos.' + repo_index + '.codehost_id'"
                           :rules="{required: true, message: '平台不能为空', trigger: 'blur'}">
               <el-select v-model="config.repos[repo_index].codehost_id"
                          size="small"
-                         placeholder="请选择托管平台"
+                         placeholder="请选择代码源"
                          @change="getRepoOwnerById(repo_index,config.repos[repo_index].codehost_id)"
                          filterable>
                 <el-option v-for="(host,index) in allCodeHosts"
@@ -188,30 +188,6 @@
               <el-switch v-model="repo.submodules"></el-switch>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item label="默认配置">
-              <el-switch v-model="repo.use_default"></el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col v-if="!hidePrimary"
-                  :span="4">
-            <el-form-item>
-              <slot name="label">
-                <label class="el-form-item__label">主库
-                  <el-tooltip class="item"
-                              effect="dark"
-                              content="设置为主库后，构建出的镜像 Tag 以及 Tar 包的名称与该库的分支或 PR 信息有关"
-                              placement="top">
-                    <i class="el-icon-question"></i>
-                  </el-tooltip>
-                </label>
-              </slot>
-              <div class="el-form-item__content">
-                <el-switch @change="changeToPrimaryRepo(repo_index,repo.is_primary)"
-                           v-model="repo.is_primary"></el-switch>
-              </div>
-            </el-form-item>
-          </el-col>
         </el-row>
       </div>
     </el-form>
@@ -261,11 +237,6 @@ export default {
       default: false
     },
     shortDescription: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    hidePrimary: {
       required: false,
       type: Boolean,
       default: false
@@ -504,14 +475,6 @@ export default {
         const items = this.$utils.filterObjectArrayByKey('name', query, this.codeInfo[index].origin_branches)
         this.$set(this.codeInfo[index], 'branches', items)
       }
-    },
-    changeToPrimaryRepo (index, val) {
-      this.config.repos.forEach((item, item_index) => {
-        item.is_primary = false
-        if (index === item_index && val) {
-          item.is_primary = true
-        }
-      })
     }
   },
   mounted () {

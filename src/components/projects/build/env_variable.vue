@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form ref="buildEnv" :inline="true" :model="preEnvs" class="form-bottom-0" label-position="top" label-width="80px">
-      <span class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">环境变量</span>
+      <span class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义环境变量</span>
       <el-button v-if="preEnvs.envs.length===0" style="padding: 0;" @click="addFirstBuildEnv()" type="text">新增</el-button>
       <div class="divider item" :style="{ display: isTest ? 'none' : 'block'}"></div>
       <el-row v-for="(app,build_env_index) in preEnvs.envs" :key="build_env_index" :gutter="2">
@@ -82,6 +82,31 @@
         <el-button type="primary" @click="saveVariable" size="small">确 定</el-button>
       </div>
     </el-dialog>
+    <section>
+      <div @click="showBuildInEnvVar = !showBuildInEnvVar">
+        内置环境变量
+        <i :class="[showBuildInEnvVar ? 'el-icon-arrow-down' : 'el-icon-arrow-right']"></i>
+      </div>
+      <div v-show="showBuildInEnvVar">
+        当前可用环境变量如下，可在构建脚本中进行引用
+        <br />$WORKSPACE&nbsp;&nbsp;工作目录
+        <br />$TASK_ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工作流任务 ID
+        <br />$IMAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;输出镜像名称
+        <br />$SERVICE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建的服务名称
+        <br />$DIST_DIR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建出的 Tar 包的目的目录
+        <br />$PKG_FILE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建出的 Tar 包名称
+        <br />$ENV_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;执行的环境名称
+        <br />$BUILD_URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建任务的 URL
+        <br />$CI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        值恒等于 true，表示当前环境是 CI/CD 环境
+        <br />$ZADIG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值恒等于
+        true，表示在 Zadig 系统上执行脚本
+        <br />&lt;REPO&gt;_PR 构建过程中指定代码仓库使用的 Pull Request 信息
+        <br />&lt;REPO&gt;_BRANCH 构建过程中指定代码仓库使用的分支信息
+        <br />&lt;REPO&gt;_TAG 构建过程中指定代码仓库使用 Tag 信息
+        <br />&lt;REPO&gt;_COMMIT_ID 构建过程中指定代码的 commit 信息
+      </div>
+    </section>
   </div>
 </template>
 
@@ -107,7 +132,8 @@ export default {
   data () {
     return {
       dialogVisible: false,
-      currentVars: {}
+      currentVars: {},
+      showBuildInEnvVar: false
     }
   },
   computed: {

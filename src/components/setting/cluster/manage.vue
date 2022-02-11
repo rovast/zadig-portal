@@ -702,10 +702,6 @@ export default {
   created () {
     this.getCluster()
     bus.$emit(`set-topbar-title`, { title: '集群管理', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
   }
 }
 </script>

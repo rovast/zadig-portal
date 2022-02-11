@@ -160,7 +160,7 @@ export default {
 
     .el-tree-node__content {
       .icon {
-        color: #1989fa;
+        color: @themeColor;
       }
 
       .display-none {

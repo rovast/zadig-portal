@@ -121,7 +121,7 @@ export default {
         -webkit-box-flex: 1;
 
         .env-name {
-          color: #1989fa;
+          color: @themeColor;
         }
       }
 </style>

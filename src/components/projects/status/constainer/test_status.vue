@@ -210,7 +210,7 @@ export default {
             }
 
             .workflow-name {
-              color: #1989fa;
+              color: @themeColor;
               font-size: 16px;
               line-height: 16px;
             }
@@ -257,7 +257,7 @@ export default {
           }
 
           &.view-detail {
-            color: #1989fa;
+            color: @themeColor;
           }
         }
       }

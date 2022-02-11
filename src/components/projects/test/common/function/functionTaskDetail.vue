@@ -312,7 +312,7 @@ export default {
   }
 
   .issue-url {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 }
@@ -333,7 +333,7 @@ export default {
     }
 
     .link a {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
 
@@ -363,7 +363,7 @@ export default {
   .version-link,
   .show-test-result,
   .download-artifact-link {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 

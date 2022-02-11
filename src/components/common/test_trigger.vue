@@ -443,7 +443,7 @@ export default {
     }
 
     .help-link {
-      color: #1989fa;
+      color: @themeColor;
     }
 
     .trigger-container {

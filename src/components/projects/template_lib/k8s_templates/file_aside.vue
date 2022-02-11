@@ -218,7 +218,7 @@ export default {
           }
 
           .edit {
-            color: #1989fa;
+            color: @themeColor;
           }
         }
       }

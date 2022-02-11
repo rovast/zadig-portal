@@ -27,7 +27,7 @@
               <template slot-scope="scope">
                 <div v-for="(ingress,ingress_index) in scope.row.ingress_infos" :key="ingress_index">
                   <div v-for="(item,host_index) in scope.row.ingress_infos[ingress_index]['host_info']" :key="host_index">
-                    <a style="color: #1989fa;" :href="`http://${item.host}`" target="_blank">{{item.host}}</a>
+                    <el-link :href="`http://${item.host}`" target="_blank">{{item.host}}</el-link>
                   </div>
                 </div>
               </template>
@@ -187,10 +187,7 @@ export default {
         { title: this.projectName, url: '' }
       ]
     })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getWorkflows()
     this.generatePipe()
   },

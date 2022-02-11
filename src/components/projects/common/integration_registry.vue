@@ -4,7 +4,7 @@
       <div>
         镜像仓库集成可以参考该
         <el-link type="warning"
-                 style="color: #1989fa; font-weight: 500; vertical-align: baseline;"
+                 class="integration-reference"
                  :href="`https://docs.koderover.com/zadig/settings/image-registry/`"
                  :underline="false"
                  target="_blank">文档</el-link>
@@ -231,6 +231,12 @@ export default {
 .integration-registry {
   padding: 10px 15px;
   font-size: 13px;
+
+  .integration-reference {
+    color: @themeColor;
+    font-weight: 500;
+    vertical-align: baseline;
+  }
 
   .content {
     padding: 30px 20px;

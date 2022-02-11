@@ -278,10 +278,7 @@ export default {
         { title: this.projectName, url: '' }
       ]
     })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getProducts()
     this.getClusterAndRegistry()
   },
@@ -433,8 +430,8 @@ export default {
         font-weight: bold;
         font-size: 13px;
         text-decoration: none;
-        background-color: #1989fa;
-        border: 1px solid #1989fa;
+        background-color: @themeColor;
+        border: 1px solid @themeColor;
         cursor: pointer;
         transition: background-color 300ms, color 300ms, border 300ms;
       }

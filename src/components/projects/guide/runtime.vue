@@ -218,12 +218,7 @@ export default {
         this.generateEnv(this.projectName, this.envType)
       }, 1000)
     };
-    bus.$emit('show-sidebar', true)
     bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
   },
   beforeDestroy () {
     clearInterval(this.envTimer)
@@ -277,8 +272,8 @@ export default {
         font-weight: bold;
         font-size: 13px;
         text-decoration: none;
-        background-color: #1989fa;
-        border: 1px solid #1989fa;
+        background-color: @themeColor;
+        border: 1px solid @themeColor;
         cursor: pointer;
         transition: background-color 300ms, color 300ms, border 300ms;
       }
@@ -322,7 +317,7 @@ export default {
         }
 
         .view-env-btn {
-          color: #1989fa;
+          color: @themeColor;
           cursor: pointer;
         }
       }

@@ -453,10 +453,7 @@ export default {
   },
   created () {
     bus.$emit('set-topbar-title', { title: '应用设置', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
+
     this.getProxyConfig()
     this.getApps()
   },

@@ -91,7 +91,7 @@ export default {
   font-size: 12px;
 
   .task-link {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .task-link,

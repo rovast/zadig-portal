@@ -293,12 +293,8 @@ export default {
     }
   },
   created () {
-    bus.$emit('show-sidebar', true)
     bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '交付物追踪', url: '/v1/delivery/artifacts' }, { title: this.serviceName, url: '' }] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
+
     this.getArtifactsDetail(this.id)
   },
   components: {
@@ -328,7 +324,7 @@ export default {
 
   .artifact-link,
   .link {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .image-layers {
@@ -388,7 +384,7 @@ export default {
                 font-size: 15px;
 
                 .link {
-                  color: #1989fa;
+                  color: @themeColor;
                 }
               }
             }

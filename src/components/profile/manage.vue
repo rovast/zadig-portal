@@ -308,10 +308,7 @@ export default {
   },
   created () {
     bus.$emit('set-topbar-title', { title: '账号设置', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
+
     this.getJwtToken()
     this.getSubscribe()
     this.getCurrentUserInfo()
@@ -408,7 +405,7 @@ export default {
               cursor: pointer;
 
               &:hover {
-                color: #1989fa;
+                color: @themeColor;
               }
             }
           }

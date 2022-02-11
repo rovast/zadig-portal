@@ -48,10 +48,6 @@ export default {
   },
   mounted () {
     bus.$emit('set-topbar-title', { title: '系统配置', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
   }
 }
 </script>

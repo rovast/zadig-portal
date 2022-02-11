@@ -7,7 +7,10 @@
             <div class="container">
               <div class="function-container">
                 <div class="btn-container">
-                  <el-dropdown @command="sortWorkflow">
+                  <button type="button" :class="{'active':showFavorite}" @click="showFavorite=!showFavorite" class="display-btn">
+                    <i class="el-icon-star-on favorite"></i>
+                  </button>
+                  <el-dropdown @command="sortWorkflow" placement="bottom">
                     <button type="button" class="display-btn">
                       <i class="el-icon-sort sort"></i>
                     </button>
@@ -18,11 +21,8 @@
                       <el-dropdown-item command="time-desc">按创建时间降序</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
-                  <button type="button" :class="{'active':showFavorite}" @click="showFavorite=!showFavorite" class="display-btn">
-                    <i class="el-icon-star-off favorite"></i>
-                  </button>
-                  <el-input v-model="keyword" placeholder="搜索工作流" class="search-workflow" prefix-icon="el-icon-search" clearable></el-input>
                 </div>
+                <el-input v-model="keyword" placeholder="搜索工作流" class="search-workflow" prefix-icon="el-icon-search" clearable></el-input>
               </div>
             </div>
           </div>
@@ -45,7 +45,7 @@
             :data-key="'name'"
             :data-sources="availableWorkflows"
             :keeps="20"
-            :estimate-size="72"
+            :estimate-size="82"
             :data-component="itemComponent"
           ></VirtualList>
           <div v-if="availableWorkflows.length === 0" class="no-product">
@@ -195,14 +195,14 @@ export default {
             { title: '项目', url: '/v1/projects' },
             {
               title: this.projectName,
-              url: `/v1/projects/detail/${this.projectName}`
+              url: `/v1/projects/detail/${this.projectName}/detail`
             },
             { title: '工作流', url: '' }
           ]
         })
         bus.$emit('set-sub-sidebar-title', {
           title: this.projectName,
-          url: `/v1/projects/detail/${this.projectName}`,
+          url: `/v1/projects/detail/${this.projectName}/detail`,
           routerList: [
             {
               name: '工作流',
@@ -227,12 +227,7 @@ export default {
           ]
         })
       } else {
-        bus.$emit('show-sidebar', true)
         bus.$emit('set-topbar-title', { title: '工作流', breadcrumb: [] })
-        bus.$emit('set-sub-sidebar-title', {
-          title: '',
-          routerList: []
-        })
       }
     },
     $route (val) {
@@ -411,14 +406,14 @@ export default {
           { title: '项目', url: '/v1/projects' },
           {
             title: this.projectName,
-            url: `/v1/projects/detail/${this.projectName}`
+            url: `/v1/projects/detail/${this.projectName}/detail`
           },
           { title: '工作流', url: '' }
         ]
       })
       bus.$emit('set-sub-sidebar-title', {
         title: this.projectName,
-        url: `/v1/projects/detail/${this.projectName}`,
+        url: `/v1/projects/detail/${this.projectName}/detail`,
         routerList: [
           {
             name: '工作流',
@@ -441,12 +436,7 @@ export default {
       })
     } else {
       this.getWorkflows()
-      bus.$emit(`show-sidebar`, true)
       bus.$emit(`set-topbar-title`, { title: '工作流', breadcrumb: [] })
-      bus.$emit(`set-sub-sidebar-title`, {
-        title: '',
-        routerList: []
-      })
     }
   },
   components: {
@@ -462,7 +452,6 @@ export default {
 .workflow-list {
   position: relative;
   flex: 1;
-  padding-left: 1.07143rem;
   overflow-y: hidden;
   background-color: #f5f7f7;
 
@@ -515,21 +504,21 @@ export default {
     display: flex;
     align-items: stretch;
     justify-content: flex-start;
-    background-color: #f5f7f7;
 
     .header-start {
       flex: 1;
 
       .container {
         margin: 0;
-        padding: 10px 20px;
+        padding: 16px 12px;
         font-size: 13px;
 
         .function-container {
           display: flex;
-          flex-wrap: wrap;
-          justify-content: flex-end;
-          min-height: 50px;
+          flex-wrap: nowrap;
+          align-items: center;
+          justify-content: space-between;
+          min-height: 30px;
 
           .btn-container {
             position: relative;
@@ -537,14 +526,10 @@ export default {
             align-items: center;
             margin-right: 5px;
 
-            .search-workflow {
-              width: auto;
-            }
-
             .display-btn {
               margin-right: 5px;
-              padding: 10px 10px;
-              color: #1989fa;
+              padding: 8px;
+              color: @themeColor;
               font-size: 13px;
               text-decoration: none;
               background-color: #fff;
@@ -560,17 +545,21 @@ export default {
               }
 
               &:hover {
-                color: #1989fa;
+                color: @themeLightColor;
                 background-color: #fff;
-                border-color: #1989fa;
+                border-color: @themeLightColor;
               }
 
               &.active {
                 color: #fff;
-                background-color: #1989fa;
-                border-color: #1989fa;
+                background-color: @themeLightColor;
+                border-color: @themeLightColor;
               }
             }
+          }
+
+          .search-workflow {
+            width: auto;
           }
         }
       }
@@ -584,8 +573,8 @@ export default {
         color: #fff;
         font-size: 13px;
         text-decoration: none;
-        background-color: #1989fa;
-        border: 1px solid #1989fa;
+        background-color: @themeColor;
+        border: 1px solid @themeColor;
         cursor: pointer;
       }
     }
@@ -593,6 +582,7 @@ export default {
 
   .pipeline-loading {
     height: calc(~'100vh - 150px');
+    margin: 0 12px;
 
     .virtual-list-container {
       height: 100%;
@@ -617,28 +607,15 @@ export default {
         font-size: 15px;
       }
     }
-
-    .button-exec {
-      margin-right: 10px;
-      padding: 8px 12px 8px 10px;
-      font-size: 16px;
-    }
   }
 
   .workflow-ul {
     margin: 0;
     padding: 0;
     list-style: none;
-    background: #fff;
 
     .start-build {
       color: #000;
-    }
-
-    .more-operation {
-      color: #000;
-      font-size: 20px;
-      cursor: pointer;
     }
 
     .step-arrow {

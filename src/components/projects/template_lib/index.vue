@@ -9,26 +9,6 @@ import bus from '@utils/eventBus'
 export default {
   created () {
     bus.$emit('set-topbar-title', { title: '模板库', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '模板库',
-      routerList: [
-        {
-          name: 'K8s YAML',
-          url: `/v1/projects/template/k8s-yamls`,
-          icon: 'iconfont iconk8s'
-        },
-        {
-          name: 'Chart',
-          url: `/v1/projects/template/charts`,
-          icon: 'iconfont iconhelmrepo'
-        },
-        {
-          name: 'Dockerfile',
-          url: `/v1/projects/template/dockerfiles`,
-          icon: 'iconfont icondocker'
-        }
-      ]
-    })
   }
 }
 </script>

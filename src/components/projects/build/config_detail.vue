@@ -818,13 +818,13 @@ export default {
   created () {
     this.loadPage()
     if (this.isCreate) {
-      bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: `/v1/projects/detail/${this.projectName}` }, { title: '构建', url: `/v1/projects/detail/${this.projectName}/builds` }, { title: '新建', url: '' }] })
+      bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: `/v1/projects/detail/${this.projectName}/detail` }, { title: '构建', url: `/v1/projects/detail/${this.projectName}/builds` }, { title: '新建', url: '' }] })
     } else {
-      bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: `/v1/projects/detail/${this.projectName}` }, { title: '构建', url: `/v1/projects/detail/${this.projectName}/builds` }, { title: this.buildConfigName, url: '' }] })
+      bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: `/v1/projects/detail/${this.projectName}/detail` }, { title: '构建', url: `/v1/projects/detail/${this.projectName}/builds` }, { title: this.buildConfigName, url: '' }] })
     }
     bus.$emit('set-sub-sidebar-title', {
       title: this.projectName,
-      url: `/v1/projects/detail/${this.projectName}`,
+      url: `/v1/projects/detail/${this.projectName}/detail`,
       routerList: [
         { name: '工作流', url: `/v1/projects/detail/${this.projectName}/pipelines` },
         { name: '集成环境', url: `/v1/projects/detail/${this.projectName}/envs` },
@@ -894,14 +894,14 @@ export default {
   border-radius: 4px;
 
   .btn-primary {
-    color: #1989fa;
+    color: @themeColor;
     background-color: rgba(25, 137, 250, 0.04);
     border-color: rgba(25, 137, 250, 0.4);
 
     &:hover {
       color: #fff;
-      background-color: #1989fa;
-      border-color: #1989fa;
+      background-color: @themeColor;
+      border-color: @themeColor;
     }
   }
 
@@ -951,7 +951,7 @@ export default {
 
       .el-breadcrumb__item__inner a:hover,
       .el-breadcrumb__item__inner:hover {
-        color: #1989fa;
+        color: @themeColor;
         cursor: pointer;
       }
     }

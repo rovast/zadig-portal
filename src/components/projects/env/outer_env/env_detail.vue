@@ -26,7 +26,7 @@ export default {
     setTopbarTitle () {
       bus.$emit('set-topbar-title', {
         title: '',
-        breadcrumb: [{ title: this.projectName, url: `/v1/projects/detail/${this.projectName}` },
+        breadcrumb: [{ title: this.projectName, url: `/v1/projects/detail/${this.projectName}/detail` },
           { title: '集成环境', url: '' },
           { title: this.envName, url: '' }]
       })

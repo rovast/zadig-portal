@@ -148,7 +148,7 @@ export default {
       title: '',
       breadcrumb: [
         { title: '项目', url: '/v1/projects' },
-        { title: this.projectName, url: `/v1/projects/detail/${this.projectName}` },
+        { title: this.projectName, url: `/v1/projects/detail/${this.projectName}/detail` },
         { title: '工作流', url: `/v1/projects/detail/${this.projectName}/pipelines` },
         { title: this.workflowName, url: `/v1/projects/detail/${this.projectName}/pipelines/multi/${this.workflowName}` },
         { title: `#${this.taskId}`, url: `/v1/projects/detail/${this.projectName}/pipelines/multi/${this.workflowName}/${this.taskId}` },
@@ -156,7 +156,7 @@ export default {
     })
     bus.$emit(`set-sub-sidebar-title`, {
       title: this.projectName,
-      url: `/v1/projects/detail/${this.projectName}`,
+      url: `/v1/projects/detail/${this.projectName}/detail`,
       routerList: [
         { name: '工作流', url: `/v1/projects/detail/${this.projectName}/pipelines` },
         { name: '集成环境', url: `/v1/projects/detail/${this.projectName}/envs` },
@@ -198,7 +198,7 @@ export default {
 
     .el-breadcrumb__item__inner a:hover,
     .el-breadcrumb__item__inner:hover {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
   }
@@ -267,7 +267,7 @@ export default {
   cursor: pointer;
 
   &:hover {
-    color: #1989fa;
+    color: @themeColor;
   }
 }
 </style>

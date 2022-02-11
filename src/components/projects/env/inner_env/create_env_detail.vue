@@ -880,10 +880,10 @@ export default {
     bus.$emit('set-topbar-title', {
       title: '',
       breadcrumb: [
-        { title: '项目', url: `/v1/projects/detail/${this.projectName}` },
+        { title: '项目', url: `/v1/projects/detail/${this.projectName}/detail` },
         {
           title: `${this.projectName}`,
-          url: `/v1/projects/detail/${this.projectName}`
+          url: `/v1/projects/detail/${this.projectName}/detail`
         },
         { title: '集成环境', url: '' },
         { title: '创建', url: '' }
@@ -947,14 +947,14 @@ export default {
   }
 
   .btn-primary {
-    color: #1989fa;
+    color: @themeColor;
     background-color: rgba(25, 137, 250, 0.04);
     border-color: rgba(25, 137, 250, 0.4);
 
     &:hover {
       color: #fff;
-      background-color: #1989fa;
-      border-color: #1989fa;
+      background-color: @themeColor;
+      border-color: @themeColor;
     }
   }
 
@@ -998,7 +998,7 @@ export default {
         font-size: 15px;
 
         &:hover {
-          color: #1989fa;
+          color: @themeColor;
           cursor: pointer;
         }
       }
@@ -1096,7 +1096,7 @@ export default {
           width: 8px;
           height: 8px;
           margin-right: 4px;
-          background-color: #1989fa;
+          background-color: @themeColor;
           border-radius: 100%;
           animation: sk-bouncedelay 1.4s infinite ease-in-out both;
         }
@@ -1278,7 +1278,7 @@ export default {
       i {
         padding-right: 4px;
         color: #5e6166;
-        color: #1989fa;
+        color: @themeColor;
         font-size: 14px;
         line-height: 14px;
         cursor: pointer;
@@ -1290,7 +1290,7 @@ export default {
 .editButton {
   display: inline-block;
   margin-left: 10px;
-  color: #1989fa;
+  color: @themeColor;
   cursor: pointer;
 }
 </style>

@@ -47,7 +47,7 @@
                     <router-link @click.native="markAsRead(notification, index)"
                                  :to="`/v1/projects/detail/${notification.content.product_name}/pipelines/${notification.content.type==='single'?notification.content.type:'multi'}/${notification.content.pipeline_name}/${notification.content.task_id}`">
                       <em>{{notification.content.pipeline_name}}
-                        <span style="color: #1989fa; font-size: 15px; cursor: pointer;">{{'#' +
+                        <span class="notification-id">{{'#' +
                           notification.content.task_id}}</span>
                       </em><br>
                     </router-link>
@@ -208,6 +208,12 @@ export default {
 
 .notification {
   display: inline-block;
+
+  .notification-id {
+    color: @themeColor;
+    font-size: 15px;
+    cursor: pointer;
+  }
 }
 
 .notify-container {
@@ -233,7 +239,7 @@ export default {
       cursor: pointer;
 
       &:hover {
-        color: #1989fa;
+        color: @themeColor;
       }
     }
   }
@@ -307,7 +313,7 @@ export default {
         }
 
         .color-running {
-          color: #1989fa;
+          color: @themeColor;
           font-weight: 500;
         }
 
@@ -343,7 +349,7 @@ export default {
             font-style: normal;
 
             .task_id {
-              color: #1989fa;
+              color: @themeColor;
             }
           }
         }
@@ -379,7 +385,7 @@ export default {
 
         .operation.read {
           &:hover {
-            color: #1989fa;
+            color: @themeColor;
           }
         }
 

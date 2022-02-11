@@ -70,7 +70,8 @@
                   <div>
                     私有镜像仓库未集成，
                     <el-button type="text"
-                               style="padding: 0; color: #1989fa;"
+                               class="theme-color"
+                               style="padding: 0;"
                                @click="registryCreateVisible = true">立即集成</el-button>
                   </div>
                 </el-alert>
@@ -565,7 +566,7 @@ export default {
           }
 
           .edit {
-            color: #1989fa;
+            color: @themeColor;
           }
         }
       }
@@ -799,5 +800,9 @@ export default {
       }
     }
   }
+}
+
+.theme-color {
+  color: @themeColor;
 }
 </style>

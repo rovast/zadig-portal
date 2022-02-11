@@ -223,7 +223,7 @@ export default {
       .el-icon-close {
         right: 50px;
         display: inline-block;
-        color: #1989fa;
+        color: @themeColor;
       }
     }
   }

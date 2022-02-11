@@ -90,7 +90,7 @@ export default {
 <style lang="less">
 .build-table {
   .task-link {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .task-link,

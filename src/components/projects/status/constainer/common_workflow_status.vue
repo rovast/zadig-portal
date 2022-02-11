@@ -229,7 +229,7 @@ export default {
           }
 
           &.running {
-            background-color: #1989fa;
+            background-color: @themeColor;
           }
 
           &.waiting {
@@ -257,7 +257,7 @@ export default {
           }
 
           &.view-detail {
-            color: #1989fa;
+            color: @themeColor;
           }
         }
       }
@@ -288,7 +288,7 @@ export default {
             }
 
             .workflow-name {
-              color: #1989fa;
+              color: @themeColor;
               font-size: 16px;
               line-height: 16px;
             }

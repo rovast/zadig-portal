@@ -385,7 +385,7 @@ export default {
   padding-bottom: 50px;
 
   .host {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .container-info {

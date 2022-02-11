@@ -11,7 +11,6 @@
 <script>
 import Member from './member.vue'
 import Role from './role.vue'
-import bus from '@utils/eventBus'
 
 export default {
   name: 'rbac',

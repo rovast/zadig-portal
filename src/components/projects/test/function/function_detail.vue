@@ -4,7 +4,6 @@
 
 <script>
 import FunctionDetail from '@/components/projects/test/common/function/function_detail.vue'
-import bus from '@utils/eventBus'
 export default {
   data () {
     return {

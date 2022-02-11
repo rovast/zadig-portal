@@ -10,7 +10,7 @@
         <span style="display: inline-block; margin-right: 10px;">
           最近成功
           <router-link v-if="recentSuccessID" :to="recentSuccessLink" class="passed">
-            <i class="icon el-icon-success"></i>
+            <!-- <i class="icon el-icon-success"></i> -->
             {{ recentSuccessID }}
           </router-link>
           <span v-else class="passed">*</span>
@@ -18,7 +18,7 @@
         <span>
           最近失败
           <router-link v-if="recentFailID" :to="recentFailLink" class="failed">
-            <i class="icon el-icon-warning"></i>
+            <!-- <i class="icon el-icon-warning"></i> -->
             {{ recentFailID }}
           </router-link>
           <span v-else class="failed">*</span>

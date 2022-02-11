@@ -298,6 +298,7 @@ export default {
     this.getProject(this.projectName)
     this.getWorkflows(this.projectName)
     this.getEnvList()
+    this.$emit('injectComp', this)
     bus.$emit(`show-sidebar`, false)
     bus.$emit('set-topbar-title', {
       title: '',
@@ -325,31 +326,6 @@ export default {
     justify-content: flex-end;
     min-height: 40px;
     padding: 10px 20px 0 20px;
-
-    .display-btn {
-      padding: 10px 15px;
-      color: @themeColor;
-      font-size: 14px;
-      background-color: #fff;
-      border: 1px solid @themeColor;
-      border-radius: 6px;
-      box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
-      cursor: pointer;
-    }
-
-    .header-end {
-      .add-project-btn {
-        width: 165px;
-        height: 100%;
-        padding: 10px 17px;
-        color: #fff;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: @themeColor;
-        border: 1px solid @themeColor;
-        cursor: pointer;
-      }
-    }
   }
 
   .projects-detail {

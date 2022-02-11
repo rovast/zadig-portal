@@ -26,12 +26,6 @@
               </div>
             </div>
           </div>
-          <div class="header-end">
-            <button type="button" class="add-project-btn" @click="showSelectWorkflowType = true">
-              <i class="el-icon-plus"></i>
-              新建工作流
-            </button>
-          </div>
         </div>
         <div
           v-loading="workflowListLoading"
@@ -365,6 +359,7 @@ export default {
     }
   },
   created () {
+    this.$emit('injectComp', this)
     // Detecting change from VirtualListItem component event.
     this.$on('refreshWorkflow', projectName => {
       this.getWorkflows(projectName)
@@ -505,7 +500,7 @@ export default {
           }
 
           .search-workflow {
-            width: auto;
+            width: 400px;
           }
         }
       }

@@ -522,7 +522,7 @@ export default {
       max-width: 160px;
       margin-top: 5px;
       overflow: hidden;
-      color: #54a2f3;
+      color: @themeColor;
       font-size: 12px;
       line-height: 16px;
       white-space: nowrap;

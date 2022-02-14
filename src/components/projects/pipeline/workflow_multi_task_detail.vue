@@ -978,6 +978,7 @@ export default {
 .workflow-task-detail {
   position: relative;
   flex: 1;
+  height: 100%;
   padding: 0 20px;
   overflow: auto;
 

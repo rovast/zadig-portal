@@ -1,14 +1,12 @@
 <template>
   <div class="project-home-container">
-    <div class="content-top project-header">
-      <div class="top-left">
-        <span class="header-start">
-          <i class="el-icon-s-grid display-btn" @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'}"></i>
-          <i class="el-icon-s-fold display-btn" @click="currentTab = 'list'" :class="{'active':currentTab==='list'}"></i>
-        </span>
+    <div class="project-header">
+      <div class="header-start">
+        <i class="el-icon-menu display-btn" @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'}"></i>
+        <i class="el-icon-s-fold display-btn" @click="currentTab = 'list'" :class="{'active':currentTab==='list'}"></i>
       </div>
-      <div class="top-right header-end">
-        <el-button type="primary" v-if="$utils.roleCheck('admin')" @click="$router.push(`/v1/projects/create`)" plain>
+      <div class="header-end">
+        <el-button v-if="$utils.roleCheck('admin')" @click="$router.push(`/v1/projects/create`)" plain>
           <i class="el-icon-plus"></i>新建项目
         </el-button>
       </div>
@@ -274,8 +272,16 @@ export default {
   }
 
   .project-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding-right: 80px;
+    padding-left: 26px;
+    background: #fff;
+
     .header-start {
-      display: inline-block;
+      flex: 0 0 auto;
       padding: 5px 10px;
       font-size: 20px;
       background-color: #fff;
@@ -300,13 +306,15 @@ export default {
 
     .header-end {
       .el-button {
-        padding: 10px 17px;
-        font-size: 13px;
-
-        i {
-          margin-right: 4px;
-          font-size: 14px;
-        }
+        padding: 10px 15px;
+        color: @themeColor;
+        font-weight: 300;
+        font-size: 14px;
+        background-color: #fff;
+        border: 1px solid @themeColor;
+        border-radius: 4px;
+        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
       }
     }
   }
@@ -341,6 +349,7 @@ export default {
 
   .projects-grid {
     height: 100%;
+    margin-top: 32px;
     padding: 0 20px;
 
     .project-card {

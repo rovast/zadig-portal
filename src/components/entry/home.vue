@@ -90,9 +90,6 @@ export default {
 </script>
 
 <style lang="less">
-@contentTopBackground: #fcfcff;
-@contentTopHeight: 60px;
-
 a {
   color: @themeColor;
   text-decoration: none;
@@ -154,42 +151,6 @@ body {
         .content-container {
           width: 100%;
           height: 100%;
-
-          .content-detail {
-            position: relative;
-            height: 100%;
-            overflow: hidden;
-
-            .content-top {
-              position: absolute;
-              top: 0;
-              right: 0;
-              left: 0;
-              z-index: 1;
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              height: @contentTopHeight;
-              padding: 0 20px;
-              background-color: @contentTopBackground;
-
-              .top-left {
-                flex: 1 0 auto;
-              }
-
-              .top-right {
-                flex: 0 0 auto;
-              }
-
-              & + * {
-                box-sizing: border-box;
-                max-height: calc(~'100% - 80px');
-                margin-top: @contentTopHeight;
-                padding-top: 16px;
-                overflow: auto;
-              }
-            }
-          }
         }
       }
     }

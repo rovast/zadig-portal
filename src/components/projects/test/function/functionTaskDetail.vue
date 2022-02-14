@@ -1,5 +1,5 @@
 <template>
-  <function-task-detail :basePath="`projects`"></function-task-detail>
+  <FunctionTaskDetail :basePath="`projects`"/>
 </template>
 
 <script>

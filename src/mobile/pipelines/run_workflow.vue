@@ -134,7 +134,7 @@
 </template>
 
 <script>
-import workflowBuildRows from './workflow_build_rows.vue'
+import workflowBuildRows from './workflowBuildRows.vue'
 import { listProductAPI, precreateWorkflowTaskAPI, getAllBranchInfoAPI, runWorkflowAPI } from '@api'
 import { Divider, Button, Notify } from 'vant'
 export default {

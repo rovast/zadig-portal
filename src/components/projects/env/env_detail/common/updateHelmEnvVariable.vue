@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import ImportValues from '@/components/projects/common/import_values/index.vue'
+import ImportValues from '@/components/projects/common/importValues/index.vue'
 import { getEnvDefaultVariableAPI } from '@api'
 
 export default {

@@ -1,17 +1,13 @@
 <template>
   <div class="status-detail-wrapper">
-    <section v-if="runningCount === 0 && pendingCount === 0"
-             class="no-running">
-      <img src="@assets/icons/illustration/run_status.svg"
-           alt="">
+    <section v-if="runningCount === 0 && pendingCount === 0" class="no-running">
+      <img src="@assets/icons/illustration/run_status.svg" alt />
       <p>暂无正在运行的任务</p>
     </section>
-    <section v-else
-             class="running-time">
-      <ProductWorkflowStatus :productWorkflowTasks="productWorkflowTasks"
-                     :expandId="productExpandId"></ProductWorkflowStatus>
-      <CommonWorkflowStatus :commonWorkflowTasks="commonWorkflowTasks"></CommonWorkflowStatus>
-      <TestStatus :testTasks="testTasks"></TestStatus>
+    <section v-else class="running-time">
+      <ProductWorkflowStatus :productWorkflowTasks="productWorkflowTasks" :expandId="productExpandId" />
+      <CommonWorkflowStatus :commonWorkflowTasks="commonWorkflowTasks" />
+      <TestStatus :testTasks="testTasks" />
     </section>
   </div>
 </template>
@@ -19,9 +15,9 @@
 <script>
 import { taskRunningSSEAPI, taskPendingSSEAPI } from '@api'
 import bus from '@utils/eventBus'
-import ProductWorkflowStatus from './constainer/product_workflow_status'
-import CommonWorkflowStatus from './constainer/common_workflow_status'
-import TestStatus from './constainer/test_status'
+import ProductWorkflowStatus from './constainer/productWorkflowStatus'
+import CommonWorkflowStatus from './constainer/commonWorkflowStatus'
+import TestStatus from './constainer/testStatus'
 export default {
   data () {
     return {
@@ -50,9 +46,15 @@ export default {
       if (type === 'running') {
         taskRunningSSEAPI()
           .then(res => {
-            this.productWorkflowTasks.running = res.data.filter(task => task.type === 'workflow')
-            this.testTasks.running = res.data.filter(task => task.type === 'test')
-            this.commonWorkflowTasks.running = res.data.filter(task => task.type === 'workflow_v3')
+            this.productWorkflowTasks.running = res.data.filter(
+              task => task.type === 'workflow'
+            )
+            this.testTasks.running = res.data.filter(
+              task => task.type === 'test'
+            )
+            this.commonWorkflowTasks.running = res.data.filter(
+              task => task.type === 'workflow_v3'
+            )
             this.task.running = res.data.length
             if (this.productWorkflowTasks.running.length > 0) {
               this.productExpandId = this.productWorkflowTasks.running[0].task_id
@@ -62,9 +64,15 @@ export default {
       } else if (type === 'queue') {
         taskPendingSSEAPI()
           .then(res => {
-            this.productWorkflowTasks.pending = res.data.filter(task => task.type === 'workflow')
-            this.testTasks.pending = res.data.filter(task => task.type === 'test')
-            this.commonWorkflowTasks.pending = res.data.filter(task => task.type === 'workflow_v3')
+            this.productWorkflowTasks.pending = res.data.filter(
+              task => task.type === 'workflow'
+            )
+            this.testTasks.pending = res.data.filter(
+              task => task.type === 'test'
+            )
+            this.commonWorkflowTasks.pending = res.data.filter(
+              task => task.type === 'workflow_v3'
+            )
             this.task.pending = res.data.length
           })
           .closeWhenDestroy(this)
@@ -85,7 +93,9 @@ export default {
     bus.$emit('set-topbar-title', { title: '运行状态', breadcrumb: [] })
   },
   components: {
-    ProductWorkflowStatus, TestStatus, CommonWorkflowStatus
+    ProductWorkflowStatus,
+    TestStatus,
+    CommonWorkflowStatus
   }
 }
 </script>

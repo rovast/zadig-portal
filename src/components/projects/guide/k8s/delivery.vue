@@ -109,7 +109,7 @@
 <script>
 import bus from '@utils/eventBus'
 import step from '../common/step.vue'
-import runWorkflow from '../../pipeline/common/run_workflow.vue'
+import runWorkflow from '../../workflow/common/run_workflow.vue'
 import { wordTranslate } from '@utils/wordTranslate.js'
 import { getProductWorkflowsInProjectAPI, getProjectIngressAPI, getWorkflowDetailAPI } from '@api'
 export default {

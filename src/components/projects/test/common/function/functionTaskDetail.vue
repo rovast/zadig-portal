@@ -118,7 +118,7 @@ import { workflowTaskDetailAPI, workflowTaskDetailSSEAPI, restartTestTaskAPI, ca
 import { wordTranslate, colorTranslate } from '@utils/wordTranslate.js'
 import deployIcons from '@/components/common/deploy_icons'
 import artifactDownload from '@/components/common/artifact_download.vue'
-import taskDetailTest from './container/task_detail_test.vue'
+import taskDetailTest from './container/taskDetailTest.vue'
 export default {
   data () {
     return {

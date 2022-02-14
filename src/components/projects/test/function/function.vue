@@ -1,5 +1,5 @@
 <template>
-  <function-test :basePath="`projects`"></function-test>
+  <FunctionTest :basePath="`projects`"/>
 </template>
 
 <script>

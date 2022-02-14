@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import AddHost from '@/components/projects/common/not_k8s/add_host.vue'
+import AddHost from '@/components/projects/common/pm/addHost.vue'
 import ImportHosts from './importHosts.vue'
 import { getHostListAPI, deleteHostAPI } from '@api'
 import bus from '@utils/eventBus'

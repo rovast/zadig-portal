@@ -34,7 +34,7 @@ export default {
 .projects-container {
   position: relative;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   background-color: #f6f6f6;
 }
 </style>

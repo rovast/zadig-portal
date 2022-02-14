@@ -1,6 +1,6 @@
 <template>
   <div class="helm-aside-container">
-    <div class="pipelines__aside-right--resizable">
+    <div class="service-aside-right--resizable">
     </div>
     <div class="aside__inner">
       <div class="aside-bar">
@@ -19,11 +19,11 @@
       </div>
       <div class="aside__content">
         <div v-if="selected === 'var'"
-             class="pipelines__aside--variables">
-          <header class="pipeline-workflow-box__header">
-            <div class="pipeline-workflow-box__title">镜像更新</div>
+             class="service-aside--variables">
+          <header class="service-aside-box__header">
+            <div class="service-aside-box__title">镜像更新</div>
           </header>
-         <div class="pipeline-workflow-box__content">
+         <div class="service-aside-box__content">
           <section>
               <h4>
                 <span><i class="iconfont iconfuwu"></i></span> 检测到的服务组件
@@ -64,11 +64,11 @@
          </div>
         </div>
         <div v-else-if="selected === 'help'"
-             class="pipelines__aside--variables">
-          <header class="pipeline-workflow-box__header">
-            <div class="pipeline-workflow-box__title">帮助</div>
+             class="service-aside--variables">
+          <header class="service-aside-box__header">
+            <div class="service-aside-box__title">帮助</div>
           </header>
-          <div class="pipelines-aside-help__content">
+          <div class="service-aside-help__content">
             <help></help>
           </div>
         </div>
@@ -225,7 +225,7 @@ export default {
     }
   }
 
-  .pipelines__aside-right--resizable {
+  .service-aside-right--resizable {
     position: absolute;
     top: 0;
     left: 0;
@@ -277,7 +277,7 @@ export default {
       background-color: #fff;
       -webkit-box-flex: 1;
 
-      .pipelines__aside--variables {
+      .service-aside--variables {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -290,7 +290,7 @@ export default {
         -webkit-box-flex: 1;
         -ms-flex-positive: 1;
 
-        .pipeline-workflow-box__header {
+        .service-aside-box__header {
           display: flex;
           flex-shrink: 0;
           align-items: center;
@@ -304,7 +304,7 @@ export default {
           -ms-flex-align: center;
           -ms-flex-negative: 0;
 
-          .pipeline-workflow-box__title {
+          .service-aside-box__title {
             margin-right: 20px;
             margin-bottom: 0;
             color: #000;
@@ -314,7 +314,7 @@ export default {
           }
         }
 
-        .pipeline-workflow-box__content {
+        .service-aside-box__content {
           flex-grow: 1;
           -webkit-box-flex: 1;
           -ms-flex-positive: 1;
@@ -337,7 +337,7 @@ export default {
           }
         }
 
-        .pipelines-aside-help__content {
+        .service-aside-help__content {
           display: flex;
           -ms-flex: 1;
           flex: 1;

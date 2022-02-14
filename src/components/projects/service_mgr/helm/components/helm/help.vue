@@ -1,24 +1,24 @@
 <template>
   <section class="pipeline-help">
-    <p class="pipelines-aside-help__welcome-message">
+    <p class="service-aside-help__welcome-message">
       欢迎使用帮助指南。可参考以下步骤配置服务
     </p>
-    <h3 class="pipelines-aside-help__step-header">
+    <h3 class="service-aside-help__step-header">
     </h3>
-    <ul class="pipelines-aside-help__step-list">
-      <li class="pipelines-aside-help__step-list-item">
-        <div class="pipelines-aside-help__step-list-item-counter">
+    <ul class="service-aside-help__step-list">
+      <li class="service-aside-help__step-list-item">
+        <div class="service-aside-help__step-list-item-counter">
           1
         </div>
-        <p class="pipelines-aside-help__step-list-item-text">
+        <p class="service-aside-help__step-list-item-text">
           新建服务，选择服务配置来源，支持三种方式：Git 仓库/ Chart 仓库/模板库
         </p>
       </li>
-      <li class="pipelines-aside-help__step-list-item">
-        <div class="pipelines-aside-help__step-list-item-counter">
+      <li class="service-aside-help__step-list-item">
+        <div class="service-aside-help__step-list-item-counter">
           2
         </div>
-        <p class="pipelines-aside-help__step-list-item-text">
+        <p class="service-aside-help__step-list-item-text">
           配置可更新镜像 <br>
           系统可自动从 values.yaml 中解析以下格式的镜像信息
         <ul style="padding-left: 5px;">
@@ -35,56 +35,56 @@
         </ul>
         </p>
       </li>
-      <li class="pipelines-aside-help__step-list-item">
-        <div class="pipelines-aside-help__step-list-item-counter">
+      <li class="service-aside-help__step-list-item">
+        <div class="service-aside-help__step-list-item-counter">
           3
         </div>
-        <p class="pipelines-aside-help__step-list-item-text">
+        <p class="service-aside-help__step-list-item-text">
           通过对镜像配置构建脚本，实现版本升级（代码构建 -> 构建镜像 -> 镜像部署）
         </p>
       </li>
-      <li class="pipelines-aside-help__step-list-item">
-        <div class="pipelines-aside-help__step-list-item-counter">
+      <li class="service-aside-help__step-list-item">
+        <div class="service-aside-help__step-list-item-counter">
           4
         </div>
-        <p class="pipelines-aside-help__step-list-item-text">
+        <p class="service-aside-help__step-list-item-text">
           配置变量，定义不同环境中使用的 values.yaml
         </p>
       </li>
     </ul>
-    <h3 class="pipelines-aside-help__step-header">
+    <h3 class="service-aside-help__step-header">
       您可能会用到的指南
     </h3>
-    <ul class="pipelines-aside-help__step-list">
+    <ul class="service-aside-help__step-list">
       <el-row :gutter="20">
         <el-col :span="8">
-          <li class="pipelines-aside-help__step-list-item">
+          <li class="service-aside-help__step-list-item">
             <a target="_blank"
                href="https://docs.koderover.com/zadig/project/service/#服务-yaml-样例"
-               class="pipelines-aside-help__step-list-item-link">
+               class="service-aside-help__step-list-item-link">
               <i class="icon el-icon-link"></i>
-              <span class="pipelines-aside-help__step-list-item-link-text">
+              <span class="service-aside-help__step-list-item-link-text">
                 无状态服务</span>
             </a>
           </li>
         </el-col>
         <el-col :span="8">
-          <li class="pipelines-aside-help__step-list-item">
+          <li class="service-aside-help__step-list-item">
             <a href="https://docs.koderover.com/zadig/project/service/#服务-yaml-样例"
                target="_blank"
-               class="pipelines-aside-help__step-list-item-link">
+               class="service-aside-help__step-list-item-link">
               <i class="icon el-icon-link"></i>
-              <span class="pipelines-aside-help__step-list-item-link-text">有状态服务 </span>
+              <span class="service-aside-help__step-list-item-link-text">有状态服务 </span>
             </a>
           </li>
         </el-col>
         <el-col :span="8">
-          <li class="pipelines-aside-help__step-list-item">
+          <li class="service-aside-help__step-list-item">
             <a target="_blank"
                href="https://docs.koderover.com/zadig/project/service/#helm-chart-服务"
-               class="pipelines-aside-help__step-list-item-link">
+               class="service-aside-help__step-list-item-link">
               <i class="icon el-icon-link"></i>
-              <span class="pipelines-aside-help__step-list-item-link-text">
+              <span class="service-aside-help__step-list-item-link-text">
                 Helm Chart 服务</span>
             </a>
           </li>
@@ -93,12 +93,12 @@
       </el-row>
       <el-row :gutter="20">
         <el-col :span="8">
-          <li class="pipelines-aside-help__step-list-item">
+          <li class="service-aside-help__step-list-item">
             <a href="https://docs.koderover.com/zadig/project/build/"
                target="_blank"
-               class="pipelines-aside-help__step-list-item-link">
+               class="service-aside-help__step-list-item-link">
               <i class="icon el-icon-link"></i>
-              <span class="pipelines-aside-help__step-list-item-link-text">新增构建步骤</span>
+              <span class="service-aside-help__step-list-item-link-text">新增构建步骤</span>
             </a>
           </li>
         </el-col>

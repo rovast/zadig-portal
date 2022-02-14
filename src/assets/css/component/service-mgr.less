@@ -34,6 +34,7 @@
 .projects-service-mgr {
   position: relative;
   flex: 1;
+  height: 100%;
   overflow: auto;
   background-color: #f5f7f7;
 
@@ -67,10 +68,10 @@
     }
   }
 
-  .pipeline {
+  .service-wrap {
     position: relative;
     display: flex;
-    height: calc(~'100% - 70px');
+    height: calc(~'100% - 135px');
     padding: 15px 5px 0 5px;
 
     &.onboarding {
@@ -78,7 +79,7 @@
     }
   }
 
-  .pipeline-workflow__wrap {
+  .service-container {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -153,13 +154,13 @@
       }
     }
 
-    .pipelines__aside_right {
+    .service-aside-right {
       min-width: 372px;
       -webkit-transition: width 0.2s ease-out;
       transition: width 0.2s ease-out;
     }
 
-    .pipelines__aside {
+    .service-aside {
       display: flex;
       flex: 1;
       flex-direction: column;
@@ -203,8 +204,9 @@
       }
 
       .save-btn[disabled] {
-        background-color: #9ac9f9;
-        border: 1px solid #9ac9f9;
+        color: #fff;
+        background-color: rgb(170, 170, 255);
+        border-color: rgb(170, 170, 255);
         cursor: not-allowed;
       }
     }

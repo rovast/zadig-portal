@@ -1,27 +1,27 @@
 <template>
   <div class="aside__wrap">
     <el-drawer title="代码源集成"
-               :visible.sync="addCodeDrawer"
+               :visible.sync="integrationCodeDrawer"
                direction="rtl">
-      <AddCode @cancel="addCodeDrawer = false"></AddCode>
+      <IntegrationCode @cancel="integrationCodeDrawer = false"/>
     </el-drawer>
     <el-drawer title="镜像仓库集成"
                :visible.sync="registryCreateVisible">
       <IntegrationRegistry @cancel="registryCreateVisible = false"
-                           @createSuccess="getRegistryWhenBuild"></IntegrationRegistry>
+                           @createSuccess="getRegistryWhenBuild"/>
     </el-drawer>
     <div class="aside__inner">
       <div class="aside-bar">
         <div class="tabs__wrap tabs__wrap_vertical">
           <div class="tabs__item"
-               :class="{'selected': selected === 'build'}"
-               @click="changeRoute('build')">
-            <span class="step-name">构建</span>
-          </div>
-          <div class="tabs__item"
                :class="{'selected': selected === 'var'}"
                @click="changeRoute('var')">
             <span class="step-name">变量</span>
+          </div>
+          <div class="tabs__item"
+               :class="{'selected': selected === 'policy'}"
+               @click="changeRoute('policy')">
+            <span class="step-name">策略</span>
           </div>
           <div class="tabs__item"
                :class="{'selected': selected === 'help'}"
@@ -32,11 +32,11 @@
       </div>
       <div class="aside__content">
         <div v-if="selected === 'build'"
-             class="pipelines__aside--variables">
-          <header class="pipeline-workflow-box__header">
-            <div class="pipeline-workflow-box__title">构建</div>
+             class="service-aside--variables">
+          <header class="service-aside-box__header">
+            <div class="service-aside-box__title">构建</div>
           </header>
-          <div class="pipeline-workflow-box__content">
+          <div class="service-aside-box__content">
             <build ref="buildRef"
                    @getServiceModules="getServiceModules"
                    :detectedServices="detectedServices"></build>
@@ -50,11 +50,11 @@
             </div>
         </div>
         <div v-if="selected === 'var'"
-             class="pipelines__aside--variables">
-          <header class="pipeline-workflow-box__header">
-            <div class="pipeline-workflow-box__title">变量</div>
+             class="service-aside--variables">
+          <header class="service-aside-box__header">
+            <div class="service-aside-box__title">变量</div>
           </header>
-          <div class="pipeline-workflow-box__content">
+          <div class="service-aside-box__content">
             <section>
               <h4>
                 <span><i class="iconfont iconfuwu"></i></span> 检测到的服务组件
@@ -248,11 +248,11 @@
           </div>
         </div>
         <div v-if="selected === 'help'"
-             class="pipelines__aside--variables">
-          <header class="pipeline-workflow-box__header">
-            <div class="pipeline-workflow-box__title">帮助</div>
+             class="service-aside--variables">
+          <header class="service-aside-box__header">
+            <div class="service-aside-box__title">帮助</div>
           </header>
-          <div class="pipelines-aside-help__content">
+          <div class="service-aside-help__content">
             <help></help>
           </div>
         </div>
@@ -265,7 +265,7 @@ import bus from '@utils/eventBus'
 import { serviceTemplateWithConfigAPI, getSingleProjectAPI, updateEnvTemplateAPI, getRegistryWhenBuildAPI, getCodeProviderAPI } from '@api'
 import build from '../common/build.vue'
 import help from './container/help.vue'
-import addCode from '../common/add_code.vue'
+import IntegrationCode from '../common/integrationCode.vue'
 import IntegrationRegistry from '@/components/projects/common/integration_registry.vue'
 const validateKey = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {
@@ -286,7 +286,7 @@ export default {
       sysEnvs: this.systemEnvs,
       customEnvs: this.detectedEnvs,
       addKeyInputVisable: false,
-      addCodeDrawer: false,
+      integrationCodeDrawer: false,
       editEnvIndex: {},
       projectForm: {},
       addKeyData: [
@@ -323,7 +323,7 @@ export default {
       if (res && res.length > 0) {
         this.$router.push(`${this.buildBaseUrl}?rightbar=build&service_name=${item.name}&build_add=true`)
       } else {
-        this.addCodeDrawer = true
+        this.integrationCodeDrawer = true
       }
     },
     saveBuildConfig () {
@@ -523,7 +523,7 @@ export default {
   components: {
     build,
     help,
-    AddCode: addCode,
+    IntegrationCode,
     IntegrationRegistry
   }
 }
@@ -595,7 +595,7 @@ export default {
     }
   }
 
-  .pipelines__aside-right--resizable {
+  .service-aside-right--resizable {
     position: absolute;
     top: 0;
     left: 0;
@@ -647,7 +647,7 @@ export default {
       background-color: #fff;
       -webkit-box-flex: 1;
 
-      .pipelines__aside--variables {
+      .service-aside--variables {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
@@ -660,7 +660,7 @@ export default {
         -webkit-box-flex: 1;
         -ms-flex-positive: 1;
 
-        .pipeline-workflow-box__header {
+        .service-aside-box__header {
           display: flex;
           flex-shrink: 0;
           align-items: center;
@@ -674,7 +674,7 @@ export default {
           -ms-flex-align: center;
           -ms-flex-negative: 0;
 
-          .pipeline-workflow-box__title {
+          .service-aside-box__title {
             margin-right: 20px;
             margin-bottom: 0;
             color: #000;
@@ -684,7 +684,7 @@ export default {
           }
         }
 
-        .pipeline-workflow-box__content {
+        .service-aside-box__content {
           flex-grow: 1;
           overflow-x: hidden;
           overflow-y: auto;
@@ -709,7 +709,7 @@ export default {
           }
         }
 
-        .pipelines-aside-help__content {
+        .service-aside-help__content {
           display: -webkit-box;
           display: -ms-flexbox;
           display: flex;

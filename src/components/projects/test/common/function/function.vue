@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import functionTestList from './container/function_test_list.vue'
+import functionTestList from './container/functionTestList.vue'
 import moment from 'moment'
 import { testsAPI, runTestsAPI, updateWorkflowAPI, deleteTestAPI, getWorkflowBindAPI, singleTestAPI } from '@api'
 

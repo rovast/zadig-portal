@@ -67,7 +67,7 @@
 
 <script>
 import _ from 'lodash'
-import workflowBuildRows from '@/components/common/workflow_build_rows.vue'
+import workflowBuildRows from '@/components/common/workflowBuildRows.vue'
 import deployIcons from '@/components/common/deploy_icons'
 import { precreateWorkflowTaskAPI, getAllBranchInfoAPI, runWorkflowAPI, getWorkflowDetailAPI } from '@api'
 

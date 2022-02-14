@@ -55,8 +55,8 @@
 </template>
 
 <script>
-import ImportValues from '@/components/projects/common/import_values/index.vue'
-import KeyValue from '@/components/projects/common/import_values/key_value.vue'
+import ImportValues from '@/components/projects/common/importValues/index.vue'
+import KeyValue from '@/components/projects/common/importValues/keyValue.vue'
 import Codemirror from '@/components/projects/common/codemirror.vue'
 import {
   getChartValuesYamlAPI,

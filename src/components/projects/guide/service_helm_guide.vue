@@ -29,7 +29,7 @@
 <script>
 import { mapState } from 'vuex'
 import step from './common/step.vue'
-import Code from '../service_mgr/helm/code'
+import Code from '../serviceMgr/helm/code'
 
 export default {
   name: 'service_helm',

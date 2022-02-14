@@ -1,9 +1,9 @@
 <template>
     <div class="projects-service-mgr">
       <el-drawer title="代码源集成"
-                 :visible.sync="addCodeDrawer"
+                 :visible.sync="integrationCodeDrawer"
                  direction="rtl">
-        <add-code @cancel="addCodeDrawer = false"></add-code>
+        <IntegrationCode @cancel="integrationCodeDrawer = false"/>
       </el-drawer>
       <el-dialog title="是否更新对应环境？"
                  custom-class="dialog-upgrade-env"
@@ -31,12 +31,12 @@
 
         </span>
       </el-dialog>
-      <div class="pipeline">
-        <div class="pipeline-workflow__wrap">
-          <multipane class="vertical-panes"
+      <div class="service-wrap">
+        <div class="service-container">
+          <Multipane class="vertical-panes"
                      layout="vertical">
             <div class="service-tree-container">
-              <serviceTree :services="services"
+              <ServiceTree :services="services"
                            :projectInfo="projectInfo"
                            :currentServiceYamlKinds="currentServiceYamlKinds"
                            :sharedServices="sharedServices"
@@ -51,32 +51,32 @@
                            @onRefreshSharedService="getSharedServices"
                            @onSelectServiceChange="onSelectServiceChange"
                            @updateYaml="updateYaml($event)"
-                           :envDialogVisible.sync="updateEnvDialogVisible"></serviceTree>
+                           :envDialogVisible.sync="updateEnvDialogVisible"/>
             </div>
             <template v-if="service.service_name  &&  services.length >0">
               <template v-if="service.type==='k8s'">
-                <multipane-resizer></multipane-resizer>
+                <MultipaneResizer/>
                 <div class="service-editor-container"
                      :style="{ minWidth: '300px', width: '500px' }"
                      :class="{'pm':service.type==='pm'}">
-                  <serviceEditorK8s ref="serviceEditor"
+                  <ServiceEditor ref="serviceEditor"
                                     :serviceInTree="service"
                                     :showNext.sync="showNext"
                                     :yamlChange.sync="yamlChange"
                                     @onParseKind="getYamlKind"
                                     @onRefreshService="getServices"
                                     @onRefreshSharedService="getSharedServices"
-                                    @onUpdateService="onUpdateService"></serviceEditorK8s>
+                                    @onUpdateService="onUpdateService"/>
                 </div>
-                <multipane-resizer></multipane-resizer>
-                <aside class="pipelines__aside pipelines__aside_right"
+                <MultipaneResizer/>
+                <aside class="service-aside service-aside-right"
                        :style="{ flexGrow: 1 }">
-                  <serviceAsideK8s :service="service"
-                                   :detectedEnvs="detectedEnvs"
-                                   :detectedServices="detectedServices"
-                                   :systemEnvs="systemEnvs"
-                                   :buildBaseUrl="`/v1/projects/detail/${projectName}/services`"
-                                   @getServiceModules="getServiceModules"> </serviceAsideK8s>
+                  <ServiceAside :service="service"
+                                :detectedEnvs="detectedEnvs"
+                                :detectedServices="detectedServices"
+                                :systemEnvs="systemEnvs"
+                                :buildBaseUrl="`/v1/projects/detail/${projectName}/services`"
+                                @getServiceModules="getServiceModules"/>
                 </aside>
 
               </template>
@@ -94,7 +94,7 @@
               <p v-else-if="service.service_name==='服务列表' && services.length >0">请在左侧选择需要编辑的服务</p>
               <p v-else-if="!service.service_name && services.length >0">请在左侧选择需要编辑的服务</p>
             </div>
-          </multipane>
+          </Multipane>
         </div>
       </div>
       <div class="controls__wrap">
@@ -111,10 +111,10 @@
 </template>
 <script>
 import mixin from '@/mixin/serviceModuleMixin'
-import serviceAsideK8s from './k8s/service_aside.vue'
-import serviceEditorK8s from './k8s/service_editor.vue'
-import serviceTree from './common/service_tree.vue'
-import addCode from './common/add_code.vue'
+import ServiceAside from './k8s/serviceAside.vue'
+import ServiceEditor from './k8s/serviceEditor.vue'
+import ServiceTree from './common/serviceTree.vue'
+import IntegrationCode from './common/integrationCode.vue'
 import { sortBy } from 'lodash'
 import { getSingleProjectAPI, getServiceTemplatesAPI, getServicesTemplateWithSharedAPI, serviceTemplateWithConfigAPI, autoUpgradeEnvAPI, listProductAPI } from '@api'
 import { Multipane, MultipaneResizer } from 'vue-multipane'
@@ -133,7 +133,7 @@ export default {
       showNext: false,
       yamlChange: false,
       updateEnvDialogVisible: false,
-      addCodeDrawer: false,
+      integrationCodeDrawer: false,
       envNameList: []
     }
   },
@@ -142,7 +142,7 @@ export default {
       if (!this.$utils.roleCheck('admin')) {
         this.$message('私有镜像仓库未集成，请联系系统管理员前往「系统设置 -> 镜像仓库」进行集成！')
       } else {
-        this.addCodeDrawer = true
+        this.integrationCodeDrawer = true
       }
     },
     createService () {
@@ -302,12 +302,12 @@ export default {
     this.getSharedServices()
   },
   components: {
-    serviceAsideK8s,
-    serviceEditorK8s,
-    serviceTree,
+    ServiceAside,
+    ServiceEditor,
+    ServiceTree,
     Multipane,
     MultipaneResizer,
-    'add-code': addCode
+    IntegrationCode
   },
   mixins: [mixin]
 }

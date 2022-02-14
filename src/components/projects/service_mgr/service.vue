@@ -21,28 +21,27 @@ export default {
       if (this.projectInfo.product_feature) {
         if (this.projectInfo.product_feature.basic_facility === 'kubernetes') {
           if (this.projectInfo.product_feature.create_env_type === 'external') {
-            this.currentComponent = () => import('./service_host')
+            this.currentComponent = () => import('./serviceHost')
             return
           }
           if (this.projectInfo.product_feature.deploy_type === 'helm') {
             this.currentComponent = () => import('./helm/code')
           } else {
-            this.currentComponent = () => import('./service_k8s')
+            this.currentComponent = () => import('./serviceK8s')
           }
         } else if (
           this.projectInfo.product_feature.basic_facility === 'cloud_host'
         ) {
-          this.currentComponent = () => import('./service_pm')
+          this.currentComponent = () => import('./servicePm')
         }
       } else {
-        this.currentComponent = () => import('./service_k8s')
+        this.currentComponent = () => import('./serviceK8s')
       }
     }
   },
   created () {
     this.projectName = this.$route.params.project_name
     this.checkProjectFeature()
-
     bus.$emit(`show-sidebar`, false)
     bus.$emit(`set-topbar-title`, {
       title: '',

@@ -70,7 +70,7 @@ export default {
   display: flex;
   flex: 1;
   padding: 15px 20px;
-  overflow: hidden;
+  overflow-y: auto;
 
   .no-show {
     margin: auto;

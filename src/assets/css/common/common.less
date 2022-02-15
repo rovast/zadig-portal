@@ -70,3 +70,86 @@
   font-size: 14px;
   line-height: 22px;
 }
+
+// form
+@secondaryColor: #8a8a8a;
+@primaryColor: #000;
+@itemWidth: 400px;
+@itemWeight: 300;
+@formItemBottom: 8px;
+
+.el-form {
+  &.primary-form {
+    .el-form-item__label {
+      color: @primaryColor;
+    }
+
+    .item-title {
+      color: @primaryColor;
+      font-weight: @itemWeight;
+      font-size: 14px;
+      line-height: 28px;
+    }
+  }
+
+  &.secondary-form {
+    .el-form-item__label {
+      color: @secondaryColor;
+    }
+  }
+
+  &.primary-form,
+  &.secondary-form {
+    .el-form-item__label {
+      font-weight: @itemWeight;
+    }
+
+    .el-form-item {
+      margin-bottom: @formItemBottom;
+
+      &.secondary-label {
+        .el-form-item__label {
+          color: @secondaryColor;
+        }
+      }
+    }
+
+    .el-input,
+    .el-select {
+      width: @itemWidth;
+
+      .el-input {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// common block
+.common-parcel-block {
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  padding: 16px 40px;
+  background-color: #fff;
+  border-radius: 6px;
+
+  .primary-title,
+  .secondary-title {
+    margin: 0 0 14px;
+    font-weight: @itemWeight;
+    font-size: 14px;
+    line-height: 24px;
+
+    &.not-first-child {
+      margin-top: 24px;
+    }
+  }
+
+  .primary-title {
+    color: @primaryColor;
+  }
+
+  .secondary-title {
+    color: @secondaryColor;
+  }
+}

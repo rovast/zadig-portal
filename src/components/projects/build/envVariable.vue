@@ -1,15 +1,9 @@
 <template>
   <div>
-    <el-form ref="buildEnv" :inline="true" :model="preEnvs" class="form-bottom-0" label-position="top" label-width="80px">
-      <span class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义环境变量</span>
-      <el-button v-if="preEnvs.envs.length===0" style="padding: 0;" @click="addFirstBuildEnv()" type="text">新增</el-button>
-      <div class="divider item" :style="{ display: isTest ? 'none' : 'block'}"></div>
+    <el-form ref="buildEnv" :inline="true" :model="preEnvs" class="variable-form" label-position="top" label-width="80px">
+      <span class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义构建变量</span>
+      <el-button v-if="preEnvs.envs.length===0" @click="addFirstBuildEnv()" type="primary" size="mini" plain>新增</el-button>
       <el-row v-for="(app,build_env_index) in preEnvs.envs" :key="build_env_index" :gutter="2">
-        <el-col :span="narrowWidth ? 4 : 4">
-          <el-form-item :prop="'envs.' + build_env_index + '.key'" :rules="{required: true, message: '键 不能为空', trigger: 'blur'}">
-            <el-input placeholder="键" v-model="preEnvs.envs[build_env_index].key" size="small"></el-input>
-          </el-form-item>
-        </el-col>
         <el-col :span="narrowWidth ? 4 : 4">
           <el-form-item class="display-flex">
             <el-select
@@ -25,10 +19,14 @@
             </el-select>
             <i
               v-show="preEnvs.envs[build_env_index].type === 'choice'"
-              class="el-icon-edit"
-              style=" color: #409eff; cursor: pointer;"
+              class="el-icon-edit edit-icon"
               @click="updateParams(build_env_index)"
             ></i>
+          </el-form-item>
+        </el-col>
+        <el-col :span="narrowWidth ? 4 : 4">
+          <el-form-item :prop="'envs.' + build_env_index + '.key'" :rules="{required: true, message: '键 不能为空', trigger: 'blur'}">
+            <el-input placeholder="键" v-model="preEnvs.envs[build_env_index].key" size="small"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="narrowWidth ? 4 : 4">
@@ -71,7 +69,7 @@
     <el-dialog :visible.sync="dialogVisible" title="枚举" width="600px" :close-on-click-modal="false" :show-close="false" append-to-body>
       <el-form ref="form" :model="currentVars" label-width="90px">
         <el-form-item label="变量名称">
-          <el-input v-model="currentVars.key" disabled size="small"></el-input>
+          <el-input v-model="currentVars.key" size="small"></el-input>
         </el-form-item>
         <el-form-item label="可选值">
           <el-input type="textarea" v-model="currentVars.choice_option" placeholder="可选值之间用英文 “,” 隔开" size="small" rows="4"></el-input>
@@ -82,29 +80,16 @@
         <el-button type="primary" @click="saveVariable" size="small">确 定</el-button>
       </div>
     </el-dialog>
-    <section>
-      <div @click="showBuildInEnvVar = !showBuildInEnvVar">
-        内置环境变量
-        <i :class="[showBuildInEnvVar ? 'el-icon-arrow-down' : 'el-icon-arrow-right']"></i>
+    <section class="inner-variable">
+      <div @click="showBuildInEnvVar = !showBuildInEnvVar" class="item-title inner-title">
+        内置构建变量
+        <i style="margin-left: 10px;" :class="[showBuildInEnvVar ? 'el-icon-arrow-up' : 'el-icon-arrow-down']"></i>
       </div>
-      <div v-show="showBuildInEnvVar">
-        当前可用环境变量如下，可在构建脚本中进行引用
-        <br />$WORKSPACE&nbsp;&nbsp;工作目录
-        <br />$TASK_ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工作流任务 ID
-        <br />$IMAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;输出镜像名称
-        <br />$SERVICE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建的服务名称
-        <br />$DIST_DIR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建出的 Tar 包的目的目录
-        <br />$PKG_FILE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建出的 Tar 包名称
-        <br />$ENV_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;执行的环境名称
-        <br />$BUILD_URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建任务的 URL
-        <br />$CI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        值恒等于 true，表示当前环境是 CI/CD 环境
-        <br />$ZADIG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值恒等于
-        true，表示在 Zadig 系统上执行脚本
-        <br />&lt;REPO&gt;_PR 构建过程中指定代码仓库使用的 Pull Request 信息
-        <br />&lt;REPO&gt;_BRANCH 构建过程中指定代码仓库使用的分支信息
-        <br />&lt;REPO&gt;_TAG 构建过程中指定代码仓库使用 Tag 信息
-        <br />&lt;REPO&gt;_COMMIT_ID 构建过程中指定代码的 commit 信息
+      <div v-show="showBuildInEnvVar" class="inner-variable-content">
+        <div v-for="variable in buildVars" :key="variable.variable">
+          <span class="var-variable">{{ variable.variable }}</span>
+          <span class="var-desc">{{ variable.desc }}</span>
+        </div>
       </div>
     </section>
   </div>
@@ -133,7 +118,65 @@ export default {
     return {
       dialogVisible: false,
       currentVars: {},
-      showBuildInEnvVar: false
+      showBuildInEnvVar: false,
+      buildVars: [
+        {
+          variable: '$WORKSPACE',
+          desc: '工作目录'
+        },
+        {
+          variable: '$TASK_ID',
+          desc: '工作流任务 ID'
+        },
+        {
+          variable: '$IMAGE',
+          desc: '输出镜像名称'
+        },
+        {
+          variable: '$SERVICE',
+          desc: '构建的服务名称'
+        },
+        {
+          variable: '$DIST_DIR',
+          desc: '构建出的 Tar 包的目的目录'
+        },
+        {
+          variable: '$PKG_FILE',
+          desc: '构建出的 Tar 包名称'
+        },
+        {
+          variable: '$ENV_NAME',
+          desc: '执行的环境名称'
+        },
+        {
+          variable: '$BUILD_URL',
+          desc: '构建任务的 URL'
+        },
+        {
+          variable: '$CI',
+          desc: '值恒等于 true，表示当前环境是 CI/CD 环境'
+        },
+        {
+          variable: '$ZADIG',
+          desc: '值恒等于 true，表示在 Zadig 系统上执行脚本'
+        },
+        {
+          variable: '<REPO>_PR',
+          desc: '构建过程中指定代码仓库使用的 Pull Request 信息'
+        },
+        {
+          variable: '<REPO>_BRANCH',
+          desc: '构建过程中指定代码仓库使用的分支信息'
+        },
+        {
+          variable: '<REPO>_TAG',
+          desc: '构建过程中指定代码仓库使用 Tag 信息'
+        },
+        {
+          variable: '<REPO>_COMMIT_ID',
+          desc: '构建过程中指定代码的 commit 信息'
+        }
+      ]
     }
   },
   computed: {
@@ -173,6 +216,7 @@ export default {
         current.is_credential = true
       } else {
         current.is_credential = false
+        this.updateParams(index)
       }
     },
     updateParams (index) {
@@ -192,6 +236,7 @@ export default {
       const env = this.preEnvs.envs[index]
       const choice_option = this.currentVars.choice_option.split(',')
       env.choice_option = choice_option
+      env.key = this.currentVars.key
       if (!choice_option.includes(env.value)) {
         env.value = ''
       }
@@ -216,9 +261,42 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@secondaryColor: #8a8a8a;
+@primaryColor: #000;
+
 .item-title {
   display: inline-block;
-  font-size: 15px;
+  width: 117px;
+  color: @secondaryColor;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 28px;
+
+  &.inner-title {
+    margin-top: 6px;
+    cursor: pointer;
+  }
+}
+
+.inner-variable {
+  .item-title.inner-title {
+    margin-top: 6px;
+    color: @themeColor;
+    cursor: pointer;
+  }
+
+  .inner-variable-content {
+    margin-top: 8px;
+    color: @primaryColor;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 22px;
+
+    .var-variable {
+      display: inline-block;
+      width: 150px;
+    }
+  }
 }
 
 .divider {
@@ -246,6 +324,17 @@ export default {
     .el-select.partial-width {
       width: 80%;
     }
+  }
+
+  .edit-icon {
+    color: @themeColor;
+    cursor: pointer;
+  }
+}
+
+.variable-form {
+  /deep/.el-form-item {
+    margin-bottom: 8px;
   }
 }
 </style>

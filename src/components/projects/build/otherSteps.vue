@@ -1,122 +1,141 @@
 <template>
-  <section>
-    <div>
+  <section class="other-step-container">
+    <el-drawer title="Dockerfile 模板预览" :visible.sync="showDockerfile" direction="rtl">
+      <Codemirror
+        v-model="dockerfileTemplate.content"
+        :cmOption="{
+      tabSize: 2,
+      readOnly: true,
+      theme: 'neo',
+      mode: 'text/x-dockerfile',
+      lineNumbers: false,
+      line: true,
+      showGutter: false,
+      displayIndentGuides: false,
+      showPrintMargin: false,
+      collapseIdentical: true
+    }"
+        class="mirror"
+      ></Codemirror>
+    </el-drawer>
+    <div style="margin: 14px 0 8px;">
       <el-dropdown @command="addExtra">
-        <el-button size="small">
-          新增构建步骤
-          <i class="el-icon-arrow-down el-icon--right"></i>
+        <el-button type="primary" size="small" plain>
+          添加步骤
+          <i style="margin-left: 8px;" class="el-icon-arrow-down el-icon--right"></i>
         </el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="docker" :disabled="docker_enabled">镜像构建</el-dropdown-item>
-          <el-dropdown-item command="binary" :disabled="binary_enabled">二进制包归档</el-dropdown-item>
-          <el-dropdown-item command="script" :disabled="post_script_enabled">Shell 脚本</el-dropdown-item>
+          <el-dropdown-item command="binary" :disabled="binary_enabled">二进制包存储</el-dropdown-item>
+          <el-dropdown-item command="script" :disabled="post_script_enabled">Shell 脚本执行</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <el-form
-      v-if="docker_enabled"
-      :model="buildConfig.post_build.docker_build"
-      :rules="docker_rules"
-      ref="docker_build"
-      label-width="220px"
-      class="docker label-at-left input-width-middle"
-    >
-      <div class="dashed-container">
-        <span class="title">
-          镜像构建
-          <el-button type="text" @click="removeDocker" icon="el-icon-delete"></el-button>
-        </span>
-        <div v-if="allRegistry.length === 0" class="registry-alert">
-          <el-alert title="私有镜像仓库未集成，请前往系统设置 -> Registry 管理  进行集成。" type="warning"></el-alert>
+    <div class="build-block" v-show="docker_enabled || binary_enabled || post_script_enabled">
+      <el-form
+        v-if="docker_enabled"
+        :model="buildConfig.post_build.docker_build"
+        :rules="docker_rules"
+        ref="dockerBuildRef"
+        label-width="170px"
+        class="build-step-form"
+        label-position="left"
+      >
+        <div class="dashed-container">
+          <span class="item-title">
+            镜像构建
+            <el-button type="text" @click="removeDocker" icon="el-icon-delete"></el-button>
+          </span>
+          <div v-if="allRegistry.length === 0" class="registry-alert">
+            <el-alert title="私有镜像仓库未集成，请前往系统设置 -> Registry 管理  进行集成。" type="warning"></el-alert>
+          </div>
+          <el-form-item label="构建上下文目录" prop="work_dir">
+            <el-input v-model="buildConfig.post_build.docker_build.work_dir" size="small">
+              <template slot="prepend">$WORKSPACE/</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="Dockerfile 来源" prop="source">
+            <el-select size="small" v-model="buildConfig.post_build.docker_build.source" placeholder="请选择">
+              <el-option label="代码仓库" value="local"></el-option>
+              <el-option label="模板库" value="template"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="buildConfig.post_build.docker_build.source === 'local'" label="Dockerfile 的绝对路径" prop="docker_file">
+            <el-input v-model="buildConfig.post_build.docker_build.docker_file" size="small">
+              <template slot="prepend">$WORKSPACE/</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item v-if="buildConfig.post_build.docker_build.source === 'template'" label="模板选择" prop="template_name">
+            <el-select
+              style="width: 90%;"
+              size="small"
+              filterable
+              @change="getDockerfileTemplate"
+              v-model="buildConfig.post_build.docker_build.template_id"
+              placeholder="请选择"
+            >
+              <el-option v-for="(template,index) in dockerfileTemplates" :key="index" :label="template.name" :value="template.id"></el-option>
+            </el-select>
+            <template>
+              <el-button
+                :disabled="!buildConfig.post_build.docker_build.template_id"
+                style="margin-left: 5px;"
+                type="text"
+                @click="showDockerfile = true"
+              >预览</el-button>
+              <div v-if="dockerfileTemplate.variable && dockerfileTemplate.variable.length > 0" class="dockerfile-args-container">
+                <span>ARG</span>
+                <span v-for="(item,index) in dockerfileTemplate.variable" :key="index">
+                  <span v-if="item.value">{{`${item.key}=${item.value} `}}</span>
+                  <span v-else>{{`${item.key} `}}</span>
+                </span>
+              </div>
+            </template>
+          </el-form-item>
+          <el-form-item label="构建参数">
+            <el-tooltip effect="dark" content="支持所有 Docker Build 参数" placement="top-start">
+              <el-input v-model="buildConfig.post_build.docker_build.build_args" size="small" placeholder="--build-arg key=value"></el-input>
+            </el-tooltip>
+          </el-form-item>
         </div>
-        <el-form-item label="镜像构建目录：" prop="work_dir">
-          <el-input v-model="buildConfig.post_build.docker_build.work_dir" size="small">
-            <template slot="prepend">$WORKSPACE/</template>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="Dockerfile 来源：" prop="source">
-          <el-select size="small" style="width: 100%;" v-model="buildConfig.post_build.docker_build.source" placeholder="请选择">
-            <el-option label="代码仓库" value="local"></el-option>
-            <el-option label="模板库" value="template"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="buildConfig.post_build.docker_build.source === 'local'" label="Dockerfile 文件的完整路径：" prop="docker_file">
-          <el-input v-model="buildConfig.post_build.docker_build.docker_file" size="small">
-            <template slot="prepend">$WORKSPACE/</template>
-          </el-input>
-        </el-form-item>
-        <el-form-item v-if="buildConfig.post_build.docker_build.source === 'template'" label="选择模板：" prop="template_name">
-          <el-select
-            style="width: 95%;"
-            size="small"
-            filterable
-            @change="getDockerfileTemplate"
-            v-model="buildConfig.post_build.docker_build.template_id"
-            placeholder="请选择"
-          >
-            <el-option v-for="(template,index) in dockerfileTemplates" :key="index" :label="template.name" :value="template.id"></el-option>
-          </el-select>
-          <template>
-            <el-button
-              :disabled="!buildConfig.post_build.docker_build.template_id"
-              style="margin-left: 5px;"
-              type="text"
-              @click="showDockerfile = true"
-            >预览</el-button>
-            <div v-if="dockerfileTemplate.variable && dockerfileTemplate.variable.length > 0" class="dockerfile-args-container">
-              <span>ARG</span>
-              <span v-for="(item,index) in dockerfileTemplate.variable" :key="index">
-                <span v-if="item.value">{{`${item.key}=${item.value} `}}</span>
-                <span v-else>{{`${item.key} `}}</span>
-              </span>
-            </div>
-          </template>
-        </el-form-item>
-        <el-form-item label="镜像构建参数：">
-          <el-tooltip effect="dark" content="支持所有 Docker Build 参数" placement="top-start">
-            <el-input v-model="buildConfig.post_build.docker_build.build_args" size="small" placeholder="--build-arg key=value"></el-input>
-          </el-tooltip>
-        </el-form-item>
-      </div>
-      <div class="divider"></div>
-    </el-form>
-    <el-form
-      v-if="binary_enabled"
-      :model="buildConfig.post_build.file_archive"
-      :rules="file_archive_rules"
-      ref="file_archive"
-      label-width="220px"
-      class="stcov label-at-left"
-    >
-      <div class="dashed-container">
-        <span class="title">
-          二进制包归档
-          <el-button type="text" @click="removeBinary" icon="el-icon-delete"></el-button>
-        </span>
-        <el-form-item label="二进制包存放路径：" prop="file_location">
-          <el-input v-model="buildConfig.post_build.file_archive.file_location" size="small">
-            <template slot="append">/$PKG_FILE</template>
-            <template slot="prepend">$WORKSPACE/</template>
-          </el-input>
-        </el-form-item>
-      </div>
-      <div class="divider"></div>
-    </el-form>
-    <el-form v-if="post_script_enabled" :model="buildConfig.post_build" ref="script" label-width="220px" class="stcov label-at-left">
-      <div class="dashed-container">
-        <span class="title">
-          Shell 脚本
-          <el-button type="text" @click="removeScript" icon="el-icon-delete"></el-button>
-        </span>
-        <div class="divider item"></div>
-        <el-row>
-          <el-col :span="24">
-            <Editor v-model="buildConfig.post_build.scripts" height="300px"></Editor>
-          </el-col>
-        </el-row>
-      </div>
-      <div class="divider"></div>
-    </el-form>
+      </el-form>
+      <el-form
+        v-if="binary_enabled"
+        :model="buildConfig.post_build.file_archive"
+        :rules="file_archive_rules"
+        ref="fileArchiveRef"
+        label-width="170px"
+        class="build-step-form"
+        label-position="left"
+      >
+        <div class="dashed-container">
+          <span class="item-title">
+            二进制包存储
+            <el-button type="text" @click="removeBinary" icon="el-icon-delete"></el-button>
+          </span>
+          <el-form-item label="二进制包存储路径" prop="file_location">
+            <el-input v-model="buildConfig.post_build.file_archive.file_location" size="small">
+              <template slot="append">/$PKG_FILE</template>
+              <template slot="prepend">$WORKSPACE/</template>
+            </el-input>
+          </el-form-item>
+        </div>
+      </el-form>
+      <el-form v-if="post_script_enabled" :model="buildConfig.post_build" ref="script" label-width="220px" class="stcov label-at-left">
+        <div class="dashed-container">
+          <div class="item-title">
+            Shell 脚本执行
+            <el-tooltip effect="dark" content="构建运行完成后执行的 Shell 脚本" placement="top">
+              <i class="el-icon-question" style="color: #a0a0a0;"></i>
+            </el-tooltip>
+            <el-button type="text" @click="removeScript" icon="el-icon-delete"></el-button>
+          </div>
+          <div class="script-content">
+            <Editor v-model="buildConfig.post_build.scripts" height="100%"></Editor>
+          </div>
+        </div>
+      </el-form>
+    </div>
   </section>
 </template>
 
@@ -172,6 +191,23 @@ export default {
     }
   },
   methods: {
+    // called by the parent component at edit time
+    initStepStatus (buildConfig = this.buildConfig) {
+      if (buildConfig.post_build.docker_build) {
+        this.docker_enabled = true
+        if (buildConfig.post_build.docker_build.template_id) {
+          this.getDockerfileTemplate(
+            buildConfig.post_build.docker_build.template_id
+          )
+        }
+      }
+      if (buildConfig.post_build.file_archive) {
+        this.binary_enabled = true
+      }
+      if (buildConfig.post_build.scripts) {
+        this.post_script_enabled = true
+      }
+    },
     addExtra (command) {
       if (command === 'docker') {
         this.docker_enabled = true
@@ -215,7 +251,15 @@ export default {
       this.post_script_enabled = false
       delete this.buildConfig.post_build.scripts
     },
-    initData () {
+    async getDockerfileTemplate (id) {
+      const res = await getDockerfileAPI(id).catch(err => {
+        console.log(err)
+      })
+      if (res) {
+        this.dockerfileTemplate = res
+      }
+    },
+    getUsedData () {
       const projectName = this.$route.params.project_name
       getRegistryWhenBuildAPI(projectName).then(res => {
         this.allRegistry = res
@@ -224,20 +268,79 @@ export default {
         this.dockerfileTemplates = res.dockerfile_template
       })
     },
-    async getDockerfileTemplate (id) {
-      const res = await getDockerfileAPI(id).catch(err => {
-        console.log(err)
-      })
-      if (res) {
-        this.dockerfileTemplate = res
+    validate () {
+      const valid = []
+      if (this.docker_enabled) {
+        valid.push(this.$refs.dockerBuildRef.validate())
       }
+      if (this.binary_enabled) {
+        valid.push(this.$refs.fileArchiveRef.validate())
+      }
+      return Promise.all(valid)
     }
   },
   created () {
-    this.initData()
+    this.getUsedData()
+    this.validObj.addValidate({
+      name: 'otherStepsValid',
+      valid: this.validate
+    })
   },
   components: {
     Editor
   }
 }
 </script>
+
+<style lang="less" scoped>
+@inputWidth: 400px;
+@secondaryColor: #8a8a8a;
+@primaryColor: #000;
+@formItemBottom: 8px;
+@labelWeight: 300;
+
+.other-step-container {
+  .build-block {
+    margin-bottom: 16px;
+    padding: 16px 40px;
+    background-color: #fff;
+    border-radius: 6px;
+
+    .item-title {
+      color: @primaryColor;
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 28px;
+    }
+
+    /deep/.el-form.build-step-form {
+      .el-form-item {
+        margin-bottom: @formItemBottom;
+      }
+
+      .el-form-item__label {
+        color: @secondaryColor;
+        font-weight: @labelWeight;
+      }
+
+      .el-input,
+      .el-select {
+        width: 100%;
+
+        .el-input {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .script-content {
+    height: 250px;
+    border: 1px solid @borderGray;
+  }
+
+  .registry-alert {
+    margin-bottom: 10px;
+  }
+}
+</style>

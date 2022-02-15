@@ -1,28 +1,30 @@
 <template>
-  <section>
-    <el-form ref="advancedConfig" :model="buildConfig" label-position="left" class="build-form" label-width="120px" inline-message>
-      <div>策略配置</div>
-      <el-form-item label="构建超时">
+  <section class="advanced-config-container">
+    <el-form ref="advancedConfig" :model="buildConfig" label-position="left" class="build-advanced-form" label-width="120px" inline-message>
+      <div class="item-title">策略配置</div>
+      <el-form-item label="超时时间">
         <el-input-number size="mini" :min="1" v-model="buildConfig.timeout"></el-input-number>
         <span>分钟</span>
       </el-form-item>
-      <el-form-item label="开启缓存">
-        <el-switch v-model="buildConfig.cache_enable" active-color="#409EFF"></el-switch>
+      <el-form-item label="缓存配置">
+        <el-switch v-model="buildConfig.cache_enable"></el-switch>
+        <br />
+        <el-radio-group v-if="buildConfig.cache_enable" v-model="buildConfig.cache_dir_type" class="radio-group">
+          <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
+          <br />
+          <el-radio label="user_defined">
+            <span>自定义目录</span>
+            <el-input style=" width: 298px; margin-left: 5px;" v-model="buildConfig.cache_user_dir" placeholder="请手动输入" size="mini"></el-input>
+          </el-radio>
+        </el-radio-group>
       </el-form-item>
-      <el-radio-group v-if="buildConfig.cache_enable" v-model="buildConfig.cache_dir_type" class="radio-group">
-        <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
-        <el-radio label="user_defined">
-          自定义目录
-          <el-input v-model="buildConfig.cache_user_dir" placeholder="请手动输入" size="mini"></el-input>
-        </el-radio>
-      </el-radio-group>
-      <div>资源配置</div>
-      <el-form-item label="集群名称" label-width="inherit" prop="pre_build.cluster_id" required :show-message="false">
-        <el-select v-model="buildConfig.pre_build.cluster_id" placeholder="选择集群名称" size="small">
+      <div class="item-title">资源配置</div>
+      <el-form-item label="集群选择" prop="pre_build.cluster_id" :rules="{ required: true, message: '请选择集群名称', trigger: ['change', 'blur'] }">
+        <el-select v-model="buildConfig.pre_build.cluster_id" placeholder="请选择集群名称" size="small">
           <el-option v-for="cluster in clusters" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="资源规格" label-width="inherit" required>
+      <el-form-item label="操作系统规格" prop="pre_build.res_req" :rules="{ required: true, message: '请选择操作系统', trigger: ['change', 'blur'] }">
         <el-select size="small" v-model="buildConfig.pre_build.res_req" placeholder="请选择">
           <el-option label="高 | CPU: 16 核 内存: 32 GB" value="high"></el-option>
           <el-option label="中 | CPU: 8 核 内存: 16 GB" value="medium"></el-option>
@@ -59,7 +61,9 @@
 import { getClusterListAPI } from '@api'
 export default {
   props: {
-    buildConfig: Object
+    buildConfig: Object,
+    validObj: Object,
+    isCreate: Boolean
   },
   data () {
     this.validateCpuLimit = (rule, value, callback) => {
@@ -91,6 +95,15 @@ export default {
     }
   },
   methods: {
+    initAdvancedConfig (buildConfig = this.buildConfig) {
+      if (this.isCreate || !buildConfig.pre_build.cluster_id) {
+        this.$set(buildConfig.pre_build, 'cluster_id', '')
+        const local = this.clusters.find(cluster => cluster.local)
+        if (local) {
+          buildConfig.pre_build.cluster_id = local.id
+        }
+      }
+    },
     checkSpec () {
       if (!this.buildConfig.pre_build.res_req_spec) {
         this.$set(this.buildConfig.pre_build, 'res_req_spec', {
@@ -102,11 +115,86 @@ export default {
     getClusterList () {
       return getClusterListAPI(this.projectName).then(res => {
         this.clusters = res.filter(element => element.status === 'normal')
+        this.initAdvancedConfig()
+      })
+    },
+    validate () {
+      return this.$refs.advancedConfig.validate().catch(() => {
+        this.$emit('validateFailed')
+        return Promise.reject()
       })
     }
   },
   created () {
     this.getClusterList()
+    this.validObj.addValidate({
+      name: 'advancedConfigValid',
+      valid: this.validate
+    })
   }
 }
 </script>
+
+<style lang="less" scoped>
+@inputWidth: 400px;
+@secondaryColor: #8a8a8a;
+@primaryColor: #000;
+@formItemBottom: 8px;
+@labelWeight: 300;
+
+.advanced-config-container {
+  .item-title {
+    color: @primaryColor;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 28px;
+  }
+
+  /deep/.el-form.build-advanced-form {
+    .el-form-item {
+      margin-bottom: @formItemBottom;
+    }
+
+    .el-form-item__label {
+      color: @secondaryColor;
+      font-weight: @labelWeight;
+    }
+
+    .el-input,
+    .el-select {
+      width: @inputWidth;
+
+      .el-input {
+        width: 100%;
+      }
+    }
+
+    .define-resource {
+      .el-form-item__label {
+        padding-right: 12px;
+      }
+
+      .el-input {
+        width: @inputWidth - 70px;
+      }
+    }
+
+    .el-input-number.el-input-number--mini {
+      .el-input {
+        width: 100%;
+      }
+    }
+
+    .radio-group {
+      margin: 8px 0;
+      line-height: 22px;
+
+      .el-radio {
+        color: @secondaryColor;
+        font-weight: @labelWeight;
+        font-size: 14px;
+      }
+    }
+  }
+}
+</style>

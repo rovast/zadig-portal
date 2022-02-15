@@ -12,7 +12,7 @@
           <Announcement v-for="(ann,index) in announcements" :key="index" :title="ann.content.title" :content="ann.content.content" />
           <Announcement title="系统提示" isHtml v-if="isAdmin && SMTPDisabled" :content="htmlTemplate" />
           <!-- <FloatLink class="main-float"/> -->
-          <router-view class="content-detail"></router-view>
+          <router-view></router-view>
         </div>
       </div>
       <!-- <div class="bottom-bar-wrap">

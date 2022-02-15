@@ -153,7 +153,7 @@
                      size="small"
                      type="success">新建</el-button>
           <span class="switch-span"
-                :style="{color: proxyInfo.enable_application_proxy?'#409EFF':'#303133'}">启用代理</span>
+                :style="{color: proxyInfo.enable_application_proxy?'#5555ff':'#303133'}">启用代理</span>
           <el-switch size="small"
                      :value="proxyInfo.enable_application_proxy"
                      @change="changeProxy"></el-switch>
@@ -504,15 +504,15 @@ export default {
       }
 
       .el-button--success.is-plain {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
 
       .el-button--success.is-plain:hover {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
     }
 
@@ -524,7 +524,7 @@ export default {
         width: 10px;
         height: 10px;
         vertical-align: middle;
-        background: #13ce66;
+        background: @themeColor;
         border-radius: 50%;
       }
     }

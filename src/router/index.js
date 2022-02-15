@@ -142,6 +142,22 @@ const routes = [
             }
           },
           {
+            path: 'builds/create',
+            component: () => import(/* webpackChunkName: "project-build" */ '@/components/projects/build/configDetail.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '新建构建'
+            }
+          },
+          {
+            path: 'builds/detail/:build_name',
+            component: () => import(/* webpackChunkName: "project-build" */ '@/components/projects/build/configDetail.vue'),
+            meta: {
+              requiresAuth: true,
+              title: '构建详情'
+            }
+          },
+          {
             path: 'test',
             component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function.vue'),
             meta: {
@@ -431,30 +447,6 @@ const routes = [
         meta: {
           requiresAuth: true,
           title: '服务管理'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/builds',
-        component: () => import(/* webpackChunkName: "project-build" */ '@/components/projects/build/config.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '构建'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/builds/create',
-        component: () => import(/* webpackChunkName: "project-build" */ '@/components/projects/build/configDetail.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '新建构建'
-        }
-      },
-      {
-        path: 'projects/detail/:project_name/builds/detail/:build_name',
-        component: () => import(/* webpackChunkName: "project-build" */ '@/components/projects/build/configDetail.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '构建详情'
         }
       },
       {

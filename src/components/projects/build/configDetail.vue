@@ -920,6 +920,7 @@ export default {
 .build-config-container {
   position: relative;
   flex: 1;
+  height: 100%;
   padding: 15px 20px;
   overflow: auto;
 

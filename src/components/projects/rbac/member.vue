@@ -42,9 +42,9 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="角色">
+      <el-table-column label="角色/策略">
         <template slot-scope="scope">
-          <span>{{scope.row.role}}</span>
+          <span>{{scope.row.role_or_policy}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">

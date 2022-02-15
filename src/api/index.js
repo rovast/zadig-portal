@@ -1621,7 +1621,7 @@ export function deleteRoleBindingsAPI (name, projectName) {
 }
 
 export function queryRoleBindingsAPI (projectName) {
-  return http.get(`/api/v1/picket/rolebindings?projectName=${projectName}`)
+  return http.get(`/api/v1/picket/bindings?projectName=${projectName}`)
 }
 
 export function queryUserBindingsAPI (uid, projectName = '') { // Query all binding roles of the user, pass projectName for project binding, default is system binding

@@ -566,8 +566,8 @@
     </div>
 </template>
 <script>
-import BuildEnv from '@/components/projects/build/build_env.vue'
-import EnvVariable from '@/components/projects/build/env_variable.vue'
+import BuildEnv from '@/components/projects/build/buildEnv.vue'
+import EnvVariable from '@/components/projects/build/envVariable.vue'
 import {
   getBuildConfigDetailAPI,
   getDockerfileTemplatesAPI,

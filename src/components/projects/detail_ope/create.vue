@@ -286,7 +286,7 @@ export default {
           }
         } else if (payload.product_feature.basic_facility === 'cloud_host') {
           this.$router.push(
-            `/v1/projects/create/${payload.product_name}/not_k8s/info`
+            `/v1/projects/create/${payload.product_name}/pm/info`
           )
         }
       })

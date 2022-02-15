@@ -70,14 +70,14 @@
         </div>
       </div>
       <div class="other-operation">
-        <h3 class="pipelines-aside-help__step-header">
+        <h3 class="service-aside-help__step-header">
           您可能还需要：
         </h3>
-        <ul class="pipelines-aside-help__step-list">
-          <li class="pipelines-aside-help__step-list-item"><a target="_blank"
+        <ul class="service-aside-help__step-list">
+          <li class="service-aside-help__step-list-item"><a target="_blank"
                href="https://docs.koderover.com/zadig/project/workflow/#git-webhook"
-               class="pipelines-aside-help__step-list-item-link"><i class="icon el-icon-link"></i>
-              <span class="pipelines-aside-help__step-list-item-link-text">
+               class="service-aside-help__step-list-item-link"><i class="icon el-icon-link"></i>
+              <span class="service-aside-help__step-list-item-link-text">
                 配置 Git Webhook 自动触发服务升级</span></a></li>
         </ul>
       </div>
@@ -109,7 +109,7 @@
 <script>
 import bus from '@utils/eventBus'
 import step from '../common/step.vue'
-import runWorkflow from '../../pipeline/common/run_workflow.vue'
+import runWorkflow from '../../workflow/common/run_workflow.vue'
 import { wordTranslate } from '@utils/wordTranslate.js'
 import { getProductWorkflowsInProjectAPI, getProjectIngressAPI, getWorkflowDetailAPI } from '@api'
 export default {

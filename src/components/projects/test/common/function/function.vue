@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import functionTestList from './container/function_test_list.vue'
+import functionTestList from './container/functionTestList.vue'
 import moment from 'moment'
 import { testsAPI, runTestsAPI, updateWorkflowAPI, deleteTestAPI, getWorkflowBindAPI, singleTestAPI } from '@api'
 
@@ -208,6 +208,7 @@ export default {
 .function-test-manage {
   position: relative;
   flex: 1;
+  height: 100%;
   padding: 15px 20px;
   overflow: auto;
 

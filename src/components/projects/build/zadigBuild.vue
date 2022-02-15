@@ -105,7 +105,7 @@
 import Editor from 'vue2-ace-bind'
 import Resize from '@/components/common/resize.vue'
 
-import EnvVariable from '@/components/projects/build/env_variable.vue'
+import EnvVariable from '@/components/projects/build/envVariable.vue'
 import AdvancedConfig from './advancedConfig.vue'
 import OtherSteps from './otherSteps.vue'
 

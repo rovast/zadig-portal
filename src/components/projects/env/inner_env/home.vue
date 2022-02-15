@@ -69,8 +69,9 @@ export default {
   position: relative;
   display: flex;
   flex: 1;
+  height: 100%;
   padding: 15px 20px;
-  overflow: hidden;
+  overflow-y: auto;
 
   .no-show {
     margin: auto;

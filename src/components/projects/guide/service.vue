@@ -1,9 +1,9 @@
 <template>
   <div class="projects-service-mgr">
     <el-drawer title="代码源集成"
-               :visible.sync="addCodeDrawer"
+               :visible.sync="integrationCodeDrawer"
                direction="rtl">
-      <add-code @cancel="addCodeDrawer = false"></add-code>
+      <add-code @cancel="integrationCodeDrawer = false"></add-code>
     </el-drawer>
     <div class="guide-container">
       <step :activeStep="1">
@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="pipeline onboarding">
-      <div class="pipeline-workflow__wrap">
+      <div class="service-container">
         <multipane class="vertical-panes"
                    layout="vertical">
           <div class="service-tree-container">
@@ -27,7 +27,7 @@
                          :basePath="`/v1/projects/create/${projectName}/helm/service`"
                          :guideMode="true"
                          ref="serviceTree"
-                         @onAddCodeSource="addCodeDrawer = true"
+                         @onAddCodeSource="integrationCodeDrawer = true"
                          @onJumpToKind="jumpToKind"
                          @onRefreshProjectInfo="checkProjectFeature"
                          @onRefreshService="getServices"
@@ -49,7 +49,7 @@
                                   @onUpdateService="onUpdateService"></serviceEditorK8s>
               </div>
               <multipane-resizer></multipane-resizer>
-              <aside class="pipelines__aside pipelines__aside_right"
+              <aside class="service-aside service-aside-right"
                      :style="{ flexGrow: 1 }">
                 <serviceAsideK8s :service="service"
                                  :detectedEnvs="detectedEnvs"
@@ -93,10 +93,10 @@
 import bus from '@utils/eventBus'
 import mixin from '@/mixin/serviceModuleMixin'
 import step from './common/step.vue'
-import addCode from '../service_mgr/common/add_code.vue'
-import serviceAsideK8s from '../service_mgr/k8s/service_aside.vue'
+import addCode from '../serviceMgr/common/integrationCode.vue'
+import serviceAsideK8s from '../serviceMgr/k8s/serviceAside.vue'
 import serviceEditorK8s from './k8s/container/service_editor.vue'
-import serviceTree from '../service_mgr/common/service_tree.vue'
+import serviceTree from '../serviceMgr/common/serviceTree.vue'
 import { sortBy } from 'lodash'
 import { getServiceTemplatesAPI, getServicesTemplateWithSharedAPI, saveServiceTemplateAPI, serviceTemplateWithConfigAPI, getSingleProjectAPI } from '@api'
 import { Multipane, MultipaneResizer } from 'vue-multipane'
@@ -112,7 +112,7 @@ export default {
       currentServiceYamlKinds: {},
       projectInfo: {},
       showNext: false,
-      addCodeDrawer: false
+      integrationCodeDrawer: false
     }
   },
   methods: {

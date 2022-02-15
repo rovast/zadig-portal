@@ -1,7 +1,7 @@
 <template>
     <div class="dockerfile-template-container">
-      <div class="pipeline">
-        <div class="pipeline-workflow__wrap">
+      <div class="service-wrap">
+        <div class="service-container">
           <multipane class="vertical-panes"
                      layout="vertical">
             <div class="file-tree-container">
@@ -24,7 +24,7 @@
                                     @onUpdateFile="onUpdateFile"></FileEditor>
                 </div>
                 <multipane-resizer></multipane-resizer>
-                <aside class="pipelines__aside pipelines__aside_right"
+                <aside class="service-aside service-aside-right"
                        :style="{ flexGrow: 1 }">
                   <FileAside :fileContent="fileContent"></FileAside>
                 </aside>

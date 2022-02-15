@@ -1181,6 +1181,7 @@ export default {
 
 .build-config-container {
   flex: 1;
+  height: 100%;
   padding: 15px 15px 60px 15px;
   overflow: auto;
   font-size: 13px;

@@ -261,7 +261,7 @@
 <script>
 import BuildEnv from '@/components/projects/build/buildEnv.vue'
 import EnvVariable from '@/components/projects/build/envVariable.vue'
-import testTrigger from '@/components/common/test_trigger.vue'
+import testTrigger from '@/components/common/testTrigger.vue'
 import bus from '@utils/eventBus'
 import ValidateSubmit from '@utils/validateAsync'
 import Editor from 'vue2-ace-bind'

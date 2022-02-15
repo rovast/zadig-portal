@@ -8,8 +8,7 @@
     </transition>
 
     <div class="guide-container">
-      <step :activeStep="0">
-      </step>
+      <Step :activeStep="0"/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第一步</span>
@@ -82,7 +81,7 @@
 </template>
 <script>
 import bus from '@utils/eventBus'
-import step from '../common/step.vue'
+import Step from '../common/step.vue'
 export default {
   data () {
     return {
@@ -109,7 +108,7 @@ export default {
     bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
   },
   components: {
-    step
+    Step
   },
   onboardingStatus: 1
 }

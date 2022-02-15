@@ -7,52 +7,42 @@
     </transition>
 
     <div class="guide-container">
-      <step :activeStep="0">
-      </step>
+      <Step :activeStep="0" />
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第一步</span>
-          <span class="second">对项目的流程做初步定义后，后续可在项目中进行调整。当您创建好服务后，我们会为您做如下的智能交付准备。Zadig
-            会自动生成以下资源：</span>
+          <span class="second">
+            对项目的流程做初步定义后，后续可在项目中进行调整。当您创建好服务后，我们会为您做如下的智能交付准备。Zadig
+            会自动生成以下资源：
+          </span>
         </div>
         <div class="account-integrations cf-block__list">
           <div class="info-block">
             <div class="info-block-item">
               <div class="account-box-item__info info-block-item-card">
                 <div class="integration-card__image">
-                  <el-button type="success"
-                             icon="el-icon-check"
-                             circle></el-button>
+                  <el-button type="success" icon="el-icon-check" circle></el-button>
                 </div>
                 <div class="integration-card__info">
                   <div class="integration-name cf-sub-title">2 套测试环境</div>
-                  <div class="integration-details">dev, qa
-                  </div>
+                  <div class="integration-details">dev, qa</div>
                 </div>
               </div>
-              <div class="account-box-item__controls">
-
-              </div>
+              <div class="account-box-item__controls"></div>
             </div>
           </div>
           <div class="info-block">
             <div class="info-block-item">
               <div class="account-box-item__info info-block-item-card">
                 <div class="integration-card__image">
-                  <el-button type="success"
-                             icon="el-icon-check"
-                             circle></el-button>
+                  <el-button type="success" icon="el-icon-check" circle></el-button>
                 </div>
                 <div class="integration-card__info">
                   <div class="integration-name cf-sub-title">3 条工作流</div>
-                  <div class="integration-details">
-                    {{projectName}}-workflow-dev , {{projectName}}-workflow-qa, {{projectName}}-ops-workflow
-                  </div>
+                  <div class="integration-details">{{projectName}}-workflow-dev , {{projectName}}-workflow-qa, {{projectName}}-ops-workflow</div>
                 </div>
               </div>
-              <div class="account-box-item__controls">
-
-              </div>
+              <div class="account-box-item__controls"></div>
             </div>
           </div>
         </div>
@@ -61,15 +51,10 @@
     <div class="controls__wrap">
       <div class="controls__right">
         <router-link :to="`/v1/projects/create/${this.projectName}/pm/config`">
-          <button type="primary"
-                  class="save-btn"
-                  plain>下一步</button>
+          <button type="primary" class="save-btn" plain>下一步</button>
         </router-link>
-        <button type="primary"
-                class="save-btn"
-                @click="jumpOnboarding">
-          <i v-if="jumpLoading"
-             class="el-icon-loading"></i>
+        <button type="primary" class="save-btn" @click="jumpOnboarding">
+          <i v-if="jumpLoading" class="el-icon-loading"></i>
           <span>跳过向导</span>
         </button>
       </div>
@@ -78,7 +63,7 @@
 </template>
 <script>
 import bus from '@utils/eventBus'
-import step from './container/step.vue'
+import Step from './container/step.vue'
 export default {
   data () {
     return {
@@ -88,11 +73,13 @@ export default {
   methods: {
     jumpOnboarding () {
       this.jumpLoading = true
-      this.saveOnboardingStatus(this.projectName, 0).then((res) => {
-        this.$router.push(`/v1/projects/detail/${this.projectName}`)
-      }).catch(() => {
-        this.jumpLoading = false
-      })
+      this.saveOnboardingStatus(this.projectName, 0)
+        .then(res => {
+          this.$router.push(`/v1/projects/detail/${this.projectName}`)
+        })
+        .catch(() => {
+          this.jumpLoading = false
+        })
     }
   },
   computed: {
@@ -102,10 +89,16 @@ export default {
   },
   created () {
     bus.$emit(`show-sidebar`, true)
-    bus.$emit(`set-topbar-title`, { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '项目', url: '/v1/projects' },
+        { title: this.projectName, url: '' }
+      ]
+    })
   },
   components: {
-    step
+    Step
   },
   onboardingStatus: 1
 }
@@ -131,7 +124,7 @@ export default {
   }
 
   .guide-container {
-    min-height: calc(~"100% - 150px");
+    min-height: calc(~'100% - 150px');
     margin-top: 10px;
 
     .current-step-container {

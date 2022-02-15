@@ -81,7 +81,7 @@
 
 <script>
 import VirtualListItem from './list/virtualListItem'
-import RunProductWorkflow from './common/run_workflow.vue'
+import RunProductWorkflow from './common/runWorkflow.vue'
 import RunCommonWorkflow from './common/runCommonWorkflow.vue'
 import VirtualList from 'vue-virtual-scroll-list'
 import qs from 'qs'

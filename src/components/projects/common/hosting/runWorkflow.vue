@@ -48,7 +48,7 @@
 </template>
 <script>
 import { wordTranslate } from '@utils/wordTranslate.js'
-import RunWorkflow from '../../workflow/common/run_workflow.vue'
+import RunWorkflow from '../../workflow/common/runWorkflow.vue'
 import { getProjectIngressAPI, getWorkflowDetailAPI, getProductWorkflowsInProjectAPI, generateWorkflowAPI } from '@api'
 
 export default {

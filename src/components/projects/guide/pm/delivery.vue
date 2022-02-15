@@ -1,8 +1,7 @@
 <template>
   <div class="projects-delivery-container">
     <div class="guide-container">
-      <step :activeStep="3">
-      </step>
+      <Step :activeStep="3"/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第四步</span>
@@ -115,19 +114,19 @@
                custom-class="run-workflow"
                width="60%"
                class="dialog">
-      <run-workflow v-if="taskDialogVisible"
+      <RunWorkflow v-if="taskDialogVisible"
                     :workflowName="workflow.name"
                     :workflowMeta="workflow"
                     :targetProject="workflow.product_tmpl_name"
-                    @success="hideAfterSuccess"></run-workflow>
+                    @success="hideAfterSuccess"/>
     </el-dialog>
   </div>
 </template>
 <script>
 import bus from '@utils/eventBus'
-import step from './container/step.vue'
+import Step from './container/step.vue'
+import RunWorkflow from '../../workflow/common/runWorkflow.vue'
 import { wordTranslate } from '@utils/wordTranslate.js'
-import runWorkflow from '../../workflow/common/run_workflow.vue'
 import { getProductWorkflowsInProjectAPI, getWorkflowDetailAPI } from '@api'
 export default {
   data () {
@@ -187,7 +186,8 @@ export default {
     bus.$emit(`set-topbar-title`, { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
   },
   components: {
-    step, runWorkflow
+    Step,
+    RunWorkflow
   },
   onboardingStatus: 0
 }

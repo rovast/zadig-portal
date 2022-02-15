@@ -27,9 +27,9 @@
 <script>
 import bus from '@utils/eventBus'
 import Step from './components/step.vue'
-import HostEnvConfig from './components/host_env_config.vue'
-import ServiceBuild from './components/service_build.vue'
-import RunWorkflow from './components/run_workflow.vue'
+import HostEnvConfig from './components/hostEnvConfig.vue'
+import ServiceBuild from './components/serviceBuild.vue'
+import RunWorkflow from './components/runWorkflow.vue'
 
 export default {
   name: 'hostConfig',

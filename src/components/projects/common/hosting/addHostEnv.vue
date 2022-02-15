@@ -47,7 +47,7 @@
 <script>
 import { getClusterListAPI, productHostingNamespaceAPI, queryWorkloads, postWorkloads } from '@/api'
 export default {
-  name: 'host_env_config',
+  name: 'hostEnvConfig',
   data () {
     return {
       allCluster: [],

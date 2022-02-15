@@ -1,8 +1,7 @@
 <template>
   <div class="projects-pm-service-container">
     <div class="guide-container">
-      <step :activeStep="1">
-      </step>
+      <Step :activeStep="1" />
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第二步</span>
@@ -11,38 +10,27 @@
       </div>
     </div>
     <div class="config-container">
-      <ServiceList ref="serviceLsit" :editService="editService" :addService="addService" :changeShowBuild="changeShowBuild"/>
-      <Build  v-if="showBuild"  ref="pm-service" :serviceName="serviceName" :isEdit="isEdit"
-
-              @listenCreateEvent="listenEvent"></Build>
+      <ServiceList ref="serviceLsit" :editService="editService" :addService="addService" :changeShowBuild="changeShowBuild" />
+      <Build v-if="showBuild" ref="pm-service" :serviceName="serviceName" :isEdit="isEdit" @listenCreateEvent="listenEvent"></Build>
       <div v-else class="no-content">
-            <img src="@assets/icons/illustration/editor_nodata.svg"
-                 alt="">
-                <p style="color: #909399;">暂无服务，创建服务请在左侧栏点击&nbsp;<el-button size="mini"
-                           icon="el-icon-plus"
-                           @click="$refs.serviceLsit.newService()"
-                           plain
-                           circle>
-                </el-button>&nbsp;创建服务</p>
+        <img src="@assets/icons/illustration/editor_nodata.svg" alt />
+        <p style="color: #909399;">
+          暂无服务，创建服务请在左侧栏点击&nbsp;
+          <el-button size="mini" icon="el-icon-plus" @click="$refs.serviceLsit.newService()" plain circle></el-button>&nbsp;创建服务
+        </p>
       </div>
     </div>
     <div class="controls__wrap">
       <div class="controls__right">
-        <button type="primary"
-                size="small"
-                :disabled="!showNext"
-                @click="toNext"
-                class="save-btn"
-                plain>下一步</button>
-        <div class="run-button">
-        </div>
+        <button type="primary" size="small" :disabled="!showNext" @click="toNext" class="save-btn" plain>下一步</button>
+        <div class="run-button"></div>
       </div>
     </div>
   </div>
 </template>
 <script>
 import bus from '@utils/eventBus'
-import step from './container/step.vue'
+import Step from './container/step.vue'
 import ServiceList from '@/components/projects/common/pm/serviceList.vue'
 import Build from '@/components/projects/common/pm/pmConfig.vue'
 
@@ -90,10 +78,18 @@ export default {
   },
   created () {
     bus.$emit(`show-sidebar`, true)
-    bus.$emit(`set-topbar-title`, { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '项目', url: '/v1/projects' },
+        { title: this.projectName, url: '' }
+      ]
+    })
   },
   components: {
-    step, Build, ServiceList
+    Step,
+    Build,
+    ServiceList
   },
   onboardingStatus: 2
 }
@@ -166,7 +162,7 @@ export default {
   .config-container {
     position: relative;
     display: flex;
-    height: calc(~"100% - 230px") !important;
+    height: calc(~'100% - 230px') !important;
     margin-bottom: 0;
     padding: 5px 15px 15px 15px;
   }

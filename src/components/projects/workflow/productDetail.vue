@@ -82,7 +82,7 @@ import {
   workflowTaskListAPI,
   getWorkflowFilterListAPI
 } from '@api'
-import runWorkflow from './common/run_workflow.vue'
+import runWorkflow from './common/runWorkflow.vue'
 import FilterStatus from './productTaskDetail/filterStatus.vue'
 import TaskList from '@/components/projects/common/taskList.vue'
 import bus from '@utils/eventBus'

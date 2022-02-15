@@ -1,5 +1,5 @@
 <template>
-  <FunctionDetaill :basePath="`projects`"/>
+  <FunctionDetail :basePath="`projects`"/>
 </template>
 
 <script>

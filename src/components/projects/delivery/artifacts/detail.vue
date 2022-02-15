@@ -166,12 +166,11 @@
                    label="Dockerfile"
                    name="dockerfile">
         <div class="dockerfile-container">
-          <dockerFile v-if="collapseItemWasOpend"
+          <DockerFile v-if="collapseItemWasOpend"
                       style="width: 100%; height: 100%;"
                       ref="dockerfile"
                       :value="artifact.docker_file"
-                      :options="yamlOptions">
-          </dockerFile>
+                      :options="yamlOptions"/>
         </div>
       </el-tab-pane>
       <el-tab-pane v-if="artifact.layers"
@@ -298,7 +297,7 @@ export default {
     this.getArtifactsDetail(this.id)
   },
   components: {
-    dockerFile: codemirror
+    DockerFile: codemirror
   }
 }
 </script>

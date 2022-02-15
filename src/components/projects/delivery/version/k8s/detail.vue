@@ -1,54 +1,42 @@
 <template>
-  <div v-loading="loading"
-       class="version-container">
-    <el-dialog :visible.sync="exportModal.visible"
-               width="65%"
-               title="服务配置查看"
-               class="export-dialog">
-      <span v-if="exportModal.textObjects.length === 0"
-            class="nothing">
-        {{'没有找到数据'}}
-      </span>
+  <div v-loading="loading" class="version-container">
+    <el-dialog :visible.sync="exportModal.visible" width="65%" title="服务配置查看" class="export-dialog">
+      <span v-if="exportModal.textObjects.length === 0" class="nothing">{{'没有找到数据'}}</span>
       <template v-else>
-        <div v-for="(obj, i) of exportModal.textObjects"
-             :key="obj.originalText"
-             class="config-viewer">
+        <div v-for="(obj, i) of exportModal.textObjects" :key="obj.originalText" class="config-viewer">
           <div>
             <div :class="{'op-row': true, expanded: obj.expanded}">
-              <el-button @click="toggleYAML(obj)"
-                         type="text"
-                         icon="el-icon-caret-bottom">
-                {{ obj.expanded ? '收起' : '展开' }}
-              </el-button>
-              <el-button @click="copyYAML(obj, i)"
-                         type="primary"
-                         plain
-                         size="small"
-                         class="at-right">复制</el-button>
+              <el-button @click="toggleYAML(obj)" type="text" icon="el-icon-caret-bottom">{{ obj.expanded ? '收起' : '展开' }}</el-button>
+              <el-button @click="copyYAML(obj, i)" type="primary" plain size="small" class="at-right">复制</el-button>
             </div>
-            <Editor v-show="obj.expanded"
-                    :value="obj.readableText"
-                    :options="exportModal.editorOption"
-                    @init="editorInit($event, obj)"
-                    lang="yaml"
-                    theme="tomorrow_night"
-                    width="100%"
-                    height="800"></Editor>
+            <Editor
+              v-show="obj.expanded"
+              :value="obj.readableText"
+              :options="exportModal.editorOption"
+              @init="editorInit($event, obj)"
+              lang="yaml"
+              theme="tomorrow_night"
+              width="100%"
+              height="800"
+            />
           </div>
         </div>
       </template>
     </el-dialog>
-    <el-dialog :title="`版本发布 ${workflowToRun.version}`"
-               :visible.sync="runWorkflowFromVersionDialogVisible"
-               custom-class="run-workflow"
-               width="60%">
+    <el-dialog
+      :title="`版本发布 ${workflowToRun.version}`"
+      :visible.sync="runWorkflowFromVersionDialogVisible"
+      custom-class="run-workflow"
+      width="60%"
+    >
       <div>
-        <run-workflow-from-version v-if="workflowToRun.workflowName"
-                                   :workflowName="workflowToRun.workflowName"
-                                   :projectName="workflowToRun.projectName"
-                                   :imageConfigs="imagesAndConfigs"></run-workflow-from-version>
+        <RunWorkflowFromVersion
+          v-if="workflowToRun.workflowName"
+          :workflowName="workflowToRun.workflowName"
+          :projectName="workflowToRun.projectName"
+          :imageConfigs="imagesAndConfigs"
+        />
       </div>
-
     </el-dialog>
     <el-tabs type="border-card">
       <el-tab-pane label="版本信息">
@@ -62,73 +50,64 @@
             <div class="text item">
               <div class="el-row">
                 <div class="el-col el-col-6">
-                  <div class=" item-title">版本</div>
+                  <div class="item-title">版本</div>
+                </div>
+                <div class="el-col el-col-6">
+                  <div class="item-desc">{{currentVersionDetail.versionInfo.version}}</div>
+                </div>
+                <div class="el-col el-col-6">
+                  <div class="item-title">产品</div>
                 </div>
                 <div class="el-col el-col-6">
                   <div class="item-desc">
-                    {{currentVersionDetail.versionInfo.version}}
-                  </div>
-                </div>
-                <div class="el-col el-col-6">
-                  <div class=" item-title">产品</div>
-                </div>
-                <div class="el-col el-col-6">
-                  <div class=" item-desc">
                     <span>{{currentVersionDetail.versionInfo.projectName}}</span>
                   </div>
                 </div>
               </div>
               <div class="el-row">
                 <div class="el-col el-col-6">
-                  <div class=" item-title">工作流详情</div>
+                  <div class="item-title">工作流详情</div>
                 </div>
                 <div class="el-col el-col-6">
-                  <div class=" item-desc">
-                    <span v-if="currentVersionDetail.versionInfo.taskId"
-                          class="link">
+                  <div class="item-desc">
+                    <span v-if="currentVersionDetail.versionInfo.taskId" class="link">
                       <router-link
-                                   :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.projectName}/pipelines/multi/${currentVersionDetail.versionInfo.workflowName}/${currentVersionDetail.versionInfo.taskId}`">
+                        :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.projectName}/pipelines/multi/${currentVersionDetail.versionInfo.workflowName}/${currentVersionDetail.versionInfo.taskId}`"
+                      >
                         {{currentVersionDetail.versionInfo.workflowName + '#'
-                        +currentVersionDetail.versionInfo.taskId}}</router-link>
+                        +currentVersionDetail.versionInfo.taskId}}
+                      </router-link>
                     </span>
                   </div>
                 </div>
                 <div class="el-col el-col-6">
-                  <div class=" item-title">描述</div>
+                  <div class="item-title">描述</div>
                 </div>
                 <div class="el-col el-col-6">
-                  <div class="item-desc">
-                    {{currentVersionDetail.versionInfo.desc}}
-                  </div>
+                  <div class="item-desc">{{currentVersionDetail.versionInfo.desc}}</div>
                 </div>
               </div>
               <div class="el-row">
                 <div class="el-col el-col-6">
-                  <div class=" item-title">创建人</div>
+                  <div class="item-title">创建人</div>
                 </div>
                 <div class="el-col el-col-6">
-                  <div class=" item-desc">
-                    {{currentVersionDetail.versionInfo.createdBy}}
-                  </div>
+                  <div class="item-desc">{{currentVersionDetail.versionInfo.createdBy}}</div>
                 </div>
                 <div class="el-col el-col-6">
-                  <div class=" item-title">创建时间</div>
+                  <div class="item-title">创建时间</div>
                 </div>
                 <div class="el-col el-col-6">
-                  <div class="item-desc">
-                    {{$utils.convertTimestamp(currentVersionDetail.versionInfo.created_at)}}
-                  </div>
+                  <div class="item-desc">{{$utils.convertTimestamp(currentVersionDetail.versionInfo.created_at)}}</div>
                 </div>
               </div>
               <div class="el-row">
                 <div class="el-col el-col-6">
-                  <div class=" item-title">标签</div>
+                  <div class="item-title">标签</div>
                 </div>
                 <div class="el-col el-col-6">
-                  <div class=" item-desc">
-                    <span v-for="(label,index) in currentVersionDetail.versionInfo.labels"
-                          :key="index"
-                          style="margin-right: 3px;">
+                  <div class="item-desc">
+                    <span v-for="(label,index) in currentVersionDetail.versionInfo.labels" :key="index" style="margin-right: 3px;">
                       <el-tag size="small">{{label}}</el-tag>
                     </span>
                   </div>
@@ -143,35 +122,28 @@
               <span>交付内容</span>
             </div>
           </div>
-          <div v-if="jiraIssues.length > 0"
-               class="el-card__body">
+          <div v-if="jiraIssues.length > 0" class="el-card__body">
             <div class="text item">
-              <div class="section-head">
-                Jira 问题关联
-              </div>
-              <el-table :data="jiraIssues"
-                        style="width: 100%;">
-
+              <div class="section-head">Jira 问题关联</div>
+              <el-table :data="jiraIssues" style="width: 100%;">
                 <el-table-column label="服务名">
-                  <template slot-scope="scope">
-                    {{scope.row.service_name}}
-                  </template>
+                  <template slot-scope="scope">{{scope.row.service_name}}</template>
                 </el-table-column>
 
                 <el-table-column label="关联问题">
                   <template slot-scope="scope">
-                    <el-popover v-for="(issue,index) in scope.row.issues"
-                                :key="index"
-                                trigger="hover"
-                                placement="top"
-                                popper-class="issue-popper">
+                    <el-popover
+                      v-for="(issue,index) in scope.row.issues"
+                      :key="index"
+                      trigger="hover"
+                      placement="top"
+                      popper-class="issue-popper"
+                    >
                       <p>报告人: {{issue.reporter?issue.reporter:'*'}}</p>
                       <p>分配给: {{issue.assignee?issue.assignee:'*'}}</p>
                       <p>优先级: {{issue.priority?issue.priority:'*'}}</p>
-                      <span slot="reference"
-                            class="issue-name-wrapper text-center">
-                        <a :href="issue.url"
-                           target="_blank">{{`${issue.key} ${issue.summary}`}}</a>
+                      <span slot="reference" class="issue-name-wrapper text-center">
+                        <a :href="issue.url" target="_blank">{{`${issue.key} ${issue.summary}`}}</a>
                       </span>
                     </el-popover>
                   </template>
@@ -179,18 +151,12 @@
               </el-table>
             </div>
           </div>
-          <div v-if="imagesAndConfigs.length > 0"
-               class="el-card__body">
+          <div v-if="imagesAndConfigs.length > 0" class="el-card__body">
             <div class="text item">
-              <div class="section-head">
-                镜像和配置信息
-              </div>
-              <el-table :data="imagesAndConfigs"
-                        style="width: 100%;">
+              <div class="section-head">镜像和配置信息</div>
+              <el-table :data="imagesAndConfigs" style="width: 100%;">
                 <el-table-column label="服务名/服务组件">
-                  <template slot-scope="scope">
-                    {{scope.row.serviceName}}
-                  </template>
+                  <template slot-scope="scope">{{scope.row.serviceName}}</template>
                 </el-table-column>
                 <el-table-column label="镜像">
                   <template slot-scope="scope">
@@ -199,55 +165,37 @@
                     </router-link>
                   </template>
                 </el-table-column>
-                <el-table-column label="服务配置"
-                                 width="130px">
+                <el-table-column label="服务配置" width="130px">
                   <template slot-scope="scope">
-                    <el-button type="text"
-                               @click="showConfig(scope.row.yamlContents)">查看</el-button>
+                    <el-button type="text" @click="showConfig(scope.row.yamlContents)">查看</el-button>
                   </template>
                 </el-table-column>
               </el-table>
             </div>
           </div>
 
-          <div v-if="packages.length > 0"
-               class="el-card__body">
+          <div v-if="packages.length > 0" class="el-card__body">
             <div class="text item">
-              <div class="section-head">
-                包信息
-              </div>
-              <el-table :data="packages"
-                        style="width: 100%;">
+              <div class="section-head">包信息</div>
+              <el-table :data="packages" style="width: 100%;">
                 <el-table-column label="服务名">
-                  <template slot-scope="scope">
-                    {{scope.row.serviceName}}
-                  </template>
+                  <template slot-scope="scope">{{scope.row.serviceName}}</template>
                 </el-table-column>
                 <el-table-column label="包文件名">
-                  <template slot-scope="scope">
-                    {{scope.row.packageFile}}
-                  </template>
+                  <template slot-scope="scope">{{scope.row.packageFile}}</template>
                 </el-table-column>
               </el-table>
             </div>
           </div>
-          <div v-if="orderedServices.length > 0"
-               class="el-card__body">
+          <div v-if="orderedServices.length > 0" class="el-card__body">
             <div class="text item">
-              <div class="section-head">
-                服务启动顺序
-              </div>
-              <el-table :data="orderedServices"
-                        style="width: 100%;">
+              <div class="section-head">服务启动顺序</div>
+              <el-table :data="orderedServices" style="width: 100%;">
                 <el-table-column label="启动顺序">
-                  <template slot-scope="scope">
-                    {{scope.$index}}
-                  </template>
+                  <template slot-scope="scope">{{scope.$index}}</template>
                 </el-table-column>
                 <el-table-column label="服务名">
-                  <template slot-scope="scope">
-                    {{scope.row.join(' , ')}}
-                  </template>
+                  <template slot-scope="scope">{{scope.row.join(' , ')}}</template>
                 </el-table-column>
               </el-table>
             </div>
@@ -384,11 +332,11 @@
             </el-table>
           </div>
         </div>
-      </el-tab-pane> -->
-      <el-tab-pane v-if="showArtifactDeployBtn"
-                   disabled>
-        <span @click="runWorkflowFromVersion"
-              slot="label"><i class="el-icon-upload2"></i> 版本发布</span>
+      </el-tab-pane>-->
+      <el-tab-pane v-if="showArtifactDeployBtn" disabled>
+        <span @click="runWorkflowFromVersion" slot="label">
+          <i class="el-icon-upload2"></i> 版本发布
+        </span>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -398,7 +346,7 @@
 import { getVersionListAPI } from '@api'
 import { uniqBy } from 'lodash'
 import Editor from 'vue2-ace-bind'
-import runWorkflowFromVersion from '../container/run_workflow.vue'
+import RunWorkflowFromVersion from '../container/runWorkflow.vue'
 export default {
   data () {
     return {
@@ -452,8 +400,10 @@ export default {
     getVersionDetail () {
       const versionId = this.versionId
       const projectName = this.projectName
-      getVersionListAPI('', projectName, '').then((res) => {
-        const currentVersionDetail = res.find(item => item.versionInfo.id === versionId)
+      getVersionListAPI('', projectName, '').then(res => {
+        const currentVersionDetail = res.find(
+          item => item.versionInfo.id === versionId
+        )
         this.transformData(currentVersionDetail)
         this.$set(this, 'currentVersionDetail', currentVersionDetail)
       })
@@ -521,25 +471,29 @@ export default {
           element.performanceTestSuite[0].testName = element.testName
           element.performanceTestSuite[0].workflowName = element.workflowName
           element.performanceTestSuite[0].taskId = element.taskId
-          element.performanceTestSuite[0].testResultPath = element.testResultPath
+          element.performanceTestSuite[0].testResultPath =
+            element.testResultPath
           this.performanceTests.push(element.performanceTestSuite[0])
         }
       })
 
       // orderedServices
       if (current_version_info.deployInfo.length > 0) {
-        this.orderedServices = current_version_info.deployInfo[0].orderedServices
+        this.orderedServices =
+          current_version_info.deployInfo[0].orderedServices
       }
     },
     showConfig (data) {
       this.exportModal.visible = true
       this.exportModal.textObjects = []
-      this.exportModal.textObjects = this.$utils.mapToArray(data, 'key').map(txt => ({
-        originalText: txt,
-        readableText: txt.replace(/\\n/g, '\n').replace(/\\t/g, '\t'),
-        expanded: true,
-        editor: null
-      }))
+      this.exportModal.textObjects = this.$utils
+        .mapToArray(data, 'key')
+        .map(txt => ({
+          originalText: txt,
+          readableText: txt.replace(/\\n/g, '\n').replace(/\\t/g, '\t'),
+          expanded: true,
+          editor: null
+        }))
     },
     editorInit (e, obj) {
       obj.editor = e
@@ -583,7 +537,11 @@ export default {
     },
     showArtifactDeployBtn () {
       // Compatible with historical data: buildInfo exists and is empty
-      if (this.currentVersionDetail.deployInfo.length !== 0 && (!this.currentVersionDetail.buildInfo || this.currentVersionDetail.buildInfo.length === 0)) {
+      if (
+        this.currentVersionDetail.deployInfo.length !== 0 &&
+        (!this.currentVersionDetail.buildInfo ||
+          this.currentVersionDetail.buildInfo.length === 0)
+      ) {
         return true
       } else {
         return false
@@ -598,7 +556,7 @@ export default {
   },
   components: {
     Editor,
-    runWorkflowFromVersion
+    RunWorkflowFromVersion
   }
 }
 </script>
@@ -670,7 +628,7 @@ export default {
   .clearfix::before,
   .clearfix::after {
     display: table;
-    content: "";
+    content: '';
   }
 
   .clearfix {

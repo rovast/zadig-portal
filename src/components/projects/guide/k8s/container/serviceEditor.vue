@@ -22,7 +22,7 @@
                 <el-button size="mini" type="text" @click="openImportYamlDialog">从模板导入</el-button>
               </div>
               <div class="yaml-desc" v-show="!service.yaml">请输入 Kubernetes YAML 配置</div>
-              <codemirror style="width: 100%; height: 100%;" ref="myCm" :value="service.yaml" :options="cmOptions" @input="onCmCodeChange"></codemirror>
+              <Codemirror style="width: 100%; height: 100%;" ref="myCm" :value="service.yaml" :options="cmOptions" @input="onCmCodeChange"/>
             </div>
           </div>
         </div>
@@ -416,7 +416,7 @@ export default {
     this.editorFocus()
   },
   components: {
-    codemirror
+    Codemirror: codemirror
   }
 }
 </script>

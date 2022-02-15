@@ -5,10 +5,10 @@
                  width="60%"
                  title="文件导出"
                  class="downloadArtifact-dialog">
-        <artifact-download ref="downloadArtifact"
+        <ArtifactDownload ref="downloadArtifact"
                           :workflowName="workflowName"
                           :taskId="taskID"
-                          :showArtifact="artifactModalVisible"></artifact-download>
+                          :showArtifact="artifactModalVisible"/>
       </el-dialog>
       <!--end of workspace-tree-dialog-->
       <el-row>
@@ -89,7 +89,7 @@
                             v-for="(build,index) in scope.row.builds"
                             :key="index">
                       <el-col :span="24">
-                        <RepoJump :build="build" :showCommit="false"></RepoJump>
+                        <RepoJump :build="build" :showCommit="false"/>
                       </el-col>
                     </el-row>
                   </div>
@@ -187,17 +187,17 @@
                   class="build-deploy-table">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <task-detail-build :buildv2="scope.row.buildv2SubTask"
+              <TaskDetailBuild :buildv2="scope.row.buildv2SubTask"
                                  :docker_build="scope.row.docker_buildSubTask"
                                  :isWorkflow="true"
                                  :serviceName="scope.row._target"
                                  :pipelineName="workflowName"
                                  :projectName="projectName"
                                  :taskID="taskID"
-                                 ref="buildComp"></task-detail-build>
-              <task-detail-deploy :deploys="scope.row.deploySubTasks"
+                                 ref="buildComp"/>
+              <TaskDetailDeploy :deploys="scope.row.deploySubTasks"
                                   :pipelineName="workflowName"
-                                  :taskID="taskID"></task-detail-deploy>
+                                  :taskID="taskID"/>
             </template>
           </el-table-column>
 
@@ -224,7 +224,7 @@
           <el-table-column>
             <template slot="header">
               部署
-              <deploy-icons></deploy-icons>
+              <DeployIcons/>
             </template>
             <template slot-scope="scope">
               <div v-if="scope.row.deploySubTasks">
@@ -276,8 +276,7 @@
                   class="build-deploy-table">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <task-detail-artifact-deploy :deploy="scope.row.deploySubTask">
-              </task-detail-artifact-deploy>
+              <TaskDetailArtifactDeploy :deploy="scope.row.deploySubTask"/>
             </template>
           </el-table-column>
 
@@ -318,8 +317,7 @@
                   class="build-deploy-table">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <task-detail-artifact-deploy :deploy="scope.row.artifact_deploySubTask" :workflowName="workflowName" :taskID="taskID">
-              </task-detail-artifact-deploy>
+              <TaskDetailArtifactDeploy :deploy="scope.row.artifact_deploySubTask" :workflowName="workflowName" :taskID="taskID"/>
             </template>
           </el-table-column>
 
@@ -361,11 +359,11 @@
                   class="test-table">
           <el-table-column type="expand">
             <template slot-scope="scope">
-              <task-detail-test :testingv2="scope.row.testingv2SubTask"
+              <TaskDetailTest :testingv2="scope.row.testingv2SubTask"
                                 :serviceName="scope.row._target"
                                 :pipelineName="workflowName"
                                 ref="testComp"
-                                :taskID="taskID"></task-detail-test>
+                                :taskID="taskID"/>
             </template>
           </el-table-column>
 
@@ -478,12 +476,12 @@ import {
   workflowTaskDetailAPI, workflowTaskDetailSSEAPI, restartWorkflowAPI, cancelWorkflowAPI, getVersionListAPI
 } from '@api'
 import { wordTranslate, colorTranslate } from '@utils/wordTranslate.js'
-import deployIcons from '@/components/common/deploy_icons'
-import artifactDownload from '@/components/common/artifact_download.vue'
-import taskDetailBuild from './productTaskDetail/build.vue'
-import taskDetailDeploy from './productTaskDetail/deploy.vue'
-import taskDetailArtifactDeploy from './productTaskDetail/artifactDeploy.vue'
-import taskDetailTest from './productTaskDetail/test.vue'
+import DeployIcons from '@/components/common/deployIcons'
+import ArtifactDownload from '@/components/common/artifactDownload.vue'
+import TaskDetailBuild from './productTaskDetail/build.vue'
+import TaskDetailDeploy from './productTaskDetail/deploy.vue'
+import TaskDetailArtifactDeploy from './productTaskDetail/artifactDeploy.vue'
+import TaskDetailTest from './productTaskDetail/test.vue'
 import RepoJump from '@/components/projects/workflow/common/repoJump.vue'
 import bus from '@utils/eventBus'
 import Etable from '@/components/common/etable'
@@ -948,12 +946,12 @@ export default {
     }
   },
   components: {
-    deployIcons,
-    artifactDownload,
-    taskDetailBuild,
-    taskDetailDeploy,
-    taskDetailArtifactDeploy,
-    taskDetailTest,
+    DeployIcons,
+    ArtifactDownload,
+    TaskDetailBuild,
+    TaskDetailDeploy,
+    TaskDetailArtifactDeploy,
+    TaskDetailTest,
     Etable,
     RepoJump
   }

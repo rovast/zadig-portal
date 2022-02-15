@@ -4,7 +4,7 @@
 <script>
 import AddHostEnv from '../../../common/hosting/addHostEnv.vue'
 export default {
-  name: 'host_env_config',
+  name: 'hostEnvConfig',
   components: {
     AddHostEnv
   },

@@ -137,7 +137,7 @@
       <el-table-column   width="250px">
         <template slot="header">
           部署
-          <deploy-icons></deploy-icons>
+          <DeployIcons/>
         </template>
         <template slot-scope="scope">
           <div v-for="deploy of scope.row.deploy"
@@ -275,8 +275,7 @@
 </template>
 
 <script>
-import deployIcons from './deploy_icons'
-
+import DeployIcons from './deployIcons'
 export default {
   data () {
     return {
@@ -307,7 +306,7 @@ export default {
     }
   },
   components: {
-    deployIcons
+    DeployIcons
   },
   watch: {
     pickedTargets: {

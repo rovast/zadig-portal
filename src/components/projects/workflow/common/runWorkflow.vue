@@ -171,7 +171,6 @@ import WorkflowBuildRows from '@/components/common/workflowBuildRows.vue'
 import WorkflowTestRows from '@/components/common/workflowTestRows.vue'
 import K8sArtifactDeploy from './k8sArtifactDeploy.vue'
 import PmArtifactDeploy from './pmArtifactDeploy.vue'
-import deployIcons from '@/components/common/deploy_icons'
 import { listProductAPI, precreateWorkflowTaskAPI, getAllBranchInfoAPI, runWorkflowAPI, getBuildTargetsAPI, getSingleProjectAPI, getRegistryWhenBuildAPI } from '@api'
 import { sortBy, keyBy, orderBy, cloneDeep, flattenDeep, differenceBy } from 'lodash'
 
@@ -680,7 +679,6 @@ export default {
   components: {
     WorkflowBuildRows,
     WorkflowTestRows,
-    deployIcons,
     PmArtifactDeploy,
     K8sArtifactDeploy
   }

@@ -20,7 +20,7 @@
         <div v-if="workflowMeta.build_stage && workflowMeta.build_stage.enabled"
              v-loading="precreateLoading">
           <div v-if="pickedTargets.length > 0">
-            <workflow-build-rows :pickedTargets="pickedTargets"></workflow-build-rows>
+            <WorkflowBuildRows :pickedTargets="pickedTargets"/>
           </div>
         </div>
         <div class="advanced-setting">
@@ -67,8 +67,7 @@
 
 <script>
 import _ from 'lodash'
-import workflowBuildRows from '@/components/common/workflowBuildRows.vue'
-import deployIcons from '@/components/common/deploy_icons'
+import WorkflowBuildRows from '@/components/common/workflowBuildRows.vue'
 import { precreateWorkflowTaskAPI, getAllBranchInfoAPI, runWorkflowAPI, getWorkflowDetailAPI } from '@api'
 
 export default {
@@ -463,8 +462,7 @@ export default {
     }
   },
   components: {
-    workflowBuildRows,
-    deployIcons
+    WorkflowBuildRows
   }
 }
 </script>

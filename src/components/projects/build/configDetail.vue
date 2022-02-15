@@ -85,7 +85,7 @@
           </el-row>
           <el-row>
             <el-col :span="8">
-              <el-form-item label="jenkins job"
+              <el-form-item label="Jenkins Job"
                             prop="jenkins_build.job_name"
                             :rules="[{ required: true, trigger: 'change', message: 'jobs不能为空' }]">
                 <el-select style="width: 100%;"

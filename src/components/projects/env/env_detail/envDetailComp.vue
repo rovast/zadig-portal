@@ -561,7 +561,7 @@ import {
   getRegistryWhenBuildAPI, updateEnvImageRegistry
 } from '@api'
 import _ from 'lodash'
-import runWorkflow from './run_workflow.vue'
+import runWorkflow from './runWorkflow.vue'
 import PmServiceLog from './components/pmLogDialog.vue'
 import PmHostList from './components/pmHostList.vue'
 import UpdateHelmEnvDialog from './components/updateHelmEnvDialog'

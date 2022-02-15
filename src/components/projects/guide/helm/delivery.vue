@@ -1,7 +1,7 @@
 <template>
   <div class="projects-delivery-container">
     <div class="guide-container">
-      <step :activeStep="3" :stepThreeTitle="`配置环境`"></step>
+      <Step :activeStep="3" :stepThreeTitle="`配置环境`"/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第四步</span>
@@ -75,20 +75,20 @@
       </div>
     </div>
     <el-dialog :visible.sync="taskDialogVisible" title="运行 产品-工作流" custom-class="run-workflow" width="60%" class="dialog">
-      <run-workflow
+      <RunWorkflow
         v-if="taskDialogVisible"
         :workflowName="workflow.name"
         :workflowMeta="workflow"
         :targetProject="workflow.product_tmpl_name"
         @success="hideAfterSuccess"
-      ></run-workflow>
+      />
     </el-dialog>
   </div>
 </template>
 <script>
 import bus from '@utils/eventBus'
-import step from '../common/step.vue'
-import runWorkflow from '../../workflow/common/run_workflow.vue'
+import Step from '../common/step.vue'
+import RunWorkflow from '../../workflow/common/runWorkflow.vue'
 import { wordTranslate } from '@utils/wordTranslate.js'
 import { getProjectIngressAPI, getProductWorkflowsInProjectAPI, getWorkflowDetailAPI, generateWorkflowAPI } from '@api'
 export default {
@@ -195,8 +195,8 @@ export default {
     this.pipeTimer = null
   },
   components: {
-    step,
-    runWorkflow
+    Step,
+    RunWorkflow
   },
   onboardingStatus: 4
 }

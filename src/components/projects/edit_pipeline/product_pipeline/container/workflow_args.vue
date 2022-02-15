@@ -52,11 +52,11 @@
       </el-form-item>
 
       <div v-if="pickedTargets.length > 0">
-        <workflow-build-rows :pickedTargets="pickedTargets"></workflow-build-rows>
+        <WorkflowBuildRows :pickedTargets="pickedTargets"/>
       </div>
     </div>
     <div v-if="workflowMeta.test_stage.enabled">
-      <workflow-test-rows :runnerTests="runner.tests"></workflow-test-rows>
+      <WorkflowTestRows :runnerTests="runner.tests"/>
     </div>
 
     <div class="start-task"
@@ -73,9 +73,8 @@
 
 <script>
 import _ from 'lodash'
-import workflowBuildRows from '@/components/common/workflowBuildRows.vue'
-import workflowTestRows from '@/components/common/workflowTestRows.vue'
-import deployIcons from '@/components/common/deploy_icons'
+import WorkflowBuildRows from '@/components/common/workflowBuildRows.vue'
+import WorkflowTestRows from '@/components/common/workflowTestRows.vue'
 import { listProductAPI, createWorkflowTaskAPI, getAllBranchInfoAPI } from '@api'
 
 export default {
@@ -394,9 +393,8 @@ export default {
     }
   },
   components: {
-    workflowBuildRows,
-    workflowTestRows,
-    deployIcons
+    WorkflowBuildRows,
+    WorkflowTestRows
   }
 }
 </script>

@@ -5,7 +5,7 @@
 import ServiceBuild from '@/components/projects/common/hosting/serviceBuild'
 
 export default {
-  name: 'service_Build',
+  name: 'serviceBuild',
   components: {
     ServiceBuild
   },

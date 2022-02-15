@@ -1,7 +1,7 @@
 <template>
   <div class="projects-runtime-container">
     <div class="guide-container">
-      <step :activeStep="2" :stepThreeTitle="`配置环境`"></step>
+      <Step :activeStep="2" :stepThreeTitle="`配置环境`"/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第三步</span>
@@ -55,7 +55,7 @@
             :envNames="envNames"
             :handledEnv="activeName"
             :envScene="`createEnv`"
-          ></HelmEnvTemplate>
+          />
           <div class="ai-bottom">
             <el-button type="primary" size="small" @click="createHelmProductEnv" :loading="isCreating" :disabled="!cantNext">创建环境</el-button>
             <div v-for="(env, index) in createRes" :key="index" class="ai-status">
@@ -79,7 +79,7 @@
 <script>
 import HelmEnvTemplate from '@/components/projects/env/env_detail/components/updateHelmEnvTemp.vue'
 import bus from '@utils/eventBus'
-import step from '../common/step.vue'
+import Step from '../common/step.vue'
 import {
   createHelmEnvAPI,
   getEnvironmentsAPI,
@@ -286,7 +286,7 @@ export default {
     this.sId = null
   },
   components: {
-    step,
+    Step,
     HelmEnvTemplate
   },
   directives: {

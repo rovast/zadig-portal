@@ -5,10 +5,10 @@
                width="60%"
                title="Artifact 文件导出"
                class="downloadArtifact-dialog">
-      <artifact-download ref="downloadArtifact"
+      <ArtifactDownload ref="downloadArtifact"
                          :workflowName="workflowName"
                          :taskId="taskID"
-                         :showArtifact="artifactModalVisible"></artifact-download>
+                         :showArtifact="artifactModalVisible"/>
     </el-dialog>
     <!--end of workspace-tree-dialog-->
     <el-row>
@@ -68,11 +68,11 @@
                 class="test-table">
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <task-detail-test :testingv2="scope.row.testingv2SubTask"
-                              :serviceName="scope.row._target"
-                              :pipelineName="workflowName"
-                              ref="testComp"
-                              :taskID="taskID"></task-detail-test>
+            <TaskDetailTest ref="testComp"
+                            :testingv2="scope.row.testingv2SubTask"
+                            :serviceName="scope.row._target"
+                            :pipelineName="workflowName"
+                            :taskID="taskID"/>
           </template>
         </el-table-column>
 
@@ -116,9 +116,8 @@
 <script>
 import { workflowTaskDetailAPI, workflowTaskDetailSSEAPI, restartTestTaskAPI, cancelTestTaskAPI } from '@api'
 import { wordTranslate, colorTranslate } from '@utils/wordTranslate.js'
-import deployIcons from '@/components/common/deploy_icons'
-import artifactDownload from '@/components/common/artifact_download.vue'
-import taskDetailTest from './container/taskDetailTest.vue'
+import ArtifactDownload from '@/components/common/artifactDownload.vue'
+import TaskDetailTest from './container/taskDetailTest.vue'
 export default {
   data () {
     return {
@@ -289,9 +288,8 @@ export default {
     }
   },
   components: {
-    deployIcons,
-    artifactDownload,
-    taskDetailTest
+    ArtifactDownload,
+    TaskDetailTest
   }
 }
 </script>

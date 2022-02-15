@@ -1,8 +1,7 @@
 <template>
   <div class="projects-pm-service-deploy-container">
     <div class="guide-container">
-      <step :activeStep="2">
-      </step>
+      <Step :activeStep="2"/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第三步</span>
@@ -119,7 +118,7 @@
 </template>
 <script>
 import bus from '@utils/eventBus'
-import step from './container/step.vue'
+import Step from './container/step.vue'
 import { generateEnvAPI, generateWorkflowAPI } from '@api'
 export default {
   data () {
@@ -222,7 +221,7 @@ export default {
     clearInterval(this.workflowTimer)
   },
   components: {
-    step
+    Step
   },
   onboardingStatus: 3
 }

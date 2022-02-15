@@ -363,7 +363,7 @@ export default {
     },
     handleClose () {
       if (this.isEdit) {
-        this.$router.push(`/v1/projects/detail/${this.projectName}`)
+        this.$router.push(`/v1/projects/detail/${this.projectName}/detail`)
       } else {
         this.$router.push('/v1/projects')
       }

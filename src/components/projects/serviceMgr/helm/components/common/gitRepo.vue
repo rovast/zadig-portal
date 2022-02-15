@@ -147,7 +147,7 @@
     </el-form>
 
     <el-dialog :append-to-body="true" :visible.sync="workSpaceModalVisible" width="60%" title="请选择要同步的文件目录" class="fileTree-dialog">
-      <Gitfile
+      <GitFileTree
         v-if="source.codehostId || source.url"
         :codehostId="source.codehostId"
         :repoName="source.repoName"
@@ -171,7 +171,7 @@ import {
   getBranchInfoByIdAPI,
   createTemplateServiceAPI
 } from '@api'
-import Gitfile from './gitFileTree'
+import GitFileTree from './gitFileTree'
 
 export default {
   name: 'GitRepo',
@@ -193,7 +193,7 @@ export default {
     }
   },
   components: {
-    Gitfile
+    GitFileTree
   },
   data () {
     return {

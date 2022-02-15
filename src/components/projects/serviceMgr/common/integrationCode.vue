@@ -331,7 +331,7 @@ export default {
         cursor: pointer;
 
         &:hover {
-          color: #13ce66;
+          color: @themeColor;
         }
       }
     }

@@ -731,15 +731,15 @@ export default {
       overflow: hidden;
 
       .el-button--success.is-plain {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
 
       .el-button--success.is-plain:hover {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
     }
 
@@ -807,7 +807,7 @@ export default {
         cursor: pointer;
 
         &:hover {
-          color: #13ce66;
+          color: @themeColor;
         }
       }
     }

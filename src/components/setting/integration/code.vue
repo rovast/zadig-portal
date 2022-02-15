@@ -370,7 +370,7 @@
                      @click="handleCodeAdd"
                      plain>添加</el-button>
           <span class="switch-span"
-                :style="{color: proxyInfo.enable_repo_proxy?'#409EFF':'#303133'}">启用代理</span>
+                :style="{color: proxyInfo.enable_repo_proxy?'#5555ff':'#303133'}">启用代理</span>
           <el-switch size="small"
                      :value="proxyInfo.enable_repo_proxy"
                      @change="changeProxy"></el-switch>
@@ -783,7 +783,7 @@ export default {
           cursor: pointer;
 
           &:hover {
-            color: #13ce66;
+            color: @themeColor;
           }
         }
       }

@@ -358,15 +358,15 @@ export default {
       overflow: hidden;
 
       .el-button--success.is-plain {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
 
       .el-button--success.is-plain:hover {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
     }
 
@@ -378,7 +378,7 @@ export default {
         width: 10px;
         height: 10px;
         vertical-align: middle;
-        background: #13ce66;
+        background: @themeColor;
         border-radius: 50%;
       }
     }

@@ -208,7 +208,7 @@ export default {
 
 /deep/ .el-icon-success {
   margin-left: 10px;
-  color: #67c23a;
+  color: @success;
   font-size: 20px;
 }
 

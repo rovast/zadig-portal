@@ -250,7 +250,7 @@ export default {
   flex: 1;
   height: 100%;
   overflow: auto;
-  background-color: #f5f7f7;
+  background-color: #f6f6f6;
 
   .empty-list {
     display: flex;

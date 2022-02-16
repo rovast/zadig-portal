@@ -482,7 +482,7 @@ export default {
 
         .project-icon {
           i {
-            color: #55f;
+            color: @themeColor;
             font-size: 24px;
           }
         }
@@ -499,7 +499,7 @@ export default {
           background: rgba(160, 160, 255, 0.15);
 
           .name {
-            color: #55f;
+            color: @themeColor;
           }
         }
       }

@@ -642,7 +642,7 @@ export default {
     background-color: rgba(160, 160, 255, 0.15);
 
     .nav-item-label {
-      color: #55f;
+      color: @themeColor;
     }
   }
 

@@ -103,11 +103,6 @@ export default {
   width: 100%;
   font-size: 12px;
 
-  th,
-  tr {
-    background-color: #fff !important;
-  }
-
   &.el-table {
     th,
     td {

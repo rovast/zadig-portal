@@ -6,20 +6,7 @@
     element-loading-spinner="iconfont iconfont-loading iconxiangmu"
   >
     <div class="project-header">
-      <!-- <template v-if="isProjectAdmin">
-        <el-dropdown placement="bottom" trigger="click">
-          <button type="button" class="display-btn">
-            <i class="el-icon-s-operation el-icon--left"></i>
-            配置
-            <i class="el-icon-caret-bottom el-icon--right"></i>
-          </button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="el-icon-edit-outline" @click.native="$router.push(`/v1/projects/edit/${projectName}`)">修改</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-delete" @click.native="deleteProject">删除</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-lock" @click.native="$router.push(`/v1/projects/detail/${projectName}/rbac`)">权限</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </template>-->
+
     </div>
     <section class="projects-detail">
       <div v-hasPermi="{projectName: projectName, action: 'get_environment'}" class="env">

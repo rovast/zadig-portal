@@ -35,21 +35,27 @@
                        label="服务名称"
                        show-overflow-tooltip>
         <template slot-scope="{ row }">
-          <div v-for="(item,index) in getRepo(row)" :key="index">
-            <el-tooltip v-if="item.builds.length > 0" class="item" effect="light"  :open-delay="250" placement="right">
-              <div slot="content">
-                <div v-for="(build,buildIndex) in item.builds" :key="buildIndex">
-                  <span v-if="build.repo_name">{{build.repo_name }}</span>
-                  <span v-if="build.tag">Tag-{{build.tag }}</span>
-                  <span v-if="build.branch">Branch-{{ build.branch }}</span>
-                  <span v-if="build.pr">PR-{{ build.pr }}</span>
-                  <span v-if="build.commit_id">{{build.commit_id.substring(0, 7)}}</span>
+          <template v-if="getRepo(row).length">
+            <div v-for="(item,index) in getRepo(row)" :key="index">
+              <el-tooltip v-if="item.builds.length > 0" class="item" effect="light"  :open-delay="250" placement="right">
+                <div slot="content">
+                  <div v-for="(build,buildIndex) in item.builds" :key="buildIndex">
+                    <span v-if="build.repo_name">{{build.repo_name }}</span>
+                    <span v-if="build.tag">Tag-{{build.tag }}</span>
+                    <span v-if="build.branch">Branch-{{ build.branch }}</span>
+                    <span v-if="build.pr">PR-{{ build.pr }}</span>
+                    <span v-if="build.commit_id">{{build.commit_id.substring(0, 7)}}</span>
+                  </div>
                 </div>
-              </div>
-              <span class="service-name pointer">{{item.service_name}}</span>
-            </el-tooltip>
-             <span v-else class="service-name">{{item.service_name}}</span>
-          </div>
+                <span class="service-name pointer">{{item.service_name}}</span>
+              </el-tooltip>
+              <span v-else class="service-name">{{item.service_name}}</span>
+            </div>
+          </template>
+          <template v-else-if="row.build_services && row.build_services.length > 0">
+            <div  v-for="item in row.build_services.slice().sort()" :key="item" class="common-column hover-color">{{item}}</div>
+          </template>
+          <div v-else class="common-column">N/A</div>
         </template>
       </el-table-column>
       <el-table-column width="120"

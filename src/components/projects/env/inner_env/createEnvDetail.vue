@@ -935,9 +935,9 @@ export default {
   .editButton {
     display: inline-block;
     margin-left: 6px;
-    padding: 0 8px;
-    font-size: 16px;
-    line-height: 28px;
+    padding: 0 6px;
+    font-size: 14px;
+    line-height: 24px;
     border: 1px solid rgba(118, 122, 200, 0.5);
     border-radius: 4px;
     cursor: pointer;

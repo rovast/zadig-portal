@@ -1,15 +1,16 @@
 <template>
-  <div class="values-outer">
-    <h4>
-      <span>values 文件</span>
-      <el-button type="text" class="title-btn" @click="showGitImportDialog = true">从 Git 导入</el-button>
+  <div class="values-yaml-container">
+    <div class="values-title">
+      <span class="title-left">
+        <span class="secondary-title">Helm values 文件</span>
+        <el-button type="text" class="title-btn" @click="showGitImportDialog = true">从代码仓导入</el-button>
+      </span>
       <i v-if="showDelete" class="el-icon-delete-solid icon-delete" @click="closeValueEdit"></i>
-    </h4>
-    <el-divider></el-divider>
+    </div>
     <Resize class="desc mirror" :resize="setResize.direction" :height="setResize.height" @sizeChange="$refs.codemirror.refresh()">
       <codemirror ref="codemirror" v-model="importRepoInfoUse.overrideYaml"></codemirror>
     </Resize>
-    <el-dialog title="从 Git 仓库导入" :visible.sync="showGitImportDialog" append-to-body>
+    <el-dialog title="从代码仓导入" :visible.sync="showGitImportDialog" append-to-body>
       <Repository ref="valueRepoRef" :repoSource="importRepoInfoUse.gitRepoConfig"></Repository>
       <div slot="footer">
         <el-button @click="showGitImportDialog = false" size="small">取 消</el-button>
@@ -64,7 +65,7 @@ export default {
   computed: {
     setResize () {
       return {
-        height: '260px',
+        height: '200px',
         direction: 'none',
         ...this.resize
       }
@@ -85,19 +86,17 @@ export default {
   },
   methods: {
     importOverrideYaml () {
-      this.$refs.valueRepoRef.validate().then(
-        async () => {
-          this.loadValueYamls = true
-          const res = await getValuesYamlFromGitAPI(this.importRepoInfoUse.gitRepoConfig).catch(error =>
-            console.log(error)
-          )
-          this.loadValueYamls = false
-          if (res) {
-            this.showGitImportDialog = false
-            this.importRepoInfoUse.overrideYaml = res
-          }
+      this.$refs.valueRepoRef.validate().then(async () => {
+        this.loadValueYamls = true
+        const res = await getValuesYamlFromGitAPI(
+          this.importRepoInfoUse.gitRepoConfig
+        ).catch(error => console.log(error))
+        this.loadValueYamls = false
+        if (res) {
+          this.showGitImportDialog = false
+          this.importRepoInfoUse.overrideYaml = res
         }
-      )
+      })
     },
     closeValueEdit () {
       this.importRepoInfoUse.yamlSource = 'default'
@@ -119,33 +118,40 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.values-outer {
-  /deep/ .el-divider--horizontal {
-    margin: 12px 0;
-  }
-
-  padding: 10px;
+.values-yaml-container {
+  margin: 12px 0;
   line-height: 1;
 
   .desc-title {
     padding: 6px 0;
   }
 
-  h4 {
-    margin: 7px 0;
-    color: #606266;
+  .values-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
     font-size: 14px;
 
-    .title-btn {
-      margin-left: 10px;
-      padding: 0;
-      font-size: 12px;
+    .title-left {
+      flex: 1 1 auto;
+
+      .secondary-title {
+        margin-bottom: 0;
+      }
+
+      .title-btn {
+        margin-left: 10px;
+        padding: 0;
+        font-weight: 300;
+        font-size: 12px;
+      }
     }
 
     .icon-delete {
-      float: right;
+      flex: 0 0 auto;
       color: #f56c6c;
-      font-size: 16px;
+      font-size: 14px;
       cursor: pointer;
     }
   }

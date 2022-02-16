@@ -1,8 +1,5 @@
 <template>
   <div class="create-product-detail-container" v-loading="loading" element-loading-text="正在加载中" element-loading-spinner="el-icon-loading">
-    <div class="module-title">
-      <h1>创建环境</h1>
-    </div>
     <div v-if="showEmptyServiceModal" class="no-resources">
       <div>
         <img src="@assets/icons/illustration/environment.svg" alt />
@@ -17,13 +14,17 @@
       </div>
     </div>
     <div v-else>
-      <el-form label-width="80px" label-position="right"  ref="create-env-ref" :model="projectConfig" :rules="rules">
+      <el-form
+        class="common-parcel-block primary-form"
+        label-width="120px"
+        label-position="left"
+        ref="create-env-ref"
+        :model="projectConfig"
+        :rules="rules"
+        inline-message
+      >
         <el-form-item label="环境名称" prop="env_name">
           <el-input @input="changeEnvName" v-model="projectConfig.env_name" size="small"></el-input>
-        </el-form-item>
-        <el-form-item label="命名空间" prop="defaultNamespace">
-          <el-input style="width: 250px;" :disabled="editButtonDisabled" v-model="projectConfig.defaultNamespace" size="small"></el-input>
-          <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">{{editButtonDisabled? '编辑' : '完成'}}</span>
         </el-form-item>
         <el-form-item label="创建方式" prop="source">
           <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
@@ -36,12 +37,19 @@
             <el-option v-for="name in projectEnvNames" :key="name" :label="name" :value="name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="集群" prop="cluster_id">
-          <el-select class="select" filterable v-model="projectConfig.cluster_id" size="small" placeholder="请选择集群">
+        <div class="primary-title">资源选择</div>
+        <el-form-item label="K8s 集群" prop="cluster_id" class="secondary-label">
+          <el-select class="select" filterable v-model="projectConfig.cluster_id" size="small" placeholder="请选择 K8s 集群">
             <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="镜像仓库">
+        <el-form-item label="K8s 命名空间" prop="defaultNamespace" class="secondary-label">
+          <el-input :disabled="editButtonDisabled" v-model="projectConfig.defaultNamespace" size="small"></el-input>
+          <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">
+            <i :class="[editButtonDisabled ? 'el-icon-edit-outline': 'el-icon-finished' ]"></i>
+          </span>
+        </el-form-item>
+        <el-form-item label="镜像仓库" class="secondary-label">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small">
             <el-option
               v-for="registry in imageRegistry"
@@ -53,25 +61,18 @@
           <div class="image-secret">imagePullSecret 名称：default-registry-secret</div>
         </el-form-item>
       </el-form>
-
-      <div style="color: rgb(153, 153, 153); font-size: 16px; line-height: 20px;">服务列表</div>
-      <el-card class="box-card-service" :body-style="{padding: '0px'}">
-        <div slot="header" class="clearfix">
-          <span class="second-title">Chart (HELM 部署)</span>
-        </div>
-        <HelmEnvTemplate
-          class="chart-value"
-          ref="helmEnvTemplateRef"
-          :chartNames="chartNames"
-          :envNames="envNames"
-          :handledEnv="envName"
-          :envScene="envScene"
-        ></HelmEnvTemplate>
-      </el-card>
-      <el-form label-width="200px" class="ops">
+      <HelmEnvTemplate
+        class="chart-value"
+        ref="helmEnvTemplateRef"
+        :chartNames="chartNames"
+        :envNames="envNames"
+        :handledEnv="envName"
+        :envScene="envScene"
+      ></HelmEnvTemplate>
+      <el-form label-width="35%" class="ops">
         <el-form-item>
-          <el-button @click="deployHelmEnv" :loading="startDeployLoading" type="primary" size="medium">确定</el-button>
           <el-button @click="$router.back()" :loading="startDeployLoading" size="medium">取消</el-button>
+          <el-button @click="deployHelmEnv" :loading="startDeployLoading" type="primary" size="medium">立即创建</el-button>
         </el-form-item>
       </el-form>
       <footer v-if="startDeployLoading" class="create-footer">
@@ -145,7 +146,7 @@ export default {
       loading: false,
       rules: {
         cluster_id: [
-          { required: true, trigger: 'change', message: '请选择集群' }
+          { required: true, trigger: 'change', message: '请选择 K8s 集群' }
         ],
         source: [
           { required: true, trigger: 'change', message: '请选择环境类型' }
@@ -307,7 +308,10 @@ export default {
     bus.$emit('set-topbar-title', {
       title: '',
       breadcrumb: [
-        { title: '项目', url: `/v1/projects/detail/${this.projectName}/detail` },
+        {
+          title: '项目',
+          url: `/v1/projects/detail/${this.projectName}/detail`
+        },
         {
           title: `${this.projectName}`,
           url: `/v1/projects/detail/${this.projectName}/detail`
@@ -339,9 +343,10 @@ export default {
 .create-product-detail-container {
   position: relative;
   flex: 1;
-  padding: 15px 20px;
+  box-sizing: border-box;
+  height: calc(~'100% - 60px');
+  padding: 16px 24px;
   overflow: auto;
-  font-size: 13px;
 
   .image-secret {
     margin-left: 3px;
@@ -350,46 +355,15 @@ export default {
     line-height: 1.5;
   }
 
-  .module-title h1 {
-    margin-bottom: 30px;
-    font-weight: 200;
-    font-size: 1.5rem;
-  }
-
-  .box-card-service {
-    margin-top: 25px;
-    margin-bottom: 25px;
-    border: none;
-    box-shadow: none;
-
-    .chart-value {
-      width: 80%;
-      min-width: 450px;
-      margin-left: 5px;
-    }
-  }
-
-  /deep/.el-card__header {
-    position: relative;
-    box-sizing: border-box;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 0;
-    border-bottom: none;
-
-    &::before {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 400px;
-      height: 1px;
-      border-bottom: 1px solid #eee;
-      content: '';
-    }
-  }
-
-  /deep/.el-collapse-item__header {
-    padding-left: 0;
+  .editButton {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 0 6px;
+    font-size: 14px;
+    line-height: 24px;
+    border: 1px solid rgba(118, 122, 200, 0.5);
+    border-radius: 4px;
+    cursor: pointer;
   }
 
   .no-resources {
@@ -492,15 +466,6 @@ export default {
     }
   }
 
-  /deep/.el-input__inner {
-    width: 250px;
-  }
-
-  .second-title {
-    color: #606266;
-    font-size: 14px;
-  }
-
   /deep/.el-tag {
     background-color: rgba(64, 158, 255, 0.2);
   }
@@ -508,12 +473,5 @@ export default {
   .ops {
     margin-top: 25px;
   }
-}
-
-.editButton {
-  display: inline-block;
-  margin-left: 10px;
-  color: @themeColor;
-  cursor: pointer;
 }
 </style>

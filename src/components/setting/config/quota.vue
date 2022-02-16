@@ -16,26 +16,28 @@
     </template>
     <div class="quota-container">
       <section>
-        <h1>任务并发数设置<el-tooltip effect="dark"
-                                    placement="top">
+        <h1>任务并发数设置 <el-tooltip effect="dark"
+                                    placement="right">
           <div slot="content">
-            每 1C2G 资源最多支持 1 个任务并发，集群资源 / 1C2G >= 工作流任务并发数 x 单任务服务并发数<br>
-            需根据集群资源配置合理的并发数量。假设集群资源为 8C16G，建议工作流任务并发数设置为 2，单任务服务并发数设置为 4。
+            每 1C2G 资源最多支持 1 个任务并发<br>
+            集群资源 / 1C2G >= 工作流任务并发数 x 单任务服务并发数<br>
+            需根据集群资源配置合理的并发数量。假设集群资源为 8C16G<br>
+            建议工作流任务并发数设置为 2，单任务服务并发数设置为 4。
           </div>
           <i class="el-icon-question tooltip"></i>
           </el-tooltip>
         </h1>
         <div class="workflow-concurrency">
-          工作流任务并发数
+          <span class="desc">工作流任务并发数</span>
           <el-input-number size="mini"
-                           :min="0"
+                           :min="1"
                            v-model.number="workflowConcurrency"></el-input-number>
         </div>
         <br/>
-        <div class="build-concurrency">
-          单任务构建并发数
+        <div class="workflow-concurrency">
+          <span class="desc">单任务构建并发数</span>
           <el-input-number size="mini"
-                           :min="0"
+                           :min="1"
                            v-model.number="buildConcurrency"></el-input-number>
         </div>
       </section>
@@ -203,6 +205,19 @@ export default {
       .tooltip {
         color: #909399;
         cursor: pointer;
+      }
+    }
+
+    .workflow-concurrency {
+      span.desc {
+        margin-left: 22px;
+        color: #606266;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .el-input-number {
+        margin-left: 20px;
       }
     }
 

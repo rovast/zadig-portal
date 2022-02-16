@@ -45,7 +45,7 @@ export default {
   height: 100%;
   overflow: auto;
   line-height: 1.5;
-  background-color: #f5f7f7;
+  background-color: #f6f6f6;
 
   .header {
     display: flex;

@@ -147,7 +147,7 @@ export default {
       }
 
       .status-good {
-        color: #52c41a;
+        color: @success;
       }
 
       .status-bad {

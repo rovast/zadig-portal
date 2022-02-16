@@ -246,7 +246,7 @@ export default {
     }
 
     .passed {
-      color: #67c23a;
+      color: @success;
     }
   }
 

@@ -81,7 +81,7 @@ export default {
 }
 
 .btn.btn-success {
-  color: #67c23a;
+  color: @success;
   background-color: rgba(103, 194, 58, 0.04);
   border-color: rgba(103, 194, 58, 0.4);
 }

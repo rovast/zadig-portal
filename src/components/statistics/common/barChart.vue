@@ -24,7 +24,7 @@ export default {
             color: '#999999'
           }
         },
-        color: ['#02baad', '#f56464'],
+        color: ['#67c23a', '#ff1949'],
         backgroundColor: 'rgba(252,252,252,0)',
         bar: {
           itemStyle: {

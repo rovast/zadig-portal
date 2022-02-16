@@ -101,12 +101,6 @@ export default {
     text-overflow: ellipsis;
   }
 
-  .el-table__empty-block,
-  tr,
-  th {
-    background-color: #fff !important;
-  }
-
   &.el-table th,
   td {
     padding: 0;

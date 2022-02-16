@@ -24,7 +24,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "insight-build" */ '@/components/insight/build/view.vue'),
             meta: {
               requiresAuth: true,
-              title: '构建洞察'
+              title: '构建效能'
             }
           },
           {
@@ -32,7 +32,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "insight-test" */ '@/components/insight/test/view.vue'),
             meta: {
               requiresAuth: true,
-              title: '测试洞察'
+              title: '测试效能'
             }
           },
           {
@@ -40,7 +40,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "insight-service" */ '@/components/insight/service/view.vue'),
             meta: {
               requiresAuth: true,
-              title: '持续交付洞察'
+              title: '部署效能'
             }
           }
         ]

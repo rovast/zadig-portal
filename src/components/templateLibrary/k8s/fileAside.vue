@@ -397,11 +397,8 @@ export default {
 
         .tabs__item {
           position: relative;
-          display: -webkit-box;
-          display: -ms-flexbox;
           display: flex;
           align-items: center;
-          margin-bottom: -1px;
           padding: 20px 17px;
           color: #000;
           font-size: 13px;
@@ -411,16 +408,12 @@ export default {
           border: none;
           border-top: 1px solid transparent;
           cursor: pointer;
-          -webkit-transition: background-color 150ms ease, color 150ms ease;
           transition: background-color 150ms ease, color 150ms ease;
-          -webkit-box-align: center;
-          -ms-flex-align: center;
 
           &.selected {
             z-index: 1;
             background-color: #fff;
             border: none;
-            -webkit-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
             box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
           }
 
@@ -429,8 +422,6 @@ export default {
             color: #000;
             background-color: #fff;
             border: none;
-            border-top: 1px solid #f5f5f5;
-            -webkit-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
             box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
           }
 
@@ -447,8 +438,6 @@ export default {
         display: flex;
         justify-content: flex-start;
         height: 56px;
-        -webkit-box-pack: start;
-        -ms-flex-pack: start;
       }
     }
   }

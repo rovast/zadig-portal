@@ -51,9 +51,9 @@
 </template>
 <script>
 import mixin from '@/mixin/serviceModuleMixin'
-import FileAside from './file_aside.vue'
-import FileEditor from './file_editor.vue'
-import FileTree from './file_tree.vue'
+import FileAside from './fileAside.vue'
+import FileEditor from './fileEditor.vue'
+import FileTree from './fileTree.vue'
 import { sortBy } from 'lodash'
 import bus from '@utils/eventBus'
 import {

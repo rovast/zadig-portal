@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import ModuleUse from './aside/module_use.vue'
-import VariableList from './aside/variable_list.vue'
+import ModuleUse from './aside/moduleUse.vue'
+import VariableList from './aside/variableList.vue'
 export default {
   data () {
     return {

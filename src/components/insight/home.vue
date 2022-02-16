@@ -28,6 +28,7 @@ export default {
     }
   },
   mounted () {
+    this.$router.push('/v1/insight/build')
     bus.$emit(`show-sidebar`, true)
     bus.$emit(`set-topbar-title`, { title: '效能洞察', breadcrumb: [] })
   },

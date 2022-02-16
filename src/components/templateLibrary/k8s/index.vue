@@ -1,5 +1,5 @@
 <template>
-    <div class="dockerfile-template-container">
+    <div class="k8s-template-container">
       <div class="service-wrap">
         <div class="service-container">
           <multipane class="vertical-panes"
@@ -54,9 +54,9 @@
 </template>
 <script>
 import mixin from '@/mixin/serviceModuleMixin'
-import FileAside from './file_aside.vue'
-import FileEditor from './file_editor.vue'
-import FileTree from './file_tree.vue'
+import FileAside from './fileAside.vue'
+import FileEditor from './fileEditor.vue'
+import FileTree from './fileTree.vue'
 import { sortBy } from 'lodash'
 import bus from '@utils/eventBus'
 import {
@@ -182,5 +182,5 @@ export default {
 </script>
 
 <style lang="less">
-@import "~@assets/css/component/dockerfile-template.less";
+@import "~@assets/css/component/k8s-template.less";
 </style>

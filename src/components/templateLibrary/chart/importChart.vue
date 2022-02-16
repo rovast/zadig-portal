@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import GitRepo from '../../serviceMgr/helm/components/common/gitRepo.vue'
+import GitRepo from '../../projects/serviceMgr/helm/components/common/gitRepo.vue'
 import { createChartTemplateAPI, updateChartTemplateAPI } from '@api'
 
 const controlParam = {

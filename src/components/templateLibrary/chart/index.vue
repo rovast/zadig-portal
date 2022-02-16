@@ -4,7 +4,7 @@
       <ImportChart v-model="chartDialogVisible" :chartCurrentService="currentService" @importChart="chartTemplateUpdate($event)"></ImportChart>
     </el-dialog>
     <multipane>
-      <div class="pane left" :style="{width: '200px', maxWidth: '400px'}">
+      <div class="pane left" :style="{width: '250px', maxWidth: '400px'}">
         <div class="top">
           <el-button icon="el-icon-plus" circle size="mini" @click="chartDialogVisible = !chartDialogVisible"></el-button>
         </div>
@@ -41,8 +41,8 @@ import { Multipane, MultipaneResizer } from 'vue-multipane'
 import Codemirror from '@/components/projects/common/codemirror.vue'
 
 import Folder from './folder.vue'
-import ImportChart from './import_chart.vue'
-import PageNav from './page_nav.vue'
+import ImportChart from './importChart.vue'
+import PageNav from './pageNav.vue'
 import Aside from './aside.vue'
 
 import {
@@ -286,8 +286,8 @@ export default {
 
 <style lang="less" scoped>
 .chart-template-container {
-  width: 100%;
   height: 100%;
+  padding: 10px 10px;
   background-color: #f6f6f6;
 
   /deep/.multipane {
@@ -316,8 +316,8 @@ export default {
 
     .pane {
       .top {
-        height: 45px;
-        line-height: 45px;
+        height: 32px;
+        line-height: 32px;
       }
 
       &.left {
@@ -325,9 +325,8 @@ export default {
         background-color: #fff;
 
         .top {
-          padding: 0 10px;
+          padding: 0 5px;
           text-align: right;
-          border-bottom: 1px solid #e6e6e6;
         }
       }
 

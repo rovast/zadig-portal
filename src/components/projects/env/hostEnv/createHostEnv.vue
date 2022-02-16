@@ -1,9 +1,9 @@
 <template>
-  <div class="host-env">
-    <AddHostEnv class="add-host" ref="addHostEnv" />
+  <div class="create-external-container">
+    <AddHostEnv ref="addHostEnv" />
     <div class="footer">
-      <el-button type="primary" @click="save()">确定</el-button>
-      <el-button type="info" @click="$router.back()">取消</el-button>
+      <el-button type="primary" @click="$router.back()" size="medium" plain>取消</el-button>
+      <el-button type="primary" @click="save()" size="medium">立即创建</el-button>
     </div>
   </div>
 </template>
@@ -30,16 +30,16 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.host-env {
-  .add-host {
-    height: calc(~'100% - 50px');
-    max-height: calc(~'100% - 50px');
-    overflow: auto;
-  }
+.create-external-container {
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(~'100% - 60px');
+  padding: 16px 24px;
+  overflow: auto;
 
   .footer {
-    margin-top: 10px;
-    margin-left: 100px;
+    margin-top: 40px;
+    margin-left: 35%;
   }
 }
 </style>

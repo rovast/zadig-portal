@@ -42,8 +42,10 @@ export default {
   position: relative;
   flex: 1;
   width: 100%;
+  height: 100%;
   overflow: auto;
   line-height: 1.5;
+  background-color: #f5f7f7;
 
   .header {
     display: flex;

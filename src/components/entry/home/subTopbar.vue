@@ -83,6 +83,11 @@ export default {
           name: '测试',
           icon: 'iconfont icontest',
           url: `/v1/projects/detail/${this.projectName}/test`
+        },
+        {
+          name: '版本管理',
+          icon: 'iconfont iconbanben',
+          url: `/v1/projects/detail/${this.projectName}/version`
         }
       ]
     }

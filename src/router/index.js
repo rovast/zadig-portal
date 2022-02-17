@@ -222,6 +222,24 @@ const routes = [
             }
           },
           {
+            path: 'version',
+            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/version/index.vue'),
+            meta: {
+              requiresAuth: true,
+              requiresSuperAdmin: false,
+              title: '版本管理'
+            }
+          },
+          {
+            path: 'version/detail/:project_name/:id',
+            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/version/detail.vue'),
+            meta: {
+              requiresAuth: true,
+              requiresSuperAdmin: false,
+              title: '版本详情'
+            }
+          },
+          {
             path: 'envs',
             component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/home.vue'),
             meta: {
@@ -312,6 +330,56 @@ const routes = [
               title: 'Kubernetes YAML 模板库'
             }
           }]
+      },
+      {
+        path: 'delivery',
+        component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/delivery/home.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '交付中心'
+        },
+        children: [
+          {
+            path: '',
+            redirect: 'version'
+          },
+          {
+            path: 'version',
+            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/delivery/version/index.vue'),
+            meta: {
+              requiresAuth: true,
+              requiresSuperAdmin: false,
+              title: '版本管理'
+            }
+          },
+          {
+            path: 'version/detail/:project_name/:id',
+            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/delivery/version/detail.vue'),
+            meta: {
+              requiresAuth: true,
+              requiresSuperAdmin: false,
+              title: '版本详情'
+            }
+          },
+          {
+            path: 'artifacts',
+            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/delivery/artifacts/index.vue'),
+            meta: {
+              requiresAuth: true,
+              requiresSuperAdmin: false,
+              title: '交付物追踪'
+            }
+          },
+          {
+            path: 'artifacts/detail/:id',
+            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/delivery/artifacts/detail.vue'),
+            meta: {
+              requiresAuth: true,
+              requiresSuperAdmin: false,
+              title: '交付物追踪'
+            }
+          }
+        ]
       },
       {
         path: 'projects/create',
@@ -599,71 +667,6 @@ const routes = [
             }
           }
         ]
-      }
-    ]
-  },
-  {
-    path: '/v1/delivery',
-    component: onboarding_home,
-    meta: {
-      requiresAuth: true,
-      title: '交付中心'
-    },
-    children: [
-      {
-        path: '',
-        component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/home.vue')
-      },
-      {
-        path: 'version',
-        component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/home.vue'),
-        children: [
-          {
-            path: ':project_name',
-            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/version/index.vue'),
-            meta: {
-              requiresAuth: true,
-              requiresSuperAdmin: false,
-              title: '版本管理'
-            }
-          },
-          {
-            path: ':project_name/create',
-            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/version/helm/createVersion.vue'),
-            meta: {
-              requiresAuth: true,
-              requiresSuperAdmin: false,
-              title: '创建版本'
-            }
-          },
-          {
-            path: ':project_name/:id',
-            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/version/detail.vue'),
-            meta: {
-              requiresAuth: true,
-              requiresSuperAdmin: false,
-              title: '版本详情'
-            }
-          }
-        ]
-      },
-      {
-        path: 'artifacts',
-        component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/artifacts/index.vue'),
-        meta: {
-          requiresAuth: true,
-          requiresSuperAdmin: false,
-          title: '交付物追踪'
-        }
-      },
-      {
-        path: 'artifacts/detail/:id',
-        component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/artifacts/detail.vue'),
-        meta: {
-          requiresAuth: true,
-          requiresSuperAdmin: false,
-          title: '交付物追踪'
-        }
       }
     ]
   },

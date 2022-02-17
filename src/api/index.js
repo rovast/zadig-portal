@@ -1333,7 +1333,7 @@ export function getVersionListAPI (workflowName = '', projectName = '', taskId =
   return http.get(`/api/aslan/delivery/releases?workflowName=${workflowName}&projectName=${projectName}&taskId=${taskId}&serviceName=${serviceName}&verbosity=${verbosity}`)
 }
 
-export function getVersionServiceListAPI (projectName) {
+export function getVersionServiceListAPI (projectName = '') {
   return http.get(`/api/aslan/delivery/servicenames?projectName=${projectName}`)
 }
 

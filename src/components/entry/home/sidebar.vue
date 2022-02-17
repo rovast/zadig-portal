@@ -188,14 +188,14 @@ export default {
               url: 'projects'
             },
             {
-              name: '模板库',
-              icon: 'iconfont iconicon-repertory',
-              url: 'template'
-            },
-            {
-              name: '测试管理',
+              name: '测试中心',
               url: 'tests',
               icon: 'iconfont icontest'
+            },
+            {
+              name: '交付中心',
+              url: 'delivery',
+              icon: 'iconfont iconjiaofu'
             }
           ]
         },

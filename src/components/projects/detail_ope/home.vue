@@ -7,7 +7,10 @@
       </div>
       <div class="header-end">
         <el-button v-if="$utils.roleCheck('admin')" @click="$router.push(`/v1/projects/create`)" plain>
-          <i class="el-icon-plus"></i>新建项目
+          <i class="el-icon-plus"></i> 新建项目
+        </el-button>
+        <el-button @click="$router.push(`/v1/template`)" plain>
+          <i class="iconfont iconicon-repertory"></i> 模板库
         </el-button>
       </div>
     </div>
@@ -322,6 +325,10 @@ export default {
         border-radius: 4px;
         box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
         cursor: pointer;
+      }
+
+      .iconfont {
+        font-size: 14px;
       }
     }
   }

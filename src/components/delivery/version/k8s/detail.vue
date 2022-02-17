@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading" class="version-container">
+  <div v-loading="loading" class="version-detail-container">
     <el-dialog :visible.sync="exportModal.visible" width="65%" title="服务配置查看" class="export-dialog">
       <span v-if="exportModal.textObjects.length === 0" class="nothing">{{'没有找到数据'}}</span>
       <template v-else>
@@ -56,11 +56,11 @@
                   <div class="item-desc">{{currentVersionDetail.versionInfo.version}}</div>
                 </div>
                 <div class="el-col el-col-6">
-                  <div class="item-title">产品</div>
+                  <div class="item-title">所属项目</div>
                 </div>
                 <div class="el-col el-col-6">
                   <div class="item-desc">
-                    <span>{{currentVersionDetail.versionInfo.projectName}}</span>
+                    <span>{{currentVersionDetail.versionInfo.productName}}</span>
                   </div>
                 </div>
               </div>
@@ -72,7 +72,7 @@
                   <div class="item-desc">
                     <span v-if="currentVersionDetail.versionInfo.taskId" class="link">
                       <router-link
-                        :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.projectName}/pipelines/multi/${currentVersionDetail.versionInfo.workflowName}/${currentVersionDetail.versionInfo.taskId}`"
+                        :to="`/v1/projects/detail/${currentVersionDetail.versionInfo.productName}/pipelines/multi/${currentVersionDetail.versionInfo.workflowName}/${currentVersionDetail.versionInfo.taskId}`"
                       >
                         {{currentVersionDetail.versionInfo.workflowName + '#'
                         +currentVersionDetail.versionInfo.taskId}}
@@ -548,7 +548,7 @@ export default {
       }
     },
     projectName () {
-      return this.$route.params.project_name
+      return this.currentVersionDetail.versionInfo.productName
     }
   },
   created () {
@@ -576,12 +576,11 @@ export default {
   }
 }
 
-.version-container {
+.version-detail-container {
   position: relative;
   flex: 1;
-  padding: 15px 30px;
+  padding: 24px 24px;
   overflow: auto;
-  font-size: 13px;
 
   .el-table td,
   .el-table th {
@@ -590,12 +589,6 @@ export default {
 
   .img-link {
     color: @themeColor;
-  }
-
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
   }
 
   .text {
@@ -846,17 +839,6 @@ export default {
 
   .pointer {
     cursor: pointer;
-  }
-
-  .el-breadcrumb {
-    font-size: 16px;
-    line-height: 1.35;
-
-    .el-breadcrumb__item__inner a:hover,
-    .el-breadcrumb__item__inner:hover {
-      color: @themeColor;
-      cursor: pointer;
-    }
   }
 }
 </style>

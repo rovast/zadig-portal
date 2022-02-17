@@ -184,7 +184,7 @@ export default {
   mixins: [mixin]
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .dropdown-menu-reference {
   display: flex;
   align-items: center;
@@ -385,24 +385,24 @@ export default {
         }
       }
 
-      .el-breadcrumb {
+      /deep/ .el-breadcrumb {
         color: #000;
         font-weight: 300;
         font-size: 14px;
       }
 
-      .el-breadcrumb__separator {
+      /deep/ .el-breadcrumb__separator {
         margin: 0 9px;
         color: @fontLightGray;
         font-weight: 300;
       }
 
-      .el-breadcrumb__inner.is-link {
+      /deep/ .el-breadcrumb__inner.is-link {
         color: #000;
         font-weight: 300;
       }
 
-      .el-breadcrumb__inner {
+      /deep/ .el-breadcrumb__inner {
         color: #8a8a8a;
       }
     }
@@ -482,7 +482,7 @@ export default {
 
         .project-icon {
           i {
-            color: #55f;
+            color: @themeColor;
             font-size: 24px;
           }
         }
@@ -499,7 +499,7 @@ export default {
           background: rgba(160, 160, 255, 0.15);
 
           .name {
-            color: #55f;
+            color: @themeColor;
           }
         }
       }

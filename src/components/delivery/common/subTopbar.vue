@@ -1,5 +1,5 @@
 <template>
-  <div class="template-library-subtopbar-container">
+  <div class="delivery-subtopbar-container">
     <div class="nav-container">
       <div class="nav-content">
         <ul v-if="routerList.length > 0" class="nav-item-list">
@@ -13,7 +13,6 @@
       </div>
     </div>
     <div class="operation">
-
     </div>
   </div>
 </template>
@@ -21,6 +20,7 @@
 export default {
   data () {
     return {
+
     }
   },
   props: {},
@@ -28,19 +28,14 @@ export default {
     routerList () {
       return [
         {
-          name: 'K8s YAML',
-          icon: 'iconfont iconk8s',
-          url: `/v1/template/k8s-yamls`
+          name: '版本管理',
+          icon: 'iconfont iconbanben',
+          url: `/v1/delivery/version`
         },
         {
-          name: 'Helm Chart',
-          icon: 'iconfont iconhelmrepo',
-          url: `/v1/template/charts`
-        },
-        {
-          name: 'Dockerfile',
-          icon: 'iconfont icondocker',
-          url: `/v1/template/dockerfiles`
+          name: '交付物追踪',
+          icon: 'iconfont iconbaoguanli',
+          url: `/v1/delivery/artifacts`
         }
       ]
     }
@@ -48,7 +43,7 @@ export default {
 }
 </script>
 <style lang="less">
-.template-library-subtopbar-container {
+.delivery-subtopbar-container {
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -218,7 +218,7 @@ export default {
 
 <style lang="less" scoped>
 .helm-version-detail {
-  padding: 20px 30px;
+  padding: 24px 24px;
 
   /deep/.el-tabs {
     .el-tabs__nav.is-top {

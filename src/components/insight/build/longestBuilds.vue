@@ -106,7 +106,7 @@ export default {
   &.el-table {
     th,
     td {
-      padding: 0;
+      padding: 0 !important;
     }
   }
 }

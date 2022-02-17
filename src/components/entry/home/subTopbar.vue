@@ -83,6 +83,11 @@ export default {
           name: '测试',
           icon: 'iconfont icontest',
           url: `/v1/projects/detail/${this.projectName}/test`
+        },
+        {
+          name: '版本管理',
+          icon: 'iconfont iconbanben',
+          url: `/v1/projects/detail/${this.projectName}/version`
         }
       ]
     }
@@ -145,10 +150,10 @@ export default {
           margin-right: 16px;
 
           &.active {
-            box-shadow: inset 0 -2px 0 #55f;
+            box-shadow: inset 0 -2px 0 @themeColor;
 
             .icon {
-              color: #55f;
+              color: @themeColor;
             }
           }
         }

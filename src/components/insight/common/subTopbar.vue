@@ -165,10 +165,10 @@ export default {
           margin-right: 16px;
 
           &.active {
-            box-shadow: inset 0 -2px 0 #55f;
+            box-shadow: inset 0 -2px 0 @themeColor;
 
             .icon {
-              color: #55f;
+              color: @themeColor;
             }
           }
         }

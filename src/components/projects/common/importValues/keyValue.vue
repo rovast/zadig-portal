@@ -53,7 +53,7 @@
         </el-table-column>
       </el-table>
     </el-form>
-    <el-button type="text" @click="addKeyValue" icon="el-icon-circle-plus-outline" style="color: #a0a0a0;">添加</el-button>
+    <el-button type="text" @click="addKeyValue" icon="el-icon-circle-plus-outline" class="gray-color">添加</el-button>
   </div>
 </template>
 
@@ -176,6 +176,10 @@ export default {
     .el-form-item {
       margin-bottom: 0;
     }
+  }
+
+  .gray-color {
+    color: @fontLightGray;
   }
 }
 </style>

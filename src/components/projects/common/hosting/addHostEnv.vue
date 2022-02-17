@@ -160,7 +160,6 @@ export default {
 </script>
 <style lang='less' scoped>
 @secondaryColor: #8a8a8a;
-@tertiaryColor: #a0a0a0;
 
 .form-content {
   padding-bottom: 40px;
@@ -177,7 +176,7 @@ export default {
     .el-transfer-panel .el-transfer-panel__header {
       height: 28px;
       line-height: 28px;
-      background: #f6f6f6;
+      background: @globalBackgroundColor;
 
       .el-checkbox {
         line-height: 28px;
@@ -191,7 +190,7 @@ export default {
     }
 
     .el-transfer-panel__empty {
-      color: @tertiaryColor;
+      color: @fontLightGray;
       font-weight: 300;
     }
 

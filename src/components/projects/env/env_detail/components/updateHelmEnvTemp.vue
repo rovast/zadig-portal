@@ -93,7 +93,8 @@ export default {
       valid.push(this.$refs.chartValuesRef.validate())
       return Promise.all(valid)
     },
-    collapseChange (activeName) { // will update
+    collapseChange (activeName) {
+      // will update
       this.validate()
         .catch(() => {
           this.activeName = activeName === 'env' ? 'service' : 'env'
@@ -122,8 +123,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@iconColor: #a0a0a0;
-
 .update-template-container {
   .template-block {
     width: 100%;
@@ -134,7 +133,7 @@ export default {
 
       i {
         margin-left: 8px;
-        color: @iconColor;
+        color: @fontLightGray;
       }
     }
   }

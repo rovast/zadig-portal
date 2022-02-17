@@ -393,7 +393,7 @@ export default {
 
       .el-breadcrumb__separator {
         margin: 0 9px;
-        color: #a0a0a0;
+        color: @fontLightGray;
         font-weight: 300;
       }
 
@@ -428,7 +428,7 @@ export default {
       }
 
       .icon {
-        color: #a0a0a0;
+        color: @fontLightGray;
         font-size: 18px;
         cursor: pointer;
 

@@ -17,7 +17,12 @@
         <el-button @click="bindComp(comp,'workflow')" icon="el-icon-plus" plain>新建工作流</el-button>
       </template>
       <template v-if="$route.path === `/v1/projects/detail/${projectName}/envs/detail`">
-        <el-button @click="bindComp(comp,'env')" icon="el-icon-plus" plain>创建环境</el-button>
+        <el-button
+          v-hasPermi="{projectName: projectName, action: 'create_environment'}"
+          @click="bindComp(comp,'env')"
+          icon="el-icon-plus"
+          plain
+        >新建环境</el-button>
       </template>
       <template v-if="$route.path === `/v1/projects/detail/${projectName}/services`">
         <el-button @click="bindComp(comp,'service')" icon="el-icon-plus" plain>新建服务</el-button>
@@ -29,7 +34,11 @@
         <el-button @click="bindComp(comp,'test')" icon="el-icon-plus" plain>新建测试</el-button>
       </template>
       <template>
-        <el-dropdown v-if="comp && comp.isProjectAdmin && $route.path === `/v1/projects/detail/${projectName}/detail`" placement="bottom" trigger="click">
+        <el-dropdown
+          v-if="comp && comp.isProjectAdmin && $route.path === `/v1/projects/detail/${projectName}/detail`"
+          placement="bottom"
+          trigger="click"
+        >
           <button type="button" class="display-btn el-button">
             <i class="el-icon-s-operation el-icon--left"></i>
             配置

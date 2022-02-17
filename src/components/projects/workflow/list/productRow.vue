@@ -274,7 +274,7 @@ export default {
 
   .operations {
     display: flex;
-    flex: 0 0 180px;
+    flex: 0 0 200px;
     align-items: center;
     justify-content: space-around;
     font-size: 23px;

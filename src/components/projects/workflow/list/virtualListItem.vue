@@ -199,7 +199,7 @@ export default {
 
 <style lang="less" scoped>
 .button-exec {
-  padding: 0 12px;
+  padding: 0 20px;
   font-weight: 400;
   font-size: 18px;
   line-height: 40px;

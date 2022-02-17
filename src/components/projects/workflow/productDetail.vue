@@ -333,14 +333,14 @@ export default {
 <style lang="less">
 .workflow-detail {
   position: relative;
-  flex: 1;
+  height: calc(~'100% - 60px');
   padding: 24px 30px 0;
   overflow: auto;
   font-size: 13px;
   background-color: #fff;
 
   .workflow-basic-info {
-    margin-bottom: 26px;
+    margin-bottom: 16px;
     box-shadow: unset;
 
     .el-card__body {
@@ -397,13 +397,14 @@ export default {
     display: flex;
     align-items: center;
     color: #44447e;
-    font-size: 18px;
+    font-weight: 300;
+    font-size: 16px;
     line-height: 22px;
 
     .title-icon {
       margin-right: 8px;
       color: @fontLightGray;
-      font-size: 20px;
+      font-size: 18px;
     }
   }
 
@@ -439,7 +440,7 @@ export default {
     width: 100%;
 
     .el-card__header {
-      padding: 16px 0;
+      padding: 16px 0 6px;
     }
   }
 

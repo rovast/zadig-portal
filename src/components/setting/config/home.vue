@@ -2,7 +2,7 @@
   <div class="config-home">
     <div class="tab-container">
       <el-tabs v-model="activeTab" type="card">
-        <el-tab-pane name="quota" label="系统配额">
+        <el-tab-pane name="quota" label="任务配置">
           <keep-alive >
             <Quota v-if="activeTab === 'quota'" />
           </keep-alive>

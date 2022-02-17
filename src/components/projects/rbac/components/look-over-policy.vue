@@ -3,13 +3,13 @@
     <section class="policy-content" v-loading="loading">
       <div>
         <span class="info-title">策略名称</span>
-        <span>{{ policyInfo.name }}</span>
+        <span>{{ policyDetail.name }}</span>
       </div>
       <div style="margin-bottom: 10px;">
         <span class="info-title">描述信息</span>
-        <span>{{ policyInfo.describe || '无' }}</span>
+        <span>{{ policyDetail.description || '无' }}</span>
       </div>
-      <el-table :data="policyInfo.rules || []">
+      <el-table :data="policyDetail.rules || []">
         <el-table-column label="模块名称">
           <template slot-scope="{ row }">{{ getPolicyDesc(row.resources) }}</template>
         </el-table-column>
@@ -25,7 +25,7 @@
         </el-table-column>-->
         <el-table-column label="关联资源">
           <template slot-scope="{ row }">
-            <div v-for="resource in row.relatedResources" :key="resource">{{ resource }}</div>
+            <div v-for="resource in row.related_resources" :key="resource">{{ resource }}</div>
           </template>
         </el-table-column>
       </el-table>
@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { getPolicyByNameAPI } from '@api'
 export default {
   props: {
     dialogFlag: Boolean,
@@ -45,16 +46,19 @@ export default {
   },
   data () {
     return {
-      loading: false
+      loading: true,
+      policyDetail: {}
     }
   },
   computed: {
     policyDialog: {
       get () {
+        if (this.dialogFlag) {
+          this.getPolicyDetailByName()
+        }
         return this.dialogFlag
       },
       set (val) {
-        this.loading = false
         this.$emit('update:dialogFlag', val)
       }
     },
@@ -65,6 +69,15 @@ export default {
   methods: {
     getPolicyDesc (action) {
       return this.policyMap[action] || action
+    },
+    async getPolicyDetailByName () {
+      this.loading = true
+      await getPolicyByNameAPI(this.projectName, this.policyInfo.name).then(
+        res => {
+          this.policyDetail = res
+        }
+      )
+      this.loading = false
     }
   }
 }

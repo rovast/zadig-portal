@@ -4,7 +4,7 @@
 
     <el-table :data="policies" style="width: 100%;">
       <el-table-column prop="name" label="策略名称"></el-table-column>
-      <el-table-column prop="describe" label="描述信息"></el-table-column>
+      <el-table-column prop="description" label="描述信息"></el-table-column>
       <el-table-column prop="prop" label="修改时间">
         <template slot-scope="{ row }">
           <span>{{ $utils.convertTimestamp(row.update_time) }}</span>
@@ -39,13 +39,13 @@ export default {
     }
   },
   methods: {
-    lookOverPolicy (index) {
+    async lookOverPolicy (index) {
       this.dialogFlag = true
       this.policyInfo = this.policies[index]
     },
     getAllPolicy () {
       getAllPolicyAPI(this.projectName).then(res => {
-        this.policies = res.policies || []
+        this.policies = res || []
       })
     },
     async getPolicyDefinitions () {

@@ -1665,6 +1665,10 @@ export function getAllPolicyAPI (projectName) {
   return http.get(`/api/v1/policies?projectName=${projectName}`)
 }
 
+export function getPolicyByNameAPI (projectName, name) {
+  return http.get(`/api/v1/policies/${name}?projectName=${projectName}`)
+}
+
 export function getPolicyByIdAPI (projectName, id) {
   return http.get(`/api/v1/policy/${id}?projectName=${projectName}`)
 }

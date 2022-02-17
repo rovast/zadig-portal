@@ -38,7 +38,7 @@
         >
           <button type="button" class="display-btn el-button">
             <i class="el-icon-s-operation el-icon--left"></i>
-            配置
+            &nbsp;&nbsp;配置&nbsp;&nbsp;
             <i class="el-icon-caret-bottom el-icon--right"></i>
           </button>
           <el-dropdown-menu slot="dropdown">
@@ -189,6 +189,22 @@ export default {
       box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
       cursor: pointer;
     }
+  }
+}
+
+.el-dropdown-menu.el-popper {
+  margin-top: 2px;
+
+  .el-dropdown-menu__item {
+    width: 80px;
+    margin: 0 10px;
+    padding: 0 10px;
+    font-weight: 300;
+    border-radius: 6px;
+  }
+
+  .popper__arrow {
+    display: none;
   }
 }
 </style>

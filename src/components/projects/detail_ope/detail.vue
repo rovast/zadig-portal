@@ -36,7 +36,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column width="300" align="right" label="更新信息（时间/操作人）">
+          <el-table-column width="300" label="更新信息（时间/操作人）">
             <template slot-scope="{ row }">
               <span class="update-time">
                 <i class="icon el-icon-time"></i>
@@ -352,6 +352,7 @@ export default {
       display: inline-block;
 
       &:not(:last-child) {
+        width: 150px;
         margin-right: 20px;
       }
 

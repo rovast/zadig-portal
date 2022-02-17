@@ -34,6 +34,7 @@
             </div>
             <div @click="toProject(project)" class="content-container">
               <h4 class="project-name">
+                <i class="type-icon iconfont" :class="projectIconMap[project.deployType]"></i>
                 <span class="name">{{project.alias?project.alias:project.name}}</span>
                 <el-tooltip v-if="!project.public" effect="dark" content="私有项目" placement="top">
                   <i class="icon iconfont iconprivate"></i>
@@ -128,7 +129,13 @@ export default {
   data () {
     return {
       loading: false,
-      currentTab: 'grid'
+      currentTab: 'grid',
+      projectIconMap: {
+        k8s: 'iconyaml',
+        helm: 'iconhelmrepo',
+        external: 'iconjiaofu',
+        pm: 'iconwuliji'
+      }
     }
   },
   methods: {
@@ -349,12 +356,11 @@ export default {
 
   .projects-grid {
     height: 100%;
-    margin-top: 32px;
-    padding: 0 20px;
+    padding: 12px;
 
     .project-card {
       height: 142px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       border: 2px solid #fff;
       border-radius: 6px;
       box-shadow: unset;
@@ -398,6 +404,7 @@ export default {
           cursor: pointer;
 
           i {
+            color: #8a8a8a;
             font-size: 20px;
             line-height: 25px;
           }
@@ -412,7 +419,7 @@ export default {
           height: 28px;
 
           .icon {
-            margin: 0 5px;
+            margin-left: 18px;
             color: @iconColor;
             font-size: 18px;
             line-height: 35px;
@@ -440,15 +447,22 @@ export default {
           .project-name {
             margin: 0;
             padding: 0;
-            color: #4c4c4c;
+            color: #44447e;
             font-weight: 400;
             font-size: 18px;
             line-height: 22px;
             cursor: pointer;
 
+            .type-icon {
+              margin-right: 6px;
+              color: @fontLightGray;
+              font-size: 20px;
+              vertical-align: top;
+            }
+
             .name {
               display: inline-block;
-              max-width: calc(100% - 20px);
+              max-width: calc(100% - 40px);
               overflow: hidden;
               white-space: nowrap;
               text-overflow: ellipsis;
@@ -460,6 +474,8 @@ export default {
           }
 
           .icon {
+            margin-left: 6px;
+            color: @fontLightGray;
             vertical-align: top;
           }
 

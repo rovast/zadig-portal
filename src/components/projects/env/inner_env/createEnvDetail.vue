@@ -264,26 +264,15 @@
         </el-form-item>
       </el-form>
       <footer v-if="startDeployLoading" class="create-footer">
-        <el-row :gutter="20">
-          <el-col :span="16">
-            <div class="grid-content bg-purple">
-              <div class="description">
-                <el-tag type="primary">正在创建环境中....</el-tag>
-              </div>
-            </div>
-          </el-col>
-
-          <el-col :span="8">
-            <div class="grid-content bg-purple">
-              <div class="deploy-loading">
-                <div class="spinner__item1"></div>
-                <div class="spinner__item2"></div>
-                <div class="spinner__item3"></div>
-                <div class="spinner__item4"></div>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
+        <div class="description">
+          <el-tag type="primary">正在创建环境中....</el-tag>
+        </div>
+        <div class="deploy-loading">
+          <div class="spinner__item1"></div>
+          <div class="spinner__item2"></div>
+          <div class="spinner__item3"></div>
+          <div class="spinner__item4"></div>
+        </div>
       </footer>
     </div>
   </div>
@@ -1060,71 +1049,65 @@ export default {
     position: fixed;
     bottom: 0;
     z-index: 5;
-    box-sizing: border-box;
-    width: 800px;
-    padding: 15px 60px 10px 0;
-    text-align: left;
-    background-color: #fff;
-    border-top: 1px solid #fff;
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 15px 0 10px;
 
-    .grid-content {
-      min-height: 36px;
-      border-radius: 4px;
+    .description {
+      flex: 0 0 auto;
+      line-height: 36px;
 
-      .description {
+      p {
+        margin: 0;
+        color: #676767;
+        font-size: 16px;
         line-height: 36px;
+        text-align: left;
+      }
+    }
 
-        p {
-          margin: 0;
-          color: #676767;
-          font-size: 16px;
-          line-height: 36px;
-          text-align: left;
-        }
+    .deploy-loading {
+      flex: 0 0 100px;
+      margin-left: 20px;
+      line-height: 36px;
+      text-align: center;
+
+      div {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-right: 4px;
+        background-color: @themeColor;
+        border-radius: 100%;
+        animation: sk-bouncedelay 1.4s infinite ease-in-out both;
       }
 
-      .deploy-loading {
-        width: 100px;
-        margin-left: 70px;
-        line-height: 36px;
-        text-align: center;
+      .spinner__item1 {
+        animation-delay: -0.6s;
+      }
 
-        div {
-          display: inline-block;
-          width: 8px;
-          height: 8px;
-          margin-right: 4px;
-          background-color: @themeColor;
-          border-radius: 100%;
-          animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+      .spinner__item2 {
+        animation-delay: -0.4s;
+      }
+
+      .spinner__item3 {
+        animation-delay: -0.2s;
+      }
+
+      @keyframes sk-bouncedelay {
+        0%,
+        80%,
+        100% {
+          -webkit-transform: scale(0);
+          transform: scale(0);
+          opacity: 0;
         }
 
-        .spinner__item1 {
-          animation-delay: -0.6s;
-        }
-
-        .spinner__item2 {
-          animation-delay: -0.4s;
-        }
-
-        .spinner__item3 {
-          animation-delay: -0.2s;
-        }
-
-        @keyframes sk-bouncedelay {
-          0%,
-          80%,
-          100% {
-            -webkit-transform: scale(0);
-            transform: scale(0);
-            opacity: 0;
-          }
-
-          40% {
-            -webkit-transform: scale(1);
-            transform: scale(1);
-            opacity: 1;
-          }
+        40% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+          opacity: 1;
         }
       }
     }

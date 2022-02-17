@@ -528,10 +528,10 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/first.vue'),
+        component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/function/function.vue'),
         meta: {
           requiresAuth: true,
-          title: '测试'
+          title: '测试管理'
         }
       },
       {

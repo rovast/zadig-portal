@@ -305,7 +305,7 @@ export default {
   position: relative;
   flex: 1;
   overflow: auto;
-  background-color: #f6f6f6;
+  background-color: @globalBackgroundColor;
 
   .guide-container {
     min-height: calc(~'100% - 70px');
@@ -365,7 +365,7 @@ export default {
         }
 
         .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
-          border-bottom-color: #f6f6f6;
+          border-bottom-color: @globalBackgroundColor;
         }
 
         .el-tabs--card > .el-tabs__header .el-tabs__item.is-active,

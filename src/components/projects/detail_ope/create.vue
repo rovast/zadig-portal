@@ -2,7 +2,15 @@
   <el-dialog :fullscreen="true" custom-class="create-project" :before-close="handleClose" :visible.sync="dialogVisible">
     <header class="project-contexts-modal__header">{{isEdit?'修改项目信息':'新建项目'}}</header>
     <section class="project-contexts-modal__content">
-      <el-form :model="projectForm" :rules="rules" label-position="right" ref="projectForm" label-width="100px" class="demo-projectForm">
+      <el-form
+        :model="projectForm"
+        :rules="rules"
+        label-position="right"
+        ref="projectForm"
+        label-width="120px"
+        class="demo-projectForm"
+        inline-message
+      >
         <el-form-item label="项目名称" prop="project_name">
           <el-input @keyup.native="()=>projectForm.project_name=projectForm.project_name.trim()" v-model="projectForm.project_name"></el-input>
         </el-form-item>
@@ -19,7 +27,7 @@
           </span>
         </el-form-item>
         <el-form-item prop="desc" label="描述信息">
-          <el-input type="textarea" :rows="2" placeholder="请输入描述信息" v-model="projectForm.desc"></el-input>
+          <el-input type="textarea" :rows="1" placeholder="请输入描述信息" v-model="projectForm.desc"></el-input>
         </el-form-item>
         <el-form-item v-if="!isEdit" label="项目类型">
           <div class="project-type">
@@ -30,7 +38,7 @@
               @click="switchType(typeItem.type)"
               :class="{selected: projectType === typeItem.type}"
             >
-              <i class="icon" :class="[projectType === typeItem.type ? 'el-icon-success' : typeItem.icon]"></i>
+              <i class="type-icon" :class="[projectType === typeItem.type ? 'el-icon-success' : typeItem.icon]"></i>
               <div class="project-type-item__desc">
                 <div class="title">{{ typeItem.title }}</div>
                 <div class="desc">{{ typeItem.firstDesc }}</div>
@@ -48,7 +56,7 @@
             >支持的基础设施列表</el-link>
           </div>
         </el-form-item>
-        <div v-if="!isEdit">
+        <div v-if="!isEdit" class="advanced-title">
           <el-button type="text" @click="showAdvanced = !showAdvanced">
             高级配置
             <i :class="{'el-icon-arrow-right': !showAdvanced, 'el-icon-arrow-down': showAdvanced }"></i>
@@ -408,6 +416,8 @@ export default {
   flex-direction: column;
   box-sizing: border-box;
   min-height: calc(~'100% - 30px');
+  padding-top: 0;
+  padding-bottom: 10px;
 }
 
 .create-project {
@@ -420,6 +430,7 @@ export default {
     min-width: 800px;
     margin: 0 auto 20px;
     padding-bottom: 14px;
+    font-weight: 300;
     font-size: 18px;
     line-height: 22px;
     text-align: center;
@@ -428,8 +439,7 @@ export default {
 
   .project-contexts-modal__content {
     flex: 1 0 auto;
-    width: 600px;
-    margin: auto;
+    margin-left: calc(~'50% - 300px');
 
     /deep/.el-form {
       &.demo-projectForm {
@@ -437,15 +447,46 @@ export default {
         .el-select,
         .el-textarea {
           width: @itemWidth;
+          font-weight: 300;
 
           .el-input {
             width: 100%;
           }
+
+          .el-textarea__inner {
+            height: 40px;
+            line-height: 30px;
+          }
         }
       }
 
+      .el-form-item__label {
+        font-weight: 300;
+      }
+
       .el-form-item {
-        margin-bottom: 15px;
+        margin-bottom: 8px;
+        font-weight: 300;
+
+        .el-form-item__content {
+          line-height: 38px;
+
+          .type-link {
+            line-height: 22px;
+
+            .icon {
+              margin-right: 5px;
+              color: #a0a0a0;
+              font-size: 16px;
+              vertical-align: text-bottom;
+            }
+
+            .el-link {
+              font-weight: 300;
+              font-size: 12px;
+            }
+          }
+        }
       }
 
       .edit-btn {
@@ -472,7 +513,7 @@ export default {
           display: flex;
           align-items: center;
           box-sizing: border-box;
-          padding-top: 8px;
+          padding: 8px 0;
           border: 1px solid transparent;
           border-radius: 4px;
           cursor: pointer;
@@ -482,11 +523,8 @@ export default {
           }
 
           .project-type-item__desc {
-            & > div {
-              margin-bottom: 8px;
-            }
-
             .title {
+              margin-bottom: 8px;
               color: #000;
               font-size: 14px;
             }
@@ -497,23 +535,10 @@ export default {
             }
           }
 
-          .icon {
+          .type-icon {
             flex: 0 0 74px;
             font-size: 24px;
             text-align: center;
-          }
-
-          .type-link {
-            .icon {
-              margin-right: 5px;
-              color: #a0a0a0;
-              font-size: 16px;
-              vertical-align: text-bottom;
-            }
-
-            .el-link {
-              font-size: 12px;
-            }
           }
 
           &:hover {
@@ -541,6 +566,13 @@ export default {
           }
         }
       }
+
+      .advanced-title {
+        .el-button {
+          padding: 6px 0;
+          font-weight: 300;
+        }
+      }
     }
 
     .small-title {
@@ -560,7 +592,7 @@ export default {
     width: 80%;
     min-width: 800px;
     margin: 20px auto 0;
-    padding-top: 24px;
+    padding-top: 14px;
     text-align: center;
     border-top: 1px solid rgba(210, 210, 210, 0.5);
   }

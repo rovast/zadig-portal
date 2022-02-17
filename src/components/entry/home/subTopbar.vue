@@ -24,9 +24,6 @@
           plain
         >新建环境</el-button>
       </template>
-      <template v-if="$route.path === `/v1/projects/detail/${projectName}/services`">
-        <el-button @click="bindComp(comp,'service')" icon="el-icon-plus" plain>新建服务</el-button>
-      </template>
       <template v-if="$route.path === `/v1/projects/detail/${projectName}/builds`">
         <el-button @click="bindComp(comp,'build')" icon="el-icon-plus" plain>新建构建</el-button>
       </template>
@@ -46,8 +43,8 @@
           </button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item icon="el-icon-edit-outline" @click.native="$router.push(`/v1/projects/edit/${projectName}`)">修改</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-delete" @click.native="comp.deleteProject">删除</el-dropdown-item>
             <el-dropdown-item icon="el-icon-lock" @click.native="$router.push(`/v1/projects/detail/${projectName}/rbac`)">权限</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-delete" @click.native="comp.deleteProject">删除</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </template>

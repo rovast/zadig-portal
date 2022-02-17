@@ -10,10 +10,10 @@ const routes = [
     component: onboarding_home,
     meta: {},
     children: [
-      { path: 'statistics', component: () => import(/* webpackChunkName: "statistics" */ '@/components/statistics/view.vue'), meta: { title: '数据概览' } },
+      { path: 'statistics', component: () => import(/* webpackChunkName: "Statistics" */ '@/components/statistics/view.vue'), meta: { title: '数据概览' } },
       {
         path: '/v1/insight',
-        component: () => import(/* webpackChunkName: "insight" */ '@/components/insight/home.vue'),
+        component: () => import(/* webpackChunkName: "Insight" */ '@/components/insight/home.vue'),
         meta: {
           requiresAuth: true,
           title: '效能洞察'
@@ -21,26 +21,26 @@ const routes = [
         children: [
           {
             path: 'build',
-            component: () => import(/* webpackChunkName: "insight-build" */ '@/components/insight/build/view.vue'),
+            component: () => import(/* webpackChunkName: "Insight Build" */ '@/components/insight/build/view.vue'),
             meta: {
               requiresAuth: true,
-              title: '构建洞察'
+              title: '构建效能'
             }
           },
           {
             path: 'test',
-            component: () => import(/* webpackChunkName: "insight-test" */ '@/components/insight/test/view.vue'),
+            component: () => import(/* webpackChunkName: "Insight Test" */ '@/components/insight/test/view.vue'),
             meta: {
               requiresAuth: true,
-              title: '测试洞察'
+              title: '测试效能'
             }
           },
           {
             path: 'service',
-            component: () => import(/* webpackChunkName: "insight-service" */ '@/components/insight/service/view.vue'),
+            component: () => import(/* webpackChunkName: "Insight Service" */ '@/components/insight/service/view.vue'),
             meta: {
               requiresAuth: true,
-              title: '持续交付洞察'
+              title: '部署效能'
             }
           }
         ]
@@ -55,7 +55,7 @@ const routes = [
       },
       {
         path: 'projects',
-        component: () => import(/* webpackChunkName: "project-list" */ '@/components/projects/detail_ope/home.vue'),
+        component: () => import(/* webpackChunkName: "Project List" */ '@/components/projects/detail_ope/home.vue'),
         meta: {
           requiresAuth: true,
           title: '项目列表'
@@ -63,7 +63,7 @@ const routes = [
       },
       {
         path: 'projects/detail/:project_name',
-        component: () => import(/* webpackChunkName: "project-view" */ '@/components/projects/detail_ope/view.vue'),
+        component: () => import(/* webpackChunkName: "Project View" */ '@/components/projects/detail_ope/view.vue'),
         meta: {
           requiresAuth: true,
           title: '项目'
@@ -71,7 +71,7 @@ const routes = [
         children: [
           {
             path: 'detail',
-            component: () => import(/* webpackChunkName: "project-detail" */ '@/components/projects/detail_ope/detail.vue'),
+            component: () => import(/* webpackChunkName: "Project Detail" */ '@/components/projects/detail_ope/detail.vue'),
             meta: {
               requiresAuth: true,
               title: '项目详情'
@@ -79,7 +79,7 @@ const routes = [
           },
           {
             path: 'pipelines',
-            component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/workflow/list.vue'),
+            component: () => import(/* webpackChunkName: "Project Workflow" */ '@/components/projects/workflow/list.vue'),
             meta: {
               requiresAuth: true,
               title: '工作流'
@@ -87,7 +87,7 @@ const routes = [
           },
           {
             path: 'pipelines/multi/:workflow_name',
-            component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/workflow/productDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Workflow" */ '@/components/projects/workflow/productDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '工作流详情'
@@ -95,7 +95,7 @@ const routes = [
           },
           {
             path: 'pipelines/multi/:workflow_name/:task_id',
-            component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/workflow/productTaskDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Workflow" */ '@/components/projects/workflow/productTaskDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '任务详情'
@@ -103,7 +103,7 @@ const routes = [
           },
           {
             path: 'pipelines/multi/testcase/:workflow_name/:task_id/:test_name/:test_job_name',
-            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/report/productWorkflowTestCase.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/report/productWorkflowTestCase.vue'),
             meta: {
               requiresAuth: true,
               title: '测试报告'
@@ -111,7 +111,7 @@ const routes = [
           },
           {
             path: 'pipelines/common/:workflow_name',
-            component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/workflow/commonDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Workflow" */ '@/components/projects/workflow/commonDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '工作流详情'
@@ -119,7 +119,7 @@ const routes = [
           },
           {
             path: 'pipelines/common/:workflow_name/:task_id',
-            component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/workflow/commonTaskDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Workflow" */ '@/components/projects/workflow/commonTaskDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '任务详情'
@@ -127,7 +127,7 @@ const routes = [
           },
           {
             path: 'services',
-            component: () => import(/* webpackChunkName: "project-service" */ '@/components/projects/serviceMgr/service.vue'),
+            component: () => import(/* webpackChunkName: "Project Service" */ '@/components/projects/serviceMgr/service.vue'),
             meta: {
               requiresAuth: true,
               title: '服务管理'
@@ -135,7 +135,7 @@ const routes = [
           },
           {
             path: 'builds',
-            component: () => import(/* webpackChunkName: "project-build" */ '@/components/projects/build/config.vue'),
+            component: () => import(/* webpackChunkName: "Project Build" */ '@/components/projects/build/config.vue'),
             meta: {
               requiresAuth: true,
               title: '构建'
@@ -143,7 +143,7 @@ const routes = [
           },
           {
             path: 'builds/create',
-            component: () => import(/* webpackChunkName: "project-build" */ '@/components/projects/build/configDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Build" */ '@/components/projects/build/configDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '新建构建'
@@ -151,7 +151,7 @@ const routes = [
           },
           {
             path: 'builds/detail/:build_name',
-            component: () => import(/* webpackChunkName: "project-build" */ '@/components/projects/build/configDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Build" */ '@/components/projects/build/configDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '构建详情'
@@ -159,7 +159,7 @@ const routes = [
           },
           {
             path: 'test',
-            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/function.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试'
@@ -167,7 +167,7 @@ const routes = [
           },
           {
             path: 'test/function',
-            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/function.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/function.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试'
@@ -175,7 +175,7 @@ const routes = [
           },
           {
             path: 'test/function/:test_name',
-            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/functionDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/functionDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试'
@@ -183,7 +183,7 @@ const routes = [
           },
           {
             path: 'test/add/function',
-            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/functionDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/functionDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试-添加'
@@ -191,7 +191,7 @@ const routes = [
           },
           {
             path: 'test/detail/function/:test_name',
-            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/functionSummary.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/functionSummary.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试-详情统计'
@@ -199,7 +199,7 @@ const routes = [
           },
           {
             path: 'test/detail/function/:test_name/:task_id',
-            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/function/functionTaskDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/functionTaskDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试-任务详情'
@@ -207,7 +207,7 @@ const routes = [
           },
           {
             path: 'test/testcase/function/:workflow_name/:task_id/:test_name',
-            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/report/testCase.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/report/testCase.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试-测试报告'
@@ -215,7 +215,7 @@ const routes = [
           },
           {
             path: 'test/testcase/function/:workflow_name/:task_id/test/:test_name',
-            component: () => import(/* webpackChunkName: "project-test" */ '@/components/projects/test/report/testCase.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/report/testCase.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试-测试报告'
@@ -223,7 +223,7 @@ const routes = [
           },
           {
             path: 'envs',
-            component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/home.vue'),
+            component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/home.vue'),
             meta: {
               requiresAuth: true,
               title: '集成环境'
@@ -231,7 +231,7 @@ const routes = [
             children: [
               {
                 path: 'create',
-                component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/createEnv.vue'),
+                component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/createEnv.vue'),
                 meta: {
                   requiresAuth: true,
                   title: '创建环境'
@@ -239,7 +239,7 @@ const routes = [
               },
               {
                 path: 'detail',
-                component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/envDetail.vue'),
+                component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/envDetail.vue'),
                 meta: {
                   requiresAuth: true,
                   title: '集成环境'
@@ -247,7 +247,7 @@ const routes = [
               },
               {
                 path: 'externalConfig',
-                component: () => import(/* webpackChunkName: "project-external-env" */ '@/components/projects/env/hostEnv/editExternalConfig.vue'),
+                component: () => import(/* webpackChunkName: "Project Hosting Env" */ '@/components/projects/env/hostEnv/editExternalConfig.vue'),
                 meta: {
                   requiresAuth: true,
                   title: '配置托管环境'
@@ -255,7 +255,7 @@ const routes = [
               },
               {
                 path: 'detail/:service_name',
-                component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/serviceDetail.vue'),
+                component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/serviceDetail.vue'),
                 meta: {
                   requiresAuth: true,
                   title: '服务详情'
@@ -263,7 +263,7 @@ const routes = [
               },
               {
                 path: 'detail/:service_name/pm',
-                component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/pmServiceDetail.vue'),
+                component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/pmServiceDetail.vue'),
                 meta: {
                   requiresAuth: true,
                   title: '服务详情'
@@ -271,7 +271,7 @@ const routes = [
               },
               {
                 path: 'detail/:service_name/config',
-                component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/serviceConfig.vue'),
+                component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/serviceConfig.vue'),
                 meta: {
                   requiresAuth: true,
                   title: '配置详情'
@@ -283,7 +283,7 @@ const routes = [
       },
       {
         path: 'template',
-        component: () => import(/* webpackChunkName: "template-lib" */ '@/components/projects/template_lib/index.vue'),
+        component: () => import(/* webpackChunkName: "Template Library" */ '@/components/templateLibrary/index.vue'),
         meta: {
           title: '模板库'
         },
@@ -294,20 +294,20 @@ const routes = [
           },
           {
             path: 'charts',
-            component: () => import(/* webpackChunkName: "chart-template" */ '@/components/projects/template_lib/chart_templates/index.vue'),
+            component: () => import(/* webpackChunkName: "Chart Template" */ '@/components/templateLibrary/chart/index.vue'),
             meta: {
               title: 'Chart 模板库'
             }
           }, {
             path: 'dockerfiles',
-            component: () => import(/* webpackChunkName: "dockerfile-template" */ '@/components/projects/template_lib/dockerfile_templates/index.vue'),
+            component: () => import(/* webpackChunkName: "Dockerfile Template" */ '@/components/templateLibrary/dockerfile/index.vue'),
             meta: {
               title: 'Dockerfile 模板库'
             }
           },
           {
             path: 'k8s-yamls',
-            component: () => import(/* webpackChunkName: "k8s-template" */ '@/components/projects/template_lib/k8s_templates/index.vue'),
+            component: () => import(/* webpackChunkName: "K8s Template" */ '@/components/templateLibrary/k8s/index.vue'),
             meta: {
               title: 'Kubernetes YAML 模板库'
             }
@@ -315,7 +315,7 @@ const routes = [
       },
       {
         path: 'projects/create',
-        component: () => import(/* webpackChunkName: "project" */ '@/components/projects/detail_ope/create.vue'),
+        component: () => import(/* webpackChunkName: "Project" */ '@/components/projects/detail_ope/create.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -323,7 +323,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/basic/info',
-        component: () => import(/* webpackChunkName: "onboarding-k8s" */ '@/components/projects/guide/k8s/basicInfo.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding K8s" */ '@/components/projects/guide/k8s/basicInfo.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -331,7 +331,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/host/config',
-        component: () => import(/* webpackChunkName: "onboarding-host" */ '@/components/projects/guide/host/hostConfig.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding Host" */ '@/components/projects/guide/host/hostConfig.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -339,7 +339,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/basic/service',
-        component: () => import(/* webpackChunkName: "onboarding-k8s" */ '@/components/projects/guide/service.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding K8s" */ '@/components/projects/guide/service.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -347,7 +347,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/basic/runtime',
-        component: () => import(/* webpackChunkName: "onboarding-k8s" */ '@/components/projects/guide/common/runtime.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding K8s" */ '@/components/projects/guide/common/runtime.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -355,7 +355,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/basic/delivery',
-        component: () => import(/* webpackChunkName: "onboarding-k8s" */ '@/components/projects/guide/k8s/delivery.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding K8s" */ '@/components/projects/guide/k8s/delivery.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -363,7 +363,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/helm/info',
-        component: () => import(/* webpackChunkName: "onboarding-helm" */ '@/components/projects/guide/helm/basicInfo.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding Helm" */ '@/components/projects/guide/helm/basicInfo.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -371,7 +371,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/helm/service',
-        component: () => import(/* webpackChunkName: "onboarding-helm" */ '@/components/projects/guide/serviceHelmGuide.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding Helm" */ '@/components/projects/guide/serviceHelmGuide.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -379,7 +379,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/helm/runtime',
-        component: () => import(/* webpackChunkName: "onboarding-helm" */ '@/components/projects/guide/helm/runtime.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding Helm" */ '@/components/projects/guide/helm/runtime.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -387,7 +387,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/helm/delivery',
-        component: () => import(/* webpackChunkName: "onboarding-helm" */ '@/components/projects/guide/helm/delivery.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding Helm" */ '@/components/projects/guide/helm/delivery.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -395,7 +395,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/pm/info',
-        component: () => import(/* webpackChunkName: "onboarding-host" */ '@/components/projects/guide/pm/info.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding Host" */ '@/components/projects/guide/pm/info.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -403,7 +403,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/pm/config',
-        component: () => import(/* webpackChunkName: "onboarding-host" */ '@/components/projects/guide/pm/config.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding Host" */ '@/components/projects/guide/pm/config.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -411,7 +411,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/pm/deploy',
-        component: () => import(/* webpackChunkName: "onboarding-host" */ '@/components/projects/guide/pm/deploy.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding Host" */ '@/components/projects/guide/pm/deploy.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -419,7 +419,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/pm/delivery',
-        component: () => import(/* webpackChunkName: "onboarding-host" */ '@/components/projects/guide/pm/delivery.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding Host" */ '@/components/projects/guide/pm/delivery.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -427,7 +427,7 @@ const routes = [
       },
       {
         path: 'projects/edit/:project_name',
-        component: () => import(/* webpackChunkName: "project" */ '@/components/projects/detail_ope/create.vue'),
+        component: () => import(/* webpackChunkName: "Project" */ '@/components/projects/detail_ope/create.vue'),
         meta: {
           requiresAuth: true,
           title: '修改项目'
@@ -435,7 +435,7 @@ const routes = [
       },
       {
         path: 'projects/detail/:project_name/pipelines',
-        component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/workflow/list.vue'),
+        component: () => import(/* webpackChunkName: "Project Workflow" */ '@/components/projects/workflow/list.vue'),
         meta: {
           requiresAuth: true,
           title: '工作流'
@@ -443,7 +443,7 @@ const routes = [
       },
       {
         path: 'projects/detail/:project_name/services',
-        component: () => import(/* webpackChunkName: "project-service" */ '@/components/projects/serviceMgr/service.vue'),
+        component: () => import(/* webpackChunkName: "Project Service" */ '@/components/projects/serviceMgr/service.vue'),
         meta: {
           requiresAuth: true,
           title: '服务管理'
@@ -451,7 +451,7 @@ const routes = [
       },
       {
         path: 'projects/detail/:project_name/envs',
-        component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/home.vue'),
+        component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/home.vue'),
         meta: {
           requiresAuth: true,
           title: '集成环境'
@@ -459,7 +459,7 @@ const routes = [
         children: [
           {
             path: 'create',
-            component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/createEnv.vue'),
+            component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/createEnv.vue'),
             meta: {
               requiresAuth: true,
               title: '创建环境'
@@ -467,7 +467,7 @@ const routes = [
           },
           {
             path: 'detail',
-            component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/envDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/envDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '集成环境'
@@ -483,7 +483,7 @@ const routes = [
           },
           {
             path: 'detail/:service_name',
-            component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/serviceDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/serviceDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '服务详情'
@@ -491,7 +491,7 @@ const routes = [
           },
           {
             path: 'detail/:service_name/pm',
-            component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/pmServiceDetail.vue'),
+            component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/pmServiceDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '服务详情'
@@ -499,7 +499,7 @@ const routes = [
           },
           {
             path: 'detail/:service_name/config',
-            component: () => import(/* webpackChunkName: "project-env" */ '@/components/projects/env/inner_env/serviceConfig.vue'),
+            component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/serviceConfig.vue'),
             meta: {
               requiresAuth: true,
               title: '配置详情'
@@ -509,7 +509,7 @@ const routes = [
       },
       {
         path: 'projects/detail/:project_name/rbac',
-        component: () => import(/* webpackChunkName: "project-rbac" */ '@/components/projects/rbac/home.vue'),
+        component: () => import(/* webpackChunkName: "Project Rbac" */ '@/components/projects/rbac/home.vue'),
         meta: {
           requiresAuth: true,
           title: '权限管理'
@@ -528,7 +528,7 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import(/* webpackChunkName: "quality-manage" */ '@/components/quality_manage/tests/first.vue'),
+        component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/first.vue'),
         meta: {
           requiresAuth: true,
           title: '测试'
@@ -536,7 +536,7 @@ const routes = [
       },
       {
         path: 'detail/:project_name/test',
-        component: () => import(/* webpackChunkName: "quality-manage" */ '@/components/quality_manage/tests/first.vue'),
+        component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/first.vue'),
         meta: {
           requiresAuth: true,
           title: '测试管理'
@@ -544,7 +544,7 @@ const routes = [
         children: [
           {
             path: 'function',
-            component: () => import(/* webpackChunkName: "quality-manage" */ '@/components/quality_manage/tests/function/function.vue'),
+            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/function/function.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试'
@@ -552,7 +552,7 @@ const routes = [
           },
           {
             path: 'function/:test_name',
-            component: () => import(/* webpackChunkName: "quality-manage" */ '@/components/quality_manage/tests/function/functionDetail.vue'),
+            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/function/functionDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试'
@@ -560,7 +560,7 @@ const routes = [
           },
           {
             path: 'add/function',
-            component: () => import(/* webpackChunkName: "quality-manage" */ '@/components/quality_manage/tests/function/functionDetail.vue'),
+            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/function/functionDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试-添加'
@@ -568,7 +568,7 @@ const routes = [
           },
           {
             path: 'detail/function/:test_name',
-            component: () => import(/* webpackChunkName: "quality-manage" */ '@/components/quality_manage/tests/function/functionSummary.vue'),
+            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/function/functionSummary.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试-详情统计'
@@ -576,7 +576,7 @@ const routes = [
           },
           {
             path: 'detail/function/:test_name/:task_id',
-            component: () => import(/* webpackChunkName: "quality-manage" */ '@/components/quality_manage/tests/function/functionTaskDetail.vue'),
+            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/function/functionTaskDetail.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试-任务详情'
@@ -584,7 +584,7 @@ const routes = [
           },
           {
             path: 'testcase/function/:workflow_name/:task_id/:test_name',
-            component: () => import(/* webpackChunkName: "quality-manage" */ '@/components/quality_manage/tests/testCase.vue'),
+            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/testCase.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试-测试报告'
@@ -592,7 +592,7 @@ const routes = [
           },
           {
             path: 'testcase/function/:workflow_name/:task_id/test/:test_name',
-            component: () => import(/* webpackChunkName: "quality-manage" */ '@/components/quality_manage/tests/testCase.vue'),
+            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/testCase.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试-测试报告'
@@ -612,15 +612,15 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/home.vue')
+        component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/home.vue')
       },
       {
         path: 'version',
-        component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/home.vue'),
+        component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/home.vue'),
         children: [
           {
             path: ':project_name',
-            component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/version/index.vue'),
+            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/version/index.vue'),
             meta: {
               requiresAuth: true,
               requiresSuperAdmin: false,
@@ -629,7 +629,7 @@ const routes = [
           },
           {
             path: ':project_name/create',
-            component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/version/helm/createVersion.vue'),
+            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/version/helm/createVersion.vue'),
             meta: {
               requiresAuth: true,
               requiresSuperAdmin: false,
@@ -638,7 +638,7 @@ const routes = [
           },
           {
             path: ':project_name/:id',
-            component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/version/detail.vue'),
+            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/version/detail.vue'),
             meta: {
               requiresAuth: true,
               requiresSuperAdmin: false,
@@ -649,7 +649,7 @@ const routes = [
       },
       {
         path: 'artifacts',
-        component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/artifacts/index.vue'),
+        component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/artifacts/index.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: false,
@@ -658,7 +658,7 @@ const routes = [
       },
       {
         path: 'artifacts/detail/:id',
-        component: () => import(/* webpackChunkName: "project-delivery" */ '@/components/projects/delivery/artifacts/detail.vue'),
+        component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/delivery/artifacts/detail.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: false,
@@ -669,7 +669,7 @@ const routes = [
   },
   {
     path: '/workflows',
-    component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/view.vue'),
+    component: () => import(/* webpackChunkName: "Edit Workflow" */ '@/components/projects/edit_pipeline/view.vue'),
     meta: {
       requiresAuth: true,
       title: '工作流管理'
@@ -677,7 +677,7 @@ const routes = [
     children: [
       {
         path: 'product/create',
-        component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/product_pipeline/pipeline.vue'),
+        component: () => import(/* webpackChunkName: "Edit Workflow" */ '@/components/projects/edit_pipeline/product_pipeline/pipeline.vue'),
         meta: {
           requiresAuth: true,
           title: '新建工作流'
@@ -685,7 +685,7 @@ const routes = [
       },
       {
         path: 'product/edit/:name',
-        component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/product_pipeline/pipeline.vue'),
+        component: () => import(/* webpackChunkName: "Edit Workflow" */ '@/components/projects/edit_pipeline/product_pipeline/pipeline.vue'),
         meta: {
           requiresAuth: true,
           title: '编辑工作流'
@@ -693,7 +693,7 @@ const routes = [
       },
       {
         path: 'common/create',
-        component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/common_pipeline/pipeline.vue'),
+        component: () => import(/* webpackChunkName: "Edit Workflow" */ '@/components/projects/edit_pipeline/common_pipeline/pipeline.vue'),
         meta: {
           requiresAuth: true,
           title: '新建工作流'
@@ -701,7 +701,7 @@ const routes = [
       },
       {
         path: 'common/edit/:name',
-        component: () => import(/* webpackChunkName: "edit-pipeline" */ '@/components/projects/edit_pipeline/common_pipeline/pipeline.vue'),
+        component: () => import(/* webpackChunkName: "Edit Workflow" */ '@/components/projects/edit_pipeline/common_pipeline/pipeline.vue'),
         meta: {
           requiresAuth: true,
           title: '编辑工作流'
@@ -723,7 +723,7 @@ const routes = [
       },
       {
         path: 'account/manage',
-        component: () => import(/* webpackChunkName: "users_mgr" */ '@/components/users_mgr/users/manage.vue'),
+        component: () => import(/* webpackChunkName: "Users Mgr" */ '@/components/users_mgr/users/manage.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -741,7 +741,7 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import(/* webpackChunkName: "user-setting" */ '@/components/profile/home.vue'),
+        component: () => import(/* webpackChunkName: "User Setting" */ '@/components/profile/home.vue'),
         meta: {
           requiresAuth: true,
           title: '账号设置'
@@ -749,7 +749,7 @@ const routes = [
       },
       {
         path: 'info',
-        component: () => import(/* webpackChunkName: "user-setting" */ '@/components/profile/manage.vue'),
+        component: () => import(/* webpackChunkName: "User Setting" */ '@/components/profile/manage.vue'),
         meta: {
           requiresAuth: true,
           title: '账号设置'
@@ -766,7 +766,7 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/home.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/home.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -775,7 +775,7 @@ const routes = [
       },
       {
         path: 'apps',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/apps/manage.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/apps/manage.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -784,7 +784,7 @@ const routes = [
       },
       {
         path: 'imgs',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/imgs/manage.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/imgs/manage.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -793,7 +793,7 @@ const routes = [
       },
       {
         path: 'registry',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/registry/manage.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/registry/manage.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -802,7 +802,7 @@ const routes = [
       },
       {
         path: 'storage',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/storage/manage.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/storage/manage.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -811,7 +811,7 @@ const routes = [
       },
       {
         path: 'helm',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/helm/manage.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/helm/manage.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -820,7 +820,7 @@ const routes = [
       },
       {
         path: 'cluster',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/cluster/manage.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/cluster/manage.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -829,7 +829,7 @@ const routes = [
       },
       {
         path: 'host',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/host/manage.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/host/manage.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -838,7 +838,7 @@ const routes = [
       },
       {
         path: 'integration',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/integration/home.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/integration/home.vue'),
         meta: {
           requiresAuth: true,
           title: '集成管理'
@@ -846,7 +846,7 @@ const routes = [
       },
       {
         path: 'config',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/config/home.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/config/home.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -855,7 +855,7 @@ const routes = [
         children: [
           {
             path: 'manage/quota',
-            component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/config/quota.vue'),
+            component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/config/quota.vue'),
             meta: {
               requiresAuth: true,
               requiresSuperAdmin: true,
@@ -864,7 +864,7 @@ const routes = [
           },
           {
             path: 'manage/proxy',
-            component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/config/proxy.vue'),
+            component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/config/proxy.vue'),
             meta: {
               requiresAuth: true,
               requiresSuperAdmin: true,
@@ -873,7 +873,7 @@ const routes = [
           },
           {
             path: 'manage/cache',
-            component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/config/cache.vue'),
+            component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/config/cache.vue'),
             meta: {
               requiresAuth: true,
               requiresSuperAdmin: true,
@@ -884,7 +884,7 @@ const routes = [
       },
       {
         path: 'announcement',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/announcement/manage.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/announcement/manage.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -893,7 +893,7 @@ const routes = [
       },
       {
         path: 'auditlog',
-        component: () => import(/* webpackChunkName: "setting" */ '@/components/setting/auditlog/manage.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/auditlog/manage.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
@@ -904,14 +904,14 @@ const routes = [
   },
   {
     path: '/mobile',
-    component: () => import(/* webpackChunkName: "mobile" */ '@/mobile/index.vue'),
+    component: () => import(/* webpackChunkName: "Mobile" */ '@/mobile/index.vue'),
     meta: {
       title: 'Zadig'
     },
     children: [
       {
         path: 'status',
-        component: () => import(/* webpackChunkName: "mobile" */ '@/mobile/pipelines/status.vue'),
+        component: () => import(/* webpackChunkName: "Mobile" */ '@/mobile/pipelines/status.vue'),
         meta: {
           requiresAuth: true,
           title: '运行状态'
@@ -919,7 +919,7 @@ const routes = [
       },
       {
         path: 'envs',
-        component: () => import(/* webpackChunkName: "mobile" */ '@/mobile/envs/envs.vue'),
+        component: () => import(/* webpackChunkName: "Mobile" */ '@/mobile/envs/envs.vue'),
         meta: {
           requiresAuth: true,
           title: '集成环境'
@@ -927,7 +927,7 @@ const routes = [
       },
       {
         path: 'envs/detail/:project_name',
-        component: () => import(/* webpackChunkName: "mobile" */ '@/mobile/envs/envDetail'),
+        component: () => import(/* webpackChunkName: "Mobile" */ '@/mobile/envs/envDetail'),
         meta: {
           requiresAuth: true,
           title: '集成环境'
@@ -935,7 +935,7 @@ const routes = [
       },
       {
         path: 'envs/detail/:project_name/:service_name',
-        component: () => import(/* webpackChunkName: "mobile" */ '@/mobile/envs/serviceDetail.vue'),
+        component: () => import(/* webpackChunkName: "Mobile" */ '@/mobile/envs/serviceDetail.vue'),
         meta: {
           requiresAuth: true,
           title: '服务详情'
@@ -943,7 +943,7 @@ const routes = [
       },
       {
         path: 'pipelines',
-        component: () => import(/* webpackChunkName: "mobile" */ '@/mobile/pipelines/pipelines.vue'),
+        component: () => import(/* webpackChunkName: "Mobile" */ '@/mobile/pipelines/pipelines.vue'),
         meta: {
           requiresAuth: true,
           title: '工作流'
@@ -951,7 +951,7 @@ const routes = [
       },
       {
         path: 'pipelines/project/:project_name/multi/:workflow_name/:task_id',
-        component: () => import(/* webpackChunkName: "mobile" */ '@/mobile/pipelines/multi_task.vue'),
+        component: () => import(/* webpackChunkName: "Mobile" */ '@/mobile/pipelines/multi_task.vue'),
         meta: {
           requiresAuth: true,
           title: '任务详情'
@@ -959,7 +959,7 @@ const routes = [
       },
       {
         path: 'pipelines/project/:project_name/multi/:workflow_name',
-        component: () => import(/* webpackChunkName: "mobile" */ '@/mobile/pipelines/detail.vue'),
+        component: () => import(/* webpackChunkName: "Mobile" */ '@/mobile/pipelines/detail.vue'),
         meta: {
           requiresAuth: true,
           title: '工作流详情'
@@ -967,7 +967,7 @@ const routes = [
       },
       {
         path: 'profile',
-        component: () => import(/* webpackChunkName: "mobile" */ '@/mobile/profile.vue'),
+        component: () => import(/* webpackChunkName: "Mobile" */ '@/mobile/profile.vue'),
         meta: {
           requiresAuth: true,
           title: '账号设置'

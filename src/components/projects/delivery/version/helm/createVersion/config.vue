@@ -245,7 +245,7 @@ export default {
   .config {
     width: 100%;
     height: calc(~'100% - 60px');
-    background-color: #f5f7f7;
+    background-color: #f6f6f6;
     border: 3px solid transparent;
 
     .left,

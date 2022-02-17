@@ -85,11 +85,6 @@ export default {
     text-overflow: ellipsis;
   }
 
-  th,
-  tr {
-    background-color: #fff !important;
-  }
-
   &.el-table {
     th,
     td {

@@ -317,7 +317,7 @@ export default {
   .sidebar-size-toggler {
     position: absolute;
     right: 0;
-    bottom: 10px;
+    bottom: 120px;
     z-index: 1;
     display: block;
     width: 12px;

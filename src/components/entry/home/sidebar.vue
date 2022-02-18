@@ -92,10 +92,10 @@ export default {
       ],
       systemMenu: [
         {
-          category_name: '第三方集成',
+          category_name: '集成管理',
           items: [
             {
-              name: '集成管理',
+              name: '系统集成',
               icon: 'iconfont iconicon_jichengguanli',
               url: 'system/integration'
             },
@@ -112,7 +112,7 @@ export default {
           ]
         },
         {
-          category_name: '基础组件',
+          category_name: '基础设施',
           items: [
             {
               name: '镜像仓库',
@@ -129,12 +129,7 @@ export default {
               icon: 'iconfont iconhelmrepo',
               url: 'system/helm',
               features: 'helm'
-            }
-          ]
-        },
-        {
-          category_name: '资源管理',
-          items: [
+            },
             {
               name: '集群管理',
               icon: 'iconfont iconjiqun',
@@ -148,18 +143,18 @@ export default {
           ]
         },
         {
-          category_name: '系统配置',
+          category_name: '系统',
           items: [
             {
               name: '系统配置',
               icon: 'iconfont iconfuwupeizhi',
               url: 'system/config'
-            }
-          ]
-        },
-        {
-          category_name: '公告与审计',
-          items: [
+            },
+            {
+              name: '用户管理',
+              icon: 'iconfont icongeren',
+              url: 'users/account/manage'
+            },
             {
               name: '公告管理',
               icon: 'iconfont icongonggao',

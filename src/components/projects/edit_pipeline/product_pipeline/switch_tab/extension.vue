@@ -2,7 +2,7 @@
   <el-card class="product-extension">
     <el-form ref="extensionForm" :model="extensionStage" :rules="rules" label-width="100px">
       <el-form-item label="URL">
-        <el-row :gutter="10">
+        <el-row :gutter="10" class="external-system">
           <el-col :span="8">
             <el-form-item prop="url">
               <el-select v-model="extensionStage.url" placeholder="选择外部系统" size="small" clearable>
@@ -63,12 +63,12 @@ export default {
       url: {
         required: true,
         message: '请选择外部系统',
-        trigger: ['blur', 'change']
+        trigger: 'blur'
       },
       path: {
         required: true,
         message: '请输入访问路径',
-        trigger: ['blur', 'change']
+        trigger: 'blur'
       }
     }
     return {
@@ -105,6 +105,10 @@ export default {
 
 <style lang="less" scoped>
 .product-extension {
+  .external-system {
+    margin-bottom: 12px;
+  }
+
   /deep/.el-input,
   .el-select {
     width: 100%;

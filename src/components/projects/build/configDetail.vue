@@ -171,26 +171,6 @@ export default {
     }
   }
 
-  /deep/.el-form.build-form {
-    .el-form-item {
-      margin-bottom: @formItemBottom;
-    }
-
-    .el-form-item__label {
-      color: @labelColor;
-      font-weight: @labelWeight;
-    }
-
-    .el-input,
-    .el-select {
-      width: @inputWidth;
-
-      .el-input {
-        width: 100%;
-      }
-    }
-  }
-
   .create-footer {
     position: fixed;
     right: calc(~'50% - 200px');

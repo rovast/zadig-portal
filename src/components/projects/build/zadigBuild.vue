@@ -1,13 +1,13 @@
 <template>
   <section class="zadig-build-container">
-    <section class="build-block" :class="{ 'show-source': jenkinsEnabled }">
+    <section class="common-parcel-block" :class="{ 'show-source': jenkinsEnabled }">
       <div class="section">
         <el-form
           ref="zadigForm"
           :model="buildConfig"
           :rules="createRules"
           label-position="left"
-          class="build-form"
+          class="primary-form"
           label-width="120px"
           inline-message
         >
@@ -25,7 +25,7 @@
             </el-select>
           </el-form-item>
           <section>
-            <div class="label-title">构建环境</div>
+            <div class="primary-title not-first-child">构建环境</div>
             <el-form-item label="操作系统" prop="pre_build.image_id" class="secondary-label">
               <el-select size="small" v-model="buildConfig.pre_build.image_id" placeholder="请选择" @change="changeImage('id', $event)">
                 <el-option v-for="(sys,index) in systems" :key="index" :label="sys.label" :value="sys.id">
@@ -77,9 +77,9 @@
         <repo-select :config="buildConfig" :validObj="validObj" class="build-secondary-form" showFirstLine></repo-select>
       </div>
       <section>
-        <div class="label-title">构建变量</div>
+        <div class="primary-title not-first-child">构建变量</div>
         <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj"></EnvVariable>
-        <div class="label-title">通用构建脚本</div>
+        <div class="primary-title not-first-child">通用构建脚本</div>
         <div class="deploy-script">
           <Resize :resize="'both'">
             <Editor v-model="buildConfig.scripts"></Editor>
@@ -97,7 +97,7 @@
       <AdvancedConfig
         ref="advancedConfigRef"
         v-show="showAdvancedConfig"
-        class="build-block"
+        class="common-parcel-block"
         :isCreate="isCreate"
         :buildConfig="buildConfig"
         :validObj="validObj"
@@ -378,20 +378,12 @@ export default {
 <style lang="less" scoped>
 @import url('~@assets/css/common/scroll-bar.less');
 
-@itemWidth: 400px;
-@labelColor: #000;
 @labelWeight: 300;
 @secondaryColor: #8a8a8a;
 @formItemBottom: 8px;
 
 .zadig-build-container {
-  .build-block {
-    box-sizing: border-box;
-    margin-bottom: 16px;
-    padding: 16px 40px;
-    background-color: #fff;
-    border-radius: 6px;
-
+  .common-parcel-block {
     &.show-source {
       padding-top: 0;
       border-start-start-radius: 0;
@@ -405,20 +397,6 @@ export default {
         }
       }
     }
-  }
-
-  /deep/.el-form-item.secondary-label {
-    .el-form-item__label {
-      color: @secondaryColor;
-    }
-  }
-
-  .label-title {
-    margin: 24px 0 14px;
-    color: @labelColor;
-    font-weight: @labelWeight;
-    font-size: 14px;
-    line-height: 22px;
   }
 
   /deep/.el-form.build-secondary-form {

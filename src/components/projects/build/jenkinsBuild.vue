@@ -1,6 +1,6 @@
 <template>
   <section class="jenkins-build-container">
-    <el-form ref="jenkinsForm" :model="jenkinsBuild" label-position="left" class="build-form" label-width="120px" inline-message>
+    <el-form ref="jenkinsForm" :model="jenkinsBuild" label-position="left" class="primary-form" label-width="120px" inline-message>
       <slot name="origin"></slot>
       <el-form-item
         label="构建名称"

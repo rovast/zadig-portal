@@ -31,18 +31,18 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <div class="build-block" v-show="docker_enabled || binary_enabled || post_script_enabled">
+    <div class="common-parcel-block" v-show="docker_enabled || binary_enabled || post_script_enabled">
       <el-form
         v-if="docker_enabled"
         :model="buildConfig.post_build.docker_build"
         :rules="docker_rules"
         ref="dockerBuildRef"
         label-width="170px"
-        class="build-step-form"
+        class="secondary-form"
         label-position="left"
       >
         <div class="dashed-container">
-          <span class="item-title">
+          <span class="primary-title">
             镜像构建
             <el-button type="text" @click="removeDocker" icon="el-icon-delete"></el-button>
           </span>
@@ -105,11 +105,11 @@
         :rules="file_archive_rules"
         ref="fileArchiveRef"
         label-width="170px"
-        class="build-step-form"
+        class="secondary-form"
         label-position="left"
       >
         <div class="dashed-container">
-          <span class="item-title">
+          <span class="primary-title">
             二进制包存储
             <el-button type="text" @click="removeBinary" icon="el-icon-delete"></el-button>
           </span>
@@ -123,7 +123,7 @@
       </el-form>
       <el-form v-if="post_script_enabled" :model="buildConfig.post_build" ref="script" label-width="220px" class="stcov label-at-left">
         <div class="dashed-container">
-          <div class="item-title">
+          <div class="primary-title">
             Shell 脚本执行
             <el-tooltip effect="dark" content="构建运行完成后执行的 Shell 脚本" placement="top">
               <i class="el-icon-question" style="color: #a0a0a0;"></i>
@@ -300,36 +300,16 @@ export default {
 @labelWeight: 300;
 
 .other-step-container {
-  .build-block {
-    margin-bottom: 16px;
-    padding: 16px 40px;
-    background-color: #fff;
-    border-radius: 6px;
-
-    .item-title {
-      color: @primaryColor;
-      font-weight: 300;
-      font-size: 14px;
+  .common-parcel-block {
+    .primary-title {
+      margin: 0;
       line-height: 28px;
     }
 
-    /deep/.el-form.build-step-form {
-      .el-form-item {
-        margin-bottom: @formItemBottom;
-      }
-
-      .el-form-item__label {
-        color: @secondaryColor;
-        font-weight: @labelWeight;
-      }
-
+    /deep/.el-form.secondary-form {
       .el-input,
       .el-select {
         width: 100%;
-
-        .el-input {
-          width: 100%;
-        }
       }
     }
   }

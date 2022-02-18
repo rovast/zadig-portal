@@ -1,6 +1,6 @@
 <template>
   <section class="advanced-config-container">
-    <el-form ref="advancedConfig" :model="buildConfig" label-position="left" class="build-advanced-form" label-width="120px" inline-message>
+    <el-form ref="advancedConfig" :model="buildConfig" label-position="left" class="secondary-form build-advanced-form" label-width="120px" inline-message>
       <div class="item-title">策略配置</div>
       <el-form-item label="超时时间">
         <el-input-number size="mini" :min="1" v-model="buildConfig.timeout"></el-input-number>
@@ -151,24 +151,6 @@ export default {
   }
 
   /deep/.el-form.build-advanced-form {
-    .el-form-item {
-      margin-bottom: @formItemBottom;
-    }
-
-    .el-form-item__label {
-      color: @secondaryColor;
-      font-weight: @labelWeight;
-    }
-
-    .el-input,
-    .el-select {
-      width: @inputWidth;
-
-      .el-input {
-        width: 100%;
-      }
-    }
-
     .define-resource {
       .el-form-item__label {
         padding-right: 12px;

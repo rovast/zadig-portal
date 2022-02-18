@@ -366,16 +366,14 @@ export default {
 
         if (!this.pipelineInfo.extension_stage) {
           this.$set(this.pipelineInfo, 'extension_stage', {
-            extension_stage: {
-              enabled: false,
-              url: '',
-              headers: [],
-              path: '',
-              is_callback: false,
-              timeout: 10
-            }
+            enabled: false,
+            url: '',
+            headers: [],
+            path: '',
+            is_callback: false,
+            timeout: 10
           })
-        };
+        }
 
         this.currentModules = {
           basicInfo: true,

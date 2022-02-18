@@ -2,7 +2,7 @@
   <el-card class="product-extension">
     <el-form ref="extensionForm" :model="extensionStage" :rules="rules" label-width="100px">
       <el-form-item label="URL">
-        <el-row :gutter="10" class="external-system">
+        <el-row :gutter="10">
           <el-col :span="8">
             <el-form-item prop="url">
               <el-select v-model="extensionStage.url" placeholder="选择外部系统" size="small" clearable>
@@ -16,10 +16,8 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div>
-          <el-tag size="small">Headers</el-tag>
-          <el-button type="text" @click="addHeader" class="add-header">添加</el-button>
-        </div>
+      </el-form-item>
+      <el-form-item label="Headers">
         <el-table :data="extensionStage.headers" style="width: 100%;">
           <el-table-column label="Header Name">
             <template slot-scope="{row}">
@@ -38,6 +36,7 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-button type="text" @click="addHeader" class="add-header">添加</el-button>
       </el-form-item>
       <el-form-item label="是否回调">
         <el-switch v-model="extensionStage.is_callback"></el-switch>
@@ -105,16 +104,30 @@ export default {
 
 <style lang="less" scoped>
 .product-extension {
-  .external-system {
-    margin-bottom: 12px;
-  }
-
   /deep/.el-input,
   .el-select {
     width: 100%;
   }
 
+  /deep/.el-form {
+    .el-form-item {
+      margin-bottom: 12px;
+    }
+  }
+
   /deep/.el-table {
+    th.el-table__cell {
+      padding: 8px 0;
+      color: #4a4a4a;
+      font-weight: 400;
+      line-height: 24px;
+      background: #eaeaea;
+
+      &.is-leaf {
+        border-block-width: 0;
+      }
+    }
+
     .el-table__cell {
       padding: 0;
     }

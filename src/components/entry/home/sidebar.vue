@@ -288,10 +288,7 @@ export default {
 <style lang="less">
 .sidebar {
   position: relative;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-direction: column;
   flex-direction: column;
   align-items: left;
   justify-content: space-between;
@@ -302,12 +299,6 @@ export default {
   background-color: rgba(118, 122, 200, 0.1);
   border-right: 1px solid #e6e9f0;
   transition: width 350ms, margin-width 230ms;
-  -webkit-box-align: left;
-  -ms-flex-align: left;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
 
   .sidebar-size-toggler {
     position: absolute;
@@ -560,8 +551,6 @@ export default {
   }
 
   .nav-item-icon {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     flex-grow: 0;
     align-items: center;
@@ -573,12 +562,6 @@ export default {
     color: @themeColor;
     font-size: 22px;
     text-align: center;
-    -webkit-box-flex: 0;
-    -ms-flex-positive: 0;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
 
     .iconfont {
       font-size: 22px;
@@ -586,8 +569,6 @@ export default {
   }
 
   .nav-item {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -598,14 +579,8 @@ export default {
     // border-left: 12px solid rgba(118, 122, 200, 0.1);
     // border-right:12px solid rgba(118, 122, 200, 0.1);
     outline: none;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    -webkit-box-pack: start;
-    -ms-flex-pack: start;
 
     .nav-item-label {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
       align-items: center;
       min-width: 130px;
@@ -613,14 +588,12 @@ export default {
       padding-right: 37px;
       padding-left: 0;
       color: #4a4a4a;
+      font-weight: 400;
       font-size: 14px;
       line-height: 22px;
       white-space: nowrap;
       text-align: left;
-      -webkit-transition: color 200ms ease-in;
       transition: color 200ms ease-in;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
 
       .arrow {
         position: static;

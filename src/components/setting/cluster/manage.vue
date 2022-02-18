@@ -71,7 +71,7 @@
           </span>
         </slot>
       </el-alert>
-      <el-form ref="cluster" :rules="rules" label-width="130px" label-position="left" :model="cluster">
+      <el-form ref="cluster" :rules="rules" label-width="140px" label-position="left" :model="cluster">
         <el-form-item label="名称" prop="name">
           <el-input size="small" v-model="cluster.name" placeholder="请输入集群名称"></el-input>
         </el-form-item>
@@ -128,7 +128,7 @@
               <el-button size="mini" plain @click="cluster.advanced_config.project_names = []">清空所有</el-button>
             </el-form-item>
           </section>
-          <section>
+          <section v-show="isEdit">
             <h4>
               调度策略
               <el-tooltip effect="dark" placement="top">
@@ -139,7 +139,7 @@
                 </div>
                 <i class="el-icon-question"></i>
               </el-tooltip>
-              <span v-if="!isEdit" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可选择调度策略</span>
+              <span v-if="!isConfigurable" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可选择调度策略</span>
             </h4>
             <el-form-item prop="advanced_config.strategy" >
               <span slot="label">选择策略</span>
@@ -149,14 +149,14 @@
                 style="width: 100%;"
                 size="small"
                 required
-                :disabled="!isEdit"
+                :disabled="!isConfigurable"
               >
                 <el-option label="随机调度" value="normal"></el-option>
                 <el-option label="强制调度" value="required"></el-option>
                 <el-option label="优先调度" value="preferred"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item v-if="cluster.advanced_config.strategy !== 'normal'" prop="advanced_config.node_labels" label="选择标签">
+            <el-form-item v-if="cluster.advanced_config.strategy && cluster.advanced_config.strategy !== 'normal'" prop="advanced_config.node_labels" label="选择标签">
               <el-select v-model="cluster.advanced_config.node_labels" placeholder="请选择" multiple style="width: 100%;" size="small">
                 <el-option v-for="node in clusterNodes.labels" :key="node" :label="node" :value="node"></el-option>
               </el-select>
@@ -171,7 +171,7 @@
               </div>
             </el-form-item>
           </section>
-          <section>
+          <section v-show="isEdit">
             <h4>
               缓存资源配置
               <el-tooltip effect="dark" placement="top">
@@ -190,13 +190,13 @@
               <span slot="label">选择存储介质</span>
               <el-radio-group v-model="cluster.cache.medium_type" @change="changeMediumType" class="storage-medium">
                 <el-radio label="object">对象存储</el-radio>
-                <el-radio :disabled="!isEdit" label="nfs">
+                <el-radio :disabled="!isConfigurable" label="nfs">
                   集群存储
-                  <span v-if="!isEdit" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可使用集群资源</span>
+                  <span v-if="!isConfigurable" style="color: #e6a23c; font-weight: 400; font-size: 12px;">集群正常接入后才可使用集群资源</span>
                 </el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="cluster.cache.medium_type === 'object'" prop="cache.object_properties">
+            <el-form-item v-if="cluster.cache.medium_type === 'object'" prop="cache.object_properties.id">
               <span slot="label">选择对象存储</span>
               <el-select v-model="cluster.cache.object_properties.id" placeholder="请选择对象存储" style="width: 100%;" size="small">
                 <template v-if="allStorage.length > 0">
@@ -464,18 +464,47 @@ export default {
           required: false,
           message: '请选择项目',
           type: 'array'
+        },
+        'cache.object_properties.id': {
+          required: true,
+          message: '请选择对象存储',
+          type: 'string'
+        },
+        'cache.nfs_properties.provision_type': {
+          required: true,
+          message: '请选择存储资源',
+          type: 'string'
+        },
+        'cache.nfs_properties.storage_class': {
+          required: true,
+          message: '请选择 Storage Class',
+          type: 'string'
+        },
+        'cache.nfs_properties.storage_size_in_gib': {
+          required: true,
+          message: '请输入存储空间大小',
+          type: 'number'
+        },
+        'cache.nfs_properties.pvc': {
+          required: true,
+          message: '请选择 PVC',
+          type: 'string'
         }
       },
       clusterNodes: {
         labels: [],
         data: [] // {labels, ready, ip}
       },
-      expandAdvanced: false
+      expandAdvanced: false,
+      hasNotified: false
     }
   },
   computed: {
     isEdit () {
       return !!this.cluster.id
+    },
+    isConfigurable () {
+      return this.cluster.id && this.cluster.status === 'normal'
     },
     matchedHost () {
       const labels = this.cluster.advanced_config.node_labels
@@ -569,8 +598,10 @@ export default {
         this.recoverCluster(currentCluster.id)
       } else if (operate === 'edit') {
         const namesapce = currentCluster.local ? 'unknown' : 'koderover-agent'
-        this.getClusterNode(currentCluster.id)
         this.cluster = cloneDeep(currentCluster)
+        if (this.isConfigurable) {
+          this.getClusterNode(currentCluster.id)
+        }
         if (this.cluster.cache.medium_type === 'object') {
           this.allStorage = await getStorageListAPI()
         } else if (this.cluster.cache.medium_type === 'nfs') {
@@ -578,6 +609,7 @@ export default {
           this.allPvc = await getClusterPvcAPI(currentCluster.id, namesapce)
         }
         this.dialogClusterFormVisible = true
+        this.hasNotified = false
       } else if (operate === 'update') {
         this.$refs.cluster.validate(valid => {
           if (valid) {
@@ -607,10 +639,13 @@ export default {
       }
     },
     async changeMediumType (type) {
-      this.$message({
-        message: '修改后，之前的缓存将不再生效',
-        type: 'info'
-      })
+      if (!this.hasNotified) {
+        this.$message({
+          message: '修改后，之前的缓存将不再生效',
+          type: 'info'
+        })
+      }
+      this.hasNotified = true
       const namesapce = this.cluster.local ? 'unknown' : 'koderover-agent'
       const id = this.cluster.id
       if (type === 'object') {

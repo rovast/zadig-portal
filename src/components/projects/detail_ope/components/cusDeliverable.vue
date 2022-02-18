@@ -134,11 +134,10 @@ export default {
 <style lang="less" scoped>
 .con {
   width: 100%;
-  // padding: 0 10px;
   line-height: 20px;
 
   .image-content {
-    padding: 10px;
+    padding: 8px;
     border: 1px solid #dcdfe6;
     border-radius: 2px;
   }
@@ -158,7 +157,7 @@ export default {
   .item {
     display: flex;
     align-items: center;
-    margin: 10px 20px;
+    margin: 10px 10px;
 
     .label {
       flex: 2.8;

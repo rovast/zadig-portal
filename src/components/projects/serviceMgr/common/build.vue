@@ -83,7 +83,7 @@
             </el-row>
             <el-row>
              <el-col :span="24">
-                <el-form-item label="jenkins job" prop="jenkins_build.job_name" :rules="[{ required: true, trigger: 'change', message: 'jobs不能为空' }]" >
+                <el-form-item label="Jenkins Job" prop="jenkins_build.job_name" :rules="[{ required: true, trigger: 'change', message: 'jobs不能为空' }]" >
                   <el-select style="width: 100%;"
                             v-model="jenkinsBuild.jenkins_build.job_name"
 

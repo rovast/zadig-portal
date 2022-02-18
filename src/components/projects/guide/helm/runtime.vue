@@ -427,7 +427,6 @@ export default {
       .save-btn {
         padding: 10px 17px;
         color: #fff;
-        font-weight: bold;
         font-size: 13px;
         text-decoration: none;
         background-color: @themeColor;

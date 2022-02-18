@@ -36,7 +36,6 @@ import bus from '@utils/eventBus'
 import ZadigBuild from './zadigBuild.vue'
 import JenkinsBuild from './jenkinsBuild.vue'
 import {
-  getCodeSourceMaskedAPI,
   createBuildConfigAPI,
   updateBuildConfigAPI,
   checkJenkinsConfigExistsAPI

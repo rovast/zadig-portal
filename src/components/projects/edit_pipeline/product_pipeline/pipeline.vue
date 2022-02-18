@@ -46,6 +46,8 @@
                :workflowToRun="pipelineInfo"
                :schedules="pipelineInfo.schedules"
                :webhook="pipelineInfo.hook_ctl"></trigger>
+      <Extension v-show="currentTab==='extension'"
+                 :extensionStage="pipelineInfo.extension_stage"></Extension>
     </div>
 
     <footer class="create-footer">
@@ -85,6 +87,7 @@ import test from './switch_tab/test.vue'
 import distribute from './switch_tab/distribute.vue'
 import trigger from './switch_tab/trigger.vue'
 import notify from './switch_tab/notify.vue'
+import Extension from './switch_tab/extension.vue'
 
 import { getWorkflowDetailAPI, workflowPresetAPI, createWorkflowAPI, updateWorkflowAPI } from '@api'
 
@@ -135,6 +138,14 @@ export default {
           enabled: false,
           items: [
           ]
+        },
+        extension_stage: {
+          enabled: false,
+          url: '',
+          headers: [],
+          path: '',
+          is_callback: false,
+          timeout: 10
         }
       },
 
@@ -147,7 +158,8 @@ export default {
         artifactDeploy: false,
         test: false,
         distribute: false,
-        notify: false
+        notify: false,
+        extension: false
       }
     }
   },
@@ -243,6 +255,10 @@ export default {
 
       if (alias === 'notify') {
         this.pipelineInfo.notify_ctl.enabled = isEnabled
+      }
+
+      if (alias === 'extension') {
+        this.pipelineInfo.extension_stage.enabled = isEnabled
       }
     },
 
@@ -347,6 +363,18 @@ export default {
             this.$set(this.pipelineInfo.distribute_stage, 'releaseIds', [])
           }
         }
+
+        if (!this.pipelineInfo.extension_stage) {
+          this.$set(this.pipelineInfo, 'extension_stage', {
+            enabled: false,
+            url: '',
+            headers: [],
+            path: '',
+            is_callback: false,
+            timeout: 10
+          })
+        }
+
         this.currentModules = {
           basicInfo: true,
           buildDeploy: res.build_stage.enabled,
@@ -354,7 +382,8 @@ export default {
           test: res.test_stage.enabled,
           distribute: res.distribute_stage.enabled,
           notify: res.notify_ctl.enabled,
-          trigger: res.hook_ctl.enabled || res.schedules.enabled
+          trigger: res.hook_ctl.enabled || res.schedules.enabled,
+          extension: res.extension_stage ? res.extension_stage.enabled : false
         }
       })
     }
@@ -368,7 +397,8 @@ export default {
     test,
     distribute,
     trigger,
-    notify
+    notify,
+    Extension
   },
   mixins: [mixin]
 }

@@ -17,28 +17,34 @@
         <el-button @click="bindComp(comp,'workflow')" icon="el-icon-plus" plain>新建工作流</el-button>
       </template>
       <template v-if="$route.path === `/v1/projects/detail/${projectName}/envs/detail`">
-        <el-button @click="bindComp(comp,'env')" icon="el-icon-plus" plain>创建环境</el-button>
-      </template>
-      <template v-if="$route.path === `/v1/projects/detail/${projectName}/services`">
-        <el-button @click="bindComp(comp,'service')" icon="el-icon-plus" plain>新建服务</el-button>
+        <el-button
+          v-hasPermi="{projectName: projectName, action: 'create_environment'}"
+          @click="bindComp(comp,'env')"
+          icon="el-icon-plus"
+          plain
+        >新建环境</el-button>
       </template>
       <template v-if="$route.path === `/v1/projects/detail/${projectName}/builds`">
         <el-button @click="bindComp(comp,'build')" icon="el-icon-plus" plain>新建构建</el-button>
       </template>
       <template v-if="$route.path === `/v1/projects/detail/${projectName}/test`">
-        <el-button @click="bindComp(comp,'test')" icon="el-icon-plus" plain>新建测试</el-button>
+        <el-button v-hasPermi="{projectName: projectName, action: 'create_test'}" @click="bindComp(comp,'test')" icon="el-icon-plus" plain>新建测试</el-button>
       </template>
       <template>
-        <el-dropdown v-if="comp && comp.isProjectAdmin && $route.path === `/v1/projects/detail/${projectName}/detail`" placement="bottom" trigger="click">
+        <el-dropdown
+          v-if="comp && comp.isProjectAdmin && $route.path === `/v1/projects/detail/${projectName}/detail`"
+          placement="bottom"
+          trigger="click"
+        >
           <button type="button" class="display-btn el-button">
             <i class="el-icon-s-operation el-icon--left"></i>
-            配置
+            &nbsp;&nbsp;配置&nbsp;&nbsp;
             <i class="el-icon-caret-bottom el-icon--right"></i>
           </button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item icon="el-icon-edit-outline" @click.native="$router.push(`/v1/projects/edit/${projectName}`)">修改</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-delete" @click.native="comp.deleteProject">删除</el-dropdown-item>
             <el-dropdown-item icon="el-icon-lock" @click.native="$router.push(`/v1/projects/detail/${projectName}/rbac`)">权限</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-delete" @click.native="comp.deleteProject">删除</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </template>
@@ -86,6 +92,11 @@ export default {
           name: '测试',
           icon: 'iconfont icontest',
           url: `/v1/projects/detail/${this.projectName}/test`
+        },
+        {
+          name: '版本管理',
+          icon: 'iconfont iconbanben',
+          url: `/v1/projects/detail/${this.projectName}/version`
         }
       ]
     }
@@ -148,10 +159,10 @@ export default {
           margin-right: 16px;
 
           &.active {
-            box-shadow: inset 0 -2px 0 #55f;
+            box-shadow: inset 0 -2px 0 @themeColor;
 
             .icon {
-              color: #55f;
+              color: @themeColor;
             }
           }
         }
@@ -183,6 +194,22 @@ export default {
       box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
       cursor: pointer;
     }
+  }
+}
+
+.el-dropdown-menu.el-popper {
+  margin-top: 2px;
+
+  .el-dropdown-menu__item {
+    width: 80px;
+    margin: 0 10px;
+    padding: 0 10px;
+    font-weight: 300;
+    border-radius: 6px;
+  }
+
+  .popper__arrow {
+    display: none;
   }
 }
 </style>

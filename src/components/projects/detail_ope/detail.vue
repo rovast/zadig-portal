@@ -6,20 +6,7 @@
     element-loading-spinner="iconfont iconfont-loading iconxiangmu"
   >
     <div class="project-header">
-      <!-- <template v-if="isProjectAdmin">
-        <el-dropdown placement="bottom" trigger="click">
-          <button type="button" class="display-btn">
-            <i class="el-icon-s-operation el-icon--left"></i>
-            配置
-            <i class="el-icon-caret-bottom el-icon--right"></i>
-          </button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="el-icon-edit-outline" @click.native="$router.push(`/v1/projects/edit/${projectName}`)">修改</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-delete" @click.native="deleteProject">删除</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-lock" @click.native="$router.push(`/v1/projects/detail/${projectName}/rbac`)">权限</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </template>-->
+
     </div>
     <section class="projects-detail">
       <div v-hasPermi="{projectName: projectName, action: 'get_environment'}" class="env">
@@ -49,7 +36,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column width="300" align="right" label="更新信息（时间/操作人）">
+          <el-table-column width="300" label="更新信息（时间/操作人）">
             <template slot-scope="{ row }">
               <span class="update-time">
                 <i class="icon el-icon-time"></i>
@@ -318,7 +305,7 @@ export default {
   position: relative;
   height: 100%;
   overflow: auto;
-  background-color: #f6f6f6;
+  background-color: @globalBackgroundColor;
 
   .project-header {
     display: flex;
@@ -365,6 +352,7 @@ export default {
       display: inline-block;
 
       &:not(:last-child) {
+        width: 150px;
         margin-right: 20px;
       }
 

@@ -53,7 +53,7 @@ export default {
           type: 'line',
           smooth: true
         }],
-        color: ['#1b78e8'],
+        color: ['#5555ff'],
         tooltip: {
           trigger: 'axis',
           formatter: (params) => {

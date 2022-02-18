@@ -394,7 +394,7 @@ export default {
   position: relative;
   flex: 1;
   overflow-y: hidden;
-  background-color: #f5f7f7;
+  background-color: @globalBackgroundColor;
 
   ::-webkit-scrollbar-track {
     background-color: #f5f5f5;

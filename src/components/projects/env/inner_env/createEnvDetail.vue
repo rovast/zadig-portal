@@ -1,27 +1,28 @@
 <template>
   <div class="create-product-detail-container" v-loading="loading" element-loading-text="正在加载中" element-loading-spinner="el-icon-loading">
-    <div class="module-title">
-      <h1>创建环境</h1>
-    </div>
     <div v-if="showEmptyServiceModal" class="no-resources">
       <div>
         <img src="@assets/icons/illustration/environment.svg" alt />
       </div>
       <div class="description">
         <p>
-          1.该环境暂无服务，请点击
+          该环境暂无服务，请点击
           <router-link :to="`/v1/projects/detail/${projectName}/services`">
             <el-button type="primary" size="mini" round plain>项目->服务</el-button>
           </router-link>添加服务
         </p>
-        <p>
-          2.如需托管外部环境，请点击
-          <el-button type="primary" size="mini" round @click="changeCreateMethodWhenServiceEmpty" plain>托管环境</el-button>开始托管
-        </p>
       </div>
     </div>
     <div v-else>
-      <el-form label-width="80px" label-position="right" ref="create-env-ref" :model="projectConfig" :rules="rules">
+      <el-form
+        class="common-parcel-block primary-form"
+        label-width="120px"
+        label-position="left"
+        ref="createEnvRef"
+        :model="projectConfig"
+        :rules="rules"
+        inline-message
+      >
         <el-form-item label="环境名称" prop="env_name">
           <el-input @input="changeEnvName" v-model="projectConfig.env_name" size="small"></el-input>
         </el-form-item>
@@ -42,18 +43,30 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="集群" prop="cluster_id">
-          <el-select class="select" filterable @change="changeCluster" v-model="projectConfig.cluster_id" size="small" placeholder="请选择集群">
+        <div v-if="$utils.isEmpty(pmServiceMap)" class="primary-title">资源选择</div>
+        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="K8s 集群" prop="cluster_id" class="secondary-label">
+          <el-select
+            class="select"
+            filterable
+            @change="changeCluster"
+            v-model="projectConfig.cluster_id"
+            size="small"
+            placeholder="请选择 K8s 集群"
+          >
             <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="命名空间" v-if="projectConfig.source==='system' && $utils.isEmpty(pmServiceMap)" prop="defaultNamespace">
+        <el-form-item
+          label="K8s 命名空间"
+          v-if="projectConfig.source==='system' && $utils.isEmpty(pmServiceMap)"
+          prop="defaultNamespace"
+          class="secondary-label"
+        >
           <el-select
             v-model="projectConfig.defaultNamespace"
             :disabled="editButtonDisabled"
-            style="width: 250px;"
             size="small"
-            placeholder="选择已有或自定义命名空间"
+            placeholder="选择或自定义命名空间"
             filterable
             allow-create
             clearable
@@ -61,10 +74,12 @@
             <el-option :value="`${projectName}-env-${projectConfig.env_name}`">{{ projectName }}-env-{{ projectConfig.env_name }}</el-option>
             <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns" :value="ns"></el-option>
           </el-select>
-          <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">{{editButtonDisabled? '编辑' : '完成'}}</span>
+          <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">
+            <i :class="[editButtonDisabled ? 'el-icon-edit-outline': 'el-icon-finished' ]"></i>
+          </span>
           <span class="ns-desc" v-show="nsIsExisted">由 Zadig 接管的服务将覆盖所选命名空间中的同名服务，请慎重操作！</span>
         </el-form-item>
-        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库">
+        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库" class="secondary-label">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small" @change="getImages">
             <el-option
               v-for="registry in imageRegistry"
@@ -75,23 +90,19 @@
           </el-select>
         </el-form-item>
       </el-form>
-
-      <el-card
+      <div
         v-if="(deployType===''||deployType==='k8s') && projectConfig.vars && projectConfig.vars.length > 0  && !$utils.isEmpty(containerMap) && projectConfig.source==='system'"
-        class="box-card-service"
-        :body-style="{padding: '0px', margin: '10px 0 0 0'}"
+        class="common-parcel-block box-card-service"
       >
-        <div class="module-title">
-          <h1>变量列表</h1>
-        </div>
+        <div class="primary-title">变量列表</div>
         <div class="kv-container">
-          <el-table :data="projectConfig.vars" style="width: 100%;">
-            <el-table-column label="Key">
+          <el-table :data="projectConfig.vars" style="width: 90%; max-width: 800px;">
+            <el-table-column label="键">
               <template slot-scope="scope">
                 <span>{{ scope.row.key }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="Value">
+            <el-table-column label="值">
               <template slot-scope="scope">
                 <el-input
                   size="small"
@@ -108,7 +119,7 @@
                 <span>{{ scope.row.services?scope.row.services.join(','):'-' }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="150">
+            <el-table-column label="操作" width="100">
               <template slot-scope="scope">
                 <template>
                   <span class="operate">
@@ -126,13 +137,13 @@
               </template>
             </el-table-column>
           </el-table>
-          <div v-if="addKeyInputVisable" class="add-key-container">
-            <el-table :data="addKeyData" :show-header="false" style="width: 100%;">
+          <div v-if="addKeyInputVisible" class="add-key-container">
+            <el-table :data="addKeyData" :show-header="false" style="width: 90%; max-width: 800px;">
               <el-table-column>
                 <template slot-scope="{ row }">
                   <el-form :model="row" :rules="keyCheckRule" ref="addKeyForm" hide-required-asterisk>
-                    <el-form-item label="Key" prop="key" inline-message>
-                      <el-input size="small" type="textarea" :autosize="{ minRows: 1, maxRows: 4}" v-model="row.key" placeholder="请输入 Key"></el-input>
+                    <el-form-item prop="key" inline-message>
+                      <el-input size="small" type="textarea" :autosize="{ minRows: 1, maxRows: 4}" v-model="row.key" placeholder="请输入键"></el-input>
                     </el-form-item>
                   </el-form>
                 </template>
@@ -140,39 +151,33 @@
               <el-table-column>
                 <template slot-scope="{ row }">
                   <el-form :model="row" :rules="keyCheckRule" ref="addValueForm" hide-required-asterisk>
-                    <el-form-item label="Value" prop="value" inline-message>
-                      <el-input
-                        size="small"
-                        type="textarea"
-                        :autosize="{ minRows: 1, maxRows: 4}"
-                        v-model="row.value"
-                        placeholder="请输入 Value"
-                      ></el-input>
+                    <el-form-item prop="value" inline-message>
+                      <el-input size="small" type="textarea" :autosize="{ minRows: 1, maxRows: 4}" v-model="row.value" placeholder="请输入值"></el-input>
                     </el-form-item>
                   </el-form>
                 </template>
               </el-table-column>
-              <el-table-column width="100">
+              <el-table-column width="150">
                 <template>
                   <span style="display: inline-block; margin-bottom: 15px;">
                     <el-button @click="addRenderKey()" type="text">确认</el-button>
-                    <el-button @click="addKeyInputVisable=false" type="text">取消</el-button>
+                    <el-button @click="addKeyInputVisible=false" type="text">取消</el-button>
                   </span>
                 </template>
               </el-table-column>
             </el-table>
           </div>
-          <span v-if="!rollbackMode" class="add-kv-btn">
-            <i title="添加" @click="addKeyInputVisable=true" class="el-icon-circle-plus">新增</i>
+          <span v-if="!rollbackMode" class="add-kv-btn" @click="addKeyInputVisible=true">
+            <i title="添加" class="el-icon-circle-plus"></i>新增
           </span>
         </div>
-      </el-card>
-      <div v-if="projectConfig.source==='system'">
-        <div style="color: rgb(153, 153, 153); font-size: 16px; line-height: 20px;">服务列表</div>
+      </div>
+      <div v-if="projectConfig.source==='system'" class="common-parcel-block">
+        <div class="primary-title">服务列表</div>
         <template v-if="deployType==='k8s'">
-          <el-card v-if="!$utils.isEmpty(containerMap)" class="box-card-service" :body-style="{padding: '0px'}">
-            <div slot="header" class="clearfix">
-              <span class="second-title">微服务 K8s YAML 部署</span>
+          <div v-if="!$utils.isEmpty(containerMap)">
+            <div class="service-filter-block">
+              <span class="secondary-title">微服务 K8s YAML 部署</span>
               <span class="service-filter">
                 快速过滤:
                 <el-tooltip class="img-tooltip" effect="dark" placement="top">
@@ -195,37 +200,36 @@
                 </el-select>
               </span>
             </div>
-
-            <el-form class="service-form" label-width="190px" label-position="left">
-              <div class="group" v-for="(typeServiceMap, serviceName) in containerMap" :key="serviceName">
-                <el-tag>{{ serviceName }}</el-tag>
-                <div class="service">
+            <el-form class="service-form-block" label-width="50%" label-position="left">
+              <div class="service-item" v-for="(typeServiceMap, serviceName) in containerMap" :key="serviceName">
+                <div class="primary-title">{{ serviceName }}</div>
+                <div class="service-content">
                   <div v-for="service in typeServiceMap" :key="`${service.service_name}-${service.type}`" class="service-block">
-                    <div v-if="service.type==='k8s' && service.containers" class="container-images">
+                    <template v-if="service.type==='k8s' && service.containers">
                       <el-form-item v-for="con of service.containers" :key="con.name" :label="con.name">
                         <el-select v-model="con.image" :disabled="rollbackMode" filterable size="small">
                           <el-option v-for="img of imageMap[con.name]" :key="`${img.name}-${img.tag}`" :label="img.tag" :value="img.full"></el-option>
                         </el-select>
                       </el-form-item>
-                    </div>
+                    </template>
                   </div>
                 </div>
               </div>
             </el-form>
-          </el-card>
-          <el-card v-if="!$utils.isEmpty(pmServiceMap)" class="box-card-service" :body-style="{padding: '0px'}">
+          </div>
+          <div v-if="!$utils.isEmpty(pmServiceMap)" class="box-card-service" :body-style="{padding: '0px'}">
             <div slot="header" class="clearfix">
               <span class="second-title">单服务或微服务(自定义脚本/Docker 部署)</span>
               <span class="small-title">(请关联服务的主机资源，后续也可以在服务中进行配置)</span>
             </div>
 
-            <el-form class="service-form" label-width="190px">
-              <div class="group" v-for="(typeServiceMap, serviceName) in pmServiceMap" :key="serviceName">
-                <el-tag>{{ serviceName }}</el-tag>
-                <div class="service">
+            <el-form class="service-form-block" label-width="50%" label-position="left">
+              <div class="service-item" v-for="(typeServiceMap, serviceName) in pmServiceMap" :key="serviceName">
+                <div class="primary-title">{{ serviceName }}</div>
+                <div class="service-content">
                   <div v-for="service in typeServiceMap" :key="`${service.service_name}-${service.type}`" class="service-block">
-                    <div v-if="service.type==='pm'" class="container-images">
-                      <el-form-item label="请关联主机资源：">
+                    <template v-if="service.type==='pm'" class="container-images">
+                      <el-form-item label="请关联主机资源">
                         <el-button v-if="allHost.length === 0" @click="createHost" type="text">创建主机</el-button>
                         <el-select
                           v-else
@@ -245,41 +249,30 @@
                           </el-option-group>
                         </el-select>
                       </el-form-item>
-                    </div>
+                    </template>
                   </div>
                 </div>
               </div>
             </el-form>
-          </el-card>
+          </div>
         </template>
       </div>
-      <el-form label-width="200px" class="ops">
+      <el-form label-width="35%" class="ops">
         <el-form-item>
-          <el-button @click="startDeploy" :loading="startDeployLoading" type="primary" size="medium">确定</el-button>
           <el-button @click="goBack" :loading="startDeployLoading" size="medium">取消</el-button>
+          <el-button @click="startDeploy" :loading="startDeployLoading" type="primary" size="medium">立即创建</el-button>
         </el-form-item>
       </el-form>
       <footer v-if="startDeployLoading" class="create-footer">
-        <el-row :gutter="20">
-          <el-col :span="16">
-            <div class="grid-content bg-purple">
-              <div class="description">
-                <el-tag type="primary">正在创建环境中....</el-tag>
-              </div>
-            </div>
-          </el-col>
-
-          <el-col :span="8">
-            <div class="grid-content bg-purple">
-              <div class="deploy-loading">
-                <div class="spinner__item1"></div>
-                <div class="spinner__item2"></div>
-                <div class="spinner__item3"></div>
-                <div class="spinner__item4"></div>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
+        <div class="description">
+          <el-tag type="primary">正在创建环境中....</el-tag>
+        </div>
+        <div class="deploy-loading">
+          <div class="spinner__item1"></div>
+          <div class="spinner__item2"></div>
+          <div class="spinner__item3"></div>
+          <div class="spinner__item4"></div>
+        </div>
       </footer>
     </div>
   </div>
@@ -304,10 +297,10 @@ import { serviceTypeMap } from '@utils/wordTranslate'
 
 const validateKey = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {
-    callback(new Error('请输入Key'))
+    callback(new Error('请输入键'))
   } else {
     if (!/^[a-zA-Z0-9_]+$/.test(value)) {
-      callback(new Error('Key 只支持字母大小写和数字，特殊字符只支持下划线'))
+      callback(new Error('请只支持字母大小写和数字，特殊字符只支持下划线'))
     } else {
       callback()
     }
@@ -349,7 +342,7 @@ export default {
       allCluster: [],
       startDeployLoading: false,
       loading: false,
-      addKeyInputVisable: false,
+      addKeyInputVisible: false,
       imageMap: {},
       containerMap: {},
       pmServiceMap: {},
@@ -357,13 +350,10 @@ export default {
       serviceTypeMap: serviceTypeMap,
       rules: {
         cluster_id: [
-          { required: true, trigger: 'change', message: '请选择集群' }
+          { required: true, trigger: 'change', message: '请选择 K8s 集群' }
         ],
         source: [
           { required: true, trigger: 'change', message: '请选择环境类型' }
-        ],
-        namespace: [
-          { required: true, trigger: 'change', message: '请选择命名空间' }
         ],
         defaultNamespace: [
           { required: true, trigger: 'change', message: '命名空间不能为空' }
@@ -726,7 +716,7 @@ export default {
       }
     },
     loadHosting () {
-      this.$refs['create-env-ref'].validate(valid => {
+      this.$refs.createEnvRef.validate(valid => {
         if (valid) {
           const payload = this.$utils.cloneObj(this.projectConfig)
           payload.services = []
@@ -756,7 +746,7 @@ export default {
     deployK8sEnv () {
       const picked2D = []
       const picked1D = []
-      this.$refs['create-env-ref'].validate(valid => {
+      this.$refs.createEnvRef.validate(valid => {
         if (valid) {
           // 同名至少要选一个
           for (const name in this.containerMap) {
@@ -880,7 +870,10 @@ export default {
     bus.$emit('set-topbar-title', {
       title: '',
       breadcrumb: [
-        { title: '项目', url: `/v1/projects/detail/${this.projectName}/detail` },
+        {
+          title: '项目',
+          url: `/v1/projects/detail/${this.projectName}/detail`
+        },
         {
           title: `${this.projectName}`,
           url: `/v1/projects/detail/${this.projectName}/detail`
@@ -908,13 +901,18 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
+@secondaryColor: #8a8a8a;
+@primaryColor: #000;
+@darkBackgroundColor: rgba(246, 246, 246, 0.6);
+
 .create-product-detail-container {
   position: relative;
   flex: 1;
-  padding: 15px 20px;
+  box-sizing: border-box;
+  height: calc(~'100% - 60px');
+  padding: 16px 24px;
   overflow: auto;
-  font-size: 13px;
 
   .ns-desc {
     display: inline-block;
@@ -923,113 +921,103 @@ export default {
     font-size: 13px;
   }
 
-  .module-title h1 {
-    margin-bottom: 30px;
-    font-weight: 200;
-    font-size: 1.5rem;
-  }
-
-  .btn {
+  .editButton {
     display: inline-block;
-    min-width: 87px;
-    height: 30px;
-    margin: 0 auto 38px;
-    padding: 0 8px;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 30px;
-    line-height: 32px;
-    white-space: nowrap;
-    border: 1px solid transparent;
+    margin-left: 6px;
+    padding: 0 6px;
+    font-size: 14px;
+    line-height: 24px;
+    border: 1px solid rgba(118, 122, 200, 0.5);
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.15s;
   }
 
-  .btn-primary {
-    color: @themeColor;
-    background-color: rgba(25, 137, 250, 0.04);
-    border-color: rgba(25, 137, 250, 0.4);
-
-    &:hover {
-      color: #fff;
-      background-color: @themeColor;
-      border-color: @themeColor;
-    }
-  }
-
-  .btn-mute {
-    color: rgba(94, 97, 102, 0.8);
-    background-color: transparent;
-    border-color: rgba(94, 97, 102, 0.4);
-
-    &:hover {
-      color: rgba(94, 97, 102, 0.8);
-      background-color: transparent;
-      border-color: rgba(94, 97, 102, 0.4);
-    }
-
-    &[disabled] {
-      color: rgba(94, 97, 102, 0.8);
-      background-color: transparent;
-      border-color: rgba(94, 97, 102, 0.4);
-      cursor: not-allowed;
-    }
-  }
-
-  .box-card,
   .box-card-service {
-    margin-top: 25px;
-    margin-bottom: 25px;
-    border: none;
-    box-shadow: none;
+    .kv-container {
+      /deep/.el-table {
+        th.el-table__cell {
+          color: @secondaryColor;
+          background: #fff;
+        }
 
-    .item {
-      .item-name {
-        margin: 10px 0;
-      }
+        .el-table__row {
+          background: @darkBackgroundColor;
 
-      .el-row {
-        margin-bottom: 15px;
-      }
-
-      .img-tooltip {
-        color: #5a5e66;
-        font-size: 15px;
-
-        &:hover {
-          color: @themeColor;
-          cursor: pointer;
+          .cell {
+            .operate {
+              .delete {
+                color: #ff1949;
+              }
+            }
+          }
         }
       }
 
-      .img-select {
-        width: 140px;
+      .add-kv-btn {
+        display: inline-block;
+        margin-top: 10px;
+        margin-left: 5px;
+        color: @themeColor;
+        cursor: pointer;
+
+        i {
+          padding-right: 4px;
+          font-size: 14px;
+          line-height: 14px;
+        }
       }
     }
   }
 
-  .el-card__header {
-    position: relative;
-    box-sizing: border-box;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 0;
-    border-bottom: none;
+  .service-filter-block {
+    .secondary-title {
+      display: inline-block;
+      width: 180px;
+    }
 
-    &::before {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 400px;
-      height: 1px;
-      border-bottom: 1px solid #eee;
-      content: '';
+    .service-filter {
+      color: @themeColor;
+      font-size: 14px;
+
+      .el-input__inner {
+        color: #409eff;
+        border-color: #8cc5ff;
+
+        &::placeholder {
+          color: #8cc5ff;
+        }
+      }
     }
   }
 
-  .el-collapse-item__header {
-    padding-left: 0;
+  .service-form-block {
+    width: 90%;
+    max-width: 800px;
+
+    .service-item {
+      margin-bottom: 8px;
+      padding: 12px;
+      background: rgba(246, 246, 246, 0.6);
+      border-radius: 6px;
+
+      .service-content {
+        box-sizing: border-box;
+        padding: 15px 12px;
+        background: #fff;
+        border: 1px solid #d2d7dc;
+        border-radius: 6px;
+
+        .service-block {
+          /deep/.el-form-item {
+            margin-bottom: 8px;
+
+            .el-select {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
   }
 
   .no-resources {
@@ -1061,92 +1049,67 @@ export default {
     position: fixed;
     bottom: 0;
     z-index: 5;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    width: 800px;
-    padding: 15px 60px 10px 0;
-    text-align: left;
-    background-color: #fff;
-    border-top: 1px solid #fff;
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 15px 0 10px;
 
-    .grid-content {
-      min-height: 36px;
-      border-radius: 4px;
+    .description {
+      flex: 0 0 auto;
+      line-height: 36px;
 
-      .description {
+      p {
+        margin: 0;
+        color: #676767;
+        font-size: 16px;
         line-height: 36px;
-
-        p {
-          margin: 0;
-          color: #676767;
-          font-size: 16px;
-          line-height: 36px;
-          text-align: left;
-        }
-      }
-
-      .deploy-loading {
-        width: 100px;
-        margin-left: 70px;
-        line-height: 36px;
-        text-align: center;
-
-        div {
-          display: inline-block;
-          width: 8px;
-          height: 8px;
-          margin-right: 4px;
-          background-color: @themeColor;
-          border-radius: 100%;
-          animation: sk-bouncedelay 1.4s infinite ease-in-out both;
-        }
-
-        .spinner__item1 {
-          animation-delay: -0.6s;
-        }
-
-        .spinner__item2 {
-          animation-delay: -0.4s;
-        }
-
-        .spinner__item3 {
-          animation-delay: -0.2s;
-        }
-
-        @keyframes sk-bouncedelay {
-          0%,
-          80%,
-          100% {
-            -webkit-transform: scale(0);
-            transform: scale(0);
-            opacity: 0;
-          }
-
-          40% {
-            -webkit-transform: scale(1);
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
+        text-align: left;
       }
     }
-  }
 
-  .el-input__inner {
-    width: 250px;
-  }
+    .deploy-loading {
+      flex: 0 0 100px;
+      margin-left: 20px;
+      line-height: 36px;
+      text-align: center;
 
-  .el-form-item__label {
-    // text-align: left;
-  }
+      div {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-right: 4px;
+        background-color: @themeColor;
+        border-radius: 100%;
+        animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+      }
 
-  .env-form {
-    display: flex;
+      .spinner__item1 {
+        animation-delay: -0.6s;
+      }
 
-    .el-form-item {
-      width: 50%;
-      margin-right: 0;
-      margin-bottom: 0;
+      .spinner__item2 {
+        animation-delay: -0.4s;
+      }
+
+      .spinner__item3 {
+        animation-delay: -0.2s;
+      }
+
+      @keyframes sk-bouncedelay {
+        0%,
+        80%,
+        100% {
+          -webkit-transform: scale(0);
+          transform: scale(0);
+          opacity: 0;
+        }
+
+        40% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
     }
   }
 
@@ -1160,56 +1123,6 @@ export default {
     font-size: 12px;
   }
 
-  .service-filter {
-    margin-left: 56px;
-    color: #409eff;
-
-    .el-input__inner {
-      color: #409eff;
-      border-color: #8cc5ff;
-
-      &::placeholder {
-        color: #8cc5ff;
-      }
-    }
-  }
-
-  .el-tag {
-    background-color: rgba(64, 158, 255, 0.2);
-  }
-
-  .service-form {
-    margin: 10px 0 0 0;
-    padding-left: 10px;
-
-    .el-form-item {
-      margin-bottom: 10px;
-    }
-
-    .group {
-      margin-top: 10px;
-      padding: 10px;
-      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    }
-  }
-
-  .service {
-    display: flex;
-  }
-
-  .service-block {
-    /* width: 50%; */
-    margin: 10px 30px 0 0;
-
-    .el-checkbox {
-      font-size: 24px;
-
-      .el-checkbox__input {
-        height: 22px;
-      }
-    }
-  }
-
   .container-images {
     margin: 5px 0 0 0;
     padding: 10px 10px 0 10px;
@@ -1220,77 +1133,5 @@ export default {
   .ops {
     margin-top: 25px;
   }
-
-  .kv-container {
-    .el-table {
-      .unused {
-        background: #e6effb;
-      }
-
-      .present {
-        background: #fff;
-      }
-
-      .new {
-        background: oldlace;
-      }
-    }
-
-    .el-table__row {
-      .cell {
-        span {
-          font-weight: 400;
-        }
-
-        .operate {
-          font-size: 1.12rem;
-
-          .delete {
-            color: #ff1949;
-          }
-        }
-      }
-    }
-
-    .render-value {
-      display: block;
-      max-width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-
-    .add-key-container {
-      .el-form-item__label {
-        display: none;
-      }
-
-      .el-form-item {
-        margin-bottom: 15px;
-      }
-    }
-
-    .add-kv-btn {
-      display: inline-block;
-      margin-top: 10px;
-      margin-left: 5px;
-
-      i {
-        padding-right: 4px;
-        color: #5e6166;
-        color: @themeColor;
-        font-size: 14px;
-        line-height: 14px;
-        cursor: pointer;
-      }
-    }
-  }
-}
-
-.editButton {
-  display: inline-block;
-  margin-left: 10px;
-  color: @themeColor;
-  cursor: pointer;
 }
 </style>

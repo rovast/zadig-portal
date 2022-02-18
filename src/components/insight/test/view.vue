@@ -8,7 +8,7 @@
               <span class="head">测试趋势</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <Trend :selectedDuration="selectedDuration" :selectedProjects="selectedProjects"/>
+            <Trend :selectedDuration="selectedDuration" :selectedProjects="selectedProjects" />
           </div>
         </div>
       </el-col>
@@ -19,7 +19,7 @@
               <span class="head">测试健康度</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <Health :selectedDuration="selectedDuration" :selectedProjects="selectedProjects"/>
+            <Health :selectedDuration="selectedDuration" :selectedProjects="selectedProjects" />
           </div>
         </div>
       </el-col>
@@ -30,7 +30,7 @@
               <span class="head">周测试收益（执行次数 x 测试用例数）</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <TestCases :selectedDuration="selectedDuration" :selectedProjects="selectedProjects"/>
+            <TestCases :selectedDuration="selectedDuration" :selectedProjects="selectedProjects" />
           </div>
         </div>
       </el-col>
@@ -43,7 +43,7 @@
               <span class="head">平均测试时长</span>
               <span class="duration">{{getSetTime}}</span>
             </div>
-            <AverageTestDuration :selectedDuration="selectedDuration" :selectedProjects="selectedProjects"/>
+            <AverageTestDuration :selectedDuration="selectedDuration" :selectedProjects="selectedProjects" />
           </div>
         </div>
       </el-col>
@@ -54,7 +54,7 @@
               <span class="head">周交付部署次数</span>
               <span style="visibility: hidden;" class="duration">{{getSetTime}}</span>
             </div>
-            <Deploy :selectedDuration="selectedDuration" :selectedProjects="selectedProjects"/>
+            <Deploy :selectedDuration="selectedDuration" :selectedProjects="selectedProjects" />
           </div>
         </div>
       </el-col>
@@ -62,6 +62,7 @@
   </div>
 </template>
 <script>
+import bus from '@utils/eventBus'
 import moment from 'moment'
 import Trend from './trend.vue'
 import Health from './health.vue'
@@ -86,13 +87,28 @@ export default {
   },
   computed: {
     getSetTime () {
-      const start = moment(Math.floor(this.selectedDuration[0] / 1000), 'X').format('YYYY/MM/DD')
-      const end = moment(Math.floor(this.selectedDuration[1] / 1000), 'X').format('YYYY/MM/DD')
+      const start = moment(
+        Math.floor(this.selectedDuration[0] / 1000),
+        'X'
+      ).format('YYYY/MM/DD')
+      const end = moment(
+        Math.floor(this.selectedDuration[1] / 1000),
+        'X'
+      ).format('YYYY/MM/DD')
       return `${start} - ${end}`
     }
+  },
+  mounted () {
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '效能洞察', url: '/v1/insight' },
+        { title: '测试效能', url: '' }
+      ]
+    })
   }
 }
 </script>
 <style lang="less">
-@import "~@assets/css/component/insight-charts.less";
+@import '~@assets/css/component/insight-charts.less';
 </style>

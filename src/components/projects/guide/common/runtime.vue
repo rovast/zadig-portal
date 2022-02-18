@@ -235,7 +235,7 @@ export default {
   position: relative;
   flex: 1;
   overflow: auto;
-  background-color: #f5f7f7;
+  background-color: @globalBackgroundColor;
 
   .controls__wrap {
     position: relative;

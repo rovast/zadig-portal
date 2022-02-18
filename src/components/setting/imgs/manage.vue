@@ -4,7 +4,7 @@
        element-loading-spinner="iconfont iconfont-loading iconjingxiang"
        class="setting-img-container">
     <!--imgs-create-dialog-->
-    <el-dialog title='添加自定义镜像'
+    <el-dialog title='添加镜像'
                width="40%"
                :close-on-click-modal="false"
                custom-class="create-img-dialog"
@@ -18,7 +18,7 @@
           <el-input size="small"
                     v-model="createImg.label"></el-input>
         </el-form-item>
-        <el-form-item label="自定义镜像名称"
+        <el-form-item label="镜像名称"
                       prop="value">
           <el-input size="small"
                     placeholder="仓库地址/命名空间/镜像名:标签"
@@ -38,7 +38,7 @@
     <!--imgs-create-dialog-->
 
     <!--imgs-edit-dialog-->
-    <el-dialog title='修改自定义镜像'
+    <el-dialog title='修改镜像'
                custom-class="create-img-dialog"
                :close-on-click-modal="false"
                :visible.sync="dialogImgEditFormVisible">
@@ -52,7 +52,7 @@
                     disabled
                     v-model="swapImg.label"></el-input>
         </el-form-item>
-        <el-form-item label="自定义镜像名称"
+        <el-form-item label="镜像名称"
                       prop="value">
           <el-input size="small"
                     v-model="swapImg.value"></el-input>
@@ -73,8 +73,7 @@
       <el-alert type="info"
                 :closable="false">
         <template slot>
-          <span>项目的构建和测试可以使用自定义构建镜像作为脚本执行的基础环境</span><br>
-          <span>自定义镜像需要添加 Zadig 系统所需的一些必要组件，详细可参考
+          <span>项目的构建和测试可以使用构建镜像作为基础环境镜像，构建镜像中需要添加一些必要软件包，详情可参考
             <el-link style="vertical-align: baseline;"
                      type="primary"
                      href="https://docs.koderover.com/zadig/settings/custom-image/"
@@ -87,7 +86,7 @@
         <el-button :plain="true"
                    @click="dialogImgCreateFormVisible=true"
                    size="small"
-                   type="success">添加自定义镜像</el-button>
+                   type="success">添加</el-button>
       </div>
       <div class="img-list">
         <template>
@@ -98,7 +97,7 @@
                 <span>{{scope.row.label}}</span>
               </template>
             </el-table-column>
-            <el-table-column label="自定义镜像名称">
+            <el-table-column label="镜像名称">
               <template slot-scope="scope">
                 <span>{{scope.row.value}}</span>
               </template>

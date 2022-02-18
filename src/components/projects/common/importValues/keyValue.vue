@@ -1,9 +1,9 @@
 <template>
-  <div class="key-value-outer">
-    <h5>指定需要覆盖的键值对</h5>
+  <div class="key-value-container">
+    <div class="secondary-title" style="margin-bottom: 10px;">指定需要覆盖的键值对</div>
     <el-form ref="form" :model="keyValueForm">
       <el-table :data="keyValues">
-        <el-table-column header-align="center" align="left" label="键">
+        <el-table-column label="键">
           <template slot-scope="{ $index }">
             <el-form-item
               :prop="`keyValues[${$index}].key`"
@@ -22,13 +22,14 @@
                 size="small"
                 @change="selectKey($event, $index)"
                 @visible-change="firstEstimatedValues"
+                style="width: 100%;"
               >
                 <el-option v-for="key in lastKeys" :key="key" :label="key" :value="key"></el-option>
               </el-select>
             </el-form-item>
           </template>
         </el-table-column>
-        <el-table-column header-align="center" align="left" label="值">
+        <el-table-column label="值">
           <template slot-scope="{ $index }">
             <el-form-item
               :prop="`keyValues[${$index}].value`"
@@ -40,14 +41,19 @@
             </el-form-item>
           </template>
         </el-table-column>
-        <el-table-column header-align="center" align="left" label="操作" width="100px">
+        <el-table-column label="操作" width="120px">
           <template slot-scope="{ $index }">
-            <el-button type="text" @click="keyValues.splice($index, 1)">删除</el-button>
+            <span class="operate" @click="keyValues.splice($index, 1)">
+              <i class="el-icon-close"></i>
+            </span>
+            <span class="operate" @click="addKeyValue">
+              <i class="el-icon-plus"></i>
+            </span>
           </template>
         </el-table-column>
       </el-table>
     </el-form>
-    <el-button type="text" @click="addKeyValue" icon="el-icon-plus">添加需要覆盖的键值对</el-button>
+    <el-button type="text" @click="addKeyValue" icon="el-icon-circle-plus-outline" class="gray-color">添加</el-button>
   </div>
 </template>
 
@@ -122,28 +128,47 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.key-value-outer {
-  h5 {
-    margin: 2px 0 14px;
-    color: #606266;
-    font-size: 14px;
-  }
+@secondaryColor: #8a8a8a;
+@darkBackgroundColor: rgba(246, 246, 246, 0.6);
 
+.key-value-container {
   /deep/ .el-table {
-    th {
-      padding: 3px 0;
-      font-weight: 500;
-      text-align: left;
+    td {
+      padding: 4px 0;
+
+      &.el-table__cell {
+        border-bottom-width: 0;
+
+        .operate {
+          display: inline-block;
+          box-sizing: border-box;
+          margin-right: 5px;
+          padding: 3px;
+          font-size: 12px;
+          line-height: 1;
+          background: #fff;
+          border: 1px solid rgba(118, 122, 200, 0.5);
+          border-radius: 4px;
+          cursor: pointer;
+        }
+      }
     }
 
-    td {
-      padding: 3px 0;
+    th.el-table__cell {
+      color: @secondaryColor;
+      background: #fff;
+    }
+
+    .el-table__row {
+      background: @darkBackgroundColor;
     }
 
     .el-table__empty-block {
       min-height: 48px;
+      background-color: @darkBackgroundColor;
 
       .el-table__empty-text {
+        font-weight: 300;
         line-height: 48px;
       }
     }
@@ -151,6 +176,10 @@ export default {
     .el-form-item {
       margin-bottom: 0;
     }
+  }
+
+  .gray-color {
+    color: @fontLightGray;
   }
 }
 </style>

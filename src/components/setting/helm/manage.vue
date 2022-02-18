@@ -65,8 +65,7 @@
     <div class="section">
       <el-alert type="info" :closable="false">
         <template>
-          支持 Harbor Helm Chart 仓库管理，用于存放 Push 的 Chart
-          <br />配置使用可参考
+          支持集成自建 Harbor 仓库及阿里、腾讯、华为等云厂商提供的 Chart 仓库，详情可参考
           <el-link
             style="font-size: 14px; vertical-align: baseline;"
             type="primary"

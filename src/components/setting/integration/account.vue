@@ -339,7 +339,7 @@
       <template>
         <el-alert type="info" :closable="false">
           <template>
-            为系统定义用户来源，默认支持 Microsoft Active Directory、OpenLDAP、GitHub 以及 OAuth 集成，详情可参考
+            支持集成 Microsoft Active Directory、OpenLDAP、GitHub 以及 OAuth 集成等外部账号系统，详情可参考
             <el-link
               style="font-size: 14px; vertical-align: baseline;"
               type="primary"

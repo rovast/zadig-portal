@@ -1,51 +1,38 @@
 <template>
-    <div class="form-content">
-      <el-form
-        :model="form"
-        status-icon
-        :rules="rules"
-        ref="form"
-        label-width="100px"
-        class="form"
-        label-position="left"
-      >
-        <el-form-item prop="env_name"  label="环境名称">
-          <el-input v-model="form.env_name" placeholder="请输入环境名称"></el-input>
-        </el-form-item>
-        <el-form-item label="集群">
-          <el-select filterable v-model="form.cluster_id" placeholder="请选择集群"  @change="changeCluster">
-             <el-option v-for="cluster in allCluster"
-                         :key="cluster.id"
-                         :label="$utils.showClusterName(cluster)"
-                         :value="cluster.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="命名空间">
-          <el-select filterable v-model="form.namespace" placeholder="命名空间" @change="changeNamespace">
-             <el-option v-for="(ns,index) in hostingNamespace"
-                         :key="index"
-                         :label="ns.name"
-                         :value="ns.name">
-              </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div class="transfer-title">选择服务</div>
-      <el-transfer
-        filter-placeholder="请输入服务名称"
-        v-model="selectService"
-        :titles="['服务列表', '已选服务']"
-        :data="serviceList"
-        class="transfer"
-        :render-content="renderFunc"
-        :filterable="true"
-      >
-      </el-transfer>
-    </div>
+  <div class="common-parcel-block form-content">
+    <el-form :model="form" :rules="rules" ref="form" label-width="120px" class="primary-form" label-position="left" inline-message>
+      <el-form-item prop="env_name" label="环境名称">
+        <el-input v-model="form.env_name" placeholder="请输入环境名称" size="small"></el-input>
+      </el-form-item>
+      <el-form-item label="K8s 集群">
+        <el-select filterable v-model="form.cluster_id" placeholder="请选择集群" @change="changeCluster" size="small">
+          <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="K8s 命名空间">
+        <el-select filterable v-model="form.namespace" placeholder="请选择命名空间" @change="changeNamespace" size="small">
+          <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns.name" :value="ns.name"></el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <div class="primary-title not-first-child">选择服务</div>
+    <el-transfer
+      filter-placeholder="请输入服务名称"
+      v-model="selectService"
+      :titles="['服务列表', '已选服务']"
+      :data="serviceList"
+      :render-content="renderFunc"
+      :filterable="true"
+    ></el-transfer>
+  </div>
 </template>
 <script>
-import { getClusterListAPI, productHostingNamespaceAPI, queryWorkloads, postWorkloads } from '@/api'
+import {
+  getClusterListAPI,
+  productHostingNamespaceAPI,
+  queryWorkloads,
+  postWorkloads
+} from '@/api'
 export default {
   name: 'hostEnvConfig',
   data () {
@@ -58,20 +45,29 @@ export default {
         namespace: null
       },
       rules: {
-        env_name: [{ required: true, message: '请输入环境名称', trigger: 'blur' }]
+        env_name: [
+          { required: true, message: '请输入环境名称', trigger: 'blur' }
+        ]
       },
       serviceList: [],
       selectService: [],
       renderFunc (h, option) {
         if (option.env_name) {
           const content = `使用项目：${option.product_name}；使用环境：${option.env_name}`
-          return <el-tooltip content={content} placement="top">
-            <span>{ option.label }</span>
-          </el-tooltip>
+          return (
+            <el-tooltip content={content} placement="top">
+              <span>{option.label}</span>
+            </el-tooltip>
+          )
         } else {
-          return <el-tooltip content={option.images && option.images[0]} placement="top">
-            <span>{ option.label }</span>
-          </el-tooltip>
+          return (
+            <el-tooltip
+              content={option.images && option.images[0]}
+              placement="top"
+            >
+              <span>{option.label}</span>
+            </el-tooltip>
+          )
         }
       }
     }
@@ -91,7 +87,12 @@ export default {
       this.getWorkloads(1)
     },
     async getWorkloads (page) {
-      const res = await queryWorkloads(this.projectName, this.form.cluster_id, this.form.namespace, page)
+      const res = await queryWorkloads(
+        this.projectName,
+        this.form.cluster_id,
+        this.form.namespace,
+        page
+      )
       this.serviceList = res.data.services.map((item, index) => {
         return {
           label: item.service_name,
@@ -122,12 +123,14 @@ export default {
     changeCluster (clusterId) {
       this.hostingNamespace = []
       this.clearTransfer()
-      productHostingNamespaceAPI(clusterId).then((res) => {
+      productHostingNamespaceAPI(clusterId).then(res => {
         this.hostingNamespace = res
       })
     },
     async validate () {
-      const res = await this.$refs.form.validate().catch(e => { return false })
+      const res = await this.$refs.form.validate().catch(e => {
+        return false
+      })
       if (res) {
         if (this.selectService.length) {
           return true
@@ -156,44 +159,50 @@ export default {
 }
 </script>
 <style lang='less' scoped>
-  .form-content {
-    padding-left: 100px;
-    background-color: #fff;
+@secondaryColor: #8a8a8a;
 
-    .form {
-      width: 500px;
-      margin-top: 30px;
+.form-content {
+  padding-bottom: 40px;
 
-      /deep/ .el-select {
-        width: 100%;
+  /deep/.el-transfer {
+    .el-transfer-panel {
+      min-width: 360px;
+    }
+
+    .el-transfer-panel__filter .el-input__inner {
+      border-radius: 4px;
+    }
+
+    .el-transfer-panel .el-transfer-panel__header {
+      height: 28px;
+      line-height: 28px;
+      background: @globalBackgroundColor;
+
+      .el-checkbox {
+        line-height: 28px;
+
+        .el-checkbox__label {
+          color: @secondaryColor;
+          font-weight: 300;
+          font-size: 12px;
+        }
       }
     }
 
-    /deep/ .el-transfer-panel {
-      width: 360px;
+    .el-transfer-panel__empty {
+      color: @fontLightGray;
+      font-weight: 300;
     }
 
-    .transfer {
-      margin-bottom: 20px;
-    }
-
-    .transfer-title {
-      margin-bottom: 20px;
-      color: #606266;
-      font-size: 14px;
-    }
-
-    /deep/ .el-pagination {
-      padding: 5px 5px 1px 2px;
-    }
-
-    /deep/ .el-transfer-panel .el-transfer-panel__header .el-checkbox .el-checkbox__label {
-      color: #606266;
-      font-size: 13px;
-    }
-
-    /deep/ .el-button {
-      padding: 10px;
+    .el-button--primary {
+      color: @themeColor;
+      background: @themeBackgroundColor;
+      border-color: @themeBorderColor;
     }
   }
+
+  /deep/ .el-button {
+    padding: 10px;
+  }
+}
 </style>

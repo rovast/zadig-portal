@@ -1,15 +1,25 @@
 <template>
-  <el-collapse class="helm-env-template" v-model="activeName" @change="collapseChange" accordion>
-    <el-collapse-item title="默认环境变量" name="env">
+  <div class="common-parcel-block update-template-container">
+    <div class="template-block">
+      <div class="primary-title template-title" @click="showGlobalVariable = !showGlobalVariable">
+        全局服务变量
+        <i :class="[showGlobalVariable ?  'el-icon-arrow-up' : 'el-icon-arrow-down' ]"></i>
+      </div>
       <EnvValues
+        v-show="showGlobalVariable"
         ref="envValuesRef"
         :envName="handledEnv"
         @envYaml="saveEnvYaml"
         :overrideYaml="defaultEnvValue && defaultEnvValue.defaultValues"
       ></EnvValues>
-    </el-collapse-item>
-    <el-collapse-item :title="`${serviceVariableTitle}变量`" name="service">
+    </div>
+    <div class="template-block">
+      <div class="primary-title not-first-child template-title" @click="showServiceVariable = !showServiceVariable">
+        服务变量
+        <i :class="[showServiceVariable ?  'el-icon-arrow-up' : 'el-icon-arrow-down' ]"></i>
+      </div>
       <ChartValues
+        v-show="showServiceVariable"
         ref="chartValuesRef"
         :chartNames="chartNames"
         :envNames="envNames"
@@ -18,8 +28,8 @@
         :showEnvTabs="showEnvTabs"
         :defaultEnvValue="defaultEnvValue"
       ></ChartValues>
-    </el-collapse-item>
-  </el-collapse>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -29,8 +39,9 @@ export default {
   name: 'HelmEnvTemplate',
   data () {
     return {
-      activeName: 'service',
-      defaultEnvsValues: {} // { key: envName, value: defaultEnvValue }
+      defaultEnvsValues: {}, // { key: envName, value: defaultEnvValue }
+      showGlobalVariable: true,
+      showServiceVariable: true
     }
   },
   props: {
@@ -60,11 +71,6 @@ export default {
     envScene: {
       type: String,
       required: true
-    },
-    serviceVariableTitle: {
-      required: false,
-      type: String,
-      default: '服务'
     }
   },
   computed: {
@@ -88,6 +94,7 @@ export default {
       return Promise.all(valid)
     },
     collapseChange (activeName) {
+      // will update
       this.validate()
         .catch(() => {
           this.activeName = activeName === 'env' ? 'service' : 'env'
@@ -116,21 +123,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.helm-env-template {
-  margin-top: -1px;
+.update-template-container {
+  .template-block {
+    width: 100%;
+    max-width: 1000px;
 
-  /deep/.el-collapse-item {
-    .el-collapse-item__header {
-      padding-left: 8px;
-    }
+    .template-title {
+      cursor: pointer;
 
-    .el-collapse-item__wrap {
-      border-bottom-width: 0;
-
-      .el-collapse-item__content {
-        padding-bottom: 10px;
-        padding-left: 8px;
-        line-height: inherit;
+      i {
+        margin-left: 8px;
+        color: @fontLightGray;
       }
     }
   }

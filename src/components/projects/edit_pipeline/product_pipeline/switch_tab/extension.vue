@@ -42,8 +42,14 @@
         <el-switch v-model="extensionStage.is_callback"></el-switch>
         <div v-show="extensionStage.is_callback">
           请根据
-          <a href="https://docs.koderover.com/" target="_blank" rel="noopener noreferrer" class="help-link">帮助文档</a>
-          调用接口：{{`${origin}/api/callback`}} 接口
+          <el-link
+            style="font-size: 14px; vertical-align: baseline;"
+            type="primary"
+            :href="`https://docs.koderover.com/`"
+            :underline="false"
+            target="_blank"
+          >帮助文档</el-link>
+          调用接口：{{`${origin}/api/callback`}}
         </div>
       </el-form-item>
       <el-form-item label="超时时间">
@@ -144,11 +150,6 @@ export default {
   .add-header {
     margin-left: 5px;
     font-size: 13px;
-  }
-
-  .help-link {
-    color: inherit;
-    text-decoration: underline;
   }
 }
 </style>

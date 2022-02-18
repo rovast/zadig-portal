@@ -196,8 +196,7 @@
       <el-alert type="info"
                 :closable="false">
         <template>
-          对象存储支持标准的 Amazon S3(Amazon Simple Storage Service)协议<br />
-          集成和使用对象存储可参考
+          支持集成阿里云 OSS、腾讯云 COS、华为云 OBS、七牛云 KODO 等符合 Amazon S3(Amazon Simple Storage Service) 协议的对象存储，详情可参考
           <el-link style="font-size: 14px; vertical-align: baseline;"
                    type="primary"
                    :href="`https://docs.koderover.com/zadig/settings/object-storage/`"

@@ -782,7 +782,7 @@ const routes = [
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,
-          title: '应用设置'
+          title: '软件包管理'
         }
       },
       {

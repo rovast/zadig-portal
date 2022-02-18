@@ -30,7 +30,7 @@
                 <li class="sidebar-item"
                     :class="{ sidebarCollapseItem: !showSidebar}">
                   <span class="view-name"><i class="iconfont iconyingyongshezhi"></i>
-                    {{showSidebar?'应用设置':'应用'}}</span>
+                    {{showSidebar?'软件包管理':'软件包'}}</span>
                   <span v-if="showSidebar"
                         class="el-icon-arrow-right next"></span>
                 </li>

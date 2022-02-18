@@ -48,8 +48,7 @@
       <el-alert type="info"
                 :closable="false">
         <template>
-          添加主机资源，可用于主机服务资源配置<br />
-          详细配置可参考
+          支持阿里云 ECS、腾讯云 CVM、华为云 ECS 等主机的接入和使用，详情可参考
           <el-link style="font-size: 14px; vertical-align: baseline;"
                    type="primary"
                    :href="`https://docs.koderover.com/zadig/settings/vm-management/`"

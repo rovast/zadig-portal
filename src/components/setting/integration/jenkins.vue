@@ -5,7 +5,7 @@
       :closable="false"
     >
       <template>
-        为系统配置 Jenkins Server，配置后的服务可以使用 Jenkins Job 构建镜像，详情可参考
+        支持集成 Jenkins Server，配置后工作流可以使用 Jenkins Job 构建镜像，详情可参考
         <el-link style="font-size: 14px; vertical-align: baseline;"
                  type="primary"
                  :href="`https://docs.koderover.com/zadig/settings/jenkins/`"

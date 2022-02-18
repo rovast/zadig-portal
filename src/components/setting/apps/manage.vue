@@ -34,12 +34,12 @@
           <el-form-item>
             <template #label>
               <span>启用</span>
-              <el-tooltip content="控制应用列表中是否展示，正在使用中的不受影响"
+              <el-tooltip content="控制软件包列表中是否展示，正在使用中的不受影响"
                           placement="top">
                 <i class="el-icon-question"></i>
               </el-tooltip>
             </template>
-            <el-checkbox v-model="createApp.enabled">启用该应用</el-checkbox>
+            <el-checkbox v-model="createApp.enabled">启用该软件包</el-checkbox>
           </el-form-item>
           <el-form-item prop="download_path">
             <template #label>
@@ -76,7 +76,7 @@
       <!--apps-create-dialog-->
 
       <!--apps-edit-dialog-->
-      <el-dialog title='修改应用'
+      <el-dialog title='修改软件包'
                  width="55%"
                  custom-class="create-app-dialog"
                  :close-on-click-modal="false"
@@ -95,12 +95,12 @@
           <el-form-item v-if="(typeof swapApp.enabled)!=='undefined'">
             <template #label>
               <span>启用</span>
-              <el-tooltip content="控制应用列表中是否展示，正在使用中的不受影响"
+              <el-tooltip content="控制软件包列表中是否展示，正在使用中的不受影响"
                           placement="top">
                 <i class="el-icon-question"></i>
               </el-tooltip>
             </template>
-            <el-checkbox v-model="swapApp.enabled">启用该应用</el-checkbox>
+            <el-checkbox v-model="swapApp.enabled">启用该软件包</el-checkbox>
           </el-form-item>
           <el-form-item v-if="(typeof swapApp.download_path)!=='undefined'"
                         prop="download_path">
@@ -138,8 +138,7 @@
         <el-alert type="info"
                   :closable="false">
           <template>
-            运行构建及测试步骤，一般都需要用户根据实际业务去安装必要的应用环境来进行构建或者编译<br/>
-            配置和使用应用可参考
+            运行构建及测试步骤时，根据实际业务去安装必要的软件包，详情可参考
             <el-link style="font-size: 14px; vertical-align: baseline;"
                      type="primary"
                      :href="`https://docs.koderover.com/zadig/settings/app/`"
@@ -203,7 +202,7 @@
                               placement="top"
                               width="260"
                               style="display: inline-block;">
-                    <p>应用删除可能会影响正在使用的工作流，确定删除应用 {{scope.row.name}} 的
+                    <p>软件包删除可能会影响正在使用的工作流，确定删除软件包 {{scope.row.name}} 的
                       {{defaultVersion[scope.row.name]}} 版本吗？</p>
                     <div style=" margin: 0; text-align: right;">
                       <el-button size="mini"
@@ -274,10 +273,10 @@ export default {
       availableApps: [],
       showPopper: {},
       rules: {
-        name: [{ required: true, message: '请填写应用名称', trigger: 'blur' }],
-        version: [{ required: true, message: '请填写应用版本', trigger: 'blur' }],
+        name: [{ required: true, message: '请填写软件包名称', trigger: 'blur' }],
+        version: [{ required: true, message: '请填写软件包版本', trigger: 'blur' }],
         scripts: [{ required: true, message: '请填写安装脚本', trigger: 'blur' }],
-        bin_path: [{ required: true, message: '请填写应用 Bin Path', trigger: 'blur' }]
+        bin_path: [{ required: true, message: '请填写软件包 Bin Path', trigger: 'blur' }]
       }
     }
   },
@@ -317,7 +316,7 @@ export default {
     addApp (data) {
       createAppAPI(data).then(res => {
         this.$message({
-          message: '新增应用成功',
+          message: '新增软件包成功',
           type: 'success'
         })
         this.getApps()
@@ -332,7 +331,7 @@ export default {
         }
       }).catch(() => {
         this.$message({
-          message: '新增应用失败',
+          message: '新增软件包失败',
           type: 'error'
         })
       }).then(() => {
@@ -342,13 +341,13 @@ export default {
     updateApp (data) {
       updateAppAPI(data).then(response => {
         this.$message({
-          message: '更新应用成功',
+          message: '更新软件包成功',
           type: 'success'
         })
         this.getApps()
       }).catch(response => {
         this.$message({
-          message: '更新应用失败',
+          message: '更新软件包失败',
           type: 'error'
         })
       }).then(() => {
@@ -362,12 +361,12 @@ export default {
       deleteAppAPI(data).then(response => {
         this.getApps()
         this.$message({
-          message: '应用已删除',
+          message: '软件包已删除',
           type: 'success'
         })
       }).catch(response => {
         this.$message({
-          message: '应用删除失败',
+          message: '软件包删除失败',
           type: 'error'
         })
       })
@@ -452,7 +451,7 @@ export default {
 
   },
   created () {
-    bus.$emit('set-topbar-title', { title: '应用设置', breadcrumb: [] })
+    bus.$emit('set-topbar-title', { title: '软件包管理', breadcrumb: [] })
 
     this.getProxyConfig()
     this.getApps()

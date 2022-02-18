@@ -100,7 +100,7 @@ export default {
               url: 'system/integration'
             },
             {
-              name: '应用设置',
+              name: '软件包管理',
               icon: 'iconfont iconyingyongshezhi',
               url: 'system/apps'
             },

@@ -43,7 +43,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <div class="primary-title">资源选择</div>
+        <div v-if="$utils.isEmpty(pmServiceMap)" class="primary-title">资源选择</div>
         <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="K8s 集群" prop="cluster_id" class="secondary-label">
           <el-select
             class="select"
@@ -217,13 +217,13 @@
               </div>
             </el-form>
           </div>
-          <el-card v-if="!$utils.isEmpty(pmServiceMap)" class="box-card-service" :body-style="{padding: '0px'}">
+          <div v-if="!$utils.isEmpty(pmServiceMap)" class="box-card-service" :body-style="{padding: '0px'}">
             <div slot="header" class="clearfix">
               <span class="second-title">单服务或微服务(自定义脚本/Docker 部署)</span>
               <span class="small-title">(请关联服务的主机资源，后续也可以在服务中进行配置)</span>
             </div>
 
-            <el-form class="service-form-block" label-width="190px">
+            <el-form class="service-form-block" label-width="50%" label-position="left">
               <div class="service-item" v-for="(typeServiceMap, serviceName) in pmServiceMap" :key="serviceName">
                 <div class="primary-title">{{ serviceName }}</div>
                 <div class="service-content">
@@ -254,7 +254,7 @@
                 </div>
               </div>
             </el-form>
-          </el-card>
+          </div>
         </template>
       </div>
       <el-form label-width="35%" class="ops">

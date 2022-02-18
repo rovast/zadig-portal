@@ -19,10 +19,9 @@
         <h1>任务并发数设置 <el-tooltip effect="dark"
                                     placement="right">
           <div slot="content">
-            每 1C2G 资源最多支持 1 个任务并发<br>
-            集群资源 / 1C2G >= 工作流任务并发数 x 单任务构建并发数<br>
-            需根据集群资源配置合理的并发数量。假设集群资源为 8C16G<br>
-            建议工作流任务并发数设置为 2，单任务服务并发数设置为 4。
+            1 个工作流任务至少需要 1C2G 资源。<br>
+            工作流任务并发数 * 单任务服务并发数 * 1C2G ≤ 集群资源。<br>
+            举例：假设集群资源为 8C16G，则建议工作流任务并发数设置为 2，单任务服务并发数设置为 4。<br>
           </div>
           <i class="el-icon-question tooltip"></i>
           </el-tooltip>
@@ -35,7 +34,7 @@
         </div>
         <br/>
         <div class="workflow-concurrency">
-          <span class="desc">单任务构建并发数</span>
+          <span class="desc">单任务服务并发数</span>
           <el-input-number size="mini"
                            :min="1"
                            v-model.number="buildConcurrency"></el-input-number>

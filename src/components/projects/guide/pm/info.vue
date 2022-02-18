@@ -109,7 +109,7 @@ export default {
   position: relative;
   flex: 1;
   overflow: auto;
-  background-color: #f6f6f6;
+  background-color: @globalBackgroundColor;
 
   .page-title-container {
     display: flex;

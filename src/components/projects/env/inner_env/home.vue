@@ -70,11 +70,11 @@ export default {
   display: flex;
   flex: 1;
   height: 100%;
-  padding: 15px 20px;
   overflow-y: auto;
 
   .no-show {
     margin: auto;
+    padding: 16px 24px;
 
     img {
       width: 460px;

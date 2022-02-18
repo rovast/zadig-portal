@@ -76,7 +76,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .container {
-  background-color: #f6f6f6;
+  background-color: @globalBackgroundColor;
 
   .content {
     height: calc(~"100vh - 340px");

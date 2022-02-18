@@ -76,7 +76,7 @@ export default {
   flex-direction: column;
   width: 100%;
   height: calc(~"100% - 61px");
-  background-color: #f6f6f6;
+  background-color: @globalBackgroundColor;
 
   .guide-container {
     margin-top: 20px;

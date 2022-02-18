@@ -288,7 +288,7 @@ export default {
 .chart-template-container {
   height: 100%;
   padding: 10px 10px;
-  background-color: #f6f6f6;
+  background-color: @globalBackgroundColor;
 
   /deep/.multipane {
     width: 100%;

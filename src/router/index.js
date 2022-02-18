@@ -596,77 +596,11 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/first.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '测试'
-        }
-      },
-      {
-        path: 'detail/:project_name/test',
-        component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/first.vue'),
+        component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/projects/test/common/function/function.vue'),
         meta: {
           requiresAuth: true,
           title: '测试管理'
-        },
-        children: [
-          {
-            path: 'function',
-            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/function/function.vue'),
-            meta: {
-              requiresAuth: true,
-              title: '功能测试'
-            }
-          },
-          {
-            path: 'function/:test_name',
-            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/function/functionDetail.vue'),
-            meta: {
-              requiresAuth: true,
-              title: '功能测试'
-            }
-          },
-          {
-            path: 'add/function',
-            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/function/functionDetail.vue'),
-            meta: {
-              requiresAuth: true,
-              title: '功能测试-添加'
-            }
-          },
-          {
-            path: 'detail/function/:test_name',
-            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/function/functionSummary.vue'),
-            meta: {
-              requiresAuth: true,
-              title: '功能测试-详情统计'
-            }
-          },
-          {
-            path: 'detail/function/:test_name/:task_id',
-            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/function/functionTaskDetail.vue'),
-            meta: {
-              requiresAuth: true,
-              title: '功能测试-任务详情'
-            }
-          },
-          {
-            path: 'testcase/function/:workflow_name/:task_id/:test_name',
-            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/testCase.vue'),
-            meta: {
-              requiresAuth: true,
-              title: '功能测试-测试报告'
-            }
-          },
-          {
-            path: 'testcase/function/:workflow_name/:task_id/test/:test_name',
-            component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/quality_manage/tests/testCase.vue'),
-            meta: {
-              requiresAuth: true,
-              title: '功能测试-测试报告'
-            }
-          }
-        ]
+        }
       }
     ]
   },

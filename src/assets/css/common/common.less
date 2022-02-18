@@ -11,6 +11,11 @@
   line-height: 18px;
 }
 
+.el-button,
+.el-input {
+  font-weight: 300;
+}
+
 // table
 .el-table {
   .caret-wrapper {
@@ -69,4 +74,135 @@
 .common-font {
   font-size: 14px;
   line-height: 22px;
+}
+
+// form
+@secondaryColor: #8a8a8a;
+@primaryColor: #000;
+@itemWidth: 400px;
+@itemWeight: 300;
+@formItemBottom: 8px;
+
+// Form label validation icon
+// You should add the label-icon class to the el-form-item component when you want to add an icon to the right of the label component
+.el-form {
+  .el-form-item__label {
+    position: relative;
+    padding-right: 30px;
+  }
+
+  &.el-form--label-top .el-form-item__label {
+    padding-bottom: 0;
+  }
+
+  &.primary-form {
+    .el-form-item__label {
+      color: @primaryColor;
+    }
+
+    .item-title {
+      color: @primaryColor;
+      font-weight: @itemWeight;
+      font-size: 14px;
+      line-height: 28px;
+    }
+  }
+
+  &.secondary-form {
+    .el-form-item__label {
+      color: @secondaryColor;
+    }
+  }
+
+  .label-icon {
+    .el-form-item__label {
+      i {
+        position: absolute;
+        top: calc(~'50% - 7px');
+        right: 8px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  &.primary-form,
+  &.secondary-form {
+    .el-form-item__label {
+      font-weight: @itemWeight;
+    }
+
+    .el-form-item {
+      margin-bottom: @formItemBottom;
+
+      &.secondary-label {
+        .el-form-item__label {
+          color: @secondaryColor;
+        }
+      }
+    }
+
+    .el-input,
+    .el-select {
+      width: @itemWidth;
+
+      .el-input {
+        width: 100%;
+      }
+    }
+  }
+
+  .el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label,
+  .el-form-item.is-required:not(.is-no-asterisk) .el-form-item__label-wrap > .el-form-item__label {
+    &::before {
+      margin-right: 0;
+      content: '';
+    }
+
+    &::after {
+      position: absolute;
+      top: calc(~'50% - 3px');
+      right: 12px;
+      width: 6px;
+      height: 6px;
+      background: #f00000;
+      border-radius: 50%;
+      content: '';
+    }
+  }
+
+  .label-icon.el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label,
+  .label-icon.el-form-item.is-required:not(.is-no-asterisk) .el-form-item__label-wrap > .el-form-item__label {
+    &::after {
+      background: transparent;
+    }
+  }
+}
+
+// common block
+.common-parcel-block {
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  padding: 16px 40px;
+  background-color: #fff;
+  border-radius: 6px;
+
+  .primary-title,
+  .secondary-title {
+    margin: 0 0 14px;
+    font-weight: @itemWeight;
+    font-size: 14px;
+    line-height: 24px;
+
+    &.not-first-child {
+      margin-top: 24px;
+    }
+  }
+
+  .primary-title {
+    color: @primaryColor;
+  }
+
+  .secondary-title {
+    color: @secondaryColor;
+  }
 }

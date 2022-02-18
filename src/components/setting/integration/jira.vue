@@ -104,7 +104,7 @@
         <el-alert type="info"
                   :closable="false">
           <template>
-            为系统定义 Jira 集成，配置后工作流可以追踪到 Jira Issue，详情可参考
+            支持集成 Jira，配置后工作流可以追踪到 Jira Issue，详情可参考
             <el-link style="font-size: 14px; vertical-align: baseline;"
                      type="primary"
                      :href="`https://docs.koderover.com/zadig/settings/jira/`"

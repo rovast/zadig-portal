@@ -84,9 +84,7 @@
       <el-alert type="info"
                 :closable="false">
         <template>
-          支持集成云厂商提供的标准镜像仓库或者自建镜像仓库<br />
-          镜像仓库主要用于存放构建输出的镜像以及预发布的镜像，涉及到工作流的运行，以及集成环境的启动<br />
-          集成镜像仓库可参考
+          支持集成阿里云 ACR、腾讯云 TCR、华为云 SWR、Amazon ECR、DockerHub、Harbor 等镜像仓库，详情可参考
           <el-link style="font-size: 14px; vertical-align: baseline;"
                    type="primary"
                    :href="`https://docs.koderover.com/zadig/settings/image-registry/`"

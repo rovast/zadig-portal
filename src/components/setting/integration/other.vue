@@ -1,6 +1,6 @@
 <template>
   <div class="integration-other-container">
-    <el-dialog title="其他" :close-on-click-modal="false" :visible.sync="dialogExternalVisible">
+    <el-dialog title="其他外部系统" :close-on-click-modal="false" :visible.sync="dialogExternalVisible">
       <el-form :model="externalEdit" @submit.native.prevent :rules="externalRules" ref="externalForm" label-width="100px">
         <el-form-item label="系统名称" prop="name">
           <el-input v-model="externalEdit.name" placeholder="输入系统名称" size="small"></el-input>
@@ -22,7 +22,7 @@
       <template>
         <el-alert type="info" :closable="false">
           <template>
-            集成外部系统，配置后工作流可以调用外部系统 API，详情可参考
+            支持集成其他外部系统，配置后工作流可以调用外部系统 API，详情可参考
             <el-link
               style="font-size: 14px; vertical-align: baseline;"
               type="primary"

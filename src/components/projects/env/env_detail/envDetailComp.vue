@@ -12,11 +12,13 @@
     <div class="envs-container">
       <ChromeTabs v-model="envName" :tabList="envNameList" :label="'name'" :name="'name'">
         <template v-slot="{ tab }">
-          <i v-if="tab.source==='helm'" class="iconfont iconhelmrepo"></i>
-          <i v-else-if="tab.source==='spock'" class="el-icon-cloudy"></i>
-          {{`${tab.name}`}}
-          <el-tag v-if="tab.production" effect="light" size="mini" type="danger">生产</el-tag>
-          <el-tag v-if="tab.source==='external'" effect="light" size="mini" type="primary">托管</el-tag>
+          <span>
+            <i v-if="tab.source==='helm'" class="iconfont iconhelmrepo"></i>
+            <i v-else-if="tab.source==='spock'" class="el-icon-cloudy"></i>
+            {{ tab.name }}
+            <el-tag v-if="tab.production" effect="light" size="mini" type="danger">生产</el-tag>
+            <el-tag v-if="tab.source==='external'" effect="light" size="mini" type="primary">托管</el-tag>
+          </span>
         </template>
       </ChromeTabs>
     </div>

@@ -27,7 +27,10 @@
             </svg>
           </div>
           <div class="custom-tab-title">
-            <slot v-bind:tab="tab"></slot>
+            <el-tooltip effect="dark" placement="bottom">
+              <slot v-bind:tab="tab"></slot>
+              <template slot="content">{{tab.name}}</template>
+            </el-tooltip>
           </div>
         </template>
       </el-tab-pane>
@@ -92,6 +95,9 @@ export default {
       .custom-tab-title {
         position: absolute;
         z-index: 2;
+        width: calc(~'100% - 40px');
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .custom-tab-svg {

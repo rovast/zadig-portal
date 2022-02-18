@@ -160,7 +160,7 @@ export default {
       bus.$emit(`set-topbar-title`, {
         title: '',
         breadcrumb: [
-          { title: '交付中心', url: `` },
+          { title: '交付中心', url: `/v1/delivery` },
           { title: '版本管理', url: `` }
         ]
       })

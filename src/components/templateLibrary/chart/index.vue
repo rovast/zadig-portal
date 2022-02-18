@@ -254,7 +254,6 @@ export default {
     }
   },
   created () {
-    bus.$emit('set-topbar-title', { title: 'Chart 模板库', breadcrumb: [] })
     this.getChartTemplates().then(res => {
       this.fileData = res
       if (res.length) {
@@ -270,6 +269,13 @@ export default {
           this.updateSelectedService(name, res[0].fullPath)
         })
       }
+    })
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '模板库', url: '/v1/template' },
+        { title: 'Helm Chart', url: '' }
+      ]
     })
   },
   components: {

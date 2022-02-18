@@ -1,56 +1,57 @@
 <template>
-    <div class="k8s-template-container">
-      <div class="service-wrap">
-        <div class="service-container">
-          <multipane class="vertical-panes"
-                     layout="vertical">
-            <div class="file-tree-container">
-              <FileTree :files="files"
-                           :fileContentChange="fileContentChange"
-                           ref="FileTree"
-                           @onRefreshFile="getFiles"
-                           @onSelectFileChange="onSelectFileChange"
-                           @updateFile="updateFile($event)"></FileTree>
-            </div>
-            <template v-if="files.length >0">
-              <template>
-                <multipane-resizer></multipane-resizer>
-                <div class="file-editor-container"
-                     :style="{ minWidth: '300px', width: '500px' }">
-                  <FileEditor ref="FileEditor"
-                                    :fileContent="fileContent"
-                                    :parseVariables.sync="parseVariables"
-                                    :inputVariables="inputVariables"
-                                    :fileContentChange="fileContentChange"
-                                    :variablesChanged="variablesChanged"
-                                    @onRefreshFile="getFiles"
-                                    @onUpdateFile="onUpdateFile"></FileEditor>
-                </div>
-                <multipane-resizer></multipane-resizer>
-                <aside class="service-aside service-aside-right"
-                       :style="{ flexGrow: 1 }">
-                  <FileAside :fileContent="fileContent" :inputVariables.sync="inputVariables" :parseVariables="parseVariables" :systemVariables="systemVariables"></FileAside>
-                </aside>
-
-              </template>
+  <div class="k8s-template-container">
+    <div class="service-wrap">
+      <div class="service-container">
+        <multipane class="vertical-panes" layout="vertical">
+          <div class="file-tree-container">
+            <FileTree
+              :files="files"
+              :fileContentChange="fileContentChange"
+              ref="FileTree"
+              @onRefreshFile="getFiles"
+              @onSelectFileChange="onSelectFileChange"
+              @updateFile="updateFile($event)"
+            ></FileTree>
+          </div>
+          <template v-if="files.length >0">
+            <template>
+              <multipane-resizer></multipane-resizer>
+              <div class="file-editor-container" :style="{ minWidth: '300px', width: '500px' }">
+                <FileEditor
+                  ref="FileEditor"
+                  :fileContent="fileContent"
+                  :parseVariables.sync="parseVariables"
+                  :inputVariables="inputVariables"
+                  :fileContentChange="fileContentChange"
+                  :variablesChanged="variablesChanged"
+                  @onRefreshFile="getFiles"
+                  @onUpdateFile="onUpdateFile"
+                ></FileEditor>
+              </div>
+              <multipane-resizer></multipane-resizer>
+              <aside class="service-aside service-aside-right" :style="{ flexGrow: 1 }">
+                <FileAside
+                  :fileContent="fileContent"
+                  :inputVariables.sync="inputVariables"
+                  :parseVariables="parseVariables"
+                  :systemVariables="systemVariables"
+                ></FileAside>
+              </aside>
             </template>
-            <div v-else
-                 class="no-content">
-              <img src="@assets/icons/illustration/editor_nodata.svg"
-                   alt="">
-              <p v-if="files.length === 0">暂无模板，点击 <el-button size="mini"
-                           icon="el-icon-plus"
-                           @click="createFile()"
-                           plain
-                           circle>
-                </el-button> 创建模板</p>
-              <p v-else-if="file.name==='模板列表' && files.length >0">请在左侧选择需要编辑的模板</p>
-              <p v-else-if="!file.name && files.length >0">请在左侧选择需要编辑的模板</p>
-            </div>
-          </multipane>
-        </div>
+          </template>
+          <div v-else class="no-content">
+            <img src="@assets/icons/illustration/editor_nodata.svg" alt />
+            <p v-if="files.length === 0">
+              暂无模板，点击
+              <el-button size="mini" icon="el-icon-plus" @click="createFile()" plain circle></el-button>创建模板
+            </p>
+            <p v-else-if="file.name==='模板列表' && files.length >0">请在左侧选择需要编辑的模板</p>
+            <p v-else-if="!file.name && files.length >0">请在左侧选择需要编辑的模板</p>
+          </div>
+        </multipane>
       </div>
     </div>
+  </div>
 </template>
 <script>
 import mixin from '@/mixin/serviceModuleMixin'
@@ -59,9 +60,7 @@ import FileEditor from './fileEditor.vue'
 import FileTree from './fileTree.vue'
 import { sortBy } from 'lodash'
 import bus from '@utils/eventBus'
-import {
-  getKubernetesTemplatesAPI, getKubernetesAPI
-} from '@api'
+import { getKubernetesTemplatesAPI, getKubernetesAPI } from '@api'
 import { Multipane, MultipaneResizer } from 'vue-multipane'
 export default {
   data () {
@@ -87,21 +86,22 @@ export default {
     },
     getFiles () {
       this.$set(this, 'fileInTree', {})
-      getKubernetesTemplatesAPI().then((res) => {
+      getKubernetesTemplatesAPI().then(res => {
         this.systemVariables = res.system_variables
-        this.files = sortBy((res.yaml_template.map(file => {
-          file.status = 'added'
-          return file
-        })), 'name')
+        this.files = sortBy(
+          res.yaml_template.map(file => {
+            file.status = 'added'
+            return file
+          }),
+          'name'
+        )
       })
     },
     async getFile (val) {
       const id = val ? val.id : null
       const status = val.status
       if (id && status === 'added') {
-        const res = await getKubernetesAPI(
-          id
-        ).catch(err => {
+        const res = await getKubernetesAPI(id).catch(err => {
           console.log(err)
         })
         if (res) {
@@ -119,7 +119,8 @@ export default {
           {
             name: name,
             rightbar: 'var'
-          })
+          }
+        )
       })
       if (status === 'added') {
         this.getFiles()
@@ -167,7 +168,13 @@ export default {
     }
   },
   mounted () {
-    bus.$emit('set-topbar-title', { title: 'Kubernetes YAML 模板库', breadcrumb: [] })
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '模板库', url: '/v1/template' },
+        { title: 'K8s YAML', url: '' }
+      ]
+    })
     this.getFiles()
   },
   components: {
@@ -182,5 +189,5 @@ export default {
 </script>
 
 <style lang="less">
-@import "~@assets/css/component/k8s-template.less";
+@import '~@assets/css/component/k8s-template.less';
 </style>

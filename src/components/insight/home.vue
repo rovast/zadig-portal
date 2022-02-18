@@ -30,7 +30,12 @@ export default {
   mounted () {
     this.$router.push('/v1/insight/build')
     bus.$emit(`show-sidebar`, true)
-    bus.$emit(`set-topbar-title`, { title: '效能洞察', breadcrumb: [] })
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '效能洞察', url: '/v1/insight' }
+      ]
+    })
   },
   components: {
     SubTopbar

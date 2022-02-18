@@ -154,8 +154,14 @@ export default {
     }
   },
   mounted () {
-    bus.$emit('set-topbar-title', { title: 'Dockerfile 模板库', breadcrumb: [] })
     this.getFiles()
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '模板库', url: '/v1/template' },
+        { title: 'Dockerfile', url: '' }
+      ]
+    })
   },
   components: {
     FileAside,

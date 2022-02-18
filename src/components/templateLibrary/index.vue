@@ -1,6 +1,6 @@
 <template>
   <div class="template-library-container">
-    <SubTopbar/>
+    <SubTopbar />
     <router-view></router-view>
   </div>
 </template>
@@ -13,7 +13,10 @@ export default {
     SubTopbar
   },
   created () {
-    bus.$emit('set-topbar-title', { title: '模板库', breadcrumb: [] })
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [{ title: '模板库', url: '/v1/template' }]
+    })
   }
 }
 </script>

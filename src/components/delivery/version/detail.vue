@@ -46,7 +46,7 @@ export default {
       bus.$emit(`set-topbar-title`, {
         title: '',
         breadcrumb: [
-          { title: '交付中心', url: `` },
+          { title: '交付中心', url: `/v1/delivery/artifacts` },
           { title: '版本管理', url: `/v1/delivery/version` },
           { title: version, url: `` }
         ]

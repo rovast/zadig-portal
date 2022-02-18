@@ -126,8 +126,12 @@ export default {
     ICountUp
   },
   mounted () {
-    bus.$emit(`set-topbar-title`, { title: '数据概览', breadcrumb: [] })
-
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '数据概览', url: '' }
+      ]
+    })
     this.getStatisticsOverview()
   }
 }

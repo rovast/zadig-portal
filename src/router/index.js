@@ -647,29 +647,6 @@ const routes = [
     ]
   },
   {
-    path: '/v1/users',
-    component: onboarding_home,
-    meta: {
-      requiresAuth: true,
-      title: '用户管理'
-    },
-    children: [
-      {
-        path: '',
-        redirect: 'account/manage'
-      },
-      {
-        path: 'account/manage',
-        component: () => import(/* webpackChunkName: "Users Mgr" */ '@/components/users_mgr/users/manage.vue'),
-        meta: {
-          requiresAuth: true,
-          requiresSuperAdmin: true,
-          title: '用户管理'
-        }
-      }
-    ]
-  },
-  {
     path: '/v1/profile',
     component: onboarding_home,
     meta: {
@@ -818,6 +795,15 @@ const routes = [
             }
           }
         ]
+      },
+      {
+        path: 'users',
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/users/manage.vue'),
+        meta: {
+          requiresAuth: true,
+          requiresSuperAdmin: true,
+          title: '用户管理'
+        }
       },
       {
         path: 'announcement',

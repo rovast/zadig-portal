@@ -136,63 +136,7 @@
         >同步</el-button>
       </span>
     </el-dialog>
-    <el-dialog
-      title="新建服务 - 使用模板新建"
-      :close-on-click-modal="false"
-      append-to-body
-      center
-      width="720px"
-      label-position="left"
-      custom-class="dialog-import-from-template"
-      :visible.sync="dialogImportFromYamlVisible"
-    >
-      <el-form :model="importYaml" @submit.native.prevent ref="importYamlForm">
-        <el-form-item label="服务名称" prop="name" :rules="{required: true, message: '服务名称不能为空', trigger: 'change'}">
-          <el-input style="width: 400px;" v-model.trim="importYaml.name" size="small"  placeholder="请输入服务名称" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="模板选择" prop="id">
-          <el-select style="width: 400px;" size="small" v-model="importYaml.id" placeholder="请选择模板" @change="getKubernetesTemplate">
-            <el-option v-for="item in importYaml.yamls" :key="item.id" :label="item.name" :value="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="变量配置">
-        </el-form-item>
-        <el-form-item>
-        <el-button
-            :disabled="!importYaml.id"
-            style="margin-left: 5px;"
-            type="text"
-            @click="previewYamlFile=!previewYamlFile"
-          >{{previewYamlFile?'关闭预览':'预览'}}</el-button>
-        </el-form-item>
-      </el-form>
-      <codemirror v-if="previewYamlFile" v-model="importYaml.content" :option="importTemplateEditorOption" class="mirror"></codemirror>
-      <template v-if="importYaml.variables.length > 0">
-        <h3>变量</h3>
-        <el-table :data="importYaml.variables" style="width: 100%;">
-          <el-table-column label="Key">
-            <template slot-scope="scope">
-              <span>{{ scope.row.key }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="Value">
-            <template slot-scope="scope">
-              <el-input
-                size="small"
-                v-model="scope.row.value"
-                type="textarea"
-                :autosize="{ minRows: 1, maxRows: 4}"
-                placeholder="请输入 Value"
-              ></el-input>
-            </template>
-          </el-table-column>
-        </el-table>
-      </template>
-      <div slot="footer" class="dialog-footer">
-        <el-button plain native-type="submit" @click="dialogImportFromYamlVisible=false" size="small">取消</el-button>
-        <el-button type="primary" native-type="submit" size="small" class="start-create" @click="loadServiceFromKubernetesTemplate">新建</el-button>
-      </div>
-    </el-dialog>
+    <ImportFromTemplate :projectName="projectName"  :dialogImportFromYamlVisible.sync="openImportYamlDialog" @importYamlSuccess="importYamlSuccess" />
     <div class="menu-container">
       <el-row>
         <el-col :span="10">
@@ -222,7 +166,7 @@
             <el-tooltip effect="dark" content="使用模板新建" placement="top">
               <el-button
                 size="mini"
-                @click="openImportYamlDialog"
+                @click="openImportYamlDialog = true"
                 icon="iconfont icon iconicon-repertory"
                 plain
                 circle
@@ -408,21 +352,8 @@
 </template>
 
 <script>
-import { codemirror } from 'vue-codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/mode/yaml/yaml.js'
-import 'codemirror/theme/xq-light.css'
-import 'codemirror/addon/scroll/annotatescrollbar.js'
-import 'codemirror/addon/search/matchesonscrollbar.js'
-import 'codemirror/addon/search/matchesonscrollbar.css'
-import 'codemirror/addon/search/match-highlighter.js'
-import 'codemirror/addon/search/jump-to-line.js'
-
-import 'codemirror/addon/dialog/dialog.js'
-import 'codemirror/addon/dialog/dialog.css'
-import 'codemirror/addon/search/searchcursor.js'
-import 'codemirror/addon/search/search.js'
 import GitFileTree from '@/components/common/gitFileTree.vue'
+import ImportFromTemplate from './importFromTemplate.vue'
 import {
   deleteServiceTemplateAPI,
   getSingleProjectAPI,
@@ -436,9 +367,7 @@ import {
   getCodeProviderAPI,
   serviceTemplateAPI,
   updateServicePermissionAPI,
-  updateServicesOrchestrationAPI,
-  loadServiceFromKubernetesTemplateAPI,
-  getKubernetesTemplatesAPI
+  updateServicesOrchestrationAPI
 } from '@api'
 export default {
   props: {
@@ -482,28 +411,10 @@ export default {
         newServiceName: ''
       },
       showHover: {},
-      importYaml: {
-        id: '',
-        yamls: [],
-        variables: [],
-        content: ''
-      },
-      importTemplateEditorOption: {
-        tabSize: 2,
-        readOnly: 'nocursor',
-        theme: 'neo',
-        mode: 'text/x-dockerfile',
-        lineNumbers: false,
-        line: true,
-        showGutter: false,
-        displayIndentGuides: false,
-        showPrintMargin: false,
-        collapseIdentical: true
-      },
       searchService: '',
       serviceGroup: [],
       allCodeHosts: [],
-      dialogImportFromYamlVisible: false,
+      openImportYamlDialog: false,
       dialogImportFromRepoLoading: false,
       searchRepoNameLoading: false,
       searchRepoOwnerLoading: false,
@@ -513,7 +424,6 @@ export default {
       showDragContainer: false,
       showSelectPath: true,
       disabledReload: false,
-      previewYamlFile: false,
       codeInfo: {
         repoOwners: [],
         repos: [],
@@ -1208,66 +1118,12 @@ export default {
         this.$refs.serviceTree.setCurrentKey(key)
       })
     },
-    async openImportYamlDialog () {
-      this.dialogImportFromYamlVisible = true
-      const res = await getKubernetesTemplatesAPI()
-      if (res) {
-        this.importYaml.yamls = res.yaml_template
-      }
-    },
-    async getKubernetesTemplate (id) {
-      if (id) {
-        this.previewYamlFile = false
-        const res = await getKubernetesAPI(id).catch(err => {
-          console.log(err)
-        })
-        if (res) {
-          this.importYaml.content = res.content
-          this.importYaml.variables = res.variable
-        }
-      }
-    },
-    async loadServiceFromKubernetesTemplate () {
-      const serviceName = this.serviceName
-      const projectName = this.projectName
-      const templateId = this.importYaml.id
-      const variables = this.importYaml.variables
-      const status = this.serviceInTree.status
-      const payload = {
-        service_name: serviceName,
-        project_name: projectName,
-        template_id: templateId,
-        variables: variables
-      }
-      if (status === 'named') {
-        const res = await loadServiceFromKubernetesTemplateAPI(payload).catch(
-          err => {
-            console.log(err)
-          }
-        )
-        if (res) {
-          this.dialogImportFromYamlVisible = false
-          this.$message({
-            type: 'success',
-            message: `服务模板 ${payload.service_name} 导入成功`
-          })
-        }
-      } else if (status === 'added') {
-        const res = await reloadServiceFromKubernetesTemplateAPI(payload).catch(
-          err => {
-            console.log(err)
-          }
-        )
-        if (res) {
-          this.dialogImportFromYamlVisible = false
-          this.$message({
-            type: 'success',
-            message: `服务模板 ${payload.service_name} 更新成功`
-          })
-        }
-      }
+    importYamlSuccess (serviceName) {
       this.$emit('update:showNext', true)
       this.$emit('onRefreshService')
+      this.$router.replace({
+        query: { service_name: serviceName, rightbar: 'var' }
+      })
     },
     listenResize () {
       window.screenHeight = document.body.clientHeight
@@ -1408,7 +1264,7 @@ export default {
   },
   components: {
     GitFileTree,
-    codemirror
+    ImportFromTemplate
   }
 }
 </script>

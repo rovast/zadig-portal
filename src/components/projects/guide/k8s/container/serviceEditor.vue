@@ -122,7 +122,7 @@ import {
   updateServicePermissionAPI,
   serviceTemplateAPI,
   getKubernetesTemplatesAPI,
-  getKubernetesAPI,
+  getKubernetesTemplateDetailAPI,
   loadServiceFromKubernetesTemplateAPI,
   reloadServiceFromKubernetesTemplateAPI
 } from '@api'
@@ -276,7 +276,7 @@ export default {
     async getKubernetesTemplate (id) {
       if (id) {
         this.showYamlFile = false
-        const res = await getKubernetesAPI(id).catch(err => {
+        const res = await getKubernetesTemplateDetailAPI(id).catch(err => {
           console.log(err)
         })
         if (res) {

@@ -1469,7 +1469,7 @@ export function praseKubernetesTemplateAPI (payload) {
   return http.post(`/api/aslan/template/yaml/getVariables`, payload)
 }
 
-export function getKubernetesAPI (id) {
+export function getKubernetesTemplateDetailAPI (id) {
   return http.get(`/api/aslan/template/yaml/${id}`)
 }
 

@@ -19,8 +19,8 @@
       ref="zadigBuildForm"
       :isCreate="isCreate"
       :jenkinsEnabled="jenkinsEnabled"
-      @jenkinsBuild="changeToJenkins"
-      @getServiceTargets="serviceTargets = $event"
+      :buildConfigData="buildConfig"
+      :serviceTargets="serviceTargets"
     ></ZadigBuild>
     <footer class="create-footer">
       <router-link :to="`/v1/projects/detail/${this.projectName}/builds`">
@@ -38,7 +38,9 @@ import JenkinsBuild from './jenkinsBuild.vue'
 import {
   createBuildConfigAPI,
   updateBuildConfigAPI,
-  checkJenkinsConfigExistsAPI
+  checkJenkinsConfigExistsAPI,
+  getBuildConfigDetailAPI,
+  getServiceTargetsAPI
 } from '@api'
 
 export default {
@@ -58,7 +60,9 @@ export default {
       jenkinsEnabled: false,
       jenkinsBuild: null,
       serviceTargets: [],
-      saveLoading: false
+      saveLoading: false,
+      configDataLoading: true,
+      buildConfig: null
     }
   },
   methods: {
@@ -95,6 +99,54 @@ export default {
       this.jenkinsEnabled = (
         await checkJenkinsConfigExistsAPI().catch(error => console.log(error))
       ).exists
+    },
+    async loadPage () {
+      this.configDataLoading = true
+      const projectName = this.projectName
+      if (!this.isCreate) {
+        const buildConfig = await getBuildConfigDetailAPI(
+          this.buildConfigName,
+          this.projectName
+        ).catch(error => console.log(error))
+        const serviceTagets = await getServiceTargetsAPI(
+          projectName
+        ).catch(error => console.log(error))
+        if (buildConfig && serviceTagets) {
+          buildConfig.pre_build.installs.forEach(element => {
+            element.id = element.name + element.version
+          })
+          buildConfig.targets.forEach(t => {
+            t.key = t.service_name + '/' + t.service_module
+          })
+          if (buildConfig.source === 'jenkins') {
+            this.source = 'jenkins'
+            this.jenkinsBuild = buildConfig
+          }
+          if (!buildConfig.timeout) {
+            this.$set(buildConfig, 'timeout', 60)
+          }
+          this.buildConfig = buildConfig
+          this.serviceTargets = [
+            ...serviceTagets,
+            ...this.buildConfig.targets
+          ].map(element => {
+            element.key = element.service_name + '/' + element.service_module
+            return element
+          })
+        }
+      } else {
+        await getServiceTargetsAPI(projectName).then(response => {
+          this.serviceTargets = response.map(
+            element => {
+              element.key = element.service_name + '/' + element.service_module
+              return element
+            }
+          )
+        })
+      }
+      this.configDataLoading = false
+
+      this.$refs.zadigBuildForm.initData(this.buildConfig)
     }
   },
   computed: {
@@ -113,6 +165,7 @@ export default {
   },
   created () {
     this.checkJenkinsEnabled()
+    this.loadPage()
     bus.$emit('set-topbar-title', {
       title: '',
       breadcrumb: [
@@ -149,7 +202,7 @@ export default {
   max-height: calc(~'100% - 60px');
   padding: 16px 40px 60px;
   overflow: auto;
-  background-color: @backgroundColor;
+  background-color: @globalBackgroundColor;
 
   .build-source {
     padding: 16px 40px @formItemBottom;
@@ -168,6 +221,7 @@ export default {
 
     /deep/.el-select {
       width: @inputWidth;
+      max-width: calc(~'100% - 130px');
     }
   }
 

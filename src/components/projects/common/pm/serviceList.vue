@@ -201,8 +201,8 @@ export default {
     border-bottom: 1px solid rgb(230, 230, 230);
   }
 
-  /deep/.el-tree {
-    height: calc(~"100% - 60px");
+  .tree {
+    max-height: calc(~"100% - 95px");
     margin-top: 10px;
     overflow: auto;
   }

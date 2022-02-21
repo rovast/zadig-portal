@@ -141,6 +141,7 @@
 
 <script>
 import Editor from 'vue2-ace-bind'
+import Codemirror from '@/components/projects/common/codemirror.vue'
 import {
   getDockerfileAPI,
   getDockerfileTemplatesAPI,
@@ -296,7 +297,8 @@ export default {
     })
   },
   components: {
-    Editor
+    Editor,
+    Codemirror
   }
 }
 </script>

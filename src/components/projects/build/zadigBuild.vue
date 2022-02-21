@@ -75,11 +75,7 @@ import OtherSteps from './otherSteps.vue'
 
 import ValidateSubmit from '@utils/validateAsync'
 
-import {
-  getBuildConfigDetailAPI,
-  getCodeSourceMaskedAPI,
-  getServiceTargetsAPI
-} from '@api'
+import { getCodeSourceMaskedAPI } from '@api'
 
 const validateBuildConfigName = (rule, value, callback) => {
   if (value === '') {
@@ -99,7 +95,9 @@ export default {
       type: Boolean
     },
     jenkinsEnabled: Boolean,
-    isCreate: Boolean
+    isCreate: Boolean,
+    buildConfigData: Object,
+    serviceTargets: Array
   },
   data () {
     return {
@@ -123,9 +121,9 @@ export default {
       showAdvancedConfig: false,
       allCodeHosts: [],
       configDataLoading: true,
-      serviceTargets: [],
-      buildConfig: {
+      initBuildConfig: {
         name: '',
+        targets: [],
         desc: '',
         repos: [],
         timeout: 60,
@@ -153,11 +151,11 @@ export default {
     }
   },
   computed: {
-    buildConfigName () {
-      return this.$route.params.build_name
-    },
     projectName () {
       return this.$route.params.project_name
+    },
+    buildConfig () {
+      return this.buildConfigData || this.initBuildConfig
     }
   },
   methods: {
@@ -195,65 +193,22 @@ export default {
         return payload
       })
     },
-    async loadPage () {
-      this.configDataLoading = true
-      const projectName = this.projectName
-      if (!this.isCreate) {
-        const buildConfig = await getBuildConfigDetailAPI(
-          this.buildConfigName,
-          this.projectName
-        ).catch(error => console.log(error))
-        const serviceTagets = await getServiceTargetsAPI(
-          projectName
-        ).catch(error => console.log(error))
-        if (buildConfig && serviceTagets) {
-          buildConfig.pre_build.installs.forEach(element => {
-            element.id = element.name + element.version
-          })
-          buildConfig.targets.forEach(t => {
-            t.key = t.service_name + '/' + t.service_module
-          })
-          if (buildConfig.source === 'jenkins') {
-            this.$emit('jenkinsBuild', buildConfig)
-          }
-          if (!buildConfig.timeout) {
-            this.$set(buildConfig, 'timeout', 60)
-          }
-          this.$refs.otherStepsRef.initStepStatus(buildConfig)
-          this.buildConfig = buildConfig
-          this.serviceTargets = [
-            ...serviceTagets,
-            ...this.buildConfig.targets
-          ].map(element => {
-            element.key = element.service_name + '/' + element.service_module
-            return element
-          })
-        }
-      } else {
-        await getServiceTargetsAPI(projectName).then(response => {
-          this.serviceTargets = [...response, ...this.buildConfig.targets].map(
-            element => {
-              element.key = element.service_name + '/' + element.service_module
-              return element
-            }
-          )
-        })
+    initData (buildConfig) {
+      if (!buildConfig) {
+        buildConfig = this.buildConfig
       }
-      this.configDataLoading = false
-      this.$emit('getServiceTargets', this.serviceTargets)
       // be used on Repo
       getCodeSourceMaskedAPI().then(response => {
         this.allCodeHosts = response
       })
 
+      this.$refs.otherStepsRef.initStepStatus(buildConfig)
+
       this.$refs.buildEnvRef.initData()
 
       // Automatic selection of local clusters
-      this.$refs.advancedConfigRef.initAdvancedConfig(this.buildConfig)
+      this.$refs.advancedConfigRef.initAdvancedConfig(buildConfig)
     }
-  },
-  created () {
-    this.loadPage()
   },
   components: {
     Editor,

@@ -67,7 +67,7 @@
               </div>
             </el-col>
             <el-col :span="6">
-              <RepoJump :build="build"></RepoJump>
+              <RepoJump :build="build"/>
             </el-col>
           </el-row>
         </template>
@@ -142,9 +142,9 @@
              :body-style="{padding:'8px 20px',margin: '5px 0 0 0' }">
       <div class="log-container">
         <div class="log-content">
-          <xterm-log :id="buildv2.service_name"
+          <XtermLog :id="buildv2.service_name"
                      @mouseleave.native="leaveLog"
-                     :logs="buildv2AnyLog"></xterm-log>
+                     :logs="buildv2AnyLog"/>
         </div>
       </div>
     </el-card>
@@ -165,13 +165,13 @@ export default {
     }
   },
   computed: {
-    build_running () {
+    buildIsRunning () {
       return this.buildv2 && this.buildv2.status === 'running'
     },
-    build_done () {
+    buildIsDone () {
       return this.isSubTaskDone(this.buildv2)
     },
-    docker_build_running () {
+    dockerBuildIsRunning () {
       return this.docker_build && this.docker_build.status === 'running'
     },
     no_docker_build () {
@@ -195,7 +195,7 @@ export default {
     }
   },
   watch: {
-    build_running (val, oldVal) {
+    buildIsRunning (val, oldVal) {
       if (!oldVal && val && this.buildLogStarted) {
         this.openBuildLog('buildv2')
       }
@@ -203,7 +203,7 @@ export default {
         this.killLog('buildv2')
       }
     },
-    docker_build_running (val, oldVal) {
+    dockerBuildIsRunning (val, oldVal) {
       if (!oldVal && val && this.buildLogStarted) {
         this.openBuildLog('docker_build')
       }
@@ -275,15 +275,15 @@ export default {
     this.killLog('docker_build')
   },
   mounted () {
-    if (this.build_running) {
+    if (this.buildIsRunning) {
       if (this.buildv2.type === 'jenkins_build') {
         this.openBuildLog('jenkins_build')
       } else {
         this.openBuildLog('buildv2')
       }
     } else {
-      if (this.build_done) {
-        if (this.docker_build_running) {
+      if (this.buildIsDone) {
+        if (this.dockerBuildIsRunning) {
           this.getHistoryBuildLog().then(() => {
             this.openBuildLog('docker_build')
           })

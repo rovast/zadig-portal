@@ -64,10 +64,10 @@
       </el-form>
     </div>
     <div class="section">
-      <repo-select :config="buildConfig"
+      <RepoSelect :config="buildConfig"
                    :validObj="validObj"
                    showDivider
-                   showFirstLine></repo-select>
+                   showFirstLine/>
     </div>
     <div class="section">
       <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj"/>

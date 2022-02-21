@@ -4,12 +4,12 @@
     <el-card class="box-card box-card-service">
       <div class="log-container">
         <div class="log-content">
-          <xterm-log-container :id="podName"
+          <XtermLogContainer :id="podName"
                                @closeConnection="showRealTimeLog('','','close')"
                                @reConnect="refreshLog"
                                ref="log"
                                :searchKey="searchKey"
-                               :logs="realtimeLog.data"></xterm-log-container>
+                               :logs="realtimeLog.data"/>
         </div>
         <div class="log-header">
           <div class="search-log-input">

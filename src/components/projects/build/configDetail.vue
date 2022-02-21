@@ -201,13 +201,13 @@
         </el-form>
       </div>
       <div class="section">
-        <repo-select :config="buildConfig"
+        <RepoSelect :config="buildConfig"
                      :validObj="validObj"
                      showFirstLine
-                     showDivider></repo-select>
+                     showDivider/>
       </div>
       <div class="section">
-        <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj"></EnvVariable>
+        <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj"/>
       </div>
 
       <div class="section">

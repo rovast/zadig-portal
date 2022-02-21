@@ -205,7 +205,7 @@
         <div class="log-content">
           <el-collapse @change="getBuildLog">
             <el-collapse-item id="log-container" title="查看构建日志">
-              <xterm-log v-if="showBuildLog" @mouseleave.native="leaveLog" :id="buildStage.sub_tasks.service_name" :logs="buildv3AnyLog"></xterm-log>
+              <XtermLog v-if="showBuildLog" @mouseleave.native="leaveLog" :id="buildStage.sub_tasks.service_name" :logs="buildv3AnyLog"/>
             </el-collapse-item>
           </el-collapse>
         </div>

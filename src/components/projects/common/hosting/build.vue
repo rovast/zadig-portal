@@ -205,14 +205,14 @@
           </el-form>
         </div>
         <div class="section">
-          <repo-select
+          <RepoSelect
             ref="repoSelect"
             :config="buildConfig"
             showDivider
             addBtnMini
             shortDescription
             showFirstLine
-          ></repo-select>
+        />
         </div>
         <div class="section">
           <EnvVariable ref="envVariable" :preEnvs="buildConfig.pre_build" :narrowWidth="true"></EnvVariable>

@@ -220,7 +220,7 @@
         <div class="trigger dashed-container">
           <el-button v-if="schedules.enabled" @click="addTimerBtn" type="text">添加配置</el-button>
           <div class="add-border" v-if="schedules.enabled">
-            <test-timer
+            <TestTimer
               ref="timer"
               timerType="project"
               dialogWidth="65%"
@@ -247,7 +247,7 @@
                   <el-button @click="addTimerSchedule" size="small" type="primary">确定</el-button>
                 </div>
               </template>
-            </test-timer>
+            </TestTimer>
           </div>
         </div>
       </div>
@@ -329,7 +329,7 @@
 
 <script type="text/javascript">
 import bus from '@utils/eventBus'
-import workflowArgs from '../container/workflow_args.vue'
+import workflowArgs from '../container/workflowArgs.vue'
 import {
   listProductAPI,
   getBranchInfoByIdAPI,

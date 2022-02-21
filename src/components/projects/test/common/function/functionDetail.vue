@@ -36,13 +36,13 @@
       </div>
       <el-form-item label-width="0px">
         <div class="repo dashed-container">
-          <repo-select :config="test"
+          <RepoSelect :config="test"
                        :validObj="validObj"
-                       hidePrimary></repo-select>
+                       hidePrimary/>
         </div>
       </el-form-item>
       <div class="divider"></div>
-         <EnvVariable :preEnvs="test.pre_test" :isTest="true" :validObj="validObj"></EnvVariable>
+         <EnvVariable :preEnvs="test.pre_test" :isTest="true" :validObj="validObj"/>
       <div class="divider">
       </div>
 
@@ -103,11 +103,11 @@
                          type="text">添加</el-button>
             </slot>
           </label>
-          <test-timer ref="timer"
+          <TestTimer ref="timer"
                       timerType="test"
                       :projectName="projectName"
                       :testName="isEdit?name:test.name"
-                      :schedules="test.schedules"></test-timer>
+                      :schedules="test.schedules"/>
         </el-form-item>
       </div>
       <div class="divider">
@@ -123,7 +123,7 @@
               :editMode="isEdit"
               :notify="test.notify_ctl"
               :showTitle="false"
-              :fromWorkflow="false"></Notify>
+              :fromWorkflow="false"/>
       <div class="divider">
       </div>
       <label class="title">
@@ -222,7 +222,7 @@
                           lang="sh"
                           theme="xcode"
                           width="100%"
-                          height="200px"></Editor>
+                          height="200px"/>
                 </el-col>
               </el-row>
             </div>
@@ -265,7 +265,7 @@ import testTrigger from '@/components/common/testTrigger.vue'
 import bus from '@utils/eventBus'
 import ValidateSubmit from '@utils/validateAsync'
 import Editor from 'vue2-ace-bind'
-import Notify from '@/components/projects/edit_pipeline/product_pipeline/switch_tab/notify.vue'
+import Notify from '@/components/projects/workflow/workflowEditor/productWorkflow/modules/notify.vue'
 import { getCodeSourceMaskedAPI, createTestAPI, updateTestAPI, singleTestAPI } from '@api'
 const validateTestName = (rule, value, callback) => {
   if (value === '') {

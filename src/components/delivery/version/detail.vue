@@ -38,7 +38,7 @@ export default {
             title: this.projectName,
             url: `/v1/projects/detail/${this.projectName}/detail`
           },
-          { title: '版本管理', url: `` },
+          { title: '版本管理', url: `/v1/projects/detail/${this.projectName}/version` },
           { title: version, url: `` }
         ]
       })

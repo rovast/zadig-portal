@@ -47,7 +47,7 @@ const routes = [
       },
       {
         path: 'status',
-        component: () => import('@/components/projects/status/status.vue'),
+        component: () => import('@/components/projects/workflow/status/status.vue'),
         meta: {
           requiresAuth: true,
           title: '运行状态'
@@ -231,7 +231,7 @@ const routes = [
             }
           },
           {
-            path: 'version/detail/:project_name/:id',
+            path: 'version/detail/:id',
             component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/version/detail.vue'),
             meta: {
               requiresAuth: true,
@@ -606,7 +606,7 @@ const routes = [
   },
   {
     path: '/workflows',
-    component: () => import(/* webpackChunkName: "Edit Workflow" */ '@/components/projects/edit_pipeline/view.vue'),
+    component: () => import(/* webpackChunkName: "Workflow Editor" */ '@/components/projects/workflow/workflowEditor/view.vue'),
     meta: {
       requiresAuth: true,
       title: '工作流管理'
@@ -614,7 +614,7 @@ const routes = [
     children: [
       {
         path: 'product/create',
-        component: () => import(/* webpackChunkName: "Edit Workflow" */ '@/components/projects/edit_pipeline/product_pipeline/pipeline.vue'),
+        component: () => import(/* webpackChunkName: "Workflow Editor" */ '@/components/projects/workflow/workflowEditor/productWorkflow/workflow.vue'),
         meta: {
           requiresAuth: true,
           title: '新建工作流'
@@ -622,7 +622,7 @@ const routes = [
       },
       {
         path: 'product/edit/:name',
-        component: () => import(/* webpackChunkName: "Edit Workflow" */ '@/components/projects/edit_pipeline/product_pipeline/pipeline.vue'),
+        component: () => import(/* webpackChunkName: "Workflow Editor" */ '@/components/projects/workflow/workflowEditor/productWorkflow/workflow.vue'),
         meta: {
           requiresAuth: true,
           title: '编辑工作流'
@@ -630,7 +630,7 @@ const routes = [
       },
       {
         path: 'common/create',
-        component: () => import(/* webpackChunkName: "Edit Workflow" */ '@/components/projects/edit_pipeline/common_pipeline/pipeline.vue'),
+        component: () => import(/* webpackChunkName: "Workflow Editor" */ '@/components/projects/workflow/workflowEditor/commonWorkflow/workflow.vue'),
         meta: {
           requiresAuth: true,
           title: '新建工作流'
@@ -638,33 +638,10 @@ const routes = [
       },
       {
         path: 'common/edit/:name',
-        component: () => import(/* webpackChunkName: "Edit Workflow" */ '@/components/projects/edit_pipeline/common_pipeline/pipeline.vue'),
+        component: () => import(/* webpackChunkName: "Workflow Editor" */ '@/components/projects/workflow/workflowEditor/commonWorkflow/workflow.vue'),
         meta: {
           requiresAuth: true,
           title: '编辑工作流'
-        }
-      }
-    ]
-  },
-  {
-    path: '/v1/users',
-    component: onboarding_home,
-    meta: {
-      requiresAuth: true,
-      title: '用户管理'
-    },
-    children: [
-      {
-        path: '',
-        redirect: 'account/manage'
-      },
-      {
-        path: 'account/manage',
-        component: () => import(/* webpackChunkName: "Users Mgr" */ '@/components/users_mgr/users/manage.vue'),
-        meta: {
-          requiresAuth: true,
-          requiresSuperAdmin: true,
-          title: '用户管理'
         }
       }
     ]
@@ -818,6 +795,15 @@ const routes = [
             }
           }
         ]
+      },
+      {
+        path: 'users',
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/users/manage.vue'),
+        meta: {
+          requiresAuth: true,
+          requiresSuperAdmin: true,
+          title: '用户管理'
+        }
       },
       {
         path: 'announcement',

@@ -132,7 +132,6 @@ export default {
         margin-right: 15px;
         padding: 10px 17px;
         color: #fff;
-        font-weight: bold;
         font-size: 13px;
         text-decoration: none;
         background-color: @themeColor;

@@ -78,18 +78,6 @@ export default {
       showSidebar: true,
       backTitle: '',
       backUrl: '/v1/status',
-      userManagementMenu: [
-        {
-          category_name: '用户管理',
-          items: [
-            {
-              name: '用户管理',
-              icon: 'iconfont icongeren',
-              url: 'users/account/manage'
-            }
-          ]
-        }
-      ],
       systemMenu: [
         {
           category_name: '集成管理',
@@ -153,7 +141,7 @@ export default {
             {
               name: '用户管理',
               icon: 'iconfont icongeren',
-              url: 'users/account/manage'
+              url: 'system/users'
             },
             {
               name: '公告管理',
@@ -261,9 +249,7 @@ export default {
     },
     navList () {
       const path = this.$route.path
-      if (path.includes('/v1/users')) {
-        return this.userManagementMenu
-      } else if (path.includes('/v1/system')) {
+      if (path.includes('/v1/system')) {
         return this.systemMenu
       } else if (this.isAdmin) {
         return this.defaultMenu.concat(this.adminMenu)

@@ -60,7 +60,7 @@
       title="从模板导入服务"
       :close-on-click-modal="false"
       append-to-body
-      custom-class="import-yaml-dialog"
+      custom-class="dialog-import-from-template"
       :visible.sync="dialogImportYamlVisible"
     >
       <h3>YAML 模板</h3>
@@ -72,7 +72,7 @@
           <el-button :disabled="!importYaml.id" style="margin-left: 5px;" type="text" @click="showYamlFile=!showYamlFile">{{showYamlFile?'关闭预览':'预览'}}</el-button>
         </el-form-item>
       </el-form>
-      <codemirror v-if="showYamlFile" v-model="importYaml.content" :option="templateOption" class="mirror"></codemirror>
+      <codemirror v-if="showYamlFile" v-model="importYaml.content" :option="importTemplateEditorOption" class="mirror"></codemirror>
       <template v-if="importYaml.variables.length > 0">
         <h3>变量</h3>
         <el-table :data="importYaml.variables" style="width: 100%;">
@@ -144,7 +144,7 @@ export default {
         line: true,
         collapseIdentical: true
       },
-      templateOption: {
+      importTemplateEditorOption: {
         tabSize: 2,
         readOnly: 'nocursor',
         theme: 'neo',

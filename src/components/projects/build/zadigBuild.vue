@@ -28,7 +28,7 @@
         </el-form>
       </div>
       <div class="section">
-        <repo-select :config="buildConfig" :validObj="validObj" class="build-secondary-form" showFirstLine></repo-select>
+        <RepoSelect :config="buildConfig" :validObj="validObj" class="build-secondary-form" showFirstLine></RepoSelect>
       </div>
       <section>
         <div class="primary-title not-first-child">构建变量</div>

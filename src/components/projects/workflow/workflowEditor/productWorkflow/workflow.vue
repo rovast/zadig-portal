@@ -1,51 +1,51 @@
 <template>
-  <div class="product-pipeline-detail">
-    <sideMenu @add-module="addModule($event)"
-              :pipelineInfo="pipelineInfo"
+  <div class="product-workflow-detail">
+    <Sidebar @add-module="addModule($event)"
+              :workflowInfo="workflowInfo"
               :currentModules="currentModules"
-              :currentTab="currentTab"></sideMenu>
+              :currentTab="currentTab"/>
     <div class="tab-page">
       <div class="tab-menu-container">
-        <tabMenu @delete-module="deleteModule($event)"
+        <Tab @delete-module="deleteModule($event)"
                  @change-tab="changeTab($event)"
-                 :pipelineInfo="pipelineInfo"
+                 :workflowInfo="workflowInfo"
                  :currentModules="currentModules"
                  :currentTab="currentTab"
-                 class="tabMenu"></tabMenu>
+                 class="tab"/>
       </div>
-      <basicInfo v-show="currentTab==='basicInfo'"
+      <BasicInfo v-show="currentTab==='basicInfo'"
                  :editMode="editMode"
-                 :pipelineInfo="pipelineInfo"></basicInfo>
-      <buildDeploy v-show="currentTab==='buildDeploy'"
+                 :workflowInfo="workflowInfo"/>
+      <BuildDeploy v-show="currentTab==='buildDeploy'"
                    :editMode="editMode"
-                   :build_stage="pipelineInfo.build_stage"
-                   :product_tmpl_name="pipelineInfo.product_tmpl_name"
-                   :presets="presets"></buildDeploy>
-      <artifactDeploy v-show="currentTab==='artifactDeploy'"
+                   :build_stage="workflowInfo.build_stage"
+                   :product_tmpl_name="workflowInfo.product_tmpl_name"
+                   :presets="presets"/>
+      <ArtifactDeploy v-show="currentTab==='artifactDeploy'"
                       :editMode="editMode"
-                      :artifact_stage="pipelineInfo.artifact_stage"
-                      :product_tmpl_name="pipelineInfo.product_tmpl_name"
-                      :presets="presets"></artifactDeploy>
-      <test v-show="currentTab==='test'"
+                      :artifact_stage="workflowInfo.artifact_stage"
+                      :product_tmpl_name="workflowInfo.product_tmpl_name"
+                      :presets="presets"/>
+      <Test v-show="currentTab==='test'"
             :editMode="editMode"
-            :test_stage="pipelineInfo.test_stage"
-            :product_tmpl_name="pipelineInfo.product_tmpl_name"></test>
-      <distribute v-show="currentTab==='distribute'"
+            :test_stage="workflowInfo.test_stage"
+            :product_tmpl_name="workflowInfo.product_tmpl_name"/>
+      <Distribute v-show="currentTab==='distribute'"
                   :editMode="editMode"
-                  :distribute_stage="pipelineInfo.distribute_stage"
-                  :product_tmpl_name="pipelineInfo.product_tmpl_name"
+                  :distribute_stage="workflowInfo.distribute_stage"
+                  :product_tmpl_name="workflowInfo.product_tmpl_name"
                   :presets="presets"
-                  :buildTargets="buildTargets"></distribute>
-      <notify v-show="currentTab==='notify'"
+                  :buildTargets="buildTargets"/>
+      <Notify v-show="currentTab==='notify'"
               :editMode="editMode"
-              :notify="pipelineInfo.notify_ctl"></notify>
-      <trigger v-show="currentTab==='trigger'"
+              :notify="workflowInfo.notify_ctl"/>
+      <Trigger v-show="currentTab==='trigger'"
                :editMode="editMode"
-               :projectName="pipelineInfo.product_tmpl_name"
+               :projectName="workflowInfo.product_tmpl_name"
                :presets="presets"
-               :workflowToRun="pipelineInfo"
-               :schedules="pipelineInfo.schedules"
-               :webhook="pipelineInfo.hook_ctl"></trigger>
+               :workflowToRun="workflowInfo"
+               :schedules="workflowInfo.schedules"
+               :webhook="workflowInfo.hook_ctl"/>
     </div>
 
     <footer class="create-footer">
@@ -76,23 +76,22 @@
 
 <script>
 import mixin from '@/mixin/workflowMixin'
-import sideMenu from './side_menu.vue'
-import tabMenu from './tab_menu.vue'
-import basicInfo from './switch_tab/basic_info.vue'
-import buildDeploy from './switch_tab/build_deploy.vue'
-import artifactDeploy from './switch_tab/artifact_deploy.vue'
-import test from './switch_tab/test.vue'
-import distribute from './switch_tab/distribute.vue'
-import trigger from './switch_tab/trigger.vue'
-import notify from './switch_tab/notify.vue'
-
+import Sidebar from './sidebar.vue'
+import Tab from './tab.vue'
+import BasicInfo from './modules/basicInfo.vue'
+import BuildDeploy from './modules/buildDeploy.vue'
+import ArtifactDeploy from './modules/artifactDeploy.vue'
+import Test from './modules/test.vue'
+import Distribute from './modules/distribute.vue'
+import Trigger from './modules/trigger.vue'
+import Notify from './modules/notify.vue'
 import { getWorkflowDetailAPI, workflowPresetAPI, createWorkflowAPI, updateWorkflowAPI } from '@api'
 
 export default {
   data () {
     return {
       fromRoute: null,
-      pipelineInfo: {
+      workflowInfo: {
         name: '',
         enabled: true,
         product_tmpl_name: '',
@@ -157,21 +156,21 @@ export default {
     })
   },
   computed: {
-    pipelineName () {
+    workflowName () {
       return this.$route.params.name
     },
     projectName () {
       return this.$route.query.projectName
     },
     editMode () {
-      return Boolean(this.pipelineName)
+      return Boolean(this.workflowName)
     },
     buildTargets () {
-      return this.pipelineInfo.build_stage.modules.map(m => m.target)
+      return this.workflowInfo.build_stage.modules.map(m => m.target)
     }
   },
   watch: {
-    'pipelineInfo.product_tmpl_name' (val) {
+    'workflowInfo.product_tmpl_name' (val) {
       workflowPresetAPI(val).then(res => {
         this.presets = res
       })
@@ -217,62 +216,62 @@ export default {
     },
     setModuleEnabled (alias, isEnabled) {
       if (alias === 'buildDeploy') {
-        this.pipelineInfo.build_stage.enabled = isEnabled
+        this.workflowInfo.build_stage.enabled = isEnabled
         return
       }
       if (alias === 'artifactDeploy') {
-        this.pipelineInfo.artifact_stage.enabled = isEnabled
+        this.workflowInfo.artifact_stage.enabled = isEnabled
         return
       }
 
       if (alias === 'test') {
-        this.pipelineInfo.test_stage.enabled = false
+        this.workflowInfo.test_stage.enabled = false
         return
       }
 
       if (alias === 'distribute') {
-        this.pipelineInfo.distribute_stage.enabled = isEnabled
+        this.workflowInfo.distribute_stage.enabled = isEnabled
         return
       }
 
       if (alias === 'trigger') {
-        this.pipelineInfo.hook_ctl.enabled = false
-        this.pipelineInfo.schedules.enabled = false
+        this.workflowInfo.hook_ctl.enabled = false
+        this.workflowInfo.schedules.enabled = false
         return
       }
 
       if (alias === 'notify') {
-        this.pipelineInfo.notify_ctl.enabled = isEnabled
+        this.workflowInfo.notify_ctl.enabled = isEnabled
       }
     },
 
     savePipeline () {
-      this.pipelineInfo.schedule_enabled = this.pipelineInfo.schedules.enabled
-      this.pipelineInfo.hook_ctl.product_tmpl_name = this.pipelineInfo.product_tmpl_name
+      this.workflowInfo.schedule_enabled = this.workflowInfo.schedules.enabled
+      this.workflowInfo.hook_ctl.product_tmpl_name = this.workflowInfo.product_tmpl_name
       this.checkCurrentTab().then(() => {
-        if (this.pipelineInfo.distribute_stage.enabled) {
-          if (this.pipelineInfo.distribute_stage.releaseIds && this.pipelineInfo.distribute_stage.releaseIds.length > 0) {
-            const releases = this.pipelineInfo.distribute_stage.releaseIds.map(element => {
+        if (this.workflowInfo.distribute_stage.enabled) {
+          if (this.workflowInfo.distribute_stage.releaseIds && this.workflowInfo.distribute_stage.releaseIds.length > 0) {
+            const releases = this.workflowInfo.distribute_stage.releaseIds.map(element => {
               return { repo_id: element }
             })
-            this.$set(this.pipelineInfo.distribute_stage, 'releases', releases)
+            this.$set(this.workflowInfo.distribute_stage, 'releases', releases)
           } else {
-            this.$set(this.pipelineInfo.distribute_stage, 'releases', [])
+            this.$set(this.workflowInfo.distribute_stage, 'releases', [])
           }
         }
-        (this.editMode ? updateWorkflowAPI : createWorkflowAPI)(this.pipelineInfo).then(res => {
+        (this.editMode ? updateWorkflowAPI : createWorkflowAPI)(this.workflowInfo).then(res => {
           this.$message.success('保存成功')
           if (this.$route.query.from) {
             this.$router.push(this.$route.query.from)
           } else {
-            this.$router.push(`/v1/projects/detail/${this.pipelineInfo.product_tmpl_name}/pipelines/multi/${this.pipelineInfo.name}`)
+            this.$router.push(`/v1/projects/detail/${this.workflowInfo.product_tmpl_name}/pipelines/multi/${this.workflowInfo.name}`)
           }
         })
       })
     },
 
     stepBack () {
-      const name = this.pipelineName
+      const name = this.workflowName
       if (this.$route.query.from) {
         this.$router.push(this.$route.query.from)
       } else if (this.fromRoute.path) {
@@ -288,63 +287,63 @@ export default {
   },
   created () {
     if (this.editMode) {
-      getWorkflowDetailAPI(this.projectName, this.pipelineName).then(res => {
-        this.pipelineInfo = res
-        if (typeof this.pipelineInfo.reset_image_policy === 'undefined') {
-          this.$set(this.pipelineInfo, 'reset_image_policy', this.pipelineInfo.reset_image ? 'taskCompleted' : '')
+      getWorkflowDetailAPI(this.projectName, this.workflowName).then(res => {
+        this.workflowInfo = res
+        if (typeof this.workflowInfo.reset_image_policy === 'undefined') {
+          this.$set(this.workflowInfo, 'reset_image_policy', this.workflowInfo.reset_image ? 'taskCompleted' : '')
         }
-        if (!this.pipelineInfo.schedules) {
-          this.$set(this.pipelineInfo, 'schedules', {
+        if (!this.workflowInfo.schedules) {
+          this.$set(this.workflowInfo, 'schedules', {
             enabled: false,
             items: []
           })
         };
-        if (!this.pipelineInfo.hook_ctl) {
-          this.$set(this.pipelineInfo, 'hook_ctl', {
+        if (!this.workflowInfo.hook_ctl) {
+          this.$set(this.workflowInfo, 'hook_ctl', {
             enabled: false,
-            product_tmpl_name: this.pipelineInfo.product_tmpl_name,
+            product_tmpl_name: this.workflowInfo.product_tmpl_name,
             items: []
           })
         };
-        if (!this.pipelineInfo.notify_ctl) {
-          this.$set(this.pipelineInfo, 'notify_ctl', {
+        if (!this.workflowInfo.notify_ctl) {
+          this.$set(this.workflowInfo, 'notify_ctl', {
             enabled: false,
             weChat_webHook: '',
             notify_type: []
           })
         };
-        if (!this.pipelineInfo.artifact_stage) {
-          this.$set(this.pipelineInfo, 'artifact_stage', {
+        if (!this.workflowInfo.artifact_stage) {
+          this.$set(this.workflowInfo, 'artifact_stage', {
             enabled: false,
             modules: []
           })
         };
-        if (this.pipelineInfo.test_stage.test_names) {
+        if (this.workflowInfo.test_stage.test_names) {
           let tests = []
-          if (!this.pipelineInfo.test_stage.tests) {
-            tests = this.pipelineInfo.test_stage.test_names.map(t_name => {
+          if (!this.workflowInfo.test_stage.tests) {
+            tests = this.workflowInfo.test_stage.test_names.map(t_name => {
               return {
                 test_name: t_name,
                 envs: []
               }
             })
           } else {
-            tests = this.pipelineInfo.test_stage.tests
+            tests = this.workflowInfo.test_stage.tests
           }
-          this.pipelineInfo.test_stage = {
-            enabled: this.pipelineInfo.test_stage.enabled,
+          this.workflowInfo.test_stage = {
+            enabled: this.workflowInfo.test_stage.enabled,
             tests: tests
           }
         };
 
         if (res.distribute_stage.enabled) {
-          if (this.pipelineInfo.distribute_stage.releases && this.pipelineInfo.distribute_stage.releases.length > 0) {
-            const releaseIds = this.pipelineInfo.distribute_stage.releases.map(element => {
+          if (this.workflowInfo.distribute_stage.releases && this.workflowInfo.distribute_stage.releases.length > 0) {
+            const releaseIds = this.workflowInfo.distribute_stage.releases.map(element => {
               return element.repo_id
             })
-            this.$set(this.pipelineInfo.distribute_stage, 'releaseIds', releaseIds)
+            this.$set(this.workflowInfo.distribute_stage, 'releaseIds', releaseIds)
           } else {
-            this.$set(this.pipelineInfo.distribute_stage, 'releaseIds', [])
+            this.$set(this.workflowInfo.distribute_stage, 'releaseIds', [])
           }
         }
         this.currentModules = {
@@ -360,22 +359,22 @@ export default {
     }
   },
   components: {
-    sideMenu,
-    tabMenu,
-    basicInfo,
-    buildDeploy,
-    artifactDeploy,
-    test,
-    distribute,
-    trigger,
-    notify
+    Sidebar,
+    Tab,
+    BasicInfo,
+    BuildDeploy,
+    ArtifactDeploy,
+    Test,
+    Distribute,
+    Trigger,
+    Notify
   },
   mixins: [mixin]
 }
 </script>
 
 <style lang="less">
-.product-pipeline-detail {
+.product-workflow-detail {
   display: flex;
   width: 100%;
 

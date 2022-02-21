@@ -14,13 +14,13 @@
       <el-card class="box-card box-card-service">
         <div class="log-container">
           <div class="log-content">
-            <xterm-log-container
+            <XtermLogContainer
               :id="serviceName"
               @closeConnection="showRealTimeLog('', '', 'close')"
               ref="log"
               :searchKey="searchKey"
               :logs="realtimeLog.data"
-            ></xterm-log-container>
+            />
           </div>
           <div class="log-header">
             <div class="search-log-input">

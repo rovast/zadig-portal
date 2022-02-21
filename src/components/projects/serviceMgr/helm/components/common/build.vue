@@ -198,7 +198,7 @@
           <BuildEnv class="section" v-show="!isSelectedBuild" :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit" mini/>
         </el-form>
         <div v-show="!isSelectedBuild" class="section">
-          <repo-select
+          <RepoSelect
             ref="repoSelect"
             :config="buildConfig"
             class="section"
@@ -206,8 +206,8 @@
             addBtnMini
             shortDescription
             showFirstLine
-          ></repo-select>
-          <EnvVariable ref="envVariable" :preEnvs="buildConfig.pre_build" :narrowWidth="true"></EnvVariable>
+          />
+          <EnvVariable ref="envVariable" :preEnvs="buildConfig.pre_build" :narrowWidth="true"/>
           <el-form
             ref="cacheDir"
             :inline="true"

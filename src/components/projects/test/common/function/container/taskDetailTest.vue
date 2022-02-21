@@ -138,9 +138,9 @@
       <div class="log-container">
         <div class="log-content">
 
-          <xterm-log :id="`${pipelineName}-${taskID}-${serviceName}`"
+          <XtermLog :id="`${pipelineName}-${taskID}-${serviceName}`"
                      @mouseleave.native="leaveLog"
-                     :logs="testAnyLog"></xterm-log>
+                     :logs="testAnyLog"/>
         </div>
       </div>
     </el-card>

@@ -15,9 +15,9 @@
 <script>
 import { taskRunningSSEAPI, taskPendingSSEAPI } from '@api'
 import bus from '@utils/eventBus'
-import ProductWorkflowStatus from './constainer/productWorkflowStatus'
-import CommonWorkflowStatus from './constainer/commonWorkflowStatus'
-import TestStatus from './constainer/testStatus'
+import ProductWorkflowStatus from './container/productWorkflowStatus'
+import CommonWorkflowStatus from './container/commonWorkflowStatus'
+import TestStatus from './container/testStatus'
 export default {
   data () {
     return {

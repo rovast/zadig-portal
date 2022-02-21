@@ -409,12 +409,6 @@ export default {
     }
   }
 
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
-
   .users-container {
     .origin {
       .type {

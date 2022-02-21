@@ -23,7 +23,7 @@
           <span class="version-link">
             <router-link
               v-if="projectName"
-              :to="`/v1/projects/detail/proxy/version/detail/${scope.row.versionInfo.productName}/${scope.row.versionInfo.id}?version=${scope.row.versionInfo.version}&type=${scope.row.versionInfo.type}`"
+              :to="`/v1/projects/detail/${scope.row.versionInfo.productName}/version/detail/${scope.row.versionInfo.id}?version=${scope.row.versionInfo.version}&type=${scope.row.versionInfo.type}`"
             >
               {{
               scope.row.versionInfo.version }}

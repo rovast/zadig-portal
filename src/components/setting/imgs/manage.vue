@@ -235,15 +235,10 @@ export default {
 .setting-img-container {
   position: relative;
   flex: 1;
+  height: 100%;
   padding: 15px 30px;
   overflow: auto;
   font-size: 13px;
-
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
 
   .section {
     margin-bottom: 56px;

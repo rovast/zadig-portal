@@ -495,12 +495,6 @@ export default {
   overflow: auto;
   font-size: 15px;
 
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2.4rem;
-  }
-
   .no-config {
     display: flex;
     align-items: center;

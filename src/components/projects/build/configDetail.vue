@@ -133,7 +133,7 @@
                  :model="buildConfig"
                  :rules="createRules"
                  label-position="right"
-                 label-width="80px">
+                 label-width="100px">
           <el-row :gutter="20">
             <el-col v-if="jenkinsEnabled" :span="8">
               <el-form-item label="构建来源">
@@ -242,7 +242,7 @@
         <el-form ref="buildScript"
                  :model="buildConfig"
                  label-position="left"
-                 label-width="80px">
+                 label-width="100px">
           <span class="item-title">构建脚本</span>
 
           <el-tooltip effect="dark"

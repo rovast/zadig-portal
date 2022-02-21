@@ -36,12 +36,6 @@
                   description="定义服务组件的构建方式以及构建依赖">
         </el-alert>
         <div class="create-buildconfig">
-          <router-link v-hasPermi="{projectName: projectName, action: 'create_build'}"
-                       :to="`/v1/projects/detail/${projectName}/builds/create`">
-            <el-button plain
-                       size="small"
-                       type="primary">添加</el-button>
-          </router-link>
           <el-button v-if="!searchInputVisible"
                      @click="searchInputVisible=true"
                      plain

@@ -3,8 +3,7 @@
     <section class="overview">
       <div>
         <h3>概览</h3>
-        <div class="divider"></div>
-        <el-row :gutter="20" class="number-container">
+        <el-row class="number-container">
           <el-col class="container-block" :span="4">
             <div>
               <h2>
@@ -74,10 +73,9 @@
         </el-row>
       </div>
     </section>
-    <section class="overview">
+    <section class="charts-container">
       <div>
         <h3>自动化流程</h3>
-        <div class="divider"></div>
         <Build class="build-container" />
         <Deploy class="deploy-container" />
         <Test class="deploy-container" />
@@ -138,36 +136,53 @@ export default {
 </script>
 <style lang="less">
 .system-statistics-container {
-  padding: 0 30px;
-
-  .divider {
-    width: 100%;
-    height: 1px;
-    background-color: #ccc;
-  }
+  height: 100%;
+  padding: 22px 24px;
+  overflow: auto;
+  background: #f6f6f6;
 
   h3 {
-    color: #646566;
+    margin: 0;
+    color: #000;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  .charts-container {
+    margin-top: 24px;
   }
 
   .number-container {
-    margin: 20px 0;
-    background-color: #f2f3f5;
+    margin-top: 16px;
+    background: #fcfcff;
+    border: 1px solid #d2d7dc;
+    border-radius: 6px;
   }
 
   .container-block {
+    position: relative;
     padding: 15px 20px;
     text-align: center;
-    border-right: 1px solid #ccc;
+
+    & + ::after {
+      position: absolute;
+      bottom: 25%;
+      left: 0;
+      width: 1px;
+      height: 50%;
+      background: #ccc;
+      content: "";
+    }
 
     h2,
     .counter-number {
       display: inline-block;
       padding-right: 0;
-      color: #333;
-      font-weight: 200;
-      font-size: 50px;
-      line-height: 50px;
+      color: #4a4a4a;
+      font-weight: 300;
+      font-size: 46px;
+      line-height: 22px;
       letter-spacing: 0;
     }
 
@@ -185,7 +200,7 @@ export default {
     p {
       display: inline-block;
       color: #969799;
-      font-size: 25px;
+      font-size: 14px;
       letter-spacing: 0;
     }
 
@@ -193,7 +208,8 @@ export default {
       display: block;
       padding-top: 10px;
       padding-right: 20px;
-      color: #a3a3a3;
+      color: #8a8a8a;
+      font-size: 14px;
     }
 
     .icon {
@@ -203,11 +219,6 @@ export default {
     &:last-child {
       border-right: none;
     }
-  }
-
-  .build-container,
-  .deploy-container {
-    padding: 10px 25px;
   }
 }
 </style>

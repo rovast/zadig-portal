@@ -201,10 +201,10 @@ export default {
     border-bottom: 1px solid rgb(230, 230, 230);
   }
 
-  .tree {
-    max-height: calc(~"100% - 95px") !important;
+  /deep/.el-tree {
+    height: calc(~"100% - 60px");
     margin-top: 10px;
-    overflow: scroll;
+    overflow: auto;
   }
 
   .input {

@@ -27,7 +27,7 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="docker" :disabled="docker_enabled">镜像构建</el-dropdown-item>
           <el-dropdown-item command="binary" :disabled="binary_enabled">二进制包存储</el-dropdown-item>
-          <el-dropdown-item command="script" :disabled="post_script_enabled">Shell 脚本执行</el-dropdown-item>
+          <el-dropdown-item command="script" v-if="!usedToHost" :disabled="post_script_enabled">Shell 脚本执行</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -46,7 +46,7 @@
             镜像构建
             <el-button type="text" @click="removeDocker" icon="el-icon-delete"></el-button>
           </span>
-          <div v-if="allRegistry.length === 0" class="registry-alert">
+          <div v-if="!usedToHost && allRegistry.length === 0" class="registry-alert">
             <el-alert title="私有镜像仓库未集成，请前往系统设置 -> Registry 管理  进行集成。" type="warning"></el-alert>
           </div>
           <el-form-item label="构建上下文目录" prop="work_dir">
@@ -149,7 +149,8 @@ import {
 export default {
   props: {
     buildConfig: Object,
-    validObj: Object
+    validObj: Object,
+    usedToHost: Boolean // Cloud hosting builds do not require mirror repositories
   },
   data () {
     return {
@@ -200,12 +201,18 @@ export default {
             buildConfig.post_build.docker_build.template_id
           )
         }
+      } else {
+        this.docker_enabled = false
       }
       if (buildConfig.post_build.file_archive) {
         this.binary_enabled = true
+      } else {
+        this.binary_enabled = false
       }
       if (buildConfig.post_build.scripts) {
         this.post_script_enabled = true
+      } else {
+        this.post_script_enabled = false
       }
     },
     addExtra (command) {
@@ -261,9 +268,11 @@ export default {
     },
     getUsedData () {
       const projectName = this.$route.params.project_name
-      getRegistryWhenBuildAPI(projectName).then(res => {
-        this.allRegistry = res
-      })
+      if (!this.usedToHost) {
+        getRegistryWhenBuildAPI(projectName).then(res => {
+          this.allRegistry = res
+        })
+      }
       getDockerfileTemplatesAPI().then(res => {
         this.dockerfileTemplates = res.dockerfile_template
       })

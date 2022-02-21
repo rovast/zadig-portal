@@ -1,10 +1,7 @@
 <template>
-  <div class="pm-service-config-container" v-loading="loading"
-       @scroll="onScroll">
+  <div class="pm-service-config-container" v-loading="loading" @scroll="onScroll">
     <div class="anchor-container">
-      <el-tabs v-model="anchorTab"
-               @tab-click="goToAnchor"
-               tab-position="right">
+      <el-tabs v-model="anchorTab" @tab-click="goToAnchor" tab-position="right">
         <el-tab-pane label="基本信息"></el-tab-pane>
         <el-tab-pane label="构建脚本"></el-tab-pane>
         <el-tab-pane v-if="isOnboarding" label="资源配置"></el-tab-pane>
@@ -12,526 +9,283 @@
         <el-tab-pane label="探活配置"></el-tab-pane>
       </el-tabs>
     </div>
-    <div id="基本信息"
-         class="section scroll">
-      <el-form ref="addConfigForm"
-               :model="buildConfig"
-               :rules="createRules"
-               label-position="right"
-               label-width="80px">
-        <el-row>
-          <el-col :span="7">
-            <el-form-item prop="service_name"
-                          label="服务名称">
-              <el-input v-model="buildConfig.service_name"
-                        placeholder="服务名称"
-                        autofocus
-                        size="small"
-                        :disabled="isEdit"
-                        auto-complete="off"></el-input>
+    <section class="zadig-build-container">
+      <section class="common-parcel-block">
+        <div id="基本信息" class="scroll">
+          <el-form
+            ref="zadigFormRef"
+            :model="buildConfig"
+            :rules="createRules"
+            label-position="left"
+            class="primary-form"
+            label-width="120px"
+            inline-message
+          >
+            <el-form-item prop="service_name" label="服务名称">
+              <el-input v-model="buildConfig.service_name" placeholder="服务名称" autofocus size="small" :disabled="isEdit" auto-complete="off"></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="8" style="margin-left: 10px;">
-            <el-form-item label="构建超时">
-              <el-input-number size="mini"
-                               :min="1"
-                               v-model="buildConfig.timeout"></el-input-number>
-              <span style="margin-left: 10px;"> 分钟</span>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="构建名称"
-                          prop="name">
-              <el-select v-model="buildConfig.name"
-                         @change="syncBuild"
-                         size="small"
-                         placeholder="请选择"
-                         filterable
-                         :allow-create="!isEdit">
-                <el-option v-for="item in builds"
-                           filterable
-                           :key="item.id"
-                           :label="item.name"
-                           :value="item.name">
-                </el-option>
+            <el-form-item label="构建名称" prop="name">
+              <el-select v-model="buildConfig.name" @change="syncBuild" size="small" placeholder="请选择" filterable :allow-create="!isEdit">
+                <el-option v-for="item in builds" filterable :key="item.id" :label="item.name" :value="item.name"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <BuildEnv class="section" :initFlag="configDataLoading" :pre_build="buildConfig.pre_build" :isCreate="!isEdit"/>
-      </el-form>
-    </div>
-    <div class="section">
-      <repo-select :config="buildConfig"
-                   :validObj="validObj"
-                   showDivider
-                   showFirstLine></repo-select>
-    </div>
-    <div class="section">
-      <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj"/>
-    </div>
-
-    <div class="section">
-      <el-form ref="cacheDir"
-               :inline="true"
-               :model="buildConfig"
-               class="config-form"
-               label-position="left">
-        <span class="item-title">缓存策略</span>
-        <div class="divider item"></div>
-        <el-row>
-          <el-col :span="4">
-            <el-form-item label="开启缓存">
-              <el-switch v-model="buildConfig.cache_enable"
-                          active-color="#409EFF">
-              </el-switch>
-            </el-form-item>
-            <el-radio-group v-if="buildConfig.cache_enable" v-model="buildConfig.cache_dir_type" class="radio-group">
-              <el-radio label="workspace">工作空间 $WORKSPACE</el-radio>
-              <el-radio label="user_defined">自定义目录
-                <el-input v-model="buildConfig.cache_user_dir"
-                          placeholder="请手动输入"
-                          size="mini">
-                </el-input>
-              </el-radio>
-            </el-radio-group>
-          </el-col>
-        </el-row>
-      </el-form>
-    </div>
-    <div id="构建脚本"
-         class="section scroll">
-        <el-form ref="buildScript"
-                :model="buildConfig"
-                label-position="left"
-                label-width="80px">
-          <span class="item-title">构建脚本</span>
-          <el-tooltip effect="dark"  placement="top-start">
-                <div slot="content">
-                  当前可用环境变量如下，可在构建脚本中进行引用<br>
-                  $WORKSPACE&nbsp;&nbsp;工作目录<br>
-                  $TASK_ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工作流任务 ID<br>
-                  $IMAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;输出镜像名称<br>
-                  $SERVICE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建的服务名称<br>
-                  $DIST_DIR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建出的 Tar 包的目的目录<br>
-                  $PKG_FILE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建出的 Tar 包名称<br>
-                  $ENV_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;执行的环境名称<br>
-                  $BUILD_URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建任务的 URL<br>
-                  $CI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  值恒等于 true，表示当前环境是 CI/CD 环境<br>
-                  $ZADIG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值恒等于
-                  true，表示在 Zadig 系统上执行脚本<br>
-                  &lt;REPO&gt;_PR 构建过程中指定代码仓库使用的 Pull Request 信息<br>
-                  &lt;REPO&gt;_BRANCH 构建过程中指定代码仓库使用的分支信息<br>
-                  &lt;REPO&gt;_TAG 构建过程中指定代码仓库使用 Tag 信息<br>
-                  &lt;REPO&gt;_COMMIT_ID 构建过程中指定代码的 commit 信息
-                </div>
-            <span class="variable">变量</span>
-          </el-tooltip>
-          <div class="divider item"></div>
-          <el-row>
-            <el-col :span="24"
-                    class="deploy-script">
-              <Resize :height="'150px'">
-                <Editor v-model="buildConfig.scripts"
-                      lang="sh"
-                      theme="xcode"
-                      width="100%"
-                      height="100%"></Editor>
-              </Resize>
-            </el-col>
-          </el-row>
-        </el-form>
-      </div>
-      <el-form v-if="dockerEnabled"
-               :model="buildConfig.post_build.docker_build"
-               :rules="docker_rules"
-               ref="docker_build"
-               class="docker label-at-left">
-
-        <div class="extra-build-container">
-          <span class="title">镜像构建
-            <el-button type="text"
-                       @click="removeDockerBuild"
-                       icon="el-icon-delete"></el-button>
-          </span>
-          <el-form-item label="镜像构建目录："
-                        prop="work_dir">
-            <el-input v-model="buildConfig.post_build.docker_build.work_dir"
-                      size="small">
-              <template slot="prepend">$WORKSPACE/</template>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="Dockerfile 文件的完整路径："
-                        prop="docker_file">
-            <el-input v-model="buildConfig.post_build.docker_build.docker_file"
-                      size="small">
-              <template slot="prepend">$WORKSPACE/</template>
-            </el-input>
-          </el-form-item>
-          <el-form-item label="镜像构建参数：">
-            <el-tooltip effect="dark"
-                        content="支持所有 Docker Build 参数"
-                        placement="top-start">
-              <el-input v-model="buildConfig.post_build.docker_build.build_args"
-                        size="small"
-                        placeholder="--build-arg key=value"></el-input>
-            </el-tooltip>
-          </el-form-item>
+            <BuildEnv ref="buildEnvRef" :buildConfig="buildConfig" :isCreate="!isEdit"></BuildEnv>
+          </el-form>
+          <repo-select :config="buildConfig" :validObj="validObj" class="build-secondary-form" showFirstLine></repo-select>
         </div>
-        <div class="divider">
-        </div>
-
-      </el-form>
-      <el-form v-if="binaryEnabled"
-               :model="buildConfig.post_build.file_archive"
-               :rules="file_archive_rules"
-               ref="file_archive"
-               class="stcov label-at-left">
-
-        <div class="extra-build-container">
-          <span class="title">二进制包归档
-            <el-button type="text"
-                       @click="removeBinaryArchive"
-                       icon="el-icon-delete"></el-button>
-          </span>
-          <el-form-item label="二进制包存放路径："
-                        prop="file_location">
-            <el-input v-model="buildConfig.post_build.file_archive.file_location"
-                      size="small">
-              <template slot="append">/$PKG_FILE</template>
-              <template slot="prepend">$WORKSPACE/</template>
-            </el-input>
-          </el-form-item>
-        </div>
-        <div class="divider">
-        </div>
-      </el-form>
-      <div class="section add-extra-step">
-        <el-dropdown @command="addExtra">
-          <el-button size="small">
-            新增构建步骤<i class="el-icon-arrow-down el-icon--right"></i>
+        <section id="构建脚本" class="scroll">
+          <div class="primary-title not-first-child">构建变量</div>
+          <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj"></EnvVariable>
+          <div class="primary-title not-first-child">通用构建脚本</div>
+          <div class="deploy-script">
+            <Resize :resize="'both'">
+              <Editor v-model="buildConfig.scripts"></Editor>
+            </Resize>
+          </div>
+        </section>
+      </section>
+      <section>
+        <div style="margin-bottom: 8px;">
+          <el-button type="primary" size="small" plain @click="showAdvancedConfig = !showAdvancedConfig">
+            高级配置
+            <i :class="[showAdvancedConfig ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
           </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="docker"
-                              :disabled="dockerEnabled">镜像构建</el-dropdown-item>
-            <el-dropdown-item command="binary"
-                              :disabled="binaryEnabled">二进制包归档</el-dropdown-item>
-
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div>
-      <div v-show="isOnboarding" id="资源配置"
-           class="section scroll">
-        <el-form :model="pmService"
-                 :inline="true"
-                 ref="envConfig"
-                 label-width="120px"
-                 label-position="top">
-          <span class="item-title">资源配置</span>
-          <div class="divider item"></div>
-          <div class="">
-            <el-row v-for="(item,item_index) in pmService.env_configs"
-                    class="env-config"
-                    :key="item_index">
-              <el-col :span="3">
-                <el-form-item :label="item_index===0?'环境':''"
-                              :prop="'env_configs.'+item_index+'.env_name'"
-                              :rules="{required: false, message: '请选择部署环境', trigger: 'blur'}">
-                  <div class="env-name">{{item.env_name}}</div>
-                </el-form-item>
-              </el-col>
-              <el-col :span="5">
-                <div class="">
-                  <el-form-item :label="item_index===0?'主机':''"
-                                :prop="'env_configs.'+item_index+'.host_ids'"
-                                :rules="{required: false, message: '请选择主机', trigger: 'blur'}">
-                    <el-button v-if="allHost.length===0"
-                               @click="createHost"
-                               type="text">创建主机</el-button>
-                    <el-select v-else
-                              size="mini"
-                              multiple
-                              filterable
-                              v-model="item.host_ids"
-                              placeholder="请选择主机">
-                      <el-option-group
-                        label="主机标签">
-                        <el-option
-                          v-for="(item,index) in allHostLabels"
-                          :key="index"
-                          :label="`${item}`"
-                          :value="item">
-                        </el-option>
-                      </el-option-group>
-                      <el-option-group
-                        label="主机列表">
-                        <el-option
-                          v-for="item in allHost"
-                          :key="item.name"
-                           :label="`${item.name}-${item.ip}`"
-                          :value="item.id">
-                        </el-option>
-                      </el-option-group>
-                    </el-select>
-                  </el-form-item>
-                </div>
-              </el-col>
-              <el-col v-if="!isOnboarding"
-                      :span="8">
-                <el-form-item :label="item_index===0?'操作':''">
-                  <div class="app-operation">
-                    <el-button v-if="item.showDelete"
-                               @click="deleteEnvConfig(item_index)"
-                               type="danger"
-                               icon="el-icon-delete"
-                               size="mini"
-                               circle></el-button>
-                    <el-tooltip v-else
-                                effect="dark"
-                                content="环境已存在，不可删除配置"
-                                placement="top">
-                      <span><i class="el-icon-question"></i></span>
-                    </el-tooltip>
-                  </div>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
-        </el-form>
-      </div>
-      <div id="部署配置"
-           class="section scroll">
-        <el-form ref="deploy-env"
-                 :inline="true"
-                 :model="buildConfig"
-                 class="config-form"
-                 label-position="left"
-                 label-width="80px">
-          <span class="item-title">部署配置</span>
-          <div class="divider item"></div>
-
-          <div class="deploy-method">
-            <el-radio-group v-model="useSshKey">
-              <el-radio :label="false">本地直连部署
-                <el-tooltip placement="top">
-                  <div slot="content">
-                    本地直连部署：需确保本系统能连通或访问到脚本中的主机地址(含本机)
-                  </div>
-                  <i class="icon el-icon-question"></i>
-                </el-tooltip>
-              </el-radio>
-              <el-radio :label="true">使用 SSH Agent 远程部署
-                <el-tooltip placement="top">
-                  <div slot="content">
-                    使用 SSH Agent 远程部署：安全登录到目标机器，执行部署操作，可在系统设置-主机管理中进行配置
-                  </div>
-                  <i class="icon el-icon-question"></i>
-                </el-tooltip>
-              </el-radio>
-            </el-radio-group>
-            <el-select v-if="useSshKey"
-                       v-model="buildConfig.sshs"
-                       size="mini"
-                       multiple
-                       placeholder="请选择主机">
-              <el-option v-for="(item,index) in  allHost"
-                         :key="index"
-                         :label="item.name"
-                         :value="item.id">
-              </el-option>
-            </el-select>
-          </div>
-          <el-row>
-            <el-col :span="24"
-                    class="deploy-script">
-              <Editor v-model="buildConfig.pm_deploy_scripts"
-                      lang="sh"
-                      theme="xcode"
-                      width="100%"
-                      height="300px">
-              </Editor>
-            </el-col>
-          </el-row>
-        </el-form>
-      </div>
-      <div id="探活配置"
-           class="section scroll">
-        <el-form ref="deploy"
-                 :inline="true"
-                 :model="pmService"
-                 class="config-form"
-                 label-position="left"
-                 label-width="80px">
-          <el-row>
-            <el-col :span="4">
-              <el-form-item label="探活配置">
-                <el-switch
-                           v-model="checkStatusEnabled"
-                           active-color="#409EFF">
-                </el-switch>
+        </div>
+        <AdvancedConfig
+          ref="advancedConfigRef"
+          v-show="showAdvancedConfig"
+          class="common-parcel-block"
+          :isCreate="!isEdit"
+          :buildConfig="buildConfig"
+          :validObj="validObj"
+          @validateFailed="showAdvancedConfig = true"
+        ></AdvancedConfig>
+      </section>
+      <section>
+        <OtherSteps ref="otherStepsRef" :buildConfig="buildConfig" :validObj="validObj" usedToHost></OtherSteps>
+      </section>
+    </section>
+    <div v-show="isOnboarding" id="资源配置" class="common-parcel-block scroll">
+      <el-form :model="pmService" ref="envConfigRef" label-width="120px" label-position="top" class="secondary-form" inline-message>
+        <span class="primary-title">资源配置</span>
+        <el-row v-for="(item,item_index) in pmService.env_configs" class="env-config" :key="item_index">
+          <el-col :span="3">
+            <el-form-item
+              :label="item_index===0?'环境':''"
+              :prop="'env_configs.'+item_index+'.env_name'"
+              :rules="{required: false, message: '请选择部署环境', trigger: 'blur'}"
+            >
+              <div class="env-name">{{ item.env_name }}</div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <div class>
+              <el-form-item
+                :label="item_index===0?'主机':''"
+                :prop="'env_configs.'+item_index+'.host_ids'"
+                :rules="{required: false, message: '请选择主机', trigger: 'blur'}"
+              >
+                <el-button v-if="allHost.length===0" @click="createHost" type="text">创建主机</el-button>
+                <el-select v-else size="mini" multiple filterable v-model="item.host_ids" placeholder="请选择主机">
+                  <el-option-group label="主机标签">
+                    <el-option v-for="(item,index) in allHostLabels" :key="index" :label="`${item}`" :value="item"></el-option>
+                  </el-option-group>
+                  <el-option-group label="主机列表">
+                    <el-option v-for="item in allHost" :key="item.name" :label="`${item.name}-${item.ip}`" :value="item.id"></el-option>
+                  </el-option-group>
+                </el-select>
               </el-form-item>
-            </el-col>
-          </el-row>
-          <template v-if="checkStatusEnabled">
-            <el-form :model="pmService"
-                     :inline="true"
-                     ref="healthCheck"
-                     label-width="120px"
-                     label-position="left">
-              <el-card class="health-check-card"
-                       v-for="(item,item_index) in pmService.health_checks"
-                       :key="item_index">
-                <div slot="header"
-                     class="clearfix">
-                  <el-button type="danger"
-                             class="delete-btn"
-                             icon="el-icon-delete"
-                             plain
-                             size="mini"
-                             @click="deleteCheck(item_index)"
-                             circle></el-button>
-                </div>
-                <el-row class="healthcheck-item">
-                  <el-form-item label="协议："
-                                :prop="'health_checks.'+item_index+'.protocol'"
-                                :rules="{required: true, message: '请选择协议', trigger: 'blur'}">
-                    <el-select v-model="item.protocol"
-                               style="width: 179px;"
-                               size="small"
-                               placeholder="请选择协议">
-                      <el-option label="HTTP"
-                                 value="http">
-                      </el-option>
-                      <el-option label="HTTPS"
-                                 value="https">
-                      </el-option>
-                      <el-option label="TCP"
-                                 value="tcp">
-                      </el-option>
-                    </el-select>
-
-                  </el-form-item>
-                </el-row>
-                <el-row v-if="item.protocol==='http'||item.protocol==='https'"
-                        class="healthcheck-item">
-                  <el-form-item label="路径："
-                                :rules="{type: 'string',message: '请填写路径',required: false,trigger: ['blur', 'change']}"
-                                :prop="'health_checks.'+item_index+'.path'">
-                    <el-input v-model="item.path"
-                              placeholder="example.com/index.html"
-                              size="small">
-                    </el-input>
-                  </el-form-item>
-                </el-row>
-                <el-row class="healthcheck-item">
-                  <el-form-item label="端口："
-                                :rules="{type: 'number',required: false,validator: validateHealthCheckPort,trigger: ['blur', 'change']}"
-                                :prop="'health_checks.'+item_index+'.port'">
-                    <el-input v-model.number="item.port"
-                              placeholder="1-65535"
-                              size="small">
-                    </el-input>
-                  </el-form-item>
-                </el-row>
-                <el-row class="healthcheck-item">
-                  <el-form-item label="响应超时："
-                                :rules=" {type: 'number',required: true,validator: validateHealthCheckTimeout,trigger: ['blur', 'change']}"
-                                :prop="'health_checks.'+item_index+'.time_out'">
-                    <el-input v-model.number="item.time_out"
-                              placeholder="2(2-60) 秒"
-                              size="small">
-                    </el-input>
-                  </el-form-item>
-                </el-row>
-                <el-button type="primary"
-                           size="mini"
-                           round
-                           plain
-                           :icon="showCheckStatusAdvanced[item_index]?'el-icon-arrow-up':'el-icon-arrow-down'"
-                           @click="changeAdvancedShow(item_index)">
-                  高级设置
-                </el-button>
-                <template v-if="showCheckStatusAdvanced[item_index]">
-                  <el-row class="healthcheck-item">
-                    <el-form-item label="探测间隔："
-                                  :rules="{type: 'number',required: false,validator: validateHealthCheckInterval,trigger: ['blur', 'change']}"
-                                  :prop="'health_checks.'+item_index+'.interval'">
-                      <el-input v-model.number="item.interval"
-                                placeholder="2(2-60) 秒"
-                                size="small">
-                      </el-input>
-                    </el-form-item>
-                  </el-row>
-                  <el-row class="healthcheck-item">
-                    <el-form-item label="健康阈值："
-                                  :rules="{ type: 'number',required: false,validator: validateHealthCheckThreshold,trigger: ['blur', 'change']}"
-                                  :prop="'health_checks.'+item_index+'.healthy_threshold'">
-                      <span slot="label">健康阈值
-                        <el-tooltip effect="dark"
-                                    placement="top">
-                          <div slot="content">从不健康变为健康的连续探测次数</div>
-                          <i class="el-icon-question"></i>
-                        </el-tooltip>
-                        ：
-                      </span>
-                      <el-input v-model.number="item.healthy_threshold"
-                                placeholder="2(2-10) 次"
-                                size="small">
-                      </el-input>
-                    </el-form-item>
-                  </el-row>
-                  <el-row class="healthcheck-item">
-                    <el-form-item label="不健康阈值："
-                                  :rules=" {type: 'number',required: false,validator: validateHealthCheckThreshold,trigger: ['blur', 'change']}"
-                                  :prop="'health_checks.'+item_index+'.unhealthy_threshold'">
-                      <span slot="label">不健康阈值
-                        <el-tooltip effect="dark"
-                                    placement="top">
-                          <div slot="content">从健康变为不健康的连续探测次数</div>
-                          <i class="el-icon-question"></i>
-                        </el-tooltip>
-                        ：
-                      </span>
-                      <el-input v-model.number="item.unhealthy_threshold"
-                                placeholder="2(2-10) 次"
-                                size="small">
-                      </el-input>
-                    </el-form-item>
-                  </el-row>
-                </template>
-              </el-card>
-              <div class="add-check">
-                <el-button type="primary"
-                           icon="el-icon-circle-plus-outline"
-                           plain
-                           size="mini"
-                           @click="addCheck()"
-                           circle></el-button>
+            </div>
+          </el-col>
+          <el-col v-if="!isOnboarding" :span="8">
+            <el-form-item :label="item_index===0?'操作':''">
+              <div class="app-operation">
+                <el-button
+                  v-if="item.showDelete"
+                  @click="deleteEnvConfig(item_index)"
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="mini"
+                  circle
+                ></el-button>
+                <el-tooltip v-else effect="dark" content="环境已存在，不可删除配置" placement="top">
+                  <span>
+                    <i class="el-icon-question"></i>
+                  </span>
+                </el-tooltip>
               </div>
-
-              <div class="divider">
-              </div>
-            </el-form>
-          </template>
-        </el-form>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
+    <div id="部署配置" class="common-parcel-block deploy-config scroll">
+      <el-form ref="deploy-env" :inline="true" :model="buildConfig" class="primary-form" label-position="left">
+        <span class="item-title">部署配置</span>
+        <div class="deploy-method">
+          <el-radio-group v-model="useSshKey" class="radio-group">
+            <el-radio :label="false">
+              本地直连部署
+              <el-tooltip placement="top">
+                <div slot="content">本地直连部署：需确保本系统能连通或访问到脚本中的主机地址(含本机)</div>
+                <i class="icon el-icon-question"></i>
+              </el-tooltip>
+            </el-radio>
+            <br />
+            <el-radio :label="true">
+              使用 SSH Agent 远程部署
+              <el-tooltip placement="top">
+                <div slot="content">使用 SSH Agent 远程部署：安全登录到目标机器，执行部署操作，可在系统设置-主机管理中进行配置</div>
+                <i class="icon el-icon-question"></i>
+              </el-tooltip>
+              <el-select v-if="useSshKey" v-model="buildConfig.sshs" size="mini" multiple placeholder="请选择主机">
+                <el-option v-for="(item,index) in  allHost" :key="index" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+            </el-radio>
+          </el-radio-group>
+        </div>
+        <section class="inner-variable">
+          <div @click="showBuildInEnvVar = !showBuildInEnvVar" class="item-title inner-title">
+            内置部署变量
+            <i style="margin-left: 10px;" :class="[showBuildInEnvVar ? 'el-icon-arrow-up' : 'el-icon-arrow-down']"></i>
+          </div>
+          <div v-show="showBuildInEnvVar" class="inner-variable-content">
+            <div v-for="(variable, index) in deployVars" :key="index" class="var-content">
+              <span v-if="variable.variable" class="var-variable">{{ variable.variable }}</span>
+              <span class="var-desc">{{ variable.desc }}</span>
+            </div>
+          </div>
+        </section>
+        <div class="deploy-script">
+          <Editor v-model="buildConfig.pm_deploy_scripts" lang="sh" theme="xcode" width="100%" height="250px"></Editor>
+        </div>
+      </el-form>
+    </div>
+    <div id="探活配置" class="common-parcel-block check-config scroll">
+      <div class="primary-title">
+        <span class="check-title">探活配置</span>
+        <el-switch v-model="checkStatusEnabled"></el-switch>
       </div>
+      <template v-if="checkStatusEnabled">
+        <el-form :model="pmService" ref="healthCheckRef" label-width="120px" label-position="left" class="secondary-form" inline-message>
+          <div class="health-check-block" v-for="(item,item_index) in pmService.health_checks" :key="item_index">
+            <div class="health-check-title">
+              <el-button type="danger" class="delete-btn" icon="el-icon-delete" plain size="mini" @click="deleteCheck(item_index)" circle></el-button>
+            </div>
+            <el-form-item
+              label="协议"
+              :prop="'health_checks.'+item_index+'.protocol'"
+              :rules="{required: true, message: '请选择协议', trigger: 'blur'}"
+            >
+              <el-select v-model="item.protocol" size="small" placeholder="请选择协议">
+                <el-option label="HTTP" value="http"></el-option>
+                <el-option label="HTTPS" value="https"></el-option>
+                <el-option label="TCP" value="tcp"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item
+              v-if="item.protocol==='http'||item.protocol==='https'"
+              label="路径"
+              :rules="{type: 'string',message: '请填写路径',required: false,trigger: ['blur', 'change']}"
+              :prop="'health_checks.'+item_index+'.path'"
+            >
+              <el-input v-model="item.path" placeholder="example.com/index.html" size="small"></el-input>
+            </el-form-item>
+            <el-form-item
+              label="端口"
+              :rules="{type: 'number',required: false,validator: validateHealthCheckPort,trigger: ['blur', 'change']}"
+              :prop="'health_checks.'+item_index+'.port'"
+            >
+              <el-input v-model.number="item.port" placeholder="1-65535" size="small"></el-input>
+            </el-form-item>
+            <el-form-item
+              label="响应超时"
+              :rules=" {type: 'number',required: true,validator: validateHealthCheckTimeout,trigger: ['blur', 'change']}"
+              :prop="'health_checks.'+item_index+'.time_out'"
+            >
+              <el-input v-model.number="item.time_out" placeholder="2(2-60) 秒" size="small"></el-input>
+            </el-form-item>
+            <el-button
+              type="primary"
+              size="mini"
+              round
+              plain
+              :icon="showCheckStatusAdvanced[item_index]?'el-icon-arrow-up':'el-icon-arrow-down'"
+              @click="changeAdvancedShow(item_index)"
+            >高级设置</el-button>
+            <template v-if="showCheckStatusAdvanced[item_index]">
+              <el-form-item
+                label="探测间隔"
+                :rules="{type: 'number',required: false,validator: validateHealthCheckInterval,trigger: ['blur', 'change']}"
+                :prop="'health_checks.'+item_index+'.interval'"
+              >
+                <el-input v-model.number="item.interval" placeholder="2(2-60) 秒" size="small"></el-input>
+              </el-form-item>
+              <el-form-item
+                label="健康阈值"
+                :rules="{ type: 'number',required: false,validator: validateHealthCheckThreshold,trigger: ['blur', 'change']}"
+                :prop="'health_checks.'+item_index+'.healthy_threshold'"
+                class="label-icon"
+              >
+                <span slot="label">
+                  健康阈值
+                  <el-tooltip effect="dark" placement="top">
+                    <div slot="content">从不健康变为健康的连续探测次数</div>
+                    <i class="el-icon-question"></i>
+                  </el-tooltip>
+                </span>
+                <el-input v-model.number="item.healthy_threshold" placeholder="2(2-10) 次" size="small"></el-input>
+              </el-form-item>
+              <el-form-item
+                label="不健康阈值"
+                :rules=" {type: 'number',required: false,validator: validateHealthCheckThreshold,trigger: ['blur', 'change']}"
+                :prop="'health_checks.'+item_index+'.unhealthy_threshold'"
+                class="label-icon"
+              >
+                <span slot="label">
+                  不健康阈值
+                  <el-tooltip effect="dark" placement="top">
+                    <div slot="content">从健康变为不健康的连续探测次数</div>
+                    <i class="el-icon-question"></i>
+                  </el-tooltip>
+                </span>
+                <el-input v-model.number="item.unhealthy_threshold" placeholder="2(2-10) 次" size="small"></el-input>
+              </el-form-item>
+            </template>
+          </div>
+          <div class="add-check">
+            <el-button type="primary" icon="el-icon-circle-plus-outline" plain size="mini" @click="addCheck()" circle></el-button>
+          </div>
+        </el-form>
+      </template>
+    </div>
     <div class="save-btn">
-      <el-button type="primary" size="small" @click="savePmService">
-          保存
-       </el-button>
+      <el-button type="primary" @click="savePmService">保存</el-button>
     </div>
   </div>
 </template>
 <script>
-import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
-import BuildEnv from '@/components/projects/build/buildEnv2.vue'
-import EnvVariable from '@/components/projects/build/envVariable.vue'
+import {
+  listProductAPI,
+  serviceTemplateAPI,
+  getBuildConfigsAPI,
+  getBuildConfigDetailAPI,
+  getCodeSourceMaskedAPI,
+  createPmServiceAPI,
+  updatePmServiceAPI,
+  getHostListAPI,
+  getHostLabelListAPI
+} from '@api'
 import Editor from 'vue2-ace-bind'
-import ValidateSubmit from '@utils/validateAsync'
 import Resize from '@/components/common/resize.vue'
+
+import BuildEnv from '@/components/projects/build/buildEnv.vue'
+import EnvVariable from '@/components/projects/build/envVariable.vue'
+import AdvancedConfig from '@/components/projects/build/advancedConfig.vue'
+import OtherSteps from '@/components/projects/build/otherSteps.vue'
+
+import ValidateSubmit from '@utils/validateAsync'
+
 const validateServiceName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入服务名称'))
@@ -543,7 +297,7 @@ const validateServiceName = (rule, value, callback) => {
     }
   }
 }
-const pm_deploy_scripts = "#<------------------------------------------------------------------------------->\n## 构建脚本中的变量均可使用，其他内置可用变量如下\n## ENV_NAME               环境名称，用于区分不同的集成环境，系统内置集成环境：dev，qa\n## <AGENT_NAME>_PK        通过 SSH Agent 远程登录服务器使用的私钥 id_rsa，其中 AGENT_NAME 为 SSH AGENT 名称，使用时需要自己填写完整  \n## <AGENT_NAME>_USERNAME  通过 SSH Agent 远程登录到服务器的用户名称 \n## <AGENT_NAME>_IP        SSH Agent 目标服务器的 IP 地址\n## <ENV>_HOST_IPs         变量支持获取指定环境关联的所有主机 IP\n## ARTIFACT               部署的交付物包，通过该变量可获取交付物包 \n## 远程部署时，可以通过使用命令 `ssh -i $<AGENT_NAME>_PK $<AGENT_NAME>_USERNAME@$<AGENT_NAME>_IP '自定义脚本'` 进行部署操作\n#<------------------------------------------------------------------------------->\n#!/bin/bash\nset -e"
+const pm_deploy_scripts = '#!/bin/bash\nset -e'
 export default {
   props: {
     isEdit: Boolean,
@@ -551,13 +305,48 @@ export default {
     changeUpdateEnvDisabled: Function
   },
   data () {
+    this.deployVars = [
+      {
+        variable: '',
+        desc: '构建脚本中的变量均可使用，其他内置可用变量如下'
+      },
+      {
+        variable: 'ENV_NAME',
+        desc: '环境名称，用于区分不同的集成环境，系统内置集成环境：dev，qa'
+      },
+      {
+        variable: '<AGENT_NAME>_PK',
+        desc:
+          '通过 SSH Agent 远程登录服务器使用的私钥 id_rsa，其中 AGENT_NAME 为 SSH AGENT 名称，使用时需要自己填写完整'
+      },
+      {
+        variable: '<AGENT_NAME>_USERNAME',
+        desc: '通过 SSH Agent 远程登录到服务器的用户名称'
+      },
+      {
+        variable: '<AGENT_NAME>_IP',
+        desc: 'SSH Agent 目标服务器的 IP 地址'
+      },
+      {
+        variable: '<ENV>_HOST_IPs',
+        desc: '变量支持获取指定环境关联的所有主机 IP'
+      },
+      {
+        variable: 'ARTIFACT',
+        desc: '部署的交付物包，通过该变量可获取交付物包'
+      },
+      {
+        variable: '',
+        desc:
+          "远程部署时，可以通过使用命令 `ssh -i $<AGENT_NAME>_PK $<AGENT_NAME>_USERNAME@$<AGENT_NAME>_IP '自定义脚本'` 进行部署操作"
+      }
+    ]
     return {
+      showBuildInEnvVar: false,
       loading: false,
       anchorTab: '',
-      serviceList: [],
       builds: [],
       useSshKey: false,
-      dialogServiceListVisible: false,
       host: {
         name: '',
         label: '',
@@ -567,14 +356,16 @@ export default {
       },
       pmService: {
         service_name: '',
-        health_checks: [{
-          protocol: 'http',
-          path: '',
-          time_out: null,
-          interval: null,
-          healthy_threshold: null,
-          unhealthy_threshold: null
-        }],
+        health_checks: [
+          {
+            protocol: 'http',
+            path: '',
+            time_out: null,
+            interval: null,
+            healthy_threshold: null,
+            unhealthy_threshold: null
+          }
+        ],
         env_configs: []
       },
       buildConfig: {
@@ -599,21 +390,16 @@ export default {
         },
         scripts: '#!/bin/bash\nset -e',
         main_file: '',
-        post_build: {
-        },
+        post_build: {},
         pm_deploy_scripts: pm_deploy_scripts,
         sshs: null
       },
-      dockerEnabled: false,
-      binaryEnabled: false,
       checkStatusEnabled: false,
-      editBuildConfigName: false,
       showCheckStatusAdvanced: {},
       allCodeHosts: [],
       allHost: [],
       allHostLabels: [],
       envNameList: [],
-      codeInfo: {},
       createRules: {
         service_name: [
           {
@@ -630,75 +416,49 @@ export default {
             message: '请输入构建名称或者选择已有构建',
             trigger: 'change'
           }
-        ],
-        'pre_build.image_id': [
-          {
-            type: 'string',
-            required: true,
-            message: '请选择系统',
-            trigger: 'change'
-          }
-        ]
-      },
-      docker_rules: {
-        work_dir: [
-          {
-            type: 'string',
-            message: '请填写镜像构建目录',
-            required: true,
-            trigger: 'blur'
-          }
-        ],
-        docker_file: [
-          {
-            type: 'string',
-            message: '请填写 Dockerfile 路径',
-            required: true,
-            trigger: 'blur'
-          }
-        ]
-      },
-      file_archive_rules: {
-        file_location: [
-          {
-            type: 'string',
-            message: '请填写文件路径',
-            required: true,
-            trigger: 'blur'
-          }
         ]
       },
       addHostRules: {
-        name: [{
-          type: 'string',
-          required: true,
-          message: '请输入主机名称',
-          trigger: 'change'
-        }],
-        label: [{
-          type: 'string',
-          required: false,
-          message: '请输入主机标签',
-          trigger: 'change'
-        }],
-        user_name: [{
-          type: 'string',
-          required: true,
-          message: '请输入用户名'
-        }],
-        ip: [{
-          type: 'string',
-          required: true,
-          message: '请输入主机 IP'
-        }],
-        private_key: [{
-          type: 'string',
-          required: true,
-          message: '请输入私钥'
-        }]
+        name: [
+          {
+            type: 'string',
+            required: true,
+            message: '请输入主机名称',
+            trigger: 'change'
+          }
+        ],
+        label: [
+          {
+            type: 'string',
+            required: false,
+            message: '请输入主机标签',
+            trigger: 'change'
+          }
+        ],
+        user_name: [
+          {
+            type: 'string',
+            required: true,
+            message: '请输入用户名'
+          }
+        ],
+        ip: [
+          {
+            type: 'string',
+            required: true,
+            message: '请输入主机 IP'
+          }
+        ],
+        private_key: [
+          {
+            type: 'string',
+            required: true,
+            message: '请输入私钥'
+          }
+        ]
       },
       validObj: new ValidateSubmit(),
-      configDataLoading: true
+      showAdvancedConfig: false
     }
   },
   methods: {
@@ -707,19 +467,27 @@ export default {
         this.$router.push(`/v1/projects/detail/${projectName}/services`)
         return
       }
-      this.$confirm('确认跳出后就不再进入 onboarding 流程。', '确认跳出产品交付向导？', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.saveOnboardingStatus(this.projectName, 0).then((res) => {
-          this.$router.push(`/v1/projects/detail/${projectName}/services`)
-        }).catch(() => {
-          this.$message.info('跳转失败')
+      this.$confirm(
+        '确认跳出后就不再进入 onboarding 流程。',
+        '确认跳出产品交付向导？',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.saveOnboardingStatus(this.projectName, 0)
+            .then(res => {
+              this.$router.push(`/v1/projects/detail/${projectName}/services`)
+            })
+            .catch(() => {
+              this.$message.info('跳转失败')
+            })
         })
-      }).catch(() => {
-        this.$message.info('取消跳转')
-      })
+        .catch(() => {
+          this.$message.info('取消跳转')
+        })
     },
     onScroll (e) {
       const scrollItems = document.querySelectorAll('.scroll')
@@ -744,7 +512,7 @@ export default {
     },
     syncBuild (val) {
       if (val) {
-        const findItem = this.builds.find((element) => {
+        const findItem = this.builds.find(element => {
           return element.name === val
         })
         if (findItem) {
@@ -753,8 +521,7 @@ export default {
       }
     },
     syncBuildConfig (buildName, projectName) {
-      this.configDataLoading = true
-      getBuildConfigDetailAPI(buildName, projectName).then((res) => {
+      getBuildConfigDetailAPI(buildName, projectName).then(res => {
         res.pre_build.installs.forEach(element => {
           element.id = element.name + element.version
         })
@@ -771,48 +538,47 @@ export default {
         if (!this.buildConfig.timeout) {
           this.$set(this.buildConfig, time_out, 0)
         }
-        if (this.buildConfig.post_build.docker_build) {
-          this.dockerEnabled = true
-        } else {
-          this.dockerEnabled = false
-        }
-        if (this.buildConfig.post_build.file_archive) {
-          this.binaryEnabled = true
-        } else {
-          this.binaryEnabled = false
-        }
-        if (this.buildConfig.sshs && (this.buildConfig.sshs.length !== 0 || this.buildConfig.sshs === [])) {
+        this.$refs.otherStepsRef.initStepStatus(this.buildConfig)
+        if (
+          this.buildConfig.sshs &&
+          (this.buildConfig.sshs.length !== 0 || this.buildConfig.sshs === [])
+        ) {
           this.useSshKey = true
         } else {
           this.useSshKey = false
         }
-        this.configDataLoading = false
+
+        this.$refs.buildEnvRef.initOperatingSystem()
+
+        this.$refs.advancedConfigRef.initAdvancedConfig(this.buildConfig)
       })
     },
     initEnvConfig () {
-      this.pmService.env_configs = [{
-        env_name: 'dev',
-        host_ids: []
-      }, {
-        env_name: 'qa',
-        host_ids: []
-      }]
+      this.pmService.env_configs = [
+        {
+          env_name: 'dev',
+          host_ids: []
+        },
+        {
+          env_name: 'qa',
+          host_ids: []
+        }
+      ]
     },
     createHost () {
       this.dialogHostCreateFormVisible = true
     },
-    addHostOperation () {
-      this.$refs['add-host'].saveHost()
-        .then(() => {
-          getHostLabelListAPI().then((res) => {
-            this.allHostLabels = res
-          })
-          getHostListAPI().then((res) => {
-            this.dialogHostCreateFormVisible = false
-            this.allHost = res
-          })
-        })
-    },
+    // addHostOperation () {
+    //   this.$refs['add-host'].saveHost().then(() => {
+    //     getHostLabelListAPI().then(res => {
+    //       this.allHostLabels = res
+    //     })
+    //     getHostListAPI().then(res => {
+    //       this.dialogHostCreateFormVisible = false
+    //       this.allHost = res
+    //     })
+    //   })
+    // },
     changeAdvancedShow (index) {
       if (this.showCheckStatusAdvanced[index]) {
         this.$set(this.showCheckStatusAdvanced, index, false)
@@ -824,7 +590,7 @@ export default {
       this.pmService.health_checks.splice(index, 1)
     },
     addCheck (index) {
-      this.$refs.healthCheck.validate((valid) => {
+      this.$refs.healthCheckRef.validate(valid => {
         if (valid) {
           this.pmService.health_checks.push({
             protocol: 'http',
@@ -910,7 +676,7 @@ export default {
       }
     },
     addEnvConfig (index) {
-      this.$refs.envConfig.validate((valid) => {
+      this.$refs.envConfigRef.validate(valid => {
         if (valid) {
           this.pmService.env_configs.push({
             env_name: '',
@@ -932,42 +698,17 @@ export default {
     },
     checkEnvConfig (val) {
       if (val) {
-        if (this.pmService.env_configs.length === 0 || this.pmService.env_configs[0].host_ids.length === 0) {
-          this.$message({ type: 'error', message: '请先为部署环境关联主机，再配置探活' })
+        if (
+          this.pmService.env_configs.length === 0 ||
+          this.pmService.env_configs[0].host_ids.length === 0
+        ) {
+          this.$message({
+            type: 'error',
+            message: '请先为部署环境关联主机，再配置探活'
+          })
           this.check_status_enabled = false
         }
       }
-    },
-    addExtra (command) {
-      if (command === 'docker') {
-        this.dockerEnabled = true
-        if (!this.buildConfig.post_build) {
-          this.$set(this.buildConfig, 'post_build', {})
-        }
-        this.$set(this.buildConfig.post_build, 'docker_build', {
-          work_dir: '',
-          docker_file: '',
-          build_args: ''
-        })
-      }
-      if (command === 'binary') {
-        this.binaryEnabled = true
-        if (!this.buildConfig.post_build) {
-          this.$set(this.buildConfig, 'post_build', {})
-        }
-        this.$set(this.buildConfig.post_build, 'file_archive', {
-          file_location: ''
-        })
-      }
-      this.$nextTick(this.$utils.scrollToBottom)
-    },
-    removeDockerBuild () {
-      this.dockerEnabled = false
-      delete this.buildConfig.post_build.docker_build
-    },
-    removeBinaryArchive () {
-      this.binaryEnabled = false
-      delete this.buildConfig.post_build.file_archive
     },
     savePmService () {
       if (this.isEdit) {
@@ -981,22 +722,35 @@ export default {
       if (!res[1]) {
         return
       }
-      const targets = [{
-        product_name: this.projectName,
-        service_name: this.buildConfig.service_name,
-        service_module: this.buildConfig.service_name
-      }]
-      const buildConfigPayload = this.$utils.cloneObj({ targets, ...this.buildConfig })
+      const targets = [
+        {
+          product_name: this.projectName,
+          service_name: this.buildConfig.service_name,
+          service_module: this.buildConfig.service_name
+        }
+      ]
+      const buildConfigPayload = this.$utils.cloneObj({
+        targets,
+        ...this.buildConfig
+      })
+      buildConfigPayload.repos.forEach(repo => {
+        this.allCodeHosts.forEach(codehost => {
+          if (repo.codehost_id === codehost.id) {
+            repo.source = codehost.type
+          }
+        })
+      })
       buildConfigPayload.product_name = this.projectName
       // 处理主机标签
-      const pmServicePayload =
-      {
+      const pmServicePayload = {
         product_name: this.projectName,
         service_name: buildConfigPayload.service_name,
         visibility: 'private',
         type: 'pm',
         build_name: buildConfigPayload.name,
-        health_checks: this.check_status_enabled ? this.pmService.health_checks : [],
+        health_checks: this.check_status_enabled
+          ? this.pmService.health_checks
+          : [],
         env_configs: this.pmService.env_configs
       }
       const hostIds = this.allHost.map(item => {
@@ -1005,45 +759,50 @@ export default {
       // 处理主机标签
       pmServicePayload.env_configs.forEach(element => {
         element.labels = element.host_ids.filter(item => {
-          return (hostIds.indexOf(item) < 0)
+          return hostIds.indexOf(item) < 0
         })
         element.host_ids = element.host_ids.filter(item => {
-          return (hostIds.indexOf(item) >= 0)
+          return hostIds.indexOf(item) >= 0
         })
       })
       const combinePayload = {
         pm_service_tmpl: pmServicePayload,
         build: buildConfigPayload
       }
-      const refs = [this.$refs.addConfigForm, this.$refs.envConfig]
+      const refs = [this.$refs.zadigFormRef, this.$refs.envConfigRef]
       if (this.check_status_enabled) {
-        refs.push(this.$refs.healthCheck)
+        refs.push(this.$refs.healthCheckRef)
       }
-      Promise.all(refs.map(r => r.validate())).then(() => {
-        createPmServiceAPI(this.projectName, combinePayload).then(() => {
-          if (this.changeUpdateEnvDisabled) {
-            this.changeUpdateEnvDisabled()
-          }
-          this.$router.push({
-            query: { serviceName: this.buildConfig.service_name }
-          })
-          this.$emit('listenCreateEvent', 'success')
-          this.$message({
-            type: 'success',
-            message: '创建主机服务成功'
-          })
-        }, () => {
-          this.$emit('listenCreateEvent', 'failed')
-          return false
+      Promise.all(refs.map(r => r.validate()))
+        .then(() => {
+          createPmServiceAPI(this.projectName, combinePayload).then(
+            () => {
+              if (this.changeUpdateEnvDisabled) {
+                this.changeUpdateEnvDisabled()
+              }
+              this.$router.push({
+                query: { serviceName: this.buildConfig.service_name }
+              })
+              this.$emit('listenCreateEvent', 'success')
+              this.$message({
+                type: 'success',
+                message: '创建主机服务成功'
+              })
+            },
+            () => {
+              this.$emit('listenCreateEvent', 'failed')
+              return false
+            }
+          )
         })
-      }).catch(() => {
-        const errDiv = document.querySelector('.is-error')
-        errDiv.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
+        .catch(() => {
+          const errDiv = document.querySelector('.is-error')
+          errDiv.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          })
+          errDiv.querySelector('input').focus()
         })
-        errDiv.querySelector('input').focus()
-      })
     },
     async updatePmService () {
       const res = await this.validObj.validateAll()
@@ -1057,6 +816,13 @@ export default {
         this.buildConfig.sshs = []
       }
       const buildConfigPayload = this.$utils.cloneObj(this.buildConfig)
+      buildConfigPayload.repos.forEach(repo => {
+        this.allCodeHosts.forEach(codehost => {
+          if (repo.codehost_id === codehost.id) {
+            repo.source = codehost.type
+          }
+        })
+      })
       const pmServicePayload = this.$utils.cloneObj(this.pmService)
       buildConfigPayload.product_name = this.projectName
       pmServicePayload.build_name = buildConfigPayload.name
@@ -1070,41 +836,46 @@ export default {
       // 处理主机标签
       pmServicePayload.env_configs.forEach(element => {
         element.labels = element.host_ids.filter(item => {
-          return (hostIds.indexOf(item) < 0)
+          return hostIds.indexOf(item) < 0
         })
         element.host_ids = element.host_ids.filter(item => {
-          return (hostIds.indexOf(item) >= 0)
+          return hostIds.indexOf(item) >= 0
         })
       })
-      const refs = [this.$refs.addConfigForm]
+      const refs = [this.$refs.zadigFormRef]
       if (this.check_status_enabled) {
-        refs.push(this.$refs.healthCheck)
+        refs.push(this.$refs.healthCheckRef)
       }
-      Promise.all(refs.map(r => r.validate())).then(() => {
-        updatePmServiceAPI(this.projectName, combinePayload).then(() => {
-          if (this.changeUpdateEnvDisabled) {
-            this.changeUpdateEnvDisabled()
-          }
-          this.$router.push({
-            query: { serviceName: this.buildConfig.service_name }
-          })
-          this.$emit('listenCreateEvent', 'success')
-          this.$message({
-            type: 'success',
-            message: '修改主机服务成功'
-          })
-        }, () => {
-          this.$emit('listenCreateEvent', 'failed')
-          return false
+      Promise.all(refs.map(r => r.validate()))
+        .then(() => {
+          updatePmServiceAPI(this.projectName, combinePayload).then(
+            () => {
+              if (this.changeUpdateEnvDisabled) {
+                this.changeUpdateEnvDisabled()
+              }
+              this.$router.push({
+                query: { serviceName: this.buildConfig.service_name }
+              })
+              this.$emit('listenCreateEvent', 'success')
+              this.$message({
+                type: 'success',
+                message: '修改主机服务成功'
+              })
+            },
+            () => {
+              this.$emit('listenCreateEvent', 'failed')
+              return false
+            }
+          )
         })
-      }).catch(() => {
-        const errDiv = document.querySelector('.is-error')
-        errDiv.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
+        .catch(() => {
+          const errDiv = document.querySelector('.is-error')
+          errDiv.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          })
+          errDiv.querySelector('input').focus()
         })
-        errDiv.querySelector('input').focus()
-      })
     },
     addNewService (obj) {
       this.buildConfig = {
@@ -1135,28 +906,29 @@ export default {
         },
         scripts: '#!/bin/bash\nset -e',
         main_file: '',
-        post_build: {
-        },
+        post_build: {},
         pm_deploy_scripts: pm_deploy_scripts,
         sshs: []
       }
-      this.pmService.health_checks = [{
-        protocol: 'http',
-        path: '',
-        time_out: null,
-        interval: null,
-        healthy_threshold: null,
-        unhealthy_threshold: null
-      }]
+      this.pmService.health_checks = [
+        {
+          protocol: 'http',
+          path: '',
+          time_out: null,
+          interval: null,
+          healthy_threshold: null,
+          unhealthy_threshold: null
+        }
+      ]
       this.checkStatusEnabled = false
       this.pmService.env_configs.forEach(item => {
         item.host_ids = []
       })
-      this.removeBinaryArchive()
+      this.$refs.otherStepsRef.removeBinary()
     },
     loadPage () {
       const projectName = this.projectName
-      getBuildConfigsAPI(projectName).then((res) => {
+      getBuildConfigsAPI(projectName).then(res => {
         this.builds = res
       })
       if (!this.isEdit) {
@@ -1171,13 +943,13 @@ export default {
           })
         })
       }
-      getCodeSourceMaskedAPI().then((res) => {
+      getCodeSourceMaskedAPI().then(res => {
         this.allCodeHosts = res
       })
-      getHostLabelListAPI().then((res) => {
+      getHostLabelListAPI().then(res => {
         this.allHostLabels = res
       })
-      getHostListAPI().then((res) => {
+      getHostListAPI().then(res => {
         this.allHost = res
       })
     }
@@ -1187,47 +959,62 @@ export default {
       handler (val, old_val) {
         if (!this.isEdit && val) {
           this.buildConfig.name = val + '-build'
-          this.configDataLoading = true
           this.$nextTick(() => {
-            this.configDataLoading = false
+            this.$refs.buildEnvRef.initOperatingSystem()
+            this.$refs.advancedConfigRef.initAdvancedConfig(this.buildConfig)
           })
         }
       }
     },
     async serviceName (value) {
+      this.showAdvancedConfig = false
+      // edit
       if (value) {
         // TODO: the reason of page show error is uncertain
         // this.loading = true
         const pmServiceName = this.serviceName
         const projectName = this.projectName
         const env_configs = []
-        const envNameList = []
-        const resList = await listProductAPI(projectName).catch(error => console.log(error))
-        if (resList) {
-          resList.forEach(element => {
-            if (element.product_name === this.projectName) {
-              envNameList.push(
-                element.name
-              )
-            }
-          })
+        let envNameList = []
+
+        if (this.envNameList.length) {
+          envNameList = this.envNameList
+        } else {
+          const resList = await listProductAPI(projectName).catch(error =>
+            console.log(error)
+          )
+          if (resList) {
+            resList.forEach(element => {
+              envNameList.push(element.name)
+            })
+          }
+          this.envNameList = envNameList
         }
-        this.envNameList = envNameList
-        const res = await serviceTemplateAPI(pmServiceName, 'pm', projectName).catch(error => console.log(error))
+
+        const res = await serviceTemplateAPI(
+          pmServiceName,
+          'pm',
+          projectName
+        ).catch(error => console.log(error))
         if (res) {
           this.pmService = res
-          if (this.pmService.health_checks && this.pmService.health_checks.length > 0) {
+          if (
+            this.pmService.health_checks &&
+            this.pmService.health_checks.length > 0
+          ) {
             this.checkStatusEnabled = true
           } else if (!this.pmService.health_checks) {
             this.checkStatusEnabled = false
-            this.$set(this.pmService, 'health_checks', [{
-              protocol: 'http',
-              path: '',
-              time_out: null,
-              interval: null,
-              healthy_threshold: null,
-              unhealthy_threshold: null
-            }])
+            this.$set(this.pmService, 'health_checks', [
+              {
+                protocol: 'http',
+                path: '',
+                time_out: null,
+                interval: null,
+                healthy_threshold: null,
+                unhealthy_threshold: null
+              }
+            ])
           }
           if (res.env_configs && res.env_configs.length > 0) {
             this.pmService.env_configs.forEach(confItem => {
@@ -1237,7 +1024,12 @@ export default {
               }
             })
             envNameList.forEach(envItem => {
-              if (!(this.pmService.env_configs.filter(e => e.env_name === envItem).length > 0)) {
+              if (
+                !(
+                  this.pmService.env_configs.filter(e => e.env_name === envItem)
+                    .length > 0
+                )
+              ) {
                 env_configs.push({
                   env_name: envItem,
                   host_ids: []
@@ -1256,11 +1048,15 @@ export default {
           if (this.pmService.build_name) {
             this.syncBuildConfig(this.pmService.build_name, projectName)
           } else {
-            this.$set(this.buildConfig, 'service_name', this.pmService.service_name)
+            this.$set(
+              this.buildConfig,
+              'service_name',
+              this.pmService.service_name
+            )
           }
           // this.loading = false
         }
-      };
+      }
     }
   },
 
@@ -1269,7 +1065,9 @@ export default {
       return this.$route.params.project_name
     },
     isOnboarding () {
-      return (!!this.$route.path.includes(`/v1/projects/create/${this.projectName}/pm/config`))
+      return !!this.$route.path.includes(
+        `/v1/projects/create/${this.projectName}/pm/config`
+      )
     }
   },
   created () {
@@ -1279,57 +1077,127 @@ export default {
     Editor,
     Resize,
     BuildEnv,
-    EnvVariable
+    EnvVariable,
+    AdvancedConfig,
+    OtherSteps
   }
 }
 </script>
-<style lang="less">
-@import url("~@assets/css/common/scroll-bar.less");
+<style lang="less" scoped>
+@import url('~@assets/css/common/scroll-bar.less');
 
 .pm-service-config-container {
-  width: calc(~"100% - 250px");
-  padding: 45px 15px 30px 15px;
+  width: calc(~'100% - 250px');
+  padding: 0 15px 30px 15px;
   overflow-x: hidden;
   overflow-y: auto;
-  font-size: 13px;
-  background: #fff;
-
-  .divider {
-    width: 100%;
-    height: 1px;
-    margin: 5px 0 15px 0;
-    background-color: #dfe0e6;
-
-    &.item {
-      width: 30%;
-    }
-  }
 
   .anchor-container {
     position: absolute;
-    right: 10px;
+    right: 20px;
     margin-top: 50px;
   }
 
-  .section {
-    margin-bottom: 15px;
+  .deploy-config {
+    margin-top: 16px;
 
-    .config-form {
-      .el-form-item {
-        margin-bottom: 0;
+    .deploy-method {
+      line-height: 28px;
+
+      .radio-group {
+        margin-left: 10px;
+
+        .el-radio {
+          color: #8a8a8a;
+          font-weight: 300;
+          font-size: 14px;
+          line-height: 28px;
+
+          .el-input {
+            margin-left: 8px;
+          }
+        }
+      }
+    }
+
+    .inner-variable {
+      .item-title.inner-title {
+        margin-top: 6px;
+        color: @themeColor;
+        cursor: pointer;
+      }
+
+      .inner-variable-content {
+        margin-top: 8px;
+        color: @primaryColor;
+        font-weight: 300;
+        font-size: 14px;
+        line-height: 22px;
+
+        .var-content {
+          display: flex;
+
+          .var-variable {
+            flex: 0 0 200px;
+          }
+        }
+      }
+    }
+
+    .deploy-script {
+      // width: calc(~'100% - 120px');
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border: 1px solid @borderGray;
+
+      .ace_editor.ace-xcode {
+        &:hover {
+          .scrollBar();
+        }
       }
     }
   }
 
-  .el-form {
-    .item-title {
-      font-size: 15px;
+  .env-name {
+    color: @secondaryColor;
+  }
+
+  .check-config {
+    .primary-title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0;
+
+      .check-title {
+        flex: 0 0 120px;
+      }
     }
 
-    .variable {
-      color: #409eff;
-      font-size: 13px;
-      cursor: pointer;
+    .health-check-block {
+      margin-bottom: 8px;
+      padding: 0 0 10px 20px;
+      border: 1px solid @borderGray;
+      border-radius: 6px;
+
+      &:first-child {
+        margin-top: 14px;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .health-check-title {
+        text-align: right;
+
+        .delete-btn {
+          margin: 10px;
+        }
+      }
+    }
+
+    .add-check {
+      margin-top: 10px;
     }
   }
 
@@ -1339,65 +1207,9 @@ export default {
     }
   }
 
-  .extra-build-container {
-    width: calc(~"100% - 120px");
-  }
-
-  .healthcheck-item {
-    margin-bottom: 15px;
-  }
-
-  .health-check-card {
-    width: calc(~"100% - 120px");
-    margin-bottom: 4px;
-
-    .el-card__header {
-      padding: none;
-      border-bottom: none;
-
-      .delete-btn {
-        float: right;
-        margin: 10px;
-      }
-    }
-  }
-
-  .deploy-script {
-    width: calc(~"100% - 120px");
-    margin-top: 10px;
-    margin-bottom: 10px;
-
-    .ace_editor.ace-xcode {
-      &:hover {
-        .scrollBar();
-      }
-    }
-  }
-
-  .deploy-method {
-    line-height: 28px;
-  }
-
-  .add-check {
-    margin-top: 10px;
-  }
-
   .save-btn {
     position: absolute;
     bottom: 20px;
-  }
-
-  .radio-group {
-    margin-left: 10px;
-
-    .el-radio {
-      padding: 5px 0;
-      font-weight: 400;
-
-      .el-input {
-        margin-left: 8px;
-      }
-    }
   }
 }
 </style>

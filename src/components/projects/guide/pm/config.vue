@@ -118,6 +118,7 @@ export default {
   flex: 1;
   height: 100%;
   overflow: auto;
+  background-color: @globalBackgroundColor;
 
   .page-title-container {
     display: flex;

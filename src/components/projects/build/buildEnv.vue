@@ -87,12 +87,7 @@ export default {
         this.buildConfig.pre_build.build_os = imageSys.value
       }
     },
-    initData () {
-      // be used on Operating System
-      getImgListAPI().then(res => {
-        this.systems = res
-        this.initOperatingSystem()
-      })
+    initData (initImage = true) {
       // be used on Dependent Packages
       getAllAppsAPI().then(res => {
         const apps = this.$utils.sortVersion(res, 'name', 'asc')
@@ -103,6 +98,13 @@ export default {
             id: app.name + app.version
           }
         })
+      })
+      // be used on Operating System
+      getImgListAPI().then(res => {
+        this.systems = res
+        if (initImage) {
+          this.initOperatingSystem()
+        }
       })
     },
     initOperatingSystem () {
@@ -122,6 +124,9 @@ export default {
         }
       }
     }
+  },
+  created () {
+    this.initData()
   }
 }
 </script>

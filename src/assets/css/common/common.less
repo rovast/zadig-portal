@@ -145,9 +145,11 @@
     .el-input,
     .el-select {
       width: @itemWidth;
+      max-width: calc(~'100% - 10px');
 
       .el-input {
         width: 100%;
+        max-width: 100%;
       }
     }
   }

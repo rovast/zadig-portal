@@ -22,6 +22,9 @@
       </div>
       <div class="aside__content">
         <div v-if="selected === 'build'" class="service-aside--variables">
+          <div style="padding-left: 15px;">
+           <el-button @click="$router.back()" icon="el-icon-back" type="text">返回</el-button>
+          </div>
           <header class="service-aside-box__header">
             <div class="service-aside-box__title">构建</div>
           </header>

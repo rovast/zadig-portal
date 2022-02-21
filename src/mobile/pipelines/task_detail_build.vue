@@ -157,9 +157,9 @@
     <div id="buildv2-log"
          v-if="!$utils.isEmpty(buildv2)&&buildv2.enabled"
          class="mobile-log-container">
-      <xterm-log :id="buildv2.job_ctx.image"
+      <XtermLog :id="buildv2.job_ctx.image"
                  :fontSize="'10'"
-                 :logs="buildv2AnyLog"></xterm-log>
+                 :logs="buildv2AnyLog"/>
     </div>
   </div>
 </template>
@@ -186,13 +186,13 @@ export default {
   },
 
   computed: {
-    build_running () {
+    buildIsRunning () {
       return this.buildv2 && this.buildv2.status === 'running'
     },
-    build_done () {
+    buildIsDone () {
       return this.isSubTaskDone(this.buildv2)
     },
-    docker_build_running () {
+    docker_buildIsRunning () {
       return this.docker_build && this.docker_build.status === 'running'
     },
     no_docker_build () {
@@ -216,7 +216,7 @@ export default {
     }
   },
   watch: {
-    build_running (val, oldVal) {
+    buildIsRunning (val, oldVal) {
       if (!oldVal && val && this.buildLogStarted) {
         this.openBuildLog('buildv2')
       }
@@ -224,7 +224,7 @@ export default {
         this.killLog('buildv2')
       }
     },
-    docker_build_running (val, oldVal) {
+    docker_buildIsRunning (val, oldVal) {
       if (!oldVal && val && this.buildLogStarted) {
         this.openBuildLog('docker_build')
       }
@@ -294,11 +294,11 @@ export default {
     this.killLog('docker_build')
   },
   mounted () {
-    if (this.build_running) {
+    if (this.buildIsRunning) {
       this.openBuildLog('buildv2')
     } else {
-      if (this.build_done) {
-        if (this.docker_build_running) {
+      if (this.buildIsDone) {
+        if (this.docker_buildIsRunning) {
           this.getHistoryBuildLog().then(() => {
             this.openBuildLog('docker_build')
           })

@@ -94,9 +94,9 @@
              :body-style="{padding:'8px 20px',margin: '5px 0 0 0' }">
       <div class="log-container">
         <div class="log-content">
-          <xterm-log :id="deploy.service_name"
+          <XtermLog :id="deploy.service_name"
                      @mouseleave.native="leaveLog"
-                     :logs="artifactDeployLog"></xterm-log>
+                     :logs="artifactDeployLog"/>
         </div>
       </div>
     </el-card>

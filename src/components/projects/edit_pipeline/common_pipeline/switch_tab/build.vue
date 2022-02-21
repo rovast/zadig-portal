@@ -94,7 +94,7 @@
       </el-form>
     </div>
     <div class="section">
-      <repo-select ref="repoSelect" :validObj="validRepoObj" :config="buildConfig" showDivider addBtnMini shortDescription showFirstLine></repo-select>
+      <RepoSelect ref="repoSelect" :validObj="validRepoObj" :config="buildConfig" showDivider addBtnMini shortDescription showFirstLine/>
     </div>
     <div class="section">
       <el-form ref="cacheDir" :inline="true" :model="buildInfo" class="form-bottom-0" label-position="left" label-width="130px">

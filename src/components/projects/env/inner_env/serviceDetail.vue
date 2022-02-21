@@ -329,7 +329,7 @@
         <i class="el-icon-full-screen screen"
            @click="fullScreen(execModal.podName +'-debug')"></i>
       </span>
-      <xterm-debug :id="execModal.podName +'-debug'"
+      <XtermDebug :id="execModal.podName +'-debug'"
                    :productName="projectName"
                    :namespace="namespace"
                    :serviceName="serviceName"
@@ -337,7 +337,7 @@
                    :podName="execModal.podName"
                    :clusterId="clusterId"
                    :visible="execModal.visible"
-                   ref="debug"></xterm-debug>
+                   ref="debug"/>
     </el-dialog>
 
     <el-dialog :visible.sync="exportModal.visible"

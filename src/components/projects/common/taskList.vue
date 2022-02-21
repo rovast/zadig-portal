@@ -77,7 +77,7 @@
                       <div v-for="(build,buildIndex) in item.builds" :key="buildIndex" class="repo-detail-item">
                         <div class="common-column">{{ build.commit_message }}</div>
                         <div class="common-column color-theme">
-                          <RepoJump :build="build" :showCommit="false" showIcon></RepoJump>
+                          <RepoJump :build="build" :showCommit="false" showIcon/>
                         </div>
                         <div class="common-column"><i class="el-icon-user" style="margin-right: 4px;"></i>{{ build.author_name }}</div>
                       </div>

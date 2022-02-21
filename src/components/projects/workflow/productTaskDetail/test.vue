@@ -68,7 +68,7 @@
             </div>
           </el-col>
           <el-col :span="6">
-            <RepoJump :build="build"></RepoJump>
+            <RepoJump :build="build"/>
           </el-col>
         </el-row>
       </div>
@@ -81,9 +81,9 @@
       <div class="log-container">
         <div class="log-content">
 
-          <xterm-log :id="`${pipelineName}-${taskID}-${serviceName}`"
+          <XtermLog :id="`${pipelineName}-${taskID}-${serviceName}`"
                      @mouseleave.native="leaveLog"
-                     :logs="testAnyLog"></xterm-log>
+                     :logs="testAnyLog"/>
         </div>
       </div>
     </el-card>
@@ -104,10 +104,10 @@ export default {
     }
   },
   computed: {
-    test_running () {
+    taskIsRunning () {
       return this.testingv2 && this.testingv2.status === 'running'
     },
-    test_done () {
+    taskIsDone () {
       return this.isSubTaskDone(this.testingv2)
     },
     testName () {
@@ -118,7 +118,7 @@ export default {
     }
   },
   watch: {
-    test_running (val, oldVal) {
+    taskIsRunning (val, oldVal) {
       if (!oldVal && val && this.testLogStarted) {
         this.openTestLog()
       }
@@ -177,10 +177,10 @@ export default {
     }
   },
   mounted () {
-    if (this.test_running) {
+    if (this.taskIsRunning) {
       this.openTestLog()
     }
-    if (this.test_done) {
+    if (this.taskIsDone) {
       getWorkflowHistoryTestLogAPI(this.projectName, this.pipelineName, this.taskID, this.testName, this.serviceName).then(
         response => {
           this.testAnyLog = (response.split('\n')).map(element => {

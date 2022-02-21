@@ -203,10 +203,10 @@ export default {
             text-overflow: ellipsis;
 
             label {
-              color: #a3a3a3;
-              font-weight: bold;
+              padding-top: 10px;
+              padding-right: 20px;
+              color: #8a8a8a;
               font-size: 14px;
-              line-height: 18px;
             }
 
             .workflow-name {

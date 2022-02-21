@@ -259,7 +259,7 @@
 </template>
 
 <script>
-import BuildEnv from '@/components/projects/build/buildEnv.vue'
+import BuildEnv from '@/components/projects/build/buildEnv2.vue'
 import EnvVariable from '@/components/projects/build/envVariable.vue'
 import testTrigger from '@/components/common/testTrigger.vue'
 import bus from '@utils/eventBus'

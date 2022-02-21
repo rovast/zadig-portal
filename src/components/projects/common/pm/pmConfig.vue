@@ -527,7 +527,7 @@
 </template>
 <script>
 import { listProductAPI, serviceTemplateAPI, getBuildConfigsAPI, getBuildConfigDetailAPI, getCodeSourceMaskedAPI, createPmServiceAPI, updatePmServiceAPI, getHostListAPI, getHostLabelListAPI } from '@api'
-import BuildEnv from '@/components/projects/build/buildEnv.vue'
+import BuildEnv from '@/components/projects/build/buildEnv2.vue'
 import EnvVariable from '@/components/projects/build/envVariable.vue'
 import Editor from 'vue2-ace-bind'
 import ValidateSubmit from '@utils/validateAsync'

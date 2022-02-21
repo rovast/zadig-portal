@@ -416,7 +416,7 @@
 import { getBuildConfigDetailAPI, getDockerfileTemplatesAPI, getDockerfileAPI, getCodeSourceMaskedAPI, createBuildConfigAPI, updateBuildConfigAPI, getServiceTargetsAPI, getRegistryWhenBuildAPI, checkJenkinsConfigExistsAPI, queryJenkinsJob, queryJenkinsParams, getBuildConfigsAPI, saveBuildConfigTargetsAPI } from '@api'
 import qs from 'qs'
 import Editor from 'vue2-ace-bind'
-import BuildEnv from '@/components/projects/build/buildEnv.vue'
+import BuildEnv from '@/components/projects/build/buildEnv2.vue'
 import Resize from '@/components/common/resize.vue'
 import EnvVariable from '@/components/projects/build/envVariable.vue'
 import Codemirror from '@/components/projects/common/codemirror.vue'

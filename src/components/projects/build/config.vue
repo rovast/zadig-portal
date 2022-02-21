@@ -287,12 +287,6 @@ export default {
     }
   }
 
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
-
   .create-buildconfig {
     margin-top: 25px;
     margin-bottom: 15px;

@@ -466,6 +466,7 @@ export default {
 .setting-app-container {
   position: relative;
   flex: 1;
+  height: 100%;
   padding: 15px 30px;
   overflow: auto;
   font-size: 13px;
@@ -474,12 +475,6 @@ export default {
     .el-dialog__body {
       padding: 20px 5%;
     }
-  }
-
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
   }
 
   .section {
@@ -517,15 +512,6 @@ export default {
 
     .app-list {
       padding-bottom: 30px;
-
-      .ann-active {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        vertical-align: middle;
-        background: @themeColor;
-        border-radius: 50%;
-      }
     }
   }
 }

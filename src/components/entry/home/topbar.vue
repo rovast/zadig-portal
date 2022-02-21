@@ -64,7 +64,7 @@
                   </li>
                 </ul>
                 <ul v-if="role.includes('admin')" class="profile-list profile-list__with-icon user-settings">
-                  <router-link to="/v1/users/account/manage">
+                  <router-link to="/v1/system/users">
                     <li class="profile-list__item">
                       <i class="iconfont icongeren"></i>
                       <span class="profile-list__text">用户管理</span>

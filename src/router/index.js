@@ -231,7 +231,7 @@ const routes = [
             }
           },
           {
-            path: 'version/detail/:project_name/:id',
+            path: 'version/detail/:id',
             component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/version/detail.vue'),
             meta: {
               requiresAuth: true,

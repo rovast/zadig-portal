@@ -329,7 +329,7 @@
 
 <script type="text/javascript">
 import bus from '@utils/eventBus'
-import workflowArgs from '../container/workflow_args.vue'
+import workflowArgs from '../container/workflowArgs.vue'
 import {
   listProductAPI,
   getBranchInfoByIdAPI,

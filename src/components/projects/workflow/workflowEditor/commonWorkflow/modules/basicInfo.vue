@@ -62,7 +62,7 @@
     <el-dialog :visible.sync="dialogVisible" width="600px" :close-on-click-modal="false" :show-close="false">
       <div slot="title">{{title}}</div>
 
-      <BasicDialog :param="paramData" ref="paramRef" :value="dialogVisible"></BasicDialog>
+      <BasicDialog :param="paramData" ref="paramRef" :value="dialogVisible"/>
 
       <div slot="footer">
         <el-button @click="dialogVisible = false" size="small">取 消</el-button>
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import BasicDialog from './basic_dialog.vue'
+import BasicDialog from './basicDialog.vue'
 import { mapState } from 'vuex'
 import { cloneDeep } from 'lodash'
 import { templatesAPI } from '@api'

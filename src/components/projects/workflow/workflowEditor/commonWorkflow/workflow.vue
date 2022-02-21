@@ -1,8 +1,8 @@
 <template>
-  <div class="common-pipeline">
-    <SideMenu class="side" :validObj="validObj"></SideMenu>
+  <div class="common-workflow">
+    <SideMenu class="side" :validObj="validObj"/>
     <div class="middle">
-      <TabMenu class="top" :validObj="validObj"></TabMenu>
+      <TabMenu class="top" :validObj="validObj"/>
       <el-card class="content">
         <keep-alive>
           <component :is="isComp" :validObj="validObj" ref="commonStep" :isEdit="!!pipelineId"></component>
@@ -18,11 +18,11 @@
 </template>
 
 <script>
-import SideMenu from './side_menu.vue'
-import TabMenu from './tab_menu.vue'
-import BasicInfo from './switch_tab/basic_info.vue'
-import Build from './switch_tab/build.vue'
-import External from './switch_tab/external.vue'
+import SideMenu from './sidebar.vue'
+import TabMenu from './tab.vue'
+import BasicInfo from './modules/basicInfo.vue'
+import Build from './modules/build.vue'
+import External from './modules/external.vue'
 import ValidateSubmit from '@utils/validateAsync'
 
 import { mapGetters, mapState } from 'vuex'
@@ -158,7 +158,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.common-pipeline {
+.common-workflow {
   position: relative;
   display: flex;
   flex: 1 1 auto;

@@ -265,7 +265,7 @@ import testTrigger from '@/components/common/testTrigger.vue'
 import bus from '@utils/eventBus'
 import ValidateSubmit from '@utils/validateAsync'
 import Editor from 'vue2-ace-bind'
-import Notify from '@/components/projects/edit_pipeline/product_pipeline/switch_tab/notify.vue'
+import Notify from '@/components/projects/workflow/workflowEditor/productWorkflow/modules/notify.vue'
 import { getCodeSourceMaskedAPI, createTestAPI, updateTestAPI, singleTestAPI } from '@api'
 const validateTestName = (rule, value, callback) => {
   if (value === '') {

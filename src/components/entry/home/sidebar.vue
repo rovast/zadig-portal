@@ -4,8 +4,8 @@
       <i :class="showSidebar?'el-icon-arrow-right':'el-icon-arrow-left'"></i>
     </a>
 
-    <div class="sidebar-header">
-      <router-link class="sidebar-header back-to" v-if="showSidebar&&showBackPath" :to="backUrl">
+    <div v-if="showBackPath" class="sidebar-header">
+      <router-link class="sidebar-header back-to" v-if="showSidebar" :to="backUrl">
         <div class="sidebar-header__icon">
           <i class="icon el-icon-back"></i>
         </div>
@@ -14,15 +14,15 @@
           <div class="logo-title logo-title_subtitle">返回上一层</div>
         </div>
       </router-link>
-      <router-link class="sidebar-header" v-if="!showSidebar&&showBackPath" :to="backUrl">
+      <router-link class="sidebar-header" v-show="!showSidebar" :to="backUrl">
         <div class="sidebar-header__icon">
           <i class="icon el-icon-back"></i>
         </div>
       </router-link>
     </div>
-    <div class="nav grow-all main-menu cf-sidebar-scroll">
-      <div v-for="(item,index) in navList" :key="index" class="category-wrapper" :class="{'divider':!showSidebar}">
-        <h4 v-show="showSidebar" class="category-name">
+    <div class="nav grow-all main-menu">
+      <div v-for="(item,index) in navList" :key="index" class="category-wrapper">
+        <h4 class="category-name" :class="{ opened: !showSidebar }">
           {{item.category_name}}
           <span v-if="item.new_feature" class="new-feature">New</span>
         </h4>
@@ -44,7 +44,7 @@
               <div class="nav-item-icon">
                 <i :class="nav.icon"></i>
               </div>
-              <div class="nav-item-label">{{nav.name}}</div>
+              <div v-show="showSidebar" class="nav-item-label">{{nav.name}}</div>
             </router-link>
             <ul v-if="nav.hasSubItem && nav.isOpened" class="sub-menu" style="overflow: hidden;">
               <li class="sub-menu-item-group">
@@ -278,13 +278,12 @@ export default {
   flex-direction: column;
   align-items: left;
   justify-content: space-between;
-  width: 196px;
+  width: 176px;
   height: 100%;
   margin-right: 0;
-  font-size: 12px;
+  padding: 0 12px;
   background-color: rgba(118, 122, 200, 0.1);
-  border-right: 1px solid #e6e9f0;
-  transition: width 350ms, margin-width 230ms;
+  transition: width 200ms, margin-width 180ms;
 
   .sidebar-size-toggler {
     position: absolute;
@@ -313,11 +312,13 @@ export default {
       display: inline-block;
       width: 100%;
       margin-top: 0;
-      margin-bottom: 10px;
+      margin-bottom: 18px;
       padding-left: 20px;
+      overflow: hidden;
       color: #8a8a8a;
-      font-weight: 400;
+      font-weight: 300;
       font-size: 16px;
+      white-space: nowrap;
       text-align: left;
       text-transform: uppercase;
 
@@ -336,6 +337,10 @@ export default {
         border: 1px solid #e02711;
         border-radius: 4px;
       }
+
+      &.opened {
+        visibility: hidden;
+      }
     }
   }
 
@@ -347,27 +352,25 @@ export default {
     overflow: auto;
     overflow-x: hidden;
     list-style: none;
-    -ms-flex-preferred-size: 0;
 
     &.grow-all {
       flex-grow: 1;
-      -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
     }
 
     &.grow-nothing {
       flex-grow: 0;
-      -webkit-box-flex: 0;
-      -ms-flex-positive: 0;
+      padding: 6px 0;
+    }
+
+    &.main-menu {
+      margin-top: 19px;
     }
   }
 
   .category-wrapper {
     position: relative;
-    -ms-flex: none !important;
     flex: none !important;
-    padding: 20px 0 10px;
-    -webkit-box-flex: 0 !important;
+    margin-bottom: 82px;
 
     &:last-child {
       padding-bottom: 30px;
@@ -442,17 +445,6 @@ export default {
   &.small-sidebar {
     width: 60px;
 
-    .category-wrapper {
-      max-width: 60px;
-      padding: 25px 0 30px;
-    }
-
-    .nav {
-      &.main-menu {
-        margin-top: 25px;
-      }
-    }
-
     .sub-menu {
       .sub-menu-item {
         padding: 0;
@@ -484,9 +476,9 @@ export default {
 
     .logo-title {
       color: #434548;
-      font-weight: bold;
+      font-weight: 300;
       font-size: 16px;
-      line-height: 16px;
+      line-height: 22px;
       text-transform: uppercase;
     }
 
@@ -508,7 +500,6 @@ export default {
     justify-content: center;
     width: 100%;
     margin-top: 10px;
-    margin-bottom: 10px;
 
     &.back-to {
       justify-content: flex-start;
@@ -541,8 +532,6 @@ export default {
     flex-grow: 0;
     align-items: center;
     justify-content: center;
-    width: 62px;
-    max-width: 62px;
     margin: 0;
     padding: 0;
     color: @themeColor;
@@ -558,20 +547,15 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    width: 100%;
-    min-width: 246px;
-    padding: 12px 0 12px 0;
+    padding: 12px 0 12px 17px;
     overflow: hidden;
-    // border-left: 12px solid rgba(118, 122, 200, 0.1);
-    // border-right:12px solid rgba(118, 122, 200, 0.1);
     outline: none;
 
     .nav-item-label {
       display: flex;
       align-items: center;
       min-width: 130px;
-      max-width: 186px;
-      padding-right: 37px;
+      margin-left: 17px;
       padding-left: 0;
       color: #4a4a4a;
       font-weight: 400;
@@ -579,7 +563,6 @@ export default {
       line-height: 22px;
       white-space: nowrap;
       text-align: left;
-      transition: color 200ms ease-in;
 
       .arrow {
         position: static;
@@ -592,8 +575,8 @@ export default {
 
   .nav-item.active,
   .nav-item:hover {
-    padding-left: 0;
     background-color: rgba(160, 160, 255, 0.15);
+    border-radius: 6px;
 
     .nav-item-label {
       color: @themeColor;

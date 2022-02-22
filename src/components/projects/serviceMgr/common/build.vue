@@ -27,7 +27,6 @@
       <template v-slot:buildName>
         <el-form-item label="构建名称" prop="name">
           <el-select
-            style="width: 100%;"
             v-model="buildConfig.name"
             placeholder="构建名称"
             :disabled="isEdit"

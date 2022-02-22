@@ -173,7 +173,7 @@ export default {
             {
               name: '测试中心',
               url: 'tests',
-              icon: 'iconfont icontest'
+              icon: 'iconfont iconvery-testing'
             },
             {
               name: '交付中心',
@@ -187,12 +187,12 @@ export default {
           items: [
             {
               name: '数据概览',
-              icon: 'iconfont iconxiaonengjiancha',
+              icon: 'iconfont iconvery-dataov',
               url: 'statistics'
             },
             {
               name: '效能洞察',
-              icon: 'iconfont iconshujudongcha',
+              icon: 'iconfont iconvery-datain',
               url: 'insight'
             }
           ]
@@ -204,7 +204,7 @@ export default {
           items: [
             {
               name: '系统设置',
-              icon: 'iconfont iconicon_jichengguanli',
+              icon: 'iconfont iconvery-setting',
               url: 'system'
             }
           ]

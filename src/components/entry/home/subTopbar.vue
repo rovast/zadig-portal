@@ -37,7 +37,7 @@
           trigger="click"
         >
           <button type="button" class="display-btn el-button">
-            <i class="el-icon-s-operation el-icon--left"></i>
+            <i class="iconfont iconvery-options el-icon--left"></i>
             &nbsp;&nbsp;配置&nbsp;&nbsp;
             <i class="el-icon-caret-bottom el-icon--right"></i>
           </button>
@@ -75,27 +75,27 @@ export default {
         },
         {
           name: '环境',
-          icon: 'iconfont iconrongqi',
+          icon: 'iconfont iconvery-environ',
           url: `/v1/projects/detail/${this.projectName}/envs`
         },
         {
           name: '服务',
-          icon: 'iconfont iconrongqifuwu',
+          icon: 'iconfont iconvery-service',
           url: `/v1/projects/detail/${this.projectName}/services`
         },
         {
           name: '构建',
-          icon: 'iconfont icongoujianzhong',
+          icon: 'iconfont iconvery-build',
           url: `/v1/projects/detail/${this.projectName}/builds`
         },
         {
           name: '测试',
-          icon: 'iconfont icontest',
+          icon: 'iconfont iconvery-testing',
           url: `/v1/projects/detail/${this.projectName}/test`
         },
         {
           name: '版本管理',
-          icon: 'iconfont iconbanben',
+          icon: 'iconfont iconvery-versionmana',
           url: `/v1/projects/detail/${this.projectName}/version`
         }
       ]

@@ -10,7 +10,7 @@
           <i class="el-icon-plus"></i> 新建项目
         </el-button>
         <el-button @click="$router.push(`/v1/template`)" plain>
-          <i class="iconfont iconicon-repertory"></i> 模板库
+          <i class="iconfont iconvery-template"></i> 模板库
         </el-button>
       </div>
     </div>

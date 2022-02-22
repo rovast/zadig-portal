@@ -2,8 +2,9 @@
   <div class="topbar-container">
     <div class="topbar-content">
       <div class="topbar-container-start">
-        <div class="logo-container">
-          <img class="logo" src="@assets/icons/logo/small-logo.png" />
+        <div class="logo-container" :class="{'opened':showSidebar}">
+          <img v-if="!showSidebar" class="logo small" src="@assets/icons/logo/small-logo.png" />
+          <img v-if="showSidebar" class="logo default" src="@assets/icons/logo/logo.svg" />
         </div>
         <div v-if="showProjectSwitcher" class="project-switcher-container">
           <el-popover placement="bottom" width="300" trigger="hover" popper-class="project-list-popover" @show="searchProject=''">
@@ -125,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['projectList']),
+    ...mapGetters(['projectList', 'showSidebar']),
     ...mapState({
       role: state => state.login.role,
       userInfo: state => state.login.userinfo
@@ -321,7 +322,7 @@ export default {
   left: 66px;
   z-index: 1010;
   height: 40px;
-  padding: 0 24px;
+  padding: 0 30px;
   font-size: 14px;
   background-color: #fff;
   border-bottom: 1px solid #ebedef;
@@ -353,12 +354,18 @@ export default {
       .logo-container {
         display: flex;
         align-items: center;
-        margin-right: 10px;
 
         .logo {
+          margin-right: 10px;
+        }
+
+        .small {
           width: 18.5px;
           height: 21px;
-          margin-right: 10px;
+        }
+
+        &.opened {
+          width: 170px;
         }
       }
 

@@ -370,7 +370,7 @@ export default {
   .category-wrapper {
     position: relative;
     flex: none !important;
-    margin-bottom: 82px;
+    margin-bottom: 50px;
 
     &:last-child {
       margin-bottom: 0;
@@ -503,14 +503,13 @@ export default {
 
     &.back-to {
       justify-content: flex-start;
-      margin-left: 15px;
 
       .sidebar-header__info {
         padding: 0;
       }
 
       .sidebar-header__icon {
-        width: 35px;
+        width: 22px;
       }
     }
 

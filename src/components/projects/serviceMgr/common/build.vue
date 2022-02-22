@@ -116,8 +116,12 @@ export default {
         })
     },
     async loadBuild (buildConfigName) {
-      this.buildConfig = {}
-      this.jenkinsBuild = {}
+      this.buildConfig = {
+        name: this.defaultBuildName
+      }
+      this.jenkinsBuild = {
+        name: this.defaultBuildName
+      }
 
       this.configDataLoading = true
       await getServiceTargetsAPI(this.projectName).then(response => {
@@ -133,10 +137,6 @@ export default {
         await this.initBuildInfo()
       }
 
-      if (!this.buildConfig.name && !this.jenkinsBuild.name) {
-        this.$set(this.buildConfig, 'name', this.defaultBuildName)
-        this.$set(this.jenkinsBuild, 'name', this.defaultBuildName)
-      }
       this.configDataLoading = false
     },
     async getCurrentBuild (buildConfigName) {

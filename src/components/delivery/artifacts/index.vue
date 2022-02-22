@@ -118,7 +118,7 @@
       ></el-pagination>
     </div>
     <div v-if="artifacts.length === 0" class="no-artifacts">
-      <img src="@assets/icons/illustration/version_manage.svg" alt />
+      <img src="@assets/icons/illustration/deliveryCenter.svg" alt />
       <p>暂无交付物，请选择需要筛选的交付物</p>
     </div>
   </div>

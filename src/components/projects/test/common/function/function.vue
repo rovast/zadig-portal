@@ -31,7 +31,7 @@
       </ul>
 
       <div v-else class="no-product">
-        <img src="@assets/icons/illustration/pipeline.svg" alt />
+        <img src="@assets/icons/illustration/test.svg" alt />
         <p>暂无可展示的测试用例，请手动新建测试</p>
       </div>
     </div>

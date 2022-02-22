@@ -43,7 +43,7 @@
             :data-component="itemComponent"
           />
           <div v-if="availableWorkflows.length === 0" class="no-product">
-            <img src="@assets/icons/illustration/pipeline.svg" alt />
+            <img src="@assets/icons/illustration/workflow.svg" alt />
             <p>暂无可展示的工作流，请手动添加工作流</p>
           </div>
         </div>

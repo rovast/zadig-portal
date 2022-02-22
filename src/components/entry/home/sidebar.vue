@@ -373,7 +373,7 @@ export default {
     margin-bottom: 82px;
 
     &:last-child {
-      padding-bottom: 30px;
+      margin-bottom: 0;
     }
 
     &.divider {

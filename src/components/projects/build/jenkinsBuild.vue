@@ -85,7 +85,7 @@ export default {
   },
   computed: {
     jenkinsBuild () {
-      return this.jenkinsBuildData || this.initJenkinsBuild
+      return Object.assign(this.initJenkinsBuild, this.jenkinsBuildData)
     }
   },
   methods: {

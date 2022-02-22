@@ -77,6 +77,8 @@ import ValidateSubmit from '@utils/validateAsync'
 
 import { getCodeSourceMaskedAPI } from '@api'
 
+import { cloneDeep } from 'lodash'
+
 const validateBuildConfigName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入构建名称'))
@@ -87,6 +89,34 @@ const validateBuildConfigName = (rule, value, callback) => {
       callback()
     }
   }
+}
+
+const initBuildConfig = {
+  name: '',
+  targets: [],
+  desc: '',
+  repos: [],
+  timeout: 60,
+  cache_enable: false,
+  cache_dir_type: '',
+  cache_user_dir: '',
+  pre_build: {
+    res_req: 'low', // high 、medium、low、min、define
+    res_req_spec: {
+      cpu_limit: 1000,
+      memory_limit: 512
+    },
+    build_os: 'xenial',
+    image_id: '',
+    image_from: '',
+    installs: [],
+    envs: [],
+    enable_proxy: false,
+    enable_gocov: false,
+    parameters: []
+  },
+  scripts: '#!/bin/bash\nset -e',
+  post_build: {}
 }
 export default {
   props: {
@@ -121,33 +151,7 @@ export default {
       showAdvancedConfig: false,
       allCodeHosts: [],
       configDataLoading: true,
-      initBuildConfig: {
-        name: '',
-        targets: [],
-        desc: '',
-        repos: [],
-        timeout: 60,
-        cache_enable: false,
-        cache_dir_type: '',
-        cache_user_dir: '',
-        pre_build: {
-          res_req: 'low', // high 、medium、low、min、define
-          res_req_spec: {
-            cpu_limit: 1000,
-            memory_limit: 512
-          },
-          build_os: 'xenial',
-          image_id: '',
-          image_from: '',
-          installs: [],
-          envs: [],
-          enable_proxy: false,
-          enable_gocov: false,
-          parameters: []
-        },
-        scripts: '#!/bin/bash\nset -e',
-        post_build: {}
-      }
+      initBuildConfig: null
     }
   },
   computed: {
@@ -155,7 +159,8 @@ export default {
       return this.$route.params.project_name
     },
     buildConfig () {
-      return this.buildConfigData || this.initBuildConfig
+      this.initBuildConfig = cloneDeep(initBuildConfig)
+      return Object.assign(this.initBuildConfig, this.buildConfigData)
     }
   },
   methods: {
@@ -197,10 +202,6 @@ export default {
       if (!buildConfig) {
         buildConfig = this.buildConfig
       }
-      // be used on Repo
-      getCodeSourceMaskedAPI().then(response => {
-        this.allCodeHosts = response
-      })
 
       this.$refs.otherStepsRef.initStepStatus(buildConfig)
 
@@ -208,6 +209,12 @@ export default {
 
       // Automatic selection of local clusters
       this.$refs.advancedConfigRef.initAdvancedConfig(buildConfig)
+    },
+    initGlobalData () {
+      // be used on Repo
+      getCodeSourceMaskedAPI().then(response => {
+        this.allCodeHosts = response
+      })
     }
   },
   components: {
@@ -217,6 +224,9 @@ export default {
     EnvVariable,
     AdvancedConfig,
     OtherSteps
+  },
+  created () {
+    this.initGlobalData()
   }
 }
 </script>

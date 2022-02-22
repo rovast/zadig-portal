@@ -35,7 +35,6 @@
             size="small"
             class="save-btn"
             @click="saveBuild"
-            plain
             >保存构建
           </el-button>
         </div>
@@ -180,10 +179,10 @@ export default {
 
   .right {
     position: relative;
-    width: calc(~'100% - 340px');
+    width: calc(~'100% - 260px');
     height: 100%;
+    padding: 0 10px;
     overflow: auto;
-    background-color: #fff;
 
     .right-build {
       max-height: calc(~'100% - 50px');
@@ -201,8 +200,6 @@ export default {
         .save-btn {
           margin-top: 10px;
           margin-left: 20px;
-          color: #fff;
-          background-color: #409eff;
         }
       }
     }

@@ -31,9 +31,9 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <div class="common-parcel-block" v-show="docker_enabled || binary_enabled || post_script_enabled">
+    <div class="common-parcel-block" v-if="docker_enabled || binary_enabled || post_script_enabled">
       <el-form
-        v-if="docker_enabled"
+        v-if="docker_enabled && buildConfig.post_build.docker_build"
         :model="buildConfig.post_build.docker_build"
         :rules="docker_rules"
         ref="dockerBuildRef"
@@ -100,7 +100,7 @@
         </div>
       </el-form>
       <el-form
-        v-if="binary_enabled"
+        v-if="binary_enabled && buildConfig.post_build.file_archive"
         :model="buildConfig.post_build.file_archive"
         :rules="file_archive_rules"
         ref="fileArchiveRef"
@@ -121,7 +121,7 @@
           </el-form-item>
         </div>
       </el-form>
-      <el-form v-if="post_script_enabled" :model="buildConfig.post_build" ref="script" label-width="220px" class="stcov label-at-left">
+      <el-form v-if="post_script_enabled && buildConfig.post_build.scripts" :model="buildConfig.post_build" ref="script" label-width="220px" class="stcov label-at-left">
         <div class="dashed-container">
           <div class="primary-title">
             Shell 脚本执行
@@ -219,9 +219,6 @@ export default {
     addExtra (command) {
       if (command === 'docker') {
         this.docker_enabled = true
-        if (!this.buildConfig.post_build) {
-          this.$set(this.buildConfig, 'post_build', {})
-        }
         this.$set(this.buildConfig.post_build, 'docker_build', {
           work_dir: '',
           docker_file: '',
@@ -231,18 +228,12 @@ export default {
       }
       if (command === 'binary') {
         this.binary_enabled = true
-        if (!this.buildConfig.post_build) {
-          this.$set(this.buildConfig, 'post_build', {})
-        }
         this.$set(this.buildConfig.post_build, 'file_archive', {
           file_location: ''
         })
       }
       if (command === 'script') {
         this.post_script_enabled = true
-        if (!this.buildConfig.post_build) {
-          this.$set(this.buildConfig, 'post_build', {})
-        }
         this.$set(this.buildConfig.post_build, 'scripts', '#!/bin/bash\nset -e')
       }
       this.$nextTick(this.$utils.scrollToBottom)

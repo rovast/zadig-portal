@@ -29,10 +29,13 @@
             <div class="service-aside-box__title">构建</div>
           </header>
           <div class="service-aside-box__content">
-            <Build ref="buildRef" @getServiceModules="getServiceModules" :detectedServices="detectedServices" />
-          </div>
-          <div class="btn-container">
-            <el-button type="primary" size="small" @click="saveBuildConfig" :disabled="projectName !== projectNameOfService">保存构建</el-button>
+            <Build ref="buildRef"
+                   :name='$route.query.service_name'
+                   :buildName='$route.query.build_name'
+                   :isEdit='!!$route.query.build_name'
+                   :followUpFn='followUpFn'
+                   :saveDisabled="projectName !== projectNameOfService"
+                   mini />
           </div>
         </div>
         <div v-if="selected === 'var'" class="service-aside--variables">
@@ -259,6 +262,9 @@ import Help from './container/help.vue'
 import Policy from './container/policy.vue'
 import IntegrationCode from '../common/integrationCode.vue'
 import IntegrationRegistry from '@/components/projects/common/integrationRegistry.vue'
+
+import qs from 'qs'
+
 const validateKey = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {
     callback(new Error('请输入 Key'))
@@ -323,8 +329,17 @@ export default {
     saveBuildConfig () {
       this.$refs.buildRef.handleBuildConfig()
     },
-    getServiceModules () {
+    followUpFn () {
       this.$emit('getServiceModules')
+      this.$router.replace({
+        query: Object.assign(
+          {},
+          qs.parse(window.location.search, { ignoreQueryPrefix: true }),
+          {
+            rightbar: 'var'
+          }
+        )
+      })
     },
     getProject () {
       const projectName = this.projectName
@@ -735,11 +750,6 @@ export default {
           -webkit-box-orient: vertical;
           -webkit-box-direction: normal;
         }
-      }
-
-      .btn-container {
-        padding: 0 10px 10px 10px;
-        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
       }
     }
 

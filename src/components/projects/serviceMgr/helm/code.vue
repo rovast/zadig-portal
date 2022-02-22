@@ -54,8 +54,8 @@
         <div class="code" v-if="page.expandFileList.length">
           <component
             v-if="currentCode.type==='components'"
-            :changeExpandFileList="changeExpandFileList"
-            :currentCode="currentCode"
+            :mini="false"
+            :followUpFn="followUpFn"
             v-bind="currentCode"
             v-bind:is="currentCode.componentsName"
           ></component>
@@ -96,7 +96,7 @@ import ServiceAside from './components/helm/aside'
 import { cloneDeep } from 'lodash'
 import { Multipane, MultipaneResizer } from 'vue-multipane'
 import UpdateHelmEnv from './components/common/updateHelmEnv'
-import Build from './components/common/build'
+import Build from '../common/build'
 import { deleteServiceTemplateAPI } from '@api'
 import { mapState, mapGetters } from 'vuex'
 
@@ -162,6 +162,15 @@ export default {
     }
   },
   methods: {
+    followUpFn () {
+      this.changeExpandFileList('del', this.currentCode)
+      setTimeout(() => {
+        this.$store.dispatch('queryServiceModule', {
+          projectName: this.projectName,
+          serviceName: this.$route.query.service_name
+        })
+      }, 3000)
+    },
     closeSelectRepo () {
       this.$store.commit('SERVICE_DIALOG_VISIBLE', false)
       this.$refs.repo.closeSelectRepo()

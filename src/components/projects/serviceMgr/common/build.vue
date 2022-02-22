@@ -1,8 +1,8 @@
 <template>
-  <div class="build-config-container">
+  <div class="build-config-container" :class="{'mini-width': !mini}">
     <div v-if="jenkinsEnabled" class="build-source" :class="{'small-padding': mini}">
       <span class="build-source-title">构建方式</span>
-      <el-select v-model="source" size="small" value-key="key" :disabled="isEdit" filterable>
+      <el-select v-model="source" size="small" value-key="key" :disabled="isEdit" @change="loadBuild(buildName)" filterable>
         <el-option v-for="(item,index) in originOptions" :key="index" :label="item.label" :value="item.value"></el-option>
       </el-select>
     </div>
@@ -42,6 +42,9 @@
         </el-form-item>
       </template>
     </ZadigBuild>
+    <footer class="create-footer">
+      <el-button type="primary" size="small" @click="handleBuildConfig" :disabled="saveDisabled">保存构建</el-button>
+    </footer>
   </div>
 </template>
 <script>
@@ -56,9 +59,18 @@ import {
   getBuildConfigsAPI
 } from '@api'
 
-import qs from 'qs'
-
 export default {
+  props: {
+    name: String,
+    buildName: String,
+    isEdit: Boolean,
+    mini: Boolean,
+    followUpFn: Function,
+    saveDisabled: {
+      default: false,
+      type: Boolean
+    }
+  },
   data () {
     return {
       source: 'zadig',
@@ -77,8 +89,7 @@ export default {
       serviceTargets: [],
       configDataLoading: true,
       buildConfig: {},
-      buildInfos: [],
-      mini: true
+      buildInfos: []
     }
   },
   methods: {
@@ -95,16 +106,7 @@ export default {
           payload.source = this.source
           payload.product_name = this.projectName
           reqAPI(payload).then(() => {
-            this.$emit('getServiceModules')
-            this.$router.replace({
-              query: Object.assign(
-                {},
-                qs.parse(window.location.search, { ignoreQueryPrefix: true }),
-                {
-                  rightbar: 'var'
-                }
-              )
-            })
+            this.followUpFn()
             this.$message({
               type: 'success',
               message: this.isEdit ? '保存构建成功' : '新建构建成功'
@@ -164,22 +166,25 @@ export default {
           ...this.serviceTargets,
           ...this.buildConfig.targets
         ]
-        if (this.buildAdd) {
+        if (!this.isEdit) {
           const currentServices = [
             ...this.buildConfig.targets,
             ...this.serviceTargets.filter(element => {
-              return element.service_module === this.buildServiceName
+              return element.service_module === this.name
             })
           ]
-          this.$set(this.buildConfig, 'targets', currentServices)
-          this.$set(this.jenkinsBuild, 'targets', currentServices)
+          if (this.source === 'zadig') {
+            this.buildConfig.targets = currentServices
+          } else if (this.source === 'jenkins') {
+            this.jenkinsBuild.targets = currentServices
+          }
         }
       }
       this.$refs.zadigBuildForm.initData(this.buildConfig)
     },
     async initBuildInfo () {
       const currentService = this.serviceTargets.filter(element => {
-        return element.service_module === this.buildServiceName
+        return element.service_module === this.name
       })
       this.$set(this.buildConfig, 'targets', currentService)
       this.$set(this.jenkinsBuild, 'targets', currentService)
@@ -199,20 +204,8 @@ export default {
     }
   },
   computed: {
-    buildConfigName () {
-      return this.$route.query.build_name
-    },
-    buildAdd () {
-      return !!this.$route.query.build_add
-    },
-    buildServiceName () {
-      return this.$route.query.service_name
-    },
     projectName () {
       return this.$route.params.project_name
-    },
-    isEdit () {
-      return !!this.$route.query.build_name
     },
     buildNames () {
       return this.buildInfos.map(build => build.name)
@@ -231,12 +224,19 @@ export default {
       }
     },
     defaultBuildName () {
-      return this.projectName + '-build-' + this.buildServiceName
+      return this.projectName + '-build-' + this.name
+    }
+  },
+  watch: {
+    name: {
+      handler () {
+        this.loadBuild(this.buildName)
+      }
     }
   },
   created () {
     this.initGlobalData().then(() => {
-      this.loadBuild(this.buildConfigName)
+      this.loadBuild(this.buildName)
     })
   },
   components: {
@@ -255,11 +255,29 @@ export default {
   position: relative;
   flex: 1;
   box-sizing: border-box;
-  height: 100%;
+  height: calc(~'100% - 60px');
   margin-right: -3px;
+  margin-bottom: 60px;
   padding-top: 2px;
   overflow: auto;
   background-color: @globalBackgroundColor;
+
+  .create-footer {
+    position: fixed;
+    bottom: 70px;
+    z-index: 1;
+    margin-left: 20px;
+    background-color: #fff;
+  }
+
+  &.mini-width {
+    margin-right: 0;
+    padding: 0 6px;
+
+    .create-footer {
+      bottom: 10px;
+    }
+  }
 
   .build-source {
     padding: 16px 40px @formItemBottom;

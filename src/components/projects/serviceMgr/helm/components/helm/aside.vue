@@ -11,6 +11,11 @@
             <span class="step-name">镜像更新</span>
           </div>
           <div class="tabs__item"
+               :class="{'selected': selected === 'policy'}"
+               @click="changeRoute('policy')">
+            <span class="step-name">策略</span>
+          </div>
+          <div class="tabs__item"
                :class="{'selected': selected === 'help'}"
                @click="changeRoute('help')">
             <span class="step-name">帮助</span>
@@ -63,6 +68,15 @@
             </section>
          </div>
         </div>
+        <div v-else-if="selected === 'policy'"
+             class="service-aside--variables">
+          <header class="service-aside-box__header">
+            <div class="service-aside-box__title">策略</div>
+          </header>
+          <div class="service-aside-help__content">
+            <Policy/>
+          </div>
+        </div>
         <div v-else-if="selected === 'help'"
              class="service-aside--variables">
           <header class="service-aside-box__header">
@@ -81,6 +95,7 @@
 import qs from 'qs'
 import bus from '@utils/eventBus'
 import { mapState } from 'vuex'
+import Policy from '../../../k8s/container/policy.vue'
 import Help from './help.vue'
 import MatchRule from './matchRule.vue'
 export default {
@@ -153,6 +168,7 @@ export default {
     }
   },
   components: {
+    Policy,
     Help,
     MatchRule
   }

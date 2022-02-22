@@ -1,7 +1,7 @@
 <template>
   <div class="status-detail-wrapper">
     <section v-if="runningCount === 0 && pendingCount === 0" class="no-running">
-      <img src="@assets/icons/illustration/run_status.svg" alt />
+      <img src="@assets/icons/illustration/runStatus.svg" alt />
       <p>暂无正在运行的任务</p>
     </section>
     <section v-else class="running-time">

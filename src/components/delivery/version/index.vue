@@ -67,7 +67,7 @@
       </el-table-column>
     </el-table>
     <div v-if="versionList.length === 0 || loading" class="version-not-available">
-      <img src="@assets/icons/illustration/version_manage.svg" alt />
+      <img src="@assets/icons/illustration/versionManage.svg" alt />
     </div>
   </div>
 </template>

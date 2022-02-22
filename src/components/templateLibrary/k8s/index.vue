@@ -60,7 +60,7 @@ import FileEditor from './fileEditor.vue'
 import FileTree from './fileTree.vue'
 import { sortBy } from 'lodash'
 import bus from '@utils/eventBus'
-import { getKubernetesTemplatesAPI, getKubernetesAPI } from '@api'
+import { getKubernetesTemplatesAPI, getKubernetesTemplateDetailAPI } from '@api'
 import { Multipane, MultipaneResizer } from 'vue-multipane'
 export default {
   data () {
@@ -101,7 +101,7 @@ export default {
       const id = val ? val.id : null
       const status = val.status
       if (id && status === 'added') {
-        const res = await getKubernetesAPI(id).catch(err => {
+        const res = await getKubernetesTemplateDetailAPI(id).catch(err => {
           console.log(err)
         })
         if (res) {

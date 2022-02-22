@@ -1,6 +1,6 @@
 <template>
   <div class="auto-test">
-    <h4>自动化测试</h4>
+    <span class="title">自动化测试</span>
     <div class="auto-test-chart-container">
       <el-row :gutter="10">
         <el-col class="number-block" :span="6">
@@ -122,26 +122,36 @@ export default {
 </script>
 <style lang="less">
 .auto-test {
-  h4 {
-    margin: 10px 0;
-    padding: 0;
+  span {
     font-weight: 300;
   }
 
+  .title {
+    color: #4a4a4a;
+    font-weight: 300;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 22px;
+    letter-spacing: 0;
+    text-align: left;
+  }
+
   .auto-test-chart-container {
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    height: 142px;
+    background: #fcfcff;
+    border: 1px solid #d2d7dc;
+    border-radius: 6px;
 
     .number-block {
-      padding: 20px 20px;
+      padding: 38px 20px;
       text-align: center;
 
       h2,
       .counter-number {
         display: inline-block;
         color: #333;
-        font-weight: 200;
-        font-size: 50px;
+        font-weight: 300;
+        font-size: 46px;
         line-height: 50px;
         letter-spacing: 0;
       }
@@ -178,8 +188,8 @@ export default {
 
       span.desc {
         display: block;
-        margin-top: 10px;
-        color: #a3a3a3;
+        color: #8a8a8a;
+        font-size: 14px;
       }
     }
   }

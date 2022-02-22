@@ -135,7 +135,7 @@
             :model="buildConfig"
             :rules="createRules"
             label-position="right"
-            label-width="80px"
+            label-width="100px"
           >
             <el-row v-if="jenkinsEnabled">
               <el-col :span="24">
@@ -251,7 +251,7 @@
             ref="buildScript"
             :model="buildConfig"
             label-position="left"
-            label-width="80px"
+            label-width="100px"
           >
             <span class="item-title">构建脚本</span>
             <el-tooltip effect="dark" placement="top-start">

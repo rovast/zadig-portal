@@ -131,7 +131,7 @@
                 :model="buildConfig"
                 :rules="createRules"
                 label-position="right"
-                label-width="80px">
+                label-width="100px">
           <el-form-item v-if="jenkinsEnabled" label="构建来源">
             <el-select style="width: 100%;"
                       v-model="source"
@@ -229,7 +229,7 @@
           <el-form ref="buildScript"
                   :model="buildConfig"
                   label-position="left"
-                  label-width="80px">
+                  label-width="100px">
             <span class="item-title">构建脚本</span>
           <el-tooltip effect="dark"  placement="top-start">
               <div slot="content">

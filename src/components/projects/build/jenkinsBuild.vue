@@ -22,7 +22,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="jenkins job" prop="jenkins_build.job_name" :rules="[{ required: true, trigger: 'change', message: 'jobs不能为空' }]">
+      <el-form-item label="Jenkins Job" prop="jenkins_build.job_name" :rules="[{ required: true, trigger: 'change', message: 'jobs不能为空' }]">
         <el-select v-model="jenkinsBuild.jenkins_build.job_name" size="small" value-key="key" @change="changeJobName" filterable>
           <el-option v-for="(item,index) in jenkinsJobList" :key="index" :label="item" :value="item"></el-option>
         </el-select>

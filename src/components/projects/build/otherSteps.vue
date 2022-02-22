@@ -39,7 +39,7 @@
         ref="dockerBuildRef"
         label-width="170px"
         class="secondary-form"
-        label-position="left"
+        :label-position="mini ? 'top' : 'left'"
       >
         <div class="dashed-container">
           <span class="primary-title">
@@ -106,7 +106,7 @@
         ref="fileArchiveRef"
         label-width="170px"
         class="secondary-form"
-        label-position="left"
+        :label-position="mini ? 'top' : 'left'"
       >
         <div class="dashed-container">
           <span class="primary-title">
@@ -151,7 +151,8 @@ export default {
   props: {
     buildConfig: Object,
     validObj: Object,
-    usedToHost: Boolean // Cloud hosting builds do not require mirror repositories
+    usedToHost: Boolean, // Cloud hosting builds do not require mirror repositories
+    mini: Boolean
   },
   data () {
     return {

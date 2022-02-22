@@ -1,6 +1,6 @@
 <template>
   <section class="zadig-build-container">
-    <section class="common-parcel-block" :class="{ 'show-source': jenkinsEnabled }">
+    <section class="common-parcel-block" :class="{ 'show-source': jenkinsEnabled, 'small-padding': mini }">
       <div class="section">
         <el-form
           ref="zadigForm"
@@ -11,9 +11,11 @@
           label-width="120px"
           inline-message
         >
-          <el-form-item label="构建名称" prop="name">
-            <el-input v-model="buildConfig.name" placeholder="构建名称" autofocus size="small" :disabled="!isCreate" auto-complete="off"></el-input>
-          </el-form-item>
+          <slot name="buildName">
+            <el-form-item label="构建名称" prop="name">
+              <el-input v-model="buildConfig.name" placeholder="构建名称" autofocus size="small" :disabled="!isCreate" auto-complete="off"></el-input>
+            </el-form-item>
+          </slot>
           <el-form-item label="服务选择">
             <el-select v-model="buildConfig.targets" multiple size="small" value-key="key" filterable>
               <el-option
@@ -56,10 +58,11 @@
         :buildConfig="buildConfig"
         :validObj="validObj"
         @validateFailed="showAdvancedConfig = true"
+        :mini="mini"
       ></AdvancedConfig>
     </section>
     <section>
-      <OtherSteps ref="otherStepsRef" :buildConfig="buildConfig" :validObj="validObj"></OtherSteps>
+      <OtherSteps ref="otherStepsRef" :buildConfig="buildConfig" :validObj="validObj" :mini="mini"></OtherSteps>
     </section>
   </section>
 </template>
@@ -244,6 +247,11 @@ export default {
       padding-top: 0;
       border-start-start-radius: 0;
       border-start-end-radius: 0;
+    }
+
+    &.small-padding {
+      padding-right: 10px;
+      padding-left: 10px;
     }
 
     .deploy-script {

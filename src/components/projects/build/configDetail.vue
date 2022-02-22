@@ -66,10 +66,6 @@ export default {
     }
   },
   methods: {
-    changeToJenkins (data) {
-      this.source = 'jenkins'
-      this.jenkinsBuild = data
-    },
     async handleBuildConfig (isCreate) {
       const reqAPI = isCreate ? createBuildConfigAPI : updateBuildConfigAPI
       const formName =

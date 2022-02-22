@@ -1,6 +1,13 @@
 <template>
   <section class="advanced-config-container">
-    <el-form ref="advancedConfig" :model="buildConfig" label-position="left" class="secondary-form build-advanced-form" label-width="120px" inline-message>
+    <el-form
+      ref="advancedConfig"
+      :model="buildConfig"
+      label-position="left"
+      class="secondary-form build-advanced-form"
+      label-width="120px"
+      inline-message
+    >
       <div class="item-title">策略配置</div>
       <el-form-item label="超时时间">
         <el-input-number size="mini" :min="1" v-model="buildConfig.timeout"></el-input-number>
@@ -14,7 +21,13 @@
           <br />
           <el-radio label="user_defined">
             <span>自定义目录</span>
-            <el-input style=" width: 298px; margin-left: 5px;" v-model="buildConfig.cache_user_dir" placeholder="请手动输入" size="mini"></el-input>
+            <br v-if="mini" />
+            <el-input
+              :style=" {width: mini? '100%' : '298px', 'margin-left': mini ? '0' : '5px'}"
+              v-model="buildConfig.cache_user_dir"
+              placeholder="请手动输入"
+              size="mini"
+            ></el-input>
           </el-radio>
         </el-radio-group>
       </el-form-item>
@@ -63,7 +76,8 @@ export default {
   props: {
     buildConfig: Object,
     validObj: Object,
-    isCreate: Boolean
+    isCreate: Boolean,
+    mini: Boolean
   },
   data () {
     this.validateCpuLimit = (rule, value, callback) => {

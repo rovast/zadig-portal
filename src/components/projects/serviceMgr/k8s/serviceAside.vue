@@ -40,7 +40,7 @@
             <div class="service-aside-box__title">变量</div>
           </header>
           <div class="service-aside-box__content">
-            <section>
+            <section class="aside-section">
               <h4>
                 <span>
                   <i class="iconfont iconfuwu"></i>
@@ -90,7 +90,7 @@
                 </el-table-column>
               </el-table>
             </section>
-            <section>
+            <section class="aside-section">
               <h4>
                 <span>
                   <i class="iconfont icongongjuxiang"></i>
@@ -111,7 +111,7 @@
                 </el-table-column>
               </el-table>
             </section>
-            <section>
+            <section class="aside-section">
               <h4>
                 <span>
                   <i class="iconfont icontanhao"></i>
@@ -321,7 +321,7 @@ export default {
       }
     },
     saveBuildConfig () {
-      this.$refs.buildRef.updateBuildConfig()
+      this.$refs.buildRef.handleBuildConfig()
     },
     getServiceModules () {
       this.$emit('getServiceModules')
@@ -702,7 +702,7 @@ export default {
           -webkit-box-flex: 1;
           -ms-flex-positive: 1;
 
-          section {
+          .aside-section {
             position: relative;
             padding: 12px 16px;
 

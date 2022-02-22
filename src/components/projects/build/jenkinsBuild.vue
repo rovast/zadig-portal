@@ -1,5 +1,5 @@
 <template>
-  <section class="jenkins-build-container">
+  <section class="jenkins-build-container" :class="{'small-padding': mini}">
     <el-form ref="jenkinsForm" :model="jenkinsBuild" label-position="left" class="primary-form" label-width="120px" inline-message>
       <slot name="origin"></slot>
       <el-form-item
@@ -26,6 +26,10 @@
         <el-select v-model="jenkinsBuild.jenkins_build.job_name" size="small" value-key="key" @change="changeJobName" filterable>
           <el-option v-for="(item,index) in jenkinsJobList" :key="index" :label="item" :value="item"></el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item label="构建超时">
+        <el-input-number size="mini" :min="1" v-model="jenkinsBuild.timeout"></el-input-number>
+        <span>分钟</span>
       </el-form-item>
       <span class="item-title">构建参数</span>
       <el-alert
@@ -62,7 +66,8 @@ export default {
   props: {
     jenkinsBuildData: Object,
     isCreate: Boolean,
-    serviceTargets: Array
+    serviceTargets: Array,
+    mini: Boolean
   },
   data () {
     return {
@@ -135,6 +140,10 @@ export default {
   background-color: #fff;
   border-end-start-radius: 6px;
   border-end-end-radius: 6px;
+
+  &.small-padding {
+    padding: 0 10px 16px;
+  }
 
   .item-title {
     color: @primaryColor;

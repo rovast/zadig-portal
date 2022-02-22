@@ -22,7 +22,6 @@
             <div class="service-aside-box__title">引用列表</div>
           </header>
           <div class="service-aside-box__content">
-            <section>
               <el-table :data="buildReference"
                         stripe
                         style="width: 100%;">
@@ -37,7 +36,6 @@
                   </template>
                 </el-table-column>
               </el-table>
-            </section>
          </div>
         </div>
         <div v-if="$route.query.rightbar === 'var'"
@@ -46,7 +44,6 @@
             <div class="service-aside-box__title">变量</div>
           </header>
           <div class="service-aside-box__content">
-            <section>
               <el-table :data="fileContent.variable"
                         stripe
                         style="width: 100%;">
@@ -61,8 +58,6 @@
                   </template>
                 </el-table-column>
               </el-table>
-            </section>
-
           </div>
         </div>
       </div>
@@ -280,26 +275,22 @@ export default {
 
         .service-aside-box__content {
           flex-grow: 1;
+          padding: 12px 16px;
           overflow-x: hidden;
           overflow-y: auto;
           -webkit-box-flex: 1;
           -ms-flex-positive: 1;
 
-          section {
-            position: relative;
-            padding: 12px 16px;
+          h4 {
+            margin: 0;
+            padding: 0;
+            color: #909399;
+            font-weight: 300;
+          }
 
-            h4 {
-              margin: 0;
-              padding: 0;
-              color: #909399;
-              font-weight: 300;
-            }
-
-            .el-table td,
-            .el-table th {
-              padding: 6px 0;
-            }
+          .el-table td,
+          .el-table th {
+            padding: 6px 0;
           }
         }
 

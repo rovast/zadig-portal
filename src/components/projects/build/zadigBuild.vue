@@ -32,7 +32,7 @@
         </el-form>
       </div>
       <div class="section">
-        <RepoSelect :config="buildConfig" :validObj="validObj" class="build-secondary-form" showFirstLine></RepoSelect>
+        <RepoSelect ref="repoSelectRef" :config="buildConfig" :validObj="validObj" class="build-secondary-form" showFirstLine></RepoSelect>
       </div>
       <section>
         <div class="primary-title not-first-child">构建变量</div>
@@ -224,6 +224,10 @@ export default {
 
       // Automatic selection of local clusters
       this.$refs.advancedConfigRef.initAdvancedConfig(buildConfig)
+
+      if (!buildConfig.id && buildConfig.repos.length === 0) {
+        this.$refs.repoSelectRef.addFirstBuildRepo()
+      }
     },
     initGlobalData () {
       // be used on Repo

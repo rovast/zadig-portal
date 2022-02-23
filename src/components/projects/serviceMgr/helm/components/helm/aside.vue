@@ -178,8 +178,6 @@ export default {
 .helm-aside-container {
   position: relative;
   display: flex;
-  -webkit-box-flex: 1;
-  -ms-flex: 1;
   flex: 1;
   height: 100%;
 
@@ -359,7 +357,7 @@ export default {
           flex: 1;
           flex-direction: column;
           height: 100%;
-          padding: 0 20px 10px 20px;
+          padding: 0 20px 30px 20px;
           overflow-y: auto;
           -webkit-box-flex: 1;
         }

@@ -29,12 +29,12 @@ export default {
       return [
         {
           name: '版本管理',
-          icon: 'iconfont iconbanben',
+          icon: 'iconfont iconvery-versionmana',
           url: `/v1/delivery/version`
         },
         {
           name: '交付物追踪',
-          icon: 'iconfont iconbaoguanli',
+          icon: 'iconfont iconvery-delitracking',
           url: `/v1/delivery/artifacts`
         }
       ]

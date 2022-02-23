@@ -16,7 +16,7 @@
 const iconConfig = {
   file: 'el-icon-document',
   folder: 'el-icon-folder',
-  service: 'iconfont iconrongqifuwu'
+  service: 'iconfont iconhelmrepo'
 }
 export default {
   name: 'left',
@@ -74,7 +74,7 @@ export default {
                   size="mini"
                   style={this.showHover[data.id] ? 'visibility: visible' : 'visibility: hidden'}
                   class="el-icon-refresh icon"
-                  onClick = {() => this.openRepoModal(data)}
+                  onClick = {() => this.openRepoModal(data.source, data)}
                 ></el-button></span>}
               </span>
             )}

@@ -57,8 +57,7 @@
               <template v-if="service.type==='k8s'">
                 <MultipaneResizer/>
                 <div class="service-editor-container"
-                     :style="{ minWidth: '300px', width: '500px' }"
-                     :class="{'pm':service.type==='pm'}">
+                     :style="{ minWidth: '300px', width: '500px' }">
                   <ServiceEditor ref="serviceEditor"
                                     :serviceInTree="service"
                                     :showNext.sync="showNext"

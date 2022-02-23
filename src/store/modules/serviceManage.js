@@ -10,6 +10,7 @@ export default {
     currentService: null,
     chartNames: [],
     updateEnv: false,
+    serviceSource: '',
     services: [] // used for service order
   },
   mutations: {
@@ -30,6 +31,9 @@ export default {
     },
     [Mutation.CURRENT_SERVICE] (state, payload) {
       state.currentService = payload
+    },
+    [Mutation.SERVICE_SOURCE] (state, payload) {
+      state.serviceSource = payload
     },
     [Mutation.CHART_NAMES] (state, services) {
       const chartNames = state.chartNames

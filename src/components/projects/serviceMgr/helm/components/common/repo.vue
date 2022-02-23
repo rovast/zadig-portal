@@ -1,33 +1,24 @@
 <template>
   <div class="form-code-container">
-    <div class="create-origin">
-      <span>服务配置来源</span>
-      <el-radio-group v-model="tabName" :disabled="isUpdate">
-        <el-radio label="git">Git 仓库</el-radio>
-        <el-radio label="chart" disabled>Chart 仓库</el-radio>
-        <el-radio label="template">模板库</el-radio>
-      </el-radio-group>
-    </div>
-
     <GitRepo
-      v-show="tabName === 'git'"
+      v-show="serviceSource === 'git'"
       @triggleAction="$emit('triggleAction')"
-      :currentSelect="tabName"
+      :currentSelect="'git'"
       :currentService="currentService"
       ref="gitRepo"
-    ></GitRepo>
+    />
 
     <ChartRepo
-      v-show="tabName === 'chart'"
-      :currentSelect="tabName"
+      v-show="serviceSource === 'chart'"
+      :currentSelect="'chart'"
       ref="chartRepo"
-    ></ChartRepo>
+    />
 
     <TemplateRepo
-      v-show="tabName === 'template'"
-      :currentSelect="tabName"
+      v-show="serviceSource === 'chartTemplate'"
+      :currentSelect="'chartTemplate'"
       ref="templateRepo"
-    ></TemplateRepo>
+    />
   </div>
 </template>
 <script>
@@ -38,26 +29,25 @@ import { mapState } from 'vuex'
 export default {
   data () {
     return {
-      tabName: '',
       isUpdate: false
     }
   },
   computed: {
     ...mapState({
       value: state => state.serviceManage.serviceDialogVisible,
-      currentService: state => state.serviceManage.currentService
+      currentService: state => state.serviceManage.currentService,
+      serviceSource: state => state.serviceManage.serviceSource
     })
   },
   watch: {
     value: {
       handler (val) {
         if (val) {
-          this.tabName = 'git'
           const cs = this.currentService
           if (cs) {
             this.isUpdate = true
             if (cs.source && cs.source === 'chartTemplate') {
-              this.tabName = 'template'
+              this.$store.commit('SERVICE_SOURCE', 'chartTemplate')
             }
           } else {
             this.isUpdate = false

@@ -167,7 +167,7 @@
               <el-button
                 size="mini"
                 @click="openImportYamlDialog = true"
-                icon="iconfont icon iconicon-repertory"
+                icon="iconfont icon iconvery-template"
                 plain
                 circle
               ></el-button>

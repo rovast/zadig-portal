@@ -1,11 +1,11 @@
 @font-face {
   font-family: "iconfont"; /* Project id 1282370 */
-  src: url('//at.alicdn.com/t/font_1282370_bn73ik4ikyo.eot?t=1645513712783'); /* IE9 */
-  src: url('//at.alicdn.com/t/font_1282370_bn73ik4ikyo.eot?t=1645513712783#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('//at.alicdn.com/t/font_1282370_bn73ik4ikyo.woff2?t=1645513712783') format('woff2'),
-       url('//at.alicdn.com/t/font_1282370_bn73ik4ikyo.woff?t=1645513712783') format('woff'),
-       url('//at.alicdn.com/t/font_1282370_bn73ik4ikyo.ttf?t=1645513712783') format('truetype'),
-       url('//at.alicdn.com/t/font_1282370_bn73ik4ikyo.svg?t=1645513712783#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_1282370_qxfi0tky5e9.eot?t=1645597844712'); /* IE9 */
+  src: url('//at.alicdn.com/t/font_1282370_qxfi0tky5e9.eot?t=1645597844712#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('//at.alicdn.com/t/font_1282370_qxfi0tky5e9.woff2?t=1645597844712') format('woff2'),
+       url('//at.alicdn.com/t/font_1282370_qxfi0tky5e9.woff?t=1645597844712') format('woff'),
+       url('//at.alicdn.com/t/font_1282370_qxfi0tky5e9.ttf?t=1645597844712') format('truetype'),
+       url('//at.alicdn.com/t/font_1282370_qxfi0tky5e9.svg?t=1645597844712#iconfont') format('svg');
 }
 
 .iconfont {
@@ -16,8 +16,80 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.iconvery-counati:before {
+.iconvery-gears:before {
+  content: "\e751";
+}
+
+.iconvery-k8s:before {
+  content: "\e8d0";
+}
+
+.iconvery-master:before {
+  content: "\e699";
+}
+
+.iconvery-nodeid:before {
+  content: "\e69a";
+}
+
+.iconvery-gitlab:before {
+  content: "\e68d";
+}
+
+.iconvery-clone:before {
+  content: "\e698";
+}
+
+.iconvery-itemadd1:before {
+  content: "\e68f";
+}
+
+.iconvery-operatereduce1:before {
+  content: "\e692";
+}
+
+.iconvery-operateadd1:before {
+  content: "\e693";
+}
+
+.iconvery-itemreduce1:before {
+  content: "\e697";
+}
+
+.iconvery-crumb:before {
   content: "\e680";
+}
+
+.iconvery-operateadd:before {
+  content: "\e682";
+}
+
+.iconvery-itemreduce:before {
+  content: "\e683";
+}
+
+.iconvery-inputdp:before {
+  content: "\e684";
+}
+
+.iconvery-itemadd:before {
+  content: "\e685";
+}
+
+.iconvery-itemverify:before {
+  content: "\e688";
+}
+
+.iconvery-operatereduce:before {
+  content: "\e68a";
+}
+
+.iconvery-nodata:before {
+  content: "\e68c";
+}
+
+.iconvery_coursena:before {
+  content: "\e681";
 }
 
 .iconvery-favg:before {

@@ -29,7 +29,7 @@ export default {
       return [
         {
           name: 'K8s YAML',
-          icon: 'iconfont iconk8s',
+          icon: 'iconfont iconvery-k8s',
           url: `/v1/template/k8s-yamls`
         },
         {

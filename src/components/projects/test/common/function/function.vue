@@ -1,5 +1,5 @@
 <template>
-  <div class="function-test-manage">
+  <div v-loading="loading" element-loading-text="加载中..." element-loading-spinner="iconfont iconfont-loading iconvery-testing" class="function-test-manage">
     <el-dialog title="选择关联的工作流" :visible.sync="selectWorkflowDialogVisible" width="30%" center>
       <el-select v-model="selectWorkflow" style="width: 100%;" filterable value-key="name" size="small" placeholder="请选择要关联的工作流，支持搜索">
         <el-option
@@ -14,11 +14,11 @@
         <el-button type="primary" size="small" :disabled="!selectWorkflow" @click="bindWorkflow">确 定</el-button>
       </span>
     </el-dialog>
-    <div class="tab-container">
+    <div v-if="testList.length > 0" class="tab-container">
       <div class="test-container">
         <el-input v-model="selectKey" placeholder="搜索测试" class="search-test" prefix-icon="el-icon-search" clearable></el-input>
       </div>
-      <ul class="test-content" v-if="testList.length > 0">
+      <ul class="test-content">
         <TestRow
           v-for="(testInfo, index) in selectedTestList"
           :key="index"
@@ -29,11 +29,10 @@
           :runTests="runTests"
         ></TestRow>
       </ul>
-
-      <div v-else class="no-product">
-        <img src="@assets/icons/illustration/pipeline.svg" alt />
-        <p>暂无可展示的测试用例，请手动新建测试</p>
-      </div>
+    </div>
+    <div v-if="testList.length === 0 && !loading" class="no-product">
+      <img src="@assets/icons/illustration/test.svg" alt />
+      <p>暂无可展示的测试用例，请手动新建测试</p>
     </div>
   </div>
 </template>
@@ -56,6 +55,7 @@ export default {
       testList: [],
       activeTab: 'function',
       selectWorkflowDialogVisible: false,
+      loading: false,
       currentTestName: '',
       currentProjectName: '',
       selectWorkflow: null,
@@ -81,12 +81,14 @@ export default {
     fetchTestList () {
       const projectName = this.projectName
       const testType = 'function'
+      this.loading = true
       testsAPI(projectName, testType).then(res => {
         for (const row of res) {
           row.updateTimeReadable = moment(row.update_time, 'X').format(
             'YYYY-MM-DD HH:mm:ss'
           )
         }
+        this.loading = false
         this.testList = res
       })
     },
@@ -234,7 +236,6 @@ export default {
     align-content: center;
     align-items: center;
     justify-content: center;
-    height: 70vh;
 
     img {
       width: 400px;

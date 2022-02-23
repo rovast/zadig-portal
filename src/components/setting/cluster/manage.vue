@@ -288,7 +288,7 @@
           <el-table :data="allCluster" style="width: 100%;" :row-class-name="tableRowClassName">
             <el-table-column label="名称">
               <template slot-scope="scope">
-                <i v-if="scope.row.local" class="iconfont iconk8s"></i>
+                <i v-if="scope.row.local" class="iconfont iconvery-k8s"></i>
                 <i v-else :class="getProviderMap(scope.row.provider,'icon')"></i>
                 <span v-if="scope.row.local">本地集群（local）</span>
                 <span v-else>{{scope.row.name}}</span>

@@ -42,11 +42,11 @@
         </el-select>
       </el-form-item>
       <el-form-item
-        label="代码库拥有者"
+        label="拥有者"
         prop="repoOwner"
         :rules="{
               required: true,
-              message: '代码库拥有者不能为空',
+              message: '拥有者不能为空',
               trigger: 'change',
             }"
       >
@@ -55,7 +55,7 @@
           size="small"
           style="width: 100%;"
           @change="getRepoNameById(source.codehostId, source.repoOwner)"
-          placeholder="请选择代码库拥有者"
+          placeholder="请选择拥有者"
           filterable
           :disabled="isUpdate"
         >
@@ -64,7 +64,7 @@
       </el-form-item>
       <template>
         <el-form-item
-          label="代码库名称"
+          label="名称"
           prop="repoName"
           :rules="{
                 required: true,
@@ -118,7 +118,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          label="目录路径："
+          label="选择文件夹："
           :rules="{
                 required: true,
                 message: '请选择目录',
@@ -126,11 +126,11 @@
               }"
         >
           <span :key="item" v-for="item in selectPath">[{{ item }}]&nbsp;</span>
-          <el-button @click="openFileTree" :disabled="!showSelectFileBtn || isUpdate" type="primary" plain size="mini" round>选择文件目录</el-button>
+          <el-button @click="openFileTree" :disabled="!showSelectFileBtn || isUpdate" type="primary" plain size="mini" icon="el-icon-plus" circle></el-button>
         </el-form-item>
       </template>
-      <el-form-item v-if="!controlParam.hiddenCreateButton">
-        <el-button size="small" plain :loading="loading" :disabled="selectPath.length === 0" @click="submit">加载</el-button>
+      <el-form-item v-if="!controlParam.hiddenCreateButton" style="text-align: right;">
+        <el-button size="small" type="primary" :loading="loading" :disabled="selectPath.length === 0" @click="submit">加载</el-button>
       </el-form-item>
     </el-form>
     <el-form v-if="gitName === 'public'" :model="source" :rules="sourceRules" ref="sourceForm" label-width="140px">
@@ -139,10 +139,10 @@
       </el-form-item>
       <el-form-item prop="path" label="文件目录：">
         <span :key="item" v-for="item in selectPath">[{{ item }}]&nbsp;</span>
-        <el-button @click="openFileTree" :disabled="!source.url || isUpdate" type="primary" plain size="mini" round>选择文件目录</el-button>
+        <el-button @click="openFileTree" :disabled="!source.url || isUpdate" type="primary" plain size="mini" icon="el-icon-plus" circle></el-button>
       </el-form-item>
-      <el-form-item>
-        <el-button size="small" :loading="loading" plain @click="submit">加载</el-button>
+      <el-form-item  style="text-align: right;">
+        <el-button size="small" :loading="loading" type="primary" @click="submit">加载</el-button>
       </el-form-item>
     </el-form>
 

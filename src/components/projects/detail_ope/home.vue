@@ -63,7 +63,7 @@
         </el-col>
       </el-row>
       <div v-if="projectList.length === 0" class="empty-list">
-        <img src="@assets/icons/illustration/product.svg" alt />
+        <img src="@assets/icons/illustration/project.svg" alt />
         <p>暂无可展示的项目，请手动添加项目</p>
       </div>
     </div>
@@ -109,8 +109,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <div v-if="projectList.length === 0" class="empty-list">
-        <img src="@assets/icons/illustration/product.svg" alt />
+      <div v-if="projectList.length === 0 && !loading" class="empty-list">
+        <img src="@assets/icons/illustration/project.svg" alt />
         <p>暂无可展示的项目，请手动添加项目</p>
       </div>
     </div>

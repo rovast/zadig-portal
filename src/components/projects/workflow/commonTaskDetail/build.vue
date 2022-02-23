@@ -114,7 +114,7 @@
           <el-col v-if="serviceType==='pm'"
                   :span="6">
             <div class="grid-content item-title">
-              <i class="iconfont iconbaoguanli"></i> 打包信息
+              <i class="iconfont iconvery-delitracking"></i> 打包信息
             </div>
           </el-col>
           <el-col v-if="serviceType==='pm' && buildv2.job_ctx"
@@ -126,7 +126,7 @@
                 :gutter="0">
           <el-col :span="6">
             <div class="grid-content item-title">
-              <i class="iconfont iconbaoguanli"></i> 打包信息
+              <i class="iconfont iconvery-delitracking"></i> 打包信息
             </div>
           </el-col>
           <el-col :span="6">

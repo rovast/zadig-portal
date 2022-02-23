@@ -1,21 +1,42 @@
 <template>
   <div class="code-content">
-    <multipane class="custom-resizer" :class="{'limit-height': !isCreate}" layout="vertical">
+    <Multipane class="custom-resizer" :class="{'limit-height': !isCreate}" layout="vertical">
       <div class="left">
         <div class="title">
-          <el-radio-group size="mini" v-model="mode">
-            <el-tooltip effect="dark" content="服务管理" placement="top">
-              <el-radio-button label="edit">
-                <i class="iconfont iconiconlog"></i>
-              </el-radio-button>
+        <el-row style="width: 100%;">
+        <el-col :span="10">
+          <div class="source-dropdown">
+            <el-radio-group v-model="mode" size="mini">
+              <el-tooltip effect="dark" content="服务管理" placement="top">
+                <el-radio-button label="edit">
+                  <i class="iconfont iconiconlog"></i>
+                </el-radio-button>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="服务编排" placement="top">
+                <el-radio-button label="arrange">
+                  <i class="iconfont iconfuwu"></i>
+                </el-radio-button>
+              </el-tooltip>
+            </el-radio-group>
+          </div>
+        </el-col>
+        <el-col  :span="14" class="text-right">
+          <div style="line-height: 32px;">
+            <el-tooltip effect="dark" content="从代码库同步" placement="top">
+              <el-button  size="mini"  icon="iconfont icon icongit" @click="openRepoModal('git')" plain circle></el-button>
             </el-tooltip>
-            <el-tooltip effect="dark" content="服务编排" placement="top">
-              <el-radio-button label="arrange">
-                <i class="iconfont iconfuwu"></i>
-              </el-radio-button>
+            <el-tooltip effect="dark" content="使用模板新建" placement="top">
+              <el-button
+                @click="openRepoModal('chartTemplate')"
+                size="mini"
+                icon="iconfont icon iconvery-template"
+                plain
+                circle
+              ></el-button>
             </el-tooltip>
-          </el-radio-group>
-          <el-button @click="openRepoModal()" size="mini" icon="el-icon-plus" plain circle></el-button>
+          </div>
+        </el-col>
+      </el-row>
         </div>
         <div class="left-tree" v-show="mode === 'edit'">
           <Folder
@@ -39,7 +60,7 @@
         </div>
         <order class="left-tree" v-show="mode === 'arrange'"></order>
       </div>
-      <multipane-resizer class="resizer1"></multipane-resizer>
+      <MultipaneResizer class="multipane-resizer"/>
       <div class="center">
         <div class="header">
           <PageNav
@@ -68,20 +89,19 @@
           />
         </div>
       </div>
-      <multipane-resizer class="resizer2" v-if="service && service.length"></multipane-resizer>
+      <MultipaneResizer class="multipane-resizer" v-if="service && service.length"/>
 
       <div :style="{ flexGrow: 1, minWidth: '372px' }" class="right">
         <ServiceAside :changeExpandFileList="changeExpandFileList" ref="aside" slot="aside" :isCreate="isCreate" />
-        <!-- 右侧aside -->
       </div>
-    </multipane>
+    </Multipane>
 
     <div class="env-bottom" v-if="!isCreate">
       <!-- <el-button size="small" type="primary" @click="commit" :disabled="!commitCache.length">保存</el-button> -->
       <el-button size="small" type="primary" :disabled="!updateEnv || !envNameList.length" @click="update">更新环境</el-button>
     </div>
     <UpdateHelmEnv v-model="updateHelmEnvDialogVisible" />
-    <el-dialog :title="currentService ? '更新服务' : '新建服务'" :visible="dialogVisible" center @close="closeSelectRepo">
+    <el-dialog :title="currentService ? '更新服务' : '新建服务'" :visible="dialogVisible" center @close="closeSelectRepo" custom-class="dialog-source">
       <Repo ref="repo" @triggleAction="changeExpandFileList('clear');clearCommitCache()" />
       <!-- 代码库弹窗 -->
     </el-dialog>
@@ -374,8 +394,9 @@ export default {
       }
       this.modalvalue = status
     },
-    openRepoModal (currentService) {
-      this.$store.commit('CURRENT_SERVICE', cloneDeep(currentService) || null)
+    openRepoModal (source, currentService = null) {
+      this.$store.commit('SERVICE_SOURCE', source)
+      this.$store.commit('CURRENT_SERVICE', currentService ? cloneDeep(currentService) : null)
       this.$store.commit('SERVICE_DIALOG_VISIBLE', true)
     },
     update () {
@@ -432,6 +453,7 @@ export default {
     },
     ...mapState({
       service: state => state.serviceManage.serviceList,
+      serviceSource: state => state.serviceManage.serviceSource,
       dialogVisible: state => state.serviceManage.serviceDialogVisible,
       currentService: state => state.serviceManage.currentService,
       updateEnv: state => state.serviceManage.updateEnv
@@ -456,16 +478,31 @@ export default {
   flex-direction: column;
   width: 100%;
   height: 100%;
+  padding: 15px 5px 0;
   overflow: auto;
-  background-color: #fff;
-  // user-select: none;
+
+  /deep/ .dialog-source {
+    .el-dialog__header {
+      padding: 20px 20px 10px;
+      font-size: 16px;
+      border: 1px solid #d2d2d2;
+    }
+
+    .el-dialog__footer {
+      padding: 0 20px 20px;
+      text-align: right;
+    }
+
+    .el-dialog__body {
+      padding: 40px 106px 20px 106px;
+    }
+  }
 
   .left {
     display: flex;
     flex-direction: column;
-    width: 230px;
-    min-width: 200px;
-    max-width: 400px;
+    min-width: 250px;
+    max-width: 480px;
     height: 100%;
     overflow: hidden;
     background-color: #fff;
@@ -478,15 +515,25 @@ export default {
       justify-content: space-between;
       height: 50px;
       padding: 0 10px;
+
+      .text-right {
+        text-align: right;
+
+        /deep/ .el-button {
+          .iconfont {
+            font-size: 12px;
+          }
+        }
+      }
     }
 
     .left-tree {
       flex: 1 1 auto;
-      max-height: calc(~'100% - 50px');
+      max-height: calc(~'100% - 65px');
       overflow: auto;
 
       .folder {
-        height: calc(~'100% - 40px');
+        height: calc(~'100% - 55px');
         overflow: auto;
       }
     }
@@ -498,32 +545,12 @@ export default {
     }
   }
 
-  .resizer1 {
+  .multipane-resizer {
     z-index: 10;
     cursor: col-resize;
   }
 
-  .resizer1::before {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    display: block;
-    width: 8px;
-    height: 55px;
-    margin-top: -20px;
-    margin-left: -5.5px;
-    background-color: #fff;
-    border: 1px solid #dbdbdb;
-    border-radius: 5px;
-    content: '';
-  }
-
-  .resizer2 {
-    z-index: 10;
-    cursor: col-resize;
-  }
-
-  .resizer2::before {
+  .multipane-resizer::before {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -554,7 +581,7 @@ export default {
 
     .code {
       box-sizing: border-box;
-      height: calc(~'100% - 40px');
+      height: calc(~'100% - 55px');
       margin-top: 40px;
       overflow-y: scroll;
       background-color: #fff;
@@ -592,7 +619,7 @@ export default {
   height: 100%;
 
   &.limit-height {
-    height: calc(~'100% - 55px');
+    height: calc(~'100% - 70px');
   }
 }
 

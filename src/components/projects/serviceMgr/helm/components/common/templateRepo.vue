@@ -2,7 +2,6 @@
   <div class="template-repo-container">
     <el-form ref="tempForm" :model="tempData" label-width="140px" :rules="rules">
       <h4 class="flex-center" style="padding-left: 40px;">
-        <span>Chart 模板</span>
         <el-button type="text" @click="triggerSubstantial(substantial)" :disabled="isUpdate">{{substantial ? '关闭批量创建' : '批量创建'}}</el-button>
       </h4>
       <el-form-item label="服务名称" prop="serviceName" v-if="!substantial">
@@ -30,7 +29,7 @@
         <CommonImportValues v-else ref="importValues" :importRepoInfo.sync="importRepoInfo" :resize="{height: '188px'}" showDelete></CommonImportValues>
       </div>
       <ImportValues v-else ref="importValues" :importRepoInfo.sync="importRepoInfo"></ImportValues>
-      <el-form-item>
+      <el-form-item style="text-align: right;">
         <el-button size="small" @click="commitDialogVisible(false)">取消</el-button>
         <el-button type="primary" size="small" @click="importTempRepo" :loading="importLoading">导入</el-button>
       </el-form-item>
@@ -101,7 +100,7 @@ export default {
   watch: {
     currentService: {
       handler (val) {
-        if (this.currentSelect === 'template' && val) {
+        if (this.currentSelect === 'chartTemplate' && val) {
           const createFrom = val.create_from
           this.tempData = {
             serviceName: createFrom.service_name,

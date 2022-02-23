@@ -9,7 +9,7 @@
               <ICountUp :delay="delay" :endVal="totalCaseCount" class="counter-number" :options="options" />
             </h2>
             <span class="desc">
-              <i class="icon iconfont icontest"></i> 测试用例数
+              <i class="icon iconfont iconvery-testing"></i> 测试用例数
             </span>
           </div>
         </el-col>

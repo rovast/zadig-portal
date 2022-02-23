@@ -50,13 +50,13 @@
                 <span @click="$router.push(`/v1/projects/detail/${project.name}/pipelines`)" class="icon iconfont icongongzuoliucheng"></span>
               </el-tooltip>
               <el-tooltip effect="dark" content="构建管理" placement="top">
-                <span @click="$router.push(`/v1/projects/detail/${project.name}/builds`)" class="icon iconfont icongoujianzhong"></span>
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/builds`)" class="icon iconfont iconvery-build"></span>
               </el-tooltip>
               <el-tooltip effect="dark" content="测试管理" placement="top">
-                <span @click="$router.push(`/v1/projects/detail/${project.name}/test`)" class="icon iconfont icontest"></span>
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/test`)" class="icon iconfont iconvery-testing"></span>
               </el-tooltip>
               <el-tooltip effect="dark" content="查看服务" placement="top">
-                <span @click="$router.push(`/v1/projects/detail/${project.name}/services`)" class="icon iconfont iconrongqifuwu"></span>
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/services`)" class="icon iconfont iconvery-service"></span>
               </el-tooltip>
             </div>
           </el-card>

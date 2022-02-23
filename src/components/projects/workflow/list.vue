@@ -1,8 +1,11 @@
 <template>
   <div class="workflow-list" ref="workflow-list">
-    <div>
+    <div  v-loading="workflowListLoading"
+          class="pipeline-loading"
+          element-loading-text="加载中..."
+          element-loading-spinner="iconfont iconfont-loading icongongzuoliucheng">
       <ul class="workflow-ul">
-        <div class="project-header">
+        <div v-if="availableWorkflows.length > 0"  class="project-header">
           <div class="header-start">
             <div class="container">
               <div class="function-container">
@@ -28,10 +31,6 @@
           </div>
         </div>
         <div
-          v-loading="workflowListLoading"
-          class="pipeline-loading"
-          element-loading-text="加载中..."
-          element-loading-spinner="iconfont iconfont-loading icongongzuoliucheng"
         >
           <VirtualList
             v-if="availableWorkflows.length > 0"
@@ -42,9 +41,9 @@
             :estimate-size="82"
             :data-component="itemComponent"
           />
-          <div v-if="availableWorkflows.length === 0" class="no-product">
+          <div v-if="availableWorkflows.length === 0 && !workflowListLoading" class="no-product">
             <img src="@assets/icons/illustration/workflow.svg" alt />
-            <p>暂无可展示的工作流，请手动添加工作流</p>
+            <p>暂无可展示的工作流，请手动新建工作流</p>
           </div>
         </div>
       </ul>
@@ -536,7 +535,6 @@ export default {
       align-content: center;
       align-items: center;
       justify-content: center;
-      height: 70vh;
 
       img {
         width: 400px;

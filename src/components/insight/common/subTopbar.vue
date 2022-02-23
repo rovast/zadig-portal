@@ -96,12 +96,12 @@ export default {
         },
         {
           name: '测试效能',
-          icon: 'iconfont iconrongqi',
+          icon: 'iconfont iconvery-testing',
           url: `/v1/insight/test`
         },
         {
           name: '部署效能',
-          icon: 'iconfont iconrongqifuwu',
+          icon: 'iconfont iconvery-environ',
           url: `/v1/insight/service`
         }
       ]

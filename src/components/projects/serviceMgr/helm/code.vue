@@ -57,6 +57,8 @@
             :followUpFn="followUpFn"
             v-bind="currentCode"
             v-bind:is="currentCode.componentsName"
+            canSelectBuildName
+            class="code-content"
           ></component>
           <CodeMirror
             v-if="currentCode.type==='file'"
@@ -95,7 +97,7 @@ import ServiceAside from './components/helm/aside'
 import { cloneDeep } from 'lodash'
 import { Multipane, MultipaneResizer } from 'vue-multipane'
 import UpdateHelmEnv from './components/common/updateHelmEnv'
-import Build from '../common/build'
+import CommonBuild from '@/components/projects/build/commonBuild.vue'
 import { deleteServiceTemplateAPI } from '@api'
 import { mapState, mapGetters } from 'vuex'
 
@@ -132,7 +134,7 @@ export default {
     Multipane,
     MultipaneResizer,
     UpdateHelmEnv,
-    Build,
+    CommonBuild,
     Repo,
     ServiceAside
   },
@@ -556,6 +558,10 @@ export default {
       margin-top: 40px;
       overflow-y: scroll;
       background-color: #fff;
+
+      .code-content {
+        padding: 3px;
+      }
     }
   }
 

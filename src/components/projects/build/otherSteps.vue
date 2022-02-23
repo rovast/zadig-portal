@@ -121,7 +121,13 @@
           </el-form-item>
         </div>
       </el-form>
-      <el-form v-if="post_script_enabled && buildConfig.post_build.scripts" :model="buildConfig.post_build" ref="script" label-width="220px" class="stcov label-at-left">
+      <el-form
+        v-if="post_script_enabled && buildConfig.post_build.scripts"
+        :model="buildConfig.post_build"
+        ref="scriptRef"
+        label-width="220px"
+        class="stcov label-at-left"
+      >
         <div class="dashed-container">
           <div class="primary-title">
             Shell 脚本执行
@@ -237,7 +243,11 @@ export default {
         this.post_script_enabled = true
         this.$set(this.buildConfig.post_build, 'scripts', '#!/bin/bash\nset -e')
       }
-      this.$nextTick(this.$utils.scrollToBottom)
+      this.$nextTick(() => {
+        document.querySelector('.other-step-container').scrollIntoView({
+          behavior: 'smooth'
+        })
+      })
     },
     removeDocker () {
       this.docker_enabled = false

@@ -103,7 +103,7 @@ export default {
       const item = {
         id: name,
         type: 'components',
-        componentsName: 'Build',
+        componentsName: 'CommonBuild',
         label: '新增构建',
         name: name,
         isEdit: false
@@ -114,7 +114,7 @@ export default {
       const item = {
         id: name,
         type: 'components',
-        componentsName: 'Build',
+        componentsName: 'CommonBuild',
         label: '修改构建',
         name: name,
         isEdit: true,

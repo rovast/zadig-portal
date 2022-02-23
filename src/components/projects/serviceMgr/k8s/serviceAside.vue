@@ -23,19 +23,22 @@
       <div class="aside__content">
         <div v-if="selected === 'build'" class="service-aside--variables">
           <div style="padding-left: 15px;">
-           <el-button @click="$router.back()" icon="el-icon-back" type="text">返回</el-button>
+            <el-button @click="$router.back()" icon="el-icon-back" type="text">返回</el-button>
           </div>
           <header class="service-aside-box__header">
             <div class="service-aside-box__title">构建</div>
           </header>
           <div class="service-aside-box__content">
-            <Build ref="buildRef"
-                   :name='$route.query.service_name'
-                   :buildName='$route.query.build_name'
-                   :isEdit='!!$route.query.build_name'
-                   :followUpFn='followUpFn'
-                   :saveDisabled="projectName !== projectNameOfService"
-                   mini />
+            <CommonBuild
+              ref="buildRef"
+              :name="$route.query.service_name"
+              :buildName="$route.query.build_name"
+              :isEdit="!!$route.query.build_name"
+              :followUpFn="followUpFn"
+              :saveDisabled="projectName !== projectNameOfService"
+              canSelectBuildName
+              mini
+            />
           </div>
         </div>
         <div v-if="selected === 'var'" class="service-aside--variables">
@@ -257,7 +260,7 @@ import {
   getRegistryWhenBuildAPI,
   getCodeProviderAPI
 } from '@api'
-import Build from '../common/build.vue'
+import CommonBuild from '@/components/projects/build/commonBuild.vue'
 import Help from './container/help.vue'
 import Policy from './container/policy.vue'
 import IntegrationCode from '../common/integrationCode.vue'
@@ -325,9 +328,6 @@ export default {
       } else {
         this.integrationCodeDrawer = true
       }
-    },
-    saveBuildConfig () {
-      this.$refs.buildRef.handleBuildConfig()
     },
     followUpFn () {
       this.$emit('getServiceModules')
@@ -546,7 +546,7 @@ export default {
     }
   },
   components: {
-    Build,
+    CommonBuild,
     Policy,
     Help,
     IntegrationCode,
@@ -732,6 +732,10 @@ export default {
             .el-table th {
               padding: 6px 0;
             }
+          }
+
+          .create-footer {
+            right: 47px;
           }
         }
 

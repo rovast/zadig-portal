@@ -1,7 +1,8 @@
 <template>
-  <div class="build-config-container" :class="{'mini-width': !mini}">
+  <div class="build-config-container" :class="{'mini-width': mini}">
     <div v-if="jenkinsEnabled" class="build-source" :class="{'small-padding': mini}">
       <span class="build-source-title">构建方式</span>
+      <!-- TODO loadBuild(buildName) buildName -->
       <el-select v-model="source" size="small" value-key="key" :disabled="isEdit" @change="loadBuild(buildName)" filterable>
         <el-option v-for="(item,index) in originOptions" :key="index" :label="item.label" :value="item.value"></el-option>
       </el-select>
@@ -24,7 +25,7 @@
       :serviceTargets="serviceTargets"
       :mini="mini"
     >
-      <template v-slot:buildName>
+      <template v-if="canSelectBuildName" v-slot:buildName>
         <el-form-item label="构建名称" prop="name">
           <el-select
             v-model="buildConfig.name"
@@ -42,9 +43,11 @@
         </el-form-item>
       </template>
     </ZadigBuild>
-    <footer class="create-footer">
-      <el-button type="primary" size="small" @click="handleBuildConfig" :disabled="saveDisabled">保存构建</el-button>
-    </footer>
+    <slot name="footer">
+      <footer class="create-footer">
+        <el-button class="save-btn" type="primary" size="small" @click="handleBuildConfig" :disabled="saveDisabled" :loading="saveLoading">保存构建</el-button>
+      </footer>
+    </slot>
   </div>
 </template>
 <script>
@@ -61,15 +64,29 @@ import {
 
 export default {
   props: {
-    name: String,
-    buildName: String,
+    name: {
+      type: String,
+      default: ''
+    }, // serviceName/Generic builds do not require a service name
+    buildName: {
+      type: String,
+      default: ''
+    }, // The build name will be available when editing the build
     isEdit: Boolean,
     followUpFn: Function,
-    mini: {
+    saveDisabled: {
       default: false,
       type: Boolean
     },
-    saveDisabled: {
+    canSelectBuildName: {
+      default: false,
+      type: Boolean
+    }, // Build name can be selected
+    initServiceName: {
+      default: true,
+      type: Boolean
+    }, // Pre-set service names and build names, usually passing in a service name means setting a pre-set value
+    mini: {
       default: false,
       type: Boolean
     }
@@ -90,6 +107,7 @@ export default {
       jenkinsEnabled: false,
       jenkinsBuild: {},
       serviceTargets: [],
+      saveLoading: false,
       configDataLoading: true,
       buildConfig: {},
       buildInfos: []
@@ -97,7 +115,9 @@ export default {
   },
   methods: {
     async handleBuildConfig () {
-      const isAdd = this.buildNames.includes(this.buildConfig.name)
+      const isAdd = this.canSelectBuildName
+        ? this.buildNames.includes(this.buildConfig.name)
+        : this.isEdit
       const reqAPI = isAdd ? updateBuildConfigAPI : createBuildConfigAPI
       const formName =
         this.source === 'zadig' ? 'zadigBuildForm' : 'jenkinsBuildRef'
@@ -108,8 +128,10 @@ export default {
           const payload = data
           payload.source = this.source
           payload.product_name = this.projectName
+          this.saveLoading = true
           reqAPI(payload).then(() => {
-            this.followUpFn()
+            this.saveLoading = false
+            this.followUpFn && this.followUpFn()
             this.$message({
               type: 'success',
               message: this.isEdit ? '保存构建成功' : '新建构建成功'
@@ -135,8 +157,12 @@ export default {
           return element
         })
       })
-
-      if (this.buildNames.includes(buildConfigName)) {
+      // Request existing build data: If you can select a build name, determine whether the build name belongs to an existing name, otherwise determine whether it is an edit state
+      if (
+        (this.canSelectBuildName &&
+          this.buildNames.includes(buildConfigName)) ||
+        (!this.canSelectBuildName && this.isEdit)
+      ) {
         await this.getCurrentBuild(buildConfigName)
       } else {
         await this.initBuildInfo()
@@ -192,7 +218,9 @@ export default {
       this.$set(this.buildConfig, 'targets', currentService)
       this.$set(this.jenkinsBuild, 'targets', currentService)
 
-      this.$refs.zadigBuildForm.initData()
+      this.$nextTick(() => {
+        this.$refs.zadigBuildForm.initData()
+      })
     },
     async initGlobalData () {
       // existed jenkins
@@ -227,7 +255,9 @@ export default {
       }
     },
     defaultBuildName () {
-      return this.projectName + '-build-' + this.name
+      return this.initServiceName
+        ? this.projectName + '-build-' + this.name
+        : ''
     }
   },
   watch: {
@@ -255,30 +285,27 @@ export default {
 @formItemBottom: 8px;
 
 .build-config-container {
-  position: relative;
+  // position: relative;
   flex: 1;
   box-sizing: border-box;
-  height: calc(~'100% - 60px');
+  height: calc(~'100% - 50px');
   margin-right: -3px;
-  margin-bottom: 60px;
+  margin-bottom: 50px;
   padding-top: 2px;
   overflow: auto;
   background-color: @globalBackgroundColor;
 
   .create-footer {
-    position: fixed;
-    bottom: 70px;
-    z-index: 1;
-    margin-left: 20px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 50px;
     background-color: #fff;
-  }
 
-  &.mini-width {
-    margin-right: 0;
-    padding: 0 6px;
-
-    .create-footer {
-      bottom: 10px;
+    .save-btn {
+      margin-top: 10px;
+      margin-left: 20px;
     }
   }
 

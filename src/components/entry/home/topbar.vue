@@ -354,6 +354,7 @@ export default {
       .logo-container {
         display: flex;
         align-items: center;
+        width: 60px;
 
         .logo {
           margin-right: 10px;

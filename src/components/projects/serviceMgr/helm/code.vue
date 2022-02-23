@@ -54,7 +54,6 @@
         <div class="code" v-if="page.expandFileList.length">
           <component
             v-if="currentCode.type==='components'"
-            :mini="false"
             :followUpFn="followUpFn"
             v-bind="currentCode"
             v-bind:is="currentCode.componentsName"

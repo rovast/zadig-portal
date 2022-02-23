@@ -3,68 +3,34 @@
     <div class="anchor-container">
       <el-tabs v-model="anchorTab" @tab-click="goToAnchor" tab-position="right">
         <el-tab-pane label="基本信息"></el-tab-pane>
-        <el-tab-pane label="构建脚本"></el-tab-pane>
         <el-tab-pane v-if="isOnboarding" label="资源配置"></el-tab-pane>
         <el-tab-pane label="部署配置"></el-tab-pane>
         <el-tab-pane label="探活配置"></el-tab-pane>
       </el-tabs>
     </div>
-    <section class="zadig-build-container">
-      <section class="common-parcel-block">
-        <div id="基本信息" class="scroll">
-          <el-form
-            ref="zadigFormRef"
-            :model="buildConfig"
-            :rules="createRules"
-            label-position="left"
-            class="primary-form"
-            label-width="120px"
-            inline-message
-          >
-            <el-form-item prop="service_name" label="服务名称">
-              <el-input v-model="buildConfig.service_name" placeholder="服务名称" autofocus size="small" :disabled="isEdit" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="构建名称" prop="name">
-              <el-select v-model="buildConfig.name" @change="syncBuild" size="small" placeholder="请选择" filterable :allow-create="!isEdit">
-                <el-option v-for="item in builds" filterable :key="item.id" :label="item.name" :value="item.name"></el-option>
-              </el-select>
-            </el-form-item>
-            <BuildEnv ref="buildEnvRef" :buildConfig="buildConfig" :isCreate="!isEdit"></BuildEnv>
-          </el-form>
-          <repo-select :config="buildConfig" :validObj="validObj" class="build-secondary-form" showFirstLine></repo-select>
-        </div>
-        <section id="构建脚本" class="scroll">
-          <div class="primary-title not-first-child">构建变量</div>
-          <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj"></EnvVariable>
-          <div class="primary-title not-first-child">通用构建脚本</div>
-          <div class="deploy-script">
-            <Resize :resize="'both'">
-              <Editor v-model="buildConfig.scripts"></Editor>
-            </Resize>
-          </div>
-        </section>
-      </section>
-      <section>
-        <div style="margin-bottom: 8px;">
-          <el-button type="primary" size="small" plain @click="showAdvancedConfig = !showAdvancedConfig">
-            高级配置
-            <i :class="[showAdvancedConfig ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
-          </el-button>
-        </div>
-        <AdvancedConfig
-          ref="advancedConfigRef"
-          v-show="showAdvancedConfig"
-          class="common-parcel-block"
-          :isCreate="!isEdit"
-          :buildConfig="buildConfig"
-          :validObj="validObj"
-          @validateFailed="showAdvancedConfig = true"
-        ></AdvancedConfig>
-      </section>
-      <section>
-        <OtherSteps ref="otherStepsRef" :buildConfig="buildConfig" :validObj="validObj" usedToHost></OtherSteps>
-      </section>
-    </section>
+    <ZadigBuild id="基本信息" class="scroll" ref="zadigFormRef" :isCreate="!isEdit" :buildConfigData="buildConfig" usedToHost>
+      <template v-slot:buildName>
+        <el-form-item label="构建名称" prop="name">
+          <el-select v-model="buildConfig.name" @change="syncBuild" size="small" placeholder="请选择" filterable :allow-create="!isEdit">
+            <el-option v-for="item in builds" filterable :key="item.id" :label="item.name" :value="item.name"></el-option>
+          </el-select>
+        </el-form-item>
+      </template>
+      <template v-slot:serviceName>
+        <el-form-item
+          prop="service_name"
+          label="服务名称"
+          :rules="{
+            type: 'string',
+            required: true,
+            validator: validateServiceName,
+            trigger: 'change'
+          }"
+        >
+          <el-input v-model="buildConfig.service_name" placeholder="服务名称" autofocus size="small" :disabled="isEdit" auto-complete="off"></el-input>
+        </el-form-item>
+      </template>
+    </ZadigBuild>
     <div v-show="isOnboarding" id="资源配置" class="common-parcel-block scroll">
       <el-form :model="pmService" ref="envConfigRef" label-width="120px" label-position="top" class="secondary-form" inline-message>
         <span class="primary-title">资源配置</span>
@@ -270,21 +236,14 @@ import {
   serviceTemplateAPI,
   getBuildConfigsAPI,
   getBuildConfigDetailAPI,
-  getCodeSourceMaskedAPI,
   createPmServiceAPI,
   updatePmServiceAPI,
   getHostListAPI,
   getHostLabelListAPI
 } from '@api'
 import Editor from 'vue2-ace-bind'
-import Resize from '@/components/common/resize.vue'
 
-import BuildEnv from '@/components/projects/build/buildEnv.vue'
-import EnvVariable from '@/components/projects/build/envVariable.vue'
-import AdvancedConfig from '@/components/projects/build/advancedConfig.vue'
-import OtherSteps from '@/components/projects/build/otherSteps.vue'
-
-import ValidateSubmit from '@utils/validateAsync'
+import ZadigBuild from '@/components/projects/build/zadigBuild.vue'
 
 const validateServiceName = (rule, value, callback) => {
   if (value === '') {
@@ -396,28 +355,10 @@ export default {
       },
       checkStatusEnabled: false,
       showCheckStatusAdvanced: {},
-      allCodeHosts: [],
       allHost: [],
       allHostLabels: [],
       envNameList: [],
-      createRules: {
-        service_name: [
-          {
-            type: 'string',
-            required: true,
-            validator: validateServiceName,
-            trigger: 'change'
-          }
-        ],
-        name: [
-          {
-            type: 'string',
-            required: true,
-            message: '请输入构建名称或者选择已有构建',
-            trigger: 'change'
-          }
-        ]
-      },
+      validateServiceName,
       addHostRules: {
         name: [
           {
@@ -457,7 +398,6 @@ export default {
           }
         ]
       },
-      validObj: new ValidateSubmit(),
       showAdvancedConfig: false
     }
   },
@@ -538,7 +478,7 @@ export default {
         if (!this.buildConfig.timeout) {
           this.$set(this.buildConfig, time_out, 0)
         }
-        this.$refs.otherStepsRef.initStepStatus(this.buildConfig)
+
         if (
           this.buildConfig.sshs &&
           (this.buildConfig.sshs.length !== 0 || this.buildConfig.sshs === [])
@@ -548,9 +488,7 @@ export default {
           this.useSshKey = false
         }
 
-        this.$refs.buildEnvRef.initOperatingSystem()
-
-        this.$refs.advancedConfigRef.initAdvancedConfig(this.buildConfig)
+        this.$refs.zadigFormRef.initData(this.buildConfig)
       })
     },
     initEnvConfig () {
@@ -710,126 +648,52 @@ export default {
         }
       }
     },
-    savePmService () {
+    async savePmService () {
+      let buildConfigPayload = await this.$refs.zadigFormRef
+        .validate()
+        .catch(err => console.log(err))
+      if (!buildConfigPayload) {
+        return
+      }
+      let pmServicePayload = {}
       if (this.isEdit) {
-        this.updatePmService()
-      } else {
-        this.createPmService()
-      }
-    },
-    async createPmService () {
-      const res = await this.validObj.validateAll()
-      if (!res[1]) {
-        return
-      }
-      const targets = [
-        {
-          product_name: this.projectName,
-          service_name: this.buildConfig.service_name,
-          service_module: this.buildConfig.service_name
+        if (!this.check_status_enabled) {
+          delete this.pmService.health_checks
         }
-      ]
-      const buildConfigPayload = this.$utils.cloneObj({
-        targets,
-        ...this.buildConfig
-      })
-      buildConfigPayload.repos.forEach(repo => {
-        this.allCodeHosts.forEach(codehost => {
-          if (repo.codehost_id === codehost.id) {
-            repo.source = codehost.type
-          }
-        })
-      })
-      buildConfigPayload.product_name = this.projectName
-      // 处理主机标签
-      const pmServicePayload = {
-        product_name: this.projectName,
-        service_name: buildConfigPayload.service_name,
-        visibility: 'private',
-        type: 'pm',
-        build_name: buildConfigPayload.name,
-        health_checks: this.check_status_enabled
-          ? this.pmService.health_checks
-          : [],
-        env_configs: this.pmService.env_configs
-      }
-      const hostIds = this.allHost.map(item => {
-        return item.id
-      })
-      // 处理主机标签
-      pmServicePayload.env_configs.forEach(element => {
-        element.labels = element.host_ids.filter(item => {
-          return hostIds.indexOf(item) < 0
-        })
-        element.host_ids = element.host_ids.filter(item => {
-          return hostIds.indexOf(item) >= 0
-        })
-      })
-      const combinePayload = {
-        pm_service_tmpl: pmServicePayload,
-        build: buildConfigPayload
-      }
-      const refs = [this.$refs.zadigFormRef, this.$refs.envConfigRef]
-      if (this.check_status_enabled) {
-        refs.push(this.$refs.healthCheckRef)
-      }
-      Promise.all(refs.map(r => r.validate()))
-        .then(() => {
-          createPmServiceAPI(this.projectName, combinePayload).then(
-            () => {
-              if (this.changeUpdateEnvDisabled) {
-                this.changeUpdateEnvDisabled()
-              }
-              this.$router.push({
-                query: { serviceName: this.buildConfig.service_name }
-              })
-              this.$emit('listenCreateEvent', 'success')
-              this.$message({
-                type: 'success',
-                message: '创建主机服务成功'
-              })
-            },
-            () => {
-              this.$emit('listenCreateEvent', 'failed')
-              return false
+        if (!this.useSshKey) {
+          this.buildConfig.sshs = []
+        }
+        pmServicePayload = this.$utils.cloneObj(this.pmService)
+        pmServicePayload.build_name = buildConfigPayload.name
+      } else {
+        buildConfigPayload = {
+          targets: [
+            {
+              product_name: this.projectName,
+              service_name: this.buildConfig.service_name,
+              service_module: this.buildConfig.service_name
             }
-          )
-        })
-        .catch(() => {
-          const errDiv = document.querySelector('.is-error')
-          errDiv.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          })
-          errDiv.querySelector('input').focus()
-        })
+          ],
+          ...buildConfigPayload
+        }
+
+        pmServicePayload = {
+          product_name: this.projectName,
+          service_name: buildConfigPayload.service_name,
+          visibility: 'private',
+          type: 'pm',
+          build_name: buildConfigPayload.name,
+          health_checks: this.check_status_enabled
+            ? this.pmService.health_checks
+            : [],
+          env_configs: this.pmService.env_configs
+        }
+      }
+      this.handlePmService(buildConfigPayload, pmServicePayload)
     },
-    async updatePmService () {
-      const res = await this.validObj.validateAll()
-      if (!res[1]) {
-        return
-      }
-      if (!this.check_status_enabled) {
-        delete this.pmService.health_checks
-      }
-      if (!this.useSshKey) {
-        this.buildConfig.sshs = []
-      }
-      const buildConfigPayload = this.$utils.cloneObj(this.buildConfig)
-      buildConfigPayload.repos.forEach(repo => {
-        this.allCodeHosts.forEach(codehost => {
-          if (repo.codehost_id === codehost.id) {
-            repo.source = codehost.type
-          }
-        })
-      })
-      const pmServicePayload = this.$utils.cloneObj(this.pmService)
+    async handlePmService (buildConfigPayload, pmServicePayload) {
       buildConfigPayload.product_name = this.projectName
-      pmServicePayload.build_name = buildConfigPayload.name
-      const combinePayload = {
-        pm_service_tmpl: pmServicePayload,
-        build: buildConfigPayload
-      }
+
       const hostIds = this.allHost.map(item => {
         return item.id
       })
@@ -842,13 +706,23 @@ export default {
           return hostIds.indexOf(item) >= 0
         })
       })
+      const combinePayload = {
+        pm_service_tmpl: pmServicePayload,
+        build: buildConfigPayload
+      }
       const refs = [this.$refs.zadigFormRef]
+      if (!this.isEdit) {
+        refs.push(this.$refs.envConfigRef)
+      }
       if (this.check_status_enabled) {
         refs.push(this.$refs.healthCheckRef)
       }
       Promise.all(refs.map(r => r.validate()))
         .then(() => {
-          updatePmServiceAPI(this.projectName, combinePayload).then(
+          ;(this.isEdit ? updatePmServiceAPI : createPmServiceAPI)(
+            this.projectName,
+            combinePayload
+          ).then(
             () => {
               if (this.changeUpdateEnvDisabled) {
                 this.changeUpdateEnvDisabled()
@@ -859,7 +733,7 @@ export default {
               this.$emit('listenCreateEvent', 'success')
               this.$message({
                 type: 'success',
-                message: '修改主机服务成功'
+                message: this.isEdit ? '修改主机服务成功' : '创建主机服务成功'
               })
             },
             () => {
@@ -924,7 +798,7 @@ export default {
       this.pmService.env_configs.forEach(item => {
         item.host_ids = []
       })
-      this.$refs.otherStepsRef.removeBinary()
+      this.$refs.zadigFormRef.initData(this.buildConfig)
     },
     loadPage () {
       const projectName = this.projectName
@@ -943,9 +817,6 @@ export default {
           })
         })
       }
-      getCodeSourceMaskedAPI().then(res => {
-        this.allCodeHosts = res
-      })
       getHostLabelListAPI().then(res => {
         this.allHostLabels = res
       })
@@ -960,8 +831,7 @@ export default {
         if (!this.isEdit && val) {
           this.buildConfig.name = val + '-build'
           this.$nextTick(() => {
-            this.$refs.buildEnvRef.initOperatingSystem()
-            this.$refs.advancedConfigRef.initAdvancedConfig(this.buildConfig)
+            this.$refs.zadigFormRef.initData()
           })
         }
       }
@@ -1075,11 +945,7 @@ export default {
   },
   components: {
     Editor,
-    Resize,
-    BuildEnv,
-    EnvVariable,
-    AdvancedConfig,
-    OtherSteps
+    ZadigBuild
   }
 }
 </script>

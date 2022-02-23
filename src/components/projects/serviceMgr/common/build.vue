@@ -64,8 +64,11 @@ export default {
     name: String,
     buildName: String,
     isEdit: Boolean,
-    mini: Boolean,
     followUpFn: Function,
+    mini: {
+      default: false,
+      type: Boolean
+    },
     saveDisabled: {
       default: false,
       type: Boolean

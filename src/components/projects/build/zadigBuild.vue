@@ -16,16 +16,18 @@
               <el-input v-model="buildConfig.name" placeholder="构建名称" autofocus size="small" :disabled="!isCreate" auto-complete="off"></el-input>
             </el-form-item>
           </slot>
-          <el-form-item label="服务选择">
-            <el-select v-model="buildConfig.targets" multiple size="small" value-key="key" filterable>
-              <el-option
-                v-for="(service,index) in serviceTargets"
-                :key="index"
-                :label="`${service.service_module}(${service.service_name})`"
-                :value="service"
-              ></el-option>
-            </el-select>
-          </el-form-item>
+          <slot name="serviceName">
+            <el-form-item label="服务选择">
+              <el-select v-model="buildConfig.targets" multiple size="small" value-key="key" filterable>
+                <el-option
+                  v-for="(service,index) in serviceTargets"
+                  :key="index"
+                  :label="`${service.service_module}(${service.service_name})`"
+                  :value="service"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </slot>
           <BuildEnv ref="buildEnvRef" :buildConfig="buildConfig" :isCreate="isCreate" :mini="mini"></BuildEnv>
         </el-form>
       </div>
@@ -62,7 +64,7 @@
       ></AdvancedConfig>
     </section>
     <section>
-      <OtherSteps ref="otherStepsRef" :buildConfig="buildConfig" :validObj="validObj" :mini="mini"></OtherSteps>
+      <OtherSteps ref="otherStepsRef" :buildConfig="buildConfig" :validObj="validObj" :mini="mini" :usedToHost="usedToHost"></OtherSteps>
     </section>
   </section>
 </template>
@@ -127,10 +129,20 @@ export default {
       default: false,
       type: Boolean
     },
-    jenkinsEnabled: Boolean,
+    jenkinsEnabled: {
+      default: false,
+      type: Boolean
+    },
     isCreate: Boolean,
     buildConfigData: Object,
-    serviceTargets: Array
+    serviceTargets: {
+      type: Array,
+      default: () => []
+    },
+    usedToHost: {
+      default: false,
+      type: Boolean
+    }
   },
   data () {
     return {
@@ -163,7 +175,7 @@ export default {
     },
     buildConfig () {
       this.initBuildConfig = cloneDeep(initBuildConfig)
-      return Object.assign(this.initBuildConfig, this.buildConfigData)
+      return Object.assign(this.initBuildConfig, cloneDeep(this.buildConfigData))
     }
   },
   methods: {

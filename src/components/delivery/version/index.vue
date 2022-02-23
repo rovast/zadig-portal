@@ -2,7 +2,7 @@
   <div
     v-loading="loading"
     element-loading-text="加载中..."
-    element-loading-spinner="iconfont iconfont-loading iconbanben"
+    element-loading-spinner="iconfont iconfont-loading iconvery-versionmana"
     class="version-list-container"
   >
     <div v-if="versionList.length !== 0" class="operation">
@@ -66,8 +66,9 @@
         </template>
       </el-table-column>
     </el-table>
-    <div v-if="versionList.length === 0 || loading" class="version-not-available">
+    <div v-if="versionList.length === 0 && !loading" class="version-not-available">
       <img src="@assets/icons/illustration/versionManage.svg" alt />
+      <p>暂无可展示的版本信息</p>
     </div>
   </div>
 </template>
@@ -195,11 +196,15 @@ export default {
     align-content: center;
     align-items: center;
     justify-content: center;
-    height: 70vh;
 
     img {
       width: 400px;
       height: 400px;
+    }
+
+    p {
+      color: #606266;
+      font-size: 15px;
     }
   }
 }

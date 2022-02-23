@@ -136,8 +136,8 @@ export default {
     align-items: center;
 
     img {
-      width: 480px;
-      height: 480px;
+      width: 400px;
+      height: 400px;
     }
 
     p {

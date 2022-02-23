@@ -3,7 +3,7 @@
     v-loading="loading"
     class="artifacts-container"
     element-loading-text="加载中..."
-    element-loading-spinner="iconfont iconfont-loading iconbaoguanli"
+    element-loading-spinner="iconfont iconfont-loading iconvery-delitracking"
   >
     <div class="operation">
       <el-select style="width: 160px; margin-right: 16px;" size="medium" v-model="filterKey" @change="changeKey" placeholder="请选择">
@@ -117,7 +117,7 @@
         :total="totalResult"
       ></el-pagination>
     </div>
-    <div v-if="artifacts.length === 0" class="no-artifacts">
+    <div v-if="artifacts.length === 0 && !loading" class="no-artifacts">
       <img src="@assets/icons/illustration/deliveryCenter.svg" alt />
       <p>暂无交付物，请选择需要筛选的交付物</p>
     </div>
@@ -381,7 +381,6 @@ export default {
     align-content: center;
     align-items: center;
     justify-content: center;
-    height: 70vh;
 
     img {
       width: 400px;

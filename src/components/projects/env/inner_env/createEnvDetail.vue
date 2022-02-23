@@ -1,15 +1,13 @@
 <template>
   <div class="create-product-detail-container" v-loading="loading" element-loading-text="正在加载中" element-loading-spinner="el-icon-loading">
-    <div v-if="showEmptyServiceModal" class="no-resources">
-      <div>
-        <img src="@assets/icons/illustration/environment.svg" alt />
-      </div>
+    <div v-if="serviceNotAvailable && !loading" class="no-resources">
+      <img src="@assets/icons/illustration/environment.svg" alt />
       <div class="description">
         <p>
           该环境暂无服务，请点击
           <router-link :to="`/v1/projects/detail/${projectName}/services`">
-            <el-button type="primary" size="mini" round plain>项目->服务</el-button>
-          </router-link>添加服务
+            <el-button type="primary" size="mini" round plain>服务</el-button>
+          </router-link>新建服务
         </p>
       </div>
     </div>
@@ -415,7 +413,7 @@ export default {
     rollbackMode () {
       return this.projectConfig.source === 'versionBack'
     },
-    showEmptyServiceModal () {
+    serviceNotAvailable () {
       return (
         this.$utils.isEmpty(this.containerMap) &&
         this.$utils.isEmpty(this.pmServiceMap) &&
@@ -1021,27 +1019,20 @@ export default {
   }
 
   .no-resources {
-    padding: 45px;
-    border-style: hidden;
-    border-radius: 4px;
-    border-collapse: collapse;
-    box-shadow: 0 0 0 2px #f1f1f1;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
 
     img {
-      display: block;
-      width: 360px;
-      height: 360px;
-      margin: 10px auto;
+      width: 400px;
+      height: 400px;
     }
 
-    .description {
-      margin: 16px auto;
-      text-align: center;
-
-      p {
-        color: #8d9199;
-        font-size: 15px;
-      }
+    p {
+      color: #606266;
+      font-size: 15px;
     }
   }
 

@@ -1,9 +1,9 @@
 <template>
-  <div class="step-container1">
+  <div class="host-step-container">
     <div class="step-detail">
       <div class="guide-title">
         <h4>
-          产品交付向导
+          项目初始化向导
         </h4>
       </div>
       <el-steps :active="activeStep"
@@ -51,10 +51,8 @@ export default {
 }
 </script>
 <style lang="less">
-.step-container1 {
-  height: 200px;
-  padding-top: 20px;
-  padding-left: 20px;
+.host-step-container {
+  padding-top: 10px;
 
   .title-container {
     margin-bottom: 10px;
@@ -63,13 +61,13 @@ export default {
 
     .first {
       display: inline-block;
-      width: 110px;
+      width: 130px;
       padding: 8px;
       color: #fff;
       font-weight: 300;
       font-size: 18px;
       text-align: center;
-      background: #3289e4;
+      background: @themeColor;
     }
 
     .second {
@@ -80,20 +78,20 @@ export default {
   }
 
   .step-detail {
-    width: 80%;
+    width: 100%;
 
     .guide-title {
       display: flex;
 
       h4 {
-        width: 110px;
+        width: 130px;
         margin: 0 0 10px 20px;
         padding: 8px;
         color: #fff;
         font-weight: 300;
         font-size: 18px;
         text-align: center;
-        background: #3289e4;
+        background: @themeColor;
       }
     }
 

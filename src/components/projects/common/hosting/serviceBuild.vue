@@ -33,9 +33,7 @@
           <el-button
             type="primary"
             size="small"
-            class="save-btn"
             @click="saveBuild"
-            plain
             >保存构建
           </el-button>
         </div>
@@ -198,11 +196,8 @@ export default {
         height: 50px;
         background-color: #fff;
 
-        .save-btn {
-          margin-top: 10px;
+        .el-button {
           margin-left: 20px;
-          color: #fff;
-          background-color: #409eff;
         }
       }
     }

@@ -7,13 +7,13 @@
           <span class="first">第三步</span>
           <span class="second">将服务加入运行环境，并准备对应的交付工作流，后续均可在项目中进行配置</span>
         </div>
-        <div class="info-container cf-block__list">
+        <div class="info-container block-list">
           <div class="title">
             <h4>环境准备</h4>
             <el-alert v-if="envFailure.length > 0||timeOut" type="warning" show-icon>
               <template v-slot:title>
                 环境正在准备中，可点击 「下一步」 或者 <span class="view-env-btn" @click="viewEnvStatus">查看环境状态</span>
-                <i v-if="jumpLoading"
+                <i v-if="exitLoading"
                    class="el-icon-loading"></i>
               </template>
             </el-alert>
@@ -99,19 +99,15 @@
     </div>
     <div class="controls__wrap">
       <div class="controls__right">
-        <router-link :to="`/v1/projects/create/${projectName}/basic/delivery`">
-          <button v-if="!getResult"
+        <router-link :to="`/v1/projects/create/${projectName}/k8s/delivery`">
+          <el-button v-if="!getResult"
                   type="primary"
-                  class="save-btn"
-                  disabled
-                  plain>下一步</button>
-          <button v-else-if="getResult"
-                  type="primary"
-                  class="save-btn"
-                  plain>下一步</button>
+                  size="small"
+                  disabled>下一步</el-button>
+          <el-button v-else-if="getResult"
+                  size="small"
+                  type="primary">下一步</el-button>
         </router-link>
-        <div class="run-button">
-        </div>
       </div>
     </div>
   </div>
@@ -130,21 +126,21 @@ export default {
       workflowTimer: 0,
       secondCount: 0,
       timeOut: 0,
-      jumpLoading: false
+      exitLoading: false
     }
   },
   methods: {
     viewEnvStatus () {
-      this.$confirm('跳出后进入项目将不再进入向导流程', '确认跳出产品交付向导？', {
+      this.$confirm('跳出后进入项目将不再进入向导流程', '确认跳出项目初始化向导？', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.jumpLoading = true
+        this.exitLoading = true
         this.saveOnboardingStatus(this.projectName, 0).then((res) => {
           this.$router.push(`/v1/projects/detail/${this.projectName}/envs`)
         }).catch(() => {
-          this.jumpLoading = false
+          this.exitLoading = false
         })
       }).catch(() => {
         this.$message.info('取消跳转')
@@ -230,10 +226,11 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .projects-runtime-container {
   position: relative;
   flex: 1;
+  height: 100%;
   overflow: auto;
   background-color: @globalBackgroundColor;
 
@@ -247,39 +244,19 @@ export default {
     align-items: center;
     justify-content: space-between;
     height: 60px;
-    margin: 0 15px;
-    padding: 0 10px;
+    padding: 0 20px;
     background-color: #fff;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
 
     & > * {
       margin-right: 10px;
     }
 
     .controls__right {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
       align-items: center;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
 
-      .save-btn {
+      a {
         margin-right: 15px;
-        padding: 10px 17px;
-        color: #fff;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: @themeColor;
-        border: 1px solid @themeColor;
-        cursor: pointer;
-        transition: background-color 300ms, color 300ms, border 300ms;
-      }
-
-      .save-btn[disabled] {
-        background-color: #9ac9f9;
-        border: 1px solid #9ac9f9;
-        cursor: not-allowed;
       }
     }
   }
@@ -294,13 +271,13 @@ export default {
 
         .first {
           display: inline-block;
-          width: 110px;
+          width: 130px;
           padding: 8px;
           color: #fff;
           font-weight: 300;
           font-size: 18px;
           text-align: center;
-          background: #3289e4;
+          background: @themeColor;
         }
 
         .second {
@@ -320,14 +297,12 @@ export default {
         }
       }
 
-      .cf-block__list {
-        -ms-flex: 1;
+      .block-list {
         flex: 1;
         margin-top: 15px;
         padding: 0 30px;
         overflow-y: auto;
         background-color: inherit;
-        -webkit-box-flex: 1;
 
         .title {
           h4 {
@@ -346,32 +321,18 @@ export default {
           min-height: 102px;
 
           .info-block-item {
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 10px;
             padding: 20px 30px;
             background-color: #fff;
-            -webkit-box-shadow: 0 3px 2px 1px rgba(0, 0, 0, 0.05);
-            box-shadow: 0 3px 2px 1px rgba(0, 0, 0, 0.05);
-            filter: progid:dximagetransform.microsoft.dropshadow(OffX=0, OffY=3px, Color='#0D000000');
-            -webkit-box-align: center;
-            -ms-flex-align: center;
-            -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
+            border-radius: 6px;
 
             .info-block-item-card {
-              display: -webkit-box;
-              display: -ms-flexbox;
               display: flex;
               align-items: center;
               justify-content: flex-start;
-              -webkit-box-align: center;
-              -ms-flex-align: center;
-              -webkit-box-pack: start;
-              -ms-flex-pack: start;
 
               .integration-card__image {
                 width: 64px;
@@ -411,9 +372,7 @@ export default {
             }
 
             .info-block-item-card > * {
-              -ms-flex: 0 0 auto;
               flex: 0 0 auto;
-              -webkit-box-flex: 0;
             }
           }
         }

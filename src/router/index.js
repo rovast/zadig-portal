@@ -390,8 +390,32 @@ const routes = [
         }
       },
       {
-        path: 'projects/create/:project_name/basic/info',
+        path: 'projects/create/:project_name/k8s/info',
         component: () => import(/* webpackChunkName: "Onboarding K8s" */ '@/components/projects/guide/k8s/basicInfo.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '新建项目'
+        }
+      },
+      {
+        path: 'projects/create/:project_name/k8s/service',
+        component: () => import(/* webpackChunkName: "Onboarding K8s" */ '@/components/projects/guide/k8s/service.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '新建项目'
+        }
+      },
+      {
+        path: 'projects/create/:project_name/k8s/runtime',
+        component: () => import(/* webpackChunkName: "Onboarding K8s" */ '@/components/projects/guide/common/runtime.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '新建项目'
+        }
+      },
+      {
+        path: 'projects/create/:project_name/k8s/delivery',
+        component: () => import(/* webpackChunkName: "Onboarding K8s" */ '@/components/projects/guide/k8s/delivery.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -400,30 +424,6 @@ const routes = [
       {
         path: 'projects/create/:project_name/host/config',
         component: () => import(/* webpackChunkName: "Onboarding Host" */ '@/components/projects/guide/host/hostConfig.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '新建项目'
-        }
-      },
-      {
-        path: 'projects/create/:project_name/basic/service',
-        component: () => import(/* webpackChunkName: "Onboarding K8s" */ '@/components/projects/guide/service.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '新建项目'
-        }
-      },
-      {
-        path: 'projects/create/:project_name/basic/runtime',
-        component: () => import(/* webpackChunkName: "Onboarding K8s" */ '@/components/projects/guide/common/runtime.vue'),
-        meta: {
-          requiresAuth: true,
-          title: '新建项目'
-        }
-      },
-      {
-        path: 'projects/create/:project_name/basic/delivery',
-        component: () => import(/* webpackChunkName: "Onboarding K8s" */ '@/components/projects/guide/k8s/delivery.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'
@@ -439,7 +439,7 @@ const routes = [
       },
       {
         path: 'projects/create/:project_name/helm/service',
-        component: () => import(/* webpackChunkName: "Onboarding Helm" */ '@/components/projects/guide/serviceHelmGuide.vue'),
+        component: () => import(/* webpackChunkName: "Onboarding Helm" */ '@/components/projects/guide/helm/service.vue'),
         meta: {
           requiresAuth: true,
           title: '新建项目'

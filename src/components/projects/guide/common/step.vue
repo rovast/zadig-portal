@@ -3,7 +3,7 @@
     <div class="step-detail">
       <div class="guide-title">
         <h4>
-          产品交付向导
+          项目初始化向导
         </h4>
       </div>
       <el-steps :active="activeStep"
@@ -84,7 +84,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .step-container {
   display: flex;
   flex-direction: row;
@@ -96,14 +96,14 @@ export default {
       display: flex;
 
       h4 {
-        width: 110px;
+        width: 130px;
         margin: 0 0 10px 20px;
         padding: 8px;
         color: #fff;
         font-weight: 300;
         font-size: 18px;
         text-align: center;
-        background: #3289e4;
+        background: @themeColor;
       }
     }
 
@@ -129,7 +129,7 @@ export default {
     .el-step__icon {
       width: 10px;
       height: 10px;
-      color: #3289e4;
+      color: @themeColor;
       font-size: 12px;
     }
 

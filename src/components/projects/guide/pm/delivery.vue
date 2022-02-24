@@ -7,7 +7,7 @@
           <span class="first">第四步</span>
           <span class="second">运行工作流触发服务的自动化交付</span>
         </div>
-        <div class="account-integrations cf-block__list">
+        <div class="account-integrations block-list">
           <el-table v-loading="loading"
                     :data="mapWorkflows"
                     style="width: 100%;">

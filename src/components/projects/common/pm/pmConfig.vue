@@ -707,7 +707,7 @@ export default {
         this.$router.push(`/v1/projects/detail/${projectName}/services`)
         return
       }
-      this.$confirm('确认跳出后就不再进入 onboarding 流程。', '确认跳出产品交付向导？', {
+      this.$confirm('确认跳出后就不再进入 onboarding 流程。', '确认跳出项目初始化向导？', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

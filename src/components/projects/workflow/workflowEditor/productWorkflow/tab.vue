@@ -111,7 +111,7 @@ export default {
     }
   },
   props: {
-    pipelineInfo: {
+    workflowInfo: {
       required: true,
       type: Object
     },

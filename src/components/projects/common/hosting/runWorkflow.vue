@@ -1,5 +1,5 @@
 <template>
-  <div class="account-integrations cf-block__list">
+  <div class="account-integrations block-list">
     <el-table v-loading="loading" :data="mapWorkflows" style="width: 100%;">
       <el-table-column label="工作流名称">
         <template slot-scope="scope">
@@ -23,7 +23,7 @@
       <el-table-column width="120px" label="操作">
         <template slot-scope="scope">
           <el-button
-            type="success"
+            type="primary"
             size="mini"
             round
             @click="runCurrentTask(scope.row)"
@@ -42,7 +42,7 @@
                     :workflowName="workflow.name"
                     :workflowMeta="workflow"
                     :targetProject="workflow.product_tmpl_name"
-                    @success="hideAfterSuccess"></RunWorkflow>
+                    @success="hideAfterSuccess"/>
     </el-dialog>
   </div>
 </template>
@@ -111,17 +111,15 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-      .cf-block__list {
-        -ms-flex: 1;
-        flex: 1;
-        margin-top: 15px;
-        padding: 0 30px;
-        overflow-y: auto;
-        background-color: inherit;
-        -webkit-box-flex: 1;
+.block-list {
+  flex: 1;
+  margin-top: 15px;
+  padding: 0 30px;
+  overflow-y: auto;
+  background-color: inherit;
 
-        .env-name {
-          color: @themeColor;
-        }
-      }
+  .env-name {
+    color: @themeColor;
+  }
+}
 </style>

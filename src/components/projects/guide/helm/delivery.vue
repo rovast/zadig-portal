@@ -7,7 +7,7 @@
           <span class="first">第四步</span>
           <span class="second">运行工作流触发服务的自动化交付</span>
         </div>
-        <div class="account-integrations cf-block__list">
+        <div class="account-integrations block-list">
           <el-table v-loading="loading" :data="mapWorkflows" style="width: 100%;">
             <el-table-column label="工作流名称">
               <template slot-scope="scope">
@@ -47,31 +47,28 @@
             <el-table-column width="120px" label="操作">
               <template slot-scope="scope">
                 <span v-if="pipeStatus.status !== 'success'">准备中，请稍后...</span>
-                <el-button v-else type="success" size="mini" round @click="runCurrentTask(scope.row)" plain>点击运行</el-button>
+                <el-button v-else type="primary" size="mini" round @click="runCurrentTask(scope.row)" plain>点击运行</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
       </div>
-      <div class="other-operation">
-        <h3 class="service-aside-help__step-header">您可能还需要：</h3>
-        <ul class="service-aside-help__step-list">
-          <li class="service-aside-help__step-list-item">
-            <a
-              target="_blank"
-              href="https://docs.koderover.com/zadig/project/workflow/#git-webhook"
-              class="service-aside-help__step-list-item-link"
-            >
-              <i class="icon el-icon-link"></i>
-              <span class="service-aside-help__step-list-item-link-text">配置 Git Webhook 自动触发服务升级</span>
-            </a>
-          </li>
+      <div class="help-links-container">
+        <h3 class="links-header">
+          您可能还需要：
+        </h3>
+        <ul class="links-list">
+          <li class="list-item"><a target="_blank"
+               href="https://docs.koderover.com/zadig/project/workflow/#git-webhook"
+               class="list-item-link"><i class="icon el-icon-link"></i>
+              <span class="list-item-link-text">
+                配置 Git Webhook 自动触发服务升级</span></a></li>
         </ul>
       </div>
     </div>
     <div class="controls__wrap">
       <div class="controls__right">
-        <button type="primary" size="small" class="save-btn" :disabled="loading" plain @click="onboardingFinish">完成</button>
+        <el-button type="primary" size="small"  :disabled="loading" @click="onboardingFinish">完成</el-button>
       </div>
     </div>
     <el-dialog :visible.sync="taskDialogVisible" title="运行 产品-工作流" custom-class="run-workflow" width="60%" class="dialog">
@@ -105,7 +102,7 @@ export default {
     onboardingFinish () {
       const projectName = this.projectName
       this.saveOnboardingStatus(projectName, 0).then(() => {
-        this.$router.push(`/v1/projects/detail/${projectName}`)
+        this.$router.push(`/v1/projects/detail/${projectName}/detail`)
       })
     },
     async getWorkflows () {

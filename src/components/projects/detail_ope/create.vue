@@ -284,7 +284,7 @@ export default {
           }
           if (payload.product_feature.deploy_type === 'k8s') {
             this.$router.push(
-              `/v1/projects/create/${payload.product_name}/basic/info?rightbar=step`
+              `/v1/projects/create/${payload.product_name}/k8s/info?rightbar=step`
             )
           }
           if (payload.product_feature.deploy_type === 'helm') {

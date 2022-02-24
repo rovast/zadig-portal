@@ -1,10 +1,10 @@
 function getRoute (status, type, projectName) {
   const routes = {
     basic: [
-      `/v1/projects/create/${projectName}/basic/info?rightbar=step`,
-      `/v1/projects/create/${projectName}/basic/service?rightbar=help`,
-      `/v1/projects/create/${projectName}/basic/runtime`,
-      `/v1/projects/create/${projectName}/basic/delivery`
+      `/v1/projects/create/${projectName}/k8s/info?rightbar=step`,
+      `/v1/projects/create/${projectName}/k8s/service?rightbar=help`,
+      `/v1/projects/create/${projectName}/k8s/runtime`,
+      `/v1/projects/create/${projectName}/k8s/delivery`
     ],
     pm: [
       `/v1/projects/create/${projectName}/pm/info`,

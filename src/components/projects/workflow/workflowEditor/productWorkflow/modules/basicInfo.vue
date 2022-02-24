@@ -2,16 +2,16 @@
   <div class="product-basic-info">
     <el-card class="box-card">
       <div>
-        <el-form :model="pipelineInfo"
+        <el-form :model="workflowInfo"
                  :rules="rules"
-                 ref="pipelineInfo"
+                 ref="workflowInfo"
                  label-position="top"
                  label-width="80px">
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item prop="name"
                             label="工作流名称">
-                <el-input v-model="pipelineInfo.name"
+                <el-input v-model="workflowInfo.name"
                           :disabled="editMode"
                           style="width: 80%;"
                           placeholder="请输入工作流名称"></el-input>
@@ -20,9 +20,9 @@
             <el-col :span="8">
               <el-form-item prop="product_tmpl_name"
                             label="选择项目">
-                <el-select v-model="pipelineInfo.product_tmpl_name"
+                <el-select v-model="workflowInfo.product_tmpl_name"
                            style="width: 80%;"
-                           @change="getEnvServices(pipelineInfo.product_tmpl_name)"
+                           @change="getEnvServices(workflowInfo.product_tmpl_name)"
                            placeholder="请选择项目"
                            :disabled="editMode || !!$route.query.projectName"
                            filterable>
@@ -42,7 +42,7 @@
                     <i class="pointer el-icon-question"></i>
                   </el-tooltip>
                 </template>
-                <el-select v-model="pipelineInfo.env_name"
+                <el-select v-model="workflowInfo.env_name"
                            style="width: 80%;"
                            placeholder="请选择环境"
                            clearable
@@ -54,7 +54,7 @@
                                label=""
                                value="">
                       <router-link style="color: #909399;"
-                                   :to="`/v1/projects/detail/${pipelineInfo.product_tmpl_name}/envs/create`">
+                                   :to="`/v1/projects/detail/${workflowInfo.product_tmpl_name}/envs/create`">
                         {{`(环境不存在，点击创建环境)`}}
                       </router-link>
                     </el-option>
@@ -65,13 +65,13 @@
           <el-form-item label="描述">
             <el-input type="input"
                       style="width: 100%;"
-                      v-model="pipelineInfo.description"></el-input>
+                      v-model="workflowInfo.description"></el-input>
           </el-form-item>
         </el-form>
         <div class="policy-title">运行策略</div>
-        <el-form :model="pipelineInfo"
+        <el-form :model="workflowInfo"
                  :rules="rules"
-                 ref="pipelineInfoPolicy"
+                 ref="workflowInfoPolicy"
                  label-position="left"
                  label-width="120px">
           <el-form-item prop="is_parallel">
@@ -83,7 +83,7 @@
                 <i class="pointer el-icon-question"></i>
               </el-tooltip>
             </template>
-            <el-switch v-model="pipelineInfo.is_parallel"></el-switch>
+            <el-switch v-model="workflowInfo.is_parallel"></el-switch>
           </el-form-item>
           <el-form-item prop="reset_image">
             <template slot="label">
@@ -94,10 +94,10 @@
                 <i class="pointer el-icon-question"></i>
               </el-tooltip>
             </template>
-            <el-switch v-model="pipelineInfo.reset_image" @change="pipelineInfo.reset_image_policy = ''"></el-switch>
+            <el-switch v-model="workflowInfo.reset_image" @change="workflowInfo.reset_image_policy = ''"></el-switch>
           </el-form-item>
-          <el-form-item prop="reset_image_policy" label="设置回退策略" v-if="pipelineInfo.reset_image">
-            <el-radio-group v-model="pipelineInfo.reset_image_policy">
+          <el-form-item prop="reset_image_policy" label="设置回退策略" v-if="workflowInfo.reset_image">
+            <el-radio-group v-model="workflowInfo.reset_image_policy">
               <el-radio v-for="policy in resetPolicy" :key="policy.label" :label="policy.label">{{ policy.text }}</el-radio>
             </el-radio-group>
           </el-form-item>
@@ -169,7 +169,7 @@ export default {
     }
   },
   props: {
-    pipelineInfo: {
+    workflowInfo: {
       required: true,
       type: Object
     },
@@ -179,11 +179,11 @@ export default {
     }
   },
   watch: {
-    pipelineInfo: {
+    workflowInfo: {
       immediate: true,
       handler: function () {
         if (this.$route.query.projectName) {
-          this.pipelineInfo.product_tmpl_name = this.$route.query.projectName
+          this.workflowInfo.product_tmpl_name = this.$route.query.projectName
         }
 
         if (!this.$route.query.projectName && !this.editMode) {
@@ -191,9 +191,9 @@ export default {
             this.projects = res
           })
         }
-        const projectName = this.pipelineInfo.product_tmpl_name
+        const projectName = this.workflowInfo.product_tmpl_name
         bus.$on('check-tab:basicInfo', () => {
-          Promise.all([this.$refs.pipelineInfo.validate(), this.$refs.pipelineInfoPolicy.validate()]).then(valid => {
+          Promise.all([this.$refs.workflowInfo.validate(), this.$refs.workflowInfoPolicy.validate()]).then(valid => {
             bus.$emit('receive-tab-check:basicInfo', valid)
           })
         })

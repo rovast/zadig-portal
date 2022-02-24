@@ -35,37 +35,11 @@
   position: relative;
   flex: 1;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   background-color: @globalBackgroundColor;
 
   .project-name {
     color: @themeColor;
-  }
-
-  .guide-container {
-    margin-top: 10px;
-
-    .current-step-container {
-      .title-container {
-        margin-left: 20px;
-
-        .first {
-          display: inline-block;
-          width: 110px;
-          padding: 8px;
-          color: #fff;
-          font-weight: 300;
-          font-size: 18px;
-          text-align: center;
-          background: #3289e4;
-        }
-
-        .second {
-          color: #4c4c4c;
-          font-size: 13px;
-        }
-      }
-    }
   }
 
   .service-wrap {
@@ -177,9 +151,7 @@
     align-items: center;
     justify-content: space-between;
     height: 55px;
-    margin: 0 5px;
     background-color: #fff;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
 
     > * {
       margin-right: 10px;

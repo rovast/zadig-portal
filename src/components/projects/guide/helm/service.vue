@@ -1,8 +1,7 @@
 <template>
-<div class="con">
+<div class="projects-guide-helm-service-container">
     <div class="guide-container">
-      <step :activeStep="2" :stepThreeTitle="`配置环境`">
-      </step>
+      <Step :activeStep="2" :stepThreeTitle="`配置环境`"/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第二步</span>
@@ -11,31 +10,28 @@
       </div>
     </div>
   <div class="content">
-    <Code ref="code" :service="serviceList" isCreate>
-    </Code>
+    <Code ref="code" :service="serviceList" isCreate />
   </div>
       <div class="controls__wrap">
       <div class="controls__right">
         <el-button type="primary"
                    size="small"
-                   class="save-btn"
                    @click="toNext"
-                   :disabled="!showNext"
-                   plain>下一步</el-button>
+                   :disabled="!showNext">下一步</el-button>
       </div>
     </div>
 </div>
 </template>
 <script>
 import { mapState } from 'vuex'
-import step from './common/step.vue'
-import Code from '../serviceMgr/helm/code'
+import Step from '../common/step.vue'
+import Code from '../../serviceMgr/helm/code'
 
 export default {
   name: 'service_helm',
   components: {
     Code,
-    step
+    Step
   },
   data () {
     return {
@@ -71,11 +67,11 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.con {
+.projects-guide-helm-service-container {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: calc(~"100% - 61px");
+  height: 100%;
   background-color: @globalBackgroundColor;
 
   .guide-container {
@@ -88,13 +84,13 @@ export default {
 
       .first {
         display: inline-block;
-        width: 110px;
+        width: 130px;
         padding: 8px;
         color: #fff;
         font-weight: 300;
         font-size: 18px;
         text-align: center;
-        background: #3289e4;
+        background: @themeColor;
       }
 
       .second {
@@ -117,7 +113,6 @@ export default {
     margin: 0 5px;
     background-color: #fff;
     border-top: 1px solid #ccc;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
 
     > * {
       margin-right: 10px;
@@ -127,24 +122,6 @@ export default {
       display: flex;
       align-items: center;
       padding: 0 15px;
-
-      .save-btn {
-        margin-right: 15px;
-        padding: 10px 17px;
-        color: #fff;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: @themeColor;
-        border: 1px solid @themeColor;
-        cursor: pointer;
-        transition: background-color 300ms, color 300ms, border 300ms;
-      }
-
-      .save-btn[disabled] {
-        background-color: #9ac9f9;
-        border: 1px solid #9ac9f9;
-        cursor: not-allowed;
-      }
     }
   }
 }
@@ -152,8 +129,11 @@ export default {
 .content {
   display: flex;
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
   background-color: #fff;
-  // user-select: none;
+
+  /deep/ .code-content {
+    padding: 0;
+  }
 }
 </style>

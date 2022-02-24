@@ -7,13 +7,13 @@
           <span class="first">第三步</span>
           <span class="second">将服务加入运行环境，并准备对应的交付工作流，后续均可在项目中进行配置</span>
         </div>
-        <div class="info-container cf-block__list">
+        <div class="info-container block-list">
           <div class="title">
             <h4>环境准备</h4>
             <el-alert v-if="envFailure.length > 0||timeOut" type="warning" show-icon>
               <template v-slot:title>
                 环境正在准备中，可点击 「下一步」 或者 <span class="view-env-btn" @click="viewEnvStatus">查看环境状态</span>
-                <i v-if="jumpLoading"
+                <i v-if="exitLoading"
                    class="el-icon-loading"></i>
               </template>
             </el-alert>
@@ -134,16 +134,16 @@ export default {
   },
   methods: {
     viewEnvStatus () {
-      this.$confirm('跳出后进入项目将不再进入向导流程', '确认跳出产品交付向导？', {
+      this.$confirm('跳出后进入项目将不再进入向导流程', '确认跳出项目初始化向导？', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.jumpLoading = true
+        this.exitLoading = true
         this.saveOnboardingStatus(this.projectName, 0).then((res) => {
           this.$router.push(`/v1/projects/detail/${this.projectName}/envs`)
         }).catch(() => {
-          this.jumpLoading = false
+          this.exitLoading = false
         })
       }).catch(() => {
         this.$message.info('取消跳转')
@@ -262,7 +262,7 @@ export default {
           font-weight: 300;
           font-size: 18px;
           text-align: center;
-          background: #3289e4;
+          background: @themeColor;
         }
 
         .second {
@@ -282,7 +282,7 @@ export default {
         }
       }
 
-      .cf-block__list {
+      .block-list {
         -ms-flex: 1;
         flex: 1;
         margin-top: 15px;

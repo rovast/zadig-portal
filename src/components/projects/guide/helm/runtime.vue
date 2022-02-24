@@ -7,7 +7,7 @@
           <span class="first">第三步</span>
           <span class="second">配置变量，按需创建环境。后续可在项目中调整。</span>
         </div>
-        <div class="account-integrations cf-block__list">
+        <div class="account-integrations block-list">
           <div class="second">配置以下几套环境：</div>
           <el-tabs v-model="activeName" type="card" @edit="handleTabsEdit">
             <el-tab-pane
@@ -69,9 +69,8 @@
     <div class="controls__wrap">
       <div class="controls__right">
         <router-link :to="`/v1/projects/create/${projectName}/helm/delivery`">
-          <button type="primary" class="save-btn" :disabled="cantNext" plain>下一步</button>
+          <el-button type="primary" size="small" :disabled="cantNext">下一步</el-button>
         </router-link>
-        <div class="run-button"></div>
       </div>
     </div>
   </div>
@@ -300,10 +299,11 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .projects-runtime-container {
   position: relative;
   flex: 1;
+  height: 100%;
   overflow: auto;
   background-color: @globalBackgroundColor;
 
@@ -317,13 +317,13 @@ export default {
 
         .first {
           display: inline-block;
-          width: 110px;
+          width: 130px;
           padding: 8px;
           color: #fff;
           font-weight: 300;
           font-size: 18px;
           text-align: center;
-          background: #3289e4;
+          background: @themeColor;
         }
 
         .second {
@@ -397,14 +397,12 @@ export default {
         }
       }
 
-      .cf-block__list {
-        -ms-flex: 1;
+      .block-list {
         flex: 1;
         margin-top: 15px;
         padding: 0 30px;
         overflow-y: auto;
         background-color: inherit;
-        -webkit-box-flex: 1;
       }
     }
   }
@@ -418,29 +416,8 @@ export default {
     display: flex;
     align-items: center;
     height: 60px;
-    margin: 0 15px;
     padding: 0 10px;
     background-color: #fff;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
-
-    .controls__right {
-      .save-btn {
-        padding: 10px 17px;
-        color: #fff;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: @themeColor;
-        border: 1px solid @themeColor;
-        cursor: pointer;
-        transition: background-color 300ms, color 300ms, border 300ms;
-      }
-
-      .save-btn[disabled] {
-        background-color: #9ac9f9;
-        border: 1px solid #9ac9f9;
-        cursor: not-allowed;
-      }
-    }
   }
 }
 </style>

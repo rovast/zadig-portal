@@ -96,7 +96,7 @@ export default {
         font-weight: 300;
         font-size: 18px;
         text-align: center;
-        background: #3289e4;
+        background: @themeColor;
       }
     }
 
@@ -122,7 +122,7 @@ export default {
     .el-step__icon {
       width: 10px;
       height: 10px;
-      color: #3289e4;
+      color: @themeColor;
       font-size: 12px;
     }
 

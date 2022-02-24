@@ -11,7 +11,7 @@
     </div>
     <div class="config-container">
       <ServiceList ref="serviceLsit" :editService="editService" :addService="addService" :changeShowBuild="changeShowBuild" />
-      <Build v-if="showBuild" ref="pm-service" :serviceName="serviceName" :isEdit="isEdit" @listenCreateEvent="listenEvent"></Build>
+      <Build v-if="showBuild" ref="pm-service" :serviceName="serviceName" :isEdit="isEdit" @listenCreateEvent="listenEvent"/>
       <div v-else class="no-content">
         <img src="@assets/icons/illustration/editor_nodata.svg" alt />
         <p style="color: #909399;">
@@ -22,8 +22,7 @@
     </div>
     <div class="controls__wrap">
       <div class="controls__right">
-        <button type="primary" size="small" :disabled="!showNext" @click="toNext" class="save-btn" plain>下一步</button>
-        <div class="run-button"></div>
+        <el-button type="primary" size="small" :disabled="!showNext" @click="toNext">下一步</el-button>
       </div>
     </div>
   </div>
@@ -148,7 +147,7 @@ export default {
         font-weight: 300;
         font-size: 18px;
         text-align: center;
-        background: #3289e4;
+        background: @themeColor;
       }
 
       .second {

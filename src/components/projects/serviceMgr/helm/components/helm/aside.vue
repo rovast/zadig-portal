@@ -247,7 +247,6 @@ export default {
     width: 5px;
     height: 100%;
     border-left: 1px solid transparent;
-    -webkit-transition: border-color ease-in-out 200ms;
     transition: border-color ease-in-out 200ms;
 
     .capture-area__component {
@@ -271,38 +270,22 @@ export default {
   }
 
   .aside__inner {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -ms-flex: 1;
     flex: 1;
-    -ms-flex-direction: row-reverse;
     flex-direction: row-reverse;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: reverse;
-    -webkit-box-flex: 1;
 
     .aside__content {
-      -ms-flex: 1;
       flex: 1;
       width: 200px;
       overflow-x: hidden;
       background-color: #fff;
-      -webkit-box-flex: 1;
 
       .service-aside--variables {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -ms-flex-direction: column;
         flex-direction: column;
         flex-grow: 1;
         height: 100%;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
 
         .service-aside-box__header {
           display: flex;
@@ -312,11 +295,6 @@ export default {
           width: 100%;
           height: 35px;
           padding: 10px 7px 10px 20px;
-          -webkit-box-pack: justify;
-          -ms-flex-pack: justify;
-          -webkit-box-align: center;
-          -ms-flex-align: center;
-          -ms-flex-negative: 0;
 
           .service-aside-box__title {
             margin-right: 20px;
@@ -330,8 +308,6 @@ export default {
 
         .service-aside-box__content {
           flex-grow: 1;
-          -webkit-box-flex: 1;
-          -ms-flex-positive: 1;
 
           section {
             position: relative;
@@ -353,13 +329,11 @@ export default {
 
         .service-aside-help__content {
           display: flex;
-          -ms-flex: 1;
           flex: 1;
           flex-direction: column;
           height: 100%;
           padding: 0 20px 30px 20px;
           overflow-y: auto;
-          -webkit-box-flex: 1;
         }
       }
 
@@ -382,19 +356,14 @@ export default {
 
     .aside-bar {
       .tabs__wrap_vertical {
-        -ms-flex-direction: column;
         flex-direction: column;
         width: 47px;
         height: 100%;
         background-color: #f5f5f5;
         border: none;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
 
         .tabs__item {
           position: relative;
-          display: -webkit-box;
-          display: -ms-flexbox;
           display: flex;
           align-items: center;
           margin-bottom: -1px;
@@ -410,16 +379,12 @@ export default {
           border: none;
           border-top: 1px solid transparent;
           cursor: pointer;
-          -webkit-transition: background-color 150ms ease, color 150ms ease;
           transition: background-color 150ms ease, color 150ms ease;
-          -webkit-box-align: center;
-          -ms-flex-align: center;
 
           &.selected {
             z-index: 1;
             background-color: #fff;
             border: none;
-            -webkit-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
             box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
           }
 
@@ -428,8 +393,6 @@ export default {
             color: #000;
             background-color: #fff;
             border: none;
-            border-top: 1px solid #f5f5f5;
-            -webkit-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
             box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
           }
 
@@ -441,13 +404,9 @@ export default {
       }
 
       .tabs__wrap {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
         justify-content: flex-start;
         height: 56px;
-        -webkit-box-pack: start;
-        -ms-flex-pack: start;
       }
     }
   }

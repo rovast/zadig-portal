@@ -74,7 +74,7 @@
                                 :detectedEnvs="detectedEnvs"
                                 :detectedServices="detectedServices"
                                 :systemEnvs="systemEnvs"
-                                :buildBaseUrl="`/v1/projects/detail/${projectName}/services`"
+                                :buildBaseUrl="isOnboarding?`/v1/projects/create/${projectName}/k8s/service`:`/v1/projects/detail/${projectName}/services`"
                                 @getServiceModules="getServiceModules"/>
                 </aside>
 
@@ -97,11 +97,18 @@
         </div>
       </div>
       <div class="controls__wrap">
-          <div v-hasPermi="{projectName: projectName, action: 'config_environment'}" class="controls__right">
+          <div v-if="isOnboarding" class="controls__right">
             <el-button type="primary"
                        size="small"
                        class="save-btn"
-                       @click="toNext"
+                       @click="showOnboardingNext"
+                       plain>下一步</el-button>
+          </div>
+          <div v-else v-hasPermi="{projectName: projectName, action: 'config_environment'}" class="controls__right">
+            <el-button type="primary"
+                       size="small"
+                       class="save-btn"
+                       @click="upgradeEnv"
                        :disabled="!showNext || !envNameList.length"
                        plain>环境更新</el-button>
           </div>
@@ -118,6 +125,12 @@ import { sortBy } from 'lodash'
 import { getSingleProjectAPI, getServiceTemplatesAPI, getServicesTemplateWithSharedAPI, serviceTemplateWithConfigAPI, autoUpgradeEnvAPI, listProductAPI } from '@api'
 import { Multipane, MultipaneResizer } from 'vue-multipane'
 export default {
+  props: {
+    isOnboarding: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       projectInfo: {},
@@ -147,7 +160,7 @@ export default {
     createService () {
       this.$refs.serviceTree.createService('platform')
     },
-    toNext () {
+    upgradeEnv () {
       this.updateEnvDialogVisible = true
     },
     onSelectServiceChange (service) {
@@ -281,6 +294,9 @@ export default {
           }
         })
       }
+    },
+    showOnboardingNext () {
+      this.$router.push(`/v1/projects/create/${this.projectName}/k8s/runtime?serviceName=${this.serviceName}`)
     }
   },
   computed: {
@@ -290,9 +306,6 @@ export default {
     serviceName () {
       return this.$route.query.service_name
     }
-  },
-  watch: {
-
   },
   mounted () {
     this.getEnvNameList()

@@ -1,5 +1,5 @@
 <template>
-  <div class="projects-info-container">
+  <div class="projects-guide-info-container">
     <transition name="el-fade-in-linear">
       <div v-if="showGuideText===true"
            class="page-title-container">
@@ -15,44 +15,39 @@
           <span class="second">对项目的流程做初步定义后，后续可在项目中进行调整。当您创建好服务后，我们会为您做如下的智能交付准备。Zadig
             会自动生成以下资源：</span>
         </div>
-        <div class="account-integrations cf-block__list">
+        <div class="block-list">
           <div class="info-block">
             <div class="info-block-item">
-              <div class="account-box-item__info info-block-item-card">
+              <div class="info-block-item-card">
                 <div class="integration-card__image">
                   <el-button type="success"
                              icon="el-icon-check"
                              circle></el-button>
                 </div>
                 <div class="integration-card__info">
-                  <div class="integration-name cf-sub-title">2 套测试环境</div>
-                  <div class="integration-details">dev, qa
+                  <div class="card-title">2 套测试环境</div>
+                  <div class="card-desc">dev, qa
                   </div>
                 </div>
-              </div>
-              <div class="account-box-item__controls">
-
               </div>
             </div>
           </div>
           <div class="info-block">
             <div class="info-block-item">
-              <div class="account-box-item__info info-block-item-card">
+              <div class="info-block-item-card">
                 <div class="integration-card__image">
                   <el-button type="success"
                              icon="el-icon-check"
                              circle></el-button>
                 </div>
                 <div class="integration-card__info">
-                  <div class="integration-name cf-sub-title">3 条工作流</div>
-                  <div class="integration-details">
-                    {{projectName}}-workflow-dev , {{projectName}}-workflow-qa ,
+                  <div class="card-title">3 条工作流</div>
+                  <div class="card-desc">
+                    {{projectName}}-workflow-dev ,
+                    {{projectName}}-workflow-qa ,
                     {{projectName}}-ops-workflow
                   </div>
                 </div>
-              </div>
-              <div class="account-box-item__controls">
-
               </div>
             </div>
           </div>
@@ -62,17 +57,14 @@
     <div class="controls__wrap">
       <div class="controls__right">
         <router-link :to="`/v1/projects/create/${projectName}/helm/service?rightbar=help`">
-          <button type="primary"
-                  class="save-btn"
-                  plain>下一步</button>
+          <el-button type="primary" size="small">下一步</el-button>
         </router-link>
-        <button type="primary"
-                class="save-btn"
-                @click="jumpOnboarding">
-          <i v-if="jumpLoading"
+        <el-button type="primary" size="small"
+                @click="exitOnboarding">
+          <i v-if="exitLoading"
              class="el-icon-loading"></i>
           <span>跳过向导</span>
-        </button>
+        </el-button>
       </div>
     </div>
   </div>
@@ -84,16 +76,16 @@ export default {
   data () {
     return {
       showGuideText: true,
-      jumpLoading: false
+      exitLoading: false
     }
   },
   methods: {
-    jumpOnboarding () {
-      this.jumpLoading = true
+    exitOnboarding () {
+      this.exitLoading = true
       this.saveOnboardingStatus(this.projectName, 0).then((res) => {
         this.$router.push(`/v1/projects/detail/${this.projectName}`)
       }).catch(() => {
-        this.jumpLoading = false
+        this.exitLoading = false
       })
     }
   },
@@ -113,186 +105,6 @@ export default {
 }
 </script>
 
-<style lang="less">
-.projects-info-container {
-  position: relative;
-  flex: 1;
-  overflow: auto;
-  background-color: @globalBackgroundColor;
-
-  .page-title-container {
-    display: flex;
-    padding: 0 20px;
-
-    h1 {
-      width: 100%;
-      color: #4c4c4c;
-      font-weight: 300;
-      text-align: center;
-    }
-  }
-
-  .guide-container {
-    min-height: calc(~"100% - 150px");
-    margin-top: 10px;
-
-    &.not-closed-title {
-      min-height: calc(~"100% - 150px");
-    }
-
-    .current-step-container {
-      .title-container {
-        margin-bottom: 10px;
-        margin-left: 20px;
-
-        .first {
-          display: inline-block;
-          width: 110px;
-          padding: 8px;
-          color: #fff;
-          font-weight: 300;
-          font-size: 18px;
-          text-align: center;
-          background: #3289e4;
-        }
-
-        .second {
-          display: inline-block;
-          color: #4c4c4c;
-          font-size: 13px;
-        }
-      }
-
-      .cf-block__list {
-        -ms-flex: 1;
-        flex: 1;
-        margin-top: 15px;
-        padding: 0 30px;
-        overflow-y: auto;
-        background-color: inherit;
-        -webkit-box-flex: 1;
-
-        .info-block {
-          .info-block-item {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 20px 30px;
-            background-color: #fff;
-            -webkit-box-shadow: 0 3px 2px 1px rgba(0, 0, 0, 0.05);
-            box-shadow: 0 3px 2px 1px rgba(0, 0, 0, 0.05);
-            filter: progid:dximagetransform.microsoft.dropshadow(OffX=0, OffY=3px, Color='#0D000000');
-            -webkit-box-align: center;
-            -ms-flex-align: center;
-            -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
-
-            .info-block-item-card {
-              display: -webkit-box;
-              display: -ms-flexbox;
-              display: flex;
-              align-items: center;
-              justify-content: flex-start;
-              -webkit-box-align: center;
-              -ms-flex-align: center;
-              -webkit-box-pack: start;
-              -ms-flex-pack: start;
-
-              .integration-card__image {
-                width: 64px;
-
-                .el-button.is-circle {
-                  padding: 6px;
-                  border-radius: 50%;
-                }
-              }
-
-              .cf-sub-title {
-                color: #2f2f2f;
-                font-weight: bold;
-                font-size: 16px;
-                text-align: left;
-              }
-
-              .integration-details {
-                color: #4c4c4c;
-                font-size: 13px;
-              }
-            }
-
-            .info-block-item-card > * {
-              -ms-flex: 0 0 auto;
-              flex: 0 0 auto;
-              -webkit-box-flex: 0;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .alert {
-    display: flex;
-    padding: 0 25px;
-
-    .el-alert {
-      margin-bottom: 35px;
-
-      .el-alert__title {
-        font-size: 15px;
-      }
-    }
-  }
-
-  .controls__wrap {
-    position: relative;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 2;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    margin: 0 15px;
-    padding: 0 10px;
-    background-color: #fff;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
-
-    .controls__right {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      align-items: center;
-      margin-right: 10px;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-
-      .save-btn,
-      .next-btn {
-        margin-right: 15px;
-        padding: 10px 17px;
-        color: #fff;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: @themeColor;
-        border: 1px solid @themeColor;
-        cursor: pointer;
-        transition: background-color 300ms, color 300ms, border 300ms;
-      }
-
-      .save-btn[disabled],
-      .next-btn[disabled] {
-        background-color: #9ac9f9;
-        border: 1px solid #9ac9f9;
-        cursor: not-allowed;
-      }
-    }
-  }
-}
+<style lang="less" scoped>
+@import "~@assets/css/component/onboarding-basicInfo.less";
 </style>

@@ -6,20 +6,16 @@
     </div>
     <div class="controls__wrap_host">
       <div class="controls__right">
-        <button type="primary"
-                  class="save-btn"
-                  @click="nextStep"
-                  plain>{{currentStep===2 ? '完成' : '下一步'}}</button>
-        <button type="primary"
-                class="save-btn"
+        <el-button type="primary"
+                  size="small"
+                  @click="nextStep">{{currentStep === 2 ? '完成' : '下一步'}}</el-button>
+        <el-button type="primary" size="small"
                 v-if="currentStep === 0"
-                @click="jumpOnboarding">
-          <i v-if="jumpLoading"
+                @click="exitOnboarding">
+          <i v-if="exitLoading"
              class="el-icon-loading"></i>
           <span>跳过向导</span>
-        </button>
-        <div class="run-button">
-        </div>
+        </el-button>
       </div>
     </div>
   </div>
@@ -39,16 +35,16 @@ export default {
   data () {
     return {
       componentsList: [HostEnvConfig, ServiceBuild, RunWorkflow],
-      jumpLoading: false
+      exitLoading: false
     }
   },
   methods: {
-    jumpOnboarding () {
-      this.jumpLoading = true
+    exitOnboarding () {
+      this.exitLoading = true
       this.saveOnboardingStatus(this.projectName, 0).then((res) => {
-        this.$router.push(`/v1/projects/detail/${this.projectName}`)
+        this.$router.push(`/v1/projects/detail/${this.projectName}/detail`)
       }).catch(() => {
-        this.jumpLoading = false
+        this.exitLoading = false
       })
     },
     nextStep () {
@@ -57,7 +53,7 @@ export default {
       } else if (this.currentStep === 1) {
         this.$router.push(`/v1/projects/create/${this.projectName}/host/config?step=${this.currentStep + 2}`)
       } else {
-        this.$router.push(`/v1/projects/detail/${this.projectName}`)
+        this.$router.push(`/v1/projects/detail/${this.projectName}/detail`)
       }
     }
   },
@@ -79,7 +75,7 @@ export default {
   background-color: @globalBackgroundColor;
 
   .content {
-    height: calc(~"100vh - 340px");
+    height: calc(~"100vh - 300px");
     overflow: scroll;
   }
 
@@ -92,42 +88,17 @@ export default {
     justify-content: space-between;
     width: 100%;
     height: 60px;
-    padding: 0 40px;
+    padding: 0 15px;
     background-color: #fff;
     border-top: 1px solid #ccc;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
 
     & > * {
       margin-right: 10px;
     }
 
     .controls__right {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
       align-items: center;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-
-      .save-btn,
-      .next-btn {
-        margin-right: 15px;
-        padding: 10px 17px;
-        color: #fff;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: @themeColor;
-        border: 1px solid @themeColor;
-        cursor: pointer;
-        transition: background-color 300ms, color 300ms, border 300ms;
-      }
-
-      .save-btn[disabled],
-      .next-btn[disabled] {
-        background-color: #9ac9f9;
-        border: 1px solid #9ac9f9;
-        cursor: not-allowed;
-      }
     }
   }
 }

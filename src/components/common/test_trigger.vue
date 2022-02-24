@@ -98,7 +98,7 @@
                       label="触发事件"
                       prop="events">
           <el-checkbox-group v-model="webhookSwap.events">
-            <el-checkbox v-for="tri in triggerMethods" :key="tri.label" :label="tri.label">{{ tri.text }}</el-checkbox>
+            <el-checkbox v-for="tri in triggerMethods.git" :key="tri.value" :label="tri.value">{{ tri.label }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="自动取消">
@@ -163,7 +163,16 @@
             </el-table-column>
             <el-table-column label="触发方式">
               <template slot-scope="scope">
-                <div v-for="event in scope.row.main_repo.events" :key="event">{{ triggerMethods.find(tri => tri.label === event).text }}</div>
+                  <div v-if="scope.row.main_repo.events.length">
+                    <div v-for="event in scope.row.main_repo.events" :key="event">
+                      <span v-if="scope.row.main_repo.source === 'gerrit'">
+                         {{ triggerMethods.gerrit.find(tri => tri.value === event)?triggerMethods.gerrit.find(tri => tri.value === event).label: 'N/A' }}
+                      </span>
+                      <span v-else>
+                         {{ triggerMethods.git.find(tri => tri.value === event)?triggerMethods.git.find(tri => tri.value === event).label: 'N/A' }}
+                      </span>
+                    </div>
+                  </div>
               </template>
             </el-table-column>
             <el-table-column label="文件目录">
@@ -222,18 +231,27 @@ export default {
         }
       ]
     }
-    this.triggerMethods = [
+    this.triggerMethods = {
+      git: [
+        {
+          value: 'push',
+          label: 'Push commits'
+        }, {
+          value: 'pull_request',
+          label: 'Pull requests'
+        }, {
+          value: 'tag',
+          label: 'Push tags'
+        }],
+      gerrit: [{
+        value: 'change-merged',
+        label: 'Change merged'
+      },
       {
-        label: 'push',
-        text: 'Push commits'
-      }, {
-        label: 'pull_request',
-        text: 'Pull requests'
-      }, {
-        label: 'tag',
-        text: 'Push tags'
-      }
-    ]
+        value: 'patchset-created',
+        label: 'Patchset created'
+      }]
+    }
     return {
       showTriggerParamsDialog: false,
       webhookBranches: {},

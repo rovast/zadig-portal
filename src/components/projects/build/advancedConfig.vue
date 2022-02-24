@@ -32,13 +32,13 @@
         </el-radio-group>
       </el-form-item>
       <div class="item-title">资源配置</div>
-      <el-form-item label="集群选择" prop="pre_build.cluster_id" :rules="{ required: true, message: '请选择集群名称', trigger: ['change', 'blur'] }">
-        <el-select v-model="buildConfig.pre_build.cluster_id" placeholder="请选择集群名称" size="small">
+      <el-form-item label="集群选择" :prop="`${secondaryProp}.cluster_id`" :rules="{ required: true, message: '请选择集群名称', trigger: ['change', 'blur'] }">
+        <el-select v-model="currentResource.cluster_id" placeholder="请选择集群名称" size="small">
           <el-option v-for="cluster in clusters" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="操作系统规格" prop="pre_build.res_req" :rules="{ required: true, message: '请选择操作系统', trigger: ['change', 'blur'] }">
-        <el-select size="small" v-model="buildConfig.pre_build.res_req" placeholder="请选择">
+      <el-form-item label="操作系统规格" :prop="`${secondaryProp}.res_req`" :rules="{ required: true, message: '请选择操作系统', trigger: ['change', 'blur'] }">
+        <el-select size="small" v-model="currentResource.res_req" placeholder="请选择">
           <el-option label="高 | CPU: 16 核 内存: 32 GB" value="high"></el-option>
           <el-option label="中 | CPU: 8 核 内存: 16 GB" value="medium"></el-option>
           <el-option label="低 | CPU: 4 核 内存: 8 GB" value="low"></el-option>
@@ -46,23 +46,23 @@
           <el-option label="自定义" value="define" @click.native="checkSpec"></el-option>
         </el-select>
 
-        <div v-if="buildConfig.pre_build.res_req_spec && buildConfig.pre_build.res_req === 'define'" class="define-resource">
+        <div v-if="currentResource.res_req_spec && currentResource.res_req === 'define'" class="define-resource">
           <el-form-item
             label="CPU(m)"
             label-width="70px"
-            prop="pre_build.res_req_spec.cpu_limit"
+            :prop="`${secondaryProp}.res_req_spec.cpu_limit`"
             :rules="{ validator: validateCpuLimit, trigger: ['change', 'blur'] }"
           >
-            <el-input v-model.number="buildConfig.pre_build.res_req_spec.cpu_limit" placeholder="自定义 CPU" size="small"></el-input>
+            <el-input v-model.number="currentResource.res_req_spec.cpu_limit" placeholder="自定义 CPU" size="small"></el-input>
           </el-form-item>
 
           <el-form-item
             label="内存(Mi)"
             label-width="70px"
-            prop="pre_build.res_req_spec.memory_limit"
+            :prop="`${secondaryProp}.res_req_spec.memory_limit`"
             :rules="{ validator: validateMemoryLimit, trigger: ['change', 'blur'] }"
           >
-            <el-input v-model.number="buildConfig.pre_build.res_req_spec.memory_limit" placeholder="自定义内存" size="small"></el-input>
+            <el-input v-model.number="currentResource.res_req_spec.memory_limit" placeholder="自定义内存" size="small"></el-input>
           </el-form-item>
         </div>
       </el-form-item>
@@ -77,7 +77,14 @@ export default {
     buildConfig: Object,
     validObj: Object,
     isCreate: Boolean,
-    mini: Boolean
+    mini: {
+      default: false,
+      type: Boolean
+    },
+    secondaryProp: {
+      default: 'pre_build',
+      type: String
+    }
   },
   data () {
     this.validateCpuLimit = (rule, value, callback) => {
@@ -108,19 +115,25 @@ export default {
       clusters: []
     }
   },
+  computed: {
+    currentResource () {
+      return this.buildConfig[this.secondaryProp]
+    }
+  },
   methods: {
     initAdvancedConfig (buildConfig = this.buildConfig) {
-      if (this.isCreate || !buildConfig.pre_build.cluster_id) {
-        this.$set(buildConfig.pre_build, 'cluster_id', '')
+      const currentResource = buildConfig[this.secondaryProp]
+      if (this.isCreate || !currentResource.cluster_id) {
+        this.$set(currentResource, 'cluster_id', '')
         const local = this.clusters.find(cluster => cluster.local)
         if (local) {
-          buildConfig.pre_build.cluster_id = local.id
+          currentResource.cluster_id = local.id
         }
       }
     },
     checkSpec () {
-      if (!this.buildConfig.pre_build.res_req_spec) {
-        this.$set(this.buildConfig.pre_build, 'res_req_spec', {
+      if (!this.currentResource.res_req_spec) {
+        this.$set(this.currentResource, 'res_req_spec', {
           cpu_limit: 1000,
           memory_limit: 512
         })

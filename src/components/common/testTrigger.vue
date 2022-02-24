@@ -176,14 +176,16 @@
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button @click.native.prevent="editWebhook(scope.$index)"
-                           type="text"
-                           size="small">
+                           type="primary"
+                           size="mini"
+                           plain>
                   编辑
                 </el-button>
                 <el-button @click.native.prevent="deleteWebhook(scope.$index)"
-                           type="text"
-                           size="small">
-                  移除
+                           type="danger"
+                           size="mini"
+                           plain>
+                  删除
                 </el-button>
               </template>
             </el-table-column>

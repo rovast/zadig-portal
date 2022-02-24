@@ -11,7 +11,7 @@
         <el-form :model="schedule_config"
                  ref="addTimer"
                  :rules="triggerRules"
-                 label-width="80px"
+                 label-width="100px"
                  label-position="left">
           <el-form-item label="触发方式"
                         prop="type">

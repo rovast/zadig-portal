@@ -5,7 +5,7 @@
         <router-link :to="`/v1/projects/detail/${projectName}/builds`">
           <el-button style="margin-right: 15px;" type="primary" plain>取消</el-button>
         </router-link>
-        <el-button @click="saveLoading=true;$refs.buildRef.handleBuildConfig()" :loading="saveLoading" type="primary">保存</el-button>
+        <el-button @click="saveLoading=true;$refs.buildRef.handleBuildConfig()" :loading="saveLoading" type="primary">立即新建</el-button>
       </footer>
     </template>
   </CommonBuild>

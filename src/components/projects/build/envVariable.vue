@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form ref="buildEnv" :inline="true" :model="preEnvs" class="variable-form" label-position="top" label-width="80px">
-      <span class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义构建变量</span>
+      <span class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义{{ isTest ? '测试' : '构建' }}变量</span>
       <el-button v-if="preEnvs.envs.length===0" @click="addFirstBuildEnv()" type="primary" size="mini" plain>新增</el-button>
       <el-row v-for="(app,build_env_index) in preEnvs.envs" :key="build_env_index" :gutter="2">
         <el-col :span="narrowWidth ? 4 : 4">
@@ -82,11 +82,14 @@
     </el-dialog>
     <section class="inner-variable">
       <div @click="showBuildInEnvVar = !showBuildInEnvVar" class="item-title inner-title">
-        内置构建变量
-        <i style="margin-left: 10px;" :class="[showBuildInEnvVar ? 'el-icon-arrow-up' : 'el-icon-arrow-down']"></i>
+        内置{{ isTest ? '测试' : '构建' }}变量
+        <i
+          style="margin-left: 10px;"
+          :class="[showBuildInEnvVar ? 'el-icon-arrow-up' : 'el-icon-arrow-down']"
+        ></i>
       </div>
       <div v-show="showBuildInEnvVar" class="inner-variable-content">
-        <div v-for="variable in buildVars" :key="variable.variable">
+        <div v-for="variable in (isTest ? testVars : buildVars)" :key="variable.variable" class="var-content">
           <span class="var-variable">{{ variable.variable }}</span>
           <span class="var-desc">{{ variable.desc }}</span>
         </div>
@@ -176,6 +179,37 @@ export default {
           variable: '<REPO>_COMMIT_ID',
           desc: '构建过程中指定代码的 commit 信息'
         }
+      ],
+      testVars: [
+        {
+          variable: '$WORKSPACE',
+          desc: '工作目录'
+        },
+        {
+          variable: '$LINKED_ENV',
+          desc: '被测命名空间'
+        },
+        {
+          variable: '$ENV_NAME',
+          desc: '被测环境名称'
+        },
+        {
+          variable: '$TEST_URL',
+          desc: '测试任务的 URL'
+        },
+        {
+          variable: '$SERVICES',
+          desc:
+            '通过工作流任务更新的服务组，服务名以 “,” 分隔，形如 service1,service2,service3。推荐使用 array=(${SERVICES//,/ } 方式转化成数组'
+        },
+        {
+          variable: '$CI',
+          desc: '值恒等于 true，表示当前环境是 CI/CD 环境'
+        },
+        {
+          variable: '$ZADIG',
+          desc: '值恒等于 true，表示在 ZADIG 系统上执行脚本'
+        }
       ]
     }
   },
@@ -252,10 +286,11 @@ export default {
     }
   },
   created () {
-    this.validObj && this.validObj.addValidate({
-      name: 'envVariable',
-      valid: this.validate
-    })
+    this.validObj &&
+      this.validObj.addValidate({
+        name: 'envVariable',
+        valid: this.validate
+      })
   }
 }
 </script>
@@ -292,9 +327,12 @@ export default {
     font-size: 14px;
     line-height: 22px;
 
-    .var-variable {
-      display: inline-block;
-      width: 150px;
+    .var-content {
+      display: flex;
+
+      .var-variable {
+        flex: 0 0 200px;
+      }
     }
   }
 }

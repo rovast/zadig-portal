@@ -31,7 +31,8 @@ export function wordTranslate (word, category, subitem = '') {
         cancelled: '取消',
         blocked: '阻塞',
         queued: '队列中',
-        skipped: '跳过'
+        skipped: '跳过',
+        prepare: '准备环境'
       }
     },
     project: {

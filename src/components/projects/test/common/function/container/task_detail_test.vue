@@ -38,14 +38,14 @@
               </a>
             </div>
           </el-col>
-          <el-col v-if="testingv2.status!=='running'"
-                  :span="6">
+          <el-col v-if="testingv2.status!=='running' && testingv2.status!=='prepare'"
+            :span="6">
             <div class="grid-content item-title">
               <i class="iconfont iconshijian"></i> 持续时间
             </div>
           </el-col>
-          <el-col v-if="testingv2.status!=='running'"
-                  :span="6">
+          <el-col v-if="testingv2.status!=='running' && testingv2.status!=='prepare'"
+            :span="6">
             <span class="item-desc">{{$utils.timeFormat(testingv2.end_time -
               testingv2.start_time)}}</span>
           </el-col>

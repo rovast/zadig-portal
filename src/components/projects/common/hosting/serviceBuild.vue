@@ -22,21 +22,13 @@
         :serviceModules="serviceModules"
       />
       <div v-show="build.showModal" class="right-build">
-        <Build
+        <CommonBuild
           ref="build"
           :handlerSubmit="handlerSubmit"
           :name="build.name"
           :isEdit="build.isEdit"
           :buildName="build.buildName"
         />
-        <div class="bottom">
-          <el-button
-            type="primary"
-            size="small"
-            @click="saveBuild"
-            >保存构建
-          </el-button>
-        </div>
       </div>
     </div>
   </div>
@@ -44,7 +36,7 @@
 <script>
 import { queryServiceWorkloads, serviceTemplateWithConfigAPI } from '@/api'
 import ServiceModule from './serviceModules'
-import Build from './build'
+import CommonBuild from '@/components/projects/build/commonBuild.vue'
 
 export default {
   name: 'serviceBuild',
@@ -54,7 +46,7 @@ export default {
   },
   components: {
     ServiceModule,
-    Build
+    CommonBuild
   },
   data () {
     return {
@@ -77,7 +69,7 @@ export default {
   },
   methods: {
     async saveBuild () {
-      const res = await this.$refs.build.updateBuildConfig()
+      const res = await this.$refs.build.handleBuildConfig()
       if (res) {
         this.getServices()
         this.getServiceModules({ label: this.build.serviceName })
@@ -178,28 +170,15 @@ export default {
 
   .right {
     position: relative;
-    width: calc(~'100% - 340px');
+    width: calc(~'100% - 260px');
     height: 100%;
+    padding: 0 10px;
     overflow: auto;
-    background-color: #fff;
 
     .right-build {
-      max-height: calc(~'100% - 50px');
-      padding-bottom: 50px;
+      height: 100%;
+      max-height: 100%;
       overflow: auto;
-
-      .bottom {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        height: 50px;
-        background-color: #fff;
-
-        .el-button {
-          margin-left: 20px;
-        }
-      }
     }
   }
 }

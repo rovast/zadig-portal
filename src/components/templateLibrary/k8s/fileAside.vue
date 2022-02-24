@@ -22,7 +22,7 @@
             <div class="service-aside-box__title">引用列表</div>
           </header>
           <div class="service-aside-box__content">
-            <section>
+            <section class="aside-section">
               <el-table :data="referenceList"
                         stripe
                         style="width: 100%;">
@@ -46,7 +46,7 @@
             <div class="service-aside-box__title">变量列表</div>
           </header>
           <div class="service-aside-box__content">
-            <section>
+            <section class="aside-section">
               <h4>
                 <span><i class="iconfont iconfuwu"></i></span> 系统内置变量
               </h4>
@@ -65,7 +65,7 @@
                 </el-table-column>
               </el-table>
             </section>
-            <section>
+            <section class="aside-section">
               <h4>
                 <span><i class="iconfont icontanhao"></i></span> 自定义变量
                 <el-tooltip effect="dark"
@@ -343,7 +343,7 @@ export default {
           -webkit-box-flex: 1;
           -ms-flex-positive: 1;
 
-          section {
+          .aside-section {
             position: relative;
             padding: 12px 16px;
 

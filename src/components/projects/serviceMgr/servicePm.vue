@@ -103,7 +103,7 @@ export default {
 .projects-pm-service-container {
   position: relative;
   flex: 1;
-  height: 100%;
+  height: calc(~'100% - 60px');
   overflow: auto;
 
   .config-container-pm {

@@ -1,15 +1,15 @@
 <template>
   <div class="repo-jump-container">
     <slot></slot>
-    <i v-if="showIcon" class="iconfont iconicon_git-branch repo-icon"></i>
     <el-tooltip :content="build.source==='gerrit'?`暂不支持在该类型上查看 Release`:`在 ${build.source} 上查看 Release`" placement="top" effect="dark">
       <span v-if="build.tag" class="link">
+        <i v-if="showIcon" class="iconfont icontag1 repo-icon"></i>
         <a
           v-if="build.source==='github'||build.source==='gitlab'"
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tags/${build.tag}`"
           target="_blank"
-        >{{"Tag-"+build.tag}}</a>
-        <span v-if="build.source==='gerrit'">{{"Tag-"+build.tag}}</span>
+        >{{showIcon ? '' : "Tag-"}}{{build.tag }}</a>
+        <span v-if="build.source==='gerrit'">{{ showIcon ? '' : "Tag-"}}{{build.tag}}</span>
       </span>
     </el-tooltip>
     <el-tooltip
@@ -18,22 +18,23 @@
       effect="dark"
     >
       <span v-if="build.branch && !build.tag" class="link">
+        <i v-if="showIcon" class="iconfont iconicon_git-branch repo-icon"></i>
         <a
           v-if="build.source==='github'||build.source==='gitlab'"
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tree/${build.branch}`"
           target="_blank"
-        >{{"Branch-"+build.branch}}</a>
-        <span v-if="build.source==='gerrit'">{{"Branch-"+build.branch}}</span>
+        >{{showIcon ? '' : "Branch-"}}{{build.branch}}</a>
+        <span v-if="build.source==='gerrit'">{{showIcon ? '' : "Branch-" }}{{build.branch}}</span>
         <a
           v-if="!build.source"
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tree/${build.branch}`"
           target="_blank"
-        >{{"Branch-"+build.branch}}</a>
+        >{{showIcon ? '' : "Branch-" }}{{ build.branch}}</a>
         <!-- <a v-else-if="build.source ==='codehub'"
                                :href="`${build.address}/codehub/project${build.project_uuid}/codehub/${build.repo_id}/home?ref=${build.branch}`"
                                target="_blank">{{"Branch-"+build.branch}}
         </a>-->
-        <span v-else-if="build.source ==='codehub'">{{"Branch-"+build.branch}}</span>
+        <span v-else-if="build.source ==='codehub'">{{showIcon ? '' : "Branch-" }}{{ build.branch}}</span>
       </span>
     </el-tooltip>
     <el-tooltip :content="`在 ${build.source} 上查看 PR`" placement="top" effect="dark">

@@ -23,16 +23,23 @@
       <div class="aside__content">
         <div v-if="selected === 'build'" class="service-aside--variables">
           <div style="padding-left: 15px;">
-           <el-button @click="$router.back()" icon="el-icon-back" type="text">返回</el-button>
+            <el-button @click="$router.back()" icon="el-icon-back" type="text">返回</el-button>
           </div>
           <header class="service-aside-box__header">
             <div class="service-aside-box__title">构建</div>
           </header>
           <div class="service-aside-box__content">
-            <Build ref="buildRef" @getServiceModules="getServiceModules" :detectedServices="detectedServices" />
-          </div>
-          <div class="btn-container">
-            <el-button type="primary" size="small" @click="saveBuildConfig" :disabled="projectName !== projectNameOfService">保存构建</el-button>
+            <CommonBuild
+              ref="buildRef"
+              :name="$route.query.service_name"
+              :buildName="$route.query.build_name"
+              :isEdit="!!$route.query.build_name"
+              :followUpFn="followUpFn"
+              :saveDisabled="projectName !== projectNameOfService"
+              canSelectBuildName
+              mini
+              fromServicePage
+            />
           </div>
         </div>
         <div v-if="selected === 'var'" class="service-aside--variables">
@@ -40,7 +47,7 @@
             <div class="service-aside-box__title">变量</div>
           </header>
           <div class="service-aside-box__content">
-            <section>
+            <section class="aside-section">
               <h4>
                 <span>
                   <i class="iconfont iconfuwu"></i>
@@ -81,7 +88,7 @@
                   <template slot-scope="scope">
                     <router-link
                       v-if="scope.row.build_name"
-                      :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_name=${scope.row.build_name}&service_project_name=${projectNameOfService}`"
+                      :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_name=${scope.row.build_name}`"
                     >
                       <el-button size="small" type="text">{{scope.row.build_name}}</el-button>
                     </router-link>
@@ -90,7 +97,7 @@
                 </el-table-column>
               </el-table>
             </section>
-            <section>
+            <section class="aside-section">
               <h4>
                 <span>
                   <i class="iconfont icongongjuxiang"></i>
@@ -111,7 +118,7 @@
                 </el-table-column>
               </el-table>
             </section>
-            <section>
+            <section class="aside-section">
               <h4>
                 <span>
                   <i class="iconfont icontanhao"></i>
@@ -254,11 +261,14 @@ import {
   getRegistryWhenBuildAPI,
   getCodeProviderAPI
 } from '@api'
-import Build from '../common/build.vue'
+import CommonBuild from '@/components/projects/build/commonBuild.vue'
 import Help from './container/help.vue'
 import Policy from './container/policy.vue'
 import IntegrationCode from '../common/integrationCode.vue'
 import IntegrationRegistry from '@/components/projects/common/integrationRegistry.vue'
+
+import qs from 'qs'
+
 const validateKey = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {
     callback(new Error('请输入 Key'))
@@ -320,11 +330,17 @@ export default {
         this.integrationCodeDrawer = true
       }
     },
-    saveBuildConfig () {
-      this.$refs.buildRef.updateBuildConfig()
-    },
-    getServiceModules () {
+    followUpFn () {
       this.$emit('getServiceModules')
+      this.$router.replace({
+        query: Object.assign(
+          {},
+          qs.parse(window.location.search, { ignoreQueryPrefix: true }),
+          {
+            rightbar: 'var'
+          }
+        )
+      })
     },
     getProject () {
       const projectName = this.projectName
@@ -531,7 +547,7 @@ export default {
     }
   },
   components: {
-    Build,
+    CommonBuild,
     Policy,
     Help,
     IntegrationCode,
@@ -702,7 +718,7 @@ export default {
           -webkit-box-flex: 1;
           -ms-flex-positive: 1;
 
-          section {
+          .aside-section {
             position: relative;
             padding: 12px 16px;
 
@@ -717,6 +733,10 @@ export default {
             .el-table th {
               padding: 6px 0;
             }
+          }
+
+          .create-footer {
+            right: 47px;
           }
         }
 
@@ -735,11 +755,6 @@ export default {
           -webkit-box-orient: vertical;
           -webkit-box-direction: normal;
         }
-      }
-
-      .btn-container {
-        padding: 0 10px 10px 10px;
-        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
       }
     }
 

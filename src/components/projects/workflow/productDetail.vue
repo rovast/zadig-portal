@@ -33,7 +33,7 @@
     <el-card class="box-card full" :body-style="{ padding: '0px', margin: '15px 0 30px 0' }">
       <div slot="header" class="block-title">
         <span>
-          <i class="el-icon-tickets title-icon"></i>历史任务
+          <i class="iconfont iconhistory title-icon"></i>历史任务
         </span>
         <FilterStatus
           ref="filterStatusRef"
@@ -333,14 +333,14 @@ export default {
 <style lang="less">
 .workflow-detail {
   position: relative;
-  flex: 1;
+  height: calc(~'100% - 60px');
   padding: 24px 30px 0;
   overflow: auto;
   font-size: 13px;
   background-color: #fff;
 
   .workflow-basic-info {
-    margin-bottom: 26px;
+    margin-bottom: 16px;
     box-shadow: unset;
 
     .el-card__body {
@@ -352,12 +352,16 @@ export default {
       color: #4a4a4a;
 
       .left,
-      .right {
+      .middle {
         flex: 0 0 auto;
       }
 
+      .right {
+        flex: 1 0 auto;
+        text-align: right;
+      }
+
       .middle {
-        flex: 1 1 auto;
         margin-left: 18px;
         color: @fontGray;
 
@@ -393,12 +397,14 @@ export default {
     display: flex;
     align-items: center;
     color: #44447e;
-    font-size: 18px;
+    font-weight: 300;
+    font-size: 16px;
     line-height: 22px;
 
     .title-icon {
       margin-right: 8px;
       color: @fontLightGray;
+      font-size: 18px;
     }
   }
 
@@ -434,7 +440,7 @@ export default {
     width: 100%;
 
     .el-card__header {
-      padding: 16px 0;
+      padding: 16px 0 6px;
     }
   }
 

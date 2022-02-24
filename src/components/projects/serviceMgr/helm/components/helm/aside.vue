@@ -29,7 +29,6 @@
             <div class="service-aside-box__title">镜像更新</div>
           </header>
          <div class="service-aside-box__content">
-          <section>
               <h4>
                 <span><i class="iconfont iconfuwu"></i></span> 检测到的服务组件
                 <el-tooltip effect="dark"
@@ -65,7 +64,6 @@
 
                 </el-table-column>
               </el-table>
-            </section>
          </div>
         </div>
         <div v-else-if="selected === 'policy'"
@@ -120,7 +118,7 @@ export default {
       const item = {
         id: name,
         type: 'components',
-        componentsName: 'Build',
+        componentsName: 'CommonBuild',
         label: '新增构建',
         name: name,
         isEdit: false
@@ -131,7 +129,7 @@ export default {
       const item = {
         id: name,
         type: 'components',
-        componentsName: 'Build',
+        componentsName: 'CommonBuild',
         label: '修改构建',
         name: name,
         isEdit: true,
@@ -308,22 +306,20 @@ export default {
 
         .service-aside-box__content {
           flex-grow: 1;
+          -webkit-box-flex: 1;
+          -ms-flex-positive: 1;
+          padding: 12px 16px;
 
-          section {
-            position: relative;
-            padding: 12px 16px;
+          h4 {
+            margin: 0;
+            padding: 0;
+            color: #909399;
+            font-weight: 300;
+          }
 
-            h4 {
-              margin: 0;
-              padding: 0;
-              color: #909399;
-              font-weight: 300;
-            }
-
-            .el-table td,
-            .el-table th {
-              padding: 6px 0;
-            }
+          .el-table td,
+          .el-table th {
+            padding: 6px 0;
           }
         }
 

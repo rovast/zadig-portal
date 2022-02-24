@@ -202,9 +202,9 @@ export default {
   }
 
   .tree {
-    max-height: calc(~"100% - 95px") !important;
+    max-height: calc(~"100% - 95px");
     margin-top: 10px;
-    overflow: scroll;
+    overflow: auto;
   }
 
   .input {

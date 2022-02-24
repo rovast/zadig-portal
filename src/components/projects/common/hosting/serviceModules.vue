@@ -36,8 +36,7 @@ export default {
 .service-content {
   box-sizing: border-box;
   width: 100%;
-  padding-top: 40px;
-  padding-left: 30px;
+  padding: 10px;
 
   .title {
     color: #909399;

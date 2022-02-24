@@ -1,229 +1,107 @@
 <template>
-  <div class="create-project">
-    <el-dialog :fullscreen="true" custom-class="create-project" :before-close="handleClose" :visible.sync="dialogVisible">
-      <div class="project-contexts-modal">
-        <header class="project-contexts-modal__header"></header>
-        <div class="project-contexts-modal__content">
-          <h1 class="project-contexts-modal__content-title">{{isEdit?'修改项目信息':'开始新建项目'}}</h1>
-          <div class="project-contexts-modal__content-container">
-            <div class="project-settings__inputs-container">
-              <el-tabs style="width: 100%;" v-if="isEdit" v-model="activeName">
-                <el-tab-pane label="基本信息" name="base"></el-tab-pane>
-                <el-tab-pane label="高级配置" name="advance"></el-tab-pane>
-              </el-tabs>
-              <el-form
-                :model="projectForm"
-                :rules="rules"
-                label-position="top"
-                ref="projectForm"
-                label-width="100px"
-                class="demo-projectForm"
-              >
-                <el-form-item label="项目名称" v-show="activeName !=='advance'" prop="project_name">
-                  <el-input @keyup.native="()=>projectForm.project_name=projectForm.project_name.trim()" v-model="projectForm.project_name"></el-input>
-                </el-form-item>
-
-                <el-form-item label="项目主键" v-show="activeName !=='advance'" prop="product_name">
-                  <span slot="label">
-                    项目主键
-                    <el-tooltip effect="dark" content="项目主键是该项目资源的全局唯一标识符，用于该项目下所有资源的引用与更新，默认自动生成，同时支持手动指定，创建后不可更改" placement="top">
-                      <i class="el-icon-question"></i>
-                    </el-tooltip>
-                    <el-button v-if="!isEdit&&!editProjectName" @click="editProjectName=true" type="text">编辑</el-button>
-                    <el-button v-if="!isEdit&&editProjectName" @click="editProjectName=false" type="text">完成</el-button>
-                  </span>
-                  <el-input :disabled="!showProjectName" v-model="projectForm.product_name"></el-input>
-                </el-form-item>
-                <el-form-item label="项目管理员" v-if="!isEdit" prop="admins">
-                  <el-select
-                    v-model="projectForm.admins"
-                    style="width: 100%;"
-                    filterable
-                    multiple
-                    remote
-                    :loading="loading"
-                    placeholder="请输入用户名搜索用户"
-                  >
-                    <el-option
-                      v-for="(user,index) in users"
-                      :key="index"
-                      :label="user.name ? `${user.account}(${user.name})` : user.account"
-                      :value="user.uid"
-                    >
-                    <span v-if="user.identity_type">
-                      <i class="iconfont" :class="'icon'+user.identity_type"></i>
-                      <span>{{user.name ? `${user.account}(${user.name})` : user.account}}</span>
-                    </span>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="项目权限" v-show="activeName !=='advance'" prop="public">
-                  <el-radio-group v-model="projectForm.public">
-                    <el-radio :label="true">公开</el-radio>
-                    <el-radio :label="false">私有</el-radio>
-                  </el-radio-group>
-                </el-form-item>
-                <el-form-item label="描述信息" v-show="activeName !=='advance'" prop="desc">
-                  <el-input type="textarea" :rows="2" placeholder="请输入描述信息" v-model="projectForm.desc"></el-input>
-                </el-form-item>
-                <el-form-item v-if="!isEdit" v-show="activeName !=='advance'" label="项目特点" prop="desc">
-                  <el-row :gutter="5">
-                    <el-col :span="4">
-                      <span>
-                        基础设施
-                        <el-tooltip placement="top">
-                          <div slot="content">
-                            Kubernetes：包括自建 K8s 和云厂商提供容器云服务
-                            <br />主机：包括物理机和云厂商提供的云服务器
-                          </div>
-                          <i class="icon el-icon-question"></i>
-                        </el-tooltip>
-                      </span>
-                    </el-col>
-                    <el-col :span="10">
-                      <el-radio-group size="mini" v-model="projectForm.product_feature.basic_facility">
-                        <el-radio border label="kubernetes">Kubernetes</el-radio>
-                        <el-radio border label="cloud_host">主机</el-radio>
-                      </el-radio-group>
-                    </el-col>
-                  </el-row>
-                  <el-row :gutter="5" v-if="projectForm.product_feature.basic_facility==='kubernetes'">
-                    <el-col :span="4">
-                      <span>
-                        环境创建方式
-                        <el-tooltip placement="top">
-                          <div slot="content">
-                            新建集成环境：在现有的 Kubernetes 集群新建环境
-                            <br />托管现有环境：托管现有 Kubernetes 集群中的资源
-                          </div>
-                          <i class="icon el-icon-question"></i>
-                        </el-tooltip>
-                      </span>
-                    </el-col>
-                    <el-col :span="10">
-                      <el-radio-group size="mini" v-model="projectForm.product_feature.create_env_type">
-                        <el-radio border label="system">新建集成环境</el-radio>
-                        <el-radio border label="external">托管现有环境</el-radio>
-                      </el-radio-group>
-                    </el-col>
-                  </el-row>
-                  <el-row
-                    v-if="projectForm.product_feature.basic_facility==='kubernetes'&&projectForm.product_feature.create_env_type==='system'"
-                    :gutter="5"
-                  >
-                    <el-col :span="4">
-                      <span>
-                        服务部署方式
-                        <el-tooltip placement="top">
-                          <div slot="content">
-                            K8s YAML 部署：使用 K8s 原生的 YAML配置方式部署服务
-                            <br />Helm Chart 部署：使用 Helm 工具部署服务
-                          </div>
-                          <i class="icon el-icon-question"></i>
-                        </el-tooltip>
-                      </span>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-radio-group size="mini" v-model="projectForm.product_feature.deploy_type">
-                        <el-radio border label="k8s">K8s YAML 部署</el-radio>
-                        <el-radio border label="helm">Helm Chart 部署</el-radio>
-                      </el-radio-group>
-                    </el-col>
-                  </el-row>
-                </el-form-item>
-                <div v-if="!isEdit" v-show="activeName !=='advance'">
-                  <el-button type="text" @click="showAdvanced = !showAdvanced">
-                    高级配置
-                    <i :class="{'el-icon-arrow-right': !showAdvanced, 'el-icon-arrow-down': showAdvanced }"></i>
-                  </el-button>
-                  <el-form-item v-show="showAdvanced" label="指定集群资源" prop="cluster_ids">
-                    <el-select filterable multiple clearable v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源" style="width: 100%;">
-                      <el-option v-for="cluster in allCluster"
-                          :key="cluster.id"
-                          :label="$utils.showClusterName(cluster)"
-                          :value="cluster.id">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </div>
-                <div v-if="isEdit" v-show="activeName==='advance'">
-                  <el-form-item label="服务部署超时（分钟）" prop="timeout">
-                    <el-input v-model.number="projectForm.timeout"></el-input>
-                  </el-form-item>
-                  <el-form-item label="自定义交付物名称">
-                    <span slot="label">
-                      自定义交付物名称
-                      <el-tooltip effect="dark" placement="top">
-                        <div slot="content">
-                          镜像和 TAR 包规则可以通过变量和常量组装生成：
-                          <br />
-                          <span class="tooltip-key" v-html="'{{.TIMESTAMP}}'"></span> 时间戳
-                          <br />
-                          <span class="tooltip-key" v-html="'{{.TASK_ID}}'"></span> 工作流任务 ID
-                          <br />
-                          <span class="tooltip-key" v-html="'{{.REPO_BRANCH}}'"></span> 代码分支名称
-                          <br />
-                          <span class="tooltip-key" v-html="'{{.REPO_PR}}'"></span> 代码 PR ID
-                          <br />
-                          <span class="tooltip-key" v-html="'{{.REPO_TAG}}'"></span> 代码 TAG
-                          <br />
-                          <span class="tooltip-key" v-html="'{{.REPO_COMMIT_ID}}'"></span> 代码 Commit ID
-                          <br />
-                          <span class="tooltip-key" v-html="'{{.PROJECT}}'"></span> 项目名称
-                          <br />
-                          <span class="tooltip-key" v-html="'{{.SERVICE}}'"></span> 服务名称
-                          <br />
-                          <span class="tooltip-key" v-html="'{{.ENV_NAME}}'">${ENV_NAME}</span> 环境名称
-                          <br />注意：常量字符只能是大小写字母、数字、中划线、下划线和点，即 [a-zA-Z0-9_.-]，首个字符不能是&nbsp;.&nbsp;或&nbsp;-。不能超过 127 个字符
-                        </div>
-                        <i class="el-icon-question"></i>
-                      </el-tooltip>
-                    </span>
-                    <CusDeliverable
-                      v-show="activeName==='advance'"
-                      :customImageRule="projectForm.custom_image_rule"
-                      :customTarRule="projectForm.custom_tar_rule"
-                      ref="cusDeliverable"
-                      v-if="isEdit"
-                    />
-                  </el-form-item>
-                  <el-form-item v-if="isHelm">
-                    <span slot="label">
-                      版本交付 hook 配置
-                      <el-tooltip effect="dark" content="完成配置后，交付中心-创建版本可 hook 外部系统" placement="top">
-                        <i class="el-icon-question"></i>
-                      </el-tooltip>
-                      <el-switch v-model="projectForm.delivery_version_hook.enable" style="margin-left: 10px;"></el-switch>
-                    </span>
-                    <el-row :gutter="10" v-if="projectForm.delivery_version_hook.enable">
-                      <el-col :span="3" style="text-align: right;">
-                        * URL
-                      </el-col>
-                      <el-col :span="10">
-                        <el-form-item prop="delivery_version_hook.hook_host">
-                          <el-select v-model="projectForm.delivery_version_hook.hook_host" placeholder="选择外部系统" size="small" clearable style="width: 100%;">
-                            <el-option v-for="external in externalList" :key="external.id" :label="external.server" :value="external.server"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="10">
-                        <el-form-item prop="delivery_version_hook.path">
-                          <el-input v-model="projectForm.delivery_version_hook.path" placeholder="输入访问路径" size="small"></el-input>
-                        </el-form-item>
-                      </el-col>
-                    </el-row>
-                  </el-form-item>
-                </div>
-              </el-form>
+  <el-dialog :fullscreen="true" custom-class="create-project" :before-close="handleClose" :visible.sync="dialogVisible">
+    <header class="project-contexts-modal__header">{{isEdit?'修改项目信息':'新建项目'}}</header>
+    <section class="project-contexts-modal__content">
+      <el-form
+        :model="projectForm"
+        :rules="rules"
+        label-position="right"
+        ref="projectForm"
+        label-width="120px"
+        class="demo-projectForm"
+        inline-message
+      >
+        <el-form-item label="项目名称" prop="project_name">
+          <el-input @keyup.native="()=>projectForm.project_name=projectForm.project_name.trim()" v-model="projectForm.project_name"></el-input>
+        </el-form-item>
+        <el-form-item label="项目主键" prop="product_name" class="label-icon">
+          <span slot="label">
+            项目标识
+            <el-tooltip effect="dark" content="项目标识是该项目资源的全局唯一标识符，用于该项目下所有资源的引用与更新，默认自动生成，同时支持手动指定，创建后不可更改" placement="top">
+              <i class="el-icon-question" style="margin-left: 5px;"></i>
+            </el-tooltip>
+          </span>
+          <el-input :disabled="!showProjectName" v-model="projectForm.product_name"></el-input>
+          <span v-if="!isEdit" @click="editProjectName = editProjectName ? false : true" class="edit-btn">
+            <i :class="[editProjectName ? 'el-icon-finished' : 'el-icon-edit-outline']"></i>
+          </span>
+        </el-form-item>
+        <el-form-item prop="desc" label="描述信息">
+          <el-input type="textarea" :rows="1" placeholder="请输入描述信息" v-model="projectForm.desc"></el-input>
+        </el-form-item>
+        <el-form-item v-if="!isEdit" label="项目类型">
+          <div class="project-type">
+            <div
+              class="project-type-item"
+              v-for="typeItem in projectTypeList"
+              :key="typeItem.type"
+              @click="switchType(typeItem.type)"
+              :class="{selected: projectType === typeItem.type}"
+            >
+              <i class="type-icon" :class="[projectType === typeItem.type ? 'el-icon-success' : typeItem.icon]"></i>
+              <div class="project-type-item__desc">
+                <div class="title">{{ typeItem.title }}</div>
+                <div class="desc">{{ typeItem.firstDesc }}</div>
+                <div class="desc">{{ typeItem.secondDesc }}</div>
+              </div>
             </div>
           </div>
+          <div class="type-link">
+            <i class="icon el-icon-warning-outline"></i>
+            <el-link
+              type="primary"
+              href="https://docs.koderover.com/zadig/pages/compatibility/"
+              target="_blank"
+              :underline="false"
+            >支持的基础设施列表</el-link>
+          </div>
+        </el-form-item>
+        <div v-if="!isEdit" class="advanced-title">
+          <el-button type="text" @click="showAdvanced = !showAdvanced">
+            高级配置
+            <i :class="{'el-icon-arrow-right': !showAdvanced, 'el-icon-arrow-down': showAdvanced }"></i>
+          </el-button>
         </div>
-        <footer class="project-contexts-modal__footer">
-          <el-button class="create-btn" type="primary" plain @click="submitForm('projectForm')">{{isEdit?'确认修改':'立即创建'}}</el-button>
-        </footer>
-      </div>
-    </el-dialog>
-  </div>
+        <div v-show="showAdvanced || isEdit">
+          <el-form-item label="访问权限" prop="public">
+            <el-select v-model="projectForm.public" popper-class="access-permission">
+              <el-option label="私有" :value="false">
+                <div class="title">私有</div>
+                <div class="desc">该项目对系统普通用户默认不可见，项目管理员可通过添加成员对特定用户添加相应权限。</div>
+              </el-option>
+              <el-option label="公开" :value="true">
+                <div class="title">公开</div>
+                <div class="desc">用户默认享有公开权限，可查看项目中的工作流、集成环境、服务、构建、测试等资源。</div>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="项目管理员" v-if="!isEdit" prop="admins">
+            <el-select v-model="projectForm.admins" filterable multiple remote :loading="loading" placeholder="请输入用户名搜索用户">
+              <el-option
+                v-for="(user,index) in users"
+                :key="index"
+                :label="user.name ? `${user.account}(${user.name})` : user.account"
+                :value="user.uid"
+              >
+                <span v-if="user.identity_type">
+                  <i class="iconfont" :class="'icon'+user.identity_type"></i>
+                  <span>{{user.name ? `${user.account}(${user.name})` : user.account}}</span>
+                </span>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="!isEdit" label="指定集群" prop="cluster_ids">
+            <el-select filterable multiple clearable v-model="projectForm.cluster_ids" placeholder="选择项目使用的集群资源">
+              <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
+            </el-select>
+          </el-form-item>
+        </div>
+      </el-form>
+    </section>
+    <footer class="project-contexts-modal__footer">
+      <el-button type="primary" @click="submitForm('projectForm')">{{isEdit?'确认修改':'立即新建'}}</el-button>
+    </footer>
+  </el-dialog>
 </template>
 <script>
 import {
@@ -231,7 +109,6 @@ import {
   createProjectAPI,
   getSingleProjectAPI,
   updateSingleProjectAPI,
-  getExternalSystemsAPI,
   getClusterListAPI
 } from '@api'
 import CusDeliverable from './components/cusDeliverable.vue'
@@ -248,25 +125,12 @@ const validateProductName = (rule, value, callback) => {
     }
   }
 }
-const validateDeployTimeout = (rule, value, callback) => {
-  const reg = /^[0-9]+.?[0-9]*/
-  if (!reg.test(value)) {
-    callback(new Error('时间应为数字'))
-  } else {
-    if (value > 0) {
-      callback()
-    } else {
-      callback(new Error('请输入正确的时间范围'))
-    }
-  }
-}
 export default {
   components: {
     CusDeliverable
   },
   data () {
     return {
-      activeName: 'base',
       dialogVisible: true,
       users: [],
       loading: false,
@@ -277,10 +141,9 @@ export default {
         product_name: '',
         admins: [],
         cluster_ids: [],
-        timeout: null,
         desc: '',
         enabled: true,
-        public: true,
+        public: false,
         product_feature: {
           basic_facility: 'kubernetes',
           deploy_type: 'k8s',
@@ -318,29 +181,66 @@ export default {
             trigger: 'change'
           }
         ],
-        timeout: [
-          {
-            required: true,
-            trigger: 'change',
-            validator: validateDeployTimeout
-          }
-        ],
         public: [
           { required: true, message: '项目权限不能为空', trigger: 'blur' }
-        ],
-        'delivery_version_hook.hook_host': {
-          required: true, message: '请选择外部系统', trigger: 'blur'
-        },
-        'delivery_version_hook.path': {
-          required: true, message: '请输入访问路径', trigger: 'blur'
-        }
+        ]
       },
-      externalList: [],
       allCluster: [],
-      showAdvanced: false
+      showAdvanced: false,
+      projectTypeList: [
+        {
+          type: 'k8s', // can't be modified
+          title: 'K8s YAML 项目',
+          firstDesc: '基础设施使用 Kubernetes',
+          secondDesc: '使用 Kubernetes YAML 管理和部署服务',
+          icon: 'iconfont iconk8s'
+        },
+        {
+          type: 'helm',
+          title: 'K8s Helm Chart 项目',
+          firstDesc: '基础设施使用 Kubernetes',
+          secondDesc: '使用 Helm Chart 管理和部署服务',
+          icon: 'iconfont iconhelmrepo'
+        },
+        {
+          type: 'external',
+          title: 'K8s 托管项目',
+          firstDesc: '托管现有 Kubernetes 集群中的资源',
+          secondDesc: '支持服务镜像的更新',
+          icon: 'iconfont iconjiaofu'
+        },
+        {
+          type: 'host',
+          title: '主机项目',
+          firstDesc: '基础设施使用主机',
+          secondDesc: '使用自定义脚本部署升级服务',
+          icon: 'iconfont iconzhuji'
+        }
+      ]
     }
   },
   methods: {
+    switchType (type) {
+      this.projectForm.product_feature = {
+        basic_facility: 'kubernetes',
+        create_env_type: 'system',
+        deploy_type: 'k8s'
+      }
+      const feature = this.projectForm.product_feature
+      switch (type) {
+        case 'k8s':
+          break
+        case 'helm':
+          feature.deploy_type = 'helm'
+          break
+        case 'external':
+          feature.create_env_type = 'external'
+          break
+        case 'host':
+          feature.basic_facility = 'cloud_host'
+          break
+      }
+    },
     getUsers () {
       const payload = {}
       usersAPI(payload).then(res => {
@@ -415,21 +315,6 @@ export default {
         if (res.team_id === 0) {
           this.projectForm.team_id = null
         }
-        if (!res.timeout) {
-          this.$set(this.projectForm, 'timeout', 10)
-        }
-        if (this.isHelm) {
-          getExternalSystemsAPI().then(res => {
-            this.externalList = res.external_system
-          })
-          if (!this.projectForm.delivery_version_hook) {
-            this.$set(this.projectForm, 'delivery_version_hook', {
-              enable: false,
-              hook_host: '',
-              path: ''
-            })
-          }
-        }
       })
     },
     submitForm (formName) {
@@ -437,14 +322,11 @@ export default {
         if (valid) {
           if (this.isEdit) {
             this.$refs.cusDeliverable.saveConfig()
-            this.projectForm.custom_image_rule = this.$refs.cusDeliverable.custom_image_rule
-            this.projectForm.custom_tar_rule = this.$refs.cusDeliverable.custom_tar_rule
             this.updateSingleProject(
               this.projectForm.product_name,
               this.projectForm
             )
           } else {
-            this.projectForm.timeout = 10
             if (
               this.projectForm.product_feature.basic_facility === 'cloud_host'
             ) {
@@ -496,8 +378,17 @@ export default {
         return false
       }
     },
-    isHelm () {
-      return this.projectForm.product_feature && this.projectForm.product_feature.deploy_type === 'helm'
+    projectType () {
+      const feature = this.projectForm.product_feature
+      if (feature.basic_facility === 'cloud_host') {
+        return 'host'
+      } else if (feature.create_env_type === 'external') {
+        return 'external'
+      } else if (feature.deploy_type === 'helm') {
+        return 'helm'
+      } else {
+        return 'k8s'
+      }
     }
   },
   mounted () {
@@ -512,10 +403,21 @@ export default {
 }
 </script>
 
-<style lang="less" >
+<style lang="less" scoped>
+@itemWidth: 400px;
+
 .tooltip-key {
   display: inline-block;
   width: 130px;
+}
+
+/deep/.el-dialog__body {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: calc(~'100% - 30px');
+  padding-top: 0;
+  padding-bottom: 10px;
 }
 
 .create-project {
@@ -523,85 +425,212 @@ export default {
     cursor: pointer;
   }
 
-  .el-dialog__headerbtn {
-    font-size: 40px;
+  .project-contexts-modal__header {
+    width: 80%;
+    min-width: 800px;
+    margin: 0 auto 20px;
+    padding-bottom: 14px;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+    border-bottom: 1px solid rgba(210, 210, 210, 0.5);
   }
 
-  .el-dialog__body {
-    padding: 5px 20px;
-  }
+  .project-contexts-modal__content {
+    flex: 1 0 auto;
+    margin-left: calc(~'50% - 300px');
 
-  .create-btn {
-    color: @themeColor;
-    background: #fff;
-    border-color: @themeColor;
+    /deep/.el-form {
+      &.demo-projectForm {
+        .el-input,
+        .el-select,
+        .el-textarea {
+          width: @itemWidth;
+          font-weight: 300;
 
-    &:hover {
-      color: #fff;
-      background: @themeColor;
-      border-color: @themeColor;
-    }
-  }
+          .el-input {
+            width: 100%;
+          }
 
-  .project-contexts-modal {
-    height: 100%;
-
-    .project-contexts-modal__header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      padding: 0 50px;
-    }
-
-    .project-contexts-modal__footer {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 60px;
-    }
-
-    .project-contexts-modal__content {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-
-      .project-contexts-modal__content-title {
-        margin: 0;
-        margin-bottom: 20px;
-        color: #000;
-        font-weight: bold;
-        font-size: 27px;
-        text-align: center;
+          .el-textarea__inner {
+            height: 40px;
+            line-height: 30px;
+          }
+        }
       }
 
-      .project-settings__inputs-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
-        width: 800px;
+      .el-form-item__label {
+        font-weight: 300;
+      }
 
-        .el-form {
-          width: 100%;
+      .el-form-item {
+        margin-bottom: 8px;
+        font-weight: 300;
 
-          .el-form-item {
-            margin-bottom: 5px;
+        .el-form-item__content {
+          line-height: 38px;
+
+          .type-link {
+            line-height: 22px;
+
+            .icon {
+              margin-right: 5px;
+              color: #a0a0a0;
+              font-size: 16px;
+              vertical-align: text-bottom;
+            }
+
+            .el-link {
+              font-weight: 300;
+              font-size: 12px;
+            }
           }
         }
+      }
 
-        .small-title {
-          color: #ccc;
-          font-size: 12px;
-        }
+      .edit-btn {
+        display: inline-block;
+        margin-left: 6px;
+        padding: 0 8px;
+        font-size: 16px;
+        line-height: 28px;
+        border: 1px solid rgba(118, 122, 200, 0.5);
+        border-radius: 4px;
+        cursor: pointer;
+      }
 
-        .el-radio--mini {
-          &.is-bordered {
-            width: 135px;
-            margin-right: 0;
+      .project-type {
+        box-sizing: border-box;
+        width: @itemWidth;
+        padding: 8px;
+        line-height: 22px;
+        background: rgba(160, 160, 255, 0.01);
+        border: 1px solid rgba(210, 215, 220, 0.3);
+        border-radius: 4px;
+
+        .project-type-item {
+          display: flex;
+          align-items: center;
+          box-sizing: border-box;
+          padding: 8px 0;
+          border: 1px solid transparent;
+          border-radius: 4px;
+          cursor: pointer;
+
+          &:not(:last-child) {
+            margin-bottom: 8px;
+          }
+
+          .project-type-item__desc {
+            .title {
+              margin-bottom: 8px;
+              color: #000;
+              font-size: 14px;
+            }
+
+            .desc {
+              color: #a0a0a0;
+              font-size: 12px;
+            }
+          }
+
+          .type-icon {
+            flex: 0 0 74px;
+            font-size: 24px;
+            text-align: center;
+          }
+
+          &:hover {
+            background: #fafafc;
+          }
+
+          &.selected {
+            background: #fafafc;
+            border-color: @themeColor;
+
+            .project-type-item__desc {
+              .title {
+                color: #44447e;
+              }
+
+              .desc {
+                color: #4a4a4a;
+              }
+            }
+
+            .icon {
+              color: @themeColor;
+              font-size: 20px;
+            }
           }
         }
+      }
+
+      .advanced-title {
+        .el-button {
+          padding: 6px 0;
+          font-weight: 300;
+        }
+      }
+    }
+
+    .small-title {
+      color: #ccc;
+      font-size: 12px;
+    }
+
+    .el-radio--mini {
+      &.is-bordered {
+        width: 135px;
+        margin-right: 0;
+      }
+    }
+  }
+
+  .project-contexts-modal__footer {
+    width: 80%;
+    min-width: 800px;
+    margin: 20px auto 0;
+    padding-top: 14px;
+    text-align: center;
+    border-top: 1px solid rgba(210, 210, 210, 0.5);
+  }
+}
+</style>
+
+<style lang="less">
+@itemWidth: 400px;
+
+.access-permission {
+  width: @itemWidth;
+
+  .el-select-dropdown__item {
+    height: auto;
+    padding: 8px 20px;
+    font-weight: 400;
+    line-height: 22px;
+    white-space: normal;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid rgba(210, 210, 210, 0.5);
+    }
+
+    .title {
+      font-size: 14px;
+    }
+
+    .desc {
+      margin-top: 8px;
+      color: #a0a0a0;
+      font-size: 12px;
+    }
+
+    &.selected {
+      color: @themeColor;
+
+      .desc {
+        color: inherit;
       }
     }
   }

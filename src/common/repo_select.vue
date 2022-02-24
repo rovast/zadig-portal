@@ -316,7 +316,8 @@ export default {
         branch: '',
         checkout_path: '',
         remote_name: 'origin',
-        submodules: false
+        submodules: false,
+        enable_proxy: false
       }
       this.showTrigger && (repoMeta.enableTrigger = false)
       this.validateForm().then(res => {
@@ -330,6 +331,7 @@ export default {
         if (this.allCodeHosts && this.allCodeHosts.length === 1) {
           const codeHostId = this.allCodeHosts[0].id
           repoMeta.codehost_id = codeHostId
+          repoMeta.enable_proxy = this.allCodeHosts[0].enable_proxy
           this.getRepoOwnerById(index + 1, codeHostId)
         }
       }).catch(err => {
@@ -344,7 +346,8 @@ export default {
         branch: '',
         checkout_path: '',
         remote_name: 'origin',
-        submodules: false
+        submodules: false,
+        enable_proxy: false
       }
       this.showTrigger && (repoMeta.enableTrigger = false)
       this.$set(this.codeInfo, 0, {
@@ -356,6 +359,7 @@ export default {
       if (this.allCodeHosts && this.allCodeHosts.length === 1) {
         const codeHostId = this.allCodeHosts[0].id
         repoMeta.codehost_id = codeHostId
+        repoMeta.enable_proxy = this.allCodeHosts[0].enable_proxy
         this.getRepoOwnerById(0, codeHostId)
       }
       this.config.repos.push(repoMeta)

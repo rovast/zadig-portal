@@ -159,7 +159,12 @@
           </el-form-item>
 
         </template>
-
+        <template>
+          <span class="switch-span">启用代理</span>
+          <el-switch size="small"
+                     v-model="codeEdit.enable_proxy"
+                     @change="changeProxy"></el-switch>
+        </template>
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -333,6 +338,12 @@
                       auto-complete="off"></el-input>
           </el-form-item>
         </template>
+        <template>
+          <span class="switch-span">启用代理</span>
+          <el-switch size="small"
+                     v-model="codeAdd.enable_proxy"
+                     @change="changeProxy"></el-switch>
+        </template>
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -369,11 +380,6 @@
                      size="small"
                      @click="handleCodeAdd"
                      plain>添加</el-button>
-          <span class="switch-span"
-                :style="{color: proxyInfo.enable_repo_proxy?'#409EFF':'#303133'}">启用代理</span>
-          <el-switch size="small"
-                     :value="proxyInfo.enable_repo_proxy"
-                     @change="changeProxy"></el-switch>
         </div>
         <el-table :data="code"
                   style="width: 100%;">
@@ -421,7 +427,7 @@
 </template>
 <script>
 import {
-  getCodeProviderAPI, deleteCodeSourceAPI, updateCodeSourceAPI, createCodeSourceAPI, getProxyConfigAPI, updateProxyConfigAPI
+  getCodeProviderAPI, deleteCodeSourceAPI, updateCodeSourceAPI, createCodeSourceAPI, getProxyConfigAPI
 } from '@api'
 const validateGitURL = (rule, value, callback) => {
   if (value === '') {
@@ -458,7 +464,8 @@ export default {
         address: '',
         access_token: '',
         application_id: '',
-        client_secret: ''
+        client_secret: '',
+        enable_proxy: false
       },
       codeAdd: {
         name: '',
@@ -639,23 +646,8 @@ export default {
       if (!this.proxyInfo.id || this.proxyInfo.type === 'no') {
         this.proxyInfo.enable_repo_proxy = false
         this.$message.error('未配置代理，请先前往「系统配置」->「代理配置」配置代理！')
-        return
+        this.codeEdit.enable_proxy = false
       }
-      this.proxyInfo.enable_repo_proxy = value
-      updateProxyConfigAPI(this.proxyInfo.id, this.proxyInfo).then(response => {
-        if (response.message === 'success') {
-          const mess = value ? '启用代理成功！' : '成功关闭代理！'
-          this.$message({
-            message: `${mess}`,
-            type: 'success'
-          })
-        } else {
-          this.$message.error(response.message)
-        }
-      }).catch(err => {
-        this.proxyInfo.enable_repo_proxy = !value
-        this.$message.error(`修改配置失败：${err}`)
-      })
     },
     getProxyConfig () {
       getProxyConfigAPI().then(response => {

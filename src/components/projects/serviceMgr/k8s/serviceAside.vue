@@ -38,6 +38,7 @@
               :saveDisabled="projectName !== projectNameOfService"
               canSelectBuildName
               mini
+              fromServicePage
             />
           </div>
         </div>
@@ -87,7 +88,7 @@
                   <template slot-scope="scope">
                     <router-link
                       v-if="scope.row.build_name"
-                      :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_name=${scope.row.build_name}&service_project_name=${projectNameOfService}`"
+                      :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_name=${scope.row.build_name}`"
                     >
                       <el-button size="small" type="text">{{scope.row.build_name}}</el-button>
                     </router-link>

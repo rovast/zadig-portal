@@ -36,7 +36,7 @@
       </div>
       <section>
         <div class="primary-title not-first-child">构建变量</div>
-        <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj"></EnvVariable>
+        <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj" :fromServicePage="fromServicePage"></EnvVariable>
         <div class="primary-title not-first-child">通用构建脚本</div>
         <div class="deploy-script">
           <Resize :resize="'both'">
@@ -142,6 +142,10 @@ export default {
     usedToHost: {
       default: false,
       type: Boolean
+    },
+    fromServicePage: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

@@ -24,6 +24,7 @@
       :buildConfigData="buildConfig"
       :serviceTargets="serviceTargets"
       :mini="mini"
+      :fromServicePage="fromServicePage"
     >
       <template v-if="canSelectBuildName" v-slot:buildName>
         <el-form-item label="构建名称" prop="name">
@@ -45,7 +46,14 @@
     </ZadigBuild>
     <slot name="footer">
       <footer class="create-footer">
-        <el-button class="save-btn" type="primary" size="small" @click="handleBuildConfig" :disabled="saveDisabled" :loading="saveLoading">保存构建</el-button>
+        <el-button
+          class="save-btn"
+          type="primary"
+          size="small"
+          @click="handleBuildConfig"
+          :disabled="saveDisabled"
+          :loading="saveLoading"
+        >保存构建</el-button>
       </footer>
     </slot>
   </div>
@@ -89,6 +97,10 @@ export default {
     mini: {
       default: false,
       type: Boolean
+    },
+    fromServicePage: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

@@ -91,7 +91,15 @@
       <div v-show="showBuildInEnvVar" class="inner-variable-content">
         <div v-for="variable in (isTest ? testVars : buildVars)" :key="variable.variable" class="var-content">
           <span class="var-variable">{{ variable.variable }}</span>
-          <span class="var-desc">{{ variable.desc }}</span>
+          <span class="var-desc">
+            {{ variable.desc }}
+            <el-button
+              v-if="variable.link && fromServicePage"
+              type="text"
+              size="small"
+              @click="variable.link.handler()"
+            >{{ variable.link.label }}</el-button>
+          </span>
         </div>
       </div>
     </section>
@@ -115,6 +123,10 @@ export default {
       required: false,
       type: Object,
       default: null
+    },
+    fromServicePage: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -133,7 +145,31 @@ export default {
         },
         {
           variable: '$IMAGE',
-          desc: '输出镜像名称'
+          desc: '输出镜像名称',
+          link: {
+            label: '更新镜像命名规则',
+            handler: () => {
+              this.$router.replace({
+                query: Object.assign({}, this.$route.query, {
+                  rightbar: 'policy'
+                })
+              })
+            }
+          }
+        },
+        {
+          variable: '$PKG_FILE',
+          desc: '构建出的 Tar 包名称',
+          link: {
+            label: '更新 Tar 包命名规则',
+            handler: () => {
+              this.$router.replace({
+                query: Object.assign({}, this.$route.query, {
+                  rightbar: 'policy'
+                })
+              })
+            }
+          }
         },
         {
           variable: '$SERVICE',
@@ -142,10 +178,6 @@ export default {
         {
           variable: '$DIST_DIR',
           desc: '构建出的 Tar 包的目的目录'
-        },
-        {
-          variable: '$PKG_FILE',
-          desc: '构建出的 Tar 包名称'
         },
         {
           variable: '$ENV_NAME',

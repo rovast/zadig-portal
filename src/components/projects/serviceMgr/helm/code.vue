@@ -79,6 +79,7 @@
             v-bind="currentCode"
             v-bind:is="currentCode.componentsName"
             canSelectBuildName
+            fromServicePage
             class="code-content"
           ></component>
           <CodeMirror

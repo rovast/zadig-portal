@@ -28,8 +28,17 @@ export default {
     }
   },
   computed: {
+    buildConfigName () {
+      return this.$route.params.build_name
+    },
     projectName () {
       return this.$route.params.project_name
+    },
+    isCreate () {
+      return (
+        this.$route.path ===
+        `/v1/projects/detail/${this.projectName}/builds/create`
+      )
     }
   },
   methods: {

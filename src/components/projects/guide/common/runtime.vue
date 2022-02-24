@@ -20,7 +20,7 @@
           </div>
           <div class="info-block">
             <div class="info-block-item">
-              <div class="account-box-item__info info-block-item-card">
+              <div class="info-block-item-card">
                 <div class="integration-card__image">
                   <el-button v-if="envSuccess.length === 2"
                              type="success"
@@ -54,8 +54,6 @@
                   </div>
                 </div>
               </div>
-              <div class="account-box-item__controls">
-              </div>
             </div>
           </div>
           <div class="title">
@@ -67,7 +65,7 @@
           </div>
           <div class="info-block">
             <div class="info-block-item">
-              <div class="account-box-item__info info-block-item-card">
+              <div class="info-block-item-card">
                 <div class="integration-card__image">
                   <el-button v-if="workflowStatus.status === 'success'"
                              type="success"
@@ -89,11 +87,8 @@
                   </div>
                 </div>
               </div>
-              <div class="account-box-item__controls">
-              </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

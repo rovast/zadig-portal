@@ -1,5 +1,5 @@
 <template>
-  <div class="account-integrations block-list">
+  <div class="block-list">
     <el-table v-loading="loading" :data="mapWorkflows" style="width: 100%;">
       <el-table-column label="工作流名称">
         <template slot-scope="scope">

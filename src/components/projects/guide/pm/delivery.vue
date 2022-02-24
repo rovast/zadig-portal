@@ -7,7 +7,7 @@
           <span class="first">第四步</span>
           <span class="second">运行工作流触发服务的自动化交付</span>
         </div>
-        <div class="account-integrations block-list">
+        <div class="block-list">
           <el-table v-loading="loading"
                     :data="mapWorkflows"
                     style="width: 100%;">
@@ -73,7 +73,7 @@
             <el-table-column width="120px"
                              label="操作">
               <template slot-scope="scope">
-                <el-button type="success"
+                <el-button type="primary"
                            size="mini"
                            round
                            @click="runCurrentTask(scope.row)"
@@ -84,27 +84,25 @@
 
         </div>
       </div>
-      <div class="other-operation">
-        <h3 class="service-aside-help__step-header">
+      <div class="help-links-container">
+        <h3 class="links-header">
           您可能还需要：
         </h3>
-        <ul class="service-aside-help__step-list">
-          <li class="service-aside-help__step-list-item"><a target="_blank"
+        <ul class="links-list">
+          <li class="list-item"><a target="_blank"
                href="https://docs.koderover.com/zadig/project/workflow/#git-webhook"
-               class="service-aside-help__step-list-item-link"><i class="icon el-icon-link"></i>
-              <span class="service-aside-help__step-list-item-link-text">
+               class="list-item-link"><i class="icon el-icon-link"></i>
+              <span class="list-item-link-text">
                 配置 Git Webhook 自动触发服务升级</span></a></li>
         </ul>
       </div>
     </div>
     <div class="controls__wrap">
       <div class="controls__right">
-        <router-link :to="`/v1/projects/detail/${projectName}`">
-          <button type="primary"
+        <router-link :to="`/v1/projects/detail/${projectName}/detail`">
+          <el-button type="primary"
                   size="small"
-                  class="save-btn"
-                  :disabled="loading"
-                  plain>完成</button>
+                  :disabled="loading">完成</el-button>
         </router-link>
 
       </div>

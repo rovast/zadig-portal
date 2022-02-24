@@ -1,5 +1,5 @@
 <template>
-  <div class="projects-pm-service-deploy-container">
+  <div class="projects-runtime-container">
     <div class="guide-container">
       <Step :activeStep="2"/>
       <div class="current-step-container">
@@ -20,7 +20,7 @@
           </div>
           <div class="info-block">
             <div class="info-block-item">
-              <div class="account-box-item__info info-block-item-card">
+              <div class="info-block-item-card">
                 <div class="integration-card__image">
                   <el-button v-if="envSuccess.length === 2"
                              type="success"
@@ -36,7 +36,7 @@
                        class="integration-details">
                     <template v-if="env.env_name==='dev'">
                       <span class="env-name">
-                        开发环境：dev
+                        开发环境：{{projectName}}-dev
                       </span>
                       <span class="desc">，开发日常自测、业务联调</span>
                       <el-link v-if="env.err_message!==''"
@@ -44,7 +44,7 @@
                     </template>
                     <template v-if="env.env_name==='qa'"
                               class="env-item">
-                      <span class="env-name">测试环境：qa
+                      <span class="env-name">测试环境：{{projectName}}-qa
                       </span>
                       <span class="desc">，测试环境（自动化测试、业务验收）</span>
                       <el-link v-if="env.err_message!==''"
@@ -53,8 +53,6 @@
 
                   </div>
                 </div>
-              </div>
-              <div class="account-box-item__controls">
               </div>
             </div>
           </div>
@@ -67,7 +65,7 @@
           </div>
           <div class="info-block">
             <div class="info-block-item">
-              <div class="account-box-item__info info-block-item-card">
+              <div class="info-block-item-card">
                 <div class="integration-card__image">
                   <el-button v-if="workflowStatus.status === 'success'"
                              type="success"
@@ -89,29 +87,22 @@
                   </div>
                 </div>
               </div>
-              <div class="account-box-item__controls">
-              </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
     <div class="controls__wrap">
       <div class="controls__right">
         <router-link :to="`/v1/projects/create/${projectName}/pm/delivery`">
-          <button v-if="!getResult"
+          <el-button v-if="!getResult"
                   type="primary"
-                  class="save-btn"
-                  disabled
-                  plain>下一步</button>
-          <button v-else-if="getResult"
-                  type="primary"
-                  class="save-btn"
-                  plain>下一步</button>
+                  size="small"
+                  disabled>下一步</el-button>
+          <el-button v-else-if="getResult"
+                  size="small"
+                  type="primary">下一步</el-button>
         </router-link>
-        <div class="run-button">
-        </div>
       </div>
     </div>
   </div>
@@ -129,7 +120,8 @@ export default {
       envTimer: 0,
       workflowTimer: 0,
       secondCount: 0,
-      timeOut: 0
+      timeOut: 0,
+      exitLoading: false
     }
   },
   methods: {
@@ -213,8 +205,7 @@ export default {
         this.generateEnv(this.projectName)
       }, 1000)
     };
-    bus.$emit(`show-sidebar`, true)
-    bus.$emit(`set-topbar-title`, { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
+    bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
   },
   beforeDestroy () {
     clearInterval(this.envTimer)
@@ -227,22 +218,38 @@ export default {
 }
 </script>
 
-<style lang="less">
-.projects-pm-service-deploy-container {
+<style lang="less" scoped>
+.projects-runtime-container {
   position: relative;
   flex: 1;
+  height: 100%;
   overflow: auto;
   background-color: @globalBackgroundColor;
 
-  .page-title-container {
+  .controls__wrap {
+    position: relative;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
     padding: 0 20px;
+    background-color: #fff;
 
-    h1 {
-      width: 100%;
-      color: #4c4c4c;
-      font-weight: 300;
-      text-align: center;
+    & > * {
+      margin-right: 10px;
+    }
+
+    .controls__right {
+      display: flex;
+      align-items: center;
+
+      a {
+        margin-right: 15px;
+      }
     }
   }
 
@@ -256,7 +263,7 @@ export default {
 
         .first {
           display: inline-block;
-          width: 110px;
+          width: 130px;
           padding: 8px;
           color: #fff;
           font-weight: 300;
@@ -283,13 +290,11 @@ export default {
       }
 
       .block-list {
-        -ms-flex: 1;
         flex: 1;
         margin-top: 15px;
         padding: 0 30px;
         overflow-y: auto;
         background-color: inherit;
-        -webkit-box-flex: 1;
 
         .title {
           h4 {
@@ -308,32 +313,18 @@ export default {
           min-height: 102px;
 
           .info-block-item {
-            display: -webkit-box;
-            display: -ms-flexbox;
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 10px;
             padding: 20px 30px;
             background-color: #fff;
-            -webkit-box-shadow: 0 3px 2px 1px rgba(0, 0, 0, 0.05);
-            box-shadow: 0 3px 2px 1px rgba(0, 0, 0, 0.05);
-            filter: progid:dximagetransform.microsoft.dropshadow(OffX=0, OffY=3px, Color='#0D000000');
-            -webkit-box-align: center;
-            -ms-flex-align: center;
-            -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
+            border-radius: 6px;
 
             .info-block-item-card {
-              display: -webkit-box;
-              display: -ms-flexbox;
               display: flex;
               align-items: center;
               justify-content: flex-start;
-              -webkit-box-align: center;
-              -ms-flex-align: center;
-              -webkit-box-pack: start;
-              -ms-flex-pack: start;
 
               .integration-card__image {
                 width: 64px;
@@ -373,56 +364,10 @@ export default {
             }
 
             .info-block-item-card > * {
-              -ms-flex: 0 0 auto;
               flex: 0 0 auto;
-              -webkit-box-flex: 0;
             }
           }
         }
-      }
-    }
-  }
-
-  .controls__wrap {
-    position: relative;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    margin: 0 15px;
-    padding: 0 10px;
-    background-color: #fff;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
-
-    .controls__right {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      align-items: center;
-      margin-right: 10px;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-
-      .save-btn {
-        margin-right: 15px;
-        padding: 10px 17px;
-        color: #fff;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: @themeColor;
-        border: 1px solid @themeColor;
-        cursor: pointer;
-        transition: background-color 300ms, color 300ms, border 300ms;
-      }
-
-      .save-btn[disabled] {
-        background-color: #9ac9f9;
-        border: 1px solid #9ac9f9;
-        cursor: not-allowed;
       }
     }
   }

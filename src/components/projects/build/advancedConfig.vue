@@ -188,12 +188,6 @@ export default {
       }
     }
 
-    .el-input-number.el-input-number--mini {
-      .el-input {
-        width: 100%;
-      }
-    }
-
     .radio-group {
       margin: 8px 0;
       line-height: 22px;

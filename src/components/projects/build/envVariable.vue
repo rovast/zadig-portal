@@ -232,7 +232,7 @@ export default {
         {
           variable: '$SERVICES',
           desc:
-            '通过工作流任务更新的服务组，服务名以 “,” 分隔，形如 service1,service2,service3。推荐使用 array=(${SERVICES//,/ } 方式转化成数组'
+            '通过工作流任务更新的服务组，服务名以 “,” 分隔，形如 service1,service2,service3。推荐使用 array=(${SERVICES//,/ ' + '} 方式转化成数组'
         },
         {
           variable: '$CI',

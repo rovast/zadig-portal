@@ -1,90 +1,152 @@
 <template>
   <div class="chart-repo-container">
-    <el-form ref="form" :model="chartData" label-width="140px">
-      <el-form-item prop="repoAttr" label="仓库属性">
-        <el-radio-group v-model="chartData.repoAttr">
-          <el-radio label="private">私有库</el-radio>
-          <el-radio label="public">公开库</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item v-show="chartData.repoAttr === 'private'" label="导入源" prop="source">
-        <el-select v-model="chartData.source" placeholder="选择 chart 导入源" size="small">
-          <el-option label="label" value="value"></el-option>
+    <el-form ref="chartRepoForm" :model="chartForm.createFrom" label-width="140px">
+      <el-form-item label="选择 Chart 仓库" prop="chartRepoName" :rules="{
+              required: true,
+              message: '请选择 Chart 仓库',
+              trigger: 'change',
+            }">
+        <el-select v-model="chartForm.createFrom.chartRepoName"  @change="getHelmRepoChart" placeholder="选择 Chart 仓库"  :disabled="isUpdate" size="small">
+          <el-option v-for="(repo,index) in repos" :key="index" :label="repo.repo_name" :value="repo.repo_name"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item v-show="chartData.repoAttr === 'private'" label="项目" prop="project">
-        <el-select v-model="chartData.project" placeholder="选择 chart 项目" size="small">
-          <el-option label="label" value="value"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item v-show="chartData.repoAttr === 'public'" label="仓库地址" prop="address">
-        <el-input v-model="chartData.address" placeholder="http://xx" size="small"></el-input>
-      </el-form-item>
-      <el-form-item label="Chart" class="chart-select">
-        <div v-for="(chart, index) in chartData.charts" :key="chart.helm">
-          <el-select v-model="chart.helm" placeholder="chart 名称" size="small">
-            <el-option label="label" value="value"></el-option>
-          </el-select>
-          <el-select v-model="chart.version" placeholder="chart 版本" size="small">
-            <el-option label="label" value="value"></el-option>
-          </el-select>
-          <span>
-            <el-button v-show="chartData.charts.length > 1" size="mini" circle icon="el-icon-minus" @click="deleteChart(index)"></el-button>
-            <el-button size="mini" circle icon="el-icon-plus" type="primary" @click="addChart"></el-button>
-          </span>
+        <el-form-item label="选择 Chart"  prop="chartName" class="chart-select" :rules="{
+              required: true,
+              message: '请选择 Chart ',
+              trigger: 'change',
+            }">
+            <el-select v-model="chartForm.createFrom.chartName" @change="getHelmChartVersion" placeholder="请选择 Chart"  :disabled="isUpdate" size="small">
+              <el-option v-for="(item,key) in chartWithVersion" :key="key" :label="key" :value="key"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item prop="chartVersion" class="chart-select last" :rules="{
+              required: true,
+              message: '请选择版本',
+              trigger: 'change',
+            }">
+            <el-select v-model="chartForm.createFrom.chartVersion" placeholder="选择版本"  :disabled="isUpdate" size="small">
+              <el-option v-for="(versionItem,index) in currentRepoVersions" :key="index" :label="versionItem.version" :value="versionItem.version"></el-option>
+            </el-select>
+        </el-form-item>
+        <div class="footer">
+          <el-button size="small" @click="$store.commit('SERVICE_DIALOG_VISIBLE', false)" plain>取消</el-button>
+          <el-button size="small" :loading="importLoading"  @click="importChartRepo" plain>导入</el-button>
         </div>
-      </el-form-item>
-      <el-form-item>
-        <el-button size="small" @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" size="small" @click="importChartRepo">导入</el-button>
-      </el-form-item>
+
     </el-form>
   </div>
 </template>
 
 <script>
+import { getHelmRepoAPI, getHelmRepoChartAPI, createTemplateServiceAPI } from '@api'
 export default {
   name: 'ChartRepo',
   data () {
     return {
-      chartData: {
-        repoAttr: 'private',
-        source: '',
-        project: '',
-        address: '',
-        charts: [{
-          helm: '',
-          version: ''
-        }]
+      chartForm: {
+        createFrom: {
+          chartRepoName: '',
+          chartName: '',
+          chartVersion: ''
+        },
+        source: 'chartRepo'
       },
-      sourceOptions: [],
-      projectOptions: [],
-      charts: [{
-        helm: '',
-        version: []
-      }]
+      importLoading: false,
+      isUpdate: false,
+      chartWithVersion: [],
+      repos: [],
+      currentRepoVersions: []
     }
   },
   props: {
-    currentSelect: String
+    currentSelect: String,
+    currentService: Object
+  },
+  watch: {
+    currentService: {
+      handler (val) {
+        if (val && val.source && val.source === 'chartRepo') {
+          console.log(val)
+          this.isUpdate = true
+          this.chartForm.createFrom.chartRepoName = val.create_from.chart_repo_name
+          this.chartForm.createFrom.chartName = val.create_from.chart_name
+          this.chartForm.createFrom.chartVersion = val.create_from.chart_version
+        } else {
+          this.isUpdate = false
+        }
+      },
+      immediate: true
+    }
   },
   methods: {
-    closeSelectRepo () {
-      console.log('close chart')
-    },
-    importChartRepo () {
-      // this.$store.commit('SERVICE_DIALOG_VISIBLE', false)
-      console.log('importChartRepo', this.chartData)
-    },
-    deleteChart (index) {
-      this.chartData.charts.splice(index, 1)
-    },
-    addChart () {
-      this.chartData.charts.push({
-        helm: '',
-        version: ''
+    getHelmRepo () {
+      this.chartWithVersion = []
+      this.currentRepoVersions = []
+      getHelmRepoAPI().then(res => {
+        this.repos = res
       })
+    },
+    getHelmRepoChart (repoName) {
+      getHelmRepoChartAPI(repoName).then(res => {
+        this.chartWithVersion = res.entries
+      })
+    },
+    getHelmChartVersion (chartName) {
+      this.chartForm.createFrom.chartVersion = ''
+      this.currentRepoVersions = this.chartWithVersion[chartName]
+    },
+    closeSelectRepo () {
+      this.chartForm = {
+        createFrom: {
+          chartRepoName: '',
+          chartName: '',
+          chartVersion: ''
+        },
+        source: 'chartRepo'
+      }
+      this.$refs.chartRepoForm.resetFields()
+    },
+    async importChartRepo () {
+      this.importLoading = true
+      const projectName = this.$route.params.project_name
+      const payload = this.chartForm
+      const validateResult = await this.$refs.chartRepoForm.validate().catch((err) => { return err })
+      if (validateResult) {
+        const res = await createTemplateServiceAPI(projectName, payload).catch(
+          err => {
+            this.importLoading = false
+            console.log(err)
+          }
+        )
+        if (res) {
+          this.importLoading = false
+          if (res.successServices.length) {
+            this.$message.success(
+              `${this.isUpdate ? '更新' : '新建'}服务 ${payload.createFrom.chartName} 成功`
+            )
+          } else {
+            this.$message.error(res.failedServices[0].error)
+          }
+          this.$store.dispatch('queryService', {
+            projectName: this.$route.params.project_name,
+            showServiceName: payload.createFrom.chartName
+          })
+          this.$store.commit('SERVICE_DIALOG_VISIBLE', false)
+          this.$store.commit('UPDATE_ENV_BUTTON', true)
+          this.$store.commit('CHART_NAMES', res.successServices.map(service => {
+            return {
+              serviceName: service,
+              type: 'create'
+            }
+          }))
+        }
+      } else {
+        this.importLoading = false
+      }
     }
+  },
+  mounted () {
+    this.getHelmRepo()
   }
 }
 </script>
@@ -97,14 +159,23 @@ export default {
     }
 
     .chart-select {
+      display: inline-block;
+      width: calc(~'50% - 5px');
+
       .el-select {
-        width: calc(~'50% - 45px');
-        margin-right: 5px;
+        width: 100%;
       }
 
-      .el-button + .el-button {
-        margin-left: 5px;
+      &.last {
+        .el-form-item__content {
+          margin-left: 0 !important;
+        }
       }
+    }
+
+    .footer {
+      display: block;
+      text-align: right;
     }
   }
 }

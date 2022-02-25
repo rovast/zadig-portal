@@ -20,7 +20,7 @@
             <span class="member title-weight" v-for="member in changedInfo[key].members" :key="member">{{ member }}</span>
           </div>
           <div v-for="workflow in changedInfo[key].workflows" :key="workflow.name">
-            <span style="font-style: italic;">{{ workflow.type | desc }}</span>
+            <!-- <span style="font-style: italic;">{{ workflow.type | desc }}</span> -->
             {{ workflow.collaboration_type === 'new' ? '独享': '共享' }}工作流 {{ workflow.name }} ：
             <span
               v-for="(verb, index) in workflow.verbs"
@@ -30,7 +30,7 @@
             权限
           </div>
           <div v-for="product in changedInfo[key].products" :key="product.name">
-            <span style="font-style: italic;">{{ product.type | desc }}</span>
+            <!-- <span style="font-style: italic;">{{ product.type | desc }}</span> -->
             {{ product.collaboration_type === 'new' ? '独享': '共享' }}环境 {{ product.name }} ：
             <span
               v-for="(verb, index) in product.verbs"
@@ -103,14 +103,26 @@ export default {
       this.collaborationData.initName = payload.name
       this.$set(this.collaborationData, 'initCollaboration', cloneDeep(payload))
       this.updateActiveName(payload.name)
+      this.$emit('resetDisabled')
     },
     async handleCollaboration () {
       this.loading = true
       let payload = null
+      const fn = payload => {
+        delete payload.initName
+        delete payload.initCollaboration
+        delete payload.saveDisabled
+        payload.workflows.forEach(workflow => {
+          delete workflow.add
+        })
+        payload.products.forEach(product => {
+          delete product.add
+        })
+      }
       switch (this.mode) {
         case 'added':
           payload = cloneDeep(this.collaborationData)
-          delete payload.initName
+          fn(payload)
           await createCollaborationAPI(this.projectName, payload).then(() => {
             this.$message.success(`您成功生成了 ${payload.name} 协作模式！`)
             this.updateCollaboration(payload)
@@ -118,8 +130,7 @@ export default {
           break
         case 'updated':
           payload = cloneDeep(this.collaborationData)
-          delete payload.initName
-          delete payload.initCollaboration
+          fn(payload)
           await updateNewCollaborationAPI(
             this.projectName,
             this.collaborationData.initName,

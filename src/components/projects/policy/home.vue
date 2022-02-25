@@ -4,8 +4,9 @@
     <el-tabs type="card" v-model="activeName">
       <el-tab-pane v-for="mode in allCollaboration" :key="mode.initName" :name="mode.initName">
         <span slot="label" class="policy-title">
-          <el-input v-show="activeName === mode.initName" v-model="mode.name" placeholder="协作模式名称" size="small"></el-input>
-          <span v-show="activeName !== mode.initName" class="mode-name">{{ mode.name }}</span>
+          <span v-if="activeName !== mode.initName || mode.initName === mode.name" class="mode-name">{{ mode.name }}</span>
+          <el-input v-else v-model="mode.name" placeholder="协作模式名称" size="small"></el-input>
+
           <i class="el-icon-delete icon" @click.stop="deleteMode(mode.initName)"></i>
         </span>
       </el-tab-pane>
@@ -56,8 +57,14 @@ export default {
       workflowList: [],
       envList: [],
       policy: {
-        workflow: [],
-        environment: []
+        workflow: {
+          newPermi: [],
+          sharePermi: []
+        },
+        environment: {
+          newPermi: [],
+          sharePermi: []
+        }
       },
       allCollaboration: [],
       activeName: ''
@@ -141,15 +148,23 @@ export default {
       ).catch(error => console.log(error))
       if (res) {
         Object.keys(this.policy).forEach(key => {
-          this.policy[key] = res
+          const current = res
             .find(group => group.resource.toLowerCase() === key)
-            .rules.filter(rule => !rule.action.startsWith('create_'))
-            .map(rule => {
+            .rules.map(rule => {
               return {
                 ...rule,
                 icon: this.selectIcon(rule.action)
               }
             })
+          this.policy[key].newPermi = current.filter(
+            rule => !rule.action.startsWith('create_')
+          )
+
+          this.policy[key].sharePermi = current.filter(
+            rule =>
+              !rule.action.startsWith('create_') &&
+              !rule.action.startsWith('delete_')
+          )
         })
       }
     },
@@ -167,10 +182,12 @@ export default {
     },
     async getWorkflows () {
       let res = []
-      res = await getProductWorkflowsInProjectAPI(this.projectName).catch(err => {
-        console.log(err)
-        return []
-      })
+      res = await getProductWorkflowsInProjectAPI(this.projectName).catch(
+        err => {
+          console.log(err)
+          return []
+        }
+      )
       const workflowList = await getCommonWorkflowListInProjectAPI(
         this.projectName
       ).catch(err => {

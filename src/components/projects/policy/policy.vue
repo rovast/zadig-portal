@@ -15,6 +15,12 @@
             <template slot="prefix">
               <i class="el-icon-search prefix-icon"></i>
             </template>
+            <el-option disabled value="NEWUSER">
+              <router-link :to="`/v1/projects/detail/${projectName}/rbac`" class="env-link">
+                <i class="el-icon-circle-plus-outline" style="margin-right: 3px;"></i>
+                添加项目成员
+              </router-link>
+            </el-option>
             <el-option label="all-users" value="*">
               <span>all-users(所有用户包括新建用户)</span>
             </el-option>
@@ -33,17 +39,20 @@
         <el-table-column label="基准工作流">
           <template slot-scope="{ row, $index }">
             <el-form-item class="base-item" :prop="`workflows[${$index}].name`" label-width="0px" required>
-              <el-select v-model="row.name" placeholder="请选择基准工作流" filterable size="small" :disabled="!!row.name">
+              <el-select v-if="!row.name" v-model="row.name" placeholder="请选择基准工作流" filterable size="small" :disabled="!!row.name">
                 <el-option v-for="workflow in lastBaseWorkflows" :key="workflow" :label="workflow" :value="workflow"></el-option>
               </el-select>
+              <el-tooltip v-else effect="dark" :content="row.name" placement="top">
+                <el-select v-model="row.name" filterable size="small" :disabled="!!row.name"></el-select>
+              </el-tooltip>
             </el-form-item>
           </template>
         </el-table-column>
         <el-table-column label="配置">
           <template slot-scope="{ row }">
-            <el-radio-group v-model="row.collaboration_type">
+            <el-radio-group v-model="row.collaboration_type" @change="updateCollaborationType($event, 'workflow', row)">
               <el-tooltip effect="dark" content="成员基于此基准工作流新建一个工作流" placement="top">
-                <el-radio label="new">新建</el-radio>
+                <el-radio label="new">独享</el-radio>
               </el-tooltip>
               <el-tooltip effect="dark" content="成员共享一个基准工作流" placement="top">
                 <el-radio label="share">共享</el-radio>
@@ -53,7 +62,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="{ row }">
-            <el-popover ref="workflowPopoverRef" placement="right" width="150" trigger="click">
+            <el-popover ref="workflowPopoverRef" placement="right" trigger="click">
               <div class="auth-list">
                 <div class="title">
                   <el-checkbox
@@ -65,7 +74,12 @@
                   所有权限
                 </div>
                 <el-checkbox-group v-model="row.verbs">
-                  <el-checkbox v-for="workflow in policy.workflow" :key="workflow.action" :label="workflow.action">
+                  <el-checkbox
+                    v-for="workflow in policy.workflow[row.collaboration_type === 'new' ? 'newPermi' : 'sharePermi']"
+                    :key="workflow.action"
+                    :label="workflow.action"
+                    class="permission-item"
+                  >
                     <i :class="[workflow.icon]"></i>
                     {{workflow.alias}}
                   </el-checkbox>
@@ -92,17 +106,20 @@
         <el-table-column label="基准环境">
           <template slot-scope="{ row, $index }">
             <el-form-item class="base-item" :prop="`products[${$index}].name`" label-width="0px" required>
-              <el-select v-model="row.name" placeholder="请选择基准环境" filterable size="small" :disabled="!!row.name">
+              <el-select v-if="!row.name" v-model="row.name" placeholder="请选择基准环境" filterable size="small">
                 <el-option v-for="env in lastBaseEnvironments" :key="env" :label="env" :value="env"></el-option>
               </el-select>
+              <el-tooltip v-else effect="dark" :content="row.name" placement="top">
+                <el-select v-model="row.name" filterable size="small" :disabled="!!row.name"></el-select>
+              </el-tooltip>
             </el-form-item>
           </template>
         </el-table-column>
         <el-table-column label="配置">
           <template slot-scope="{ row }">
-            <el-radio-group v-model="row.collaboration_type">
+            <el-radio-group v-model="row.collaboration_type" @change="updateCollaborationType($event, 'environment', row)">
               <el-tooltip effect="dark" content="成员基于此基准环境新建一个环境" placement="top">
-                <el-radio label="new">新建</el-radio>
+                <el-radio label="new">独享</el-radio>
               </el-tooltip>
               <el-tooltip effect="dark" content="成员共享一个基准环境" placement="top">
                 <el-radio label="share">共享</el-radio>
@@ -112,7 +129,7 @@
         </el-table-column>
         <el-table-column prop="prop" label="操作">
           <template slot-scope="{ row }">
-            <el-popover ref="envPopoverRef" placement="right" width="160" trigger="click">
+            <el-popover ref="envPopoverRef" placement="right" trigger="click">
               <div class="auth-list">
                 <div class="title">
                   <el-checkbox
@@ -124,7 +141,12 @@
                   所有权限
                 </div>
                 <el-checkbox-group v-model="row.verbs">
-                  <el-checkbox v-for="environment in policy.environment" :key="environment.action" :label="environment.action">
+                  <el-checkbox
+                    v-for="environment in policy.environment[row.collaboration_type === 'new' ? 'newPermi' : 'sharePermi']"
+                    :key="environment.action"
+                    :label="environment.action"
+                    class="permission-item"
+                  >
                     <i :class="[environment.icon]"></i>
                     {{environment.alias}}
                   </el-checkbox>
@@ -157,7 +179,7 @@
       </div>
     </el-form>
     <div class="bottom">
-      <el-button type="primary" @click="handleCollaboration">确认生成</el-button>
+      <el-button type="primary" @click="handleCollaboration" :disabled="saveDisabled">保存</el-button>
     </div>
     <PolicyDialog
       :changedInfo="changedInfo"
@@ -167,6 +189,7 @@
       :mode="mode"
       :deleteMode="deleteMode"
       :updateActiveName="updateActiveName"
+      @resetDisabled="resetDisabled"
     ></PolicyDialog>
   </section>
 </template>
@@ -196,7 +219,8 @@ export default {
     return {
       changedInfo: {},
       visible: false,
-      mode: ''
+      mode: '',
+      saveDisabled: true
     }
   },
   computed: {
@@ -221,10 +245,10 @@ export default {
       const policy = this.policy
       const workflow = {}
       const environment = {}
-      policy.workflow.forEach(work => {
+      policy.workflow.newPermi.forEach(work => {
         workflow[work.action] = work.alias
       })
-      policy.environment.forEach(env => {
+      policy.environment.newPermi.forEach(env => {
         environment[env.action] = env.alias
       })
       return {
@@ -234,14 +258,36 @@ export default {
     }
   },
   methods: {
+    updateCollaborationType (configType, resourceType, row) {
+      if (row.add) {
+        row.verbs = this.policy[resourceType][
+          configType === 'new' ? 'newPermi' : 'sharePermi'
+        ].map(data => data.action)
+      }
+    },
     isIndeterminate (row, type) {
-      return row.verbs.length > 0 && row.verbs.length < this.policy[type].length
+      return (
+        row.verbs.length > 0 &&
+        row.verbs.length <
+          this.policy[type][
+            row.collaboration_type === 'new' ? 'newPermi' : 'sharePermi'
+          ].length
+      )
     },
     checkAll (row, type) {
-      return row.verbs.length === this.policy[type].length
+      return (
+        row.verbs.length ===
+        this.policy[type][
+          row.collaboration_type === 'new' ? 'newPermi' : 'sharePermi'
+        ].length
+      )
     },
     handleCheckAllChange (val, row, type) {
-      row.verbs = val ? this.policy[type].map(data => data.action) : []
+      row.verbs = val
+        ? this.policy[type][
+          row.collaboration_type === 'new' ? 'newPermi' : 'sharePermi'
+        ].map(data => data.action)
+        : []
     },
 
     deleteWorkflow (index) {
@@ -252,7 +298,8 @@ export default {
         this.collaborationData.workflows.push({
           name: '',
           collaboration_type: 'share',
-          verbs: this.policy.workflow.map(data => data.action)
+          verbs: this.policy.workflow.sharePermi.map(data => data.action),
+          add: true
         })
       })
     },
@@ -264,8 +311,8 @@ export default {
         this.collaborationData.products.push({
           name: '',
           collaboration_type: 'share',
-          recycle_day: 0,
-          verbs: this.policy.environment.map(data => data.action)
+          verbs: this.policy.environment.sharePermi.map(data => data.action),
+          add: true
         })
       })
     },
@@ -459,6 +506,24 @@ export default {
       res.length = res.intersection.length + res.left.length + res.right.length
       res.all = [].concat(res.intersection, res.left, res.right)
       return res
+    },
+    resetDisabled () {
+      this.$nextTick(() => {
+        this.saveDisabled = true
+      })
+    }
+  },
+  watch: {
+    collaborationData: {
+      handler (nVal, oVal) {
+        if (nVal !== oVal) {
+          oVal.saveDisabled = this.saveDisabled
+          this.saveDisabled = nVal.saveDisabled !== false
+        } else {
+          this.saveDisabled = false
+        }
+      },
+      deep: true
     }
   },
   components: {
@@ -569,5 +634,17 @@ export default {
       }
     }
   }
+}
+
+.env-link {
+  display: inline-block;
+  width: 100%;
+  height: calc(~'100% - 1px');
+  color: #606266;
+  border-bottom: 1px solid #d2d7dc;
+}
+
+.permission-item {
+  display: block;
 }
 </style>

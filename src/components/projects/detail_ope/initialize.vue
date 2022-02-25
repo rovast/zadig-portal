@@ -1,16 +1,13 @@
 <template>
   <div class="init-resource">
-    <header>资源确认</header>
+    <header>管理员为您配置了以下工作流和环境</header>
     <section>
       <article v-if="collaborationData.workflow.length">
         <div class="title">
           <i class="iconfont icongongzuoliucheng"></i>工作流
         </div>
         <div v-for="(workflow, index) in collaborationData.workflow" :key="index" class="detail-item">
-          <div class="item-name">
-            {{ workflow.name }}
-            <el-tag effect="plain" size="mini">{{ workflow.collaboration_type === 'share' ? '共享' : '新建' }}</el-tag>
-          </div>
+          <div class="item-name">{{ workflow.name }}</div>
         </div>
       </article>
       <article v-if="collaborationData.product.length">
@@ -72,7 +69,7 @@ export default {
         )
       }
       initializeCollaborationAPI(this.projectName, payload).then(res => {
-        this.$message.success(`用户初始环境创建成功！`)
+        this.$message.success(`项目更新成功，环境更新可能需要一些时间，请稍后使用！`)
         this.$router.go(-1)
       })
     },

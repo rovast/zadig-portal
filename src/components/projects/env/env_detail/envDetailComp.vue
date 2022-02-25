@@ -1079,7 +1079,7 @@ export default {
     updateK8sEnv (envInfo) {
       const content = `<p>更新环境, 是否继续?</p>${
         this.nsIsExisted
-          ? '<p style="color: #f56c6c; font-size: 13px;">由 Zadig 接管的服务将覆盖所选命名空间中的同名服务，请慎重操作！'
+          ? '<p style="color: #f56c6c; font-size: 13px;">Zadig 中定义的服务将覆盖所选命名空间中的同名服务，请谨慎操作！'
           : ''
       }</p>`
       this.$confirm(content, '更新', {

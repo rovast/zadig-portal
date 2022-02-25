@@ -154,10 +154,10 @@
           </el-form-item>
           <el-form-item v-if="webhookSwap.repo.source==='gerrit'" label="触发事件" prop="events">
             <el-checkbox-group v-model="webhookSwap.events">
-              <el-checkbox style="display: block;" label="change-merged"></el-checkbox>
+              <el-checkbox style="display: block;" label="change-merged">Change merged</el-checkbox>
               <el-checkbox style="display: block;" label="patchset-created">
+                <span>Patchset created</span>
                 <template v-if="webhookSwap.events.includes('patchset-created')">
-                  <span>patchset-created</span>
                   <span style="color: #606266;">评分标签</span>
                   <el-input size="mini" style="width: 250px;" v-model="webhookSwap.repo.label" placeholder="Code-Review"></el-input>
                 </template>
@@ -166,7 +166,7 @@
           </el-form-item>
           <el-form-item v-else-if="webhookSwap.repo.source!=='gerrit'" label="触发事件" prop="events">
             <el-checkbox-group v-model="webhookSwap.events">
-              <el-checkbox v-for="tri in triggerMethods" :key="tri.label" :label="tri.label">{{ tri.text }}</el-checkbox>
+              <el-checkbox v-for="tri in triggerMethods.git" :key="tri.value" :label="tri.value">{{ tri.label }}</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="触发策略">
@@ -290,11 +290,16 @@
                   <span>{{ row.workflow_args.namespace || 'N/A' }}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="触发方式" width="110px">
+              <el-table-column label="触发方式" width="130px">
                 <template slot-scope="{ row }">
                   <div v-if="row.main_repo.events.length">
                     <div v-for="event in row.main_repo.events" :key="event">
-                      {{ triggerMethods.find(tri => tri.label === event).text }}
+                      <span v-if="row.main_repo.source === 'gerrit'">
+                         {{ triggerMethods.gerrit.find(tri => tri.value === event)?triggerMethods.gerrit.find(tri => tri.value === event).label: 'N/A' }}
+                      </span>
+                      <span v-else>
+                         {{ triggerMethods.git.find(tri => tri.value === event)?triggerMethods.git.find(tri => tri.value === event).label: 'N/A' }}
+                      </span>
                     </div>
                   </div>
                   <span v-else>{{ 'N/A' }}</span>
@@ -414,19 +419,27 @@ export default {
       }
     }
 
-    this.triggerMethods = [
+    this.triggerMethods = {
+      git: [
+        {
+          value: 'push',
+          label: 'Push commits'
+        }, {
+          value: 'pull_request',
+          label: 'Pull requests'
+        }, {
+          value: 'tag',
+          label: 'Push tags'
+        }],
+      gerrit: [{
+        value: 'change-merged',
+        label: 'Change merged'
+      },
       {
-        label: 'push',
-        text: 'Push commits'
-      }, {
-        label: 'pull_request',
-        text: 'Pull requests'
-      }, {
-        label: 'tag',
-        text: 'Push tags'
-      }
-    ]
-
+        value: 'patchset-created',
+        label: 'Patchset created'
+      }]
+    }
     return {
       testInfos: [],
       gotScheduleRepo: false,

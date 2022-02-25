@@ -98,25 +98,18 @@
                     <HelpLink :inline="true"
                                  :keyword="{location:'个人中心',key:'APIToken'}"></HelpLink>
                   </td>
-                  <td v-if="jwtToken">
-                    <span class="token">
-                      <el-input size="small"
-                                placeholder=""
-                                readonly
-                                type="text"
-                                v-model="jwtToken">
-                        <el-button v-clipboard:copy="jwtToken"
-                                   v-clipboard:success="copySuccess"
-                                   v-clipboard:error="copyError"
-                                   slot="append"
-                                   icon="el-icon-document-copy">复制</el-button>
-                      </el-input>
-
-                    </span>
-                  </td>
-                  <td v-else>
-                    <el-button @click="getToken()"
-                               type="text">点击获取</el-button>
+                  <td>
+                    <el-input size="small"
+                              placeholder=""
+                              readonly
+                              type="text"
+                              v-model="currentEditUserInfo.token">
+                      <el-button v-clipboard:copy="currentEditUserInfo.token"
+                                  v-clipboard:success="copySuccess"
+                                  v-clipboard:error="copyError"
+                                  slot="append"
+                                  icon="el-icon-document-copy">复制</el-button>
+                    </el-input>
                   </td>
                 </tr>
                 <tr>
@@ -146,7 +139,6 @@
 
 <script>
 import bus from '@utils/eventBus'
-import store from 'storejs'
 import HelpLink from './common/helpLink.vue'
 import { getCurrentUserInfoAPI, updateCurrentUserInfoAPI, getSubscribeAPI, saveSubscribeAPI, downloadConfigAPI } from '@api'
 import { mapState } from 'vuex'
@@ -179,7 +171,6 @@ export default {
         newPassword: '',
         confirmPassword: ''
       },
-      jwtToken: null,
       loading: false,
       modifiedPwdDialogVisible: false,
       sysNoti: {},
@@ -201,9 +192,6 @@ export default {
       if (res) {
         this.currentEditUserInfo = res
       }
-    },
-    getJwtToken () {
-      this.jwtToken = store.get('userInfo').token
     },
     copySuccess (event) {
       this.$message({
@@ -308,8 +296,10 @@ export default {
   },
   created () {
     bus.$emit('set-topbar-title', { title: '账号设置', breadcrumb: [] })
-
-    this.getJwtToken()
+    bus.$emit('set-sub-sidebar-title', {
+      title: '',
+      routerList: []
+    })
     this.getSubscribe()
     this.getCurrentUserInfo()
   },
@@ -381,10 +371,6 @@ export default {
           width: 850px;
           margin-top: 15px;
           color: #666f80;
-
-          .token {
-            width: 100%;
-          }
 
           tr td {
             padding: 15px 8px;

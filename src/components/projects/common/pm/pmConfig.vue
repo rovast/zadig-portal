@@ -226,7 +226,7 @@
       </template>
     </div>
     <div class="save-btn">
-      <el-button type="primary" @click="savePmService">保存</el-button>
+      <el-button size="small" type="primary" @click="savePmService">保存</el-button>
     </div>
   </div>
 </template>

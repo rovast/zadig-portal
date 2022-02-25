@@ -5,7 +5,7 @@
       <el-alert type="info"
                 :closable="false">
         <template>
-          设置系统中的组件配额，参考
+          设置系统的工作流及测试任务的执行策略，参考
           <el-link style="font-size: 14px; vertical-align: baseline;"
                    type="primary"
                    :href="`https://docs.koderover.com/zadig/settings/system-settings/`"
@@ -16,11 +16,43 @@
     </template>
     <div class="quota-container">
       <section>
-        <h1>历史任务保留策略 <el-tooltip effect="dark"
-                      content="包括工作流任务及其产生的构建日志、测试日志、测试报告、二进制文件"
-                      placement="right">
-            <i class="el-icon-question tooltip"></i>
+        <h1>任务并发数设置 <el-tooltip effect="dark"
+                                    placement="right">
+          <div slot="content">
+            1 个工作流任务至少需要 1C2G 资源。<br>
+            工作流任务并发数 * 单任务服务并发数 * 1C2G ≤ 集群资源。<br>
+            举例：假设集群资源为 8C16G，则建议工作流任务并发数设置为 2，单任务服务并发数设置为 4。<br>
+          </div>
+          <i class="el-icon-question tooltip"></i>
           </el-tooltip>
+        </h1>
+        <div class="workflow-concurrency">
+          <span class="desc">工作流任务并发数</span>
+          <el-input-number size="mini"
+                           :min="1"
+                           v-model.number="workflowConcurrency"></el-input-number>
+        </div>
+        <br/>
+        <div class="workflow-concurrency">
+          <span class="desc">单任务服务并发数</span>
+          <el-input-number size="mini"
+                           :min="1"
+                           v-model.number="buildConcurrency"></el-input-number>
+        </div>
+      </section>
+      <br/>
+      <section class="save-concurrency-setting">
+        <el-button @click="updateConcurrencySettings(workflowConcurrency, buildConcurrency)"
+                   size="small"
+                   type="primary">保存</el-button>
+      </section>
+      <br/>
+      <section>
+        <h1>历史任务保留策略 <el-tooltip effect="dark"
+                                 content="包括工作流任务及其产生的构建日志、测试日志、测试报告、二进制文件"
+                                 placement="right">
+          <i class="el-icon-question tooltip"></i>
+        </el-tooltip>
         </h1>
         <div class="config-list">
           <el-radio-group v-model="selectType">
@@ -53,13 +85,13 @@
       <section class="operation">
         <el-button @click="setCapacity('WorkflowTaskRetention',selectType,WorkflowTaskRetention[selectType])"
                    size="small"
-                   type="primary">确定</el-button>
+                   type="primary">保存</el-button>
       </section>
     </div>
   </div>
 </template>
 <script>
-import { getCapacityAPI, setCapacityAPI } from '@api'
+import { getCapacityAPI, setCapacityAPI, getWorkflowConcurrencySettingsAPI, updateWorkflowConcurrencySettingsAPI } from '@api'
 import bus from '@utils/eventBus'
 export default {
   data () {
@@ -68,7 +100,9 @@ export default {
       WorkflowTaskRetention: {
         max_days: null,
         max_items: 1000
-      }
+      },
+      workflowConcurrency: 2,
+      buildConcurrency: 5
     }
   },
   methods: {
@@ -81,6 +115,22 @@ export default {
           this[target].max_items = res.retention.max_items
           this.selectType = 'max_items'
         }
+      })
+    },
+    getConcurrencySettings () {
+      getWorkflowConcurrencySettingsAPI().then((res) => {
+        this.workflowConcurrency = res.workflow_concurrency
+        this.buildConcurrency = res.build_concurrency
+      })
+    },
+    updateConcurrencySettings (workflowConcurrency, buildConcurrency) {
+      const payload = {
+        workflow_concurrency: workflowConcurrency,
+        build_concurrency: buildConcurrency
+      }
+      updateWorkflowConcurrencySettingsAPI(payload).then((res) => {
+        this.$message.success('更新工作流并发设置成功')
+        this.getConcurrencySettings()
       })
     },
     setCapacity (target, key, value) {
@@ -126,6 +176,7 @@ export default {
     bus.$emit(`set-topbar-title`, { title: '系统配置', breadcrumb: [] })
 
     this.getCapacity('WorkflowTaskRetention')
+    this.getConcurrencySettings()
   }
 }
 </script>
@@ -150,6 +201,19 @@ export default {
       .tooltip {
         color: #909399;
         cursor: pointer;
+      }
+    }
+
+    .workflow-concurrency {
+      span.desc {
+        margin-left: 22px;
+        color: #606266;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .el-input-number {
+        margin-left: 20px;
       }
     }
 

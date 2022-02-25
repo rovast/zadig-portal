@@ -8,14 +8,13 @@
         :addService="addService"
         :changeShowBuild="(value) =>showBuild = value"
       />
-      <Build
+      <PmConfig
         v-if="showBuild"
         ref="pm-service"
         :serviceName="serviceName"
         :isEdit="isEdit"
         :changeUpdateEnvDisabled="changeUpdateEnvDisabled"
-        @listenCreateEvent="listenEvent"
-      ></Build>
+        @listenCreateEvent="listenEvent"/>
       <div v-else class="no-content">
             <img src="@assets/icons/illustration/editor_nodata.svg"
                  alt="">
@@ -29,16 +28,16 @@
     </div>
     <div class="controls__wrap">
       <div class="controls__right">
-        <button type="primary" class="save-btn" @click="openDialog" :disabled="updateEnvDisabled">
+        <el-button type="primary" size="small" @click="openDialog" :disabled="updateEnvDisabled">
           更新环境
-        </button>
+        </el-button>
       </div>
     </div>
   </div>
 </template>
 <script>
 import ServiceList from '@/components/projects/common/pm/serviceList.vue'
-import Build from '@/components/projects/common/pm/pmConfig.vue'
+import PmConfig from '@/components/projects/common/pm/pmConfig.vue'
 import UpdateEnv from './pm/updateEnv'
 export default {
   data () {
@@ -79,7 +78,7 @@ export default {
     }
   },
   components: {
-    Build,
+    PmConfig,
     ServiceList,
     UpdateEnv
   }

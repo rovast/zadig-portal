@@ -467,6 +467,28 @@
           </el-table-column>
         </el-table>
       </template>
+
+      <template v-if="extensionStage">
+         <div class="section-head">
+          扩展
+        </div>
+        <el-alert v-if="extensionStage.error" title="错误信息" :description="extensionStage.error" type="error" close-text="知道了" style="margin: 8px 0;"></el-alert>
+        <el-row :gutter="0" class="extension-content">
+          <el-col :span="6">
+            <i class="iconfont iconzhuangtai"></i> 状态
+          </el-col>
+          <el-col :span="6" :class="colorTranslation(extensionStage.status, 'pipeline', 'task')">
+            {{ extensionStage.status ? myTranslate(extensionStage.status) : "未运行" }}
+          </el-col>
+          <el-col v-if="extensionStage.status!=='running'" :span="6">
+            <i class="iconfont iconshijian"></i> 持续时间
+          </el-col>
+          <el-col v-if="extensionStage.status!=='running'" :span="6">
+            {{ extensionStage.duration }}
+          </el-col>
+        </el-row>
+      </template>
+
       <el-backtop target=".workflow-or-pipeline-task-detail"></el-backtop>
     </div>
 </template>
@@ -755,6 +777,17 @@ export default {
         return arr
       })
       return this.$utils.flattenArray(twoD)
+    },
+    extensionStage () {
+      const extension = this.taskDetail.stages.find(stage => stage.type === 'extension')
+      if (extension) {
+        return {
+          error: extension.sub_tasks.extension.error,
+          status: extension.status,
+          duration: this.$utils.timeFormat(extension.sub_tasks.extension.end_time - extension.sub_tasks.extension.start_time)
+        }
+      }
+      return null
     }
   },
   methods: {
@@ -1094,6 +1127,13 @@ export default {
     .el-row {
       margin-bottom: 5px;
     }
+  }
+
+  .extension-content {
+    margin-top: 12px;
+    color: #606266;
+    font-size: 14px;
+    line-height: 22px;
   }
 }
 

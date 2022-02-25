@@ -24,7 +24,7 @@
               message: '请选择版本',
               trigger: 'change',
             }">
-            <el-select v-model="chartForm.createFrom.chartVersion" placeholder="选择版本"  :disabled="isUpdate" size="small">
+            <el-select v-model="chartForm.createFrom.chartVersion" placeholder="选择版本"   size="small">
               <el-option v-for="(versionItem,index) in currentRepoVersions" :key="index" :label="versionItem.version" :value="versionItem.version"></el-option>
             </el-select>
         </el-form-item>
@@ -66,11 +66,11 @@ export default {
     currentService: {
       handler (val) {
         if (val && val.source && val.source === 'chartRepo') {
-          console.log(val)
           this.isUpdate = true
           this.chartForm.createFrom.chartRepoName = val.create_from.chart_repo_name
           this.chartForm.createFrom.chartName = val.create_from.chart_name
           this.chartForm.createFrom.chartVersion = val.create_from.chart_version
+          this.getHelmRepoChart(val.create_from.chart_repo_name)
         } else {
           this.isUpdate = false
         }

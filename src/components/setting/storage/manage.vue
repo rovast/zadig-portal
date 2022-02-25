@@ -38,8 +38,8 @@
               <i class="iconfont iconhuawei"></i> <span>华为云 OBS</span>
             </el-option>
             <el-option :value="0"
-                       label="其它">
-              <i class="iconfont iconqita"></i> <span>其它</span>
+                       label="其他">
+              <i class="iconfont iconqita"></i> <span>其他</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -133,8 +133,8 @@
               <i class="iconfont iconhuawei"></i> <span>华为云 OBS</span>
             </el-option>
             <el-option :value="0"
-                       label="其它">
-              <i class="iconfont iconqita"></i> <span>其它</span>
+                       label="其他">
+              <i class="iconfont iconqita"></i> <span>其他</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -308,7 +308,7 @@ export default {
       providerMap: {
         0: {
           icon: 'iconfont logo iconqita',
-          name: '其它'
+          name: '其他'
         },
 
         1: {

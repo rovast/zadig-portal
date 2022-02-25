@@ -132,7 +132,7 @@ export default {
       providerMap: {
         0: {
           icon: 'iconfont logo iconwuliji',
-          name: '其它'
+          name: '其他'
         },
 
         1: {

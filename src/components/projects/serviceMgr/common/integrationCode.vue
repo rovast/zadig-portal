@@ -37,7 +37,7 @@
                 class="el-icon-document-copy copy"></span>
         </span>
         <span class="tips">- 应用权限请勾选：api、read_user、read_repository</span>
-        <span class="tips">- 其它配置可以点击
+        <span class="tips">- 其他配置可以点击
           <el-link style="font-size: 13px;"
                    type="primary"
                    :href="`https://docs.koderover.com/zadig/settings/codehost/gitlab/`"

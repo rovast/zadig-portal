@@ -229,7 +229,7 @@
               ></el-button>
               <span :style="{'visibility': showHover[data.service_name] ? 'visible': 'hidden'}" class="operation-container">
                 <el-tooltip effect="dark" placement="top">
-                  <div slot="content">共享服务可在其它项目的服务编排中使用</div>
+                  <div slot="content">共享服务可在其他项目的服务编排中使用</div>
                   <el-tag
                     v-if="data.type === 'k8s'"
                     :type="data.visibility==='public'?'primary':'info'"

@@ -60,6 +60,19 @@
       </span>
       <span class="operation"> </span>
     </div>
+    <div v-if="currentModules['extension']"
+         class="tab-container">
+      <div @click="changeTab('extension')"
+           class="tab"
+           :class="{'active-tab':currentTab==='extension' }">
+        <span class="number">扩展</span>
+      </div>
+      <span class="operation">
+        <i @click="deleteModule('extension')"
+           class="el-icon-error"></i>
+      </span>
+      <span class="operation"> </span>
+    </div>
     <div v-if="currentModules['trigger']"
          class="tab-container">
       <div @click="changeTab('trigger')"

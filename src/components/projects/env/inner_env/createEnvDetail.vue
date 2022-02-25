@@ -75,7 +75,7 @@
           <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">
             <i :class="[editButtonDisabled ? 'el-icon-edit-outline': 'el-icon-finished' ]"></i>
           </span>
-          <span class="ns-desc" v-show="nsIsExisted">由 Zadig 接管的服务将覆盖所选命名空间中的同名服务，请慎重操作！</span>
+          <span class="ns-desc" v-show="nsIsExisted">Zadig 中定义的服务将覆盖所选命名空间中的同名服务，请谨慎操作！</span>
         </el-form-item>
         <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库" class="secondary-label">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small" @change="getImages">

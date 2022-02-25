@@ -976,6 +976,14 @@ export function updateProxyConfigAPI (id, payload) {
 }
 
 // Quota
+export function getWorkflowConcurrencySettingsAPI () {
+  return http.get(`/api/aslan/system/concurrency/workflow`)
+}
+
+export function updateWorkflowConcurrencySettingsAPI (payload) {
+  return http.post(`/api/aslan/system/concurrency/workflow`, payload)
+}
+
 export function getCapacityAPI (target) {
   return http.get(`/api/aslan/system/capacity/target/${target}`)
 }

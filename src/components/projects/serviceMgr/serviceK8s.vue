@@ -19,7 +19,7 @@
                          :key="index"
                          :label="env">{{env.name}}</el-checkbox>
           </el-checkbox-group>
-          <div v-show="checkedEnvList.find(env => env.is_existed)" class="tip-desc">由 Zadig 接管的服务将覆盖所选命名空间中的同名服务，请慎重操作！</div>
+          <div v-show="checkedEnvList.find(env => env.is_existed)" class="tip-desc">Zadig 中定义的服务将覆盖所选命名空间中的同名服务，请谨慎操作！</div>
         </div>
         <span slot="footer"
               class="dialog-footer">

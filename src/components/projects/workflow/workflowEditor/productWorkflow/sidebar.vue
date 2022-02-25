@@ -33,6 +33,13 @@
           <i class="operation el-icon-circle-plus-outline"></i>
         </a>
       </li>
+       <li>
+        <a @click="addModule('extension')"
+           href="javascript:"
+           class="title">扩展
+          <i class="operation el-icon-circle-plus-outline"></i>
+        </a>
+      </li>
       <li>
         <a @click="addModule('trigger')"
            href="javascript:"

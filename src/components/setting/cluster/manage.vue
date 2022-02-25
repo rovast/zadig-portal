@@ -358,7 +358,7 @@ import {
 } from '@api'
 import { wordTranslate } from '@utils/wordTranslate'
 import bus from '@utils/eventBus'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, omit } from 'lodash'
 const validateClusterName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入集群名称'))
@@ -576,7 +576,7 @@ export default {
       } else if (operate === 'add') {
         this.$refs.cluster.validate(valid => {
           if (valid) {
-            const payload = cloneDeep(this.cluster)
+            const payload = cloneDeep(omit(this.cluster, 'cache'))
             this.dialogClusterFormVisible = false
             this.addCluster(payload)
           } else {

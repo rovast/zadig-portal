@@ -296,7 +296,7 @@ export default {
         ) {
           this.info = {
             message:
-              '信息：其它项目的共享服务，不支持在本项目中编辑，编辑器为只读模式'
+              '信息：其他项目的共享服务，不支持在本项目中编辑，编辑器为只读模式'
           }
         } else if (
           val.product_name === this.projectName &&

@@ -153,7 +153,7 @@ export default {
         },
         {
           value: 'native',
-          label: '其它',
+          label: '其他',
           reg_addr: '地址',
           namespace: 'Namespace',
           access_key: 'Docker 用户名',

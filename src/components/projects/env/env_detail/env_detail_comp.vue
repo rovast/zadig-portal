@@ -161,10 +161,6 @@
                                type="text"
                                @click="deleteHostingEnv(productInfo.product_name,productInfo.env_name)">
                       取消托管</el-button>
-
-                    <el-button v-hasPermi="{projectName: projectName, action: 'config_environment'}" v-if="productInfo.status!=='Creating'"
-                               type="text"
-                               @click="openRecycleEnvDialog()">环境回收</el-button>
                 </template>
               </div>
             </el-col>
@@ -548,7 +544,6 @@
       <UpdateHelmVarDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="updateHelmVarDialog" :projectName="projectName" :envName="envName"/>
       <UpdateK8sVarDialog  :fetchAllData="fetchAllData" :productInfo="productInfo" ref="updateK8sVarDialog"/>
       <PmServiceLog  ref="pmServiceLog"/>
-      <RecycleDialog :getEnvServices="getEnvServices" :productInfo="productInfo" :initPageInfo="initPageInfo" :recycleDay="recycleDay" ref="recycleDialog" />
     </div>
 
 </template>
@@ -567,7 +562,6 @@ import PmHostList from './components/pmHostList.vue'
 import UpdateHelmEnvDialog from './components/updateHelmEnvDialog'
 import UpdateHelmVarDialog from './components/updateHelmVarDialog'
 import UpdateK8sVarDialog from './components/updateK8sVarDialog'
-import RecycleDialog from './components/recycleDialog'
 const jsdiff = require('diff')
 
 const validateKey = (rule, value, callback) => {
@@ -768,13 +762,6 @@ export default {
     },
     openPmServiceLog (envName, serviceName) {
       this.$refs.pmServiceLog.openDialog(envName, serviceName)
-    },
-    openRecycleEnvDialog () {
-      if (this.usedInPolicy.length) {
-        this.cantDelete(false)
-        return
-      }
-      this.$refs.recycleDialog.openDialog()
     },
     searchServicesByKeyword () {
       this.initPageInfo()
@@ -1316,8 +1303,7 @@ export default {
     PmHostList,
     UpdateHelmEnvDialog,
     UpdateHelmVarDialog,
-    UpdateK8sVarDialog,
-    RecycleDialog
+    UpdateK8sVarDialog
   },
   props: {
     envBasePath: {

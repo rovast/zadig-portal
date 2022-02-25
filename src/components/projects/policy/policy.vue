@@ -26,9 +26,9 @@
         </el-form-item>
       </div>
 
-      <div class="level-one-title">配置协作规则</div>
+      <div class="primary-title">配置协作规则</div>
 
-      <div class="level-two-title">工作流</div>
+      <div class="secondary-title">工作流</div>
       <el-table :data="collaborationData.workflows" style="width: 100%;">
         <el-table-column label="基准工作流">
           <template slot-scope="{ row, $index }">
@@ -87,7 +87,7 @@
         </div>
       </el-table>
 
-      <div class="level-two-title">集成环境</div>
+      <div class="secondary-title">集成环境</div>
       <el-table :data="collaborationData.products" style="width: 100%;">
         <el-table-column label="基准环境">
           <template slot-scope="{ row, $index }">
@@ -132,25 +132,6 @@
               </div>
               <el-button type="primary" slot="reference" size="mini" plain style="margin-right: 10px;">权限</el-button>
             </el-popover>
-            <el-popover ref="recoverPopoverRef" placement="right" width="300" trigger="click">
-              <div class="auth-list">
-                <div class="title">回收策略</div>
-                <div class="content">
-                  <div>
-                    环境将在
-                    <el-input-number v-model="row.recycle_day" size="small" :min="0"></el-input-number>天后自动回收
-                  </div>
-                  <div class="tooltip">默认设置为 0 永久不回收</div>
-                </div>
-              </div>
-              <el-button
-                :type="row.collaboration_type === 'share' ? '' : 'primary'"
-                slot="reference"
-                size="mini"
-                plain
-                :disabled="row.collaboration_type === 'share'"
-              >回收策略</el-button>
-            </el-popover>
           </template>
         </el-table-column>
         <el-table-column width="90px">
@@ -164,9 +145,19 @@
           <el-tag effect="dark">删除环境将影响参与成员操作权限</el-tag>
         </div>
       </el-table>
+
+      <div class="recycle-resources">
+        <span class="primary-title recycle-title">
+          资源回收策略
+          <el-tooltip effect="dark" content="如果成员在一段时间内（配置的资源回收时间）没有访问项目，那么该成员的资源将会被回收，默认 0 天表示不回收。成员重新访问项目将会再次获得资源。" placement="top">
+            <i class="el-icon-question"></i>
+          </el-tooltip>
+        </span>
+        <el-input-number v-model="collaborationData.recycle_day" size="small" :min="0"></el-input-number>天
+      </div>
     </el-form>
     <div class="bottom">
-      <el-button type="primary" size="small" @click="handleCollaboration">确认生成</el-button>
+      <el-button type="primary" @click="handleCollaboration">确认生成</el-button>
     </div>
     <PolicyDialog
       :changedInfo="changedInfo"
@@ -485,6 +476,22 @@ export default {
   font-size: 16px;
   line-height: 22px;
 
+  .primary-title,
+  .secondary-title {
+    margin: 24px 0 14px;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 24px;
+  }
+
+  .primary-title {
+    color: #000;
+  }
+
+  .secondary-title {
+    color: #8a8a8a;
+  }
+
   .top {
     /deep/.el-select {
       width: calc(~'100% - 110px');
@@ -494,17 +501,6 @@ export default {
       width: 30px;
       line-height: 30px;
     }
-  }
-
-  .level-one-title {
-    padding-top: 24px;
-  }
-
-  .level-two-title {
-    padding: 20px 0 16px;
-    color: #434548;
-    font-weight: 500;
-    font-size: 14px;
   }
 
   /deep/.el-form {
@@ -527,8 +523,15 @@ export default {
     }
   }
 
+  .recycle-resources {
+    .recycle-title {
+      display: inline-block;
+      width: 120px;
+    }
+  }
+
   .bottom {
-    margin: 20px 0;
+    margin: 26px 0 16px;
   }
 
   .icon {

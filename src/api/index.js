@@ -1198,10 +1198,6 @@ export function getHelmEnvChartDiffAPI (projectName, envName) {
   return http.get(`/api/aslan/environment/environments/${envName}/helmChartVersions?projectName=${projectName}`)
 }
 
-export function recycleEnvAPI (projectName, envName, recycleDay) {
-  return http.put(`/api/aslan/environment/environments/${envName}/envRecycle?projectName=${projectName}&recycleDay=${recycleDay}`)
-}
-
 export function getConfigmapAPI (query) {
   return http.get(`/api/aslan/environment/configmaps?${query}`)
 }

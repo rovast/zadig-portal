@@ -4,7 +4,7 @@
       <span>服务配置来源</span>
       <el-radio-group v-model="tabName" :disabled="isUpdate">
         <el-radio label="git">Git 仓库</el-radio>
-        <el-radio label="chart" disabled>Chart 仓库</el-radio>
+        <el-radio label="chart">Chart 仓库</el-radio>
         <el-radio label="template">模板库</el-radio>
       </el-radio-group>
     </div>
@@ -20,6 +20,7 @@
     <ChartRepo
       v-show="tabName === 'chart'"
       :currentSelect="tabName"
+      :currentService="currentService"
       ref="chartRepo"
     ></ChartRepo>
 
@@ -58,6 +59,8 @@ export default {
             this.isUpdate = true
             if (cs.source && cs.source === 'chartTemplate') {
               this.tabName = 'template'
+            } else if (cs.source && cs.source === 'chartRepo') {
+              this.tabName = 'chart'
             }
           } else {
             this.isUpdate = false

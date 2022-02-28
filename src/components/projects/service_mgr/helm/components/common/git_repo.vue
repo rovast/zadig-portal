@@ -377,6 +377,12 @@ export default {
     },
     async addService () {
       const projectName = this.$route.params.project_name
+      const codehostItem = this.allCodeHosts.find(item => {
+        return item.id === this.source.codehostId
+      })
+      if (codehostItem) {
+        this.codehostSource = codehostItem.type
+      }
       let payload = {}
       if (this.gitName === 'public') {
         payload = {

@@ -38,7 +38,9 @@
             <div @click="toProject(project)" class="content-container">
               <h4 class="project-name">
                 <i class="type-icon iconfont" :class="projectIconMap[project.deployType]"></i>
-                <span class="name">{{project.alias?project.alias:project.name}}</span>
+                <el-tooltip effect="dark" :content="project.alias?project.alias:project.name" placement="top">
+                  <span class="name">{{project.alias?project.alias:project.name}}</span>
+                </el-tooltip>
                 <el-tooltip v-if="!project.public" effect="dark" content="私有项目" placement="top">
                   <i class="icon iconfont iconprivate"></i>
                 </el-tooltip>

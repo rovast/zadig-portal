@@ -215,9 +215,20 @@ export default {
         console.log(err)
       )
       if (res) {
+        const fn = (item) => {
+          const deleteId = item.verbs.findIndex(verb =>
+            verb.startsWith('delete_')
+          )
+          if (deleteId !== -1) {
+            this.$set(item, 'withDeletePermi', true)
+          }
+          return item
+        }
         this.allCollaboration = res.collaborations.map(col => {
           return {
             ...col,
+            workflows: col.workflows.map(workflow => fn(workflow)),
+            products: col.products.map(product => fn(product)),
             initName: col.name,
             initCollaboration: cloneDeep(col)
           }

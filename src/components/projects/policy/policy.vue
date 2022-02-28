@@ -266,6 +266,21 @@ export default {
         row.verbs = this.policy[resourceType][
           configType === 'new' ? 'newPermi' : 'sharePermi'
         ].map(data => data.action)
+      } else {
+        if (configType === 'share') {
+          const deleteId = row.verbs.findIndex(verb =>
+            verb.startsWith('delete_')
+          )
+          if (deleteId !== -1) {
+            row.verbs.splice(deleteId, 1)
+          }
+          row.withDeletePermi = deleteId !== -1
+        } else if (row.withDeletePermi) {
+          const deletePermi = this.policy[resourceType].newPermi
+            .map(data => data.action)
+            .find(permi => permi.startsWith('delete_'))
+          row.verbs.push(deletePermi)
+        }
       }
     },
     isIndeterminate (row, type) {

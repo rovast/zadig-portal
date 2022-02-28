@@ -113,10 +113,33 @@ export default {
         delete payload.initCollaboration
         delete payload.saveDisabled
         payload.workflows.forEach(workflow => {
+          delete workflow.withDeletePermi
           delete workflow.add
         })
         payload.products.forEach(product => {
+          delete product.withDeletePermi
           delete product.add
+        })
+      }
+
+      const init = payload => {
+        payload.workflows.forEach(workflow => {
+          const deleteId = workflow.verbs.findIndex(verb =>
+            verb.startsWith('delete_')
+          )
+          if (deleteId !== -1) {
+            this.$set(workflow, 'withDeletePermi', true)
+          }
+          return workflow
+        })
+        payload.products.forEach(product => {
+          const deleteId = product.verbs.findIndex(verb =>
+            verb.startsWith('delete_')
+          )
+          if (deleteId !== -1) {
+            this.$set(product, 'withDeletePermi', true)
+          }
+          return product
         })
       }
       switch (this.mode) {
@@ -126,6 +149,7 @@ export default {
           await createCollaborationAPI(this.projectName, payload).then(() => {
             this.$message.success(`您成功生成了 ${payload.name} 协作模式！`)
             fn(this.collaborationData)
+            init(this.collaborationData)
             this.updateCollaboration(payload)
           })
           break
@@ -139,6 +163,7 @@ export default {
           ).then(() => {
             this.$message.success(`您成功更新了 ${payload.name} 协作模式！`)
             fn(this.collaborationData)
+            init(this.collaborationData)
             this.updateCollaboration(payload)
           })
           break

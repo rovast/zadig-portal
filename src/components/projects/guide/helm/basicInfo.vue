@@ -83,7 +83,7 @@ export default {
     exitOnboarding () {
       this.exitLoading = true
       this.saveOnboardingStatus(this.projectName, 0).then((res) => {
-        this.$router.push(`/v1/projects/detail/${this.projectName}`)
+        this.$router.push(`/v1/projects/detail/${this.projectName}/detail`)
       }).catch(() => {
         this.exitLoading = false
       })

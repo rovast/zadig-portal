@@ -159,12 +159,6 @@
           </el-form-item>
 
         </template>
-        <template>
-          <span class="switch-span">启用代理</span>
-          <el-switch size="small"
-                     v-model="codeEdit.enable_proxy"
-                     @change="changeProxy"></el-switch>
-        </template>
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -338,12 +332,6 @@
                       auto-complete="off"></el-input>
           </el-form-item>
         </template>
-        <template>
-          <span class="switch-span">启用代理</span>
-          <el-switch size="small"
-                     v-model="codeAdd.enable_proxy"
-                     @change="changeProxy"></el-switch>
-        </template>
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -406,6 +394,13 @@
             <template slot-scope="scope">
               {{$utils.convertTimestamp(scope.row.updated_at)}}
             </template>
+          </el-table-column>
+          <el-table-column label="开启代理"
+                           width="100">
+            <el-switch slot-scope="scope"
+                       size="small"
+                       v-model="scope.row.enable_proxy"
+                       @change="updateRepoProxySettings(scope.row)"></el-switch>
           </el-table-column>
           <el-table-column label="操作"
                            width="160">
@@ -531,6 +526,10 @@ export default {
     }
   },
   methods: {
+    updateRepoProxySettings (row) {
+      const codehostID = row.id
+      updateCodeSourceAPI(codehostID, row)
+    },
     handleCodeAdd () {
       this.dialogCodeAddFormVisible = true
     },

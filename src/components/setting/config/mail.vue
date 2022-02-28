@@ -1,5 +1,5 @@
 <template>
-  <div class="intergration-account-container">
+  <div class="intergration-mail-container">
     <!--start of edit mail dialog-->
     <el-dialog title="邮件配置-修改"
                :close-on-click-modal="false"
@@ -11,7 +11,7 @@
                :rules="mailRules"
                ref="mailHostForm">
         <el-form-item label="主机"
-                      label-width="80px"
+                      label-width="100px"
                       prop="name">
           <el-input v-model="mailHostEdit.name"
                     placeholder="主机"
@@ -19,7 +19,7 @@
                     auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="端口"
-                      label-width="80px"
+                      label-width="100px"
                       prop="port">
           <el-input-number v-model="mailHostEdit.port"
                            controls-position="right"
@@ -27,7 +27,7 @@
                            :max="65535"></el-input-number>
         </el-form-item>
         <el-form-item label="用户名"
-                      label-width="80px"
+                      label-width="100px"
                       prop="username">
           <el-input v-model="mailHostEdit.username"
                     placeholder="用户名"
@@ -35,7 +35,7 @@
                     auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码"
-                      label-width="80px"
+                      label-width="100px"
                       prop="password">
           <el-input v-model="mailHostEdit.password"
                     placeholder="请输入新密码"
@@ -43,7 +43,7 @@
                     auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="TLS"
-                      label-width="80px"
+                      label-width="100px"
                       prop="isTLS">
           <el-checkbox v-model="mailHostEdit.isTLS">启用</el-checkbox>
         </el-form-item>
@@ -52,16 +52,8 @@
       <el-form :model="mailServiceEdit"
                :rules="mailRules"
                ref="mailServiceForm">
-        <!-- <el-form-item label="名称"
-                      label-width="80px"
-                      prop="name">
-          <el-input v-model="mailServiceEdit.name"
-                    placeholder="名称"
-                    autofocus
-                    auto-complete="off"></el-input>
-        </el-form-item> -->
         <el-form-item label="发信地址"
-                      label-width="80px"
+                      label-width="100px"
                       prop="address">
           <el-input v-model="mailServiceEdit.address"
                     placeholder="发信地址"
@@ -69,21 +61,13 @@
                     auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="显示名称"
-                      label-width="80px"
+                      label-width="100px"
                       prop="display_name">
           <el-input v-model="mailServiceEdit.display_name"
                     placeholder="显示名称"
                     autofocus
                     auto-complete="off"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="主题前缀"
-                      label-width="80px"
-                      prop="theme">
-          <el-input v-model="mailServiceEdit.theme"
-                    placeholder="主题前缀"
-                    autofocus
-                    auto-complete="off"></el-input>
-        </el-form-item> -->
 
       </el-form>
       <div slot="footer"
@@ -112,7 +96,7 @@
                :rules="mailRules"
                ref="mailHostForm">
         <el-form-item label="主机"
-                      label-width="80px"
+                      label-width="100px"
                       prop="name">
           <el-input v-model="mailHostAdd.name"
                     placeholder="主机"
@@ -120,7 +104,7 @@
                     auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="端口"
-                      label-width="80px"
+                      label-width="100px"
                       prop="port">
           <el-input-number v-model="mailHostAdd.port"
                            controls-position="right"
@@ -128,7 +112,7 @@
                            :max="65535"></el-input-number>
         </el-form-item>
         <el-form-item label="用户名"
-                      label-width="80px"
+                      label-width="100px"
                       prop="username">
           <el-input v-model="mailHostAdd.username"
                     placeholder="用户名"
@@ -136,7 +120,7 @@
                     auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码"
-                      label-width="80px"
+                      label-width="100px"
                       prop="password">
           <el-input v-model="mailHostAdd.password"
                     placeholder="密码"
@@ -144,7 +128,7 @@
                     auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="TLS"
-                      label-width="80px"
+                      label-width="100px"
                       prop="isTLS">
           <el-checkbox v-model="mailHostAdd.isTLS">启用</el-checkbox>
         </el-form-item>
@@ -153,16 +137,8 @@
       <el-form :model="mailServiceAdd"
                :rules="mailRules"
                ref="mailServiceForm">
-        <!-- <el-form-item label="名称"
-                      label-width="80px"
-                      prop="name">
-          <el-input v-model="mailServiceAdd.name"
-                    placeholder="名称"
-                    autofocus
-                    auto-complete="off"></el-input>
-        </el-form-item> -->
         <el-form-item label="发信地址"
-                      label-width="80px"
+                      label-width="100px"
                       prop="address">
           <el-input v-model="mailServiceAdd.address"
                     placeholder="发信地址"
@@ -170,22 +146,13 @@
                     auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="显示名称"
-                      label-width="80px"
+                      label-width="100px"
                       prop="display_name">
           <el-input v-model="mailServiceAdd.display_name"
                     placeholder="显示名称"
                     autofocus
                     auto-complete="off"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="主题前缀"
-                      label-width="80px"
-                      prop="theme">
-          <el-input v-model="mailServiceAdd.theme"
-                    placeholder="主题前缀"
-                    autofocus
-                    auto-complete="off"></el-input>
-        </el-form-item> -->
-
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -210,13 +177,14 @@
                 target="_blank">帮助文档</el-link>
             </template>
           </el-alert>
-          <div class="sync-container">
-            <el-button v-if="mailHosts.length === 0"
+          <div v-if="mailHosts.length === 0" class="sync-container">
+            <el-button
                        size="small"
                        type="primary"
                        plain
                        @click="handleMailAdd">添加</el-button>
           </div>
+          <div class="mail-container">
           <el-table :data="mailHosts"
                     style="width: 100%;">
             <el-table-column label="主机">
@@ -253,6 +221,8 @@
               </template>
             </el-table-column>
           </el-table>
+          </div>
+
      </div>
 </template>
 <script>
@@ -360,7 +330,7 @@ export default {
             this.getMailHostConfig()
             this.getMailServiceConfig()
             this.$message({
-              message: '主机配置删除成功',
+              message: '邮件配置删除成功',
               type: 'success'
             })
           }
@@ -392,7 +362,7 @@ export default {
             this.getMailServiceConfig()
             this.handleMailCancel()
             this.$message({
-              message: '主机配置新增成功',
+              message: '邮件配置新增成功',
               type: 'success'
             })
           }
@@ -410,7 +380,7 @@ export default {
             this.getMailServiceConfig()
             this.handleMailCancel()
             this.$message({
-              message: '主机配置修改成功',
+              message: '邮件配置修改成功',
               type: 'success'
             })
           }
@@ -426,27 +396,20 @@ export default {
 </script>
 
 <style lang="less">
-.intergration-account-container {
+.intergration-mail-container {
   position: relative;
   flex: 1;
   overflow: auto;
   font-size: 13px;
 
-  .tab-container {
-    margin-top: 15px;
-
-    .sync-container {
-      padding-top: 15px;
-      padding-bottom: 15px;
-    }
+  .sync-container {
+    padding-top: 15px;
+    padding-bottom: 15px;
   }
 
-  .text-success {
-    color: rgb(82, 196, 26);
-  }
-
-  .text-failed {
-    color: #ff1949;
+  .mail-container {
+    padding-top: 15px;
+    padding-bottom: 15px;
   }
 
   .edit-form-dialog {

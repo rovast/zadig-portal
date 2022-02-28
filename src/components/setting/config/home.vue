@@ -22,6 +22,11 @@
             <Link v-if="activeTab === 'link'" />
           </keep-alive>
         </el-tab-pane>
+        <el-tab-pane name="mail" label="邮件配置">
+          <keep-alive >
+            <Mail v-if="activeTab === 'mail'" />
+          </keep-alive>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -31,6 +36,7 @@ import Quota from './quota.vue'
 import Proxy from './proxy.vue'
 import Cache from './cache.vue'
 import Link from './link.vue'
+import Mail from './mail.vue'
 import bus from '@utils/eventBus'
 
 export default {
@@ -39,7 +45,8 @@ export default {
     Proxy,
     Cache,
     Quota,
-    Link
+    Link,
+    Mail
   },
   data () {
     return {

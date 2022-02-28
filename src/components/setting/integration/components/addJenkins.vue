@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="(isEdit ? '编辑': '新增') + 'Jenkins 集成'"
+    :title="(isEdit ? '编辑': '新增') + ' Jenkins 配置'"
     custom-class="edit-form-dialog"
     :visible.sync="dialogVisible"
     center

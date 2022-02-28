@@ -308,21 +308,6 @@ export default {
   overflow: auto;
   font-size: 13px;
 
-  .breadcrumb {
-    margin-bottom: 25px;
-
-    .el-breadcrumb {
-      font-size: 16px;
-      line-height: 1.35;
-
-      .el-breadcrumb__item__inner a:hover,
-      .el-breadcrumb__item__inner:hover {
-        color: @themeColor;
-        cursor: pointer;
-      }
-    }
-  }
-
   .tab-container {
     .sync-container {
       padding-top: 15px;

@@ -98,12 +98,12 @@
       </el-table-column>
       <el-table-column label="操作" width="100px">
         <template slot-scope="{ row }">
-          <el-tooltip effect="dark" content="该用户关联项目协作模式 ，产生了相应的策略不能直接移除，请先将用户从对应协作模式中移除" placement="top">
+          <el-tooltip effect="dark" content="该用户关联项目协作模式，产生了相应的策略不能直接移除，请先将用户从对应协作模式中移除" placement="top">
             <span>
               <el-button v-if="row.hasSystemPolicy" size="mini" type="info" plain disabled>移除</el-button>
             </span>
           </el-tooltip>
-          <el-tooltip effect="dark" content="所有用户具备 read-only 权限，可以通过项目配置->设置访问权限为私有将其移除" placement="top">
+          <el-tooltip effect="dark" content="所有用户具备 read-only 权限，可以通过项目配置 -> 设置访问权限为私有将其移除" placement="top">
             <span>
               <el-button v-if="row.readOnly" size="mini" type="info" plain disabled>移除</el-button>
             </span>

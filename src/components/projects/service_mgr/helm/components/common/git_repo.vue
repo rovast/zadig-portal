@@ -145,11 +145,27 @@
         <el-button size="small" :loading="loading" plain @click="submit">加载</el-button>
       </el-form-item>
     </el-form>
-
-    <el-dialog :append-to-body="true" :visible.sync="workSpaceModalVisible" width="60%" title="请选择要同步的文件目录" class="fileTree-dialog">
+    <el-dialog v-if="codehostSource === 'gerrit'" :append-to-body="true"
+               :visible.sync="workSpaceModalVisible"
+               width="60%"
+               title="请选择要同步的文件或文件目录"
+               class="fileTree-dialog">
+      <GerritFileTree ref="worktree"
+                    :codehostId="source.codehostId"
+                    :repoName="source.repoName"
+                    :repoUUID="source.repoUUID"
+                    :repoOwner="source.repoOwner"
+                    :branchName="source.branchName"
+                    :remoteName="source.remoteName"
+                    :gitType="codehostSource"
+                    @getPreloadServices="getPreloadServices"
+                    :showTree="workSpaceModalVisible"/>
+    </el-dialog>
+    <el-dialog v-else :append-to-body="true" :visible.sync="workSpaceModalVisible" width="60%" title="请选择要同步的文件目录" class="fileTree-dialog">
       <Gitfile
         v-if="source.codehostId || source.url"
         :codehostId="source.codehostId"
+        :codehostSource="codehostSource"
         :repoName="source.repoName"
         :repoOwner="source.repoOwner"
         :branchName="source.branchName"
@@ -161,6 +177,7 @@
         :justSelectOne="controlParam.justSelectOneFile"
       />
     </el-dialog>
+
   </div>
 </template>
 <script>
@@ -172,7 +189,7 @@ import {
   createTemplateServiceAPI
 } from '@api'
 import Gitfile from './gitfile_tree'
-
+import GerritFileTree from '@/components/common/gitfile_tree.vue'
 export default {
   name: 'GitRepo',
   props: {
@@ -193,12 +210,14 @@ export default {
     }
   },
   components: {
-    Gitfile
+    Gitfile,
+    GerritFileTree
   },
   data () {
     return {
       loading: false,
       gitName: 'private',
+      codehostSource: '',
       allCodeHosts: [],
       searchProjectLoading: false,
       workSpaceModalVisible: false,
@@ -262,6 +281,12 @@ export default {
       this.source.repoOwner = ''
       this.source.repoName = ''
       this.source.branchName = ''
+      const codehostItem = this.allCodeHosts.find(item => {
+        return item.id === id
+      })
+      if (codehostItem) {
+        this.codehostSource = codehostItem.type
+      }
       const res = await getRepoOwnerByIdAPI(id, key).catch(error =>
         console.log(error)
       )
@@ -335,6 +360,9 @@ export default {
 
       this.$emit('triggleAction')
     },
+    getPreloadServices (service) {
+      this.changeSelectPath([service.path])
+    },
     changeSelectPath (path) {
       this.selectPath = path
       this.workSpaceModalVisible = false
@@ -349,6 +377,12 @@ export default {
     },
     async addService () {
       const projectName = this.$route.params.project_name
+      const codehostItem = this.allCodeHosts.find(item => {
+        return item.id === this.source.codehostId
+      })
+      if (codehostItem) {
+        this.codehostSource = codehostItem.type
+      }
       let payload = {}
       if (this.gitName === 'public') {
         payload = {
@@ -360,7 +394,7 @@ export default {
         }
       } else {
         payload = {
-          source: 'repo',
+          source: this.codehostSource === 'gerrit' ? 'gerrit' : 'repo',
           createFrom: {
             codehostID: this.source.codehostId,
             owner: this.source.repoOwner,

@@ -46,6 +46,10 @@
 import { getRepoFilesAPI } from '@api'
 export default {
   props: {
+    codehostSource: {
+      type: String,
+      default: ''
+    },
     codehostId: {
       type: Number,
       default: 0
@@ -118,13 +122,24 @@ export default {
       this.selectPath = ''
       this.loading = true
       if (this.type === 'private') {
-        params = {
-          codehostId,
-          repoOwner,
-          repoName,
-          branchName,
-          path,
-          type: 'helm'
+        if (this.codehostSource === 'gerrit') {
+          params = {
+            codehostId,
+            repoOwner,
+            repoName,
+            branchName,
+            path,
+            type: 'gerrit'
+          }
+        } else {
+          params = {
+            codehostId,
+            repoOwner,
+            repoName,
+            branchName,
+            path,
+            type: 'helm'
+          }
         }
       } else if (this.type === 'public') {
         params = {

@@ -136,8 +136,8 @@ export default {
       projectIconMap: {
         k8s: 'iconyaml',
         helm: 'iconhelmrepo',
-        external: 'iconjiaofu',
-        pm: 'iconwuliji'
+        external: 'iconvery-trustee',
+        cloud_host: 'iconwuliji'
       }
     }
   },

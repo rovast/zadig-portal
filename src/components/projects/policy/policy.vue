@@ -1,7 +1,7 @@
 <template>
   <section class="policy-content">
-    <el-form ref="policyFormRef" :rules="rules" :model="collaborationData" label-width="120px" label-position="left">
-      <div class="top">
+    <div class="top">
+      <el-form ref="roleRef" :rules="rules" :model="collaborationData" label-width="120px" label-position="left">
         <el-form-item label="选择参与成员" prop="members">
           <el-select
             v-model="collaborationData.members"
@@ -30,20 +30,22 @@
             </el-option>
           </el-select>
         </el-form-item>
-      </div>
+      </el-form>
+    </div>
 
-      <div class="primary-title">配置协作规则</div>
+    <div class="primary-title">配置协作规则</div>
 
-      <div class="secondary-title">工作流</div>
+    <div class="secondary-title">工作流</div>
+    <el-form ref="workflowRef" :model="collaborationData" label-width="120px" label-position="left">
       <el-table :data="collaborationData.workflows" style="width: 100%;">
         <el-table-column label="基准工作流">
           <template slot-scope="{ row, $index }">
             <el-form-item class="base-item" :prop="`workflows[${$index}].name`" label-width="0px" required>
-              <el-select v-if="!row.name" v-model="row.name" placeholder="请选择基准工作流" filterable size="small" :disabled="!!row.name">
-                <el-option v-for="workflow in lastBaseWorkflows" :key="workflow" :label="workflow" :value="workflow"></el-option>
-              </el-select>
-              <el-tooltip v-else effect="dark" :content="row.name" placement="top">
-                <el-select v-model="row.name" filterable size="small" :disabled="!!row.name"></el-select>
+              <el-tooltip effect="dark" :content="row.name" placement="top">
+                <el-select v-model="row.name" placeholder="请选择基准工作流" filterable size="small" :disabled="!row.add">
+                  <el-option v-if="row.name" :label="row.name" :value="row.name"></el-option>
+                  <el-option v-for="workflow in lastBaseWorkflows" :key="workflow" :label="workflow" :value="workflow"></el-option>
+                </el-select>
               </el-tooltip>
             </el-form-item>
           </template>
@@ -69,9 +71,7 @@
                     :indeterminate="isIndeterminate(row, 'workflow')"
                     :value="checkAll(row, 'workflow')"
                     @change="handleCheckAllChange($event, row, 'workflow')"
-                  ></el-checkbox>
-                  <i></i>
-                  所有权限
+                  ></el-checkbox>所有权限
                 </div>
                 <el-checkbox-group v-model="row.verbs">
                   <el-checkbox
@@ -100,17 +100,19 @@
           <el-tag effect="dark">删除工作流将影响参与成员操作权限</el-tag>
         </div>
       </el-table>
+    </el-form>
 
-      <div class="secondary-title">集成环境</div>
+    <div class="secondary-title">集成环境</div>
+    <el-form ref="environmentRef" :model="collaborationData" label-width="120px" label-position="left">
       <el-table :data="collaborationData.products" style="width: 100%;">
         <el-table-column label="基准环境">
           <template slot-scope="{ row, $index }">
             <el-form-item class="base-item" :prop="`products[${$index}].name`" label-width="0px" required>
-              <el-select v-if="!row.name" v-model="row.name" placeholder="请选择基准环境" filterable size="small">
-                <el-option v-for="env in lastBaseEnvironments" :key="env" :label="env" :value="env"></el-option>
-              </el-select>
-              <el-tooltip v-else effect="dark" :content="row.name" placement="top">
-                <el-select v-model="row.name" filterable size="small" :disabled="!!row.name"></el-select>
+              <el-tooltip effect="dark" :content="row.name" placement="top">
+                <el-select v-model="row.name" placeholder="请选择基准环境" filterable size="small" :disabled="!row.add">
+                  <el-option v-if="row.name" :label="row.name" :value="row.name"></el-option>
+                  <el-option v-for="env in lastBaseEnvironments" :key="env" :label="env" :value="env"></el-option>
+                </el-select>
               </el-tooltip>
             </el-form-item>
           </template>
@@ -167,17 +169,18 @@
           <el-tag effect="dark">删除环境将影响参与成员操作权限</el-tag>
         </div>
       </el-table>
-
-      <div class="recycle-resources">
-        <span class="primary-title recycle-title">
-          资源回收策略
-          <el-tooltip effect="dark" content="如果成员在一段时间内（配置的资源回收时间）没有访问项目，那么该成员的资源将会被回收，默认 0 天表示不回收。成员重新访问项目将会再次获得资源。" placement="top">
-            <i class="el-icon-question"></i>
-          </el-tooltip>
-        </span>
-        <el-input-number v-model="collaborationData.recycle_day" size="small" :min="0"></el-input-number>天
-      </div>
     </el-form>
+
+    <div class="recycle-resources">
+      <span class="primary-title recycle-title">
+        资源回收策略
+        <el-tooltip effect="dark" content="如果成员在一段时间内（配置的资源回收时间）没有访问项目，那么该成员的资源将会被回收，默认 0 天表示不回收。成员重新访问项目将会再次获得资源。" placement="top">
+          <i class="el-icon-question"></i>
+        </el-tooltip>
+      </span>
+      <el-input-number v-model="collaborationData.recycle_day" size="small" :min="0"></el-input-number>天
+    </div>
+
     <div class="bottom">
       <el-button type="primary" @click="handleCollaboration" :disabled="saveDisabled">保存</el-button>
     </div>
@@ -213,7 +216,7 @@ export default {
         required: true,
         type: 'array',
         message: '请选择参与成员',
-        trigger: 'blur'
+        trigger: ['blur', 'change']
       }
     }
     return {
@@ -294,7 +297,7 @@ export default {
       this.collaborationData.workflows.splice(index, 1)
     },
     addWorkflow () {
-      this.validate().then(res => {
+      this.validate('workflow').then(res => {
         this.collaborationData.workflows.push({
           name: '',
           collaboration_type: 'share',
@@ -307,7 +310,7 @@ export default {
       this.collaborationData.products.splice(index, 1)
     },
     addEnvironment () {
-      this.validate().then(res => {
+      this.validate('environment').then(res => {
         this.collaborationData.products.push({
           name: '',
           collaboration_type: 'share',
@@ -336,8 +339,25 @@ export default {
         this.checkDifferent(data, data.initCollaboration)
       })
     },
-    validate () {
-      return this.$refs.policyFormRef.validate()
+    validate (type = '') {
+      let valid = []
+      if (!type) {
+        valid = [
+          this.$refs.roleRef.validate(),
+          this.$refs.workflowRef.validate(),
+          this.$refs.environmentRef.validate()
+        ]
+        return Promise.all(valid)
+      } else {
+        return this.$refs[`${type}Ref`].validate()
+      }
+    },
+    clearValidate () {
+      this.$nextTick(() => {
+        this.$refs.roleRef.clearValidate()
+        this.$refs.workflowRef.clearValidate()
+        this.$refs.environmentRef.clearValidate()
+      })
     },
     checkDifferent (current, initial) {
       this.changedInfo = {}
@@ -609,12 +629,16 @@ export default {
 }
 
 .auth-list {
-  text-align: center;
+  margin: 0 10px;
 
   .title {
     margin-bottom: 15px;
     padding-bottom: 8px;
     border-bottom: 1px solid #e4e7ed;
+
+    .el-checkbox {
+      margin-right: 5px;
+    }
   }
 
   .content {
@@ -634,6 +658,10 @@ export default {
       }
     }
   }
+
+  .permission-item {
+    display: block;
+  }
 }
 
 .env-link {
@@ -642,9 +670,5 @@ export default {
   height: calc(~'100% - 1px');
   color: #606266;
   border-bottom: 1px solid #d2d7dc;
-}
-
-.permission-item {
-  display: block;
 }
 </style>

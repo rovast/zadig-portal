@@ -125,6 +125,7 @@ export default {
           fn(payload)
           await createCollaborationAPI(this.projectName, payload).then(() => {
             this.$message.success(`您成功生成了 ${payload.name} 协作模式！`)
+            fn(this.collaborationData)
             this.updateCollaboration(payload)
           })
           break
@@ -137,6 +138,7 @@ export default {
             payload
           ).then(() => {
             this.$message.success(`您成功更新了 ${payload.name} 协作模式！`)
+            fn(this.collaborationData)
             this.updateCollaboration(payload)
           })
           break

@@ -87,6 +87,7 @@ export default {
         initName: ''
       }
       console.log('computed', this.activeName, res)
+      this.$refs.policyRef && this.$refs.policyRef.clearValidate()
       return res
     }
   },

@@ -1593,7 +1593,11 @@ export function deletePublicRoleAPI (name, projectName) {
 }
 
 export function queryPublicRoleAPI (projectName) {
-  return http.get(`/api/v1/public-roles?projectName=${projectName}`)
+  return http.get(`/api/v1/preset-roles?projectName=${projectName}`)
+}
+
+export function updateMutiRolebindingsAPI (projectName, userID, payload) {
+  return http.post(`/api/v1/rolebindings/update?projectName=${projectName}&bulk=true&userID=${userID}`, payload)
 }
 
 export function queryPublicRoleDetailAPI (name, projectName) {

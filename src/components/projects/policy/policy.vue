@@ -21,7 +21,7 @@
                 添加项目成员
               </router-link>
             </el-option>
-            <el-option v-for="user in userList" :key="user.uid" :label="user.username" :value="user.uid">
+            <el-option v-for="user in userList" :key="user.uid" :label="user.uid === '*' ? 'all-users': user.username " :value="user.uid">
               <span v-if="user.uid === '*'">all-users(项目所有用户包括新建用户)</span>
               <template v-else>
                 <i class="iconfont iconsystem option-icon"></i>

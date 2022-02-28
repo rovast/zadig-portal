@@ -1,7 +1,7 @@
 <template>
   <div class="buildConfig-container">
     <!--start of edit service target dialog-->
-    <el-dialog title="修改服务" width="40%" custom-class="create-buildconfig" :visible.sync="dialogEditTargetVisible">
+    <el-dialog title="更新服务组件" width="40%" custom-class="create-buildconfig" :visible.sync="dialogEditTargetVisible">
       <el-form label-position="top" :model="editBuildManageTargets" @submit.native.prevent ref="editTargetForm">
         <el-form-item label="服务组件">
           <el-select v-model="editBuildManageTargets.targets" value-key="key" multiple filterable>
@@ -146,7 +146,7 @@ export default {
         this.getBuildConfig()
         this.$message({
           type: 'success',
-          message: '修改服务成功'
+          message: '更新服务组件成功'
         })
       })
     },

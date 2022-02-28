@@ -200,9 +200,9 @@
               <span slot="label">选择对象存储</span>
               <el-select v-model="cluster.cache.object_properties.id" placeholder="请选择对象存储" style="width: 100%;" size="small">
                 <template v-if="allStorage.length > 0">
-                  <el-option v-for="(item,index) in allStorage" :key="index" :label="`${item.endpoint}/${item.bucket}`" :value="item.id"></el-option>
+                  <el-option v-for="(item,index) in (cluster.local ? allStorage : externalStorage)" :key="index" :label="`${item.endpoint}/${item.bucket}`" :value="item.id"></el-option>
                 </template>
-                <el-option v-if="allStorage.length === 0" value="NEWCUSTOM">
+                <el-option v-if="(cluster.local ? allStorage : externalStorage).length === 0" value="NEWCUSTOM">
                   <router-link to="/v1/system/storage" style="color: #606266;">集成对象存储</router-link>
                 </el-option>
               </el-select>
@@ -406,6 +406,7 @@ export default {
       },
       allCluster: [],
       allStorage: [],
+      externalStorage: [],
       allStorageClass: [],
       allPvc: [],
       deployType: 'Deployment',
@@ -535,9 +536,10 @@ export default {
     }
   },
   methods: {
-    getStorage () {
-      getStorageListAPI().then(res => {
+    async getStorage () {
+      await getStorageListAPI().then(res => {
         this.allStorage = res
+        this.externalStorage = res.filter(storage => !storage.endpoint.startsWith('zadig-minio.'))
       })
     },
     getClusterNode (clusterId) {
@@ -565,7 +567,7 @@ export default {
     },
     async clusterOperation (operate, currentCluster) {
       if (operate === 'init') {
-        this.allStorage = await getStorageListAPI()
+        await this.getStorage()
         if (this.allStorage.length > 0) {
           const defaultStorage = this.allStorage.find(
             storage => storage.is_default
@@ -603,7 +605,7 @@ export default {
           this.getClusterNode(currentCluster.id)
         }
         if (this.cluster.cache.medium_type === 'object') {
-          this.allStorage = await getStorageListAPI()
+          await this.getStorage()
         } else if (this.cluster.cache.medium_type === 'nfs') {
           this.allStorageClass = await getClusterStorageClassAPI(currentCluster.id)
           this.allPvc = await getClusterPvcAPI(currentCluster.id, namesapce)
@@ -649,7 +651,7 @@ export default {
       const namesapce = this.cluster.local ? 'unknown' : 'koderover-agent'
       const id = this.cluster.id
       if (type === 'object') {
-        this.allStorage = await getStorageListAPI()
+        await this.getStorage()
       } else if (type === 'nfs') {
         this.allPvc = await getClusterPvcAPI(id, namesapce)
         this.allStorageClass = await getClusterStorageClassAPI(id)

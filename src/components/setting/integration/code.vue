@@ -159,12 +159,6 @@
           </el-form-item>
 
         </template>
-        <template>
-          <span class="switch-span">启用代理</span>
-          <el-switch size="small"
-                     v-model="codeEdit.enable_proxy"
-                     @change="changeProxy"></el-switch>
-        </template>
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -338,12 +332,6 @@
                       auto-complete="off"></el-input>
           </el-form-item>
         </template>
-        <template>
-          <span class="switch-span">启用代理</span>
-          <el-switch size="small"
-                     v-model="codeAdd.enable_proxy"
-                     @change="changeProxy"></el-switch>
-        </template>
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -406,6 +394,13 @@
             <template slot-scope="scope">
               {{$utils.convertTimestamp(scope.row.updated_at)}}
             </template>
+          </el-table-column>
+          <el-table-column label="开启代理"
+                           width="100">
+            <el-switch slot-scope="scope"
+                       size="small"
+                       v-model="scope.row.enable_proxy"
+                       @change="updateRepoProxySettings(scope.row)"></el-switch>
           </el-table-column>
           <el-table-column label="操作"
                            width="160">
@@ -531,6 +526,23 @@ export default {
     }
   },
   methods: {
+    updateRepoProxySettings (row) {
+      if (!this.proxyInfo.id || this.proxyInfo.type === 'no') {
+        row.enable_proxy = false
+        this.$message.error('未配置代理，请先前往「系统配置」->「代理配置」配置代理！')
+        return
+      }
+      const codehostID = row.id
+      updateCodeSourceAPI(codehostID, row).then((res) => {
+        this.$message({
+          message: row.enable_proxy ? '已启用代理' : '已关闭代理',
+          type: 'success'
+        })
+      }).catch(err => {
+        row.enable_proxy = !row.enable_proxy
+        this.$message.error(`代理修改失败：${err}`)
+      })
+    },
     handleCodeAdd () {
       this.dialogCodeAddFormVisible = true
     },
@@ -641,13 +653,6 @@ export default {
         message: '地址复制失败',
         type: 'error'
       })
-    },
-    changeProxy (value) {
-      if (!this.proxyInfo.id || this.proxyInfo.type === 'no') {
-        this.proxyInfo.enable_repo_proxy = false
-        this.$message.error('未配置代理，请先前往「系统配置」->「代理配置」配置代理！')
-        this.codeEdit.enable_proxy = false
-      }
     },
     getProxyConfig () {
       getProxyConfigAPI().then(response => {

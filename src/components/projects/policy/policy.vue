@@ -41,7 +41,7 @@
         <el-table-column label="基准工作流">
           <template slot-scope="{ row, $index }">
             <el-form-item class="base-item" :prop="`workflows[${$index}].name`" label-width="0px" required>
-              <el-tooltip effect="dark" :content="row.name" placement="top">
+              <el-tooltip effect="dark" :content="row.name" placement="top" :popper-class="row.name ? '' : 'hidden-base-tooltip'">
                 <el-select v-model="row.name" placeholder="请选择基准工作流" filterable size="small" :disabled="!row.add">
                   <el-option v-if="row.name" :label="row.name" :value="row.name"></el-option>
                   <el-option v-for="workflow in lastBaseWorkflows" :key="workflow" :label="workflow" :value="workflow"></el-option>
@@ -108,7 +108,7 @@
         <el-table-column label="基准环境">
           <template slot-scope="{ row, $index }">
             <el-form-item class="base-item" :prop="`products[${$index}].name`" label-width="0px" required>
-              <el-tooltip effect="dark" :content="row.name" placement="top">
+              <el-tooltip effect="dark" :content="row.name" placement="top" :popper-class="row.name ? '' : 'hidden-base-tooltip'">
                 <el-select v-model="row.name" placeholder="请选择基准环境" filterable size="small" :disabled="!row.add">
                   <el-option v-if="row.name" :label="row.name" :value="row.name"></el-option>
                   <el-option v-for="env in lastBaseEnvironments" :key="env" :label="env" :value="env"></el-option>
@@ -670,5 +670,11 @@ export default {
   height: calc(~'100% - 1px');
   color: #606266;
   border-bottom: 1px solid #d2d7dc;
+}
+</style>
+
+<style lang="less">
+.hidden-base-tooltip {
+  display: none;
 }
 </style>

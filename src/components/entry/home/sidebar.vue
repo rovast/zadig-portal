@@ -4,7 +4,7 @@
       <i :class="showSidebar?'el-icon-arrow-right':'el-icon-arrow-left'"></i>
     </a>
 
-    <div v-if="showBackPath" class="sidebar-header">
+    <div v-if="showBackPath" class="sidebar-header" :style="{ width: showSidebar ? '100%' : 'auto'}">
       <router-link class="sidebar-header back-to" v-if="showSidebar" :to="backUrl">
         <div class="sidebar-header__icon">
           <i class="icon el-icon-back"></i>
@@ -272,6 +272,8 @@ export default {
 </script>
 
 <style lang="less">
+@twoSidesWidth: 12px;
+
 .sidebar {
   position: relative;
   display: flex;
@@ -281,7 +283,6 @@ export default {
   width: 176px;
   height: 100%;
   margin-right: 0;
-  padding: 0 12px;
   background-color: rgba(118, 122, 200, 0.1);
   transition: width 200ms, margin-width 180ms;
 
@@ -370,7 +371,9 @@ export default {
   .category-wrapper {
     position: relative;
     flex: none !important;
+    margin-right: @twoSidesWidth;
     margin-bottom: 50px;
+    margin-left: @twoSidesWidth;
 
     &:last-child {
       margin-bottom: 0;
@@ -500,7 +503,7 @@ export default {
     display: flex;
     justify-content: center;
     width: 100%;
-    margin-top: 10px;
+    margin: 10px @twoSidesWidth 0;
 
     &.back-to {
       justify-content: flex-start;

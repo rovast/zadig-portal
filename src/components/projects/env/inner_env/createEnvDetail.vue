@@ -175,7 +175,6 @@
         <template v-if="deployType==='k8s'">
           <div v-if="!$utils.isEmpty(containerMap)">
             <div class="service-filter-block">
-              <span class="secondary-title">微服务 K8s YAML 部署</span>
               <span class="service-filter">
                 快速过滤:
                 <el-tooltip class="img-tooltip" effect="dark" placement="top">
@@ -968,10 +967,7 @@ export default {
   }
 
   .service-filter-block {
-    .secondary-title {
-      display: inline-block;
-      width: 180px;
-    }
+    margin-bottom: 14px;
 
     .service-filter {
       color: @themeColor;

@@ -122,6 +122,11 @@ export default {
   },
   created () {
     this.getUsers()
+    if (this.$route.query.addRole) {
+      setTimeout(() => {
+        this.addUserFormVisible = true
+      }, 180) // To slow down the visual changes too fast
+    }
   }
 }
 </script>

@@ -25,7 +25,8 @@
         <el-form-item prop="type"
                       label="类型">
           <el-select v-model="proxyInfo.type"
-                     size="small">
+                     size="small"
+                     @change="changeProxy">
             <el-option label="不使用代理"
                        value="no"></el-option>
             <el-option label="HTTP 代理"
@@ -205,6 +206,15 @@ export default {
         this.noPost = false
         this.$message.error(`获取代理配置失败：${error}`)
       })
+    },
+    // if proxy is unset, then turn off repo proxy
+    // otherwise repo proxy is ALWAYS on
+    changeProxy () {
+      if (this.proxyInfo.type === 'no') {
+        this.proxyInfo.enable_repo_proxy = false
+      } else {
+        this.proxyInfo.enable_repo_proxy = true
+      }
     }
   },
   activated () {

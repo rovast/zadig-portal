@@ -12,19 +12,24 @@
             <GitHubApp v-if="currentTab === 'githubapp'" />
           </keep-alive>
         </el-tab-pane>
-        <el-tab-pane name="account" label="账号系统集成">
+        <el-tab-pane name="jenkins" label="Jenkins 集成">
           <keep-alive>
-            <Account v-if="currentTab === 'account'" />
+            <Jenkins v-if="currentTab === 'jenkins'" />
           </keep-alive>
         </el-tab-pane>
-        <el-tab-pane name="external" label="外部系统集成">
+        <el-tab-pane name="jira" label="Jira 集成">
+          <keep-alive>
+            <Jira v-if="currentTab === 'jira'" />
+          </keep-alive>
+        </el-tab-pane>
+        <el-tab-pane name="external" label="其他系统集成">
           <keep-alive>
             <External v-if="currentTab === 'external'" />
           </keep-alive>
         </el-tab-pane>
-        <el-tab-pane name="mail" label="邮件集成">
+        <el-tab-pane name="account" label="账号系统集成">
           <keep-alive>
-            <Mail v-if="currentTab === 'mail'" />
+            <Account v-if="currentTab === 'account'" />
           </keep-alive>
         </el-tab-pane>
       </el-tabs>
@@ -34,18 +39,20 @@
 <script>
 import bus from '@utils/eventBus'
 import Code from './code.vue'
-import GitHubApp from './github_app.vue'
-import Account from './account.vue'
-import Mail from './mail.vue'
+import GitHubApp from './githubApp.vue'
+import Jenkins from './jenkins.vue'
+import Jira from './jira.vue'
 import External from './external.vue'
+import Account from './account.vue'
 
 export default {
   name: 'integration',
   components: {
     Code,
     GitHubApp,
+    Jenkins,
+    Jira,
     Account,
-    Mail,
     External
   },
   data () {
@@ -70,7 +77,6 @@ export default {
   computed: {},
   mounted () {
     bus.$emit('set-topbar-title', { title: '集成管理', breadcrumb: [] })
-
     this.showCurrentTab()
   }
 }

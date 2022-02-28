@@ -755,7 +755,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/integration/home.vue'),
         meta: {
           requiresAuth: true,
-          title: '集成管理'
+          title: '系统集成'
         }
       },
       {

@@ -1,5 +1,5 @@
 <template>
-  <div class="tab-container">
+  <div class="integration-jenkins-container">
     <el-alert
       type="info"
       :closable="false"
@@ -23,13 +23,16 @@
         >添加</el-button
       >
     </div>
+    <div class="jeknins-container">
     <Etable :tableColumns="tableColumns" :tableData="tableData" id="id" />
+    </div>
+
     <AddJenkins :getJenkins="getJenkins" ref="jenkinsref" />
   </div>
 </template>
 <script>
 import Etable from '@/components/common/etable'
-import AddJenkins from './components/add_jenkins'
+import AddJenkins from './components/addJenkins'
 import { queryJenkins, deleteJenkins } from '@/api'
 import _ from 'lodash'
 export default {
@@ -78,7 +81,7 @@ export default {
   },
   methods: {
     async handleJenkinsaDelete (data) {
-      this.$confirm('确定要删除这个代码源吗？', '确认', {
+      this.$confirm('确定要删除这个配置吗？', '确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -108,7 +111,12 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.tab-container {
+.integration-jenkins-container {
+  position: relative;
+  flex: 1;
+  overflow: auto;
+  font-size: 13px;
+
   .sync-container {
     padding-top: 15px;
     padding-bottom: 15px;

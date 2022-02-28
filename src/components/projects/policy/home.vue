@@ -34,7 +34,7 @@ import Policy from './policy.vue'
 import bus from '@utils/eventBus'
 import { cloneDeep } from 'lodash'
 import {
-  usersAPI,
+  queryRoleBindingsAPI,
   queryPolicyDefinitionsAPI,
   getProductWorkflowsInProjectAPI,
   getCommonWorkflowListInProjectAPI,
@@ -131,15 +131,15 @@ export default {
       })
       this.activeName = initName
     },
-    getUsers () {
-      const projectName = this.projectName
-      const payload = {
-        name: '',
-        page: 1,
-        per_page: 1000000
-      }
-      usersAPI(payload, projectName).then(res => {
-        this.userList = _.uniqBy(res.users, 'uid')
+    getProjectUsers () {
+      queryRoleBindingsAPI(this.projectName).then(res => {
+        const userList = _.uniqBy(res, 'uid')
+        const allId = userList.findIndex(user => user.uid === '*')
+        if (allId !== -1) {
+          const allUser = userList.splice(allId, 1)
+          userList.unshift(allUser[0])
+        }
+        this.userList = userList
       })
     },
     async getPolicyDefinitions () {
@@ -233,7 +233,7 @@ export default {
     Policy
   },
   created () {
-    this.getUsers()
+    this.getProjectUsers()
     this.getPolicyDefinitions()
     this.getWorkflows()
     this.getEnvNameList()

@@ -21,12 +21,12 @@
                 添加项目成员
               </router-link>
             </el-option>
-            <el-option label="all-users" value="*">
-              <span>all-users(所有用户包括新建用户)</span>
-            </el-option>
-            <el-option v-for="user in userList" :key="user.uid" :label="user.name" :value="user.uid">
-              <i class="iconfont iconsystem option-icon"></i>
-              {{user.name}} ({{user.account}})
+            <el-option v-for="user in userList" :key="user.uid" :label="user.username" :value="user.uid">
+              <span v-if="user.uid === '*'">all-users(项目所有用户包括新建用户)</span>
+              <template v-else>
+                <i class="iconfont iconsystem option-icon"></i>
+                {{user.username}} ({{user.account}})
+              </template>
             </el-option>
           </el-select>
         </el-form-item>
@@ -351,7 +351,7 @@ export default {
         this.changedInfo = {
           added: {
             members: isAllMemberCurr
-              ? this.userList.map(user => user.name)
+              ? this.userList.map(user => user.username)
               : this.transformUidToName(current.members),
             workflows: cloneDeep(current.workflows),
             products: cloneDeep(current.products)
@@ -362,7 +362,7 @@ export default {
         this.changedInfo = {
           deleted: {
             members: isAllMemberInit
-              ? this.userList.map(user => user.name)
+              ? this.userList.map(user => user.username)
               : this.transformUidToName(initial.members),
             workflows: cloneDeep(initial.workflows),
             products: cloneDeep(initial.products)
@@ -374,7 +374,7 @@ export default {
         if (isAllMemberCurr && isAllMemberInit) {
           changedInfo = {
             updated: {
-              members: this.userList.map(user => user.name)
+              members: this.userList.map(user => user.username)
             }
           }
         } else if (isAllMemberCurr) {
@@ -461,7 +461,7 @@ export default {
       }
       return this.userList
         .filter(user => userIds.includes(user.uid))
-        .map(user => user.name)
+        .map(user => user.username)
     },
     getArraySet (arr1, arr2, key = '') {
       const a1 = cloneDeep(arr1)

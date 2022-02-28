@@ -527,8 +527,21 @@ export default {
   },
   methods: {
     updateRepoProxySettings (row) {
+      if (!this.proxyInfo.id || this.proxyInfo.type === 'no') {
+        row.enable_proxy = false
+        this.$message.error('未配置代理，请先前往「系统配置」->「代理配置」配置代理！')
+        return
+      }
       const codehostID = row.id
-      updateCodeSourceAPI(codehostID, row)
+      updateCodeSourceAPI(codehostID, row).then((res) => {
+        this.$message({
+          message: '代理修改成功',
+          type: 'success'
+        })
+      }).catch(err => {
+        row.enable_proxy = !row.enable_proxy
+        this.$message.error(`代理修改失败：${err}`)
+      })
     },
     handleCodeAdd () {
       this.dialogCodeAddFormVisible = true
@@ -640,13 +653,6 @@ export default {
         message: '地址复制失败',
         type: 'error'
       })
-    },
-    changeProxy (value) {
-      if (!this.proxyInfo.id || this.proxyInfo.type === 'no') {
-        this.proxyInfo.enable_repo_proxy = false
-        this.$message.error('未配置代理，请先前往「系统配置」->「代理配置」配置代理！')
-        this.codeEdit.enable_proxy = false
-      }
     },
     getProxyConfig () {
       getProxyConfigAPI().then(response => {

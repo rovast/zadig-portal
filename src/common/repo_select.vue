@@ -27,7 +27,7 @@
               <el-select v-model="config.repos[repo_index].codehost_id"
                          size="small"
                          placeholder="请选择托管平台"
-                         @change="getRepoOwnerById(repo_index,config.repos[repo_index].codehost_id)"
+                         @change="selectRepoAndGetOwner(repo_index,config.repos[repo_index].codehost_id)"
                          filterable>
                 <el-option v-for="(host,index) in allCodeHosts"
                            :key="index"
@@ -219,7 +219,7 @@
 </template>
 
 <script type="text/javascript">
-import { getCodeSourceMaskedAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI } from '@api'
+import { getCodeSourceMaskedAPI, getRepoOwnerByIdAPI, getRepoNameByIdAPI, getBranchInfoByIdAPI, getCodeSourceAPI } from '@api'
 import { orderBy } from 'lodash'
 export default {
   data () {
@@ -316,7 +316,8 @@ export default {
         branch: '',
         checkout_path: '',
         remote_name: 'origin',
-        submodules: false
+        submodules: false,
+        enable_proxy: false
       }
       this.showTrigger && (repoMeta.enableTrigger = false)
       this.validateForm().then(res => {
@@ -330,6 +331,7 @@ export default {
         if (this.allCodeHosts && this.allCodeHosts.length === 1) {
           const codeHostId = this.allCodeHosts[0].id
           repoMeta.codehost_id = codeHostId
+          repoMeta.enable_proxy = this.allCodeHosts[0].enable_proxy
           this.getRepoOwnerById(index + 1, codeHostId)
         }
       }).catch(err => {
@@ -344,7 +346,8 @@ export default {
         branch: '',
         checkout_path: '',
         remote_name: 'origin',
-        submodules: false
+        submodules: false,
+        enable_proxy: false
       }
       this.showTrigger && (repoMeta.enableTrigger = false)
       this.$set(this.codeInfo, 0, {
@@ -356,6 +359,7 @@ export default {
       if (this.allCodeHosts && this.allCodeHosts.length === 1) {
         const codeHostId = this.allCodeHosts[0].id
         repoMeta.codehost_id = codeHostId
+        repoMeta.enable_proxy = this.allCodeHosts[0].enable_proxy
         this.getRepoOwnerById(0, codeHostId)
       }
       this.config.repos.push(repoMeta)
@@ -428,6 +432,13 @@ export default {
       this.$set(this.config.repos[index], 'repo_uuid', repoUUID)
       this.$set(this.config.repos[index], 'repo_id', repoId)
       this.config.repos[index].branch = ''
+    },
+    selectRepoAndGetOwner (index, id, key = '') {
+      // first we get the basic information about the codehost
+      getCodeSourceAPI(id).then((res) => {
+        this.config.repos[index].enable_proxy = res.enable_proxy
+      })
+      this.getRepoOwnerById(index, id, key)
     },
     getRepoOwnerById (index, id, key = '') {
       if (!key) {

@@ -737,6 +737,10 @@ export function createCodeSourceAPI (payload) {
   return http.post(`/api/v1/codehosts`, payload)
 }
 
+export function getCodeSourceAPI (code_source_id) {
+  return http.get(`/api/v1/codehosts/${code_source_id}`)
+}
+
 export function deleteCodeSourceAPI (code_source_id) {
   return http.delete(`/api/v1/codehosts/${code_source_id}`)
 }

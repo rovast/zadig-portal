@@ -186,6 +186,7 @@ import {
   getRepoNameByIdAPI,
   getRepoOwnerByIdAPI,
   getBranchInfoByIdAPI,
+  getRepoFilesAPI,
   createTemplateServiceAPI
 } from '@api'
 import Gitfile from './gitfile_tree'
@@ -382,6 +383,17 @@ export default {
       })
       if (codehostItem) {
         this.codehostSource = codehostItem.type
+      }
+      if (this.codehostSource === 'gerrit') {
+        const params = {
+          codehostId: this.source.codehostId,
+          repoOwner: this.source.repoOwner,
+          repoName: this.source.repoName,
+          branchName: this.source.branchName,
+          path: this.selectPath,
+          type: 'gerrit'
+        }
+        await getRepoFilesAPI(params)
       }
       let payload = {}
       if (this.gitName === 'public') {

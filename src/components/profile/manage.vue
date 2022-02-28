@@ -10,7 +10,7 @@
                center>
       <div class="modifiled-pwd-container">
         <el-form label-position="top"
-                 label-width="80px"
+                 label-width="100px"
                  :rules="rules"
                  ref="ruleForm"
                  :model="pwd">

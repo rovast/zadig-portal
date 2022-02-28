@@ -71,7 +71,7 @@
           </span>
         </slot>
       </el-alert>
-      <el-form ref="cluster" :rules="rules" label-width="140px" label-position="left" :model="cluster">
+      <el-form ref="cluster" :rules="rules" label-width="148px" label-position="left" :model="cluster">
         <el-form-item label="名称" prop="name">
           <el-input size="small" v-model="cluster.name" placeholder="请输入集群名称"></el-input>
         </el-form-item>

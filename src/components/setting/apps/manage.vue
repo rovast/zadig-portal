@@ -31,7 +31,7 @@
                       placeholder="$HOME/install_pkg/bin"
                       v-model="createApp.bin_path"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item class="label-icon">
             <template #label>
               <span>启用</span>
               <el-tooltip content="控制软件包列表中是否展示，正在使用中的不受影响"
@@ -41,7 +41,7 @@
             </template>
             <el-checkbox v-model="createApp.enabled">启用该软件包</el-checkbox>
           </el-form-item>
-          <el-form-item prop="download_path">
+          <el-form-item prop="download_path" class="label-icon">
             <template #label>
               <span>安装包地址</span>
               <el-tooltip content="系统自动从配置地址下载安装包并做缓存，安装包可通过 ${FILEPATH} 变量获取"
@@ -92,7 +92,7 @@
             <el-input size="small"
                       v-model="swapApp.bin_path"></el-input>
           </el-form-item>
-          <el-form-item v-if="(typeof swapApp.enabled)!=='undefined'">
+          <el-form-item v-if="(typeof swapApp.enabled)!=='undefined'" class="label-icon">
             <template #label>
               <span>启用</span>
               <el-tooltip content="控制软件包列表中是否展示，正在使用中的不受影响"
@@ -103,7 +103,8 @@
             <el-checkbox v-model="swapApp.enabled">启用该软件包</el-checkbox>
           </el-form-item>
           <el-form-item v-if="(typeof swapApp.download_path)!=='undefined'"
-                        prop="download_path">
+                        prop="download_path"
+                        class="label-icon">
             <template #label>
               <span>安装包地址</span>
               <el-tooltip content="系统自动从配置地址下载安装包并做缓存，安装包可通过 ${FILEPATH} 变量获取"

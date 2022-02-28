@@ -74,7 +74,7 @@
                  ref="workflowInfoPolicy"
                  label-position="left"
                  label-width="120px">
-          <el-form-item prop="is_parallel">
+          <el-form-item prop="is_parallel" class="label-icon">
             <template slot="label">
               <span>并发运行 </span>
               <el-tooltip effect="dark"
@@ -85,7 +85,7 @@
             </template>
             <el-switch v-model="workflowInfo.is_parallel"></el-switch>
           </el-form-item>
-          <el-form-item prop="reset_image">
+          <el-form-item prop="reset_image" class="label-icon">
             <template slot="label">
               <span>镜像版本回退 </span>
               <el-tooltip effect="dark"

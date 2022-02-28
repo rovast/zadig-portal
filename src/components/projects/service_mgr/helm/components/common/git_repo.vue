@@ -186,6 +186,7 @@ import {
   getRepoNameByIdAPI,
   getRepoOwnerByIdAPI,
   getBranchInfoByIdAPI,
+  getRepoFilesAPI,
   createTemplateServiceAPI
 } from '@api'
 import Gitfile from './gitfile_tree'
@@ -376,12 +377,24 @@ export default {
       this.$emit('selectPath', emitParams)
     },
     async addService () {
+      this.loading = true
       const projectName = this.$route.params.project_name
       const codehostItem = this.allCodeHosts.find(item => {
         return item.id === this.source.codehostId
       })
       if (codehostItem) {
         this.codehostSource = codehostItem.type
+      }
+      if (this.codehostSource === 'gerrit') {
+        const params = {
+          codehostId: this.source.codehostId,
+          repoOwner: this.source.repoOwner,
+          repoName: this.source.repoName,
+          branchName: this.source.branchName,
+          path: this.selectPath,
+          type: 'gerrit'
+        }
+        await getRepoFilesAPI(params)
       }
       let payload = {}
       if (this.gitName === 'public') {
@@ -415,7 +428,6 @@ export default {
     },
     async submit () {
       this.$refs.sourceForm.validate().then(res => {
-        this.loading = true
         this.addService()
       })
     }

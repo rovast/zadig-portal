@@ -443,7 +443,8 @@ export default {
   }
 
   &.small-sidebar {
-    width: 60px;
+    box-sizing: border-box;
+    width: 80px;
 
     .sub-menu {
       .sub-menu-item {

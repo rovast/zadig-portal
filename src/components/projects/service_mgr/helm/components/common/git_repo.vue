@@ -377,6 +377,7 @@ export default {
       this.$emit('selectPath', emitParams)
     },
     async addService () {
+      this.loading = true
       const projectName = this.$route.params.project_name
       const codehostItem = this.allCodeHosts.find(item => {
         return item.id === this.source.codehostId
@@ -427,7 +428,6 @@ export default {
     },
     async submit () {
       this.$refs.sourceForm.validate().then(res => {
-        this.loading = true
         this.addService()
       })
     }

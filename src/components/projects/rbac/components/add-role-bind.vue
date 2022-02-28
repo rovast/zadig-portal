@@ -125,6 +125,7 @@ export default {
     if (this.$route.query.addRole) {
       setTimeout(() => {
         this.addUserFormVisible = true
+        this.$router.replace({ query: {} })
       }, 180) // To slow down the visual changes too fast
     }
   }

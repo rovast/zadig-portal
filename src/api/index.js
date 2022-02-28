@@ -364,6 +364,10 @@ export function getHelmChartServiceModule (projectName, serviceName) {
   return http.get(`/api/aslan/service/helm/${projectName}/${serviceName}/serviceModule?projectName=${projectName}`)
 }
 
+export function getHelmRepoChartAPI (repoName) {
+  return http.get(`/api/aslan/system/helm/${repoName}/index`)
+}
+
 export function imagesAPI (payload, registry = '') {
   return http.post(`/api/aslan/system/registry/images?registryId=${registry}`, { names: payload })
 }
@@ -731,6 +735,10 @@ export function getCodeProviderAPI () {
 
 export function createCodeSourceAPI (payload) {
   return http.post(`/api/v1/codehosts`, payload)
+}
+
+export function getCodeSourceAPI (code_source_id) {
+  return http.get(`/api/v1/codehosts/${code_source_id}`)
 }
 
 export function deleteCodeSourceAPI (code_source_id) {

@@ -36,14 +36,14 @@
                  href="#buildv2-log">{{buildv2.status?buildOverallStatusZh:"未运行"}}</a>
             </div>
           </el-col>
-          <el-col v-if="buildv2.status!=='running'"
-                  :span="6">
+          <el-col v-if="buildv2.status!=='running' && buildv2.status!=='prepare'"
+            :span="6">
             <div class="grid-content item-title">
               <i class="iconfont iconshijian"></i> 持续时间
             </div>
           </el-col>
-          <el-col v-if="buildv2.status!=='running'"
-                  :span="6">
+          <el-col v-if="buildv2.status!=='running' && buildv2.status!=='prepare'"
+            :span="6">
             <span
                   class="item-desc">{{$utils.timeFormat(buildv2.end_time - buildv2.start_time)}}</span>
           </el-col>

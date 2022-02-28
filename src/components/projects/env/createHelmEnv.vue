@@ -26,6 +26,23 @@
         <el-form-item label="环境名称" prop="env_name">
           <el-input @input="changeEnvName" v-model="projectConfig.env_name" size="small"></el-input>
         </el-form-item>
+        <el-form-item label="命名空间" prop="defaultNamespace">
+          <el-select
+              v-model="projectConfig.defaultNamespace"
+              :disabled="editButtonDisabled"
+              style="width: 250px;"
+              size="small"
+              placeholder="选择已有或自定义命名空间"
+              filterable
+              allow-create
+              clearable
+          >
+            <el-option :value="`${projectName}-env-${projectConfig.env_name}`">{{ projectName }}-env-{{ projectConfig.env_name }}</el-option>
+            <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns" :value="ns"></el-option>
+          </el-select>
+          <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">{{editButtonDisabled? '编辑' : '完成'}}</span>
+          <span class="ns-desc" v-show="nsIsExisted">Zadig 中定义的服务将覆盖所选命名空间中的同名服务，请谨慎操作！</span>
+        </el-form-item>
         <el-form-item label="创建方式" prop="source">
           <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
             <el-option label="系统创建" value="system"></el-option>
@@ -97,7 +114,8 @@ import {
   getSingleProjectAPI,
   createHelmEnvAPI,
   getEnvironmentsAPI,
-  getRegistryWhenBuildAPI
+  getRegistryWhenBuildAPI,
+  productHostingNamespaceAPI
 } from '@api'
 import bus from '@utils/eventBus'
 import { cloneDeep } from 'lodash'
@@ -159,7 +177,8 @@ export default {
       envNames: [],
       envName: '',
       envScene: 'createEnv', // updateRenderSet
-      imageRegistry: []
+      imageRegistry: [],
+      hostingNamespace: []
     }
   },
 
@@ -169,6 +188,9 @@ export default {
     },
     showEmptyServiceModal () {
       return this.projectChartNames.length === 0
+    },
+    nsIsExisted () {
+      return this.hostingNamespace.includes(this.projectConfig.defaultNamespace)
     }
   },
   methods: {
@@ -185,6 +207,9 @@ export default {
         }
         return element.status === 'normal'
       })
+      if (this.projectConfig.cluster_id) {
+        this.changeCluster(this.projectConfig.cluster_id)
+      }
     },
     async checkProjectFeature () {
       const projectName = this.projectName
@@ -205,6 +230,11 @@ export default {
         : []
       this.chartNames = this.projectChartNames
       this.projectConfig.source = 'system'
+    },
+    changeCluster (clusterId) {
+      productHostingNamespaceAPI(clusterId, 'create').then(res => {
+        this.hostingNamespace = res.map(ns => ns.name)
+      })
     },
     changeCreateMethod () {
       const source = this.projectConfig.source
@@ -255,7 +285,8 @@ export default {
             baseEnvName: isCopy ? baseEnvName : '',
             chartValues: valueInfo.chartInfo,
             defaultValues: valueInfo.envInfo[defaultEnv] || '',
-            namespace: this.projectConfig.defaultNamespace
+            namespace: this.projectConfig.defaultNamespace,
+            is_existed: this.nsIsExisted
           }
           this.startDeployLoading = true
           function sleep (time) {
@@ -336,6 +367,13 @@ export default {
   height: calc(~'100% - 60px');
   padding: 16px 24px;
   overflow: auto;
+
+  .ns-desc {
+    display: inline-block;
+    margin-left: 8px;
+    color: #e6a23c;
+    font-size: 13px;
+  }
 
   .image-secret {
     margin-left: 3px;

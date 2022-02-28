@@ -16,6 +16,9 @@
           <el-radio label="fixed">使用环境中修改过的变量（不包括镜像）覆盖新 Chart 中的变量</el-radio>
         </el-radio-group>
       </div>-->
+      <div class="overwrite-warning" v-if="this.productInfo.is_existed">
+        <p>Zadig 中定义的服务将覆盖所选命名空间中的同名服务，请谨慎操作！</p>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" type="primary" :loading="updataHelmEnvLoading" @click="updateHelmEnv()">确 定</el-button>
         <el-button size="small" @click="updateHelmEnvDialogVisible = false">取 消</el-button>
@@ -48,7 +51,8 @@ export default {
   name: 'updateHelmEnv',
   props: {
     productInfo: Object,
-    fetchAllData: Function
+    fetchAllData: Function,
+    isExisted: Boolean
   },
   data () {
     return {
@@ -157,6 +161,11 @@ export default {
 /deep/.el-dialog {
   .el-dialog__body {
     padding: 0 10px 20px;
+  }
+
+  .overwrite-warning {
+    color: #f56c6c;
+    font-size: 13px;
   }
 
   .kr-container {

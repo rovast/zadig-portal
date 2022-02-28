@@ -897,7 +897,7 @@ export default {
       if (this.$utils.isEmpty(subTask) || subTask.status === '') {
         return 0
       }
-      const endTime = subTask.status === 'running' ? Math.floor(Date.now() / 1000) : subTask.end_time
+      const endTime = (subTask.status === 'running' || subTask.status === 'prepare') ? Math.floor(Date.now() / 1000) : subTask.end_time
       return endTime - subTask.start_time
     },
     makePrettyElapsedTime (subTask) {

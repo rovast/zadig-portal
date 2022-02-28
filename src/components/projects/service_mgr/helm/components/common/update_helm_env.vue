@@ -5,7 +5,7 @@
     </div>
     <div class="content">
       <el-checkbox-group v-model="checkedEnvList">
-        <el-checkbox v-for="(env, index) in envNameList" :key="index" :label="env.envName"></el-checkbox>
+        <el-checkbox v-for="(env, index) in envList" :key="index" :label="env">{{env.name}}</el-checkbox>
       </el-checkbox-group>
       <ChartValues
         v-if="chartNames"
@@ -17,6 +17,9 @@
         :envScene="`updateEnv`"
       ></ChartValues>
     </div>
+    <div class="overwrite-warning" v-show="checkedEnvList.find(env => env.is_existed)">
+      <p>Zadig 中定义的服务将覆盖所选命名空间中的同名服务，请谨慎操作！</p>
+    </div>
     <span slot="footer" class="dialog-footer">
       <el-button size="small" :disabled="!checkedEnvList.length" type="primary" @click="autoUpgradeEnv">确 定</el-button>
       <el-button size="small" @click="skipUpdate">跳过</el-button>
@@ -25,7 +28,7 @@
 </template>
 <script>
 import ChartValues from '@/components/projects/env/env_detail/common/updateHelmEnvChart.vue'
-import { updateHelmEnvAPI } from '@api'
+import { updateHelmEnvAPI, listProductAPI } from '@api'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
@@ -35,7 +38,8 @@ export default {
   },
   data () {
     return {
-      checkedEnvList: []
+      checkedEnvList: [],
+      envList: []
     }
   },
   methods: {
@@ -71,6 +75,18 @@ export default {
     },
     async getProducts () {
       await this.$store.dispatch('getProjectList')
+    },
+    async getEnvNameList () {
+      const projectName = this.projectName
+      const envNameList = await listProductAPI(projectName)
+      if (envNameList.length) {
+        this.envList = envNameList.map(env => {
+          return {
+            name: env.name,
+            is_existed: env.is_existed || false
+          }
+        })
+      }
     }
   },
   computed: {
@@ -108,6 +124,7 @@ export default {
   },
   mounted () {
     this.getProducts()
+    this.getEnvNameList()
   },
   components: {
     ChartValues
@@ -129,6 +146,11 @@ export default {
         margin-top: 12px;
       }
     }
+  }
+
+  .overwrite-warning {
+    color: #f56c6c;
+    font-size: 13px;
   }
 }
 </style>

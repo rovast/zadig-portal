@@ -535,7 +535,7 @@ export default {
       const codehostID = row.id
       updateCodeSourceAPI(codehostID, row).then((res) => {
         this.$message({
-          message: '代理修改成功',
+          message: row.enable_proxy ? '已启用代理' : '已关闭代理',
           type: 'success'
         })
       }).catch(err => {

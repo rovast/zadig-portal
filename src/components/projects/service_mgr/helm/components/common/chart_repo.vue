@@ -70,7 +70,7 @@ export default {
           this.chartForm.createFrom.chartRepoName = val.create_from.chart_repo_name
           this.chartForm.createFrom.chartName = val.create_from.chart_name
           this.chartForm.createFrom.chartVersion = val.create_from.chart_version
-          this.getHelmRepoChart(val.create_from.chart_repo_name)
+          this.getHelmRepoChartVersionWhenReload(val.create_from.chart_repo_name, val.create_from.chart_name)
         } else {
           this.isUpdate = false
         }
@@ -93,6 +93,10 @@ export default {
     },
     getHelmChartVersion (chartName) {
       this.chartForm.createFrom.chartVersion = ''
+      this.currentRepoVersions = this.chartWithVersion[chartName]
+    },
+    async getHelmRepoChartVersionWhenReload (repoName, chartName) {
+      this.chartWithVersion = (await getHelmRepoChartAPI(repoName)).entries
       this.currentRepoVersions = this.chartWithVersion[chartName]
     },
     closeSelectRepo () {

@@ -59,12 +59,14 @@
             <div @click="toProject(project)" class="content-container">
               <div class="content">
                 <div class="card-header">
-                  <div class="quickstart-icon">
-                    <span>{{project.name.slice(0, 1).toUpperCase()}}</span>
-                  </div>
                   <div class="card-text">
                     <h4 class="project-name">
-                      {{project.alias?project.alias:project.name}}&nbsp;
+                        <div class="quickstart-icon">
+                          <span>{{project.name.slice(0, 1).toUpperCase()}}</span>
+                        </div>
+                      <el-tooltip effect="dark" :content="project.alias?project.alias:project.name" placement="top">
+                        <span class="name">{{project.alias?project.alias:project.name}}</span>
+                      </el-tooltip>
                       <el-tooltip v-if="!project.public" effect="dark" content="私有项目" placement="top">
                         <i class="icon iconfont iconprivate"></i>
                       </el-tooltip>
@@ -505,7 +507,7 @@ export default {
         .content-container {
           flex: 1;
           height: calc(~'100% - 55px');
-          padding: 15px 15px 0 15px;
+          padding: 12px 12px 0 12px;
 
           .content {
             display: flex;
@@ -513,6 +515,8 @@ export default {
             height: 100%;
 
             .card-header {
+              width: 100%;
+
               .quickstart-icon {
                 display: inline-block;
                 margin-bottom: 15px;
@@ -532,7 +536,7 @@ export default {
 
               .card-text {
                 display: inline-block;
-                margin-left: 4px;
+                width: 100%;
               }
 
               .divider {
@@ -544,11 +548,14 @@ export default {
               }
 
               .project-name {
+                width: calc(100% - 20px);
                 margin: 0;
                 padding: 0;
+                overflow: hidden;
                 color: #4c4c4c;
                 font-weight: 500;
-                font-size: 20px;
+                font-size: 18px;
+                white-space: nowrap;
                 text-overflow: ellipsis;
                 cursor: pointer;
 
@@ -565,7 +572,6 @@ export default {
             .info {
               .project-desc {
                 display: inline-block;
-                margin-top: 12px;
                 font-size: 14px;
               }
             }

@@ -242,7 +242,7 @@
                       </span>
                       <span v-else-if="task.service_type === 'helm'">
                         <i class="iconfont iconhelmrepo"></i>
-                        {{task.container_name}}
+                        {{task.service_name}}
                       </span>
                       {{':'+ myTranslate(task.status)}}
                     </span>

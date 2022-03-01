@@ -119,7 +119,7 @@ export default {
       },
       searchProject: '',
       projectIconMap: {
-        k8s: 'iconyaml',
+        k8s: 'iconk8s',
         helm: 'iconhelmrepo',
         external: 'iconvery-trustee',
         cloud_host: 'iconwuliji'

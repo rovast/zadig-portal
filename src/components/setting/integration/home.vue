@@ -87,7 +87,6 @@ export default {
   position: relative;
   flex: 1;
   height: 100%;
-  margin-top: 15px;
   padding: 15px 30px;
   overflow: auto;
 

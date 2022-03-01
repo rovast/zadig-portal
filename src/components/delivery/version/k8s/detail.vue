@@ -155,8 +155,8 @@
             <div class="text item">
               <div class="section-head">镜像和配置信息</div>
               <el-table :data="imagesAndConfigs" style="width: 100%;">
-                <el-table-column label="服务名/服务组件">
-                  <template slot-scope="scope">{{scope.row.serviceName}}</template>
+                <el-table-column label="服务组件(服务名称)">
+                  <template slot-scope="scope">{{$utils.showServiceName(scope.row.containerName)}}</template>
                 </el-table-column>
                 <el-table-column label="镜像">
                   <template slot-scope="scope">

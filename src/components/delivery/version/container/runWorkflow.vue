@@ -4,7 +4,7 @@
     <el-form-item prop="productName"
                   label="集成环境">
       <el-select v-model="runner.envAndNamespace"
-                 size="medium"
+                 size="small"
                  :disabled="specificEnv"
                  class="full-width">
         <el-option v-for="pro of matchedProducts"

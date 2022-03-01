@@ -16,16 +16,18 @@
         </span>
       </el-tab-pane>
     </el-tabs>
-    <Policy
-      ref="policyRef"
-      :userList="userList"
-      :workflowList="workflowList"
-      :envList="envList"
-      :policy="policy"
-      :collaborationData="currentCollaboration"
-      :deleteMode="deleteMode"
-      :updateActiveName="updateActiveName"
-    ></Policy>
+    <div class="policy-outer">
+      <Policy
+        ref="policyRef"
+        :userList="userList"
+        :workflowList="workflowList"
+        :envList="envList"
+        :policy="policy"
+        :collaborationData="currentCollaboration"
+        :deleteMode="deleteMode"
+        :updateActiveName="updateActiveName"
+      ></Policy>
+    </div>
   </div>
 </template>
 
@@ -215,7 +217,7 @@ export default {
         console.log(err)
       )
       if (res) {
-        const fn = (item) => {
+        const fn = item => {
           const deleteId = item.verbs.findIndex(verb =>
             verb.startsWith('delete_')
           )
@@ -267,7 +269,15 @@ export default {
 
 <style lang="less" scoped>
 .cooperation-container {
-  padding: 15px 20px;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 15px 20px 0;
+
+  .policy-outer {
+    height: calc(~'100% - 100px');
+    padding-right: 30%;
+    overflow: auto;
+  }
 
   /deep/.el-tabs {
     margin-top: 10px;

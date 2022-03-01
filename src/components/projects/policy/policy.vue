@@ -575,7 +575,6 @@ export default {
 
 <style lang="less" scoped>
 .policy-content {
-  width: 70%;
   min-width: 600px;
   padding: 10px;
   color: #8a8a8a;

@@ -2,12 +2,12 @@
   <div class="policy-container">
     <div class="form-container">
       <el-form :model="projectForm" :rules="rules" label-position="top" ref="projectForm" label-width="100px">
-        <el-form-item label="服务部署超时（分钟）" prop="timeout">
+        <el-form-item label="服务部署超时设置（分钟）" prop="timeout">
           <el-input v-model.number="projectForm.timeout"></el-input>
         </el-form-item>
-        <el-form-item label="自定义交付物名称">
+        <el-form-item label="交付物命名规则设置">
           <span slot="label">
-            自定义交付物名称
+            交付物命名规则设置
             <el-tooltip effect="dark" placement="top">
               <div slot="content">
                 镜像和 TAR 包规则可以通过变量和常量组装生成：

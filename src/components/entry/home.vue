@@ -11,7 +11,7 @@
         <div class="main-content-container" :class="{'small-sidebar': !showSidebar}">
           <Announcement v-for="(ann,index) in announcements" :key="index" :title="ann.content.title" :content="ann.content.content" />
           <Announcement title="系统提示" isHtml v-if="isAdmin && SMTPDisabled" :content="htmlTemplate" />
-          <!-- <FloatLink class="main-float"/> -->
+          <FloatLink class="main-float" />
           <router-view></router-view>
         </div>
       </div>
@@ -156,6 +156,13 @@ body {
 
           &.small-sidebar {
             width: calc(~'100% - 80px');
+          }
+
+          .main-float {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 1;
           }
         }
       }

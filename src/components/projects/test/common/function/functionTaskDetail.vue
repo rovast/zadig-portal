@@ -78,7 +78,11 @@
 
         <el-table-column prop="_target"
                          label="名称"
-                         width="200px"></el-table-column>
+                         width="200px">
+          <template slot-scope="scope">
+            <span>{{$utils.showServiceName(scope.row._target)}}</span>
+          </template>
+        </el-table-column>
 
         <el-table-column label="运行状态">
           <template slot-scope="scope">

@@ -683,7 +683,15 @@ const utils = {
     } else {
       return `${cluster.name} （${cluster.production ? '生产集群' : '测试集群'})`
     }
+  },
+  showServiceName (serviceName) {
+    if (serviceName.includes('_')) {
+      return `${serviceName.split('_')[0]} (${serviceName.split('_')[1]})`
+    } else {
+      return serviceName
+    }
   }
+
 }
 
 export default utils

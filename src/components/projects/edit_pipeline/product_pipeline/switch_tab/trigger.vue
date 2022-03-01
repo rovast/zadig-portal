@@ -29,6 +29,7 @@
             size="small"
             @change="repoChange(webhookSwap.repo)"
             filterable
+            allow-create
             clearable
             value-key="key"
             placeholder="请选择"
@@ -52,6 +53,7 @@
               v-model="webhookSwap.repo.branch"
               size="small"
               filterable
+              allow-create
               clearable
               placeholder="请选择分支"
             >
@@ -81,6 +83,7 @@
               v-model="webhookSwap.repo.branch"
               size="small"
               filterable
+              allow-create
               clearable
               placeholder="请选择分支"
             >

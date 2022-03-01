@@ -45,7 +45,7 @@ export default {
   font-size: 14px;
   line-height: 40px;
   text-align: center;
-  background-color: #faf6e1;
+  background-color: rgba(250, 246, 225, 0.92);
 
   .layout-container {
     max-width: 1056px;

@@ -39,6 +39,7 @@
             <span v-if="product.verbs.length === 0">无</span>
             权限
           </div>
+          <div v-if="changedInfo.updated && changedInfo.updated.recycle_day">资源回收策略更新为 {{ changedInfo.updated.recycle_day }} 天。</div>
         </div>
       </div>
       <div class="title">请确认！</div>

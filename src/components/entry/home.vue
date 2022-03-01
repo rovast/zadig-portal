@@ -9,9 +9,11 @@
           <Sidebar class="side-bar-component" />
         </div>
         <div class="main-content-container" :class="{'small-sidebar': !showSidebar}">
-          <Announcement v-for="(ann,index) in announcements" :key="index" :title="ann.content.title" :content="ann.content.content" />
-          <Announcement title="系统提示" isHtml v-if="isAdmin && SMTPDisabled" :content="htmlTemplate" />
-          <!-- <FloatLink class="main-float"/> -->
+          <div class="announcement-container">
+            <Announcement v-for="(ann,index) in announcements" :key="index" :title="ann.content.title" :content="ann.content.content" />
+            <Announcement title="系统提示" isHtml v-if="isAdmin && SMTPDisabled" :content="htmlTemplate" />
+          </div>
+          <FloatLink class="main-float" />
           <router-view></router-view>
         </div>
       </div>
@@ -150,12 +152,26 @@ body {
         }
 
         .main-content-container {
-          width: calc(~'100% - 200px');
+          width: calc(~'100% - 176px');
           height: 100%;
           transition: width 350ms, margin-width 230ms;
 
           &.small-sidebar {
             width: calc(~'100% - 80px');
+          }
+
+          .announcement-container {
+            position: fixed;
+            right: 0;
+            left: 0;
+            z-index: 1;
+          }
+
+          .main-float {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 1;
           }
         }
       }

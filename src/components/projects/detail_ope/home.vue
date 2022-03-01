@@ -6,12 +6,23 @@
         <i class="el-icon-s-fold display-btn" @click="currentTab = 'list'" :class="{'active':currentTab==='list'}"></i>
       </div>
       <div class="header-end">
-        <el-button v-if="$utils.roleCheck('admin')" @click="$router.push(`/v1/projects/create`)" plain>
-          <i class="el-icon-plus"></i> 新建项目
+        <el-button v-if="$utils.roleCheck('admin')" @click="$router.push(`/v1/projects/create`)" style="width: 132px; margin-right: 10px;" plain>
+          <i class="el-icon-plus"></i>&nbsp;&nbsp;&nbsp;&nbsp;新建项目&nbsp;&nbsp;
         </el-button>
-        <el-button @click="$router.push(`/v1/template`)" plain>
-          <i class="iconfont iconvery-template"></i> 模板库
-        </el-button>
+        <template>
+          <el-dropdown placement="bottom" trigger="click">
+            <button type="button" class="display-btn el-button">
+              <i class="iconfont iconvery-template el-icon--left"></i>
+              &nbsp;&nbsp;模板库&nbsp;&nbsp;
+              <i class="el-icon-caret-bottom el-icon--right"></i>
+            </button>
+            <el-dropdown-menu slot="dropdown" class="template-config">
+              <el-dropdown-item icon="iconfont iconvery-k8s" @click.native="$router.push(`/v1/template/k8s-yamls`)">K8s YAML</el-dropdown-item>
+              <el-dropdown-item icon="iconfont iconhelmrepo" @click.native="$router.push(`/v1/template/charts`)">Helm Chart</el-dropdown-item>
+              <el-dropdown-item icon="iconfont icondocker" @click.native="$router.push(`/v1/template/dockerfiles`)">Dockerfile</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
       </div>
     </div>
     <div
@@ -336,7 +347,7 @@ export default {
   }
 
   .projects-list {
-    height: 100%;
+    height: calc(~'100% - 60px');
     padding: 0 20px;
 
     .el-table {
@@ -364,7 +375,7 @@ export default {
   }
 
   .projects-grid {
-    height: 100%;
+    height: calc(~'100% - 84px');
     padding: 12px;
 
     .project-card {
@@ -506,6 +517,21 @@ export default {
   .el-message-box__content {
     max-height: 300px;
     overflow-y: auto;
+  }
+}
+
+.el-dropdown-menu.el-popper.template-config {
+  margin-top: 2px;
+
+  .el-dropdown-menu__item {
+    margin: 0 10px;
+    padding: 0 10px;
+    font-weight: 300;
+    border-radius: 6px;
+  }
+
+  .popper__arrow {
+    display: none;
   }
 }
 </style>

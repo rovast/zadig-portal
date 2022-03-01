@@ -13,7 +13,7 @@
     <div class="trigger-mode">
       <el-button type="text" @click="switchMode">{{ webhookSwap.is_yaml ? 'GUI 方式' : 'YAML 方式' }}</el-button>
     </div>
-      <el-form :model="webhookSwap" ref="triggerForm" label-position="left" label-width="120px" :rules="rules">
+      <el-form :model="webhookSwap" ref="triggerForm" label-position="left" label-width="125px" :rules="rules">
         <el-form-item label="名称" prop="name" class="bottom-22">
           <el-input size="small" autofocus ref="webhookNamedRef" v-model="webhookSwap.name" placeholder="请输入名称"></el-input>
         </el-form-item>

@@ -154,7 +154,7 @@
                        icon="el-icon-copy-document"
                        size="mini"
                        class="common-font">
-              clone
+              克隆
             </el-button>
         </template>
       </el-table-column>

@@ -13,7 +13,7 @@
       custom-class="dialog-style"
       width="35%"
     >
-      <el-form ref="helm" :rules="rules" label-width="80px" tab-position="left" :model="helm">
+      <el-form ref="helm" :rules="rules" label-width="90px" tab-position="left" :model="helm">
         <el-form-item label="URL" prop="url">
           <el-input size="small" placeholder="http(s)://example.com" v-model="helm.url"></el-input>
         </el-form-item>
@@ -42,7 +42,7 @@
       custom-class="dialog-style"
       width="35%"
     >
-      <el-form ref="swapHelm" :rules="rules" label-width="80px" tab-position="left" :model="swapHelm">
+      <el-form ref="swapHelm" :rules="rules" label-width="90px" tab-position="left" :model="swapHelm">
         <el-form-item label="URL" prop="url">
           <el-input size="small" placeholder="http(s)://example.com" v-model="swapHelm.url"></el-input>
         </el-form-item>

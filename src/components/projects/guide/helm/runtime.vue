@@ -33,12 +33,12 @@
             </el-tab-pane>
           </el-tabs>
           <el-form label-width="100px" ref="createEnvRef" :model="currentInfo" :rules="rules" label-position="left" inline>
-            <el-form-item label="集群：" prop="clusterID">
+            <el-form-item label="集群" prop="clusterID">
               <el-select class="select" filterable v-model="currentInfo.clusterID" size="small" placeholder="请选择集群">
                 <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="镜像仓库：">
+            <el-form-item label="镜像仓库">
               <el-select class="select" v-model.trim="currentInfo.registry_id" placeholder="请选择镜像仓库" size="small">
                 <el-option
                   v-for="registry in imageRegistry"

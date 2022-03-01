@@ -3,7 +3,7 @@
     <div>
       <h1 class="title">用户注册</h1>
       <h2 class="subtitle">请输入新用户信息</h2>
-      <el-form :model="signUpForm" ref="signUpForm" :rules="rules" label-position="left" label-width="70px">
+      <el-form :model="signUpForm" ref="signUpForm" :rules="rules" label-position="left" label-width="80px">
         <el-form-item label="用户名" prop="account">
           <el-input v-model="signUpForm.account" placeholder="请输入用户名"></el-input>
         </el-form-item>

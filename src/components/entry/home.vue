@@ -155,7 +155,7 @@ body {
           transition: width 350ms, margin-width 230ms;
 
           &.small-sidebar {
-            width: calc(~'100% - 60px');
+            width: calc(~'100% - 80px');
           }
         }
       }

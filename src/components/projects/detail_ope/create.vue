@@ -111,7 +111,6 @@ import {
   updateSingleProjectAPI,
   getClusterListAPI
 } from '@api'
-import CusDeliverable from './components/cusDeliverable.vue'
 
 const pinyin = require('pinyin')
 const validateProductName = (rule, value, callback) => {
@@ -126,9 +125,6 @@ const validateProductName = (rule, value, callback) => {
   }
 }
 export default {
-  components: {
-    CusDeliverable
-  },
   data () {
     return {
       dialogVisible: true,
@@ -321,7 +317,6 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (this.isEdit) {
-            this.$refs.cusDeliverable.saveConfig()
             this.updateSingleProject(
               this.projectForm.product_name,
               this.projectForm

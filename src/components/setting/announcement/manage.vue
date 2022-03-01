@@ -9,7 +9,7 @@
       <el-form ref="announcement"
                :rules="rules"
                :model="announcement"
-               label-width="80px">
+               label-width="90px">
         <el-form-item label="标题"
                       prop="content.title">
           <el-input v-model="announcement.content.title"></el-input>
@@ -60,7 +60,7 @@
       <el-form ref="swapAnnouncement"
                :rules="rules"
                :model="swapAnnouncement"
-               label-width="80px">
+               label-width="90px">
         <el-form-item label="标题"
                       prop="content.title">
           <el-input v-model="swapAnnouncement.content.title"></el-input>

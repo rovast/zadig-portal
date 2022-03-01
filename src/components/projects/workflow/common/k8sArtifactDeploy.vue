@@ -88,7 +88,7 @@
         </div>
         <el-form v-if="versionInfo.enabled"
                   :model="versionInfo"
-                  label-width="80px"
+                  label-width="90px"
                   ref="versionForm"
                   :rules="versionRules">
           <el-form-item label="版本名称"

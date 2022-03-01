@@ -101,7 +101,7 @@
             <el-checkbox v-for="tri in triggerMethods.git" :key="tri.value" :label="tri.value">{{ tri.label }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item label="自动取消">
+        <el-form-item label="自动取消" class="label-icon">
           <span slot="label">
             <span>自动取消</span>
             <el-tooltip effect="dark"

@@ -203,7 +203,7 @@ export default {
           title: 'K8s 托管项目',
           firstDesc: '托管现有 Kubernetes 集群中的资源',
           secondDesc: '支持服务镜像的更新',
-          icon: 'iconfont iconjiaofu'
+          icon: 'iconfont iconvery-trustee"'
         },
         {
           type: 'host',

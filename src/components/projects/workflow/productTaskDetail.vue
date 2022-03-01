@@ -79,7 +79,7 @@
               <el-table-column label="服务"
                                width="160">
                 <template slot-scope="scope">
-                  {{scope.row.service_name}}
+                  {{$utils.showServiceName(scope.row.service_name)}}
                 </template>
               </el-table-column>
               <el-table-column label="代码">
@@ -203,7 +203,11 @@
 
           <el-table-column prop="_target"
                            label="服务"
-                           width="200px"></el-table-column>
+                           width="200px">
+            <template slot-scope="scope">
+             <span>{{$utils.showServiceName(scope.row._target)}}</span>
+            </template>
+          </el-table-column>
 
           <el-table-column label="构建"
                            width="250px">
@@ -238,7 +242,7 @@
                       </span>
                       <span v-else-if="task.service_type === 'helm'">
                         <i class="iconfont iconhelmrepo"></i>
-                        {{task.container_name}}
+                        {{task.service_name}}
                       </span>
                       {{':'+ myTranslate(task.status)}}
                     </span>
@@ -282,7 +286,11 @@
 
           <el-table-column prop="_target"
                            label="服务"
-                           width="200px"></el-table-column>
+                           width="200px">
+            <template slot-scope="scope">
+             <span>{{$utils.showServiceName(scope.row._target)}}</span>
+            </template>
+          </el-table-column>
 
           <el-table-column>
             <template slot="header">
@@ -323,7 +331,11 @@
 
           <el-table-column prop="_target"
                            label="服务"
-                           width="200px"></el-table-column>
+                           width="200px">
+            <template slot-scope="scope">
+             <span>{{$utils.showServiceName(scope.row._target)}}</span>
+            </template>
+          </el-table-column>
 
           <el-table-column>
             <template slot="header">
@@ -369,7 +381,11 @@
 
           <el-table-column prop="_target"
                            label="名称"
-                           width="200px"></el-table-column>
+                           width="200px">
+            <template slot-scope="scope">
+             <span>{{$utils.showServiceName(scope.row._target)}}</span>
+            </template>
+          </el-table-column>
 
           <el-table-column label="运行状态">
             <template slot-scope="scope">
@@ -423,7 +439,11 @@
                   class="release-table">
           <el-table-column prop="_target"
                            label="服务"
-                           width="200px"></el-table-column>
+                           width="200px">
+          <template slot-scope="scope">
+           <span>{{$utils.showServiceName(scope.row._target)}}</span>
+          </template>
+          </el-table-column>
 
           <el-table-column label="运行状态"
                            width="180px">

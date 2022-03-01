@@ -57,7 +57,7 @@
                        show-overflow-tooltip>
         <template slot-scope="{ row }">
           <template v-if="row.build_services && row.build_services.length > 0">
-            <div  v-for="item in row.build_services.slice().sort()" :key="item" class="common-column hover-color">{{item}}</div>
+            <div  v-for="item in row.build_services.slice().sort()" :key="item" class="common-column hover-color">{{$utils.showServiceName(item)}}</div>
           </template>
           <div v-else class="common-column">N/A</div>
         </template>

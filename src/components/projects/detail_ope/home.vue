@@ -147,7 +147,7 @@ export default {
       loading: false,
       currentTab: 'grid',
       projectIconMap: {
-        k8s: 'iconyaml',
+        k8s: 'iconk8s',
         helm: 'iconhelmrepo',
         external: 'iconvery-trustee',
         cloud_host: 'iconwuliji'
@@ -475,7 +475,7 @@ export default {
 
             .type-icon {
               margin-right: 6px;
-              color: @fontLightGray;
+              color: @themeColor;
               font-size: 20px;
               vertical-align: top;
             }

@@ -167,7 +167,7 @@
                    size="small"
                    class="start-create"
                    @click="updateCodeConfig">
-          {{(codeEdit.type==='gerrit'||codeEdit.type==='codehub')?'确定':'前往授权'}}</el-button>
+          {{codeEdit.type==='codehub'?'确定':'前往授权'}}</el-button>
         <el-button plain
                    native-type="submit"
                    size="small"

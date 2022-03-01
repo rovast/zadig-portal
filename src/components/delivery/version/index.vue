@@ -5,7 +5,7 @@
     element-loading-spinner="iconfont iconfont-loading iconvery-versionmana"
     class="version-list-container"
   >
-    <div v-if="versionList.length !== 0" class="operation">
+    <div class="operation">
       <el-select
         style="width: 160px;"
         v-model="selectedService"
@@ -16,6 +16,23 @@
       >
         <el-option v-for="(item,index) in serviceList" :key="index" :label="item" :value="item"></el-option>
       </el-select>
+      <div v-if="showHookConfig" class="hook-config">
+        <span class="hook-switch">
+          hook 配置
+          <el-switch v-model="versionHook.enable" style="margin-left: 10px;" @change="saveHook"></el-switch>
+        </span>
+        <el-form ref="hookRef" :model="versionHook" v-if="versionHook.enable" inline class="hook-form">
+          <el-form-item prop="hook_host" :rules="{required: true, message: '请选择外部系统', trigger: 'blur'}">
+            <el-select v-model="versionHook.hook_host" placeholder="选择外部系统" size="small" clearable style="width: 100%;">
+              <el-option v-for="external in externalList" :key="external.id" :label="external.server" :value="external.server"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="path" :rules="{required: true, message: '请输入访问路径', trigger: 'blur'}">
+            <el-input v-model="versionHook.path" placeholder="输入访问路径" size="small"></el-input>
+          </el-form-item>
+        </el-form>
+        <i v-if="versionHook.enable" class="hook-icon el-icon-finished" @click="saveHook"></i>
+      </div>
     </div>
     <el-table :data="versionList" v-show="versionList.length > 0" style="width: 100%;">
       <el-table-column label="版本">
@@ -38,7 +55,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="create_by" label="所属项目">
+      <el-table-column prop="create_by" label="所属项目" v-if="!projectName">
         <template slot-scope="scope">
           <span>{{ scope.row.versionInfo.productName }}</span>
         </template>
@@ -75,10 +92,14 @@
 
 <script>
 import bus from '@utils/eventBus'
+import { cloneDeep } from 'lodash'
 import {
   getVersionListAPI,
   getVersionServiceListAPI,
-  deleteVersionAPI
+  deleteVersionAPI,
+  getSingleProjectAPI,
+  getExternalSystemsAPI,
+  updateSingleProjectAPI
 } from '@api'
 export default {
   data () {
@@ -86,7 +107,13 @@ export default {
       loading: false,
       versionList: [],
       serviceList: [],
-      selectedService: ''
+      selectedService: '',
+      externalList: [],
+      versionHook: {
+        enable: false,
+        hook_host: '',
+        path: ''
+      }
     }
   },
   methods: {
@@ -134,18 +161,68 @@ export default {
       getVersionServiceListAPI(projectName).then(res => {
         this.serviceList = res
       })
+    },
+    initData () {
+      getSingleProjectAPI(this.projectName).then(res => {
+        this.projectForm = res
+        if (res.team_id === 0) {
+          this.projectForm.team_id = null
+        }
+        if (!res.timeout) {
+          this.projectForm.timeout = 10
+        }
+        getExternalSystemsAPI().then(res => {
+          this.externalList = res.external_system
+        })
+        if (!this.projectForm.delivery_version_hook) {
+          this.projectForm.delivery_version_hook = {
+            enable: false,
+            hook_host: '',
+            path: ''
+          }
+        }
+        this.versionHook = cloneDeep(this.projectForm.delivery_version_hook)
+      })
+    },
+    saveHook (enable) {
+      if (enable === true) {
+        return
+      }
+      this.$refs.hookRef &&
+        this.$refs.hookRef.validate().then(() => {
+          const payload = {
+            ...this.projectForm,
+            delivery_version_hook: this.versionHook
+          }
+          updateSingleProjectAPI(this.projectName, payload).then(res => {
+            this.$message({
+              type: 'success',
+              message: '更新成功'
+            })
+          })
+        })
     }
   },
   computed: {
     projectName () {
       return this.$route.params.project_name
     },
-    inProject () {
-      return this.$route.path.indexOf('/v1/projects/detail') > -1
+    showHookConfig () {
+      if (!this.projectName) {
+        return false
+      }
+      const project = this.$store.getters.projectList.find(
+        project => project.name === this.projectName
+      )
+      if (project && project.deployType === 'helm') {
+        this.initData()
+        return true
+      }
+      return false
     }
   },
   created () {
-    if (this.inProject) {
+    if (this.projectName) {
       bus.$emit(`set-topbar-title`, {
         title: '',
         breadcrumb: [
@@ -187,7 +264,35 @@ export default {
   }
 
   .operation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 16px;
+
+    .hook-config {
+      display: flex;
+      align-items: center;
+
+      .hook-switch {
+        display: inline-block;
+        margin-right: 10px;
+        font-weight: 300;
+        white-space: nowrap;
+      }
+
+      .el-form.hook-form {
+        white-space: nowrap;
+
+        .el-form-item {
+          margin-bottom: 0;
+        }
+      }
+
+      .hook-icon {
+        color: @themeColor;
+        cursor: pointer;
+      }
+    }
   }
 
   .version-not-available {

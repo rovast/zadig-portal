@@ -336,7 +336,7 @@ export default {
   }
 
   .projects-list {
-    height: 100%;
+    height: calc(~'100% - 60px');
     padding: 0 20px;
 
     .el-table {
@@ -364,7 +364,7 @@ export default {
   }
 
   .projects-grid {
-    height: 100%;
+    height: calc(~'100% - 84px');
     padding: 12px;
 
     .project-card {

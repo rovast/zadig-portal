@@ -150,7 +150,7 @@ body {
         }
 
         .main-content-container {
-          width: calc(~'100% - 200px');
+          width: calc(~'100% - 176px');
           height: 100%;
           transition: width 350ms, margin-width 230ms;
 

@@ -1,7 +1,7 @@
 <template>
   <div class="con">
     <div class="image-content">
-     <div class="title">自定义镜像名称</div>
+     <div class="title">镜像名称规则</div>
      <div class="item" v-for="key of Object.keys(customerImage)" :key="'image'+key">
          <div class="label">{{customerImage[key].label}}</div>
          <el-input class="input1" oninput="value=value.replace(/[^\a-\z\A-\Z0-9\\_\.\-\$\{}]/g,'')" v-model="customerImage[key].service" size="small" placeholder="${SERVICE}" clearable  ></el-input> &nbsp;:&nbsp;
@@ -10,7 +10,7 @@
      </div>
     </div>
     <div class="tar-content">
-      <div class="title">自定义 TAR 包名称</div>
+      <div class="title">TAR 包名称规则</div>
       <div class="item" v-for="key of Object.keys(tar)" :key="'tar'+key">
           <div class="label">{{tar[key].label}}</div>
           <el-input class="input3" oninput="value=value.replace(/[^\a-\z\A-\Z0-9\\_\.\-\$\{}]/g,'')" v-model="tar[key].value" size="small" :placeholder="tar[key].placeholder" clearable></el-input>
@@ -177,7 +177,8 @@ export default {
 
     .reset {
       margin-left: 10px;
-      color: #409eff;
+      color: @themeColor;
+      font-size: 12px;
       cursor: pointer;
     }
   }

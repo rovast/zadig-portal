@@ -62,8 +62,8 @@
               <el-tooltip effect="dark" content="工作流" placement="top">
                 <span @click="$router.push(`/v1/projects/detail/${project.name}/pipelines`)" class="icon iconfont icongongzuoliucheng"></span>
               </el-tooltip>
-              <el-tooltip effect="dark" content="构建管理" placement="top">
-                <span @click="$router.push(`/v1/projects/detail/${project.name}/builds`)" class="icon iconfont iconvery-build"></span>
+              <el-tooltip effect="dark" content="环境管理" placement="top">
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/envs`)" class="icon iconfont iconvery-environ"></span>
               </el-tooltip>
               <el-tooltip effect="dark" content="测试管理" placement="top">
                 <span @click="$router.push(`/v1/projects/detail/${project.name}/test`)" class="icon iconfont iconvery-testing"></span>

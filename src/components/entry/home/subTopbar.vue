@@ -47,7 +47,7 @@
           <el-dropdown-menu slot="dropdown" class="project-config">
             <el-dropdown-item icon="el-icon-edit-outline" @click.native="$router.push(`/v1/projects/edit/${projectName}`)">修改</el-dropdown-item>
             <el-dropdown-item icon="el-icon-lock" @click.native="$router.push(`/v1/projects/detail/${projectName}/rbac`)">权限</el-dropdown-item>
-            <el-dropdown-item v-if="deployType === 'k8s'" icon="item-icon iconfont iconvery-collaboratiom" @click.native="$router.push(`/v1/projects/detail/${projectName}/policy`)">协作模式</el-dropdown-item>
+            <el-dropdown-item v-if="deployType === 'k8s' || deployType === 'helm'" icon="item-icon iconfont iconvery-collaboratiom" @click.native="$router.push(`/v1/projects/detail/${projectName}/policy`)">协作模式</el-dropdown-item>
             <el-dropdown-item icon="el-icon-delete" @click.native="comp.deleteProject">删除</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>

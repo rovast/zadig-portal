@@ -272,6 +272,14 @@ const routes = [
         }
       },
       {
+        path: 'projects/initialize/:project_name',
+        component: () => import(/* webpackChunkName: "project" */ '@/components/projects/detail_ope/initialize.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '项目详情'
+        }
+      },
+      {
         path: 'projects/detail/:project_name/pipelines',
         component: () => import(/* webpackChunkName: "project-pipeline" */ '@/components/projects/pipeline/workflow_list.vue'),
         meta: {
@@ -372,6 +380,14 @@ const routes = [
       {
         path: 'projects/detail/:project_name/rbac',
         component: () => import(/* webpackChunkName: "project-rbac" */ '@/components/projects/rbac/home.vue'),
+        meta: {
+          requiresAuth: true,
+          title: '权限管理'
+        }
+      },
+      {
+        path: 'projects/detail/:project_name/policy',
+        component: () => import(/* webpackChunkName: "project-policy" */ '@/components/projects/policy/home.vue'),
         meta: {
           requiresAuth: true,
           title: '权限管理'

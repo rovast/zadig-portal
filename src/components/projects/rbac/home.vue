@@ -4,6 +4,9 @@
       <el-tabs  v-model="activeTab" :tab-position="tabPosition" type="card" style="height: 200px;">
         <el-tab-pane name="member" label="成员管理"><Member v-if="activeTab==='member'" :projectName="projectName" /></el-tab-pane>
         <el-tab-pane name="role" label="角色管理"><Role  v-if="activeTab==='role'" :projectName="projectName"/></el-tab-pane>
+        <el-tab-pane name="policy" label="策略管理">
+          <Policy v-if="activeTab==='policy'" :projectName="projectName"></Policy>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -11,13 +14,15 @@
 <script>
 import Member from './member.vue'
 import Role from './role.vue'
+import Policy from './policy'
 import bus from '@utils/eventBus'
 
 export default {
   name: 'rbac',
   components: {
     Member,
-    Role
+    Role,
+    Policy
   },
   data () {
     return {

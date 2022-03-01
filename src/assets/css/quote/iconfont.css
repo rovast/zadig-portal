@@ -1,11 +1,11 @@
 @font-face {
   font-family: "iconfont"; /* Project id 1282370 */
-  src: url('~@assets/fonts/iconfont.eot?t=1643177610928'); /* IE9 */
-  src: url('~@assets/fonts/iconfont.eot?t=1643177610928#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('~@assets/fonts/iconfont.woff2?t=1643177610928') format('woff2'),
-       url('~@assets/fonts/iconfont.woff?t=1643177610928') format('woff'),
-       url('~@assets/fonts/iconfont.ttf?t=1643177610928') format('truetype'),
-       url('~@assets/icons/font/iconfont.svg?t=1643177610928#iconfont') format('svg');
+  src: url('~@assets/fonts/iconfont.eot?t=1643282044266'); /* IE9 */
+  src: url('~@assets/fonts/iconfont.eot?t=1643282044266#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('~@assets/fonts/iconfont.woff2?t=1643282044266') format('woff2'),
+       url('~@assets/fonts/iconfont.woff?t=1643282044266') format('woff'),
+       url('~@assets/fonts/iconfont.ttf?t=1643282044266') format('truetype'),
+       url('~@assets/icons/font/iconfont.svg?t=1643282044266#iconfont') format('svg');
 }
 
 .iconfont {

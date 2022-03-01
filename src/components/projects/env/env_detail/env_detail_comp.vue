@@ -161,10 +161,6 @@
                                type="text"
                                @click="deleteHostingEnv(productInfo.product_name,productInfo.env_name)">
                       取消托管</el-button>
-
-                    <el-button v-hasPermi="{projectName: projectName, action: 'config_environment'}" v-if="productInfo.status!=='Creating'"
-                               type="text"
-                               @click="openRecycleEnvDialog()">环境回收</el-button>
                 </template>
               </div>
             </el-col>
@@ -548,7 +544,6 @@
       <UpdateHelmVarDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="updateHelmVarDialog" :projectName="projectName" :envName="envName"/>
       <UpdateK8sVarDialog  :fetchAllData="fetchAllData" :productInfo="productInfo" ref="updateK8sVarDialog"/>
       <PmServiceLog  ref="pmServiceLog"/>
-      <RecycleDialog :getEnvServices="getEnvServices" :productInfo="productInfo" :initPageInfo="initPageInfo" :recycleDay="recycleDay" ref="recycleDialog" />
     </div>
 
 </template>
@@ -567,7 +562,6 @@ import PmHostList from './components/pmHostList.vue'
 import UpdateHelmEnvDialog from './components/updateHelmEnvDialog'
 import UpdateHelmVarDialog from './components/updateHelmVarDialog'
 import UpdateK8sVarDialog from './components/updateK8sVarDialog'
-import RecycleDialog from './components/recycleDialog'
 const jsdiff = require('diff')
 
 const validateKey = (rule, value, callback) => {
@@ -705,6 +699,10 @@ export default {
         }
       }
     },
+    usedInPolicy () {
+      const env = this.envNameList.find(env => env.name === this.envName)
+      return env ? env.base_refs : []
+    },
     imageRegistryDesc () {
       let findImage = ''
       let defaultImage = ''
@@ -764,9 +762,6 @@ export default {
     },
     openPmServiceLog (envName, serviceName) {
       this.$refs.pmServiceLog.openDialog(envName, serviceName)
-    },
-    openRecycleEnvDialog () {
-      this.$refs.recycleDialog.openDialog()
     },
     searchServicesByKeyword () {
       this.initPageInfo()
@@ -1113,7 +1108,20 @@ export default {
           })
         })
     },
+    cantDelete (isDelete = true) {
+      this.$alert(
+        `环境 ${this.envName} 已在协作模式 ${this.usedInPolicy.join('、')} 中被定义为基准环境，如需${isDelete ? '删除' : '配置回收策略'}请先修改协作模式！`,
+        `${isDelete ? '删除' : '回收'}环境`,
+        {
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+    },
     deleteProduct (project_name, env_name) {
+      if (this.usedInPolicy.length) {
+        this.cantDelete()
+        return
+      }
       const envType = this.isProd ? 'prod' : ''
       this.$prompt('请输入环境名称以确认', `确定要删除 ${project_name} 项目的 ${env_name} 环境?`, {
         confirmButtonText: '确定',
@@ -1295,8 +1303,7 @@ export default {
     PmHostList,
     UpdateHelmEnvDialog,
     UpdateHelmVarDialog,
-    UpdateK8sVarDialog,
-    RecycleDialog
+    UpdateK8sVarDialog
   },
   props: {
     envBasePath: {

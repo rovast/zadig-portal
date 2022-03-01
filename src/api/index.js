@@ -4,10 +4,12 @@ import store from 'storejs'
 import Element from 'element-ui'
 import errorMap from '@/utilities/errorMap'
 import Store from '../store'
+import Router from '../router'
 const specialAPIs = ['/api/aslan/system/operation', '/api/aslan/delivery/artifacts', '/api/aslan/environment/kube/workloads']
 const ignoreErrReq = '/api/aslan/services/validateUpdate/'
 const reqExps = [/api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/workloads/, /api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/groups/]
 const analyticsReq = 'https://api.koderover.com/api/operation/upload'
+const userInitEnvRoute = '/v1/projects/initialize/'
 const http = axios.create()
 const CancelToken = axios.CancelToken
 
@@ -100,6 +102,12 @@ http.interceptors.response.use(
       return response
     } else if (isInReg) {
       return response
+    } else if (response.data.code === 10000) {
+      const currentRoute = Router.history.current
+      if (currentRoute.fullPath.startsWith(userInitEnvRoute)) {
+        return response.data
+      }
+      Router.push(`${userInitEnvRoute}${currentRoute.params.project_name}`)
     } else {
       return response.data
     }
@@ -1198,10 +1206,6 @@ export function getHelmEnvChartDiffAPI (projectName, envName) {
   return http.get(`/api/aslan/environment/environments/${envName}/helmChartVersions?projectName=${projectName}`)
 }
 
-export function recycleEnvAPI (projectName, envName, recycleDay) {
-  return http.put(`/api/aslan/environment/environments/${envName}/envRecycle?projectName=${projectName}&recycleDay=${recycleDay}`)
-}
-
 export function getConfigmapAPI (query) {
   return http.get(`/api/aslan/environment/configmaps?${query}`)
 }
@@ -1597,7 +1601,11 @@ export function deletePublicRoleAPI (name, projectName) {
 }
 
 export function queryPublicRoleAPI (projectName) {
-  return http.get(`/api/v1/public-roles?projectName=${projectName}`)
+  return http.get(`/api/v1/preset-roles?projectName=${projectName}`)
+}
+
+export function updateMutiRolebindingsAPI (projectName, userID, payload) {
+  return http.post(`/api/v1/rolebindings/update?projectName=${projectName}&bulk=true&userID=${userID}`, payload)
 }
 
 export function queryPublicRoleDetailAPI (name, projectName) {
@@ -1621,7 +1629,7 @@ export function deleteRoleBindingsAPI (name, projectName) {
 }
 
 export function queryRoleBindingsAPI (projectName) {
-  return http.get(`/api/v1/picket/rolebindings?projectName=${projectName}`)
+  return http.get(`/api/v1/picket/bindings?projectName=${projectName}`)
 }
 
 export function queryUserBindingsAPI (uid, projectName = '') { // Query all binding roles of the user, pass projectName for project binding, default is system binding
@@ -1634,6 +1642,43 @@ export function getProjectPermissionAPI (projectName = '', uid) {
 
 export function getArtifactFileAPI (payload, id) {
   return http.post(`/api/aslan/system/s3storage/${id}/releases/search?kind=file`, payload)
+}
+
+// initialize project workflow and environment
+export function getNewCollaborationAPI (projectName) {
+  return http.get(`/api/aslan/collaboration/collaborations/new?projectName=${projectName}`)
+}
+
+export function initializeCollaborationAPI (projectName, payload) {
+  return http.post(`/api/aslan/collaboration/collaborations/sync?projectName=${projectName}`, payload)
+}
+
+export function getAllCollaborationAPI (projectName) {
+  return http.get(`/api/aslan/collaboration/collaborations?projectName=${projectName}`)
+}
+
+export function createCollaborationAPI (projectName, payload) {
+  return http.post(`/api/aslan/collaboration/collaborations?projectName=${projectName}`, payload)
+}
+
+export function updateNewCollaborationAPI (projectName, name, payload) {
+  return http.put(`/api/aslan/collaboration/collaborations/${name}?projectName=${projectName}`, payload)
+}
+
+export function deleteCollaborationAPI (projectName, name) {
+  return http.delete(`/api/aslan/collaboration/collaborations/${name}?projectName=${projectName}`)
+}
+
+export function getAllPolicyAPI (projectName) {
+  return http.get(`/api/v1/policies?projectName=${projectName}`)
+}
+
+export function getPolicyByNameAPI (projectName, name) {
+  return http.get(`/api/v1/policies/${name}?projectName=${projectName}`)
+}
+
+export function getPolicyByIdAPI (projectName, id) {
+  return http.get(`/api/v1/policy/${id}?projectName=${projectName}`)
 }
 
 // Insight

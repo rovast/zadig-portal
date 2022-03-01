@@ -84,88 +84,7 @@
         <div class="module-title">
           <h1>变量列表</h1>
         </div>
-        <div class="kv-container">
-          <el-table :data="projectConfig.vars" style="width: 100%;">
-            <el-table-column label="Key">
-              <template slot-scope="scope">
-                <span>{{ scope.row.key }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="Value">
-              <template slot-scope="scope">
-                <el-input
-                  size="small"
-                  v-model="scope.row.value"
-                  type="textarea"
-                  :disabled="rollbackMode"
-                  :autosize="{ minRows: 1, maxRows: 4}"
-                  placeholder="请输入内容"
-                ></el-input>
-              </template>
-            </el-table-column>
-            <el-table-column label="关联服务">
-              <template slot-scope="scope">
-                <span>{{ scope.row.services?scope.row.services.join(','):'-' }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" width="150">
-              <template slot-scope="scope">
-                <template>
-                  <span class="operate">
-                    <el-button
-                      v-if="scope.row.state === 'unused'"
-                      type="text"
-                      @click="deleteRenderKey(scope.$index,scope.row.state)"
-                      class="delete"
-                    >移除</el-button>
-                    <el-tooltip v-else effect="dark" content="模板中用到的渲染 Key 无法被删除" placement="top">
-                      <span class="el-icon-question"></span>
-                    </el-tooltip>
-                  </span>
-                </template>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div v-if="addKeyInputVisable" class="add-key-container">
-            <el-table :data="addKeyData" :show-header="false" style="width: 100%;">
-              <el-table-column>
-                <template slot-scope="{ row }">
-                  <el-form :model="row" :rules="keyCheckRule" ref="addKeyForm" hide-required-asterisk>
-                    <el-form-item label="Key" prop="key" inline-message>
-                      <el-input size="small" type="textarea" :autosize="{ minRows: 1, maxRows: 4}" v-model="row.key" placeholder="请输入 Key"></el-input>
-                    </el-form-item>
-                  </el-form>
-                </template>
-              </el-table-column>
-              <el-table-column>
-                <template slot-scope="{ row }">
-                  <el-form :model="row" :rules="keyCheckRule" ref="addValueForm" hide-required-asterisk>
-                    <el-form-item label="Value" prop="value" inline-message>
-                      <el-input
-                        size="small"
-                        type="textarea"
-                        :autosize="{ minRows: 1, maxRows: 4}"
-                        v-model="row.value"
-                        placeholder="请输入 Value"
-                      ></el-input>
-                    </el-form-item>
-                  </el-form>
-                </template>
-              </el-table-column>
-              <el-table-column width="100">
-                <template>
-                  <span style="display: inline-block; margin-bottom: 15px;">
-                    <el-button @click="addRenderKey()" type="text">确认</el-button>
-                    <el-button @click="addKeyInputVisable=false" type="text">取消</el-button>
-                  </span>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-          <span v-if="!rollbackMode" class="add-kv-btn">
-            <i title="添加" @click="addKeyInputVisable=true" class="el-icon-circle-plus">新增</i>
-          </span>
-        </div>
+        <VarList :variables="projectConfig.vars" :rollbackMode="rollbackMode"></VarList>
       </el-card>
       <div v-if="projectConfig.source==='system'">
         <div style="color: rgb(153, 153, 153); font-size: 16px; line-height: 20px;">服务列表</div>
@@ -286,6 +205,7 @@
 </template>
 
 <script>
+import VarList from './varList.vue'
 import {
   imagesAPI,
   productHostingNamespaceAPI,
@@ -302,17 +222,6 @@ import bus from '@utils/eventBus'
 import { uniq, cloneDeep } from 'lodash'
 import { serviceTypeMap } from '@utils/wordTranslate'
 
-const validateKey = (rule, value, callback) => {
-  if (typeof value === 'undefined' || value === '') {
-    callback(new Error('请输入Key'))
-  } else {
-    if (!/^[a-zA-Z0-9_]+$/.test(value)) {
-      callback(new Error('Key 只支持字母大小写和数字，特殊字符只支持下划线'))
-    } else {
-      callback()
-    }
-  }
-}
 const validateEnvName = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {
     callback(new Error('填写环境名称'))
@@ -349,7 +258,6 @@ export default {
       allCluster: [],
       startDeployLoading: false,
       loading: false,
-      addKeyInputVisable: false,
       imageMap: {},
       containerMap: {},
       pmServiceMap: {},
@@ -387,24 +295,6 @@ export default {
           state: 'unused'
         }
       ],
-      keyCheckRule: {
-        key: [
-          {
-            type: 'string',
-            required: true,
-            validator: validateKey,
-            trigger: 'blur'
-          }
-        ],
-        value: [
-          {
-            type: 'string',
-            required: false,
-            message: 'value',
-            trigger: 'blur'
-          }
-        ]
-      },
       imageRegistry: [],
       containerNames: []
     }
@@ -657,43 +547,6 @@ export default {
         }
       }
     },
-    addRenderKey () {
-      if (this.addKeyData[0].key !== '') {
-        this.$refs.addKeyForm.validate(valid => {
-          if (valid) {
-            this.projectConfig.vars.push(
-              this.$utils.cloneObj(this.addKeyData[0])
-            )
-            this.addKeyData[0].key = ''
-            this.addKeyData[0].value = ''
-            this.$refs.addKeyForm.resetFields()
-            this.$refs.addValueForm.resetFields()
-          } else {
-            return false
-          }
-        })
-      }
-    },
-    deleteRenderKey (index, state) {
-      if (state === 'present') {
-        this.$confirm('该 Key 被产品服务模板引用，确定删除', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            this.projectConfig.vars.splice(index, 1)
-          })
-          .catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消删除'
-            })
-          })
-      } else {
-        this.projectConfig.vars.splice(index, 1)
-      }
-    },
     startDeploy () {
       if (this.projectConfig.source === 'versionBack') {
         this.projectConfig.source = 'system'
@@ -904,6 +757,9 @@ export default {
       }
       this.getTemplateAndImg()
     })
+  },
+  components: {
+    VarList
   }
 }
 </script>
@@ -1219,71 +1075,6 @@ export default {
 
   .ops {
     margin-top: 25px;
-  }
-
-  .kv-container {
-    .el-table {
-      .unused {
-        background: #e6effb;
-      }
-
-      .present {
-        background: #fff;
-      }
-
-      .new {
-        background: oldlace;
-      }
-    }
-
-    .el-table__row {
-      .cell {
-        span {
-          font-weight: 400;
-        }
-
-        .operate {
-          font-size: 1.12rem;
-
-          .delete {
-            color: #ff1949;
-          }
-        }
-      }
-    }
-
-    .render-value {
-      display: block;
-      max-width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-
-    .add-key-container {
-      .el-form-item__label {
-        display: none;
-      }
-
-      .el-form-item {
-        margin-bottom: 15px;
-      }
-    }
-
-    .add-kv-btn {
-      display: inline-block;
-      margin-top: 10px;
-      margin-left: 5px;
-
-      i {
-        padding-right: 4px;
-        color: #5e6166;
-        color: #1989fa;
-        font-size: 14px;
-        line-height: 14px;
-        cursor: pointer;
-      }
-    }
   }
 }
 

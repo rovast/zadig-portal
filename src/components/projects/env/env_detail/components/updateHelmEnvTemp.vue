@@ -1,12 +1,7 @@
 <template>
   <el-collapse class="helm-env-template" v-model="activeName" @change="collapseChange" accordion>
     <el-collapse-item title="默认环境变量" name="env">
-      <EnvValues
-        ref="envValuesRef"
-        :envName="handledEnv"
-        @envYaml="saveEnvYaml"
-        :overrideYaml="defaultEnvValue && defaultEnvValue.defaultValues"
-      ></EnvValues>
+      <EnvValues ref="envValuesRef" :envName="handledEnv" :baseEnvObj="baseEnvObj" :defaultEnvsValues="defaultEnvsValues"></EnvValues>
     </el-collapse-item>
     <el-collapse-item :title="`${serviceVariableTitle}变量`" name="service">
       <ChartValues
@@ -17,6 +12,7 @@
         :envScene="envScene"
         :showEnvTabs="showEnvTabs"
         :defaultEnvValue="defaultEnvValue"
+        :baseEnvObj="baseEnvObj"
       ></ChartValues>
     </el-collapse-item>
   </el-collapse>
@@ -65,6 +61,15 @@ export default {
       required: false,
       type: String,
       default: '服务'
+    },
+    baseEnvObj: {
+      type: Object,
+      default: () => null // {envName: baseEvnName}
+    },
+    currentEnvValue: {
+      // current env yaml
+      type: String,
+      required: false
     }
   },
   computed: {
@@ -76,11 +81,16 @@ export default {
       }
     }
   },
+  watch: {
+    currentEnvValue: {
+      handler (val) {
+        this.$set(this.defaultEnvsValues, 'DEFAULT', val || '')
+        this.$refs.envValuesRef && this.$refs.envValuesRef.initEnvVariableInfo()
+      },
+      immediate: true
+    }
+  },
   methods: {
-    saveEnvYaml (data) {
-      const envName = data.envName || 'DEFAULT'
-      this.$set(this.defaultEnvsValues, envName, data.defaultValues)
-    },
     validate () {
       const valid = []
       valid.push(this.$refs.envValuesRef.validate())

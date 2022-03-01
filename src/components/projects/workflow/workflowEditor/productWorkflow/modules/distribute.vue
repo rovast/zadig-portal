@@ -144,7 +144,7 @@ export default {
       return targets
     },
     unconfiguredTargetsDisplayed () {
-      return [{ service_name: '同步部署模块服务' }].concat(this.unconfiguredTargets)
+      return [{ service_name: '同步部署模块的服务' }].concat(this.unconfiguredTargets)
     },
     unconfiguredTargets () {
       const rest = this.allTargets.filter(t => !((t.service_name + '/' + t.service_module) in this.serviceDistMap))
@@ -247,7 +247,7 @@ export default {
     },
 
     addServiceDist () {
-      if (this.serviceToAdd.service_name === '同步部署模块服务') {
+      if (this.serviceToAdd.service_name === '同步部署模块的服务') {
         for (const tar of this.buildTargets) {
           if (!((tar.service_name + '/' + tar.service_module) in this.serviceDistMap)) {
             this._addSingleServiceDist(tar)

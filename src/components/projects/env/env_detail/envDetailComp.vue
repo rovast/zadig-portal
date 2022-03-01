@@ -507,7 +507,6 @@
     />
     <UpdateK8sVarDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="updateK8sVarDialog" />
     <PmServiceLog ref="pmServiceLog" />
-    />
   </div>
 </template>
 

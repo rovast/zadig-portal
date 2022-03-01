@@ -136,7 +136,11 @@
         >同步</el-button>
       </span>
     </el-dialog>
-    <ImportFromTemplate :projectName="projectName"  :dialogImportFromYamlVisible.sync="openImportYamlDialog" @importYamlSuccess="importYamlSuccess" />
+    <ImportFromTemplate
+      :projectName="projectName"
+      :dialogImportFromYamlVisible.sync="openImportYamlDialog"
+      @importYamlSuccess="importYamlSuccess"
+    />
     <div class="menu-container">
       <el-row>
         <el-col :span="10">
@@ -164,13 +168,7 @@
               <el-button v-if="deployType==='k8s'" size="mini" @click="createService('repo')" icon="iconfont icon icongit" plain circle></el-button>
             </el-tooltip>
             <el-tooltip effect="dark" content="使用模板新建" placement="top">
-              <el-button
-                size="mini"
-                @click="openImportYamlDialog = true"
-                icon="iconfont icon iconvery-template"
-                plain
-                circle
-              ></el-button>
+              <el-button size="mini" @click="openImportYamlDialog = true" icon="iconfont icon iconvery-template" plain circle></el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -199,11 +197,7 @@
           >
             <span class="service-status" :class="data.status"></span>
             <i v-if="data.type==='k8s'" class="service-type iconfont iconrongqifuwu"></i>
-            <el-tooltip
-              v-if="data.type!=='kind' && data.visibility==='public' && data.product_name!==projectName"
-              effect="light"
-              placement="top"
-            >
+            <el-tooltip v-if="isShared(data)" effect="light" placement="top">
               <div slot="content">
                 <span>{{`服务名：${data.service_name}`}}</span>
                 <span>
@@ -227,7 +221,10 @@
                 icon="el-icon-edit-outline"
                 @click.stop="() => reEditServiceName(node, data)"
               ></el-button>
-              <span :style="{'visibility': showHover[data.service_name] ? 'visible': 'hidden'}" class="operation-container">
+              <span v-if="isShared(data)">
+                <el-tag v-if="data.type === 'k8s'" type="primary" effect="dark" size="mini" style="cursor: not-allowed;">共享</el-tag>
+              </span>
+              <span v-else :style="{'visibility': showHover[data.service_name] || data.visibility==='public' ? 'visible': 'hidden'}">
                 <el-tooltip effect="dark" placement="top">
                   <div slot="content">共享服务可在其他项目的服务编排中使用</div>
                   <el-tag
@@ -238,7 +235,8 @@
                     size="mini"
                   >共享</el-tag>
                 </el-tooltip>
-
+              </span>
+              <span :style="{'visibility': showHover[data.service_name] ? 'visible': 'hidden'}" class="operation-container">
                 <el-button
                   v-hasPermi="{projectName: projectName, action: 'delete_service'}"
                   v-if="(data.product_name===projectName||data.status === 'named')"
@@ -470,6 +468,13 @@ export default {
   },
 
   methods: {
+    isShared (data) {
+      return (
+        data.type !== 'kind' &&
+        data.visibility === 'public' &&
+        data.product_name !== this.projectName
+      )
+    },
     validateServiceName (rule, value, callback) {
       if (value === '') {
         callback(new Error('请输入服务名称'))

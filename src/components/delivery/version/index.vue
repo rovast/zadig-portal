@@ -5,7 +5,7 @@
     element-loading-spinner="iconfont iconfont-loading iconvery-versionmana"
     class="version-list-container"
   >
-    <div v-if="versionList.length !== 0" class="operation">
+    <div class="operation">
       <el-select
         style="width: 160px;"
         v-model="selectedService"

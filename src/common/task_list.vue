@@ -47,9 +47,9 @@
                     <span v-if="build.commit_id">{{build.commit_id.substring(0, 7)}}</span>
                   </div>
                 </div>
-                <span class="service-name pointer">{{item.service_name}}</span>
+                <span class="service-name pointer">{{$utils.showServiceName(item.service_name)}}</span>
               </el-tooltip>
-              <span v-else class="service-name">{{item.service_name}}</span>
+              <span v-else class="service-name">{{$utils.showServiceName(item.service_name)}}</span>
             </div>
           </template>
           <template v-else-if="row.build_services && row.build_services.length > 0">

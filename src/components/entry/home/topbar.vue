@@ -324,7 +324,12 @@ export default {
 .help-icon {
   margin: 0 38px;
   color: #a0a0a0;
-  font-size: 28px;
+  font-size: 20px;
+  cursor: pointer;
+
+  &:hover {
+    color: @themeColor;
+  }
 }
 
 .flex {

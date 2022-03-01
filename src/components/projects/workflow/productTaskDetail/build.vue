@@ -79,7 +79,7 @@
             </div>
           </el-col>
           <el-col :span="6">
-            <span class="item-desc">{{buildv2.service_name}}</span>
+            <span class="item-desc">{{$utils.showServiceName(buildv2.service_name)}}</span>
           </el-col>
           <el-col v-if="serviceType!=='pm'"
                   :span="6">

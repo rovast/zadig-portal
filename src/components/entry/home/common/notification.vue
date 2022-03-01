@@ -221,7 +221,7 @@ export default {
 
   .notify-header {
     padding: 15px 20px;
-    background-color: #f5f7fa;
+    background-color: #f2f3f5;
     border-bottom: 1px solid #dcdfe5;
 
     .msg {
@@ -253,7 +253,6 @@ export default {
     &::-webkit-scrollbar-track {
       background-color: #f5f5f5;
       border-radius: 6px;
-      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     }
 
     &::-webkit-scrollbar {
@@ -262,7 +261,6 @@ export default {
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: #555;
       border-radius: 6px;
       box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     }
@@ -282,7 +280,7 @@ export default {
 
       .notification {
         position: relative;
-        padding: 10px 20px 10px 35px;
+        padding: 10px 20px 10px 20px;
         background: #fff;
         border-bottom: 1px solid #e2dee6;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);

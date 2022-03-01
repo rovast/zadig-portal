@@ -18,7 +18,16 @@
       </el-select>
       <div v-if="showHookConfig" class="hook-config">
         <span class="hook-switch">
-          hook 配置
+          <span>
+            hook 配置
+            <a
+              href="https://docs.koderover.com/zadig/delivery/version-management/#hook-%E5%A4%96%E9%83%A8%E7%B3%BB%E7%BB%9F"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <el-tag size="mini" type="success" effect="dark" class="help-tag">help</el-tag>
+            </a>
+          </span>
           <el-switch v-model="versionHook.enable" style="margin-left: 10px;" @change="saveHook"></el-switch>
         </span>
         <el-form ref="hookRef" :model="versionHook" v-if="versionHook.enable" inline class="hook-form">
@@ -278,6 +287,11 @@ export default {
         margin-right: 10px;
         font-weight: 300;
         white-space: nowrap;
+
+        .help-tag {
+          vertical-align: super;
+          cursor: pointer;
+        }
       }
 
       .el-form.hook-form {

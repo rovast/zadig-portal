@@ -54,7 +54,8 @@
 import {
   getCommonWorkflowAPI,
   deleteCommonWorkflowAPI,
-  getCommonWorkflowTasksAPI
+  getCommonWorkflowTasksAPI,
+  getCommonWorkflowListInProjectAPI
 } from '@api'
 import TaskList from '@/components/projects/common/taskList.vue'
 import RunCommonWorkflow from './common/runCommonWorkflow.vue'
@@ -72,7 +73,8 @@ export default {
       timerId: null,
       timeTimeoutFinishFlag: false,
       commonToRun: {},
-      stages: []
+      stages: [],
+      usedInPolicy: [] // whether used in policy
     }
   },
   computed: {
@@ -133,6 +135,13 @@ export default {
       const workflowName = this.workflowName
       const workflowID = this.workflowID
       const projectName = this.projectName
+      if (this.usedInPolicy.length) {
+        this.$alert(`工作流 ${workflowName} 已在协作模式 ${this.usedInPolicy.join('、')} 中被定义为基准工作流，如需删除请先修改协作模式！`, '删除工作流', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+        return
+      }
       this.$prompt('输入工作流名称确认', '删除工作流 ' + workflowName, {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -169,6 +178,14 @@ export default {
         stages.push('扩展')
       }
       this.stages = stages
+    },
+    async getWorkflow () {
+      const res = await getCommonWorkflowListInProjectAPI(this.projectName).catch(err => {
+        console.log(err)
+      })
+      if (res) {
+        this.usedInPolicy = res.workflow_list.find(re => re.name === this.workflowName).base_refs || []
+      }
     }
   },
   beforeDestroy () {
@@ -179,6 +196,7 @@ export default {
     const projectName = this.projectName
     const workflowID = this.workflowID
     const workflowName = this.workflowName
+    this.getWorkflow()
     getCommonWorkflowAPI(projectName, workflowID).then(res => {
       this.workflow = res
       this.fetchStages(res)

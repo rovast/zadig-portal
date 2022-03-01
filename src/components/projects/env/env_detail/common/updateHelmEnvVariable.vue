@@ -27,9 +27,14 @@ export default {
       type: String,
       required: true
     },
-    overrideYaml: {
-      type: String,
-      required: false
+    baseEnvObj: {
+      type: Object,
+      required: false,
+      default: () => null
+    },
+    defaultEnvsValues: {
+      type: Object,
+      required: true
     }
   },
   data () {
@@ -40,6 +45,9 @@ export default {
   computed: {
     projectName () {
       return this.$route.params.project_name
+    },
+    overrideYaml () {
+      return this.defaultEnvsValues[this.envName || 'DEFAULT']
     }
   },
   methods: {
@@ -60,38 +68,57 @@ export default {
       }
       return Promise.all(valid)
     },
-    async getEnvVariablesYaml ({ envName }) {
-      const res = await getEnvDefaultVariableAPI(
-        this.projectName,
-        envName
-      ).catch(err => {
-        console.log(err)
-        this.initEnvVariableInfo(envName)
-      })
+    async getEnvVariablesYaml (envName, baseEnvName = envName) {
+      const res = await this.initEnvVariablesYaml(envName, baseEnvName).catch(
+        err => {
+          console.log(err)
+          this.initEnvVariableInfo(envName)
+        }
+      )
       if (res) {
         this.envVariable = {
           yamlSource: res.defaultValues ? 'freeEdit' : 'default',
           overrideYaml: res.defaultValues
         }
       }
+    },
+    initEnvVariablesYaml (envName, baseEnvName) {
+      return getEnvDefaultVariableAPI(this.projectName, baseEnvName).then(
+        res => {
+          this.$set(this.defaultEnvsValues, envName, res.defaultValues)
+          return res
+        }
+      )
     }
   },
   watch: {
     envName: {
       handler (newV, oldV) {
-        if (newV === '' || this.overrideYaml) {
+        if (newV === '' || this.overrideYaml || this.baseEnvObj) {
           this.initEnvVariableInfo()
         } else {
-          this.getEnvVariablesYaml({ envName: newV })
+          this.getEnvVariablesYaml(newV)
         }
       },
       immediate: true
     },
     'envVariable.overrideYaml' (newV) {
-      this.$emit('envYaml', {
-        envName: this.envName,
-        defaultValues: newV
-      })
+      this.$set(this.defaultEnvsValues, this.envName || 'DEFAULT', newV)
+    },
+    baseEnvObj: {
+      handler (newV, oldV) {
+        if (newV) {
+          Object.keys(newV).forEach(val => {
+            const fn =
+              val === this.envName
+                ? this.getEnvVariablesYaml
+                : this.initEnvVariablesYaml
+            fn(val, newV[val])
+          })
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   components: {

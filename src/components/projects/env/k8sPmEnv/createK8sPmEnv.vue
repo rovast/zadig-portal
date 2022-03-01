@@ -201,7 +201,7 @@
 </template>
 
 <script>
-import VarList from '../k8sPmEnv/varList.vue'
+import VarList from './varList.vue'
 import {
   imagesAPI,
   productHostingNamespaceAPI,

@@ -26,7 +26,7 @@
             :key="item.name"
             :label="item.name"
             :value="item.name"
-          >{{item.name}} {{item.isPublic ? '(公共角色)': ''}}</el-option>
+          >{{item.name}} {{item.isPublic ? '(系统内置)': ''}}</el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -51,8 +51,8 @@ export default {
       addUserFormVisible: false,
       users: [],
       form: {
-        uids: '',
-        name: ''
+        uids: [],
+        name: 'read-project-only'
       },
       formRules: {
         uids: [
@@ -101,7 +101,8 @@ export default {
         payload.push({
           uid: uid,
           role: name,
-          public: role.isPublic ? role.isPublic : false
+          preset: role.isPublic ? role.isPublic : false,
+          type: 'custom'
         })
       })
       const res = await addRoleBindingsAPI(
@@ -113,14 +114,20 @@ export default {
           message: '添加成员成功',
           type: 'success'
         })
-
         await this.getMembers()
         this.addUserFormVisible = false
+        this.$refs.form.resetFields()
       }
     }
   },
   created () {
     this.getUsers()
+    if (this.$route.query.addRole) {
+      setTimeout(() => {
+        this.addUserFormVisible = true
+        this.$router.replace({ query: {} })
+      }, 180) // To slow down the visual changes too fast
+    }
   }
 }
 </script>

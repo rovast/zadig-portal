@@ -231,6 +231,15 @@ const routes = [
             }
           },
           {
+            path: 'version/create',
+            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/delivery/version/helm/createVersion.vue'),
+            meta: {
+              requiresAuth: true,
+              requiresSuperAdmin: false,
+              title: '创建版本'
+            }
+          },
+          {
             path: 'version/detail/:id',
             component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/version/detail.vue'),
             meta: {

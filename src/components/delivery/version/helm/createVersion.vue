@@ -105,10 +105,7 @@ export default {
     },
     cancel () {
       this.$router.push({
-        path: `/v1/delivery/version/${this.$route.params.project_name}`,
-        query: {
-          deployType: 'helm'
-        }
+        path: `/v1/projects/detail/${this.$route.params.project_name}/version`
       })
     }
   },
@@ -135,7 +132,7 @@ export default {
 <style lang="less" scoped>
 .create-helm-version {
   min-width: 820px;
-  height: calc(~'100% - 60px');
+  height: calc(~'100% - 100px');
   padding: 20px 30px;
 
   h4 {

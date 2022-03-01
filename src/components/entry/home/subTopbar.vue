@@ -30,6 +30,9 @@
       <template v-if="$route.path === `/v1/projects/detail/${projectName}/test`">
         <el-button v-hasPermi="{projectName: projectName, action: 'create_test'}" @click="bindComp(comp,'test')" icon="el-icon-plus" plain>新建测试</el-button>
       </template>
+      <template v-if="$route.path === `/v1/projects/detail/${projectName}/version` && deployType === 'helm'">
+        <el-button v-hasPermi="{projectName: projectName, action: 'create_delivery'}" @click="bindComp(comp,'version')" icon="el-icon-plus" plain>创建版本</el-button>
+      </template>
       <template>
         <el-dropdown
           v-if="comp && comp.isProjectAdmin && $route.path === `/v1/projects/detail/${projectName}/detail`"
@@ -66,6 +69,10 @@ export default {
     }
   },
   computed: {
+    deployType () {
+      const project = this.$store.getters.projectList.find(project => project.name === this.projectName)
+      return project ? project.deployType : ''
+    },
     routerList () {
       return [
         {
@@ -114,6 +121,10 @@ export default {
       } else if (type === 'test') {
         this.$router.push(
           `/v1/projects/detail/${this.projectName}/test/add/function`
+        )
+      } else if (type === 'version') {
+        this.$router.push(
+          `/v1/projects/detail/${this.projectName}/version/create`
         )
       }
     }

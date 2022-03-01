@@ -23,16 +23,16 @@
             <el-input v-show="row.edit" v-model="row.url" placeholder="请输入 URL" size="small"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="100px">
+        <el-table-column label="操作">
           <template slot-scope="{row}">
-            <span class="btn" v-show="!row.edit" @click="deleteExternalLink(row)">删除</span>
-            <span class="btn" v-show="!row.edit" @click="row.edit = true">编辑</span>
-            <span class="btn" v-show="row.edit" @click="updateExternalLink(row)">确认</span>
+            <el-button v-if="!row.edit" size="mini" type="primary" @click="row.edit = true" plain>编辑</el-button>
+            <el-button v-if="!row.edit" size="mini" type="danger"  @click="deleteExternalLink(row)" plain>删除</el-button>
+            <el-button v-if="row.edit"  size="mini" type="primary" @click="updateExternalLink(row)" plain>确认</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div style="margin-top: 20px;">
-        <el-button type="text" icon="el-icon-plus" @click="addLink">添加快捷链接</el-button>
+        <el-button type="text" icon="el-icon-plus" @click="addLink">添加</el-button>
       </div>
     </div>
   </div>
@@ -107,15 +107,6 @@ export default {
   .link-content {
     padding-top: 15px;
     padding-bottom: 15px;
-  }
-
-  .btn {
-    margin-right: 10px;
-    color: #409eff;
-    font-weight: 500;
-    font-size: 14px;
-    white-space: nowrap;
-    cursor: pointer;
   }
 }
 </style>

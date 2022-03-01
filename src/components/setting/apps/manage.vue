@@ -197,7 +197,8 @@
               <el-table-column label="操作">
                 <template slot-scope="scope">
                   <el-button @click="appOperation('edit',selectedApp(scope.row.name,defaultVersion[scope.row.name]))"
-                             size="mini">编辑</el-button>
+                             type="primary"
+                             size="mini" plain>编辑</el-button>
                   <el-popover v-model="showPopper[scope.row.name]"
                               trigger="click"
                               placement="top"
@@ -216,7 +217,7 @@
                     <div slot="reference">
                       <el-button size="mini"
                                  @click="showDeleteModal(scope.row.name)"
-                                 type="danger">删除</el-button>
+                                 type="danger" plain>删除</el-button>
                     </div>
                   </el-popover>
                 </template>
@@ -453,7 +454,6 @@ export default {
   },
   created () {
     bus.$emit('set-topbar-title', { title: '软件包管理', breadcrumb: [] })
-
     this.getProxyConfig()
     this.getApps()
   },

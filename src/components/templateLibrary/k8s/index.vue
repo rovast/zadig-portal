@@ -188,6 +188,6 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 @import '~@assets/css/component/k8s-template.less';
 </style>

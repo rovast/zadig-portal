@@ -320,7 +320,7 @@
           size="small"
           @click="createAccountUser()"
           class="start-create"
-        >保存</el-button>
+        >确定</el-button>
         <el-button
           v-else-if="userAccount.mode==='edit'"
           :disabled="userAccount.name === ''"

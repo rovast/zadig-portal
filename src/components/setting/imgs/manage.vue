@@ -105,10 +105,11 @@
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button @click="editImg(scope.row)"
-                           size="mini">编辑</el-button>
+                           type="primary"
+                           size="mini" plain>编辑</el-button>
                 <el-button size="mini"
                            @click="deleteImg(scope.row)"
-                           type="danger">删除</el-button>
+                           type="danger" plain>删除</el-button>
               </template>
             </el-table-column>
           </el-table>

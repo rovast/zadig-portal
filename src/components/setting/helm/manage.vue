@@ -92,8 +92,8 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button @click="repoOperation('edit',scope.row)" size="mini">编辑</el-button>
-                <el-button @click="repoOperation('delete',scope.row)" size="mini" type="danger">删除</el-button>
+                <el-button @click="repoOperation('edit',scope.row)" type="primary" size="mini" plain>编辑</el-button>
+                <el-button @click="repoOperation('delete',scope.row)" size="mini" type="danger" plain>删除</el-button>
               </template>
             </el-table-column>
           </el-table>

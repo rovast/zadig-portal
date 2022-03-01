@@ -123,7 +123,7 @@
                 :hidden="unreadMsgs.length===0"
                 class="item">
         <span v-popover:popover4>
-          <i class="el-icon-bell icon"></i>
+          <i class="el-icon-bell icon-bell"></i>
         </span>
       </el-badge>
     </div>
@@ -213,6 +213,12 @@ export default {
     color: @themeColor;
     font-size: 15px;
     cursor: pointer;
+  }
+}
+
+.notify {
+  .icon-bell {
+    font-size: 20px;
   }
 }
 

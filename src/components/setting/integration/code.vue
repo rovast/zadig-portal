@@ -159,7 +159,6 @@
           </el-form-item>
 
         </template>
-
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -369,11 +368,6 @@
                      size="small"
                      @click="handleCodeAdd"
                      plain>添加</el-button>
-          <span class="switch-span"
-                :style="{color: proxyInfo.enable_repo_proxy?'#5555ff':'#303133'}">启用代理</span>
-          <el-switch size="small"
-                     :value="proxyInfo.enable_repo_proxy"
-                     @change="changeProxy"></el-switch>
         </div>
         <el-table :data="code"
                   style="width: 100%;">
@@ -401,6 +395,13 @@
               {{$utils.convertTimestamp(scope.row.updated_at)}}
             </template>
           </el-table-column>
+          <el-table-column label="开启代理"
+                           width="100">
+            <el-switch slot-scope="scope"
+                       size="small"
+                       v-model="scope.row.enable_proxy"
+                       @change="updateRepoProxySettings(scope.row)"></el-switch>
+          </el-table-column>
           <el-table-column label="操作"
                            width="160">
             <template slot-scope="scope">
@@ -421,7 +422,7 @@
 </template>
 <script>
 import {
-  getCodeProviderAPI, deleteCodeSourceAPI, updateCodeSourceAPI, createCodeSourceAPI, getProxyConfigAPI, updateProxyConfigAPI
+  getCodeProviderAPI, deleteCodeSourceAPI, updateCodeSourceAPI, createCodeSourceAPI, getProxyConfigAPI
 } from '@api'
 const validateGitURL = (rule, value, callback) => {
   if (value === '') {
@@ -458,7 +459,8 @@ export default {
         address: '',
         access_token: '',
         application_id: '',
-        client_secret: ''
+        client_secret: '',
+        enable_proxy: false
       },
       codeAdd: {
         name: '',
@@ -524,6 +526,23 @@ export default {
     }
   },
   methods: {
+    updateRepoProxySettings (row) {
+      if (!this.proxyInfo.id || this.proxyInfo.type === 'no') {
+        row.enable_proxy = false
+        this.$message.error('未配置代理，请先前往「系统配置」->「代理配置」配置代理！')
+        return
+      }
+      const codehostID = row.id
+      updateCodeSourceAPI(codehostID, row).then((res) => {
+        this.$message({
+          message: row.enable_proxy ? '已启用代理' : '已关闭代理',
+          type: 'success'
+        })
+      }).catch(err => {
+        row.enable_proxy = !row.enable_proxy
+        this.$message.error(`代理修改失败：${err}`)
+      })
+    },
     handleCodeAdd () {
       this.dialogCodeAddFormVisible = true
     },
@@ -633,28 +652,6 @@ export default {
       this.$message({
         message: '地址复制失败',
         type: 'error'
-      })
-    },
-    changeProxy (value) {
-      if (!this.proxyInfo.id || this.proxyInfo.type === 'no') {
-        this.proxyInfo.enable_repo_proxy = false
-        this.$message.error('未配置代理，请先前往「系统配置」->「代理配置」配置代理！')
-        return
-      }
-      this.proxyInfo.enable_repo_proxy = value
-      updateProxyConfigAPI(this.proxyInfo.id, this.proxyInfo).then(response => {
-        if (response.message === 'success') {
-          const mess = value ? '启用代理成功！' : '成功关闭代理！'
-          this.$message({
-            message: `${mess}`,
-            type: 'success'
-          })
-        } else {
-          this.$message.error(response.message)
-        }
-      }).catch(err => {
-        this.proxyInfo.enable_repo_proxy = !value
-        this.$message.error(`修改配置失败：${err}`)
       })
     },
     getProxyConfig () {

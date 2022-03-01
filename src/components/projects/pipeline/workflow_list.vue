@@ -27,10 +27,17 @@
             </div>
           </div>
           <div class="header-end">
-            <button type="button" class="add-project-btn" @click="showSelectWorkflowType = true">
+           <!-- Todo: enable common workflow -->
+            <!-- <button type="button" class="add-project-btn" @click="showSelectWorkflowType = true">
               <i class="el-icon-plus"></i>
               新建工作流
-            </button>
+            </button> -->
+            <router-link :to="`/workflows/product/create?projectName=${this.projectName ? this.projectName : ''}`">
+              <button type="button" class="add-project-btn">
+                <i class="el-icon-plus"></i>
+                新建工作流
+              </button>
+            </router-link>
           </div>
         </div>
         <div

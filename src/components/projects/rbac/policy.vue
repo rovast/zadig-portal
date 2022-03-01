@@ -12,17 +12,17 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="{ $index }">
-          <el-button type="primary" size="small" plain @click="lookOverPolicy($index)">查看</el-button>
+          <el-button type="primary" size="small" plain @click="viewPolicy($index)">查看</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <LookOverPolicy :dialogFlag.sync="dialogFlag" :policyInfo="policyInfo" :policyMap="policyMap"></LookOverPolicy>
+    <ViewPolicy :dialogFlag.sync="dialogFlag" :policyInfo="policyInfo" :policyMap="policyMap"></ViewPolicy>
   </div>
 </template>
 
 <script>
-import LookOverPolicy from './lookOverPolicy.vue'
+import ViewPolicy from './viewPolicy.vue'
 import { getAllPolicyAPI, queryPolicyDefinitionsAPI } from '@api'
 export default {
   data () {
@@ -39,7 +39,7 @@ export default {
     }
   },
   methods: {
-    async lookOverPolicy (index) {
+    async viewPolicy (index) {
       this.dialogFlag = true
       this.policyInfo = this.policies[index]
     },
@@ -65,7 +65,7 @@ export default {
     }
   },
   components: {
-    LookOverPolicy
+    ViewPolicy
   },
   created () {
     this.getAllPolicy()

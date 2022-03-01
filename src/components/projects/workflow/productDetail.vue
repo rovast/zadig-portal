@@ -80,6 +80,7 @@ import {
   getWorkflowDetailAPI,
   deleteProductWorkflowAPI,
   workflowTaskListAPI,
+  getProductWorkflowsInProjectAPI,
   getWorkflowFilterListAPI
 } from '@api'
 import runWorkflow from './common/runWorkflow.vue'
@@ -127,7 +128,8 @@ export default {
       pageStart: 0,
       currentPage: 1,
       timerId: null,
-      timeTimeoutFinishFlag: false
+      timeTimeoutFinishFlag: false,
+      usedInPolicy: [] // whether used in policy
     }
   },
   computed: {
@@ -225,6 +227,13 @@ export default {
     },
     removeWorkflow () {
       const name = this.workflowName
+      if (this.usedInPolicy.length) {
+        this.$alert(`工作流 ${name} 已在协作模式 ${this.usedInPolicy.join('、')} 中被定义为基准工作流，如需删除请先修改协作模式！`, '删除工作流', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+        return
+      }
       this.$prompt('输入工作流名称确认', '删除工作流 ' + name, {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -252,6 +261,14 @@ export default {
     rerun (task) {
       this.taskDialogVisible = true
       this.forcedUserInput = task.workflow_args
+    },
+    async getWorkflow () {
+      const res = await getProductWorkflowsInProjectAPI(this.projectName).catch(err => {
+        console.log(err)
+      })
+      if (res) {
+        this.usedInPolicy = res.find(re => re.name === this.workflowName).base_refs || []
+      }
     },
     getFilterList ({ type }) {
       return getWorkflowFilterListAPI(this.projectName, this.workflowName, type)
@@ -301,6 +318,7 @@ export default {
     clearTimeout(this.timerId)
   },
   mounted () {
+    this.getWorkflow()
     getWorkflowDetailAPI(this.projectName, this.workflowName).then(res => {
       this.workflow = res
       this.fetchStages(res)

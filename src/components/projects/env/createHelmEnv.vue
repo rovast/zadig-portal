@@ -26,23 +26,6 @@
         <el-form-item label="环境名称" prop="env_name">
           <el-input @input="changeEnvName" v-model="projectConfig.env_name" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="命名空间" prop="defaultNamespace">
-          <el-select
-              v-model="projectConfig.defaultNamespace"
-              :disabled="editButtonDisabled"
-              style="width: 250px;"
-              size="small"
-              placeholder="选择已有或自定义命名空间"
-              filterable
-              allow-create
-              clearable
-          >
-            <el-option :value="`${projectName}-env-${projectConfig.env_name}`">{{ projectName }}-env-{{ projectConfig.env_name }}</el-option>
-            <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns" :value="ns"></el-option>
-          </el-select>
-          <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">{{editButtonDisabled? '编辑' : '完成'}}</span>
-          <span class="ns-desc" v-show="nsIsExisted">Zadig 中定义的服务将覆盖所选命名空间中的同名服务，请谨慎操作！</span>
-        </el-form-item>
         <el-form-item label="创建方式" prop="source">
           <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
             <el-option label="系统创建" value="system"></el-option>
@@ -61,10 +44,22 @@
           </el-select>
         </el-form-item>
         <el-form-item label="K8s 命名空间" prop="defaultNamespace" class="secondary-label">
-          <el-input :disabled="editButtonDisabled" v-model="projectConfig.defaultNamespace" size="small"></el-input>
+          <el-select
+              v-model="projectConfig.defaultNamespace"
+              :disabled="editButtonDisabled"
+              size="small"
+              placeholder="选择已有或自定义命名空间"
+              filterable
+              allow-create
+              clearable
+          >
+            <el-option :value="`${projectName}-env-${projectConfig.env_name}`">{{ projectName }}-env-{{ projectConfig.env_name }}</el-option>
+            <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns" :value="ns"></el-option>
+          </el-select>
           <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">
             <i :class="[editButtonDisabled ? 'el-icon-edit-outline': 'el-icon-finished' ]"></i>
           </span>
+          <span class="ns-desc" v-show="nsIsExisted">Zadig 中定义的服务将覆盖所选命名空间中的同名服务，请谨慎操作！</span>
         </el-form-item>
         <el-form-item label="镜像仓库" class="secondary-label">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small">
@@ -173,7 +168,7 @@ export default {
       },
       projectEnvNames: [],
       projectChartNames: [],
-      chartNames: null,
+      chartNames: null, // envNames and envName || chartNames
       envNames: [],
       envName: '',
       envScene: 'createEnv', // updateRenderSet

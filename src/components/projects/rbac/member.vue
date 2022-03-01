@@ -15,12 +15,11 @@
             </div>
             <!-- Details -->
             <div class="name-listing-description">
-              <h3 v-if="scope.row.uid === '*'" class="name-listing-title">
-                所有用户
-              </h3>
-              <h3 v-else class="name-listing-title">
-                {{ scope.row.username ? `${scope.row.username}(${scope.row.account})`: scope.row.account }}
-              </h3>
+              <h3 v-if="scope.row.uid === '*'" class="name-listing-title">所有用户</h3>
+              <h3
+                v-else
+                class="name-listing-title"
+              >{{ scope.row.username ? `${scope.row.username}(${scope.row.account})`: scope.row.account }}</h3>
               <!-- Name Listing Footer -->
               <div class="name-listing-footer">
                 <ul>
@@ -43,13 +42,73 @@
         </template>
       </el-table-column>
       <el-table-column label="角色">
-        <template slot-scope="scope">
-          <span>{{scope.row.role}}</span>
+        <template slot-scope="{ row }">
+          <div v-if="row.uid === '*'">
+            {{ row.role }}
+            <span v-if="row.type === 'system'">(系统内置)</span>
+          </div>
+          <div v-else>
+            <div class="role-content" v-show="!row.editRole">
+              <div :class="{'role-content-left': row.roles.length}">
+                <div v-for="(role, index) in row.roles" :key="index">
+                  <span>{{ role.role }}</span>
+                  <span v-if="role.type === 'system'">(系统内置)</span>
+                </div>
+              </div>
+              <div>
+                <i class="role-icon el-icon-edit-outline" @click="row.editRole = true"></i>
+              </div>
+            </div>
+            <div class="role-content" v-show="row.editRole">
+              <div class="role-content-left">
+                <el-select v-model="row.updatedRoles" placeholder="选择角色" size="small" multiple>
+                  <el-option
+                    v-for="(item, index) in rolesFiltered"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.name"
+                  >{{item.name}} {{item.isPublic ? '(系统内置)': ''}}</el-option>
+                </el-select>
+              </div>
+              <div>
+                <i
+                  class="role-icon role-close el-icon-circle-close"
+                  @click="row.editRole = false;row.updatedRoles=row.roles.map(role => role.role);"
+                ></i>
+                <i class="role-icon el-icon-circle-check" @click="updateRoles(row)"></i>
+              </div>
+            </div>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
-        <template slot-scope="scope">
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row.name)" plain>删除</el-button>
+      <el-table-column label="策略">
+        <template slot-scope="{ row }">
+          <div v-if="row.uid === '*'" :class="{'show-gray': row.hasSystemPolicy}">
+            {{ row.policy }}
+            <span v-if="row.hasSystemPolicy">(系统创建)</span>
+          </div>
+          <div v-else>
+            <div v-if="!row.policies.length">-</div>
+            <div v-for="(policy, index) in row.policies" :key="index" :class="{'show-gray': policy.type === 'system'}">
+              <span>{{ policy.policy }}</span>
+              <span v-if="policy.type === 'system'">(系统创建)</span>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="100px">
+        <template slot-scope="{ row }">
+          <el-tooltip effect="dark" content="该用户关联项目协作模式，产生了相应的策略不能直接移除，请先将用户从对应协作模式中移除" placement="top">
+            <span>
+              <el-button v-if="row.hasSystemPolicy" size="mini" type="info" plain disabled>移除</el-button>
+            </span>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="所有用户具备 read-only 权限，可以通过项目配置 -> 设置访问权限为私有将其移除" placement="top">
+            <span>
+              <el-button v-if="row.readOnly" size="mini" type="info" plain disabled>移除</el-button>
+            </span>
+          </el-tooltip>
+          <el-button v-if="!row.hasSystemPolicy && !row.readOnly" size="mini" type="danger" @click="handleDelete(row)" plain>移除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -63,8 +122,11 @@ import {
   queryRoleBindingsAPI,
   queryRoleAPI,
   queryPublicRoleAPI,
-  deleteRoleBindingsAPI
+  deleteRoleBindingsAPI,
+  updateMutiRolebindingsAPI
 } from '@/api'
+
+import { cloneDeep } from 'lodash'
 
 export default {
   name: 'member',
@@ -75,6 +137,7 @@ export default {
     projectName: String
   },
   data () {
+    this.cloneDeep = cloneDeep
     return {
       members: [],
       rolesFiltered: [],
@@ -87,20 +150,53 @@ export default {
       }
     }
   },
+  computed: {
+    isPublic () {
+      const project = this.$store.getters.projectList.find(
+        project => project.name === this.projectName
+      )
+      return project ? project.public : false
+    }
+  },
   methods: {
-    async handleDelete (name) {
+    updateRoles (row, isDelete = false) {
+      const payload = row.updatedRoles.map(role => {
+        return {
+          uid: row.uid,
+          role: role,
+          type: 'custom',
+          preset: this.rolesFiltered.find(cuRole => cuRole.name === role).isPublic || false
+        }
+      })
+      updateMutiRolebindingsAPI(this.projectName, row.uid, payload).then(() => {
+        this.$message.success(isDelete ? '删除成功!' : '更新用户角色成功！')
+        this.getRoleBindings()
+        row.editRole = false
+      })
+    },
+    async handleDelete (row) {
       this.$confirm('确定要删除这个成员吗？', '确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteRoleBindingsAPI(name, this.projectName).then(() => {
-          this.$message({
-            message: '删除成功',
-            type: 'success'
+        if (row.uid !== '*') {
+          this.updateRoles(
+            {
+              uid: row.uid,
+              updatedRoles: []
+            },
+            true
+          )
+        } else {
+          deleteRoleBindingsAPI(row.name, this.projectName).then(() => {
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            this.getRoleBindings()
           })
-          this.getRoleBindings()
-        })
+        }
       })
     },
     async getRoleBindings () {
@@ -108,7 +204,33 @@ export default {
         console.log(error)
       )
       if (res) {
-        this.members = res
+        const members = res
+          .filter(member => member.uid !== '*')
+          .map(member => {
+            member.editRole = false
+            member.updatedRoles = member.roles.map(role => role.role)
+            member.hasSystemPolicy = member.policies.find(
+              policy => policy.type === 'system'
+            )
+            return member
+          })
+
+        const allMember = res.find(member => member.uid === '*')
+        if (allMember) {
+          allMember.roles.forEach(role => {
+            if (this.isPublic && role.role === 'read-only') {
+              role.readOnly = true
+            }
+            members.push(role)
+          })
+          allMember.policies.forEach(policy => {
+            if (policy.type === 'system') {
+              policy.hasSystemPolicy = true
+            }
+            members.push(policy)
+          })
+        }
+        this.members = members
       }
     },
     async getRole () {
@@ -121,7 +243,7 @@ export default {
       if (roles && publicRoles) {
         this.rolesFiltered = roles
         publicRoles.forEach(item => {
-          this.rolesFiltered.push({ name: item.name, isPublic: true })
+          this.rolesFiltered.push({ ...item, isPublic: true })
         })
       }
     }
@@ -199,6 +321,30 @@ export default {
         }
       }
     }
+  }
+
+  .role-content {
+    display: flex;
+    align-items: center;
+
+    .role-content-left {
+      margin-right: 20px;
+    }
+
+    .role-icon {
+      color: #1989fa;
+      font-size: 16px;
+      cursor: pointer;
+
+      &.role-close {
+        margin-right: 5px;
+        color: #f56c6c;
+      }
+    }
+  }
+
+  .show-gray {
+    color: #99a9bf;
   }
 }
 </style>

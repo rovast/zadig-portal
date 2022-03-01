@@ -90,6 +90,7 @@ export default {
       default: () => null
     },
     envNames: {
+      // when envName is different from initEnvNames, the envNames is all name
       // 环境列表
       type: Array,
       required: false,
@@ -116,8 +117,14 @@ export default {
       }
     },
     envScene: {
+      // updateRenderSet: update env variable;  updateEnv, createEnv
       type: String,
       required: true
+    },
+    baseEnvObj: {
+      // used for envNames is different from initEnvNames(which used to request api)
+      type: Object,
+      default: () => null // {envName: baseEvnName}
     }
   },
   data () {
@@ -133,7 +140,8 @@ export default {
       disabledEnv: [],
       showReview: false,
       listKeyValues: {},
-      searchService: ''
+      searchService: '',
+      getChartValuesFinished: 0
     }
   },
   computed: {
@@ -200,7 +208,12 @@ export default {
         {
           projectName: this.projectName,
           serviceName: this.selectedChart,
-          envName: envName === 'DEFAULT' ? '' : envName,
+          envName:
+            envName === 'DEFAULT'
+              ? ''
+              : this.baseEnvObj
+                ? this.baseEnvObj[envName]
+                : envName,
           format: kvFlag ? 'flatMap' : 'yaml',
           scene: this.envScene
         },
@@ -230,7 +243,7 @@ export default {
       const chartValues = []
       const serviceNames = Object.keys(this.allChartNameInfo)
       const chartNameInfo = this.allChartNameInfo
-      const envNames = this.envNames.length ? this.envNames : ['DEFAULT']
+      const envNames = this.envNames.length ? this.envNames : [this.selectedEnv]
       for (const serviceName in chartNameInfo) {
         if (!serviceNames.includes(serviceName)) {
           continue
@@ -261,16 +274,18 @@ export default {
     resetAllChartNameInfo () {
       this.allChartNameInfo = {}
     },
-    initAllChartNameInfo (envName = 'DEFAULT') {
+    initAllChartNameInfo (envName = '') {
       if (!this.chartNames) {
         return
       }
       this.chartNames.forEach(chart => {
         const envInfos = {}
+        envName = envName || chart.envName || 'DEFAULT' // priority: envName -> chart.envName -> 'DEFAULT'
         envInfos[envName] = {
           ...cloneDeep(chartInfoTemp),
-          ...chart,
-          envName: envName === 'DEFAULT' ? '' : envName
+          ...cloneDeep(chart),
+          envName: envName === 'DEFAULT' ? '' : envName,
+          yamlSource: chart.overrideYaml ? 'freeEdit' : 'default'
         }
         this.$set(this.allChartNameInfo, chart.serviceName, {
           ...this.allChartNameInfo[chart.serviceName],
@@ -288,19 +303,21 @@ export default {
       return Promise.all(valid)
     },
     async getChartValuesYaml ({ envName }) {
+      this.getChartValuesFinished++
       const fn =
         this.envScene === 'updateRenderSet'
-          ? getChartValuesYamlAPI
-          : getAllChartValuesYamlAPI
+          ? getChartValuesYamlAPI // get current env info
+          : getAllChartValuesYamlAPI // get current project info
       const serviceNames = this.chartNames
         ? this.chartNames.map(chart => chart.serviceName)
-        : []
+        : [] // get all service info in current env
       const res = await fn(this.projectName, envName, serviceNames).catch(
         err => {
           this.disabledEnv.push(envName)
           console.log(err)
         }
       )
+      this.getChartValuesFinished--
       if (res) {
         if (this.disabledEnv.includes(envName)) {
           const id = this.disabledEnv.indexOf(envName)
@@ -330,6 +347,25 @@ export default {
         })
         this.selectedChart = Object.keys(this.allChartNameInfo)[0]
       }
+    },
+    copyEnvChartInfo (envName, initEnvName) {
+      const services = Object.keys(this.allChartNameInfo).filter(name => {
+        return this.allChartNameInfo[name][initEnvName]
+      })
+      if (
+        this.allChartNameInfo[services[0]] &&
+        this.allChartNameInfo[services[0]][envName] &&
+        this.allChartNameInfo[services[0]][envName].copy
+      ) {
+        return
+      }
+      services.forEach(name => {
+        const charts = this.allChartNameInfo[name]
+        this.$set(charts, envName, {
+          ...cloneDeep(charts[initEnvName]),
+          copy: true
+        })
+      })
     }
   },
   watch: {
@@ -367,6 +403,9 @@ export default {
     chartNames: {
       handler (newV, oldV) {
         if (newV) {
+          if (newV[0] && newV[0].envName) {
+            this.selectedEnv = newV[0].envName
+          }
           this.initAllChartNameInfo()
         }
       },
@@ -379,6 +418,13 @@ export default {
         }
       },
       immediate: true
+    },
+    getChartValuesFinished (val) {
+      if (val === 0 && this.baseEnvObj) {
+        Object.keys(this.baseEnvObj).forEach(env => {
+          this.copyEnvChartInfo(env, this.baseEnvObj[env])
+        })
+      }
     }
   },
   components: {

@@ -27,6 +27,7 @@
         :envScene="envScene"
         :showEnvTabs="showEnvTabs"
         :defaultEnvValue="defaultEnvValue"
+        :baseEnvObj="baseEnvObj"
       ></ChartValues>
     </div>
   </div>
@@ -71,6 +72,15 @@ export default {
     envScene: {
       type: String,
       required: true
+    },
+    baseEnvObj: {
+      type: Object,
+      default: () => null // {envName: baseEvnName}
+    },
+    currentEnvValue: {
+      // current env yaml
+      type: String,
+      required: false
     }
   },
   computed: {
@@ -82,11 +92,16 @@ export default {
       }
     }
   },
+  watch: {
+    currentEnvValue: {
+      handler (val) {
+        this.$set(this.defaultEnvsValues, 'DEFAULT', val || '')
+        this.$refs.envValuesRef && this.$refs.envValuesRef.initEnvVariableInfo()
+      },
+      immediate: true
+    }
+  },
   methods: {
-    saveEnvYaml (data) {
-      const envName = data.envName || 'DEFAULT'
-      this.$set(this.defaultEnvsValues, envName, data.defaultValues)
-    },
     validate () {
       const valid = []
       valid.push(this.$refs.envValuesRef.validate())

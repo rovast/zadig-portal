@@ -32,20 +32,18 @@
             </div>
           </div>
         </div>
-        <div>
-          <VirtualList
-            v-if="availableWorkflows.length > 0"
-            class="virtual-list-container"
-            :data-key="'name'"
-            :data-sources="availableWorkflows"
-            :keeps="20"
-            :estimate-size="82"
-            :data-component="itemComponent"
-          />
-          <div v-if="availableWorkflows.length === 0 && !workflowListLoading" class="no-product">
-            <img src="@assets/icons/illustration/workflow.svg" alt />
-            <p>暂无可展示的工作流，请手动新建工作流</p>
-          </div>
+        <VirtualList
+          v-if="availableWorkflows.length > 0"
+          class="virtual-list-container"
+          :data-key="'name'"
+          :data-sources="availableWorkflows"
+          :keeps="20"
+          :estimate-size="82"
+          :data-component="itemComponent"
+        />
+        <div v-if="availableWorkflows.length === 0 && !workflowListLoading" class="no-product">
+          <img src="@assets/icons/illustration/workflow.svg" alt />
+          <p>暂无可展示的工作流，请手动新建工作流</p>
         </div>
       </ul>
     </div>
@@ -266,6 +264,14 @@ export default {
     deleteProductWorkflow (workflow) {
       const name = workflow.name
       const projectName = workflow.projectName
+      console.log('ProductWorkflow', workflow, workflow.base_refs)
+      if (workflow.base_refs && workflow.base_refs.length) {
+        this.$alert(`工作流 ${name} 已在协作模式 ${workflow.base_refs.join('、')} 中被定义为基准工作流，如需删除请先修改协作模式！`, '删除工作流', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+        return
+      }
       this.$prompt('输入工作流名称确认', '删除工作流 ' + name, {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -287,6 +293,13 @@ export default {
       })
     },
     deleteCommonWorkflow (workflow) {
+      if (workflow.base_refs && workflow.base_refs.length) {
+        this.$alert(`工作流 ${workflow.name} 已在协作模式 ${workflow.base_refs.join('、')} 中被定义为基准工作流，如需删除请先修改协作模式！`, '删除工作流', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+        return
+      }
       this.$prompt('输入工作流名称确认', `删除工作流 ${workflow.name}`, {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -413,6 +426,7 @@ export default {
 .workflow-list {
   position: relative;
   flex: 1;
+  height: calc(~'100% - 60px');
   overflow-y: hidden;
   background-color: @globalBackgroundColor;
 
@@ -542,8 +556,9 @@ export default {
   }
 
   .pipeline-loading {
-    height: calc(~'100vh - 150px');
+    height: 100%;
     margin: 0 12px;
+    overflow: hidden;
 
     .virtual-list-container {
       height: 100%;
@@ -570,8 +585,10 @@ export default {
   }
 
   .workflow-ul {
+    height: 100%;
     margin: 0;
     padding: 0;
+    overflow: hidden;
     list-style: none;
 
     .start-build {

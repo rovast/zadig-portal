@@ -480,6 +480,12 @@ export default {
         }
         this.mode = 'updated'
         this.changedInfo = changedInfo
+        if (initial.recycle_day !== current.recycle_day) {
+          if (!this.changedInfo.updated) {
+            this.changedInfo.updated = {}
+          }
+          this.changedInfo.updated.recycle_day = current.recycle_day
+        }
       }
       if (
         Object.keys(this.changedInfo).length ||

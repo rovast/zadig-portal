@@ -10,9 +10,9 @@
       <div class="inner-rule">
         <el-checkbox v-model="systemMatchRules[0].inUse"></el-checkbox>
         <div class="rule">
-            <span class="title">格式一</span>
-            <div class="rule-items">
-             image:
+          <span class="title">格式一</span>
+          <div class="rule-items">
+            image:
             <br />&nbsp;&nbsp;repository: 仓库地址/命名空间/镜像名
             <br />&nbsp;&nbsp;tag: 标签名
             <br />
@@ -21,9 +21,9 @@
       </div>
       <div class="inner-rule">
         <el-checkbox v-model="systemMatchRules[1].inUse"></el-checkbox>
-          <div class="rule">
-            <span class="title">格式二</span>
-            <div class="rule-items">
+        <div class="rule">
+          <span class="title">格式二</span>
+          <div class="rule-items">
             image: 仓库地址/命名空间/镜像名:标签名
             <br />
           </div>
@@ -33,30 +33,30 @@
       <div>
         <el-form ref="ruleForm" :model="formModel" v-if="formModel.matchRules.filter(rule => !rule.presetId).length > 0">
           <div v-for="(rule,index) in formModel.matchRules" :key="index">
-          <el-row v-if="!rule.presetId"  :gutter="5">
-            <el-col :span="8">
-              <el-form-item :prop="'matchRules.'+ index +'.repo'" :rules="{ required: true, message: '仓库地址不能为空', trigger: 'blur' }">
-                <el-input v-model="rule.repo" placeholder="仓库地址/命名空间" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1" class="separator">/</el-col>
-            <el-col :span="4">
-              <el-form-item :prop="'matchRules.'+ index +'.image'" :rules="{ required: true, message: '镜像名称不能为空', trigger: 'blur' }">
-                <el-input v-model="rule.image" placeholder="镜像名" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1" class="separator">:</el-col>
-            <el-col :span="4">
-              <el-form-item :prop="'matchRules.'+ index +'.tag'" :rules="{ required: true, message: '标签名称不能为空', trigger: 'blur' }">
-                <el-input v-model="rule.tag" placeholder="标签名" size="mini"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item  style="text-align: right;">
-                <el-button @click="deleteCustomRule(index)" class="operation-btn" size="mini" icon="el-icon-close"></el-button>
-              </el-form-item>
-            </el-col>
-          </el-row>
+            <el-row v-if="!rule.presetId" :gutter="5">
+              <el-col :span="8">
+                <el-form-item :prop="'matchRules.'+ index +'.repo'" :rules="{ required: true, message: '仓库地址不能为空', trigger: 'blur' }">
+                  <el-input v-model="rule.repo" placeholder="仓库地址/命名空间" size="mini"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="1" class="separator">/</el-col>
+              <el-col :span="4">
+                <el-form-item :prop="'matchRules.'+ index +'.image'" :rules="{ required: true, message: '镜像名称不能为空', trigger: 'blur' }">
+                  <el-input v-model="rule.image" placeholder="镜像名" size="mini"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="1" class="separator">:</el-col>
+              <el-col :span="4">
+                <el-form-item :prop="'matchRules.'+ index +'.tag'" :rules="{ required: true, message: '标签名称不能为空', trigger: 'blur' }">
+                  <el-input v-model="rule.tag" placeholder="标签名" size="mini"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
+                <el-form-item style="text-align: right;">
+                  <el-button @click="deleteCustomRule(index)" class="operation-btn" size="mini" icon="el-icon-close"></el-button>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </div>
         </el-form>
         <el-button type="text" size="small" icon="el-icon-circle-plus-outline" @click="addMatchRule">添加</el-button>
@@ -171,9 +171,13 @@ export default {
       this.formModel.matchRules.splice(index, 1)
     },
     addMatchRule () {
-      this.$refs.ruleForm.validate().then(res => {
+      if (this.$refs.ruleForm) {
+        this.$refs.ruleForm.validate().then(() => {
+          this.formModel.matchRules.push(cloneDeep(this.customRule))
+        })
+      } else {
         this.formModel.matchRules.push(cloneDeep(this.customRule))
-      })
+      }
     },
     getMatchRules () {
       this.pageLoading = true
@@ -189,7 +193,9 @@ export default {
     },
     updateMatchRules () {
       this.addLoading = true
-      updateMatchRulesAPI(this.projectName, { rules: this.formModel.matchRules })
+      updateMatchRulesAPI(this.projectName, {
+        rules: this.formModel.matchRules
+      })
         .then(res => {
           this.$message.success(`更新规则成功！`)
           this.updateMatchRule = false

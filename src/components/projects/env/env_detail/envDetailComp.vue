@@ -319,7 +319,7 @@
             <template slot-scope="scope">
               <template>
                 <el-tooltip v-for="(image,index) in scope.row.images" :key="index" effect="dark" :content="image" placement="top">
-                  <span style="display: block;">{{imageNameSplit(image) }}</span>
+                  <span style="display: inline-block;">{{imageNameSplit(image) }}</span>
                 </el-tooltip>
               </template>
             </template>

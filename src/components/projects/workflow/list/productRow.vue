@@ -1,7 +1,7 @@
 <template>
-  <li class="product-workflow-row" :class="recentTaskStatus">
-    <section @click="setFavorite(projectName,name,type)" class="favorite el-icon-star-on" :class="{'liked':isFavorite}"></section>
-    <section class="product-header">
+  <li class="product-workflow-row" :class="recentTaskStatus" @click="$router.push(pipelineLink)">
+    <section @click.stop="setFavorite(projectName,name,type)" class="favorite el-icon-star-on" :class="{'liked':isFavorite}"></section>
+    <section class="product-header" @click.stop>
       <div>
         <router-link :to="pipelineLink">{{ name }}</router-link>
         <el-tag v-if="type === 'common'" size="mini">通用</el-tag>
@@ -37,7 +37,7 @@
       <div class="gray-desc">成功率</div>
       <div class="value">{{ avgSuccessRate || '*' }}</div>
     </section>
-    <section class="operations">
+    <section class="operations" @click.stop>
       <slot name="operations"></slot>
     </section>
   </li>
@@ -180,6 +180,7 @@ export default {
   line-height: 22px;
   background: #fff;
   border-left: 6px solid #77797d;
+  cursor: pointer;
 
   &.running,
   &.elected {
@@ -230,6 +231,7 @@ export default {
 
   .product-header {
     flex: 0 0 20%;
+    cursor: auto;
 
     a {
       color: @themeColor;
@@ -278,6 +280,7 @@ export default {
     align-items: center;
     justify-content: space-around;
     font-size: 23px;
+    cursor: auto;
   }
 }
 </style>

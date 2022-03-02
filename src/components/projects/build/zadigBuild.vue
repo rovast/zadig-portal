@@ -103,7 +103,7 @@ const initBuildConfig = {
   repos: [],
   timeout: 60,
   cache_enable: false,
-  cache_dir_type: '',
+  cache_dir_type: 'workspace',
   cache_user_dir: '',
   pre_build: {
     res_req: 'low', // high 、medium、low、min、define

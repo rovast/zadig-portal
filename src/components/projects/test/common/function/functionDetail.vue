@@ -124,7 +124,7 @@ export default {
         repos: [],
         timeout: 60,
         cache_enable: false,
-        cache_dir_type: '',
+        cache_dir_type: 'workspace',
         cache_user_dir: '',
         hook_ctl: {
           enabled: false,

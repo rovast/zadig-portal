@@ -401,11 +401,6 @@ export default {
     }
   }
 
-  .security-table,
-  .release-table {
-    margin-left: 48px;
-  }
-
   .el-table__expanded-cell {
     padding: 0;
   }

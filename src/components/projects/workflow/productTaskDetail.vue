@@ -1115,11 +1115,6 @@ export default {
     }
   }
 
-  .security-table,
-  .release-table {
-    margin-left: 48px;
-  }
-
   .show-test-result {
     a {
       color: @themeColor;

@@ -93,6 +93,7 @@
                              v-model.number="build[build.prNumberPropName]"
                              size="small"
                              placeholder="请选择 PR"
+                             allow-create
                              filterable
                              clearable>
 

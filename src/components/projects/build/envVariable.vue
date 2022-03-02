@@ -4,7 +4,7 @@
       <span class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义{{ isTest ? '测试' : '构建' }}变量</span>
       <el-button v-if="preEnvs.envs.length===0" @click="addFirstBuildEnv()" type="primary" size="mini" plain>新增</el-button>
       <el-row v-for="(app,build_env_index) in preEnvs.envs" :key="build_env_index" :gutter="2">
-        <el-col :span="narrowWidth ? 4 : 4">
+        <el-col :span="4">
           <el-form-item class="display-flex">
             <el-select
               v-model="preEnvs.envs[build_env_index].type"
@@ -24,12 +24,12 @@
             ></i>
           </el-form-item>
         </el-col>
-        <el-col :span="narrowWidth ? 4 : 4">
+        <el-col :span="4">
           <el-form-item :prop="'envs.' + build_env_index + '.key'" :rules="{required: true, message: '键 不能为空', trigger: 'blur'}">
             <el-input placeholder="键" v-model="preEnvs.envs[build_env_index].key" size="small"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="narrowWidth ? 4 : 4">
+        <el-col :span="4">
           <el-form-item
             :prop="'envs.' + build_env_index + '.value'"
             :rules="{required: true, message: '值 不能为空', trigger: ['blur', 'change']}"
@@ -46,7 +46,7 @@
             <el-input v-else placeholder="值" v-model="preEnvs.envs[build_env_index].value" size="small"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="narrowWidth ? 4 : 3" v-show="preEnvs.envs[build_env_index].type!=='choice'">
+        <el-col :span="mini ? 4 : 3" v-show="preEnvs.envs[build_env_index].type!=='choice'">
           <el-form-item prop="is_credential">
             <el-checkbox v-model="preEnvs.envs[build_env_index].is_credential">
               敏感信息
@@ -56,7 +56,7 @@
             </el-checkbox>
           </el-form-item>
         </el-col>
-        <el-col :span="narrowWidth ? 8 : 5">
+        <el-col :span="8">
           <el-form-item style="margin-right: 0;">
             <div class="app-operation">
               <el-button v-if="preEnvs.envs.length >= 1" @click="deleteBuildEnv(build_env_index)" type="danger" size="small" plain>删除</el-button>
@@ -115,7 +115,7 @@ export default {
       type: Boolean,
       default: false
     },
-    narrowWidth: {
+    mini: {
       type: Boolean,
       default: false
     },

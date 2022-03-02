@@ -81,6 +81,7 @@
             canSelectBuildName
             fromServicePage
             class="code-content"
+            mini
           ></component>
           <CodeMirror
             v-if="currentCode.type==='file'"

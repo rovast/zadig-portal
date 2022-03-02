@@ -49,9 +49,10 @@ export default {
             this.isUpdate = true
             if (cs.source && cs.source === 'chartTemplate') {
               this.$store.commit('SERVICE_SOURCE', 'chartTemplate')
-              this.serviceSource = 'chartTemplateTemplate'
             } else if (cs.source && cs.source === 'chartRepo') {
-              this.serviceSource = 'chart'
+              this.$store.commit('SERVICE_SOURCE', 'chart')
+            } else {
+              this.$store.commit('SERVICE_SOURCE', 'git')
             }
           } else {
             this.isUpdate = false

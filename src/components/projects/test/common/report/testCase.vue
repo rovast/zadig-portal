@@ -167,9 +167,9 @@ export default {
 .test-case-container {
   position: relative;
   flex: 1;
+  height: 100%;
   padding: 0 20px;
   overflow: auto;
-  background-color: #fff;
 
   .el-breadcrumb {
     font-size: 16px;

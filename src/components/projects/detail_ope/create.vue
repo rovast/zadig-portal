@@ -406,12 +406,16 @@ export default {
   width: 130px;
 }
 
+/deep/.el-dialog__header {
+  padding: 0;
+}
+
 /deep/.el-dialog__body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   min-height: calc(~'100% - 30px');
-  padding-top: 0;
+  padding-top: 15px;
   padding-bottom: 10px;
 }
 
@@ -423,7 +427,7 @@ export default {
   .project-contexts-modal__header {
     width: 80%;
     min-width: 800px;
-    margin: 0 auto 20px;
+    margin: 0 auto 16px;
     padding-bottom: 14px;
     font-weight: 300;
     font-size: 18px;
@@ -586,7 +590,7 @@ export default {
   .project-contexts-modal__footer {
     width: 80%;
     min-width: 800px;
-    margin: 20px auto 0;
+    margin: 16px auto 0;
     padding-top: 14px;
     text-align: center;
     border-top: 1px solid rgba(210, 210, 210, 0.5);

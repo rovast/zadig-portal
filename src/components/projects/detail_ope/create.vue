@@ -38,7 +38,7 @@
               @click="switchType(typeItem.type)"
               :class="{selected: projectType === typeItem.type}"
             >
-              <i class="type-icon" :class="[projectType === typeItem.type ? 'el-icon-success' : typeItem.icon]"></i>
+              <i class="type-icon" :class="[projectType === typeItem.type ? 'el-icon-success selected' : typeItem.icon]"></i>
               <div class="project-type-item__desc">
                 <div class="title">{{ typeItem.title }}</div>
                 <div class="desc">{{ typeItem.firstDesc }}</div>
@@ -203,7 +203,7 @@ export default {
           title: 'K8s 托管项目',
           firstDesc: '托管现有 Kubernetes 集群中的资源',
           secondDesc: '支持服务镜像的更新',
-          icon: 'iconfont iconvery-trustee"'
+          icon: 'iconfont iconvery-trustee'
         },
         {
           type: 'host',
@@ -538,6 +538,10 @@ export default {
             flex: 0 0 74px;
             font-size: 24px;
             text-align: center;
+
+            &.selected {
+              color: @themeColor;
+            }
           }
 
           &:hover {

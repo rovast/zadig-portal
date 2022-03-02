@@ -332,7 +332,7 @@ export default {
     }
 
     .role-icon {
-      color: #1989fa;
+      color: @themeColor;
       font-size: 16px;
       cursor: pointer;
 

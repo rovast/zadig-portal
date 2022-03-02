@@ -90,7 +90,7 @@
       <el-table v-if="projectList.length > 0" :data="projectList" stripe style="width: 100%;">
         <el-table-column label="项目名称">
           <template slot-scope="scope">
-            <router-link :to="`/v1/projects/detail/${scope.row.name}`" class="project-name">
+            <router-link :to="`/v1/projects/detail/${scope.row.name}/detail`" class="project-name">
               {{scope.row.alias?scope.row.alias:scope.row.name }}
               <el-tooltip v-if="!scope.row.public" effect="dark" content="私有项目" placement="top">
                 <i class="icon iconfont iconprivate"></i>

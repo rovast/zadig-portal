@@ -87,15 +87,22 @@ export default {
 
 <style lang="less">
 .no-content {
-  width: 360px;
-  height: 300px;
-  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 
   img {
-    display: block;
-    width: 30%;
-    height: auto;
-    margin: 50px auto 0 auto;
+    width: 200px;
+    height: 200px;
+  }
+
+  p {
+    color: #606266;
+    font-size: 15px;
   }
 }
 

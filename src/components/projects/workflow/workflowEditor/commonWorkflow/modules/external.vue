@@ -43,7 +43,7 @@
         <el-switch v-model="externalData.is_callback"></el-switch>
         <div v-show="externalData.is_callback">请按规定调用接口：{{`${origin}/api/callback`}} 接口</div>
       </el-form-item>
-      <el-form-item label="超时">
+      <el-form-item label="超时" v-show="externalData.is_callback">
         <el-input-number v-model="externalData.timeout" :min="1" :max="100" size="small"></el-input-number>分钟
       </el-form-item>
     </el-form>

@@ -55,7 +55,7 @@
             </el-input>
           </el-form-item>
           <el-form-item label="Dockerfile 来源" prop="source">
-            <el-select size="small" v-model="buildConfig.post_build.docker_build.source" placeholder="请选择">
+            <el-select size="small" v-model="buildConfig.post_build.docker_build.source" placeholder="请选择" @change="$refs.dockerBuildRef.clearValidate()">
               <el-option label="代码仓库" value="local"></el-option>
               <el-option label="模板库" value="template"></el-option>
             </el-select>
@@ -174,7 +174,7 @@ export default {
         docker_file: [
           {
             type: 'string',
-            message: '请填写Dockerfile路径',
+            message: '请填写 Dockerfile 路径',
             required: true,
             trigger: 'blur'
           }

@@ -136,11 +136,11 @@ export default {
       this.$refs[formName]
         .validate()
         .then(data => {
-          console.log('yeah, success!', data)
           const payload = data
           payload.source = this.source
           payload.product_name = this.projectName
           this.saveLoading = true
+          this.$emit('updateBtnLoading', true)
           reqAPI(payload).then(() => {
             this.saveLoading = false
             this.followUpFn && this.followUpFn()
@@ -152,6 +152,7 @@ export default {
         })
         .catch(err => {
           console.log('傻了吧', err)
+          this.saveLoading = true
         })
     },
     async loadBuild (buildConfigName) {

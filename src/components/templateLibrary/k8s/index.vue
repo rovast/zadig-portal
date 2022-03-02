@@ -40,7 +40,7 @@
             </template>
           </template>
           <div v-else class="no-content">
-            <img src="@assets/icons/illustration/editor_nodata.svg" alt />
+            <img src="@assets/icons/illustration/editorNoService.svg" alt />
             <p v-if="files.length === 0">
               暂无模板，点击
               <el-button size="mini" icon="el-icon-plus" @click="createFile()" plain circle></el-button>创建模板

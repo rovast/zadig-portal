@@ -284,7 +284,7 @@ export default {
       position: relative;
       top: 0;
       flex: 1;
-      max-width: 30px;
+      max-width: 25px;
       margin-right: 25px;
       margin-right: 10px;
     }

@@ -1,5 +1,5 @@
 <template>
-  <div class="buildConfig-container">
+  <div v-loading="loading" element-loading-text="加载中..." element-loading-spinner="iconfont iconfont-loading iconvery-build" class="buildConfig-container">
     <!--start of edit service target dialog-->
     <el-dialog title="更新服务组件" width="40%" custom-class="create-buildconfig" :visible.sync="dialogEditTargetVisible">
       <el-form label-position="top" :model="editBuildManageTargets" @submit.native.prevent ref="editTargetForm">
@@ -19,7 +19,7 @@
       </div>
     </el-dialog>
     <!--end of edit service target dialog-->
-    <section class="tab-container">
+    <section v-if="buildConfigs.length > 0" class="tab-container">
       <div class="build-search-container">
         <el-input v-model.lazy="searchBuildConfig" placeholder="请输入构建名称" class="search-test" autofocus prefix-icon="el-icon-search"></el-input>
       </div>
@@ -64,6 +64,10 @@
         </el-table-column>
       </el-table>
     </section>
+    <div v-if="buildConfigs.length === 0 && !loading" class="build-not-available">
+      <img src="@assets/icons/illustration/build.svg" alt />
+      <p>暂无可展示的构建，请手动新建构建</p>
+    </div>
   </div>
 </template>
 
@@ -87,7 +91,8 @@ export default {
       },
       searchBuildConfig: '',
       dialogEditTargetVisible: false,
-      searchInputVisible: false
+      searchInputVisible: false,
+      loading: false
     }
   },
   methods: {
@@ -152,7 +157,9 @@ export default {
     },
     getBuildConfig () {
       const projectName = this.projectName
+      this.loading = true
       getBuildConfigsAPI(projectName).then(res => {
+        this.loading = false
         res.forEach(element => {
           element.targets = element.targets.map(t => {
             t.key = t.service_name + '/' + t.service_module
@@ -214,6 +221,25 @@ export default {
   height: 100%;
   padding: 15px 20px;
   overflow: auto;
+
+  .build-not-available {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 400px;
+      height: 300px;
+      padding: 45px 45px;
+    }
+
+    p {
+      color: #606266;
+      font-size: 15px;
+    }
+  }
 
   .create-buildconfig {
     width: 400px;

@@ -7,7 +7,7 @@
           该环境暂无服务，请点击
           <router-link :to="`/v1/projects/detail/${projectName}/services`">
             <el-button type="primary" size="mini" round plain>服务</el-button>
-          </router-link>新建服务
+          </router-link> 新建服务
         </p>
       </div>
     </div>

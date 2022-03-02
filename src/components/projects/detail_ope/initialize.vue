@@ -35,6 +35,7 @@
       @resetVisible="initEnvInfo"
       :currentEnv="currentEnv"
       :currentInfo="currentInfo"
+      :baseEnvObj="baseEnvObj"
     ></InitEnvDialog>
   </div>
 </template>
@@ -53,7 +54,8 @@ export default {
       },
       dialogVisible: false,
       currentEnv: '',
-      currentInfo: null
+      currentInfo: null,
+      baseEnvObj: {}
     }
   },
   computed: {
@@ -69,7 +71,9 @@ export default {
         )
       }
       initializeCollaborationAPI(this.projectName, payload).then(res => {
-        this.$message.success(`项目更新成功，环境更新可能需要一些时间，请稍后使用！`)
+        this.$message.success(
+          `项目更新成功，环境更新可能需要一些时间，请稍后使用！`
+        )
         this.$router.go(-1)
       })
     },
@@ -94,6 +98,13 @@ export default {
         res.product = uniqBy(res.product, fn)
         res.workflow = uniqBy(res.workflow, fn)
         this.collaborationData = res
+        const baseEnvObj = {}
+        res.product
+          .filter(product => product.collaboration_type === 'new')
+          .forEach(product => {
+            baseEnvObj[product.name] = product.base_name
+          })
+        this.baseEnvObj = baseEnvObj
       })
     },
     editEnvInfo (env) {

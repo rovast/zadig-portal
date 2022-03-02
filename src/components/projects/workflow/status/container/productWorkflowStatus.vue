@@ -23,26 +23,7 @@
               </span>
             </span>
             <span class="stages-tag">
-              <el-tag v-if="showStage(task.stages,'buildv2')"
-                      size=small
-                      class="stage-tag"
-                      type="primary">构建</el-tag>
-              <el-tag v-if="showStage(task.stages,'deploy')"
-                      size=small
-                      class="stage-tag"
-                      type="primary">部署</el-tag>
-              <el-tag v-if="showStage(task.stages,'artifact')"
-                      size=small
-                      class="stage-tag"
-                      type="primary">交付物部署</el-tag>
-              <el-tag v-if="showStage(task.stages,'testingv2')"
-                      size=small
-                      class="stage-tag"
-                      type="primary">测试</el-tag>
-              <el-tag v-if="showStage(task.stages,'release_image')"
-                      size=small
-                      class="stage-tag"
-                      type="primary">分发</el-tag>
+              <CusTags :values="getStages(task.stages)" class="item"/>
             </span>
             <section class="basic-info">
               <p class="author"><i class="el-icon-user"></i> {{task.task_creator}}</p>
@@ -395,26 +376,7 @@
             </span>
           </span>
           <span class="stages-tag">
-            <el-tag v-if="showStage(task.stages,'buildv2')"
-                    size=small
-                    class="stage-tag"
-                    type="primary">构建</el-tag>
-            <el-tag v-if="showStage(task.stages,'deploy')"
-                    size=small
-                    class="stage-tag"
-                    type="primary">部署</el-tag>
-            <el-tag v-if="showStage(task.stages,'artifact')"
-                    size=small
-                    class="stage-tag"
-                    type="primary">交付物部署</el-tag>
-            <el-tag v-if="showStage(task.stages,'testingv2')"
-                    size=small
-                    class="stage-tag"
-                    type="primary">测试</el-tag>
-            <el-tag v-if="showStage(task.stages,'release_image')"
-                    size=small
-                    class="stage-tag"
-                    type="primary">分发</el-tag>
+              <CusTags :values="getStages(task.stages)" class="item"/>
           </span>
           <section class="basic-info">
             <p class="author"><i class="el-icon-user"></i> {{task.task_creator}}</p>
@@ -512,14 +474,36 @@ export default {
     wordTranslation (word, category, subitem = '') {
       return wordTranslate(word, category, subitem)
     },
-    showStage (stages, stage_name) {
+    showStage (stages, stageName) {
       let flag = false
       stages.forEach(stage => {
-        if (stage_name === stage.type) {
+        if (stageName === stage.type) {
           flag = true
         }
       })
       return flag
+    },
+    getStages (stages) {
+      if (!stages) {
+        return
+      }
+      const stageNames = []
+      if (stages.find(item => item.type === 'buildv2')) {
+        stageNames.push('构建')
+      }
+      if (stages.find(item => item.type === 'deploy')) {
+        stageNames.push('部署')
+      }
+      if (stages.find(item => item.type === 'artifact')) {
+        stageNames.push('交付物部署')
+      }
+      if (stages.find(item => item.type === 'testingv2')) {
+        stageNames.push('测试')
+      }
+      if (stages.find(item => item.type === 'release_image')) {
+        stageNames.push('分发')
+      }
+      return stageNames
     },
     showTaskDetail (task_id) {
       this.taskDetailExpand[task_id] = true
@@ -709,7 +693,7 @@ export default {
           padding-right: 15px;
           padding-left: 15px;
           color: #fff;
-          font-weight: bold;
+          font-weight: 400;
           font-size: 13px;
           line-height: 30px;
           text-align: center;
@@ -721,7 +705,7 @@ export default {
           }
 
           &.running {
-            background-color: #1989fa;
+            background-color: @themeColor;
           }
 
           &.pending {
@@ -750,7 +734,7 @@ export default {
 
             label {
               color: #a3a3a3;
-              font-weight: bold;
+              font-weight: 400;
               font-size: 14px;
               line-height: 18px;
             }
@@ -909,7 +893,7 @@ export default {
         }
 
         &.running {
-          border-left-color: #1989fa;
+          border-left-color: @themeColor;
           animation: blink 1.6s infinite;
         }
 
@@ -946,7 +930,7 @@ export default {
         }
 
         .running::before {
-          background-color: #1989fa;
+          background-color: @themeColor;
         }
 
         .passed::before {

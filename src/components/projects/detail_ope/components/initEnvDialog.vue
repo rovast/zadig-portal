@@ -9,6 +9,7 @@
         :envScene="`updateRenderSet`"
         :chartNames="chartNames"
         :currentEnvValue="currentEnvValue"
+        :baseEnvObj="baseEnvObj"
       ></HelmEnvTemplate>
     </div>
     <div slot="footer">
@@ -26,7 +27,8 @@ export default {
   props: {
     visible: Boolean,
     currentEnv: String,
-    currentInfo: Object
+    currentInfo: Object,
+    baseEnvObj: Object
   },
   data () {
     return {

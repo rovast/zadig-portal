@@ -9,8 +9,8 @@
         v-show="showGlobalVariable"
         ref="envValuesRef"
         :envName="handledEnv"
-        @envYaml="saveEnvYaml"
-        :overrideYaml="defaultEnvValue && defaultEnvValue.defaultValues"
+        :baseEnvObj="baseEnvObj"
+        :defaultEnvsValues="defaultEnvsValues"
       ></EnvValues>
     </div>
     <div class="template-block">

@@ -102,13 +102,13 @@ export default {
 .projects-pm-service-container {
   position: relative;
   flex: 1;
-  height: calc(~'100% - 60px');
+  height: 100%;
   overflow: auto;
 
   .config-container-pm {
     position: relative;
     display: flex;
-    height: calc(~'100% - 90px') !important;
+    height: calc(~'100% - 80px') !important;
     margin-bottom: 0;
     padding: 5px 15px 15px 15px;
   }

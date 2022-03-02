@@ -477,8 +477,9 @@ export default {
 .code-content {
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   width: 100%;
-  height: calc(~'100% - 60px');
+  height: 100%;
   padding: 15px 5px 0;
   overflow: auto;
 
@@ -620,7 +621,7 @@ export default {
   height: 100%;
 
   &.limit-height {
-    height: calc(~'100% - 70px');
+    height: calc(~'100% - 56px');
   }
 }
 

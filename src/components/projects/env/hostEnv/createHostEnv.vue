@@ -33,7 +33,7 @@ export default {
 .create-external-container {
   box-sizing: border-box;
   width: 100%;
-  height: calc(~'100% - 60px');
+  height: 100%;
   padding: 16px 24px;
   overflow: auto;
 

@@ -16,7 +16,7 @@
         :changeUpdateEnvDisabled="changeUpdateEnvDisabled"
         @listenCreateEvent="listenEvent"/>
       <div v-else class="no-content">
-            <img src="@assets/icons/illustration/editor_nodata.svg"
+            <img src="@assets/icons/illustration/editorNoService.svg"
                  alt="">
             <p style="color: #909399;">暂无服务，创建服务请在左侧栏点击&nbsp;<el-button size="mini"
                            icon="el-icon-plus"

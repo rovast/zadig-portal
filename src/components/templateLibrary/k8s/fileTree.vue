@@ -40,18 +40,9 @@
             <span class="file-status"
                   :class="data.status"></span>
             <i class="file-type icon el-icon-document"></i>
-            <el-tooltip
-                        effect="light"
-                        placement="top">
-              <div slot="content">
-                <span>
-                  {{`模板名：${data.name}`}}
-                </span>
-              </div>
               <div class="tree-file-name">
                 <span class="label">{{node.label}}</span>
               </div>
-            </el-tooltip>
             <template>
               <el-button v-if="data.status==='named'"
                          type="text"

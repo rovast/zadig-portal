@@ -16,10 +16,7 @@
         </div>
         <div v-for="(env, index) in collaborationData.product" :key="index" class="detail-item display-flex">
           <div>
-            <div class="item-name">
-              {{ env.name }}
-              <el-tag effect="plain" size="mini">{{ env.collaboration_type === 'share' ? '共享' : '新建' }}</el-tag>
-            </div>
+            <div class="item-name">{{ env.name }}</div>
           </div>
           <el-button v-if="env.collaboration_type === 'new'" type="primary" plain size="small" @click="editEnvInfo(env)">环境变量</el-button>
         </div>

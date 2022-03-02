@@ -6,7 +6,8 @@
           <el-button style="margin-right: 15px;" type="primary" plain>取消</el-button>
         </router-link>
         <el-button
-          @click="saveLoading=true;$refs.buildRef.handleBuildConfig()"
+          @click="$refs.buildRef.handleBuildConfig()"
+          @updateBtnLoading="saveLoading = $event"
           :loading="saveLoading"
           type="primary"
         >{{ compBind.isEdit ? '确认修改' : '立即新建' }}</el-button>

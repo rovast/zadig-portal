@@ -2,8 +2,12 @@
   <li class="product-workflow-row" :class="recentTaskStatus" @click="$router.push(pipelineLink)">
     <section @click.stop="setFavorite(projectName,name,type)" class="favorite el-icon-star-on" :class="{'liked':isFavorite}"></section>
     <section class="product-header" @click.stop>
-      <div>
-        <router-link :to="pipelineLink">{{ name }}</router-link>
+      <div class="workflow-name">
+        <router-link :to="pipelineLink">
+          <el-tooltip effect="dark" :content="name" placement="top">
+            <span class="name-span">{{ name }}</span>
+          </el-tooltip>
+        </router-link>
         <el-tag v-if="type === 'common'" size="mini">通用</el-tag>
       </div>
       <div class="gray-desc" style="margin-top: 4px;">
@@ -174,8 +178,10 @@ export default {
   flex-grow: 1;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
   height: 80px;
   margin-bottom: 8px;
+  overflow: auto;
   font-size: 14px;
   line-height: 22px;
   background: #fff;
@@ -230,12 +236,27 @@ export default {
   }
 
   .product-header {
-    flex: 0 0 20%;
+    flex: 0 0 200px;
+    max-width: 200px;
     cursor: auto;
 
-    a {
-      color: @themeColor;
-      font-weight: 500;
+    .workflow-name {
+      display: flex;
+      align-items: center;
+
+      a {
+        color: @themeColor;
+        font-weight: 500;
+
+        .name-span {
+          display: inline-block;
+          width: 160px;
+          max-width: 160px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
     }
 
     .icon {

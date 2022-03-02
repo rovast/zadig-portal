@@ -38,7 +38,7 @@
               @click="switchType(typeItem.type)"
               :class="{selected: projectType === typeItem.type}"
             >
-              <i class="type-icon" :class="[projectType === typeItem.type ? 'el-icon-success' : typeItem.icon]"></i>
+              <i class="type-icon" :class="[projectType === typeItem.type ? 'el-icon-success selected' : typeItem.icon]"></i>
               <div class="project-type-item__desc">
                 <div class="title">{{ typeItem.title }}</div>
                 <div class="desc">{{ typeItem.firstDesc }}</div>
@@ -203,7 +203,7 @@ export default {
           title: 'K8s 托管项目',
           firstDesc: '托管现有 Kubernetes 集群中的资源',
           secondDesc: '支持服务镜像的更新',
-          icon: 'iconfont iconvery-trustee"'
+          icon: 'iconfont iconvery-trustee'
         },
         {
           type: 'host',
@@ -406,12 +406,16 @@ export default {
   width: 130px;
 }
 
+/deep/.el-dialog__header {
+  padding: 0;
+}
+
 /deep/.el-dialog__body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   min-height: calc(~'100% - 30px');
-  padding-top: 0;
+  padding-top: 15px;
   padding-bottom: 10px;
 }
 
@@ -423,7 +427,7 @@ export default {
   .project-contexts-modal__header {
     width: 80%;
     min-width: 800px;
-    margin: 0 auto 20px;
+    margin: 0 auto 16px;
     padding-bottom: 14px;
     font-weight: 300;
     font-size: 18px;
@@ -534,6 +538,10 @@ export default {
             flex: 0 0 74px;
             font-size: 24px;
             text-align: center;
+
+            &.selected {
+              color: @themeColor;
+            }
           }
 
           &:hover {
@@ -586,7 +594,7 @@ export default {
   .project-contexts-modal__footer {
     width: 80%;
     min-width: 800px;
-    margin: 20px auto 0;
+    margin: 16px auto 0;
     padding-top: 14px;
     text-align: center;
     border-top: 1px solid rgba(210, 210, 210, 0.5);

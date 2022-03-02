@@ -175,7 +175,7 @@ export default {
         .activeTab {
           li {
             background-color: #e1edfa;
-            border-left: 3px solid #1989fa;
+            border-left: 3px solid @thmeColor;
 
             .view-name {
               color: #000;

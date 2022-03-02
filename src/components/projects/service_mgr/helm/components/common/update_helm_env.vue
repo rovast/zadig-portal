@@ -11,7 +11,7 @@
         v-if="chartNames"
         class="chart-value"
         ref="chartValuesRef"
-        :envNames="checkedEnvList"
+        :envNames="checkedEnvList.map(env => env.name)"
         :chartNames="chartNames"
         showEnvTabs
         :envScene="`updateEnv`"
@@ -56,7 +56,7 @@ export default {
         type: 'warning'
       }).then(() => {
         const payload = {
-          envNames: this.checkedEnvList,
+          envNames: this.checkedEnvList.map(env => env.name),
           replacePolicy: 'notUseEnvImage',
           chartValues: this.$refs.chartValuesRef.getAllChartNameInfo()
         }

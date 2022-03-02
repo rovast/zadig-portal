@@ -315,7 +315,7 @@ export default {
         .add-icon {
           position: relative;
           top: 7px;
-          color: #409eff;
+          color: @themeColor;
           font-size: 26px;
           cursor: pointer;
         }

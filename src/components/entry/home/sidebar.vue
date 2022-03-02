@@ -578,7 +578,7 @@ export default {
 
   .nav-item.active,
   .nav-item:hover {
-    background-color: #e6e6fa;
+    background-color: rgba(230, 230, 250, 0.8);
     border-radius: 6px;
 
     .nav-item-label {

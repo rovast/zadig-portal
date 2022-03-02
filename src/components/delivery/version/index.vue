@@ -160,10 +160,6 @@ export default {
           this.versionList = res
           this.loading = false
         })
-        .catch(err => {
-          this.$message.error(`获取版本信息出错：${err}`)
-          this.loading = false
-        })
     },
     getVersionServiceList () {
       const projectName = this.projectName ? this.projectName : ''

@@ -35,7 +35,7 @@
           <div v-for="(rule,index) in formModel.matchRules" :key="index">
             <el-row v-if="!rule.presetId" :gutter="5">
               <el-col :span="8">
-                <el-form-item :prop="'matchRules.'+ index +'.repo'" :rules="{ required: true, message: '仓库地址不能为空', trigger: 'blur' }">
+                <el-form-item>
                   <el-input v-model="rule.repo" placeholder="仓库地址/命名空间" size="mini"></el-input>
                 </el-form-item>
               </el-col>

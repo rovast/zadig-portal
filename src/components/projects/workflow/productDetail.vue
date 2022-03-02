@@ -351,7 +351,7 @@ export default {
 <style lang="less">
 .workflow-detail {
   position: relative;
-  height: calc(~'100% - 60px');
+  height: 100%;
   padding: 24px 30px 0;
   overflow: auto;
   font-size: 13px;

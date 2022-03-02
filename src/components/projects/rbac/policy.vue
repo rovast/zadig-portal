@@ -2,7 +2,7 @@
   <div class="rbac-policy">
     <el-alert type="info" :closable="false" description="用户与策略关联后，即可获得策略描述的权限"></el-alert>
 
-    <el-table :data="policies" style="width: 100%;">
+    <el-table :data="policies" style="width: 100%; margin-top: 15px;">
       <el-table-column prop="name" label="策略名称"></el-table-column>
       <el-table-column prop="description" label="描述信息"></el-table-column>
       <el-table-column prop="prop" label="修改时间">

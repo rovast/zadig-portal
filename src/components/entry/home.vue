@@ -152,6 +152,8 @@ body {
         }
 
         .main-content-container {
+          display: flex;
+          flex-direction: column;
           width: calc(~'100% - 176px');
           height: 100%;
           transition: width 350ms, margin-width 230ms;

@@ -1065,7 +1065,7 @@ export default {
   position: relative;
   flex: 1;
   box-sizing: border-box;
-  height: calc(~'100% - 60px');
+  height: 100%;
   padding: 24px 30px;
   overflow: auto;
 
@@ -1113,11 +1113,6 @@ export default {
     .error {
       color: #ff1989;
     }
-  }
-
-  .security-table,
-  .release-table {
-    margin-left: 48px;
   }
 
   .show-test-result {

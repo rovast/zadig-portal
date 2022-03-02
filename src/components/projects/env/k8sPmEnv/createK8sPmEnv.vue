@@ -769,7 +769,7 @@ export default {
   position: relative;
   flex: 1;
   box-sizing: border-box;
-  height: calc(~'100% - 60px');
+  height: 100%;
   padding: 16px 24px;
   overflow: auto;
 

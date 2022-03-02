@@ -33,8 +33,9 @@ export default {
 
 .projects-container {
   position: relative;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  overflow: hidden;
   background-color: @globalBackgroundColor;
 }
 </style>

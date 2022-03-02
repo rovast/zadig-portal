@@ -175,6 +175,20 @@ export default {
 
     .el-dialog__body {
       padding: 40px 106px 0;
+
+      .preload-container {
+        .service-name,
+        .contains {
+          color: #909399;
+          font-size: 13px;
+        }
+
+        .service-name {
+          display: inline-block;
+          margin-right: 4px;
+          color: #303133;
+        }
+      }
     }
 
     .preload-error {
@@ -186,18 +200,6 @@ export default {
       padding: 0;
       color: #8a8a8a;
       background: #fff;
-    }
-
-    .preload-container {
-      .service-name,
-      .contains {
-        color: #909399;
-        font-size: 13px;
-      }
-
-      .service-name {
-        color: #303133;
-      }
     }
   }
 </style>

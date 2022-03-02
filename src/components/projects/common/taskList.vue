@@ -53,11 +53,14 @@
       </el-table-column>
       <el-table-column v-if="showServiceNames"
                        min-width="180"
-                       label="服务名称"
-                       show-overflow-tooltip>
+                       label="服务名称">
         <template slot-scope="{ row }">
           <template v-if="row.build_services && row.build_services.length > 0">
-            <div  v-for="item in row.build_services.slice().sort()" :key="item" class="common-column hover-color">{{$utils.showServiceName(item)}}</div>
+            <div v-for="item in row.build_services.slice().sort()" :key="item" class="common-column hover-color">
+              <el-tooltip effect="dark" :content="$utils.showServiceName(item)" placement="top">
+                <span class="service-name-span">{{$utils.showServiceName(item)}}</span>
+              </el-tooltip>
+            </div>
           </template>
           <div v-else class="common-column">N/A</div>
         </template>
@@ -348,6 +351,14 @@ export default {
   .hover-color {
     &:hover {
       color: @themeColor;
+    }
+
+    .service-name-span {
+      display: inline-block;
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   }
 

@@ -187,9 +187,9 @@
               </div>
               <el-table :data="imagesAndConfigs"
                         style="width: 100%;">
-                <el-table-column label="服务名/服务组件">
+                <el-table-column label="服务组件(服务名称)">
                   <template slot-scope="scope">
-                    {{scope.row.serviceName}}
+                    {{$utils.showServiceName(scope.row.containerName)}}
                   </template>
                 </el-table-column>
                 <el-table-column label="镜像">

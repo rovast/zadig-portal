@@ -62,11 +62,8 @@
         <el-col :span="12">
           <div class="grid-content button-container">
             <el-button @click="stepBack"
-                       type="primary"
-                       class="btn-primary"
-                       style="margin-right: 15px;">取消</el-button>
-            <el-button class="btn-primary"
-                       @click="savePipeline()"
+                       type="primary" plain>取消</el-button>
+            <el-button @click="savePipeline()"
                        type="primary">保存</el-button>
           </div>
         </el-col>
@@ -433,18 +430,6 @@ export default {
     text-align: left;
     background-color: transparent;
     border-radius: 4px;
-
-    .btn-primary {
-      color: @themeColor;
-      background-color: rgba(25, 137, 250, 0.04);
-      border-color: rgba(25, 137, 250, 0.4);
-
-      &:hover {
-        color: #fff;
-        background-color: @themeColor;
-        border-color: @themeColor;
-      }
-    }
 
     .grid-content {
       min-height: 36px;

@@ -1442,4 +1442,10 @@ export default {
   color: @themeColor;
   cursor: pointer;
 }
+
+.el-message-box__wrapper {
+  .el-message-box__title {
+    padding-right: 20px;
+  }
+}
 </style>

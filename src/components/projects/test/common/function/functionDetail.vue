@@ -64,22 +64,22 @@
       <div style="margin-bottom: 8px;">
         <el-button type="primary" size="small" plain @click="switchAdvancedStatus">
           高级配置
-          <i :class="[showAdvancedConfig ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
+          <i :class="[test.advanced_setting_modified ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
         </el-button>
       </div>
       <AdvancedConfig
         class="common-parcel-block test-advanced-config"
-        v-show="showAdvancedConfig"
+        v-show="test.advanced_setting_modified"
         ref="advancedConfigRef"
         :testConfig="test"
         :allCodeHosts="allCodeHosts"
         :validObj="validObj"
-        @validateFailed="showAdvancedConfig = true"
+        @validateFailed="test.advanced_setting_modified = true"
       ></AdvancedConfig>
     </section>
 
     <footer class="create-footer">
-      <router-link :to="`/v1/projects/detail/${projectName}/test/function`">
+      <router-link :to="`/v1/projects/detail/${projectName}/test`">
         <el-button style="margin-right: 15px;" type="primary" plain>取消</el-button>
       </router-link>
       <el-button @click="saveTest" type="primary">{{ isEdit ? '确认修改' : '立即新建' }}</el-button>
@@ -123,9 +123,10 @@ export default {
         desc: '',
         repos: [],
         timeout: 60,
-        cache_enable: false,
+        cache_enable: true,
         cache_dir_type: 'workspace',
         cache_user_dir: '',
+        advanced_setting_modified: false,
         hook_ctl: {
           enabled: false,
           items: []
@@ -165,8 +166,7 @@ export default {
       },
       validateTestName,
       validObj: new ValidateSubmit(),
-      configDataLoading: false,
-      showAdvancedConfig: false
+      configDataLoading: false
     }
   },
   computed: {
@@ -182,8 +182,8 @@ export default {
   },
   methods: {
     switchAdvancedStatus () {
-      this.showAdvancedConfig = !this.showAdvancedConfig
-      if (this.showAdvancedConfig) {
+      this.test.advanced_setting_modified = !this.test.advanced_setting_modified
+      if (this.test.advanced_setting_modified) {
         this.$nextTick(() => {
           document.querySelector('.test-advanced-config').scrollIntoView({
             behavior: 'smooth'

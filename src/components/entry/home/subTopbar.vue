@@ -75,38 +75,37 @@ export default {
       return project ? project.deployType : ''
     },
     routerList () {
-      return [
-        {
-          name: '工作流',
-          icon: 'iconfont icongongzuoliucheng',
-          url: `/v1/projects/detail/${this.projectName}/pipelines`
-        },
-        {
-          name: '环境',
-          icon: 'iconfont iconvery-environ',
-          url: `/v1/projects/detail/${this.projectName}/envs`
-        },
-        {
-          name: '服务',
-          icon: 'iconfont iconvery-service',
-          url: `/v1/projects/detail/${this.projectName}/services`
-        },
-        {
-          name: '构建',
-          icon: 'iconfont iconvery-build',
-          url: `/v1/projects/detail/${this.projectName}/builds`
-        },
-        {
-          name: '测试',
-          icon: 'iconfont iconvery-testing',
-          url: `/v1/projects/detail/${this.projectName}/test`
-        },
-        {
-          name: '版本管理',
-          icon: 'iconfont iconvery-versionmana',
-          url: `/v1/projects/detail/${this.projectName}/version`
-        }
-      ]
+      const commonRoute = [{
+        name: '工作流',
+        icon: 'iconfont icongongzuoliucheng',
+        url: `/v1/projects/detail/${this.projectName}/pipelines`
+      },
+      {
+        name: '环境',
+        icon: 'iconfont iconvery-environ',
+        url: `/v1/projects/detail/${this.projectName}/envs`
+      },
+      {
+        name: '服务',
+        icon: 'iconfont iconvery-service',
+        url: `/v1/projects/detail/${this.projectName}/services`
+      },
+      {
+        name: '构建',
+        icon: 'iconfont iconvery-build',
+        url: `/v1/projects/detail/${this.projectName}/builds`
+      },
+      {
+        name: '测试',
+        icon: 'iconfont iconvery-testing',
+        url: `/v1/projects/detail/${this.projectName}/test`
+      }]
+      const versionRoute = {
+        name: '版本管理',
+        icon: 'iconfont iconvery-versionmana',
+        url: `/v1/projects/detail/${this.projectName}/version`
+      }
+      return ['k8s', 'helm'].includes(this.deployType) ? commonRoute.concat(versionRoute) : commonRoute
     }
   },
   methods: {

@@ -28,11 +28,11 @@
         </el-form-item>
         <el-form-item label="创建方式" prop="source">
           <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
-            <el-option label="系统创建" value="system"></el-option>
-            <el-option label="复制环境" value="copy"></el-option>
+            <el-option label="新建" value="system"></el-option>
+            <el-option label="复制" value="copy"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="projectConfig.source === 'copy'" label="复制环境" prop="baseEnvName">
+        <el-form-item v-if="projectConfig.source === 'copy'" label="选择环境" prop="baseEnvName">
           <el-select class="select" @change="changeBaseEnv" v-model="projectConfig.baseEnvName" size="small" placeholder="请选择复制的环境名称">
             <el-option v-for="name in projectEnvNames" :key="name" :label="name" :value="name"></el-option>
           </el-select>

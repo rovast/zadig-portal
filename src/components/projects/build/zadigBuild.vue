@@ -47,19 +47,19 @@
     </section>
     <section>
       <div style="margin-bottom: 8px;">
-        <el-button type="primary" size="small" plain @click="showAdvancedConfig = !showAdvancedConfig">
+        <el-button type="primary" size="small" plain @click="buildConfig.advanced_setting_modified = !buildConfig.advanced_setting_modified">
           高级配置
-          <i :class="[showAdvancedConfig ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
+          <i :class="[buildConfig.advanced_setting_modified ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
         </el-button>
       </div>
       <AdvancedConfig
         ref="advancedConfigRef"
-        v-show="showAdvancedConfig"
+        v-show="buildConfig.advanced_setting_modified"
         class="common-parcel-block"
         :isCreate="isCreate"
         :buildConfig="buildConfig"
         :validObj="validObj"
-        @validateFailed="showAdvancedConfig = true"
+        @validateFailed="buildConfig.advanced_setting_modified = true"
         :mini="mini"
       ></AdvancedConfig>
     </section>
@@ -102,9 +102,10 @@ const initBuildConfig = {
   desc: '',
   repos: [],
   timeout: 60,
-  cache_enable: false,
+  cache_enable: true,
   cache_dir_type: 'workspace',
   cache_user_dir: '',
+  advanced_setting_modified: false,
   pre_build: {
     res_req: 'low', // high 、medium、low、min、define
     res_req_spec: {
@@ -167,7 +168,6 @@ export default {
         }
       },
       validObj: new ValidateSubmit(),
-      showAdvancedConfig: false,
       allCodeHosts: [],
       configDataLoading: true,
       initBuildConfig: null

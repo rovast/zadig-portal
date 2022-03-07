@@ -299,6 +299,7 @@ export default {
   /deep/.multipane {
     width: 100%;
     height: 100%;
+    border-bottom: 1px solid #ccc;
 
     .multipane-resizer {
       position: relative;
@@ -340,7 +341,7 @@ export default {
         margin-right: 10px;
 
         .mirror {
-          height: calc(~'100% - 50px');
+          height: calc(~'100% - 37px');
           padding: 5px;
         }
       }

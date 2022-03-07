@@ -21,59 +21,57 @@
                   </el-tooltip>
                 </div>
               </el-col>
-              <template v-if="build.showBranch">
-                <el-col :span="7">
-                  <el-select v-if="build.branchNames && build.branchNames.length > 0"
-                             v-model.trim="build.branch"
-                             filterable
-                             clearable
-                             allow-create
-                             size="small"
-                             placeholder="请选择分支">
-                    <el-option v-for="branch of build.branchNames"
-                               :key="branch"
-                               :label="branch"
-                               :value="branch"></el-option>
-                  </el-select>
-                  <el-tooltip v-else
-                              content="请求分支失败，请手动输入分支"
-                              placement="top"
-                              popper-class="gray-popper">
-                    <el-input v-model="build.branch"
-                              class="short-input"
-                              size="small"
-                              placeholder="请填写分支"></el-input>
-                  </el-tooltip>
-                </el-col>
-              </template>
 
-              <template v-if="build.showTag">
-                <el-col :span="7">
-                  <el-select v-if="build.tags && build.tags.length > 0"
-                             v-model="build.tag"
-                             size="small"
-                             placeholder="请选择 Tag"
-                             filterable
-                             clearable>
-                    <el-option v-for="(item,index) in build.tags"
-                               :key="index"
-                               :label="item.name"
-                               :value="item.name">
-                    </el-option>
-                  </el-select>
-                  <el-tooltip v-else
-                              content="请求 Release Tag 失败，支持手动输入 Release Tag"
-                              placement="top"
-                              popper-class="gray-popper">
-                    <el-input v-model="build.tag"
-                              class="short-input"
-                              size="small"
-                              placeholder="请填写 Tag"></el-input>
-                  </el-tooltip>
-                </el-col>
-              </template>
+              <el-col v-if="build.showBranch" :span="7">
+                <el-select v-if="build.branchNames && build.branchNames.length > 0"
+                            v-model.trim="build.branch"
+                            filterable
+                            clearable
+                            allow-create
+                            size="small"
+                            placeholder="请选择分支">
+                  <el-option v-for="branch of build.branchNames"
+                              :key="branch"
+                              :label="branch"
+                              :value="branch"></el-option>
+                </el-select>
+                <el-tooltip v-else
+                            content="请求分支失败，请手动输入分支"
+                            placement="top"
+                            popper-class="gray-popper">
+                  <el-input v-model="build.branch"
+                            class="short-input"
+                            size="small"
+                            placeholder="请填写分支"></el-input>
+                </el-tooltip>
+              </el-col>
+
+              <el-col v-if="build.showTag" :span="7">
+                <el-select v-if="build.tags && build.tags.length > 0"
+                            v-model="build.tag"
+                            size="small"
+                            placeholder="请选择 Tag"
+                            filterable
+                            clearable>
+                  <el-option v-for="(item,index) in build.tags"
+                              :key="index"
+                              :label="item.name"
+                              :value="item.name">
+                  </el-option>
+                </el-select>
+                <el-tooltip v-else
+                            content="请求 Release Tag 失败，支持手动输入 Release Tag"
+                            placement="top"
+                            popper-class="gray-popper">
+                  <el-input v-model="build.tag"
+                            class="short-input"
+                            size="small"
+                            placeholder="请填写 Tag"></el-input>
+                </el-tooltip>
+              </el-col>
+
               <el-col v-if="build.showSwitch"
-                      :span="9"
+                      :span="8"
                       :offset="1"
                       style="line-height: 32px;">
                 <el-switch v-model="build.releaseMethod"
@@ -86,49 +84,52 @@
                            inactive-color="#dcdfe6">
                 </el-switch>
               </el-col>
-              <template v-if="build.showPR">
-                <el-col :span="7"
-                        :offset="1">
-                  <el-select v-if="!$utils.isEmpty(build.branchPRsMap)"
-                             v-model.number="build[build.prNumberPropName]"
-                             size="small"
-                             placeholder="请选择 PR"
-                             filterable
-                             clearable>
 
-                    <el-tooltip v-for="item in build.branchPRsMap[build.branch]"
-                                :key="item[build.prNumberPropName]"
-                                placement="left"
-                                popper-class="gray-popper">
+              <el-col v-if="build.showPR" :span="7"
+                      :offset="1">
+                <el-select v-if="!$utils.isEmpty(build.branchPRsMap)"
+                            v-model.number="build[build.prNumberPropName]"
+                            size="small"
+                            placeholder="请选择 PR"
+                            filterable
+                            clearable>
 
-                      <div slot="content">{{`创建人: ${$utils.tailCut(item.authorUsername,10)}`}}
-                        <br />{{`时间: ${$utils.convertTimestamp(item.createdAt)}`}}
-                        <br />{{`源分支: ${item.sourceBranch}`}}
-                        <br />{{`目标分支: ${item.targetBranch}`}}
-                      </div>
-                      <el-option :label="`#${item[build.prNumberPropName]} ${item.title}`"
-                                 :value="item[build.prNumberPropName]">
-                      </el-option>
-                    </el-tooltip>
-                  </el-select>
-                  <el-tooltip v-else
-                              content="PR 不存在，支持手动输入 PR 号"
-                              placement="top"
+                  <el-tooltip v-for="item in build.branchPRsMap[build.branch]"
+                              :key="item[build.prNumberPropName]"
+                              placement="left"
                               popper-class="gray-popper">
-                    <el-input v-model.number="build[build.prNumberPropName]"
-                              class="short-input"
-                              size="small"
-                              placeholder="请填写 PR 号"></el-input>
+
+                    <div slot="content">{{`创建人: ${$utils.tailCut(item.authorUsername,10)}`}}
+                      <br />{{`时间: ${$utils.convertTimestamp(item.createdAt)}`}}
+                      <br />{{`源分支: ${item.sourceBranch}`}}
+                      <br />{{`目标分支: ${item.targetBranch}`}}
+                    </div>
+                    <el-option :label="`#${item[build.prNumberPropName]} ${item.title}`"
+                                :value="item[build.prNumberPropName]">
+                    </el-option>
                   </el-tooltip>
-                </el-col>
-              </template>
-              <el-tooltip v-if="build.errorMsg"
-                          class="item"
-                          effect="dark"
-                          :content="build.errorMsg"
-                          placement="top">
-                <i class="el-icon-question repo-warning"></i>
-              </el-tooltip>
+                </el-select>
+                <el-tooltip v-else
+                            content="PR 不存在，支持手动输入 PR 号"
+                            placement="top"
+                            popper-class="gray-popper">
+                  <el-input v-model.number="build[build.prNumberPropName]"
+                            class="short-input"
+                            size="small"
+                            placeholder="请填写 PR 号"></el-input>
+                </el-tooltip>
+              </el-col>
+
+              <el-col :span="1">
+                <el-tooltip v-if="build.errorMsg"
+                            class="item"
+                            effect="dark"
+                            :content="build.errorMsg"
+                            placement="top">
+                  <i class="el-icon-question repo-warning"></i>
+                </el-tooltip>
+              </el-col>
+
             </template>
           </el-row>
         </template>

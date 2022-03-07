@@ -414,9 +414,8 @@ export default {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  min-height: calc(~'100% - 30px');
-  padding-top: 15px;
-  padding-bottom: 10px;
+  min-height: calc(~'100% - 20px');
+  padding: 15px 20px 10px;
 }
 
 .create-project {
@@ -518,12 +517,12 @@ export default {
           cursor: pointer;
 
           &:not(:last-child) {
-            margin-bottom: 8px;
+            margin-bottom: 2px;
           }
 
           .project-type-item__desc {
             .title {
-              margin-bottom: 8px;
+              margin-bottom: 5px;
               color: #000;
               font-size: 14px;
             }
@@ -531,6 +530,7 @@ export default {
             .desc {
               color: #a0a0a0;
               font-size: 12px;
+              line-height: 20px;
             }
           }
 

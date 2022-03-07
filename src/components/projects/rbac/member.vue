@@ -84,7 +84,7 @@
       <el-table-column label="策略">
         <template slot-scope="{ row }">
           <div v-if="row.uid === '*'" :class="{'show-gray': row.hasSystemPolicy}">
-            {{ row.policy }}
+            {{ row.policy || '-' }}
             <span v-if="row.hasSystemPolicy">(系统创建)</span>
           </div>
           <div v-else>

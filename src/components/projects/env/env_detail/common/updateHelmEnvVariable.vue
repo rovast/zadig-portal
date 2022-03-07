@@ -1,12 +1,6 @@
 <template>
   <div class="helm-env-variable">
-    <div v-show="envVariable.yamlSource === 'default'" class="default-values">
-      <div class="secondary-title">暂无环境默认变量 values 文件</div>
-      <el-button type="text" @click="envVariable.yamlSource = 'freeEdit'" style="padding: 5px 0;">添加 values 文件</el-button>
-    </div>
     <ImportValues
-      v-show="envVariable.yamlSource !== 'default'"
-      showDelete
       ref="importValuesRef"
       :resize="{direction: 'vertical'}"
       :importRepoInfo="envVariable"

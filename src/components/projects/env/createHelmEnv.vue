@@ -32,7 +32,7 @@
             <el-option label="复制" value="copy"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="projectConfig.source === 'copy'" label="复制环境" prop="baseEnvName">
+        <el-form-item v-if="projectConfig.source === 'copy'" label="选择环境" prop="baseEnvName">
           <el-select class="select" @change="changeBaseEnv" v-model="projectConfig.baseEnvName" size="small" placeholder="请选择复制的环境名称">
             <el-option v-for="name in projectEnvNames" :key="name" :label="name" :value="name"></el-option>
           </el-select>

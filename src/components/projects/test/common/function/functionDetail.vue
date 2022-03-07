@@ -123,7 +123,7 @@ export default {
         desc: '',
         repos: [],
         timeout: 60,
-        cache_enable: false,
+        cache_enable: true,
         cache_dir_type: 'workspace',
         cache_user_dir: '',
         hook_ctl: {

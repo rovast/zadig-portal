@@ -22,7 +22,7 @@
               </h2>
               <p>个</p>
               <span>
-                <i class="icon iconfont iconxiangmu"></i> 项目
+                <i class="icon iconfont iconxiangmuloading"></i> 项目
               </span>
             </div>
           </el-col>
@@ -33,7 +33,7 @@
               </h2>
               <p>个</p>
               <span>
-                <i class="icon iconfont iconrongqifuwu"></i> 微服务
+                <i class="icon iconfont iconvery-service"></i> 服务
               </span>
             </div>
           </el-col>
@@ -55,7 +55,7 @@
               </h2>
               <p>个</p>
               <span>
-                <i class="icon iconfont iconrongqi"></i> 环境
+                <i class="icon iconfont iconvery-environ"></i> 环境
               </span>
             </div>
           </el-col>

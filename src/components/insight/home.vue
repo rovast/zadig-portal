@@ -7,7 +7,6 @@
   </div>
 </template>
 <script>
-import bus from '@utils/eventBus'
 import SubTopbar from './common/subTopbar'
 export default {
   data () {
@@ -26,16 +25,6 @@ export default {
     changeDuration (duration) {
       this.selectedDuration = duration
     }
-  },
-  mounted () {
-    this.$router.push('/v1/insight/build')
-    bus.$emit(`show-sidebar`, true)
-    bus.$emit(`set-topbar-title`, {
-      title: '',
-      breadcrumb: [
-        { title: '效能洞察', url: '/v1/insight' }
-      ]
-    })
   },
   components: {
     SubTopbar

@@ -15,7 +15,7 @@
               <label>{{`#${task.task_id}`}}</label>
               <br>
               <router-link
-                           :to="`/v1/tests/detail/${task.product_name}/test/detail/function/${task.test_args.test_name}-job/${task.task_id}?status=${task.status}`">
+                           :to="`/v1/projects/detail/${task.product_name}/test/detail/function/${task.test_args.test_name}-job/${task.task_id}?status=${task.status}`">
                 <span class="workflow-name"><i
                      class="el-icon-link"></i>{{`${task.pipeline_name}`}}</span>
               </router-link>

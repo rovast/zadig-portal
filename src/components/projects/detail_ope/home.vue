@@ -454,7 +454,6 @@ export default {
         .content-container {
           flex: 1;
           height: calc(~'100% - 35px');
-          padding-right: 15px;
 
           .divider {
             width: 278px;
@@ -467,6 +466,7 @@ export default {
           .project-name {
             margin: 0;
             padding: 0;
+            padding-right: 15px;
             color: #44447e;
             font-weight: 400;
             font-size: 18px;
@@ -501,7 +501,7 @@ export default {
 
           .project-desc {
             max-height: calc(100% - 32px);
-            overflow: hidden;
+            overflow: auto;
             font-size: 12px;
             line-height: 22px;
           }

@@ -79,7 +79,7 @@
     </section>
 
     <footer class="create-footer">
-      <router-link :to="`/v1/projects/detail/${projectName}/test/function`">
+      <router-link :to="`/v1/projects/detail/${projectName}/test`">
         <el-button style="margin-right: 15px;" type="primary" plain>取消</el-button>
       </router-link>
       <el-button @click="saveTest" type="primary">{{ isEdit ? '确认修改' : '立即新建' }}</el-button>

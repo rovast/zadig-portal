@@ -180,6 +180,10 @@ export default {
       color: #ff4949;
       cursor: pointer;
     }
+
+    .info-wrapper {
+      word-break: break-word;
+    }
   }
 
   .operations {

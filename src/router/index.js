@@ -18,6 +18,7 @@ const routes = [
           requiresAuth: true,
           title: '效能洞察'
         },
+        redirect: '/v1/insight/build',
         children: [
           {
             path: 'build',

@@ -213,7 +213,7 @@
                         </el-form>
                       </template>
                     </el-table-column>
-                    <el-table-column width="140">
+                    <el-table-column width="150">
                       <template>
                         <span style="display: inline-block; margin-bottom: 15px;">
                           <el-button @click="addRenderKey()" type="text">确认</el-button>

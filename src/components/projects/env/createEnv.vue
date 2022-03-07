@@ -3,7 +3,7 @@
 </template>
 <script>
 import CreateHostEnv from './hostEnv/createHostEnv.vue'
-import CreateEnvDetail from './inner_env/createEnvDetail.vue'
+import CreateEnvDetail from './k8sPmEnv/createK8sPmEnv.vue'
 import CreateHelmEnv from './createHelmEnv.vue'
 import { getSingleProjectAPI } from '@/api'
 

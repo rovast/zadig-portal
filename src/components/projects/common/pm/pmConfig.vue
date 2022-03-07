@@ -333,9 +333,10 @@ export default {
         desc: '',
         repos: [],
         timeout: 60,
-        cache_enable: false,
+        cache_enable: true,
         cache_dir_type: 'workspace',
         cache_user_dir: '',
+        advanced_setting_modified: false,
         pre_build: {
           res_req: 'low',
           build_os: 'xenial',
@@ -397,8 +398,7 @@ export default {
             message: '请输入私钥'
           }
         ]
-      },
-      showAdvancedConfig: false
+      }
     }
   },
   methods: {
@@ -758,9 +758,10 @@ export default {
         desc: '',
         repos: [],
         timeout: 60,
-        cache_enable: false,
+        cache_enable: true,
         cache_dir_type: 'workspace',
         cache_user_dir: '',
+        advanced_setting_modified: false,
         pre_build: {
           res_req: 'low', // high 、medium、low、min、define
           res_req_spec: {
@@ -837,7 +838,6 @@ export default {
       }
     },
     async serviceName (value) {
-      this.showAdvancedConfig = false
       // edit
       if (value) {
         // TODO: the reason of page show error is uncertain

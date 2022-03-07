@@ -32,7 +32,7 @@
       >
         <el-row :gutter="10">
           <el-col v-if="!pmServiceList.length" :span="12">
-            <div class="grid-title">所属集群</div>
+            <div class="grid-title">K8s 集群</div>
             <div v-if="productInfo.is_local" class="grid-content">本地集群</div>
             <div v-else class="grid-content">{{productInfo.is_prod?productInfo.cluster_name+' (生产集群)':productInfo.cluster_name +' (测试集群)'}}</div>
           </el-col>
@@ -43,7 +43,7 @@
         </el-row>
         <el-row :gutter="10">
           <el-col :span="12" v-if="!pmServiceList.length">
-            <div class="grid-title">命名空间</div>
+            <div class="grid-title">K8s 命名空间</div>
             <div class="grid-content">{{ envText }}</div>
           </el-col>
           <el-col :span="12">
@@ -403,16 +403,11 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column align="left" label="所属项目" width="130px">
-            <template slot-scope="scope">
-              <span>{{ scope.row.product_name }}</span>
-            </template>
-          </el-table-column>
           <el-table-column align="left" label="状态" width="130px">
             <template slot="header">
               状态
               <el-tooltip effect="dark" placement="top">
-                <div slot="content">实际正常的服务/预期的正常服务数量</div>
+                <div slot="content">实际正常运行的服务数量/预期正常运行服务数量</div>
                 <i class="el-icon-question"></i>
               </el-tooltip>
             </template>
@@ -1446,5 +1441,11 @@ export default {
 .add-host {
   color: @themeColor;
   cursor: pointer;
+}
+
+.el-message-box__wrapper {
+  .el-message-box__title {
+    padding-right: 20px;
+  }
 }
 </style>

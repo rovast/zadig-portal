@@ -41,7 +41,7 @@ export default {
   data () {
     return {
       defaultEnvsValues: {}, // { key: envName, value: defaultEnvValue }
-      showGlobalVariable: true,
+      showGlobalVariable: false,
       showServiceVariable: true
     }
   },

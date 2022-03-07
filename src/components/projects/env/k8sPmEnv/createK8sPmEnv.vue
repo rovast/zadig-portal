@@ -26,8 +26,8 @@
         </el-form-item>
         <el-form-item label="创建方式" prop="source" v-if="$utils.isEmpty(pmServiceMap)">
           <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
-            <el-option label="系统创建" value="system"></el-option>
-            <el-option v-if="currentProductDeliveryVersions.length > 0" label="版本回溯" value="versionBack"></el-option>
+            <el-option label="新建" value="system"></el-option>
+            <el-option v-if="currentProductDeliveryVersions.length > 0" label="回溯" value="versionBack"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="projectConfig.source==='versionBack'" label="选择版本">
@@ -99,29 +99,6 @@
         <div class="primary-title">服务列表</div>
         <template v-if="deployType==='k8s'">
           <div v-if="!$utils.isEmpty(containerMap)">
-            <div class="service-filter-block">
-              <span class="service-filter">
-                快速过滤:
-                <el-tooltip class="img-tooltip" effect="dark" placement="top">
-                  <div slot="content">
-                    智能选择会优先选择最新的容器镜像，如果在 Registry
-                    <br />下不存在该容器镜像，则会选择模板中的默认镜像进行填充
-                  </div>
-                  <i class="el-icon-info"></i>
-                </el-tooltip>
-                <el-select
-                  :disabled="rollbackMode"
-                  size="small"
-                  class="img-select"
-                  v-model="quickSelection"
-                  placeholder="请选择"
-                  @change="quickInitImage"
-                >
-                  <el-option label="全容器-智能选择镜像" value="latest"></el-option>
-                  <el-option label="全容器-全部默认镜像" value="default"></el-option>
-                </el-select>
-              </span>
-            </div>
             <el-form class="service-form-block" label-width="50%" label-position="left">
               <div class="service-item" v-for="(typeServiceMap, serviceName) in containerMap" :key="serviceName">
                 <div class="primary-title">{{ serviceName }}</div>

@@ -35,7 +35,7 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(~'100% - 40px');
   background-color: @globalBackgroundColor;
 }
 </style>

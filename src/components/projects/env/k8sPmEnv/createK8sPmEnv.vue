@@ -761,7 +761,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@secondaryColor: #8a8a8a;
+@secondaryColor: #888888;
 @primaryColor: #000;
 @darkBackgroundColor: rgba(246, 246, 246, 0.6);
 

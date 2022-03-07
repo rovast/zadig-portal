@@ -205,7 +205,7 @@ export default {
             label {
               padding-top: 10px;
               padding-right: 20px;
-              color: #8a8a8a;
+              color: #888;
               font-size: 14px;
             }
 

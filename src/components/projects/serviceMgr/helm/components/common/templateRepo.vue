@@ -50,7 +50,7 @@ import { mapState } from 'vuex'
 
 const rules = {
   serviceName: [{ required: true, message: '请输入服务名称', trigger: 'blur' }],
-  moduleName: [{ required: true, message: '请选择模板', trigger: 'blur' }]
+  moduleName: [{ required: true, message: '请选择模板', trigger: ['blur', 'change'] }]
 }
 
 // const createTemplateForm = {

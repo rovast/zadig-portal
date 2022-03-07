@@ -106,7 +106,7 @@ export default {
           envs: res.pre_test.envs || []
         })
       }
-      updateWorkflowAPI(workflow).then(() => {
+      updateWorkflowAPI('', workflow).then(() => {
         this.$message({
           type: 'success',
           message: '关联工作流成功'
@@ -172,7 +172,7 @@ export default {
               }
             )
           }
-          updateWorkflowAPI(workflow).then(() => {
+          updateWorkflowAPI('', workflow).then(() => {
             this.$message({
               type: 'success',
               message: '移除关联成功'

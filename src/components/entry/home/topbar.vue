@@ -2,10 +2,6 @@
   <div class="topbar-container">
     <div class="topbar-content">
       <div class="topbar-container-start">
-        <div class="logo-container" :class="{'opened':showSidebar}">
-          <img v-if="!showSidebar" class="logo small" src="@assets/icons/logo/small-logo.png" />
-          <img v-if="showSidebar" class="logo default" src="@assets/icons/logo/logo.svg" />
-        </div>
         <div v-if="showProjectSwitcher" class="project-switcher-container">
           <el-popover placement="bottom" width="300" trigger="hover" popper-class="project-list-popover" @show="searchProject=''">
             <div class="project-list-container">
@@ -492,7 +488,7 @@ export default {
       }
 
       /deep/ .el-breadcrumb__inner {
-        color: #8a8a8a;
+        color: #888;
       }
     }
 

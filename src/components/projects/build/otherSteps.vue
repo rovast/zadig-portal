@@ -307,7 +307,7 @@ export default {
 
 <style lang="less" scoped>
 @inputWidth: 400px;
-@secondaryColor: #8a8a8a;
+@secondaryColor: #888888;
 @primaryColor: #000;
 @formItemBottom: 8px;
 @labelWeight: 300;

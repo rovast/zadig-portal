@@ -1,14 +1,15 @@
 <template>
   <div class="main-home-container">
     <div class="main-view">
-      <div class="topbar-wrap">
+      <!-- <div class="topbar-wrap">
         <Topbar />
-      </div>
+      </div> -->
       <div class="content-wrap">
         <div class="side-bar-container" :class="{'small-sidebar': !showSidebar}">
           <Sidebar class="side-bar-component" />
         </div>
         <div class="main-content-container" :class="{'small-sidebar': !showSidebar}">
+          <Topbar />
           <div class="announcement-container">
             <Announcement v-for="(ann,index) in announcements" :key="index" :title="ann.content.title" :content="ann.content.content" />
             <Announcement title="系统提示" isHtml v-if="isAdmin && SMTPDisabled" :content="htmlTemplate" />
@@ -17,9 +18,6 @@
           <router-view></router-view>
         </div>
       </div>
-      <!-- <div class="bottom-bar-wrap">
-        <BottomBar/>
-      </div>-->
     </div>
   </div>
 </template>
@@ -145,7 +143,7 @@ body {
 
       .content-wrap {
         display: flex;
-        height: calc(~'100% - 40px');
+        height: 100%;
 
         .sidebar-container {
           height: 100%;

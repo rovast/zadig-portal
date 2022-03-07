@@ -131,7 +131,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@secondaryColor: #8a8a8a;
+@secondaryColor: #888888;
 @primaryColor: #000;
 
 .jenkins-build-container {

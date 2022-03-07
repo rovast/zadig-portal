@@ -424,7 +424,7 @@ export default {
           cursor: pointer;
 
           i {
-            color: #8a8a8a;
+            color: #888;
             font-size: 20px;
             line-height: 25px;
           }

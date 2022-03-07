@@ -115,7 +115,7 @@
         </el-table-column>
         <el-table-column label>
           <template slot-scope="scope">
-            <router-link :to="`/v1/projects/detail/${scope.row.name}`">
+            <router-link :to="`/v1/projects/detail/${scope.row.name}/detail`">
               <el-button class="operation" type="text">配置</el-button>
             </router-link>
             <el-button @click="deleteProject(scope.row.name)" class="operation" type="text">删除</el-button>

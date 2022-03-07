@@ -692,7 +692,7 @@ export default {
     }
 
     .color-running {
-      color: #1989fa;
+      color: @themeColor;
       font-weight: 500;
     }
 

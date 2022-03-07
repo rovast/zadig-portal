@@ -81,7 +81,7 @@
             <div class="build-item view">
               <i class="iconfont icon"
                  :class="{'iconview-off1': config.hide_service_module, iconview: !config.hide_service_module}"
-                 :style="{ color: config.hide_service_module ? '#99a9bf': '#1989fa' }"
+                 :style="{ color: config.hide_service_module ? '#99a9bf': '#5555ff' }"
                  @click="config.hide_service_module = !config.hide_service_module"
               ></i>
             </div>
@@ -182,6 +182,7 @@ export default {
 
       .icon {
         font-size: 18px;
+        cursor: pointer;
       }
     }
 

@@ -25,6 +25,15 @@
             <el-tooltip effect="dark" content="从代码库同步" placement="top">
               <el-button  size="mini"  icon="iconfont icon icongit" @click="openRepoModal('git')" plain circle></el-button>
             </el-tooltip>
+            <el-tooltip effect="dark" content="从 Chart 仓库同步" placement="top">
+              <el-button
+                @click="openRepoModal('chart')"
+                size="mini"
+                icon="iconfont icon iconhelmrepo"
+                plain
+                circle
+              ></el-button>
+            </el-tooltip>
             <el-tooltip effect="dark" content="使用模板新建" placement="top">
               <el-button
                 @click="openRepoModal('chartTemplate')"

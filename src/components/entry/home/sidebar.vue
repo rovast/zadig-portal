@@ -283,7 +283,7 @@ export default {
   width: 176px;
   height: 100%;
   margin-right: 0;
-  background-color: rgba(118, 122, 200, 0.1);
+  background-color: #f2f2fa;
   transition: width 200ms, margin-width 180ms;
 
   .sidebar-size-toggler {
@@ -292,7 +292,7 @@ export default {
     bottom: 120px;
     z-index: 1;
     display: block;
-    width: 12px;
+    width: 16px;
     height: 48px;
     color: #fff;
     line-height: 48px;
@@ -578,7 +578,7 @@ export default {
 
   .nav-item.active,
   .nav-item:hover {
-    background-color: rgba(160, 160, 255, 0.15);
+    background-color: rgba(230, 230, 250, 0.8);
     border-radius: 6px;
 
     .nav-item-label {

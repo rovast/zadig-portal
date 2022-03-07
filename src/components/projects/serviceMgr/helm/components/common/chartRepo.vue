@@ -30,7 +30,7 @@
         </el-form-item>
         <div class="footer">
           <el-button size="small" @click="$store.commit('SERVICE_DIALOG_VISIBLE', false)" plain>取消</el-button>
-          <el-button size="small" :loading="importLoading"  @click="importChartRepo" plain>导入</el-button>
+          <el-button size="small" type="primary" :loading="importLoading"  @click="importChartRepo">{{ isUpdate?'更新':'新建' }}</el-button>
         </div>
 
     </el-form>

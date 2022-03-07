@@ -29,7 +29,7 @@
           <van-icon @click.stop.prevent="showAction(workflow)"
                     name="more-o"
                     size="2em"
-                    color="#1989fa" />
+                    color="#5555ff" />
         </template>
 
       </van-cell>

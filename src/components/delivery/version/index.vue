@@ -5,7 +5,7 @@
     element-loading-spinner="iconfont iconfont-loading iconvery-versionmana"
     class="version-list-container"
   >
-    <div class="operation">
+    <div v-if="versionList.length > 0" class="operation">
       <el-select
         style="width: 160px;"
         v-model="selectedService"
@@ -43,7 +43,7 @@
         <i v-if="versionHook.enable" class="hook-icon el-icon-finished" @click="saveHook"></i>
       </div>
     </div>
-    <el-table :data="versionList" v-show="versionList.length > 0" style="width: 100%;">
+    <el-table :data="versionList" v-if="versionList.length > 0" style="width: 100%;">
       <el-table-column label="版本">
         <template slot-scope="scope">
           <span class="version-link">
@@ -315,6 +315,7 @@ export default {
     img {
       width: 400px;
       height: 400px;
+      padding: 45px;
     }
 
     p {

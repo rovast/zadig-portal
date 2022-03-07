@@ -175,7 +175,7 @@ export default {
           }
 
           &.running {
-            background-color: #1989fa;
+            background-color: @themeColor;
           }
 
           &.waiting {

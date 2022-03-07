@@ -127,7 +127,7 @@ h2 {
 
 .btn-theme {
   color: #fff;
-  background: #376bff;
+  background: @themeColor;
   border: none;
 }
 
@@ -136,16 +136,16 @@ h2 {
 }
 
 .btn-theme:hover {
-  background: #2c5ce4;
+  background: #5555ffc2;
 }
 
 .btn-md {
   width: 100%;
   padding: 12px 30px 11px 30px;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 14px;
   letter-spacing: 1px;
-  border-radius: 50px;
+  border-radius: 4px;
   cursor: pointer;
 }
 

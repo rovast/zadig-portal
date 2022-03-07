@@ -82,7 +82,7 @@
             </template>
             <div v-else
                  class="no-content">
-              <img src="@assets/icons/illustration/editor_nodata.svg"
+              <img src="@assets/icons/illustration/editorNoService.svg"
                    alt="">
               <p v-if="services.length === 0">暂无服务，点击 <el-button size="mini"
                            icon="el-icon-plus"

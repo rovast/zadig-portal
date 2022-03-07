@@ -13,7 +13,7 @@
       <ServiceList ref="serviceLsit" :editService="editService" :addService="addService" :changeShowBuild="changeShowBuild" />
       <Build v-if="showBuild" ref="pm-service" :serviceName="serviceName" :isEdit="isEdit" @listenCreateEvent="listenEvent"/>
       <div v-else class="no-content">
-        <img src="@assets/icons/illustration/editor_nodata.svg" alt />
+        <img src="@assets/icons/illustration/editorNoService.svg" alt />
         <p style="color: #909399;">
           暂无服务，创建服务请在左侧栏点击&nbsp;
           <el-button size="mini" icon="el-icon-plus" @click="$refs.serviceLsit.newService()" plain circle></el-button>&nbsp;创建服务
@@ -96,15 +96,22 @@ export default {
 
 <style lang="less">
 .no-content {
-  width: 360px;
-  height: 300px;
-  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 
   img {
-    display: block;
-    width: 30%;
-    height: auto;
-    margin: 50px auto 0 auto;
+    width: 200px;
+    height: 200px;
+  }
+
+  p {
+    color: #606266;
+    font-size: 15px;
   }
 }
 

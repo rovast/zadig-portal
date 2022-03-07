@@ -190,7 +190,7 @@ export default {
 
   &.running,
   &.elected {
-    border-left-color: #1989fa;
+    border-left-color: @themeColor;
     animation: blink 1.5s infinite;
   }
 

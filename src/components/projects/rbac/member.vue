@@ -284,7 +284,7 @@ export default {
       position: relative;
       top: 0;
       flex: 1;
-      max-width: 30px;
+      max-width: 25px;
       margin-right: 25px;
       margin-right: 10px;
     }
@@ -332,7 +332,7 @@ export default {
     }
 
     .role-icon {
-      color: #1989fa;
+      color: @themeColor;
       font-size: 16px;
       cursor: pointer;
 

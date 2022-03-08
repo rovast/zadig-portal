@@ -162,9 +162,7 @@ export default {
     .tree {
       box-sizing: border-box;
       height: 100%;
-      padding-top: 30px;
-      padding-right: 20px;
-      padding-left: 20px;
+      padding: 10px;
     }
   }
 

@@ -61,7 +61,7 @@ export default {
 
   /deep/ .projects-service-mgr {
     .service-wrap {
-      height: calc(~'100% - 280px');
+      height: calc(~'100% - 250px');
     }
   }
 

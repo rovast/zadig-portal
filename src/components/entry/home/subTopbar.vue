@@ -22,7 +22,7 @@
           @click="bindComp(comp,'env')"
           icon="el-icon-plus"
           plain
-        >新建环境</el-button>
+        >创建环境</el-button>
       </template>
       <template v-if="$route.path === `/v1/projects/detail/${projectName}/builds`">
         <el-button @click="bindComp(comp,'build')" icon="el-icon-plus" plain>新建构建</el-button>

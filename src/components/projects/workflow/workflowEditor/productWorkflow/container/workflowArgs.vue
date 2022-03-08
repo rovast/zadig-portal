@@ -2,7 +2,7 @@
   <el-form class="workflow-args"
            label-width="100px">
     <el-form-item prop="productName"
-                  label="集成环境">
+                  label="环境">
       <el-select :value="runner.product_tmpl_name&&runner.namespace ? `${runner.product_tmpl_name} / ${runner.namespace}` : ''"
                  @change="precreate"
                  size="small"
@@ -301,7 +301,7 @@ export default {
     },
     checkInput () {
       if (!this.runner.product_tmpl_name || !this.runner.namespace) {
-        this.$message.error('请选择集成环境')
+        this.$message.error('请选择环境')
         return false
       }
 

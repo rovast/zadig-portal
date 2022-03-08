@@ -734,7 +734,7 @@ export default {
           title: `${this.projectName}`,
           url: `/v1/projects/detail/${this.projectName}/detail`
         },
-        { title: '集成环境', url: '' },
+        { title: '环境', url: '' },
         { title: '创建', url: '' }
       ]
     })

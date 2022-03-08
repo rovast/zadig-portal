@@ -271,7 +271,7 @@ export default {
       },
       {
         variable: 'ENV_NAME',
-        desc: '环境名称，用于区分不同的集成环境，系统内置集成环境：dev，qa'
+        desc: '环境名称，用于区分不同的环境，系统内置环境：dev，qa'
       },
       {
         variable: '<AGENT_NAME>_PK',

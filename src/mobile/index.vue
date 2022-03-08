@@ -25,7 +25,7 @@
       <van-tabbar-item replace
                        name="envs"
                        to="/mobile/envs"
-                       icon="points">集成环境</van-tabbar-item>
+                       icon="points">环境</van-tabbar-item>
       <van-tabbar-item replace
                        name="profile"
                        to="/mobile/profile"

@@ -68,7 +68,6 @@ body {
   height: 100%;
   overflow: hidden;
   overflow-y: auto;
-  font-weight: 300;
   font-family:
     'Overpass',
     'Noto Sans SC',

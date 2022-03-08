@@ -414,7 +414,7 @@ export default {
   .block-title {
     display: flex;
     align-items: center;
-    color: #44447e;
+    color: @projectNameColor;
     font-weight: 300;
     font-size: 16px;
     line-height: 22px;

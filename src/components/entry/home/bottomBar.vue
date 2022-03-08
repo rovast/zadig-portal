@@ -53,7 +53,7 @@ export default {
 .bottom-bar-container {
   display: flex;
   height: 32px;
-  background-color: #a0a0ff;
+  background-color: @themeColor;
 
   .breadcrumb-container {
     display: flex;
@@ -80,7 +80,7 @@ export default {
       position: relative;
       display: inline-flex;
       margin-right: 60px;
-      color: #44447e;
+      color: @projectNameColor;
       font-weight: 300;
       font-size: 14px;
       line-height: 22px;
@@ -90,7 +90,7 @@ export default {
 
         a,
         span {
-          color: #44447e;
+          color: @projectNameColor;
           cursor: pointer;
         }
       }

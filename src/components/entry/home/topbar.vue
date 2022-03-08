@@ -452,7 +452,7 @@ export default {
 
         .icon-switcher {
           i {
-            color: #a0a0ff;
+            color: @themeColor;
             cursor: pointer;
           }
         }

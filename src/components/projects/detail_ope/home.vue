@@ -266,8 +266,6 @@ export default {
 </script>
 
 <style lang="less" >
-@iconColor: #a0a0ff;
-
 .project-home-container {
   position: relative;
   flex: 1;
@@ -352,7 +350,7 @@ export default {
 
     .el-table {
       .project-name {
-        color: #44447e;
+        color: @projectNameColor;
         font-weight: 400;
         font-size: 16px;
         line-height: 22px;
@@ -440,7 +438,7 @@ export default {
 
           .icon {
             margin-left: 18px;
-            color: @iconColor;
+            color: @projectItemIconColor;
             font-size: 18px;
             line-height: 35px;
             cursor: pointer;
@@ -467,7 +465,7 @@ export default {
             margin: 0;
             padding: 0;
             padding-right: 15px;
-            color: #44447e;
+            color: @projectNameColor;
             font-weight: 400;
             font-size: 18px;
             line-height: 22px;

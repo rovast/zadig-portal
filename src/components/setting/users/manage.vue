@@ -58,7 +58,7 @@
             <span class="text-title">用户注册:</span>
             <el-switch v-model="registrationStatus"
                        @change="changeRegistration"
-                       active-color="#5555ff">
+                       active-color="#1989fa">
             </el-switch>
           </div>
         </el-col>

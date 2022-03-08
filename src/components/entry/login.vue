@@ -343,7 +343,7 @@ export default {
         }
 
         .btn-theme:hover {
-          background: #5555ffc2;
+          background: #1989fac2;
         }
 
         .name {

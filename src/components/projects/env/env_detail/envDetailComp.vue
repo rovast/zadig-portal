@@ -51,9 +51,10 @@
             <div class="grid-content">{{getProdStatus(productInfo.status,productStatus.updatable)}}</div>
           </el-col>
         </el-row>
-        <!-- pm and hosting project don't show registry -->
-        <el-row :gutter="10" v-if="!isPmService">
-          <el-col v-if="!isExternal" :span="12">
+
+        <el-row :gutter="10">
+          <!-- pm and hosting project don't show registry -->
+          <el-col v-if="!isExternal && !isPmService" :span="12">
             <div class="grid-title">镜像仓库</div>
             <div class="grid-content image-registry">
               <div v-if="editImageRegistry === false">

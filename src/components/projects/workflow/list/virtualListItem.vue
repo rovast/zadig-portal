@@ -175,7 +175,7 @@ export default {
     async changeSchedule (projectName) {
       const workflowInfo = this.workflowInfo
       workflowInfo.schedulerEnabled = !workflowInfo.schedulerEnabled
-      const res = await updateWorkflowAPI(this.workflowInfo.product_tmpl_name, this.workflowInfo).catch(error =>
+      const res = await updateWorkflowAPI(this.workflowInfo).catch(error =>
         console.log(error)
       )
       if (res) {

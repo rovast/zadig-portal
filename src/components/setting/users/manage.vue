@@ -2,7 +2,15 @@
   <div class="users-overview-container">
     <!--start of add user dialog-->
     <el-dialog title="新建用户" custom-class="create-user-dialog" :close-on-click-modal="false" :visible.sync="dialogAddUserVisible">
-      <el-form :model="addUser" @submit.native.prevent :rules="addUserRule" ref="addUserForm">
+      <el-form
+        :model="addUser"
+        @submit.native.prevent
+        :rules="addUserRule"
+        ref="addUserForm"
+        label-position="left"
+        label-width="80px"
+        class="primary-form"
+      >
         <el-form-item label="用户名" prop="account">
           <el-input size="small" v-model="addUser.account"></el-input>
         </el-form-item>
@@ -56,10 +64,7 @@
         <el-col :span="3">
           <div style="width: 100%; line-height: 32px;">
             <span class="text-title">用户注册:</span>
-            <el-switch v-model="registrationStatus"
-                       @change="changeRegistration"
-                       active-color="#5555ff">
-            </el-switch>
+            <el-switch v-model="registrationStatus" @change="changeRegistration" active-color="#5555ff"></el-switch>
           </div>
         </el-col>
       </el-row>
@@ -255,27 +260,36 @@ export default {
       )
       if (usersData && rolesData) {
         this.totalUser = usersData.totalCount
-        this.users = sortBy(usersData.users.map(user => {
-          const roleInfo = rolesData.find(role => {
-            return role.uid === user.uid
-          })
-          if (roleInfo) {
-            user.role = roleInfo.role
-            user.roleBindingName = roleInfo.name
-          } else {
-            user.role = ''
-          }
-          return user
-        }), 'account')
+        this.users = sortBy(
+          usersData.users.map(user => {
+            const roleInfo = rolesData.find(role => {
+              return role.uid === user.uid
+            })
+            if (roleInfo) {
+              user.role = roleInfo.role
+              user.roleBindingName = roleInfo.name
+            } else {
+              user.role = ''
+            }
+            return user
+          }),
+          'account'
+        )
       }
       this.loading = false
     },
     deleteUser (row) {
-      this.$confirm(`确定删除 ${this.identityTypeMap[row.identity_type]} 用户 ${row.name ? row.name : row.account}`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
+      this.$confirm(
+        `确定删除 ${this.identityTypeMap[row.identity_type]} 用户 ${
+          row.name ? row.name : row.account
+        }`,
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
         .then(() => {
           deleteUserAPI(row.uid).then(res => {
             this.$message({
@@ -289,7 +303,7 @@ export default {
             )
           })
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error)
           this.$message({
             type: 'info',
@@ -335,11 +349,10 @@ export default {
       })
     },
     changeRegistration (val) {
-      const payload =
-        {
-          name: 'RegisterTrigger',
-          enabled: val
-        }
+      const payload = {
+        name: 'RegisterTrigger',
+        enabled: val
+      }
       changeRegistrationAPI(payload).then(res => {
         this.checkRegistration()
         this.$message({
@@ -371,43 +384,13 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .users-overview-container {
   position: relative;
   flex: 1;
   padding: 15px 30px;
   overflow: auto;
   font-size: 13px;
-
-  .el-input {
-    display: inline-block;
-  }
-
-  .create-user-dialog {
-    width: 450px;
-
-    .el-dialog__header {
-      padding: 15px;
-      text-align: center;
-      border-bottom: 1px solid #e4e4e4;
-
-      .el-dialog__close {
-        font-size: 10px;
-      }
-    }
-
-    .el-dialog__body {
-      padding-bottom: 0;
-    }
-
-    .el-select {
-      width: 100%;
-    }
-
-    .el-input {
-      display: inline-block;
-    }
-  }
 
   .users-container {
     .origin {
@@ -486,9 +469,31 @@ export default {
       }
     }
   }
+}
+</style>
 
-  .el-table th > .cell {
-    color: #97a8be;
+<style lang="less">
+.create-user-dialog {
+  width: 600px;
+
+  .el-dialog__header {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #e4e4e4;
+
+    .el-dialog__close {
+      font-size: 10px;
+    }
+  }
+
+  .el-dialog__body {
+    padding: 30px 48px 0;
+
+    .el-form.primary-form {
+      .el-form-item {
+        margin-bottom: 16px;
+      }
+    }
   }
 }
 </style>

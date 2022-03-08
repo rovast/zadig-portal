@@ -14,7 +14,6 @@
         </div>
         <div class="sidebar-header__info">
           <div class="logo-title">{{backTitle}}</div>
-          <div class="logo-title logo-title_subtitle">返回上一层</div>
         </div>
       </router-link>
       <router-link class="sidebar-header-item" v-show="!showSidebar&&showBackPath"  :to="backUrl">
@@ -512,14 +511,14 @@ export default {
       display: flex;
       justify-content: center;
       width: 100%;
-      padding: 10px 25px;
+      padding: 10px 30px;
     }
 
     .back-to {
       justify-content: flex-start;
 
       .sidebar-header__info {
-        margin-left: 10px;
+        margin-left: 5px;
         padding: 0;
       }
 

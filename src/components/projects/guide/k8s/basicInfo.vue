@@ -1,12 +1,5 @@
 <template>
   <div class="projects-guide-info-container">
-    <transition name="el-fade-in-linear">
-      <div v-if="showGuideText === true"
-           class="page-title-container">
-        <h1>恭喜您成功创建新的项目 {{this.projectName}}</h1>
-      </div>
-    </transition>
-
     <div class="guide-container">
       <Step :activeStep="0"/>
       <div class="current-step-container">

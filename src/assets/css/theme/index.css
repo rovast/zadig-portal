@@ -8913,7 +8913,7 @@
   line-height: 38px;
 }
 .el-step__title.is-process {
-  font-weight: 700;
+  font-weight: 400;
   color: #303133;
 }
 .el-step__title.is-wait {

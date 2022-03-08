@@ -11,7 +11,7 @@
     <ZadigBuild id="基本信息" class="scroll" ref="zadigFormRef" :isCreate="!isEdit" :buildConfigData="buildConfig" usedToHost>
       <template v-slot:buildName>
         <el-form-item label="构建名称" prop="name">
-          <el-select v-model="buildConfig.name" @change="syncBuild" size="small" placeholder="请选择" filterable :allow-create="!isEdit">
+          <el-select v-model="currentBuildConfig.name" @change="syncBuild" size="small" placeholder="请选择" filterable :allow-create="!isEdit">
             <el-option v-for="item in builds" filterable :key="item.id" :label="item.name" :value="item.name"></el-option>
           </el-select>
         </el-form-item>
@@ -27,7 +27,7 @@
             trigger: 'change'
           }"
         >
-          <el-input v-model="buildConfig.service_name" placeholder="服务名称" autofocus size="small" :disabled="isEdit" auto-complete="off"></el-input>
+          <el-input v-model="currentBuildConfig.service_name" placeholder="服务名称" autofocus size="small" :disabled="isEdit" auto-complete="off"></el-input>
         </el-form-item>
       </template>
     </ZadigBuild>
@@ -86,7 +86,7 @@
       </el-form>
     </div>
     <div id="部署配置" class="common-parcel-block deploy-config scroll">
-      <el-form ref="deploy-env" :inline="true" :model="buildConfig" class="primary-form" label-position="left">
+      <el-form ref="deploy-env" :inline="true" :model="currentBuildConfig" class="primary-form" label-position="left">
         <span class="item-title">部署配置</span>
         <div class="deploy-method">
           <el-radio-group v-model="useSshKey" class="radio-group">
@@ -104,7 +104,7 @@
                 <div slot="content">使用 SSH Agent 远程部署：安全登录到目标机器，执行部署操作，可在系统设置-主机管理中进行配置</div>
                 <i class="icon el-icon-question"></i>
               </el-tooltip>
-              <el-select v-if="useSshKey" v-model="buildConfig.sshs" size="mini" multiple placeholder="请选择主机">
+              <el-select v-if="useSshKey" v-model="currentBuildConfig.sshs" size="mini" multiple placeholder="请选择主机">
                 <el-option v-for="(item,index) in  allHost" :key="index" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </el-radio>
@@ -123,7 +123,7 @@
           </div>
         </section>
         <div class="deploy-script">
-          <Editor v-model="buildConfig.pm_deploy_scripts" lang="sh" theme="xcode" width="100%" height="250px"></Editor>
+          <Editor v-model="currentBuildConfig.pm_deploy_scripts" lang="sh" theme="xcode" width="100%" height="250px"></Editor>
         </div>
       </el-form>
     </div>
@@ -242,6 +242,7 @@ import {
   getHostLabelListAPI
 } from '@api'
 import Editor from 'vue2-ace-bind'
+import { cloneDeep } from 'lodash'
 
 import ZadigBuild from '@/components/projects/build/zadigBuild.vue'
 
@@ -327,30 +328,10 @@ export default {
         ],
         env_configs: []
       },
-      buildConfig: {
+      buildConfig: null,
+      currentBuildConfig: {
         service_name: '',
         name: '',
-        desc: '',
-        repos: [],
-        timeout: 60,
-        cache_enable: true,
-        cache_dir_type: 'workspace',
-        cache_user_dir: '',
-        advanced_setting_modified: false,
-        pre_build: {
-          res_req: 'low',
-          build_os: 'xenial',
-          image_id: '',
-          image_from: '',
-          installs: [],
-          envs: [],
-          enable_proxy: false,
-          enable_gocov: false,
-          parameters: []
-        },
-        scripts: '#!/bin/bash\nset -e',
-        main_file: '',
-        post_build: {},
         pm_deploy_scripts: pm_deploy_scripts,
         sshs: null
       },
@@ -467,7 +448,7 @@ export default {
         })
         let originServiceName = ''
         if (!this.isEdit) {
-          originServiceName = this.buildConfig.service_name
+          originServiceName = this.currentBuildConfig.service_name
         } else if (this.isEdit) {
           originServiceName = this.pmService.service_name
         }
@@ -476,7 +457,7 @@ export default {
           this.$set(this.buildConfig, 'service_name', originServiceName)
         }
         if (!this.buildConfig.timeout) {
-          this.$set(this.buildConfig, time_out, 0)
+          this.$set(this.buildConfig, timeout, 0)
         }
 
         if (
@@ -486,6 +467,13 @@ export default {
           this.useSshKey = true
         } else {
           this.useSshKey = false
+        }
+
+        this.currentBuildConfig = {
+          service_name: this.buildConfig.service_name,
+          name: this.buildConfig.name,
+          pm_deploy_scripts: this.buildConfig.pm_deploy_scripts,
+          sshs: cloneDeep(this.buildConfig.sshs)
         }
 
         this.$refs.zadigFormRef.initData(this.buildConfig)
@@ -644,7 +632,7 @@ export default {
             type: 'error',
             message: '请先为部署环境关联主机，再配置探活'
           })
-          this.check_status_enabled = false
+          this.checkStatusEnabled = false
         }
       }
     },
@@ -657,33 +645,38 @@ export default {
       }
       let pmServicePayload = {}
       if (this.isEdit) {
-        if (!this.check_status_enabled) {
+        if (!this.checkStatusEnabled) {
           delete this.pmService.health_checks
         }
         if (!this.useSshKey) {
-          this.buildConfig.sshs = []
+          this.currentBuildConfig.sshs = []
         }
         pmServicePayload = this.$utils.cloneObj(this.pmService)
-        pmServicePayload.build_name = buildConfigPayload.name
+        pmServicePayload.build_name = this.currentBuildConfig.name
+        buildConfigPayload = {
+          ...buildConfigPayload,
+          ...this.currentBuildConfig
+        }
       } else {
         buildConfigPayload = {
+          ...buildConfigPayload,
+          ...this.currentBuildConfig,
           targets: [
             {
               product_name: this.projectName,
-              service_name: this.buildConfig.service_name,
-              service_module: this.buildConfig.service_name
+              service_name: this.currentBuildConfig.service_name,
+              service_module: this.currentBuildConfig.service_name
             }
-          ],
-          ...buildConfigPayload
+          ]
         }
 
         pmServicePayload = {
           product_name: this.projectName,
-          service_name: buildConfigPayload.service_name,
+          service_name: this.currentBuildConfig.service_name,
           visibility: 'private',
           type: 'pm',
-          build_name: buildConfigPayload.name,
-          health_checks: this.check_status_enabled
+          build_name: this.currentBuildConfig.name,
+          health_checks: this.checkStatusEnabled
             ? this.pmService.health_checks
             : [],
           env_configs: this.pmService.env_configs
@@ -714,11 +707,19 @@ export default {
       if (!this.isEdit) {
         refs.push(this.$refs.envConfigRef)
       }
-      if (this.check_status_enabled) {
+      if (this.checkStatusEnabled) {
         refs.push(this.$refs.healthCheckRef)
       }
       Promise.all(refs.map(r => r.validate()))
         .then(() => {
+          const buildName = this.currentBuildConfig.name
+          const findItem = this.builds.find(element => {
+            return element.name === buildName
+          })
+          if (!findItem) {
+            delete combinePayload.build.id
+          }
+
           ;(this.isEdit ? updatePmServiceAPI : createPmServiceAPI)(
             this.projectName,
             combinePayload
@@ -728,7 +729,7 @@ export default {
                 this.changeUpdateEnvDisabled()
               }
               this.$router.push({
-                query: { serviceName: this.buildConfig.service_name }
+                query: { serviceName: this.currentBuildConfig.service_name }
               })
               this.$emit('listenCreateEvent', 'success')
               this.$message({
@@ -752,38 +753,14 @@ export default {
         })
     },
     addNewService (obj) {
-      this.buildConfig = {
+      this.currentBuildConfig = {
         service_name: obj.service_name,
         name: '',
-        desc: '',
-        repos: [],
-        timeout: 60,
-        cache_enable: true,
-        cache_dir_type: 'workspace',
-        cache_user_dir: '',
-        advanced_setting_modified: false,
-        pre_build: {
-          res_req: 'low', // high 、medium、low、min、define
-          res_req_spec: {
-            cpu_limit: 1000,
-            memory_limit: 512
-          },
-          build_os: 'xenial',
-          image_id: '',
-          image_from: '',
-          installs: [],
-          envs: [],
-          enable_proxy: false,
-          enable_gocov: false,
-          parameters: [],
-          cluster_id: '',
-          namespace: ''
-        },
-        scripts: '#!/bin/bash\nset -e',
-        main_file: '',
-        post_build: {},
         pm_deploy_scripts: pm_deploy_scripts,
-        sshs: []
+        sshs: null
+      }
+      this.buildConfig = {
+        name: obj.service_name + '-build'
       }
       this.pmService.health_checks = [
         {
@@ -799,7 +776,9 @@ export default {
       this.pmService.env_configs.forEach(item => {
         item.host_ids = []
       })
-      this.$refs.zadigFormRef.initData(this.buildConfig)
+      this.$nextTick(() => {
+        this.$refs.zadigFormRef.initData()
+      })
     },
     loadPage () {
       const projectName = this.projectName
@@ -827,13 +806,10 @@ export default {
     }
   },
   watch: {
-    'buildConfig.service_name': {
+    'currentBuildConfig.service_name': {
       handler (val, old_val) {
         if (!this.isEdit && val) {
-          this.buildConfig.name = val + '-build'
-          this.$nextTick(() => {
-            this.$refs.zadigFormRef.initData()
-          })
+          this.currentBuildConfig.name = val + '-build'
         }
       }
     },
@@ -919,7 +895,7 @@ export default {
             this.syncBuildConfig(this.pmService.build_name, projectName)
           } else {
             this.$set(
-              this.buildConfig,
+              this.currentBuildConfig,
               'service_name',
               this.pmService.service_name
             )

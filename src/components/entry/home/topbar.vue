@@ -307,7 +307,8 @@ export default {
       &:hover {
         color: #262626;
         text-decoration: none;
-        background-color: #f5f5f5;
+        background-color: rgba(0, 102, 255, 0.07);
+        border-radius: 6px;
 
         & > a {
           color: @themeColor;

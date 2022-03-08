@@ -169,9 +169,9 @@ export default {
   .config-container {
     position: relative;
     display: flex;
-    height: calc(~'100% - 230px') !important;
+    height: calc(~'100% - 225px') !important;
     margin-bottom: 0;
-    padding: 5px 0 15px 0;
+    padding: 5px 0 10px 0;
   }
 
   .controls__wrap {

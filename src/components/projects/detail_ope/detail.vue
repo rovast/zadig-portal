@@ -299,7 +299,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@titleColor: #44447e;
 
 .projects-detail-container {
   position: relative;
@@ -325,7 +324,7 @@ export default {
 
     .section-title {
       margin: 0 0 16px;
-      color: @titleColor;
+      color: @projectNameColor;
       font-weight: 300;
       font-size: 18px;
       line-height: 22px;

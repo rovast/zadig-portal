@@ -3,7 +3,7 @@
     <van-nav-bar v-if="title==='Zadig'"
                  title="Zadig" />
     <van-notice-bar v-if="title==='Zadig'"
-                    color="#5555ff"
+                    color="#1989fa"
                     background="#ecf9ff"
                     :scrollable="true"
                     left-icon="info-o">
@@ -11,7 +11,7 @@
     </van-notice-bar>
     <router-view />
     <van-tabbar v-model="active"
-                active-color="#5555ff"
+                active-color="#1989fa"
                 inactive-color="#000"
                 route>
       <van-tabbar-item replace

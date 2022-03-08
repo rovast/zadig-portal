@@ -554,7 +554,7 @@ export default {
 
             .project-type-item__desc {
               .title {
-                color: #44447e;
+                color: @projectNameColor;
               }
 
               .desc {

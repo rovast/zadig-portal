@@ -29,7 +29,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@titleColor: #44447e;
 
 .projects-container {
   position: relative;

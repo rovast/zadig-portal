@@ -64,7 +64,10 @@
         <el-col :span="3">
           <div style="width: 100%; line-height: 32px;">
             <span class="text-title">用户注册:</span>
-            <el-switch v-model="registrationStatus" @change="changeRegistration" active-color="#5555ff"></el-switch>
+            <el-switch v-model="registrationStatus"
+                       @change="changeRegistration"
+                       active-color="#1989fa">
+            </el-switch>
           </div>
         </el-col>
       </el-row>

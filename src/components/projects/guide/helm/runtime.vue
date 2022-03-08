@@ -321,7 +321,7 @@ export default {
           padding: 8px;
           color: #fff;
           font-weight: 300;
-          font-size: 18px;
+          font-size: 16px;
           text-align: center;
           background: @themeColor;
         }

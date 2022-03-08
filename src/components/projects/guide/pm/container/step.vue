@@ -12,11 +12,11 @@
                 finish-status="success">
         <el-step title="项目配置"
                  description=""></el-step>
-        <el-step title="服务配置"
+        <el-step title="新建服务"
                  description=""></el-step>
         <el-step title="加入环境"
                  description=""></el-step>
-        <el-step title="工作流交付"
+        <el-step title="执行工作流"
                  description=""></el-step>
       </el-steps>
     </div>
@@ -53,7 +53,7 @@ export default {
         padding: 8px;
         color: #fff;
         font-weight: 300;
-        font-size: 18px;
+        font-size: 16px;
         text-align: center;
         background: @themeColor;
       }

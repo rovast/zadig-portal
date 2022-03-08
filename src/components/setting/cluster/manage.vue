@@ -196,7 +196,7 @@
                 </el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="cluster.cache.medium_type === 'object'" prop="cache.object_properties.id">
+            <!-- <el-form-item v-if="cluster.cache.medium_type === 'object'" prop="cache.object_properties.id">
               <span slot="label">选择对象存储</span>
               <el-select v-model="cluster.cache.object_properties.id" placeholder="请选择对象存储" style="width: 100%;" size="small">
                 <template v-if="allStorage.length > 0">
@@ -206,8 +206,8 @@
                   <router-link to="/v1/system/storage" style="color: #606266;">集成对象存储</router-link>
                 </el-option>
               </el-select>
-            </el-form-item>
-            <template v-else-if="cluster.cache.medium_type === 'nfs'">
+            </el-form-item> -->
+            <template v-if="cluster.cache.medium_type === 'nfs'">
               <el-form-item prop="cache.nfs_properties.provision_type">
                 <span slot="label">选择存储资源</span>
                 <el-radio-group v-model="cluster.cache.nfs_properties.provision_type">

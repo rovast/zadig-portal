@@ -13,7 +13,7 @@
       <el-form-item label="选择模板" prop="moduleName">
         <el-select v-model="tempData.moduleName" placeholder="请选择模板" size="small" :disabled="isUpdate" @change="getHelmTemplateVariable">
           <el-option disabled value="NEWMODULE">
-            <router-link to="/v1/template/charts" class="template-link">
+            <router-link to="/v1/template/charts" class="module-link">
               <i class="el-icon-circle-plus-outline" style="margin-right: 3px;"></i>
               新建模板
             </router-link>

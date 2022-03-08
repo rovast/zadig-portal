@@ -6,7 +6,7 @@
     class="version-list-container"
   >
     <div v-if="versionList.length > 0" class="operation">
-      <el-select
+      <!-- <el-select
         style="width: 160px;"
         v-model="selectedService"
         @change="searchVersionByService"
@@ -15,7 +15,7 @@
         size="medium"
       >
         <el-option v-for="(item,index) in serviceList" :key="index" :label="item" :value="item"></el-option>
-      </el-select>
+      </el-select> -->
       <div v-if="showHookConfig" class="hook-config">
         <span class="hook-switch">
           <span>

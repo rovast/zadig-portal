@@ -1,9 +1,9 @@
 <template>
   <div class="integration-account-container">
-    <el-dialog title="账号系统管理-添加" :close-on-click-modal="false" custom-class="user-form-dialog" :visible.sync="dialogUserAccountFormVisible">
+    <el-dialog :title="'账号系统管理-'+(userAccount.mode === 'add'?'添加':'编辑')" :close-on-click-modal="false" custom-class="user-form-dialog" :visible.sync="dialogUserAccountFormVisible">
       <el-form :model="userAccount" @submit.native.prevent :rules="userAccountRules" status-icon ref="userAccountForm">
         <el-form-item label="账号系统类型" prop="type">
-          <el-select v-model="userAccount.name" @change="clearValidate('userAccountForm')" :disabled="userAccount.mode ==='edit'">
+          <el-select v-model="userAccount.name" @change="clearValidate()" :disabled="userAccount.mode ==='edit'">
             <el-option label="Microsoft Active Directory" value="Microsoft Active Directory"></el-option>
             <el-option label="OpenLDAP" value="OpenLDAP"></el-option>
             <el-option label="GitHub" value="GitHub"></el-option>
@@ -19,7 +19,7 @@
           :rules="userAccountGitHubRules"
           ref="userAccountGitHubForm"
           label-position="left"
-          label-width="105px"
+          label-width="110px"
         >
           <el-alert type="info" :closable="false" style="margin-bottom: 15px;">
             <slot>
@@ -61,7 +61,7 @@
           @submit.native.prevent
           :rules="userAccountADRules"
           ref="userAccountADForm"
-          label-width="168px"
+          label-width="185px"
           label-position="left"
         >
           <h4>基本配置</h4>
@@ -94,7 +94,7 @@
             <el-checkbox v-model="userAccountAD.config.startTLS"></el-checkbox>
           </el-form-item>
           <h4>用户规则</h4>
-          <el-form-item label="基础 DN" prop="baseDN">
+          <el-form-item label="基础 DN" prop="userSearch.baseDN">
             <el-input
               v-model="userAccountAD.config.userSearch.baseDN"
               placeholder="从根节点搜索用户，例如：cn=users,dc=example.com,dc=com"
@@ -138,7 +138,7 @@
           @submit.native.prevent
           :rules="userAccountLDAPRules"
           ref="userAccountLDAPForm"
-          label-width="168px"
+          label-width="185px"
           label-position="left"
         >
           <h4>基本配置</h4>
@@ -220,7 +220,7 @@
           @submit.native.prevent
           :rules="userAccountOAuthRules"
           ref="userAccountOAuthForm"
-          label-width="180px"
+          label-width="185px"
           label-position="left"
         >
           <el-alert type="info" :closable="false" style="margin-bottom: 15px;">
@@ -745,8 +745,16 @@ export default {
         type: 'error'
       })
     },
-    clearValidate (ref) {
-      this.$refs[ref].clearValidate()
+    clearValidate () {
+      if (this.$refs.userAccountGitHubForm) {
+        this.$refs.userAccountGitHubForm.clearValidate()
+      } else if (this.$refs.userAccountLDAPForm) {
+        this.$refs.userAccountLDAPForm.clearValidate()
+      } else if (this.$refs.userAccountOauthForm) {
+        this.$refs.userAccountOauthForm.clearValidate()
+      } else if (this.$refs.userAccountCustomForm) {
+        this.$refs.userAccountCustomForm.clearValidate()
+      }
     },
     addAccount () {
       this.dialogUserAccountFormVisible = true

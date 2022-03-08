@@ -36,6 +36,9 @@
               <el-option v-for="external in externalList" :key="external.id" :label="external.server" :value="external.server"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item style=" margin-right: 5px; margin-left: -5px;">
+            <span>/</span>
+          </el-form-item>
           <el-form-item prop="path" :rules="{required: true, message: '请输入访问路径', trigger: 'blur'}">
             <el-input v-model="versionHook.path" placeholder="输入访问路径" size="small"></el-input>
           </el-form-item>

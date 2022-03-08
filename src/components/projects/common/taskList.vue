@@ -47,7 +47,7 @@
       </el-table-column>
       <el-table-column label="执行人" min-width="120">
         <template slot-scope="{ row }">
-          <div class="common-column" :class="[['webhook', 'timer'].includes(row.task_creator) ? 'column-gray' : '']">{{ row.task_creator }}</div>
+          <div class="common-column">{{ row.task_creator }}</div>
           <div class="common-column column-gray">{{ convertTimestamp(row.create_time) }}</div>
         </template>
       </el-table-column>

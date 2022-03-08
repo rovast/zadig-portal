@@ -157,7 +157,7 @@ export default {
             type: 'string',
             required: true,
             validator: validateBuildConfigName,
-            trigger: 'blur'
+            trigger: ['blur', 'change']
           }
         ],
         'pre_build.image_id': {
@@ -170,16 +170,21 @@ export default {
       validObj: new ValidateSubmit(),
       allCodeHosts: [],
       configDataLoading: true,
-      initBuildConfig: null
+      buildConfig: cloneDeep(initBuildConfig)
     }
   },
   computed: {
     projectName () {
       return this.$route.params.project_name
-    },
-    buildConfig () {
-      this.initBuildConfig = cloneDeep(initBuildConfig)
-      return Object.assign(this.initBuildConfig, cloneDeep(this.buildConfigData))
+    }
+  },
+  watch: {
+    buildConfigData: {
+      handler (nVal, oVal) {
+        this.buildConfig = { ...cloneDeep(initBuildConfig), ...cloneDeep(nVal) }
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {

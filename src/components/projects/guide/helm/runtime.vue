@@ -29,7 +29,7 @@
               </span>
             </el-tab-pane>
             <el-tab-pane name="addNew" v-if="canHandle">
-              <span slot="label" @click="handleTabsEdit('', 'add')">新建环境</span>
+              <span slot="label" @click="handleTabsEdit('', 'add')">创建环境</span>
             </el-tab-pane>
           </el-tabs>
           <el-form label-width="100px" ref="createEnvRef" :model="currentInfo" :rules="rules" label-position="left" inline>

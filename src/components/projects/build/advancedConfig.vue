@@ -140,7 +140,8 @@ export default {
       }
     },
     getClusterList () {
-      return getClusterListAPI(this.projectName).then(res => {
+      const projectName = this.$route.params.project_name
+      return getClusterListAPI(projectName).then(res => {
         this.clusters = res.filter(element => element.status === 'normal')
         this.initAdvancedConfig()
       })

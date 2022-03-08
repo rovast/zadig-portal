@@ -19,7 +19,6 @@
     <div class="policy-outer">
       <Policy
         ref="policyRef"
-        :userList="userList"
         :workflowList="workflowList"
         :envList="envList"
         :policy="policy"
@@ -36,7 +35,6 @@ import Policy from './policy.vue'
 import bus from '@utils/eventBus'
 import { cloneDeep } from 'lodash'
 import {
-  queryRoleBindingsAPI,
   queryPolicyDefinitionsAPI,
   getProductWorkflowsInProjectAPI,
   getCommonWorkflowListInProjectAPI,
@@ -55,7 +53,6 @@ const collaborationInfo = {
 export default {
   data () {
     return {
-      userList: [],
       workflowList: [],
       envList: [],
       policy: {
@@ -133,17 +130,6 @@ export default {
         initName
       })
       this.activeName = initName
-    },
-    getProjectUsers () {
-      queryRoleBindingsAPI(this.projectName).then(res => {
-        const userList = _.uniqBy(res, 'uid')
-        const allId = userList.findIndex(user => user.uid === '*')
-        if (allId !== -1) {
-          const allUser = userList.splice(allId, 1)
-          userList.unshift(allUser[0])
-        }
-        this.userList = userList
-      })
     },
     async getPolicyDefinitions () {
       const res = await queryPolicyDefinitionsAPI(
@@ -247,7 +233,6 @@ export default {
     Policy
   },
   created () {
-    this.getProjectUsers()
     this.getPolicyDefinitions()
     this.getWorkflows()
     this.getEnvNameList()

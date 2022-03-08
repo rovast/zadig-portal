@@ -95,7 +95,7 @@
 
         <el-table-column label="测试报告">
           <template slot-scope="scope">
-            <span v-if="scope.row.testingv2SubTask.status === 'passed'||scope.row.testingv2SubTask.report_ready === true">
+            <span v-if="scope.row.testingv2SubTask.report_ready === true">
               <router-link class="show-test-result" :to="getTestReport(scope.row.testingv2SubTask, scope.row._target)">
                 查看
               </router-link>

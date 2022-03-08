@@ -10,7 +10,7 @@
                center>
       <div class="modifiled-pwd-container">
         <el-form label-position="top"
-                 label-width="80px"
+                 label-width="100px"
                  :rules="rules"
                  ref="ruleForm"
                  :model="pwd">
@@ -43,10 +43,7 @@
         <div class="row">
           <div class="edit-columns">
             <div class="ember-view">
-              <div class="avatar-overlay"></div>
-              <img src="@assets/icons/others/profile.png"
-                   alt=""
-                   class="avatar">
+              <span class="avatar iconfont iconvery-user"></span>
             </div>
           </div>
           <div class="info-tag">
@@ -324,19 +321,13 @@ export default {
   overflow: auto;
   font-size: 13px;
 
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
-
   .section {
     margin-bottom: 56px;
 
     .Box {
       padding: 55px 20px;
-      border: 2px solid #f1f1f1;
-      border-radius: 3px;
+      border: 1px solid #f1f1f1;
+      border-radius: 2px;
 
       .username {
         font-weight: 300;
@@ -356,6 +347,11 @@ export default {
         .ember-view {
           float: left;
           width: 300px;
+
+          .avatar {
+            color: @themeColor;
+            font-size: 40px;
+          }
         }
 
         .edit-profile {
@@ -391,7 +387,7 @@ export default {
               cursor: pointer;
 
               &:hover {
-                color: #1989fa;
+                color: @themeColor;
               }
             }
           }

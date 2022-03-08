@@ -47,7 +47,7 @@
                     <router-link @click.native="markAsRead(notification, index)"
                                  :to="`/v1/projects/detail/${notification.content.product_name}/pipelines/${notification.content.type==='single'?notification.content.type:'multi'}/${notification.content.pipeline_name}/${notification.content.task_id}`">
                       <em>{{notification.content.pipeline_name}}
-                        <span style="color: #1989fa; font-size: 15px; cursor: pointer;">{{'#' +
+                        <span class="notification-id">{{'#' +
                           notification.content.task_id}}</span>
                       </em><br>
                     </router-link>
@@ -123,7 +123,7 @@
                 :hidden="unreadMsgs.length===0"
                 class="item">
         <span v-popover:popover4>
-          <i class="el-icon-bell icon"></i>
+          <i class="el-icon-bell icon-bell"></i>
         </span>
       </el-badge>
     </div>
@@ -208,6 +208,18 @@ export default {
 
 .notification {
   display: inline-block;
+
+  .notification-id {
+    color: @themeColor;
+    font-size: 15px;
+    cursor: pointer;
+  }
+}
+
+.notify {
+  .icon-bell {
+    font-size: 20px;
+  }
 }
 
 .notify-container {
@@ -215,7 +227,7 @@ export default {
 
   .notify-header {
     padding: 15px 20px;
-    background-color: #f5f7fa;
+    background-color: #f2f3f5;
     border-bottom: 1px solid #dcdfe5;
 
     .msg {
@@ -233,7 +245,7 @@ export default {
       cursor: pointer;
 
       &:hover {
-        color: #1989fa;
+        color: @themeColor;
       }
     }
   }
@@ -247,7 +259,6 @@ export default {
     &::-webkit-scrollbar-track {
       background-color: #f5f5f5;
       border-radius: 6px;
-      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     }
 
     &::-webkit-scrollbar {
@@ -256,7 +267,6 @@ export default {
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: #555;
       border-radius: 6px;
       box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     }
@@ -276,7 +286,7 @@ export default {
 
       .notification {
         position: relative;
-        padding: 10px 20px 10px 35px;
+        padding: 10px 20px 10px 20px;
         background: #fff;
         border-bottom: 1px solid #e2dee6;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
@@ -307,7 +317,7 @@ export default {
         }
 
         .color-running {
-          color: #1989fa;
+          color: @themeColor;
           font-weight: 500;
         }
 
@@ -343,7 +353,7 @@ export default {
             font-style: normal;
 
             .task_id {
-              color: #1989fa;
+              color: @themeColor;
             }
           }
         }
@@ -379,7 +389,7 @@ export default {
 
         .operation.read {
           &:hover {
-            color: #1989fa;
+            color: @themeColor;
           }
         }
 

@@ -526,8 +526,8 @@ export function createWorkflowAPI (data) {
   return http.post(`/api/aslan/workflow/workflow?projectName=${data.product_tmpl_name}`, data)
 }
 
-export function updateWorkflowAPI (data) {
-  return http.put(`/api/aslan/workflow/workflow?projectName=${data.product_tmpl_name}`, data)
+export function updateWorkflowAPI (data, ifPassFilter = false) {
+  return http.put(`/api/aslan/workflow/workflow?projectName=${data.product_tmpl_name}&ifPassFilter=${ifPassFilter}`, data)
 }
 
 export function deleteProductWorkflowAPI (projectName, name) {
@@ -992,6 +992,14 @@ export function updateProxyConfigAPI (id, payload) {
 }
 
 // Quota
+export function getWorkflowConcurrencySettingsAPI () {
+  return http.get(`/api/aslan/system/concurrency/workflow`)
+}
+
+export function updateWorkflowConcurrencySettingsAPI (payload) {
+  return http.post(`/api/aslan/system/concurrency/workflow`, payload)
+}
+
 export function getCapacityAPI (target) {
   return http.get(`/api/aslan/system/capacity/target/${target}`)
 }
@@ -1345,7 +1353,7 @@ export function getVersionListAPI (workflowName = '', projectName = '', taskId =
   return http.get(`/api/aslan/delivery/releases?workflowName=${workflowName}&projectName=${projectName}&taskId=${taskId}&serviceName=${serviceName}&verbosity=${verbosity}`)
 }
 
-export function getVersionServiceListAPI (projectName) {
+export function getVersionServiceListAPI (projectName = '') {
   return http.get(`/api/aslan/delivery/servicenames?projectName=${projectName}`)
 }
 
@@ -1481,7 +1489,7 @@ export function praseKubernetesTemplateAPI (payload) {
   return http.post(`/api/aslan/template/yaml/getVariables`, payload)
 }
 
-export function getKubernetesAPI (id) {
+export function getKubernetesTemplateDetailAPI (id) {
   return http.get(`/api/aslan/template/yaml/${id}`)
 }
 
@@ -1739,12 +1747,4 @@ export function getServiceDeploySummaryAPI ({ startDate, endDate, projectNames }
 
 export function getServiceFailureAPI ({ startDate, endDate, projectNames }) {
   return http.post(`/api/aslan/stat/quality/deployTopFiveFailureMeasure`, { startDate, endDate, productNames: projectNames })
-}
-
-export function getWorkflowConcurrencySettingsAPI () {
-  return http.get(`/api/aslan/system/concurrency/workflow`)
-}
-
-export function updateWorkflowConcurrencySettingsAPI (payload) {
-  return http.post(`/api/aslan/system/concurrency/workflow`, payload)
 }

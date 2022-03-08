@@ -1,6 +1,6 @@
 import 'normalize.css'
 import 'loaders.css'
-import 'element-ui/lib/theme-chalk/index.css'
+import './assets/css/theme/index.css'
 import 'vant/lib/index.css'
 import Vue from 'vue'
 import Element from 'element-ui'

@@ -5,28 +5,28 @@
         <el-form-item label="选择参与成员" prop="members">
           <el-select
             v-model="collaborationData.members"
-            placeholder="搜寻或邀请（默认为全部用户）"
+            placeholder="可搜寻选择用户"
             multiple
             clearable
             filterable
             collapse-tags
             size="small"
+            :remote="hasAllUser"
+            :remote-method="getUsers"
           >
-            <template slot="prefix">
+            <!-- <template slot="prefix">
               <i class="el-icon-search prefix-icon"></i>
-            </template>
+            </template> -->
             <el-option disabled value="NEWUSER">
               <router-link :to="`/v1/projects/detail/${projectName}/rbac?addRole=true`" class="env-link">
                 <i class="el-icon-circle-plus-outline" style="margin-right: 3px;"></i>
                 添加项目成员
               </router-link>
             </el-option>
-            <el-option v-for="user in userList" :key="user.uid" :label="user.uid === '*' ? 'all-users': user.username " :value="user.uid">
-              <span v-if="user.uid === '*'">all-users(项目所有用户包括新建用户)</span>
-              <template v-else>
-                <i class="iconfont iconsystem option-icon"></i>
-                {{user.username}} ({{user.account}})
-              </template>
+            <el-option v-if="hasAllUser" label="所有用户" value="*"></el-option>
+            <el-option v-for="user in currentUsers" :key="user.uid" :label="user.username" :value="user.uid">
+              <i class="iconfont iconsystem option-icon"></i>
+              {{user.username}} ({{user.account}})
             </el-option>
           </el-select>
         </el-form-item>
@@ -102,7 +102,7 @@
       </el-table>
     </el-form>
 
-    <div class="secondary-title">集成环境</div>
+    <div class="secondary-title">环境</div>
     <el-form ref="environmentRef" :model="collaborationData" label-width="120px" label-position="left">
       <el-table :data="collaborationData.products" style="width: 100%;">
         <el-table-column label="基准环境">
@@ -198,11 +198,11 @@
 </template>
 
 <script>
-import { difference, intersection, cloneDeep } from 'lodash'
+import { cloneDeep, uniqBy } from 'lodash'
 import PolicyDialog from './policyDialog.vue'
+import { queryRoleBindingsAPI, usersAPI } from '@api'
 export default {
   props: {
-    userList: Array,
     workflowList: Array,
     envList: Array,
     policy: Object,
@@ -223,7 +223,10 @@ export default {
       changedInfo: {},
       visible: false,
       mode: '',
-      saveDisabled: true
+      saveDisabled: true,
+      currentUsers: [],
+      userList: [],
+      hasAllUser: false
     }
   },
   computed: {
@@ -261,6 +264,37 @@ export default {
     }
   },
   methods: {
+    getProjectUsers () {
+      queryRoleBindingsAPI(this.projectName).then(res => {
+        const userList = uniqBy(res, 'uid')
+        const allId = userList.findIndex(user => user.uid === '*')
+        if (allId !== -1) {
+          this.hasAllUser = true
+          userList.splice(allId, 1)
+          this.getUsers()
+        }
+        this.currentUsers = userList
+        this.userList = userList
+      })
+    },
+    getUsers (search = '') {
+      const projectName = this.projectName
+      const payload = {
+        name: search,
+        page: 1,
+        per_page: 100
+      }
+      usersAPI(payload, projectName).then(res => {
+        res.users.forEach(user => {
+          user.username = user.name
+        })
+        if (search) {
+          this.currentUsers = uniqBy(res.users, 'uid')
+        } else {
+          this.currentUsers = uniqBy(this.userList.concat(uniqBy(res.users, 'uid')), 'uid')
+        }
+      })
+    },
     updateCollaborationType (configType, resourceType, row) {
       if (row.add) {
         row.verbs = this.policy[resourceType][
@@ -378,7 +412,6 @@ export default {
       this.changedInfo = {}
       let changedInfo = {} //  added: {}, deleted: {}, updated: {}
 
-      const allUsers = this.userList.map(user => user.uid)
       const isAllMemberCurr = current ? current.members.includes('*') : false
       const isAllMemberInit = initial ? initial.members.includes('*') : false
 
@@ -386,7 +419,7 @@ export default {
         this.changedInfo = {
           added: {
             members: isAllMemberCurr
-              ? this.userList.map(user => user.username)
+              ? ['所有用户']
               : this.transformUidToName(current.members),
             workflows: cloneDeep(current.workflows),
             products: cloneDeep(current.products)
@@ -397,7 +430,7 @@ export default {
         this.changedInfo = {
           deleted: {
             members: isAllMemberInit
-              ? this.userList.map(user => user.username)
+              ? ['所有用户']
               : this.transformUidToName(initial.members),
             workflows: cloneDeep(initial.workflows),
             products: cloneDeep(initial.products)
@@ -409,29 +442,25 @@ export default {
         if (isAllMemberCurr && isAllMemberInit) {
           changedInfo = {
             updated: {
-              members: this.userList.map(user => user.username)
+              members: ['所有用户']
             }
           }
         } else if (isAllMemberCurr) {
           changedInfo = {
             added: {
-              members: this.transformUidToName(
-                difference(allUsers, initial.members)
-              )
+              members: ['所有用户']
             },
             updated: {
-              members: intersection(allUsers, initial.members)
+              members: []
             }
           }
         } else if (isAllMemberInit) {
           changedInfo = {
             deleted: {
-              members: this.transformUidToName(
-                difference(allUsers, current.members)
-              )
+              members: ['所有用户']
             },
             updated: {
-              members: intersection(allUsers, current.members)
+              members: []
             }
           }
         } else {
@@ -480,6 +509,12 @@ export default {
         }
         this.mode = 'updated'
         this.changedInfo = changedInfo
+        if (initial.recycle_day !== current.recycle_day) {
+          if (!this.changedInfo.updated) {
+            this.changedInfo.updated = {}
+          }
+          this.changedInfo.updated.recycle_day = current.recycle_day
+        }
       }
       if (
         Object.keys(this.changedInfo).length ||
@@ -561,6 +596,9 @@ export default {
       deep: true
     }
   },
+  created () {
+    this.getProjectUsers()
+  },
   components: {
     PolicyDialog
   }
@@ -569,10 +607,9 @@ export default {
 
 <style lang="less" scoped>
 .policy-content {
-  width: 70%;
   min-width: 600px;
   padding: 10px;
-  color: #8a8a8a;
+  color: #888;
   font-size: 16px;
   line-height: 22px;
 
@@ -589,7 +626,7 @@ export default {
   }
 
   .secondary-title {
-    color: #8a8a8a;
+    color: #888;
   }
 
   .top {

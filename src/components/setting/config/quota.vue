@@ -148,7 +148,7 @@ export default {
             retention: { [key]: value }
           }
           setCapacityAPI(payload).then((res) => {
-            this.$message.success('更新系统配额成功')
+            this.$message.success('更新历史任务保留策略成功')
             this.getCapacity('WorkflowTaskRetention')
           })
         }).catch(() => {
@@ -174,10 +174,7 @@ export default {
 
   created () {
     bus.$emit(`set-topbar-title`, { title: '系统配置', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getCapacity('WorkflowTaskRetention')
     this.getConcurrencySettings()
   }

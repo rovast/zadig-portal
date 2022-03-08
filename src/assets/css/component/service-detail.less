@@ -1,4 +1,4 @@
-@normal-blue: #409eff;
+@normal-blue: #0066ff;
 @hover-blue: #66b1ff;
 
 @stat-green: #90d76d;
@@ -33,7 +33,7 @@
   }
 
   .copy-btn {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 }
@@ -78,7 +78,7 @@
 
     .el-breadcrumb__item__inner a:hover,
     .el-breadcrumb__item__inner:hover {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
   }
@@ -168,7 +168,7 @@
       cursor: pointer;
 
       i {
-        color: #1989fa;
+        color: @themeColor;
 
         &:hover {
           color: rgba(25, 137, 250, 0.85);
@@ -258,7 +258,7 @@
     .op-buttons {
       display: flex;
 
-      .el-button {
+      /deep/ .el-button {
         margin: 0 0 0 10px;
 
         &:first-child {
@@ -266,7 +266,7 @@
         }
       }
 
-      .iconTerminal {
+      /deep/ .iconTerminal {
         font-size: 12px;
       }
     }
@@ -369,7 +369,7 @@
 
   .health-check {
     &.green {
-      color: #67c23a;
+      color: @success;
     }
 
     &.red {

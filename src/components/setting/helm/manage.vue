@@ -13,7 +13,7 @@
       custom-class="dialog-style"
       width="35%"
     >
-      <el-form ref="helm" :rules="rules" label-width="80px" tab-position="left" :model="helm">
+      <el-form ref="helm" :rules="rules" label-width="90px" tab-position="left" :model="helm">
         <el-form-item label="URL" prop="url">
           <el-input size="small" placeholder="http(s)://example.com" v-model="helm.url"></el-input>
         </el-form-item>
@@ -42,7 +42,7 @@
       custom-class="dialog-style"
       width="35%"
     >
-      <el-form ref="swapHelm" :rules="rules" label-width="80px" tab-position="left" :model="swapHelm">
+      <el-form ref="swapHelm" :rules="rules" label-width="90px" tab-position="left" :model="swapHelm">
         <el-form-item label="URL" prop="url">
           <el-input size="small" placeholder="http(s)://example.com" v-model="swapHelm.url"></el-input>
         </el-form-item>
@@ -65,8 +65,7 @@
     <div class="section">
       <el-alert type="info" :closable="false">
         <template>
-          支持 Harbor Helm Chart 仓库管理，用于存放 push 的 chart
-          <br />配置使用可参考
+          支持集成自建 Harbor 仓库及阿里、腾讯、华为等云厂商提供的 Chart 仓库，详情可参考
           <el-link
             style="font-size: 14px; vertical-align: baseline;"
             type="primary"
@@ -93,8 +92,8 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button @click="repoOperation('edit',scope.row)" size="mini">编辑</el-button>
-                <el-button @click="repoOperation('delete',scope.row)" size="mini" type="danger">删除</el-button>
+                <el-button @click="repoOperation('edit',scope.row)" type="primary" size="mini" plain>编辑</el-button>
+                <el-button @click="repoOperation('delete',scope.row)" size="mini" type="danger" plain>删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -226,10 +225,7 @@ export default {
   computed: {},
   mounted () {
     bus.$emit(`set-topbar-title`, { title: 'HELM 仓库', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getHelmRepo()
   }
 }
@@ -243,12 +239,6 @@ export default {
   overflow: auto;
   font-size: 13px;
 
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
-
   .section {
     margin-bottom: 56px;
 
@@ -258,15 +248,15 @@ export default {
       overflow: hidden;
 
       .el-button--success.is-plain {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
 
       .el-button--success.is-plain:hover {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
     }
 

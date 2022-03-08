@@ -39,7 +39,7 @@
                     class="el-icon-document-copy copy"></span>
             </span>
             <span class="tips">- 应用权限请勾选：api、read_user、read_repository</span>
-            <span class="tips">- 其它配置可以点击
+            <span class="tips">- 其他配置可以点击
               <el-link style="font-size: 14px; vertical-align: baseline;"
                        type="primary"
                        :href="`https://docs.koderover.com/zadig/settings/codehost/gitlab/`"
@@ -215,7 +215,7 @@
                     class="el-icon-document-copy copy"></span>
             </span>
             <span class="tips">- 应用权限请勾选：api、read_user、read_repository</span>
-            <span class="tips">- 其它配置可以点击
+            <span class="tips">- 其他配置可以点击
               <el-link style="font-size: 14px; vertical-align: baseline;"
                        type="primary"
                        :href="`https://docs.koderover.com/zadig/settings/codehost/gitlab/`"
@@ -354,7 +354,7 @@
           <el-alert type="info"
                     :closable="false">
             <template>
-              为系统定义代码源，默认支持 GitLab、GitHub、CodeHub、Gerrit 集成，详情可参考
+              支持集成代码源，支持 GitLab、GitHub、CodeHub、Gerrit 集成，详情可参考
               <el-link style="font-size: 14px; vertical-align: baseline;"
                        type="primary"
                        :href="`https://docs.koderover.com/zadig/settings/codehost/gitlab/`"
@@ -683,27 +683,6 @@ export default {
   overflow: auto;
   font-size: 13px;
 
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
-
-  .breadcrumb {
-    margin-bottom: 25px;
-
-    .el-breadcrumb {
-      font-size: 16px;
-      line-height: 1.35;
-
-      .el-breadcrumb__item__inner a:hover,
-      .el-breadcrumb__item__inner:hover {
-        color: #1989fa;
-        cursor: pointer;
-      }
-    }
-  }
-
   .tab-container {
     .sync-container {
       padding-top: 15px;
@@ -780,7 +759,7 @@ export default {
           cursor: pointer;
 
           &:hover {
-            color: #13ce66;
+            color: @themeColor;
           }
         }
       }

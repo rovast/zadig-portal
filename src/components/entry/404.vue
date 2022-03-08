@@ -214,7 +214,7 @@ export default {
   .bg-blue {
     height: 100%;
     overflow: hidden;
-    background-color: #1989fa;
+    background-color: @themeColor;
   }
 
   .custom-navbar {

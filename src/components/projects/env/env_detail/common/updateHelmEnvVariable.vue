@@ -1,22 +1,17 @@
 <template>
   <div class="helm-env-variable">
-    <div v-show="envVariable.yamlSource === 'default'" class="default-values">
-      <div class="desc">暂无环境默认变量 values 文件</div>
-      <el-button type="text" @click="envVariable.yamlSource = 'freeEdit'" icon="el-icon-plus">添加 values 文件</el-button>
-    </div>
     <ImportValues
-      v-show="envVariable.yamlSource !== 'default'"
-      showDelete
       ref="importValuesRef"
       :resize="{direction: 'vertical'}"
       :importRepoInfo="envVariable"
       @closeValueEdit="envVariable.overrideYaml = ''"
+      style="margin-top: 0;"
     ></ImportValues>
   </div>
 </template>
 
 <script>
-import ImportValues from '@/components/projects/common/import_values/index.vue'
+import ImportValues from '@/components/projects/common/importValues/index.vue'
 import { getEnvDefaultVariableAPI } from '@api'
 
 export default {
@@ -130,10 +125,10 @@ export default {
 .helm-env-variable {
   width: 100%;
 
-  .desc {
-    margin-top: 10px;
-    color: #909399;
-    font-size: 14px;
+  .default-values {
+    .secondary-title {
+      margin-bottom: 8px;
+    }
   }
 }
 </style>

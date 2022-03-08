@@ -29,9 +29,9 @@
             <i class="iconfont iconhuawei"></i>
             <span>华为云</span>
           </el-option>
-          <el-option :value="0" label="其它">
+          <el-option :value="0" label="其他">
             <i class="iconfont iconwuliji"></i>
-            <span>其它</span>
+            <span>其他</span>
           </el-option>
         </el-select>
       </el-form-item>
@@ -223,7 +223,7 @@ export default {
       .el-icon-close {
         right: 50px;
         display: inline-block;
-        color: #1989fa;
+        color: @themeColor;
       }
     }
   }

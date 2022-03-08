@@ -1,0 +1,126 @@
+.projects-guide-info-container {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  overflow: auto;
+  background-color: @globalBackgroundColor;
+
+  .page-title-container {
+    display: flex;
+    padding: 0 20px;
+
+    h1 {
+      width: 100%;
+      color: #000;
+      font-weight: 300;
+      text-align: center;
+    }
+  }
+
+  .controls__wrap {
+    position: relative;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 0 20px;
+    background-color: #fff;
+
+    & > * {
+      margin-right: 10px;
+    }
+
+    .controls__right {
+      display: flex;
+      align-items: center;
+
+      a {
+        margin-right: 15px;
+      }
+    }
+  }
+
+  .guide-container {
+    min-height: calc(~"100% - 70px");
+    margin-top: 10px;
+
+    .current-step-container {
+      .title-container {
+        margin-bottom: 10px;
+        margin-left: 20px;
+
+        .first {
+          display: inline-block;
+          width: 130px;
+          padding: 8px;
+          color: #fff;
+          font-weight: 300;
+          font-size: 16px;
+          text-align: center;
+          background: @themeColor;
+        }
+
+        .second {
+          display: inline-block;
+          color: #4c4c4c;
+          font-size: 13px;
+        }
+      }
+
+      .block-list {
+        flex: 1;
+        margin-top: 30px;
+        padding: 0 30px;
+        overflow-y: auto;
+        background-color: inherit;
+
+        .info-block {
+          .info-block-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 20px 30px;
+            background-color: #fff;
+            border-radius: 6px;
+
+            .info-block-item-card {
+              display: flex;
+              align-items: center;
+              justify-content: flex-start;
+
+              .integration-card__image {
+                width: 64px;
+
+                .el-button.is-circle {
+                  padding: 6px;
+                  border-radius: 50%;
+                }
+              }
+
+              .card-title {
+                color: #2f2f2f;
+                font-weight: 500;
+                font-size: 16px;
+                text-align: left;
+              }
+
+              .card-desc {
+                color: #4c4c4c;
+                font-size: 13px;
+              }
+            }
+
+            .info-block-item-card > * {
+              flex: 0 0 auto;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -11,7 +11,7 @@
           <div class="name-listing-details">
             <!-- Logo -->
             <div class="avator">
-              <img src="@assets/icons/others/profile.png" alt />
+               <span class="iconfont iconvery-user"></span>
             </div>
             <!-- Details -->
             <div class="name-listing-description">
@@ -84,7 +84,7 @@
       <el-table-column label="策略">
         <template slot-scope="{ row }">
           <div v-if="row.uid === '*'" :class="{'show-gray': row.hasSystemPolicy}">
-            {{ row.policy }}
+            {{ row.policy || '-' }}
             <span v-if="row.hasSystemPolicy">(系统创建)</span>
           </div>
           <div v-else>
@@ -117,7 +117,7 @@
 </template>
 <script>
 import bus from '@utils/eventBus'
-import AddRoleBind from './components/add-role-bind.vue'
+import AddRoleBind from './addRoleBinding.vue'
 import {
   queryRoleBindingsAPI,
   queryRoleAPI,
@@ -257,7 +257,7 @@ export default {
         { title: '项目', url: '/v1/projects' },
         {
           title: this.projectName,
-          url: `/v1/projects/detail/${this.projectName}`
+          url: `/v1/projects/detail/${this.projectName}/detail`
         },
         { title: '权限', url: '' },
         { title: '成员管理', url: '' }
@@ -280,13 +280,11 @@ export default {
     align-items: center;
     padding: 0;
 
-    .avator img {
+    .avator span {
       position: relative;
-      top: 0;
-      flex: 1;
-      max-width: 30px;
-      margin-right: 25px;
       margin-right: 10px;
+      color: @themeColor;
+      font-size: 24px;
     }
 
     .name-listing-description {
@@ -332,7 +330,7 @@ export default {
     }
 
     .role-icon {
-      color: #1989fa;
+      color: @themeColor;
       font-size: 16px;
       cursor: pointer;
 

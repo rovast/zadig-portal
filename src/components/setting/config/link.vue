@@ -1,7 +1,13 @@
 <template>
   <div class="config-link">
     <el-alert type="info" :closable="false">
-      <template>可设置外部快捷链接，方便跳转。</template>
+      <template>支持添加外部快捷链接，详情可参考
+        <el-link style="font-size: 14px; vertical-align: baseline;"
+          type="primary"
+          :href="`https://docs.koderover.com/zadig/settings/system-settings/`"
+          :underline="false"
+          target="_blank">帮助文档</el-link>
+      </template>
     </el-alert>
     <div class="link-content">
       <el-table :data="links" style="width: 100%;">
@@ -17,16 +23,16 @@
             <el-input v-show="row.edit" v-model="row.url" placeholder="请输入 URL" size="small"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="100px">
+        <el-table-column label="操作">
           <template slot-scope="{row}">
-            <span class="btn" v-show="!row.edit" @click="deleteExternalLink(row)">删除</span>
-            <span class="btn" v-show="!row.edit" @click="row.edit = true">编辑</span>
-            <span class="btn" v-show="row.edit" @click="updateExternalLink(row)">确认</span>
+            <el-button v-if="!row.edit" size="mini" type="primary" @click="row.edit = true" plain>编辑</el-button>
+            <el-button v-if="!row.edit" size="mini" type="danger"  @click="deleteExternalLink(row)" plain>删除</el-button>
+            <el-button v-if="row.edit"  size="mini" type="primary" @click="updateExternalLink(row)" plain>确认</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div style="margin-top: 20px;">
-        <el-button type="text" icon="el-icon-plus" @click="addLink">添加快捷链接</el-button>
+        <el-button type="text" icon="el-icon-plus" @click="addLink">添加</el-button>
       </div>
     </div>
   </div>
@@ -101,15 +107,6 @@ export default {
   .link-content {
     padding-top: 15px;
     padding-bottom: 15px;
-  }
-
-  .btn {
-    margin-right: 10px;
-    color: #409eff;
-    font-weight: 500;
-    font-size: 14px;
-    white-space: nowrap;
-    cursor: pointer;
   }
 }
 </style>

@@ -1,14 +1,13 @@
 <template>
   <div class="projects-delivery-container">
     <div class="guide-container">
-      <step :activeStep="3">
-      </step>
+      <Step :activeStep="3"/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第四步</span>
           <span class="second">运行工作流触发服务的自动化交付</span>
         </div>
-        <div class="account-integrations cf-block__list">
+        <div class="block-list">
           <el-table v-loading="loading"
                     :data="mapWorkflows"
                     style="width: 100%;">
@@ -32,7 +31,7 @@
                      :key="ingress_index">
                   <div v-for="(item,host_index) in scope.row.ingress_infos[ingress_index]['host_info']"
                        :key="host_index">
-                    <a style="color: #1989fa;"
+                    <a style="color: @themeColor;"
                        :href="`http://${item.host}`"
                        target="_blank">{{item.host}}</a>
                   </div>
@@ -58,7 +57,7 @@
             <el-table-column width="120px"
                              label="操作">
               <template slot-scope="scope">
-                <el-button type="success"
+                <el-button type="primary"
                            size="mini"
                            round
                            @click="runCurrentTask(scope.row)"
@@ -66,30 +65,27 @@
               </template>
             </el-table-column>
           </el-table>
-
         </div>
       </div>
-      <div class="other-operation">
-        <h3 class="pipelines-aside-help__step-header">
+      <div class="help-links-container">
+        <h3 class="links-header">
           您可能还需要：
         </h3>
-        <ul class="pipelines-aside-help__step-list">
-          <li class="pipelines-aside-help__step-list-item"><a target="_blank"
+        <ul class="links-list">
+          <li class="list-item"><a target="_blank"
                href="https://docs.koderover.com/zadig/project/workflow/#git-webhook"
-               class="pipelines-aside-help__step-list-item-link"><i class="icon el-icon-link"></i>
-              <span class="pipelines-aside-help__step-list-item-link-text">
+               class="list-item-link"><i class="icon el-icon-link"></i>
+              <span class="list-item-link-text">
                 配置 Git Webhook 自动触发服务升级</span></a></li>
         </ul>
       </div>
     </div>
     <div class="controls__wrap">
       <div class="controls__right">
-        <router-link :to="`/v1/projects/detail/${projectName}`">
-          <button type="primary"
+        <router-link :to="`/v1/projects/detail/${projectName}/detail`">
+          <el-button type="primary"
                   size="small"
-                  class="save-btn"
-                  :disabled="loading"
-                  plain>完成</button>
+                  :disabled="loading">完成</el-button>
         </router-link>
       </div>
     </div>
@@ -98,18 +94,18 @@
                custom-class="run-workflow"
                width="60%"
                class="dialog">
-      <run-workflow v-if="taskDialogVisible"
+      <RunWorkflow v-if="taskDialogVisible"
                     :workflowName="workflow.name"
                     :workflowMeta="workflow"
                     :targetProject="workflow.product_tmpl_name"
-                    @success="hideAfterSuccess"></run-workflow>
+                    @success="hideAfterSuccess"/>
     </el-dialog>
   </div>
 </template>
 <script>
 import bus from '@utils/eventBus'
-import step from '../common/step.vue'
-import runWorkflow from '../../pipeline/common/run_workflow.vue'
+import Step from '../common/step.vue'
+import RunWorkflow from '../../workflow/common/runWorkflow.vue'
 import { wordTranslate } from '@utils/wordTranslate.js'
 import { getProductWorkflowsInProjectAPI, getProjectIngressAPI, getWorkflowDetailAPI } from '@api'
 export default {
@@ -175,13 +171,10 @@ export default {
   created () {
     this.getWorkflows()
     bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
   },
   components: {
-    step, runWorkflow
+    Step,
+    RunWorkflow
   },
   onboardingStatus: 0
 }

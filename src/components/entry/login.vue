@@ -221,7 +221,7 @@ export default {
     cursor: pointer !important;
 
     &:hover {
-      color: #007bff !important;
+      color: @themeColor !important;
       text-decoration-line: none;
     }
   }
@@ -291,10 +291,10 @@ export default {
 
         .btn-md {
           padding: 12px 30px 11px 30px;
-          font-weight: 600;
+          font-weight: 400;
           font-size: 14px;
           letter-spacing: 1px;
-          border-radius: 50px;
+          border-radius: 4px;
           cursor: pointer;
         }
 
@@ -332,7 +332,7 @@ export default {
 
         .btn-theme {
           color: #fff;
-          background: #007bff;
+          background: @themeColor;
           border: none;
           border-radius: 0.25rem;
         }
@@ -343,7 +343,7 @@ export default {
         }
 
         .btn-theme:hover {
-          background: #2c5ce4;
+          background: #0066ffc2;
         }
 
         .name {

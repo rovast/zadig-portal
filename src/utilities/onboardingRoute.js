@@ -1,16 +1,16 @@
 function getRoute (status, type, projectName) {
   const routes = {
     basic: [
-      `/v1/projects/create/${projectName}/basic/info?rightbar=step`,
-      `/v1/projects/create/${projectName}/basic/service?rightbar=help`,
-      `/v1/projects/create/${projectName}/basic/runtime`,
-      `/v1/projects/create/${projectName}/basic/delivery`
+      `/v1/projects/create/${projectName}/k8s/info?rightbar=step`,
+      `/v1/projects/create/${projectName}/k8s/service?rightbar=help`,
+      `/v1/projects/create/${projectName}/k8s/runtime`,
+      `/v1/projects/create/${projectName}/k8s/delivery`
     ],
-    not_k8s: [
-      `/v1/projects/create/${projectName}/not_k8s/info`,
-      `/v1/projects/create/${projectName}/not_k8s/config`,
-      `/v1/projects/create/${projectName}/not_k8s/deploy`,
-      `/v1/projects/create/${projectName}/not_k8s/delivery`
+    pm: [
+      `/v1/projects/create/${projectName}/pm/info`,
+      `/v1/projects/create/${projectName}/pm/config`,
+      `/v1/projects/create/${projectName}/pm/deploy`,
+      `/v1/projects/create/${projectName}/pm/delivery`
     ],
     helm: [
       `/v1/projects/create/${projectName}/helm/info?rightbar=step`,
@@ -31,7 +31,7 @@ export function whetherOnboarding (projectTemplate) {
   }
   if (productFeature.deploy_type === 'k8s') {
     if (productFeature.basic_facility === 'cloud_host') {
-      return getRoute(status - 1, 'not_k8s', projectName)
+      return getRoute(status - 1, 'pm', projectName)
     } else {
       return getRoute(status - 1, 'basic', projectName)
     }

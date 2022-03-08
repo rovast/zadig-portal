@@ -1,9 +1,9 @@
 <template>
   <div class="integration-account-container">
-    <el-dialog title="账号系统管理-添加" :close-on-click-modal="false" custom-class="user-form-dialog" :visible.sync="dialogUserAccountFormVisible">
+    <el-dialog :title="'账号系统管理-'+(userAccount.mode === 'add'?'添加':'编辑')" :close-on-click-modal="false" custom-class="user-form-dialog" :visible.sync="dialogUserAccountFormVisible">
       <el-form :model="userAccount" @submit.native.prevent :rules="userAccountRules" status-icon ref="userAccountForm">
         <el-form-item label="账号系统类型" prop="type">
-          <el-select v-model="userAccount.name" @change="clearValidate('userAccountForm')" :disabled="userAccount.mode ==='edit'">
+          <el-select v-model="userAccount.name" @change="clearValidate()" :disabled="userAccount.mode ==='edit'">
             <el-option label="Microsoft Active Directory" value="Microsoft Active Directory"></el-option>
             <el-option label="OpenLDAP" value="OpenLDAP"></el-option>
             <el-option label="GitHub" value="GitHub"></el-option>
@@ -19,7 +19,7 @@
           :rules="userAccountGitHubRules"
           ref="userAccountGitHubForm"
           label-position="left"
-          label-width="105px"
+          label-width="110px"
         >
           <el-alert type="info" :closable="false" style="margin-bottom: 15px;">
             <slot>
@@ -61,7 +61,7 @@
           @submit.native.prevent
           :rules="userAccountADRules"
           ref="userAccountADForm"
-          label-width="168px"
+          label-width="185px"
           label-position="left"
         >
           <h4>基本配置</h4>
@@ -94,7 +94,7 @@
             <el-checkbox v-model="userAccountAD.config.startTLS"></el-checkbox>
           </el-form-item>
           <h4>用户规则</h4>
-          <el-form-item label="基础 DN" prop="baseDN">
+          <el-form-item label="基础 DN" prop="userSearch.baseDN">
             <el-input
               v-model="userAccountAD.config.userSearch.baseDN"
               placeholder="从根节点搜索用户，例如：cn=users,dc=example.com,dc=com"
@@ -138,7 +138,7 @@
           @submit.native.prevent
           :rules="userAccountLDAPRules"
           ref="userAccountLDAPForm"
-          label-width="168px"
+          label-width="185px"
           label-position="left"
         >
           <h4>基本配置</h4>
@@ -220,7 +220,7 @@
           @submit.native.prevent
           :rules="userAccountOAuthRules"
           ref="userAccountOAuthForm"
-          label-width="180px"
+          label-width="185px"
           label-position="left"
         >
           <el-alert type="info" :closable="false" style="margin-bottom: 15px;">
@@ -320,7 +320,7 @@
           size="small"
           @click="createAccountUser()"
           class="start-create"
-        >保存</el-button>
+        >确定</el-button>
         <el-button
           v-else-if="userAccount.mode==='edit'"
           :disabled="userAccount.name === ''"
@@ -339,11 +339,11 @@
       <template>
         <el-alert type="info" :closable="false">
           <template>
-            为系统定义用户来源，默认支持 Microsoft Active Directory、OpenLDAP、GitHub 以及 OAuth 集成，详情可参考
+            支持集成 Microsoft Active Directory、OpenLDAP、GitHub 以及 OAuth 集成等外部账号系统，详情可参考
             <el-link
               style="font-size: 14px; vertical-align: baseline;"
               type="primary"
-              :href="`https://docs.koderover.com/zadig/settings/account/ldap`"
+              :href="`https://docs.koderover.com/zadig/settings/account/ldap/`"
               :underline="false"
               target="_blank"
             >帮助文档</el-link>。
@@ -745,8 +745,16 @@ export default {
         type: 'error'
       })
     },
-    clearValidate (ref) {
-      this.$refs[ref].clearValidate()
+    clearValidate () {
+      if (this.$refs.userAccountGitHubForm) {
+        this.$refs.userAccountGitHubForm.clearValidate()
+      } else if (this.$refs.userAccountLDAPForm) {
+        this.$refs.userAccountLDAPForm.clearValidate()
+      } else if (this.$refs.userAccountOauthForm) {
+        this.$refs.userAccountOauthForm.clearValidate()
+      } else if (this.$refs.userAccountCustomForm) {
+        this.$refs.userAccountCustomForm.clearValidate()
+      }
     },
     addAccount () {
       this.dialogUserAccountFormVisible = true
@@ -1171,12 +1179,6 @@ export default {
   overflow: auto;
   font-size: 13px;
 
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
-
   .tips {
     display: block;
 
@@ -1188,7 +1190,7 @@ export default {
       border-radius: 2px;
 
       .copy {
-        color: #1989fa;
+        color: @themeColor;
         font-size: 16px;
         cursor: pointer;
       }

@@ -1,13 +1,43 @@
 <template>
-  <div class="kr-top-bar">
-    <div class="top-bar-content">
-      <div class="kr-top-bar-start">
-        <span v-if="content.title" class="kr-topbar-title">{{content.title}}</span>
-        <el-breadcrumb v-if="content.breadcrumb && content.breadcrumb.length > 0" separator=">">
-          <el-breadcrumb-item v-for="(item,index) in content.breadcrumb" :to="item.url" :key="index">{{item.title}}</el-breadcrumb-item>
-        </el-breadcrumb>
+  <div class="topbar-container">
+    <div class="topbar-content">
+      <div class="topbar-container-start">
+        <div v-if="showProjectSwitcher" class="project-switcher-container">
+          <el-popover placement="bottom" width="300" trigger="hover" popper-class="project-list-popover" @show="searchProject=''">
+            <div class="project-list-container">
+              <div class="search-container">
+                <el-input placeholder="搜索" v-model.trim="searchProject" size="small" />
+              </div>
+              <div class="list-container">
+                <div
+                  v-for="(item,index) in filteredProjectList"
+                  :key="index"
+                  class="project-item"
+                  :class="{'active':item.name === projectName}"
+                  @click="changeProject(item.name)"
+                >
+                  <div class="project-icon">
+                    <i class="iconfont" :class="projectIconMap[item.deployType]"></i>
+                  </div>
+                  <div class="name">{{item.alias}}</div>
+                </div>
+              </div>
+            </div>
+
+            <span slot="reference" class="icon-switcher">
+              <i class="el-icon-caret-bottom"></i>
+            </span>
+          </el-popover>
+        </div>
+        <div class="breadcrumb-container">
+          <div class="project-switcher"></div>
+          <!-- <span v-if="content.title" class="kr-topbar-title">{{content.title}}</span> -->
+          <el-breadcrumb v-if="content.breadcrumb && content.breadcrumb.length > 0" separator=">">
+            <el-breadcrumb-item v-for="(item,index) in content.breadcrumb" :to="item.url" :key="index">{{item.title}}</el-breadcrumb-item>
+          </el-breadcrumb>
+        </div>
       </div>
-      <div class="kr-top-bar-end">
+      <div class="topbar-container-end">
         <el-popover placement="bottom" popper-class="help-droplist" trigger="click">
           <ul class="dropdown-menu" uib-dropdown-menu>
             <li>
@@ -37,7 +67,7 @@
             <li>
               <a href="https://docs.koderover.com/zadig/env/service/" target="_blank">
                 <i class="icon el-icon-link"></i>
-                <span>集成环境</span>
+                <span>环境</span>
               </a>
             </li>
             <li>
@@ -73,16 +103,13 @@
               </a>
             </li>-->
           </ul>
-          <span slot="reference" class="help">
-            <span class="text">
-              <i class="el-icon-question"></i>文档
-            </span>
+          <span slot="reference">
+            <i class="help-icon iconfont iconvery-teach"></i>
           </span>
         </el-popover>
         <span>
-          <notification class="icon notify"></notification>
+          <Notification class="icon notify" />
         </span>
-
         <div class="nav nav-item-bottom user-profile">
           <el-popover placement="bottom" width="240" popper-class="dropdown-menu" trigger="click">
             <div class="flex">
@@ -103,7 +130,7 @@
                   </li>
                 </ul>
                 <ul v-if="role.includes('admin')" class="profile-list profile-list__with-icon user-settings">
-                  <router-link to="/v1/users/account/manage">
+                  <router-link to="/v1/system/users">
                     <li class="profile-list__item">
                       <i class="iconfont icongeren"></i>
                       <span class="profile-list__text">用户管理</span>
@@ -131,10 +158,10 @@
               </div>
             </div>
             <div slot="reference" class="dropdown-menu-reference">
-              <img src="@assets/icons/others/profile.png" class="menu-avatar" alt />
+              <img src="@assets/icons/others/topbar-profile.png" class="menu-avatar" alt />
               <span class="username">
                 <span>{{userName}}</span>
-                <i class="el-icon-arrow-down el-icon--right"></i>
+                <i class="iconfont iconmorelist"></i>
               </span>
             </div>
           </el-popover>
@@ -144,25 +171,40 @@
   </div>
 </template>
 <script>
-import notification from './common/notification.vue'
+import Notification from './common/notification.vue'
 import mixin from '@/mixin/topbarMixin'
 import bus from '@utils/eventBus'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 export default {
   data () {
     return {
       content: {
         title: '',
-        breadcrumb: [],
-        projectList: []
+        breadcrumb: []
+      },
+      searchProject: '',
+      projectIconMap: {
+        k8s: 'iconk8s',
+        helm: 'iconhelmrepo',
+        external: 'iconvery-trustee',
+        cloud_host: 'iconwuliji'
       }
     }
   },
   computed: {
+    ...mapGetters(['projectList', 'showSidebar']),
     ...mapState({
       role: state => state.login.role,
       userInfo: state => state.login.userinfo
     }),
+    filteredProjectList () {
+      return this.projectList.filter(item => {
+        return item.name.indexOf(this.searchProject) > -1
+      })
+    },
+    showProjectSwitcher () {
+      return this.$route.path.includes('/v1/projects/detail/')
+    },
     userName () {
       // 系统用户
       if (this.userInfo.identityType === 'system') {
@@ -176,12 +218,18 @@ export default {
       } else {
         return this.userInfo.name
       }
+    },
+    projectName () {
+      return this.$route.params.project_name
     }
   },
   methods: {
     async logOut () {
       await this.$store.dispatch('LOGINOUT')
       this.$router.push('/signin')
+    },
+    changeProject (projectName) {
+      this.$router.push(`/v1/projects/detail/${projectName}/detail`)
     },
     handleCommand (command) {
       if (command === 'logOut') {
@@ -198,12 +246,12 @@ export default {
     })
   },
   components: {
-    notification
+    Notification
   },
   mixins: [mixin]
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .dropdown-menu-reference {
   display: flex;
   align-items: center;
@@ -213,12 +261,15 @@ export default {
 
   .username {
     display: inline-block;
-    margin-left: 10px;
-    font-size: 15px;
+    margin-left: 18px;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 22px;
   }
 
-  .el-icon--right {
-    margin-left: 25px;
+  .iconmorelist {
+    margin-left: 54px;
+    color: #c4c4c4;
   }
 }
 
@@ -256,13 +307,25 @@ export default {
       &:hover {
         color: #262626;
         text-decoration: none;
-        background-color: #f5f5f5;
+        background-color: rgba(0, 102, 255, 0.07);
+        border-radius: 6px;
 
         & > a {
-          color: #1989fa;
+          color: @themeColor;
         }
       }
     }
+  }
+}
+
+.help-icon {
+  margin: 0 38px;
+  color: #a0a0a0;
+  font-size: 20px;
+  cursor: pointer;
+
+  &:hover {
+    color: @themeColor;
   }
 }
 
@@ -297,7 +360,7 @@ export default {
 
         &:hover {
           .profile-list__text {
-            color: #1989fa;
+            color: @themeColor;
           }
         }
 
@@ -305,7 +368,7 @@ export default {
           display: inline-block;
           width: 20px;
           margin-right: 10px;
-          color: #3a8ee6;
+          color: @themeColor;
           font-size: 16px;
           text-align: center;
         }
@@ -331,19 +394,18 @@ export default {
   }
 }
 
-.kr-top-bar {
+.topbar-container {
   top: 0;
   right: 0;
   left: 66px;
   z-index: 1010;
-  height: 60px;
-  padding: 0 20px;
-  color: #44504f;
+  height: 40px;
+  padding: 0 30px;
   font-size: 14px;
   background-color: #fff;
   border-bottom: 1px solid #ebedef;
 
-  .top-bar-content {
+  .topbar-content {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -356,7 +418,7 @@ export default {
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
 
-    .kr-top-bar-start {
+    .topbar-container-start {
       display: flex;
       flex: 0 1 auto;
       flex-basis: auto;
@@ -366,6 +428,36 @@ export default {
       justify-content: flex-start;
       min-width: 0;
       margin-right: 10px;
+
+      .logo-container {
+        display: flex;
+        align-items: center;
+        width: 60px;
+
+        .logo {
+          margin-right: 10px;
+        }
+
+        .small {
+          width: 18.5px;
+          height: 21px;
+        }
+
+        &.opened {
+          width: 170px;
+        }
+      }
+
+      .project-switcher-container {
+        margin-right: 20px;
+
+        .icon-switcher {
+          i {
+            color: @themeColor;
+            cursor: pointer;
+          }
+        }
+      }
 
       span {
         &.kr-topbar-title {
@@ -379,12 +471,29 @@ export default {
         }
       }
 
-      .el-breadcrumb {
-        font-size: 16px;
+      /deep/ .el-breadcrumb {
+        color: #000;
+        font-weight: 300;
+        font-size: 14px;
+      }
+
+      /deep/ .el-breadcrumb__separator {
+        margin: 0 9px;
+        color: @fontLightGray;
+        font-weight: 300;
+      }
+
+      /deep/ .el-breadcrumb__inner.is-link {
+        color: #000;
+        font-weight: 300;
+      }
+
+      /deep/ .el-breadcrumb__inner {
+        color: #888;
       }
     }
 
-    .kr-top-bar-end {
+    .topbar-container-end {
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
@@ -405,12 +514,12 @@ export default {
       }
 
       .icon {
-        color: #4c4c4c;
+        color: @fontLightGray;
         font-size: 18px;
         cursor: pointer;
 
         &:hover {
-          color: #1989fa;
+          color: @themeColor;
         }
       }
 
@@ -419,51 +528,12 @@ export default {
         line-height: 60px;
       }
 
-      .system-statistics {
-        margin-right: 30px;
-        line-height: 60px;
-      }
-
-      .help {
-        display: block;
-        margin-right: 45px;
-        line-height: 60px;
-        cursor: pointer;
-
-        .text {
-          display: inline-block;
-          line-height: 60px;
-        }
-      }
-
-      .system-statistics,
-      .help {
-        color: #4c4c4c;
-        font-size: 14px;
-
-        i {
-          display: inline-block;
-          margin-right: 5px;
-          color: rgba(0, 0, 0, 0.19);
-          font-size: 14px;
-          line-height: 60px;
-        }
-
-        &:hover {
-          color: #1989fa;
-
-          i {
-            color: #1989fa;
-          }
-        }
-      }
-
       .user-profile {
-        margin-left: 80px;
+        margin-left: 38px;
 
         .menu-avatar {
-          width: 30px;
-          height: 30px;
+          width: 28px;
+          height: 28px;
           border-radius: 50%;
         }
       }
@@ -471,28 +541,51 @@ export default {
   }
 }
 
-.el-select-dropdown.el-popper {
-  .el-scrollbar {
-    .el-select-dropdown__item {
-      .k8s-product-option {
-        position: relative;
+.project-list-popover {
+  ::-webkit-scrollbar-track {
+    width: 5px;
+    height: 5px;
+    background-color: #fff;
+    border-radius: 6px;
+  }
 
-        span {
-          padding-right: 20px;
-        }
+  .project-list-container {
+    .search-container {
+      margin-bottom: 10px;
+    }
 
-        i {
-          position: absolute;
-          right: 0;
-          padding-left: 8px;
-          line-height: 34px;
-          visibility: hidden;
-          cursor: pointer;
-        }
+    .list-container {
+      display: flex;
+      flex-direction: column;
+      height: 300px;
+      overflow: auto;
 
-        &:hover {
+      .project-item {
+        display: flex;
+        padding: 10px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+
+        .project-icon {
           i {
-            visibility: visible;
+            color: @themeColor;
+            font-size: 24px;
+          }
+        }
+
+        .name {
+          display: flex;
+          align-items: center;
+          margin-left: 10px;
+          font-size: 16px;
+        }
+
+        &:hover,
+        &.active {
+          background: rgba(0, 102, 255, 0.07);
+
+          .name {
+            color: @themeColor;
           }
         }
       }

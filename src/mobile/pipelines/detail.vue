@@ -122,7 +122,7 @@
 import { Col, Collapse, CollapseItem, Row, NavBar, Tag, Panel, Loading, Button, Notify, Tab, Tabs, Cell, CellGroup, Icon, Divider, ActionSheet, List, Pagination } from 'vant'
 import { getWorkflowDetailAPI, workflowTaskListAPI } from '@api'
 import { wordTranslate } from '@utils/wordTranslate.js'
-import runWorkflow from './run_workflow.vue'
+import runWorkflow from './runWorkflow.vue'
 import moment from 'moment'
 export default {
   components: {
@@ -259,7 +259,7 @@ export default {
   padding-bottom: 50px;
 
   .task-id {
-    color: #1989fa;
+    color: @themeColor;
   }
 
   .status,

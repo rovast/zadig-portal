@@ -2,37 +2,27 @@
   <div class="project-home-container">
     <div class="project-header">
       <div class="header-start">
-        <div class="container">
-          <div class="display-mode">
-            <div class="btn-container">
-              <button type="button" @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'?true:false}" class="display-btn">
-                <i class="el-icon-s-grid"></i>
-                <span class="add-filter-value-title">网格视图</span>
-              </button>
-              <button type="button" @click="currentTab = 'list'" :class="{'active':currentTab==='list'?true:false}" class="display-btn">
-                <i class="el-icon-s-fold"></i>
-                <span class="add-filter-value-title">列表视图</span>
-              </button>
-              <button
-                type="button"
-                @click="$router.push(`/v1/projects/template`)"
-                style="margin-left: 10px; border-radius: 20px;"
-                class="display-btn"
-              >
-                <i class="iconfont iconicon-repertory" style="font-size: 13px;"></i>
-                <span class="add-filter-value-title">模板库</span>
-              </button>
-            </div>
-          </div>
-        </div>
+        <i class="el-icon-menu display-btn" @click="currentTab = 'grid'" :class="{'active':currentTab==='grid'}"></i>
+        <i class="el-icon-s-fold display-btn" @click="currentTab = 'list'" :class="{'active':currentTab==='list'}"></i>
       </div>
       <div class="header-end">
-        <router-link v-if="$utils.roleCheck('admin')" to="/v1/projects/create">
-          <button type="button" class="add-project-btn">
-            <i class="el-icon-plus"></i>
-            新建项目
-          </button>
-        </router-link>
+        <el-button v-if="$utils.roleCheck('admin')" @click="$router.push(`/v1/projects/create`)" style="width: 132px; margin-right: 10px;" plain>
+          <i class="el-icon-plus"></i>&nbsp;&nbsp;&nbsp;&nbsp;新建项目&nbsp;&nbsp;
+        </el-button>
+        <template>
+          <el-dropdown placement="bottom" trigger="click">
+            <button type="button" class="display-btn el-button">
+              <i class="iconfont iconvery-template el-icon--left"></i>
+              &nbsp;&nbsp;模板库&nbsp;&nbsp;
+              <i class="el-icon-caret-bottom el-icon--right"></i>
+            </button>
+            <el-dropdown-menu slot="dropdown" class="template-config">
+              <el-dropdown-item icon="iconfont iconvery-k8s" @click.native="$router.push(`/v1/template/k8s-yamls`)">K8s YAML</el-dropdown-item>
+              <el-dropdown-item icon="iconfont iconhelmrepo" @click.native="$router.push(`/v1/template/charts`)">Helm Chart</el-dropdown-item>
+              <el-dropdown-item icon="iconfont icondocker" @click.native="$router.push(`/v1/template/dockerfiles`)">Dockerfile</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
       </div>
     </div>
     <div
@@ -43,9 +33,9 @@
       class="projects-grid"
     >
       <el-row :gutter="12">
-        <el-col v-for="(project,index) in projectList" :key="index" :span="6">
+        <el-col v-for="(project,index) in projectList" :key="index" :xs="12" :sm="8" :md="6" :lg="6" :xl="4">
           <el-card shadow="hover" class="project-card">
-            <span class="operations">
+            <div class="operations">
               <el-dropdown @command="handleCommand" trigger="click">
                 <span class="el-dropdown-link">
                   <i class="el-icon-more"></i>
@@ -55,50 +45,38 @@
                   <el-dropdown-item :command="{action:'delete',projectName:project.name}">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-            </span>
+            </div>
             <div @click="toProject(project)" class="content-container">
-              <div class="content">
-                <div class="card-header">
-                  <div class="card-text">
-                    <h4 class="project-name">
-                        <div class="quickstart-icon">
-                          <span>{{project.name.slice(0, 1).toUpperCase()}}</span>
-                        </div>
-                      <el-tooltip effect="dark" :content="project.alias?project.alias:project.name" placement="top">
-                        <span class="name">{{project.alias?project.alias:project.name}}</span>
-                      </el-tooltip>
-                      <el-tooltip v-if="!project.public" effect="dark" content="私有项目" placement="top">
-                        <i class="icon iconfont iconprivate"></i>
-                      </el-tooltip>
-                    </h4>
-                  </div>
-                  <div class="info">
-                    <span class="project-desc">{{project.desc}}</span>
-                  </div>
-                </div>
-              </div>
+              <h4 class="project-name">
+                <i class="type-icon iconfont" :class="projectIconMap[project.deployType]"></i>
+                <el-tooltip effect="dark" :content="project.alias?project.alias:project.name" placement="top">
+                  <span class="name">{{project.alias?project.alias:project.name}}</span>
+                </el-tooltip>
+                <el-tooltip v-if="!project.public" effect="dark" content="私有项目" placement="top">
+                  <i class="icon iconfont iconprivate"></i>
+                </el-tooltip>
+              </h4>
+              <div class="project-desc">{{project.desc}}</div>
             </div>
             <div class="footer">
-              <div class="module">
-                <el-tooltip effect="dark" content="工作流" placement="top">
-                  <span @click="$router.push(`/v1/projects/detail/${project.name}/pipelines`)" class="icon iconfont icongongzuoliucheng"></span>
-                </el-tooltip>
-                <el-tooltip effect="dark" content="构建管理" placement="top">
-                  <span @click="$router.push(`/v1/projects/detail/${project.name}/builds`)" class="icon iconfont icongoujianzhong"></span>
-                </el-tooltip>
-                <el-tooltip effect="dark" content="测试管理" placement="top">
-                  <span @click="$router.push(`/v1/projects/detail/${project.name}/test`)" class="icon iconfont icontest"></span>
-                </el-tooltip>
-                <el-tooltip effect="dark" content="查看服务" placement="top">
-                  <span @click="$router.push(`/v1/projects/detail/${project.name}/services`)" class="icon iconfont iconrongqifuwu"></span>
-                </el-tooltip>
-              </div>
+              <el-tooltip effect="dark" content="工作流" placement="top">
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/pipelines`)" class="icon iconfont icongongzuoliucheng"></span>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="环境管理" placement="top">
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/envs`)" class="icon iconfont iconvery-environ"></span>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="测试管理" placement="top">
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/test`)" class="icon iconfont iconvery-testing"></span>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="查看服务" placement="top">
+                <span @click="$router.push(`/v1/projects/detail/${project.name}/services`)" class="icon iconfont iconvery-service"></span>
+              </el-tooltip>
             </div>
           </el-card>
         </el-col>
       </el-row>
-      <div v-if="projectList.length === 0" class="no-product">
-        <img src="@assets/icons/illustration/product.svg" alt />
+      <div v-if="projectList.length === 0" class="empty-list">
+        <img src="@assets/icons/illustration/project.svg" alt />
         <p>暂无可展示的项目，请手动添加项目</p>
       </div>
     </div>
@@ -112,7 +90,7 @@
       <el-table v-if="projectList.length > 0" :data="projectList" stripe style="width: 100%;">
         <el-table-column label="项目名称">
           <template slot-scope="scope">
-            <router-link :to="`/v1/projects/detail/${scope.row.name}`" class="project-name">
+            <router-link :to="`/v1/projects/detail/${scope.row.name}/detail`" class="project-name">
               {{scope.row.alias?scope.row.alias:scope.row.name }}
               <el-tooltip v-if="!scope.row.public" effect="dark" content="私有项目" placement="top">
                 <i class="icon iconfont iconprivate"></i>
@@ -120,7 +98,7 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="envs" label="集成环境">
+        <el-table-column prop="envs" label="环境">
           <template slot-scope="scope">{{scope.row.envs.length}}</template>
         </el-table-column>
         <el-table-column label="更新信息">
@@ -137,15 +115,15 @@
         </el-table-column>
         <el-table-column label>
           <template slot-scope="scope">
-            <router-link :to="`/v1/projects/detail/${scope.row.name}`">
+            <router-link :to="`/v1/projects/detail/${scope.row.name}/detail`">
               <el-button class="operation" type="text">配置</el-button>
             </router-link>
             <el-button @click="deleteProject(scope.row.name)" class="operation" type="text">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div v-if="projectList.length === 0" class="no-product">
-        <img src="@assets/icons/illustration/product.svg" alt />
+      <div v-if="projectList.length === 0 && !loading" class="empty-list">
+        <img src="@assets/icons/illustration/project.svg" alt />
         <p>暂无可展示的项目，请手动添加项目</p>
       </div>
     </div>
@@ -167,12 +145,18 @@ export default {
   data () {
     return {
       loading: false,
-      currentTab: 'grid'
+      currentTab: 'grid',
+      projectIconMap: {
+        k8s: 'iconk8s',
+        helm: 'iconhelmrepo',
+        external: 'iconvery-trustee',
+        cloud_host: 'iconwuliji'
+      }
     }
   },
   methods: {
     toProject (project) {
-      this.$router.push(`/v1/projects/detail/${project.name}`)
+      this.$router.push(`/v1/projects/detail/${project.name}/detail`)
     },
     handleCommand (command) {
       if (command.action === 'delete') {
@@ -276,12 +260,7 @@ export default {
   },
   mounted () {
     this.$store.dispatch('getProjectList')
-    bus.$emit('show-sidebar', true)
     bus.$emit('set-topbar-title', { title: '项目', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
   }
 }
 </script>
@@ -290,10 +269,11 @@ export default {
 .project-home-container {
   position: relative;
   flex: 1;
+  height: 100%;
   overflow: auto;
-  background-color: #f5f7f7;
+  background-color: @globalBackgroundColor;
 
-  .no-product {
+  .empty-list {
     display: flex;
     flex-direction: column;
     align-content: center;
@@ -314,94 +294,66 @@ export default {
 
   .project-header {
     display: flex;
-    align-items: stretch;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding-right: 80px;
+    padding-left: 26px;
+    background: #fff;
 
     .header-start {
-      flex: 1;
+      flex: 0 0 auto;
+      padding: 5px 10px;
+      font-size: 20px;
+      background-color: #fff;
+      border: 1px solid @borderGray;
+      border-radius: 4px;
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
 
-      .container {
-        min-height: 50px;
-        margin: 0;
-        padding: 10px 20px;
-        font-size: 13px;
+      .display-btn {
+        color: @fontGray;
+        cursor: pointer;
 
-        .display-mode {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: baseline;
-          justify-content: flex-start;
-          min-height: 46px;
+        &:not(:last-child) {
+          margin-right: 8px;
+        }
 
-          .btn-container {
-            position: relative;
-            height: 44px;
-            margin-top: 1px;
-            margin-right: 5px;
-
-            .display-btn {
-              padding: 13px 17px;
-              color: #1989fa;
-              font-size: 13px;
-              text-decoration: none;
-              background-color: #fff;
-              border: none;
-              border-color: #fff;
-              border-style: none;
-              border-radius: 2px;
-              box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
-              cursor: pointer;
-
-              &:hover {
-                color: #1989fa;
-                background-color: #fff;
-                border-color: #1989fa;
-              }
-
-              &.active {
-                color: #fff;
-                background-color: #1989fa;
-                border-color: #1989fa;
-              }
-
-              &.round {
-                margin-left: 20px;
-                border-radius: 20px;
-              }
-            }
-          }
+        &:hover,
+        &.active {
+          color: @themeColor;
         }
       }
     }
 
     .header-end {
-      .add-project-btn {
-        width: 165px;
-        height: 100%;
-        padding: 10px 17px;
-        color: #fff;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: #1989fa;
-        border: 1px solid #1989fa;
+      .el-button {
+        padding: 10px 15px;
+        color: @themeColor;
+        font-weight: 400;
+        font-size: 14px;
+        background-color: #fff;
+        border: 1px solid @themeColor;
+        border-radius: 4px;
+        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
         cursor: pointer;
+      }
+
+      .iconfont {
+        font-size: 14px;
       }
     }
   }
 
   .projects-list {
-    height: 100%;
+    height: calc(~'100% - 60px');
     padding: 0 20px;
 
     .el-table {
-      tr {
-        height: 71px;
-      }
-
       .project-name {
-        color: #4c4c4c;
+        color: @projectNameColor;
         font-weight: 400;
         font-size: 16px;
+        line-height: 22px;
         text-align: left;
 
         .iconprivate::before {
@@ -414,38 +366,35 @@ export default {
         color: #606266;
 
         &:hover {
-          color: #1989fa;
+          color: @themeColor;
         }
       }
     }
   }
 
   .projects-grid {
-    height: 100%;
-    padding: 0 20px;
+    height: calc(~'100% - 84px');
+    padding: 12px;
 
     .project-card {
-      height: 135px;
-      margin-bottom: 15px;
+      height: 142px;
+      margin-bottom: 12px;
       border: 2px solid #fff;
-      border-radius: 3px;
-      box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      box-shadow: unset;
 
       &:hover {
-        border-color: #1989fa;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         cursor: pointer;
-
-        .quickstart-icon span {
-          background-color: #1989fa !important;
-        }
       }
 
       .el-card__body {
         position: relative;
         display: flex;
         flex-direction: column;
+        box-sizing: border-box;
         height: 100%;
-        padding: 0;
+        padding: 15px;
 
         &.add {
           font-size: 30px;
@@ -473,6 +422,7 @@ export default {
           cursor: pointer;
 
           i {
+            color: #888;
             font-size: 20px;
             line-height: 25px;
           }
@@ -484,19 +434,14 @@ export default {
           align-self: flex-end;
           justify-content: flex-end;
           width: 100%;
-          height: 35px;
-          border-top: 1px solid #ebeef5;
+          height: 28px;
 
           .icon {
-            margin: 0 5px;
-            color: #606266;
-            font-size: 25px;
+            margin-left: 18px;
+            color: @projectItemIconColor;
+            font-size: 18px;
             line-height: 35px;
             cursor: pointer;
-
-            &:hover {
-              color: #1989fa;
-            }
           }
 
           .operation {
@@ -506,75 +451,57 @@ export default {
 
         .content-container {
           flex: 1;
-          height: calc(~'100% - 55px');
-          padding: 12px 12px 0 12px;
+          height: calc(~'100% - 35px');
 
-          .content {
-            display: flex;
-            flex-direction: row;
-            height: 100%;
+          .divider {
+            width: 278px;
+            height: 1px;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            background-color: #ccc;
+          }
 
-            .card-header {
-              width: 100%;
+          .project-name {
+            margin: 0;
+            padding: 0;
+            padding-right: 15px;
+            color: @projectNameColor;
+            font-weight: 400;
+            font-size: 18px;
+            line-height: 22px;
+            cursor: pointer;
 
-              .quickstart-icon {
-                display: inline-block;
-                margin-bottom: 15px;
-
-                span {
-                  display: inline-block;
-                  width: 18px;
-                  height: 18px;
-                  color: #fff;
-                  font-size: 18px;
-                  line-height: 18px;
-                  text-align: center;
-                  background-color: #999;
-                  border-radius: 50%;
-                }
-              }
-
-              .card-text {
-                display: inline-block;
-                width: 100%;
-              }
-
-              .divider {
-                width: 278px;
-                height: 1px;
-                margin-top: 14px;
-                margin-bottom: 8px;
-                background-color: #ccc;
-              }
-
-              .project-name {
-                width: calc(100% - 20px);
-                margin: 0;
-                padding: 0;
-                overflow: hidden;
-                color: #4c4c4c;
-                font-weight: 500;
-                font-size: 18px;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                cursor: pointer;
-
-                .iconprivate::before {
-                  color: #c8c9cc;
-                }
-              }
+            .type-icon {
+              margin-right: 6px;
+              color: @themeColor;
+              font-size: 20px;
+              vertical-align: top;
             }
 
-            .icon {
-              margin-right: 15px;
+            .name {
+              display: inline-block;
+              max-width: calc(100% - 40px);
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
             }
 
-            .info {
-              .project-desc {
-                display: inline-block;
-                font-size: 14px;
-              }
+            .iconprivate::before {
+              color: #c8c9cc;
             }
+          }
+
+          .icon {
+            margin-left: 6px;
+            color: @fontLightGray;
+            vertical-align: top;
+          }
+
+          .project-desc {
+            max-height: calc(100% - 32px);
+            overflow: auto;
+            font-size: 12px;
+            line-height: 22px;
           }
         }
       }
@@ -588,6 +515,21 @@ export default {
   .el-message-box__content {
     max-height: 300px;
     overflow-y: auto;
+  }
+}
+
+.el-dropdown-menu.el-popper.template-config {
+  margin-top: 2px;
+
+  .el-dropdown-menu__item {
+    margin: 0 10px;
+    padding: 0 10px;
+    font-weight: 400;
+    border-radius: 6px;
+  }
+
+  .popper__arrow {
+    display: none;
   }
 }
 </style>

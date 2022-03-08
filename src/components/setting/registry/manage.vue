@@ -84,9 +84,7 @@
       <el-alert type="info"
                 :closable="false">
         <template>
-          支持集成云厂商提供的标准镜像仓库或者自建镜像仓库<br />
-          镜像仓库主要用于存放构建输出的镜像以及预发布的镜像，涉及到工作流的运行，以及集成环境的启动<br />
-          集成镜像仓库可参考
+          支持集成阿里云 ACR、腾讯云 TCR、华为云 SWR、Amazon ECR、DockerHub、Harbor 等镜像仓库，详情可参考
           <el-link style="font-size: 14px; vertical-align: baseline;"
                    type="primary"
                    :href="`https://docs.koderover.com/zadig/settings/image-registry/`"
@@ -137,10 +135,12 @@
                              width="180px">
               <template slot-scope="scope">
                 <el-button @click="registryAction('edit',scope.row)"
-                           size="mini">编辑</el-button>
+                           size="mini"
+                           type="primary"
+                           plain>编辑</el-button>
                 <el-button @click="registryAction('delete',scope.row)"
                            size="mini"
-                           type="danger">删除</el-button>
+                           type="danger" plain>删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -229,7 +229,7 @@ export default {
         },
         {
           value: 'native',
-          label: '其它',
+          label: '其他',
           reg_addr: '地址',
           namespace: 'Namespace',
           access_key: 'Docker 用户名',
@@ -372,10 +372,7 @@ export default {
   },
   created () {
     bus.$emit(`set-topbar-title`, { title: '镜像仓库', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getRegistry()
   }
 }
@@ -389,12 +386,6 @@ export default {
   overflow: auto;
   font-size: 13px;
 
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
-
   .section {
     margin-bottom: 56px;
 
@@ -404,15 +395,15 @@ export default {
       overflow: hidden;
 
       .el-button--success.is-plain {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
 
       .el-button--success.is-plain:hover {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
     }
 

@@ -1,13 +1,13 @@
 <template>
   <div class="projects-delivery-container">
     <div class="guide-container">
-      <step :activeStep="3" :stepThreeTitle="`配置环境`"></step>
+      <Step :activeStep="3" :stepThreeTitle="`配置环境`"/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第四步</span>
           <span class="second">运行工作流触发服务的自动化交付</span>
         </div>
-        <div class="account-integrations cf-block__list">
+        <div class="block-list">
           <el-table v-loading="loading" :data="mapWorkflows" style="width: 100%;">
             <el-table-column label="工作流名称">
               <template slot-scope="scope">
@@ -27,7 +27,7 @@
               <template slot-scope="scope">
                 <div v-for="(ingress,ingress_index) in scope.row.ingress_infos" :key="ingress_index">
                   <div v-for="(item,host_index) in scope.row.ingress_infos[ingress_index]['host_info']" :key="host_index">
-                    <a style="color: #1989fa;" :href="`http://${item.host}`" target="_blank">{{item.host}}</a>
+                    <el-link :href="`http://${item.host}`" target="_blank">{{item.host}}</el-link>
                   </div>
                 </div>
               </template>
@@ -47,48 +47,45 @@
             <el-table-column width="120px" label="操作">
               <template slot-scope="scope">
                 <span v-if="pipeStatus.status !== 'success'">准备中，请稍后...</span>
-                <el-button v-else type="success" size="mini" round @click="runCurrentTask(scope.row)" plain>点击运行</el-button>
+                <el-button v-else type="primary" size="mini" round @click="runCurrentTask(scope.row)" plain>点击运行</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
       </div>
-      <div class="other-operation">
-        <h3 class="pipelines-aside-help__step-header">您可能还需要：</h3>
-        <ul class="pipelines-aside-help__step-list">
-          <li class="pipelines-aside-help__step-list-item">
-            <a
-              target="_blank"
-              href="https://docs.koderover.com/zadig/project/workflow/#git-webhook"
-              class="pipelines-aside-help__step-list-item-link"
-            >
-              <i class="icon el-icon-link"></i>
-              <span class="pipelines-aside-help__step-list-item-link-text">配置 Git Webhook 自动触发服务升级</span>
-            </a>
-          </li>
+      <div class="help-links-container">
+        <h3 class="links-header">
+          您可能还需要：
+        </h3>
+        <ul class="links-list">
+          <li class="list-item"><a target="_blank"
+               href="https://docs.koderover.com/zadig/project/workflow/#git-webhook"
+               class="list-item-link"><i class="icon el-icon-link"></i>
+              <span class="list-item-link-text">
+                配置 Git Webhook 自动触发服务升级</span></a></li>
         </ul>
       </div>
     </div>
     <div class="controls__wrap">
       <div class="controls__right">
-        <button type="primary" size="small" class="save-btn" :disabled="loading" plain @click="onboardingFinish">完成</button>
+        <el-button type="primary" size="small"  :disabled="loading" @click="onboardingFinish">完成</el-button>
       </div>
     </div>
     <el-dialog :visible.sync="taskDialogVisible" title="运行 产品-工作流" custom-class="run-workflow" width="60%" class="dialog">
-      <run-workflow
+      <RunWorkflow
         v-if="taskDialogVisible"
         :workflowName="workflow.name"
         :workflowMeta="workflow"
         :targetProject="workflow.product_tmpl_name"
         @success="hideAfterSuccess"
-      ></run-workflow>
+      />
     </el-dialog>
   </div>
 </template>
 <script>
 import bus from '@utils/eventBus'
-import step from '../common/step.vue'
-import runWorkflow from '../../pipeline/common/run_workflow.vue'
+import Step from '../common/step.vue'
+import RunWorkflow from '../../workflow/common/runWorkflow.vue'
 import { wordTranslate } from '@utils/wordTranslate.js'
 import { getProjectIngressAPI, getProductWorkflowsInProjectAPI, getWorkflowDetailAPI, generateWorkflowAPI } from '@api'
 export default {
@@ -105,7 +102,7 @@ export default {
     onboardingFinish () {
       const projectName = this.projectName
       this.saveOnboardingStatus(projectName, 0).then(() => {
-        this.$router.push(`/v1/projects/detail/${projectName}`)
+        this.$router.push(`/v1/projects/detail/${projectName}/detail`)
       })
     },
     async getWorkflows () {
@@ -187,10 +184,7 @@ export default {
         { title: this.projectName, url: '' }
       ]
     })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getWorkflows()
     this.generatePipe()
   },
@@ -198,8 +192,8 @@ export default {
     this.pipeTimer = null
   },
   components: {
-    step,
-    runWorkflow
+    Step,
+    RunWorkflow
   },
   onboardingStatus: 4
 }

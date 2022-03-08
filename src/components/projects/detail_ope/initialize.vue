@@ -1,6 +1,6 @@
 <template>
   <div class="init-resource">
-    <header>管理员为您配置了以下工作流和环境</header>
+    <header><i class="iconfont iconvery-handshake"></i>管理员为您配置了以下工作流和环境</header>
     <section>
       <article v-if="collaborationData.workflow.length">
         <div class="title">
@@ -16,18 +16,16 @@
         </div>
         <div v-for="(env, index) in collaborationData.product" :key="index" class="detail-item display-flex">
           <div>
-            <div class="item-name">
-              {{ env.name }}
-              <el-tag effect="plain" size="mini">{{ env.collaboration_type === 'share' ? '共享' : '新建' }}</el-tag>
-            </div>
+            <div class="item-name">{{ env.name }}</div>
           </div>
           <el-button v-if="env.collaboration_type === 'new'" type="primary" plain size="small" @click="editEnvInfo(env)">环境变量</el-button>
         </div>
       </article>
+
+      <footer>
+        <el-button type="primary" size="small" icon="confirm-icon iconfont iconvery-confirm" @click="createEnvAndWorkflow" round>确认</el-button>
+      </footer>
     </section>
-    <footer>
-      <el-button type="primary" size="small" icon="el-icon-finished" @click="createEnvAndWorkflow">确认</el-button>
-    </footer>
 
     <InitEnvDialog
       ref="envDialogRef"
@@ -35,6 +33,7 @@
       @resetVisible="initEnvInfo"
       :currentEnv="currentEnv"
       :currentInfo="currentInfo"
+      :baseEnvObj="baseEnvObj"
     ></InitEnvDialog>
   </div>
 </template>
@@ -53,7 +52,8 @@ export default {
       },
       dialogVisible: false,
       currentEnv: '',
-      currentInfo: null
+      currentInfo: null,
+      baseEnvObj: {}
     }
   },
   computed: {
@@ -69,7 +69,9 @@ export default {
         )
       }
       initializeCollaborationAPI(this.projectName, payload).then(res => {
-        this.$message.success(`项目更新成功，环境更新可能需要一些时间，请稍后使用！`)
+        this.$message.success(
+          `项目更新成功，环境更新可能需要一些时间，请稍后使用！`
+        )
         this.$router.go(-1)
       })
     },
@@ -94,6 +96,13 @@ export default {
         res.product = uniqBy(res.product, fn)
         res.workflow = uniqBy(res.workflow, fn)
         this.collaborationData = res
+        const baseEnvObj = {}
+        res.product
+          .filter(product => product.collaboration_type === 'new')
+          .forEach(product => {
+            baseEnvObj[product.name] = product.base_name
+          })
+        this.baseEnvObj = baseEnvObj
       })
     },
     editEnvInfo (env) {
@@ -140,34 +149,52 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@width: 800px;
+
 .init-resource {
   flex: 1;
-  padding: 15px 20px;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 30px;
+  overflow: auto;
   color: #4c4c4c;
   line-height: 2;
+  background: url('~@assets/icons/illustration/collaborationProject.svg') #f5f7f7 no-repeat;
   background-color: #f5f7f7;
+  background-position: right 50px bottom 50px;
+  background-size: 300px 250px;
+
+  .iconfont {
+    margin-right: 10px;
+    color: #ff2868;
+  }
 
   header {
-    margin-bottom: 25px;
-    color: black;
-    font-size: 15px;
-    text-align: center;
+    width: @width;
+    margin: 20px auto;
+    color: #8a8a8a;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 22px;
   }
 
   section {
+    box-sizing: border-box;
+    width: @width;
+    margin: auto;
+    padding: 20px 30px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+
     article {
       .title {
         margin: 12px 0 8px;
         font-size: 15px;
-
-        .iconfont {
-          margin-right: 10px;
-          color: #ff2868;
-        }
       }
 
       .detail-item {
-        margin-bottom: 1px;
+        margin-bottom: 2px;
         padding: 8px 20px;
         background-color: #fff;
 
@@ -192,15 +219,16 @@ export default {
         justify-content: space-between;
       }
     }
-  }
 
-  footer {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    padding: 20px 60px;
-    text-align: right;
+    footer {
+      padding: 40px 60px 10px;
+      text-align: center;
+
+      /deep/.confirm-icon {
+        margin-right: 5px;
+        font-size: 12px;
+      }
+    }
   }
 }
 </style>

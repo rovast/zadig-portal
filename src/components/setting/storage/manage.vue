@@ -38,8 +38,8 @@
               <i class="iconfont iconhuawei"></i> <span>华为云 OBS</span>
             </el-option>
             <el-option :value="0"
-                       label="其它">
-              <i class="iconfont iconqita"></i> <span>其它</span>
+                       label="其他">
+              <i class="iconfont iconqita"></i> <span>其他</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -133,8 +133,8 @@
               <i class="iconfont iconhuawei"></i> <span>华为云 OBS</span>
             </el-option>
             <el-option :value="0"
-                       label="其它">
-              <i class="iconfont iconqita"></i> <span>其它</span>
+                       label="其他">
+              <i class="iconfont iconqita"></i> <span>其他</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -196,8 +196,7 @@
       <el-alert type="info"
                 :closable="false">
         <template>
-          对象存储支持标准的 Amazon S3(Amazon Simple Storage Service)协议<br />
-          集成和使用对象存储可参考
+          支持集成阿里云 OSS、腾讯云 COS、华为云 OBS、七牛云 KODO 等符合 Amazon S3(Amazon Simple Storage Service) 协议的对象存储，详情可参考
           <el-link style="font-size: 14px; vertical-align: baseline;"
                    type="primary"
                    :href="`https://docs.koderover.com/zadig/settings/object-storage/`"
@@ -264,10 +263,13 @@
                              label="操作">
               <template slot-scope="scope">
                 <el-button @click="storageOperation('edit',scope.row)"
-                           size="mini">编辑</el-button>
+                           size="mini"
+                           type="primary"
+                           plain>编辑</el-button>
                 <el-button @click="storageOperation('delete',scope.row)"
                            size="mini"
-                           type="danger">删除</el-button>
+                           type="danger"
+                           plain>删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -309,7 +311,7 @@ export default {
       providerMap: {
         0: {
           icon: 'iconfont logo iconqita',
-          name: '其它'
+          name: '其他'
         },
 
         1: {
@@ -437,10 +439,7 @@ export default {
   },
   created () {
     bus.$emit('set-topbar-title', { title: '对象存储', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
+
     this.getStorage()
   }
 }
@@ -454,12 +453,6 @@ export default {
   overflow: auto;
   font-size: 13px;
 
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
-
   .section {
     margin-bottom: 56px;
 
@@ -469,15 +462,15 @@ export default {
       overflow: hidden;
 
       .el-button--success.is-plain {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
 
       .el-button--success.is-plain:hover {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
     }
 

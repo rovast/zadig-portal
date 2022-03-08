@@ -5,7 +5,7 @@
       <el-alert type="info"
                 :closable="false">
         <template>
-          为系统配置代理，配置后可以在「代码源集成」和「应用设置」中选择使用代理，参考
+         支持配置系统代理，配置后可以在「代码源集成」和「软件包管理」中选择使用代理，详情可参考
           <el-link style="font-size: 14px; vertical-align: baseline;"
                    type="primary"
                    :href="`https://docs.koderover.com/zadig/settings/system-settings/`"
@@ -229,21 +229,6 @@ export default {
   flex: 1;
   overflow: auto;
   font-size: 13px;
-
-  .breadcrumb {
-    margin-bottom: 25px;
-
-    .el-breadcrumb {
-      font-size: 16px;
-      line-height: 1.35;
-
-      .el-breadcrumb__item__inner a:hover,
-      .el-breadcrumb__item__inner:hover {
-        color: #1989fa;
-        cursor: pointer;
-      }
-    }
-  }
 
   .sync-container {
     padding-top: 15px;

@@ -1,12 +1,5 @@
 <template>
   <div class="integration-external">
-    <h4 class="title">Jenkins 集成</h4>
-    <Jenkins class="content"></Jenkins>
-
-    <h4 class="title">Jira 集成</h4>
-    <Jira class="content"></Jira>
-
-    <h4 class="title">其他</h4>
     <Other class="content"></Other>
   </div>
 </template>

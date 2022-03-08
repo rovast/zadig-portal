@@ -31,17 +31,17 @@
                       placeholder="$HOME/install_pkg/bin"
                       v-model="createApp.bin_path"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item class="label-icon">
             <template #label>
               <span>启用</span>
-              <el-tooltip content="控制应用列表中是否展示，正在使用中的不受影响"
+              <el-tooltip content="控制软件包列表中是否展示，正在使用中的不受影响"
                           placement="top">
                 <i class="el-icon-question"></i>
               </el-tooltip>
             </template>
-            <el-checkbox v-model="createApp.enabled">启用该应用</el-checkbox>
+            <el-checkbox v-model="createApp.enabled">启用该软件包</el-checkbox>
           </el-form-item>
-          <el-form-item prop="download_path">
+          <el-form-item prop="download_path" class="label-icon">
             <template #label>
               <span>安装包地址</span>
               <el-tooltip content="系统自动从配置地址下载安装包并做缓存，安装包可通过 ${FILEPATH} 变量获取"
@@ -76,7 +76,7 @@
       <!--apps-create-dialog-->
 
       <!--apps-edit-dialog-->
-      <el-dialog title='修改应用'
+      <el-dialog title='修改软件包'
                  width="55%"
                  custom-class="create-app-dialog"
                  :close-on-click-modal="false"
@@ -92,18 +92,19 @@
             <el-input size="small"
                       v-model="swapApp.bin_path"></el-input>
           </el-form-item>
-          <el-form-item v-if="(typeof swapApp.enabled)!=='undefined'">
+          <el-form-item v-if="(typeof swapApp.enabled)!=='undefined'" class="label-icon">
             <template #label>
               <span>启用</span>
-              <el-tooltip content="控制应用列表中是否展示，正在使用中的不受影响"
+              <el-tooltip content="控制软件包列表中是否展示，正在使用中的不受影响"
                           placement="top">
                 <i class="el-icon-question"></i>
               </el-tooltip>
             </template>
-            <el-checkbox v-model="swapApp.enabled">启用该应用</el-checkbox>
+            <el-checkbox v-model="swapApp.enabled">启用该软件包</el-checkbox>
           </el-form-item>
           <el-form-item v-if="(typeof swapApp.download_path)!=='undefined'"
-                        prop="download_path">
+                        prop="download_path"
+                        class="label-icon">
             <template #label>
               <span>安装包地址</span>
               <el-tooltip content="系统自动从配置地址下载安装包并做缓存，安装包可通过 ${FILEPATH} 变量获取"
@@ -138,8 +139,7 @@
         <el-alert type="info"
                   :closable="false">
           <template>
-            运行构建及测试步骤，一般都需要用户根据实际业务去安装必要的应用环境来进行构建或者编译<br/>
-            配置和使用应用可参考
+            运行构建及测试步骤时，根据实际业务去安装必要的软件包，详情可参考
             <el-link style="font-size: 14px; vertical-align: baseline;"
                      type="primary"
                      :href="`https://docs.koderover.com/zadig/settings/app/`"
@@ -153,7 +153,7 @@
                      size="small"
                      type="success">新建</el-button>
           <span class="switch-span"
-                :style="{color: proxyInfo.enable_application_proxy?'#409EFF':'#303133'}">启用代理</span>
+                :style="{color: proxyInfo.enable_application_proxy?'#0066ff':'#303133'}">启用代理</span>
           <el-switch size="small"
                      :value="proxyInfo.enable_application_proxy"
                      @change="changeProxy"></el-switch>
@@ -197,13 +197,14 @@
               <el-table-column label="操作">
                 <template slot-scope="scope">
                   <el-button @click="appOperation('edit',selectedApp(scope.row.name,defaultVersion[scope.row.name]))"
-                             size="mini">编辑</el-button>
+                             type="primary"
+                             size="mini" plain>编辑</el-button>
                   <el-popover v-model="showPopper[scope.row.name]"
                               trigger="click"
                               placement="top"
                               width="260"
                               style="display: inline-block;">
-                    <p>应用删除可能会影响正在使用的工作流，确定删除应用 {{scope.row.name}} 的
+                    <p>软件包删除可能会影响正在使用的工作流，确定删除软件包 {{scope.row.name}} 的
                       {{defaultVersion[scope.row.name]}} 版本吗？</p>
                     <div style=" margin: 0; text-align: right;">
                       <el-button size="mini"
@@ -216,7 +217,7 @@
                     <div slot="reference">
                       <el-button size="mini"
                                  @click="showDeleteModal(scope.row.name)"
-                                 type="danger">删除</el-button>
+                                 type="danger" plain>删除</el-button>
                     </div>
                   </el-popover>
                 </template>
@@ -274,10 +275,10 @@ export default {
       availableApps: [],
       showPopper: {},
       rules: {
-        name: [{ required: true, message: '请填写应用名称', trigger: 'blur' }],
-        version: [{ required: true, message: '请填写应用版本', trigger: 'blur' }],
+        name: [{ required: true, message: '请填写软件包名称', trigger: 'blur' }],
+        version: [{ required: true, message: '请填写软件包版本', trigger: 'blur' }],
         scripts: [{ required: true, message: '请填写安装脚本', trigger: 'blur' }],
-        bin_path: [{ required: true, message: '请填写应用 Bin Path', trigger: 'blur' }]
+        bin_path: [{ required: true, message: '请填写软件包 Bin Path', trigger: 'blur' }]
       }
     }
   },
@@ -317,7 +318,7 @@ export default {
     addApp (data) {
       createAppAPI(data).then(res => {
         this.$message({
-          message: '新增应用成功',
+          message: '新增软件包成功',
           type: 'success'
         })
         this.getApps()
@@ -332,7 +333,7 @@ export default {
         }
       }).catch(() => {
         this.$message({
-          message: '新增应用失败',
+          message: '新增软件包失败',
           type: 'error'
         })
       }).then(() => {
@@ -342,13 +343,13 @@ export default {
     updateApp (data) {
       updateAppAPI(data).then(response => {
         this.$message({
-          message: '更新应用成功',
+          message: '更新软件包成功',
           type: 'success'
         })
         this.getApps()
       }).catch(response => {
         this.$message({
-          message: '更新应用失败',
+          message: '更新软件包失败',
           type: 'error'
         })
       }).then(() => {
@@ -362,12 +363,12 @@ export default {
       deleteAppAPI(data).then(response => {
         this.getApps()
         this.$message({
-          message: '应用已删除',
+          message: '软件包已删除',
           type: 'success'
         })
       }).catch(response => {
         this.$message({
-          message: '应用删除失败',
+          message: '软件包删除失败',
           type: 'error'
         })
       })
@@ -452,11 +453,7 @@ export default {
 
   },
   created () {
-    bus.$emit('set-topbar-title', { title: '应用设置', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
+    bus.$emit('set-topbar-title', { title: '软件包管理', breadcrumb: [] })
     this.getProxyConfig()
     this.getApps()
   },
@@ -470,6 +467,7 @@ export default {
 .setting-app-container {
   position: relative;
   flex: 1;
+  height: 100%;
   padding: 15px 30px;
   overflow: auto;
   font-size: 13px;
@@ -478,12 +476,6 @@ export default {
     .el-dialog__body {
       padding: 20px 5%;
     }
-  }
-
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
   }
 
   .section {
@@ -507,29 +499,20 @@ export default {
       }
 
       .el-button--success.is-plain {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
 
       .el-button--success.is-plain:hover {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
     }
 
     .app-list {
       padding-bottom: 30px;
-
-      .ann-active {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        vertical-align: middle;
-        background: #13ce66;
-        border-radius: 50%;
-      }
     }
   }
 }

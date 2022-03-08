@@ -129,7 +129,7 @@ export default {
     },
     updateEnv (res) {
       const message = JSON.parse(res.match(/{.+}/g)[0])
-      this.$confirm(`您的更新操作将覆盖集成环境中${message.name}服务变更，确认继续?`, '提示', {
+      this.$confirm(`您的更新操作将覆盖环境中${message.name}服务变更，确认继续?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

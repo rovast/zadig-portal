@@ -29,7 +29,7 @@
           <van-icon @click.stop.prevent="showAction(workflow)"
                     name="more-o"
                     size="2em"
-                    color="#1989fa" />
+                    color="#0066ff" />
         </template>
 
       </van-cell>
@@ -57,7 +57,7 @@ import { NavBar, Tag, Panel, Loading, Button, Notify, Tab, Tabs, Cell, CellGroup
 import qs from 'qs'
 import { getProductWorkflowsAPI } from '@api'
 import { wordTranslate } from '@utils/wordTranslate.js'
-import runWorkflow from './run_workflow.vue'
+import runWorkflow from './runWorkflow.vue'
 export default {
   components: {
     [NavBar.name]: NavBar,

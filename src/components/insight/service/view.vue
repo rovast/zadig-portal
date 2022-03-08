@@ -51,6 +51,7 @@
   </div>
 </template>
 <script>
+import bus from '@utils/eventBus'
 import moment from 'moment'
 import Health from './health.vue'
 import Deploy from './deploy.vue'
@@ -78,6 +79,15 @@ export default {
       const end = moment(Math.floor(this.selectedDuration[1] / 1000), 'X').format('YYYY/MM/DD')
       return `${start} - ${end}`
     }
+  },
+  mounted () {
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '效能洞察', url: '/v1/insight' },
+        { title: '部署效能', url: '' }
+      ]
+    })
   }
 }
 </script>

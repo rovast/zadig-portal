@@ -54,16 +54,7 @@ export default {
   },
   mounted () {
     bus.$emit('set-topbar-title', { title: '', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: this.projectName,
-      url: `/v1/projects/detail/${this.projectName}`,
-      routerList: [
-        { name: '工作流', url: `/v1/projects/detail/${this.projectName}/pipelines` },
-        { name: '集成环境', url: `/v1/projects/detail/${this.projectName}/envs` },
-        { name: '服务', url: `/v1/projects/detail/${this.projectName}/services` },
-        { name: '构建', url: `/v1/projects/detail/${this.projectName}/builds` },
-        { name: '测试', url: `/v1/projects/detail/${this.projectName}/test` }]
-    })
+
     if (this.$route.query.outer) {
       this.loading = false
       return
@@ -78,11 +69,12 @@ export default {
   position: relative;
   display: flex;
   flex: 1;
-  padding: 15px 20px;
-  overflow: hidden;
+  height: 100%;
+  overflow-y: auto;
 
   .no-show {
     margin: auto;
+    padding: 16px 24px;
 
     img {
       width: 460px;

@@ -3,7 +3,7 @@
     <div>
       <h1 class="title">用户注册</h1>
       <h2 class="subtitle">请输入新用户信息</h2>
-      <el-form :model="signUpForm" ref="signUpForm" :rules="rules" label-position="left" label-width="70px">
+      <el-form :model="signUpForm" ref="signUpForm" :rules="rules" label-position="left" label-width="80px">
         <el-form-item label="用户名" prop="account">
           <el-input v-model="signUpForm.account" placeholder="请输入用户名"></el-input>
         </el-form-item>
@@ -127,7 +127,7 @@ h2 {
 
 .btn-theme {
   color: #fff;
-  background: #376bff;
+  background: @themeColor;
   border: none;
 }
 
@@ -136,16 +136,16 @@ h2 {
 }
 
 .btn-theme:hover {
-  background: #2c5ce4;
+  background: #0066ffc2;
 }
 
 .btn-md {
   width: 100%;
   padding: 12px 30px 11px 30px;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 14px;
   letter-spacing: 1px;
-  border-radius: 50px;
+  border-radius: 4px;
   cursor: pointer;
 }
 

@@ -3,15 +3,15 @@
     <el-input class="search-service" v-model="searchService" placeholder="搜索服务" suffix-icon="el-icon-search" size="small"></el-input>
     <el-tabs class="service-list" tab-position="left" type="border-card" v-model="selectedChart" :before-leave="switchTabs">
       <el-tab-pane :name="name.serviceName" v-for="name in filteredServiceNames" :key="name.serviceName" :disabled="name.type==='delete'">
-        <span slot="label">
+        <template slot="label">
+          <el-tooltip effect="dark" :content="name.serviceName" placement="top">
+            <span class="tab-title">{{name.serviceName}}</span>
+          </el-tooltip>
           <i
             class="icon"
             :class="{'el-icon-delete': name.type==='delete', 'el-icon-refresh': name.type==='update', 'el-icon-folder-add': name.type==='create'}"
           ></i>
-          <el-tooltip effect="dark" :content="name.serviceName" placement="left">
-            <span class="desc">{{name.serviceName}}</span>
-          </el-tooltip>
-        </span>
+        </template>
       </el-tab-pane>
     </el-tabs>
     <div class="values" v-if="selectedChart && serviceNames.length" :class="{hidden: serviceNotHandle}">
@@ -20,9 +20,8 @@
           <el-tab-pane :label="env" :name="env" v-for="env in envNames" :key="env" :disabled="disabledEnv.includes(env)"></el-tab-pane>
         </el-tabs>
         <div class="v-content" v-if="usedChartNameInfo">
-          <div class="version-title">Chart Version: {{usedChartNameInfo.chartVersion}}</div>
           <div v-show="usedChartNameInfo.yamlSource === 'default'" class="default-values">
-            <el-button type="text" @click="usedChartNameInfo.yamlSource = 'freeEdit'" icon="el-icon-plus">添加 values 文件</el-button>
+            <el-button type="text" @click="usedChartNameInfo.yamlSource = 'freeEdit'">添加 values 文件</el-button>
           </div>
           <ImportValues
             v-show="usedChartNameInfo.yamlSource !== 'default'"
@@ -55,8 +54,8 @@
 </template>
 
 <script>
-import ImportValues from '@/components/projects/common/import_values/index.vue'
-import KeyValue from '@/components/projects/common/import_values/key_value.vue'
+import ImportValues from '@/components/projects/common/importValues/index.vue'
+import KeyValue from '@/components/projects/common/importValues/keyValue.vue'
 import Codemirror from '@/components/projects/common/codemirror.vue'
 import {
   getChartValuesYamlAPI,
@@ -447,7 +446,7 @@ export default {
   .search-service {
     position: absolute;
     z-index: 1;
-    width: 150px;
+    width: 180px;
 
     /deep/.el-input__inner {
       width: 100%;
@@ -460,7 +459,7 @@ export default {
     flex-shrink: 0;
 
     &.service-list {
-      width: 150px;
+      width: 180px;
 
       .el-tabs__nav {
         max-height: calc(~'100% - 35px');
@@ -476,14 +475,22 @@ export default {
         border-right-width: 0;
 
         .el-tabs__item {
-          width: 150px;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 180px;
+          font-weight: 300;
+          text-align: left;
+
+          .tab-title {
+            flex: 1 1 calc(~'100% - 40px');
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
 
           .icon {
-            display: inline-block;
-            padding-right: 3px;
+            padding-left: 3px;
           }
         }
       }
@@ -495,6 +502,10 @@ export default {
 
     .el-tabs__content {
       padding: 0;
+    }
+
+    &.el-tabs--border-card > .el-tabs__header {
+      background-color: rgba(246, 246, 246, 0.6);
     }
   }
 

@@ -144,7 +144,8 @@ const utils = {
     } else {
       return 'service-not-running'
     }
-  }, /*   秒格式化
+  },
+  /*   秒格式化
   * @param  {number}           秒数
   * @return {string}           x分x秒|*
   */
@@ -161,6 +162,29 @@ const utils = {
           return min + ' 分 ' + '0 秒'
         } else {
           return min + ' 分 ' + second + ' 秒'
+        }
+      }
+    } else {
+      return '*'
+    }
+  },
+  /*   秒格式化
+  * @param  {number}           秒数
+  * @return {string}           XmYs|*
+  */
+  timeFormatEn (sec) {
+    if (!isNaN(sec)) {
+      if (sec < 60) {
+        return Math.floor(sec) + 's'
+      } else if (sec >= 60) {
+        let min = 0
+        let second = 0
+        min = parseInt(sec / 60)
+        second = Math.floor(sec % 60)
+        if (second === 0) {
+          return min + 'm' + '0s'
+        } else {
+          return min + 'm' + second + 's'
         }
       }
     } else {

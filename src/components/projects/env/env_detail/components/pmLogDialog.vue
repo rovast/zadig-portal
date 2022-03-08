@@ -14,13 +14,13 @@
       <el-card class="box-card box-card-service">
         <div class="log-container">
           <div class="log-content">
-            <xterm-log-container
+            <XtermLogContainer
               :id="serviceName"
               @closeConnection="showRealTimeLog('', '', 'close')"
               ref="log"
               :searchKey="searchKey"
               :logs="realtimeLog.data"
-            ></xterm-log-container>
+            />
           </div>
           <div class="log-header">
             <div class="search-log-input">
@@ -205,7 +205,7 @@ export default {
 
     .el-breadcrumb__item__inner a:hover,
     .el-breadcrumb__item__inner:hover {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
   }
@@ -227,7 +227,7 @@ export default {
       cursor: pointer;
 
       &:hover {
-        color: #1989fa;
+        color: @themeColor;
       }
     }
 

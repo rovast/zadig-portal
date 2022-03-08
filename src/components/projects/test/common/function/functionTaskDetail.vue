@@ -5,10 +5,10 @@
                width="60%"
                title="Artifact 文件导出"
                class="downloadArtifact-dialog">
-      <artifact-download ref="downloadArtifact"
+      <ArtifactDownload ref="downloadArtifact"
                          :workflowName="workflowName"
                          :taskId="taskID"
-                         :showArtifact="artifactModalVisible"></artifact-download>
+                         :showArtifact="artifactModalVisible"/>
     </el-dialog>
     <!--end of workspace-tree-dialog-->
     <el-row>
@@ -68,11 +68,11 @@
                 class="test-table">
         <el-table-column type="expand">
           <template slot-scope="scope">
-            <task-detail-test :testingv2="scope.row.testingv2SubTask"
-                              :serviceName="scope.row._target"
-                              :pipelineName="workflowName"
-                              ref="testComp"
-                              :taskID="taskID"></task-detail-test>
+            <TaskDetailTest ref="testComp"
+                            :testingv2="scope.row.testingv2SubTask"
+                            :serviceName="scope.row._target"
+                            :pipelineName="workflowName"
+                            :taskID="taskID"/>
           </template>
         </el-table-column>
 
@@ -95,7 +95,7 @@
 
         <el-table-column label="测试报告">
           <template slot-scope="scope">
-            <span v-if="scope.row.testingv2SubTask.status === 'passed'||scope.row.testingv2SubTask.report_ready === true">
+            <span v-if="scope.row.testingv2SubTask.report_ready === true">
               <router-link class="show-test-result" :to="getTestReport(scope.row.testingv2SubTask, scope.row._target)">
                 查看
               </router-link>
@@ -120,9 +120,8 @@
 <script>
 import { workflowTaskDetailAPI, workflowTaskDetailSSEAPI, restartTestTaskAPI, cancelTestTaskAPI } from '@api'
 import { wordTranslate, colorTranslate } from '@utils/wordTranslate.js'
-import deployIcons from '@/components/common/deploy_icons'
-import artifactDownload from '@/components/common/artifact_download.vue'
-import taskDetailTest from './container/task_detail_test.vue'
+import ArtifactDownload from '@/components/common/artifactDownload.vue'
+import TaskDetailTest from './container/taskDetailTest.vue'
 export default {
   data () {
     return {
@@ -293,9 +292,8 @@ export default {
     }
   },
   components: {
-    deployIcons,
-    artifactDownload,
-    taskDetailTest
+    ArtifactDownload,
+    TaskDetailTest
   }
 }
 </script>
@@ -316,7 +314,7 @@ export default {
   }
 
   .issue-url {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 }
@@ -337,7 +335,7 @@ export default {
     }
 
     .link a {
-      color: #1989fa;
+      color: @themeColor;
       cursor: pointer;
     }
 
@@ -367,7 +365,7 @@ export default {
   .version-link,
   .show-test-result,
   .download-artifact-link {
-    color: #1989fa;
+    color: @themeColor;
     cursor: pointer;
   }
 
@@ -401,11 +399,6 @@ export default {
     .error {
       color: #ff1989;
     }
-  }
-
-  .security-table,
-  .release-table {
-    margin-left: 48px;
   }
 
   .el-table__expanded-cell {

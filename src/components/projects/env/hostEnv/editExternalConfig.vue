@@ -13,7 +13,10 @@
       <span class="des">{{stepMap[currentStep].description}}</span>
       <component ref="component" :envName="$route.query.envName" :projectName="projectName" class="com" :is="componentsList[currentStep]" />
     </div>
-    <div class="bottom"><div class="nextstep"  @click="nextStep">{{currentStep===2 ? '完成' : '下一步'}}</div><span class="des" @click="exit" v-if="currentStep===1">退出向导</span></div>
+    <div class="bottom">
+      <div class="nextstep" @click="nextStep">{{currentStep===2 ? '完成' : '下一步'}} </div>
+      <span class="des" @click="exit" v-if="currentStep===1">退出向导</span>
+    </div>
   </div>
 </template>
 <script>
@@ -78,7 +81,7 @@ export default {
     font-size: 18px;
     line-height: 30px;
     text-align: center;
-    background: #3289e4;
+    background: @themeColor;
   }
 
   .step {
@@ -99,7 +102,7 @@ export default {
       font-size: 18px;
       line-height: 30px;
       text-align: center;
-      background: #3289e4;
+      background: @themeColor;
     }
 
     .des {
@@ -133,7 +136,7 @@ export default {
       font-size: 18px;
       line-height: 30px;
       text-align: center;
-      background: #3289e4;
+      background: @themeColor;
     }
 
     .des {

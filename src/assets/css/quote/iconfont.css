@@ -1,11 +1,11 @@
 @font-face {
   font-family: "iconfont"; /* Project id 1282370 */
-  src: url('~@assets/fonts/iconfont.eot?t=1643282044266'); /* IE9 */
-  src: url('~@assets/fonts/iconfont.eot?t=1643282044266#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('~@assets/fonts/iconfont.woff2?t=1643282044266') format('woff2'),
-       url('~@assets/fonts/iconfont.woff?t=1643282044266') format('woff'),
-       url('~@assets/fonts/iconfont.ttf?t=1643282044266') format('truetype'),
-       url('~@assets/icons/font/iconfont.svg?t=1643282044266#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_1282370_tul7gzru1g.eot?t=1646748060131'); /* IE9 */
+  src: url('//at.alicdn.com/t/font_1282370_tul7gzru1g.eot?t=1646748060131#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('//at.alicdn.com/t/font_1282370_tul7gzru1g.woff2?t=1646748060131') format('woff2'),
+       url('//at.alicdn.com/t/font_1282370_tul7gzru1g.woff?t=1646748060131') format('woff'),
+       url('//at.alicdn.com/t/font_1282370_tul7gzru1g.ttf?t=1646748060131') format('truetype'),
+       url('//at.alicdn.com/t/font_1282370_tul7gzru1g.svg?t=1646748060131#iconfont') format('svg');
 }
 
 .iconfont {
@@ -14,6 +14,326 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.iconvery-user:before {
+  content: "\e69b";
+}
+
+.iconvery-sort:before {
+  content: "\e6f2";
+}
+
+.iconvery-gears:before {
+  content: "\e751";
+}
+
+.iconvery-k8s:before {
+  content: "\e8d0";
+}
+
+.iconvery-master:before {
+  content: "\e699";
+}
+
+.iconvery-nodeid:before {
+  content: "\e69a";
+}
+
+.iconvery-gitlab:before {
+  content: "\e68d";
+}
+
+.iconvery-clone:before {
+  content: "\e698";
+}
+
+.iconvery-itemadd1:before {
+  content: "\e68f";
+}
+
+.iconvery-operatereduce1:before {
+  content: "\e692";
+}
+
+.iconvery-operateadd1:before {
+  content: "\e693";
+}
+
+.iconvery-itemreduce1:before {
+  content: "\e697";
+}
+
+.iconvery-crumb:before {
+  content: "\e680";
+}
+
+.iconvery-operateadd:before {
+  content: "\e682";
+}
+
+.iconvery-itemreduce:before {
+  content: "\e683";
+}
+
+.iconvery-inputdp:before {
+  content: "\e684";
+}
+
+.iconvery-itemadd:before {
+  content: "\e685";
+}
+
+.iconvery-itemverify:before {
+  content: "\e688";
+}
+
+.iconvery-operatereduce:before {
+  content: "\e68a";
+}
+
+.iconvery-nodata:before {
+  content: "\e68c";
+}
+
+.iconvery_coursena:before {
+  content: "\e681";
+}
+
+.iconvery-favg:before {
+  content: "\e67b";
+}
+
+.iconvery-favb:before {
+  content: "\e67c";
+}
+
+.iconvery-favr:before {
+  content: "\e67d";
+}
+
+.iconvery-favbut:before {
+  content: "\e67e";
+}
+
+.iconvery-close:before {
+  content: "\e644";
+}
+
+.iconvery-action:before {
+  content: "\e647";
+}
+
+.iconvery-creation:before {
+  content: "\e648";
+}
+
+.iconvery-amen:before {
+  content: "\e649";
+}
+
+.iconvery-corelation:before {
+  content: "\e64b";
+}
+
+.iconvery-attention:before {
+  content: "\e64c";
+}
+
+.iconvery-delitracking:before {
+  content: "\e64d";
+}
+
+.iconvery-collaboratiom:before {
+  content: "\e64e";
+}
+
+.iconvery-build:before {
+  content: "\e64f";
+}
+
+.iconvery-discorela:before {
+  content: "\e652";
+}
+
+.iconvery-editsuc:before {
+  content: "\e653";
+}
+
+.iconvery-editing:before {
+  content: "\e654";
+}
+
+.iconvery-filtrate:before {
+  content: "\e655";
+}
+
+.iconvery-environ:before {
+  content: "\e656";
+}
+
+.iconvery-flyout:before {
+  content: "\e657";
+}
+
+.iconvery-more:before {
+  content: "\e658";
+}
+
+.iconvery-pdmpro:before {
+  content: "\e659";
+}
+
+.iconvery-morepipe:before {
+  content: "\e65a";
+}
+
+.iconvery-pdm:before {
+  content: "\e65b";
+}
+
+.iconvery-notification:before {
+  content: "\e65c";
+}
+
+.iconvery-selection:before {
+  content: "\e65d";
+}
+
+.iconvery-quiz:before {
+  content: "\e65f";
+}
+
+.iconvery-host-1:before {
+  content: "\e661";
+}
+
+.iconvery-limipower:before {
+  content: "\e662";
+}
+
+.iconvery-uman:before {
+  content: "\e664";
+}
+
+.iconvery-help:before {
+  content: "\e665";
+}
+
+.iconvery-version:before {
+  content: "\e666";
+}
+
+.iconvery-options:before {
+  content: "\e667";
+}
+
+.iconvery-taxis:before {
+  content: "\e668";
+}
+
+.iconvery-pipeline:before {
+  content: "\e669";
+}
+
+.iconvery-service:before {
+  content: "\e66a";
+}
+
+.iconvery-versionmana:before {
+  content: "\e66d";
+}
+
+.iconvery-time:before {
+  content: "\e66e";
+}
+
+.iconvery-depipe:before {
+  content: "\e66f";
+}
+
+.iconvery-template:before {
+  content: "\e670";
+}
+
+.iconvery-testing1:before {
+  content: "\e671";
+}
+
+.iconvery-helm:before {
+  content: "\e675";
+}
+
+.iconvery-trustee:before {
+  content: "\e676";
+}
+
+.iconvery-teach:before {
+  content: "\e677";
+}
+
+.iconvery-host:before {
+  content: "\e678";
+}
+
+.iconvery-yaml:before {
+  content: "\e679";
+}
+
+.iconvery-datain:before {
+  content: "\e63f";
+}
+
+.iconvery-testing:before {
+  content: "\e640";
+}
+
+.iconvery-setting:before {
+  content: "\e641";
+}
+
+.iconvery-project:before {
+  content: "\e643";
+}
+
+.iconvery-dataov:before {
+  content: "\e63e";
+}
+
+.iconvery-deli:before {
+  content: "\e63d";
+}
+
+.iconvery-env:before {
+  content: "\e63a";
+}
+
+.iconyaml:before {
+  content: "\e639";
+}
+
+.iconhistory:before {
+  content: "\e674";
+}
+
+.icontag1:before {
+  content: "\e7e4";
+}
+
+.iconmorelist:before {
+  content: "\e6a6";
+}
+
+.iconicon_git-branch:before {
+  content: "\e637";
+}
+
+.iconicon_git-commit:before {
+  content: "\e638";
+}
+
+.icondeploy:before {
+  content: "\e636";
 }
 
 .iconsystem1:before {
@@ -507,4 +827,3 @@
 .iconjiaofu1:before {
   content: "\e694";
 }
-

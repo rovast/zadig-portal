@@ -16,16 +16,17 @@
         </span>
       </el-tab-pane>
     </el-tabs>
-    <Policy
-      ref="policyRef"
-      :userList="userList"
-      :workflowList="workflowList"
-      :envList="envList"
-      :policy="policy"
-      :collaborationData="currentCollaboration"
-      :deleteMode="deleteMode"
-      :updateActiveName="updateActiveName"
-    ></Policy>
+    <div class="policy-outer">
+      <Policy
+        ref="policyRef"
+        :workflowList="workflowList"
+        :envList="envList"
+        :policy="policy"
+        :collaborationData="currentCollaboration"
+        :deleteMode="deleteMode"
+        :updateActiveName="updateActiveName"
+      ></Policy>
+    </div>
   </div>
 </template>
 
@@ -34,7 +35,6 @@ import Policy from './policy.vue'
 import bus from '@utils/eventBus'
 import { cloneDeep } from 'lodash'
 import {
-  queryRoleBindingsAPI,
   queryPolicyDefinitionsAPI,
   getProductWorkflowsInProjectAPI,
   getCommonWorkflowListInProjectAPI,
@@ -53,7 +53,6 @@ const collaborationInfo = {
 export default {
   data () {
     return {
-      userList: [],
       workflowList: [],
       envList: [],
       policy: {
@@ -132,17 +131,6 @@ export default {
       })
       this.activeName = initName
     },
-    getProjectUsers () {
-      queryRoleBindingsAPI(this.projectName).then(res => {
-        const userList = _.uniqBy(res, 'uid')
-        const allId = userList.findIndex(user => user.uid === '*')
-        if (allId !== -1) {
-          const allUser = userList.splice(allId, 1)
-          userList.unshift(allUser[0])
-        }
-        this.userList = userList
-      })
-    },
     async getPolicyDefinitions () {
       const res = await queryPolicyDefinitionsAPI(
         this.projectName
@@ -215,7 +203,7 @@ export default {
         console.log(err)
       )
       if (res) {
-        const fn = (item) => {
+        const fn = item => {
           const deleteId = item.verbs.findIndex(verb =>
             verb.startsWith('delete_')
           )
@@ -245,7 +233,6 @@ export default {
     Policy
   },
   created () {
-    this.getProjectUsers()
     this.getPolicyDefinitions()
     this.getWorkflows()
     this.getEnvNameList()
@@ -256,29 +243,9 @@ export default {
         { title: '项目', url: '/v1/projects' },
         {
           title: this.projectName,
-          url: `/v1/projects/detail/${this.projectName}`
+          url: `/v1/projects/detail/${this.projectName}/detail`
         },
         { title: '协作模式', url: '' }
-      ]
-    })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: this.projectName,
-      url: `/v1/projects/detail/${this.projectName}`,
-      routerList: [
-        {
-          name: '工作流',
-          url: `/v1/projects/detail/${this.projectName}/pipelines`
-        },
-        {
-          name: '集成环境',
-          url: `/v1/projects/detail/${this.projectName}/envs`
-        },
-        {
-          name: '服务',
-          url: `/v1/projects/detail/${this.projectName}/services`
-        },
-        { name: '构建', url: `/v1/projects/detail/${this.projectName}/builds` },
-        { name: '测试', url: `/v1/projects/detail/${this.projectName}/test` }
       ]
     })
   }
@@ -287,7 +254,15 @@ export default {
 
 <style lang="less" scoped>
 .cooperation-container {
-  padding: 15px 20px;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 15px 20px 0;
+
+  .policy-outer {
+    height: calc(~'100% - 100px');
+    padding-right: 30%;
+    overflow: auto;
+  }
 
   /deep/.el-tabs {
     margin-top: 10px;
@@ -325,7 +300,7 @@ export default {
         .add-icon {
           position: relative;
           top: 7px;
-          color: #409eff;
+          color: @themeColor;
           font-size: 26px;
           cursor: pointer;
         }

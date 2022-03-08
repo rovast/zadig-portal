@@ -43,7 +43,7 @@
     >
       <el-alert title="注意:" type="warning" style="margin-bottom: 15px;" :closable="false">
         <slot>
-          <span class="tip-item">- 如果指定生产集群为“否”，有集成环境创建权限的用户，可以指定使用哪个集群资源。</span>
+          <span class="tip-item">- 如果指定生产集群为“否”，有环境创建权限的用户，可以指定使用哪个集群资源。</span>
           <span class="tip-item">
             -
             如果指定生产集群为“是”，超级管理员可以通过权限控制集群资源的使用，以实现业务与资源的严格隔离和安全生产管控。
@@ -71,7 +71,7 @@
           </span>
         </slot>
       </el-alert>
-      <el-form ref="cluster" :rules="rules" label-width="140px" label-position="left" :model="cluster">
+      <el-form ref="cluster" :rules="rules" label-width="148px" label-position="left" :model="cluster">
         <el-form-item label="名称" prop="name">
           <el-input size="small" v-model="cluster.name" placeholder="请输入集群名称"></el-input>
         </el-form-item>
@@ -90,9 +90,9 @@
               <i class="iconfont iconhuawei"></i>
               <span>华为云 CCE</span>
             </el-option>
-            <el-option :value="0" label="其它">
+            <el-option :value="0" label="其他">
               <i class="iconfont iconqita"></i>
-              <span>其它</span>
+              <span>其他</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -196,7 +196,7 @@
                 </el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item v-if="cluster.cache.medium_type === 'object'" prop="cache.object_properties.id">
+            <!-- <el-form-item v-if="cluster.cache.medium_type === 'object'" prop="cache.object_properties.id">
               <span slot="label">选择对象存储</span>
               <el-select v-model="cluster.cache.object_properties.id" placeholder="请选择对象存储" style="width: 100%;" size="small">
                 <template v-if="allStorage.length > 0">
@@ -206,8 +206,8 @@
                   <router-link to="/v1/system/storage" style="color: #606266;">集成对象存储</router-link>
                 </el-option>
               </el-select>
-            </el-form-item>
-            <template v-else-if="cluster.cache.medium_type === 'nfs'">
+            </el-form-item> -->
+            <template v-if="cluster.cache.medium_type === 'nfs'">
               <el-form-item prop="cache.nfs_properties.provision_type">
                 <span slot="label">选择存储资源</span>
                 <el-radio-group v-model="cluster.cache.nfs_properties.provision_type">
@@ -270,8 +270,7 @@
     <div class="section">
       <el-alert type="info" :closable="false">
         <template>
-          基于本地集群安装，同时支持外部多个 K8s 集群资源的接入和使用
-          <br />详细配置可参考
+          支持阿里云 ACK、腾讯云 TKE、华为云 CCE 等 K8s 集群的接入和使用，详情可参考
           <el-link
             style="font-size: 14px; vertical-align: baseline;"
             type="primary"
@@ -289,7 +288,7 @@
           <el-table :data="allCluster" style="width: 100%;" :row-class-name="tableRowClassName">
             <el-table-column label="名称">
               <template slot-scope="scope">
-                <i v-if="scope.row.local" class="iconfont iconk8s"></i>
+                <i v-if="scope.row.local" class="iconfont iconvery-k8s"></i>
                 <i v-else :class="getProviderMap(scope.row.provider,'icon')"></i>
                 <span v-if="scope.row.local">本地集群（local）</span>
                 <span v-else>{{scope.row.name}}</span>
@@ -332,8 +331,8 @@
                   <el-button v-if="scope.row.status==='normal'" @click="clusterOperation('disconnect',scope.row)" size="mini">断开</el-button>
                   <el-button v-if="scope.row.status==='disconnected'" @click="clusterOperation('recover',scope.row)" size="mini">恢复</el-button>
                 </span>
-                <el-button @click="clusterOperation('edit',scope.row)" size="mini">编辑</el-button>
-                <el-button v-show="!scope.row.local" @click="clusterOperation('delete',scope.row)" size="mini" type="danger">删除</el-button>
+                <el-button @click="clusterOperation('edit',scope.row)" type="primary" size="mini" plain>编辑</el-button>
+                <el-button v-show="!scope.row.local" @click="clusterOperation('delete',scope.row)" size="mini" type="danger" plain>删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -414,7 +413,7 @@ export default {
       providerMap: {
         0: {
           icon: 'iconfont logo iconqita',
-          name: '其它'
+          name: '其他'
         },
 
         1: {
@@ -739,10 +738,6 @@ export default {
   created () {
     this.getCluster()
     bus.$emit(`set-topbar-title`, { title: '集群管理', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
   }
 }
 </script>
@@ -753,15 +748,10 @@ export default {
 .setting-cluster-container {
   position: relative;
   flex: 1;
+  height: 100%;
   padding: 15px 30px;
   overflow: auto;
   font-size: 13px;
-
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
 
   .section {
     margin-bottom: 56px;
@@ -772,15 +762,15 @@ export default {
       overflow: hidden;
 
       .el-button--success.is-plain {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
 
       .el-button--success.is-plain:hover {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
     }
 
@@ -848,7 +838,7 @@ export default {
         cursor: pointer;
 
         &:hover {
-          color: #13ce66;
+          color: @themeColor;
         }
       }
     }

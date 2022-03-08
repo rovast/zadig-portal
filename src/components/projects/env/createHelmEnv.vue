@@ -1,8 +1,5 @@
 <template>
   <div class="create-product-detail-container" v-loading="loading" element-loading-text="正在加载中" element-loading-spinner="el-icon-loading">
-    <div class="module-title">
-      <h1>创建环境</h1>
-    </div>
     <div v-if="showEmptyServiceModal" class="no-resources">
       <div>
         <img src="@assets/icons/illustration/environment.svg" alt />
@@ -12,20 +9,44 @@
           该环境暂无服务，请点击
           <router-link :to="`/v1/projects/detail/${projectName}/services`">
             <el-button type="primary" size="mini" round plain>项目->服务</el-button>
-          </router-link>添加服务
+          </router-link> 添加服务
         </p>
       </div>
     </div>
     <div v-else>
-      <el-form label-width="80px" label-position="right"  ref="create-env-ref" :model="projectConfig" :rules="rules">
+      <el-form
+        class="common-parcel-block primary-form"
+        label-width="120px"
+        label-position="left"
+        ref="create-env-ref"
+        :model="projectConfig"
+        :rules="rules"
+        inline-message
+      >
         <el-form-item label="环境名称" prop="env_name">
           <el-input @input="changeEnvName" v-model="projectConfig.env_name" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="命名空间" prop="defaultNamespace">
+        <el-form-item label="创建方式" prop="source">
+          <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
+            <el-option label="新建" value="system"></el-option>
+            <el-option label="复制" value="copy"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="projectConfig.source === 'copy'" label="选择环境" prop="baseEnvName">
+          <el-select class="select" @change="changeBaseEnv" v-model="projectConfig.baseEnvName" size="small" placeholder="请选择复制的环境名称">
+            <el-option v-for="name in projectEnvNames" :key="name" :label="name" :value="name"></el-option>
+          </el-select>
+        </el-form-item>
+        <div class="primary-title">资源选择</div>
+        <el-form-item label="K8s 集群" prop="cluster_id" class="secondary-label">
+          <el-select class="select" filterable v-model="projectConfig.cluster_id" size="small" placeholder="请选择 K8s 集群">
+            <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="K8s 命名空间" prop="defaultNamespace" class="secondary-label">
           <el-select
               v-model="projectConfig.defaultNamespace"
               :disabled="editButtonDisabled"
-              style="width: 250px;"
               size="small"
               placeholder="选择已有或自定义命名空间"
               filterable
@@ -35,26 +56,12 @@
             <el-option :value="`${projectName}-env-${projectConfig.env_name}`">{{ projectName }}-env-{{ projectConfig.env_name }}</el-option>
             <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns" :value="ns"></el-option>
           </el-select>
-          <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">{{editButtonDisabled? '编辑' : '完成'}}</span>
+          <span class="editButton" @click="editButtonDisabled = !editButtonDisabled">
+            <i :class="[editButtonDisabled ? 'el-icon-edit-outline': 'el-icon-finished' ]"></i>
+          </span>
           <span class="ns-desc" v-show="nsIsExisted">Zadig 中定义的服务将覆盖所选命名空间中的同名服务，请谨慎操作！</span>
         </el-form-item>
-        <el-form-item label="创建方式" prop="source">
-          <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
-            <el-option label="系统创建" value="system"></el-option>
-            <el-option label="复制环境" value="copy"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="projectConfig.source === 'copy'" label="复制环境" prop="baseEnvName">
-          <el-select class="select" @change="changeBaseEnv" v-model="projectConfig.baseEnvName" size="small" placeholder="请选择复制的环境名称">
-            <el-option v-for="name in projectEnvNames" :key="name" :label="name" :value="name"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="集群" prop="cluster_id">
-          <el-select class="select" filterable v-model="projectConfig.cluster_id" size="small" placeholder="请选择集群">
-            <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="镜像仓库">
+        <el-form-item label="镜像仓库" class="secondary-label">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small">
             <el-option
               v-for="registry in imageRegistry"
@@ -66,48 +73,30 @@
           <div class="image-secret">imagePullSecret 名称：default-registry-secret</div>
         </el-form-item>
       </el-form>
-
-      <div style="color: rgb(153, 153, 153); font-size: 16px; line-height: 20px;">服务列表</div>
-      <el-card class="box-card-service" :body-style="{padding: '0px'}">
-        <div slot="header" class="clearfix">
-          <span class="second-title">Chart (HELM 部署)</span>
-        </div>
-        <HelmEnvTemplate
-          class="chart-value"
-          ref="helmEnvTemplateRef"
-          :chartNames="chartNames"
-          :envNames="envNames"
-          :handledEnv="envName"
-          :envScene="envScene"
-        ></HelmEnvTemplate>
-      </el-card>
-      <el-form label-width="200px" class="ops">
+      <HelmEnvTemplate
+        class="chart-value"
+        ref="helmEnvTemplateRef"
+        :chartNames="chartNames"
+        :envNames="envNames"
+        :handledEnv="envName"
+        :envScene="envScene"
+      ></HelmEnvTemplate>
+      <el-form label-width="35%" class="ops">
         <el-form-item>
-          <el-button @click="deployHelmEnv" :loading="startDeployLoading" type="primary" size="medium">确定</el-button>
           <el-button @click="$router.back()" :loading="startDeployLoading" size="medium">取消</el-button>
+          <el-button @click="deployHelmEnv" :loading="startDeployLoading" type="primary" size="medium">立即创建</el-button>
         </el-form-item>
       </el-form>
       <footer v-if="startDeployLoading" class="create-footer">
-        <el-row :gutter="20">
-          <el-col :span="16">
-            <div class="grid-content bg-purple">
-              <div class="description">
-                <el-tag type="primary">正在创建环境中....</el-tag>
-              </div>
-            </div>
-          </el-col>
-
-          <el-col :span="8">
-            <div class="grid-content bg-purple">
-              <div class="deploy-loading">
-                <div class="spinner__item1"></div>
-                <div class="spinner__item2"></div>
-                <div class="spinner__item3"></div>
-                <div class="spinner__item4"></div>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
+        <div class="description">
+          <el-tag type="primary">正在创建环境中....</el-tag>
+        </div>
+        <div class="deploy-loading">
+          <div class="spinner__item1"></div>
+          <div class="spinner__item2"></div>
+          <div class="spinner__item3"></div>
+          <div class="spinner__item4"></div>
+        </div>
       </footer>
     </div>
   </div>
@@ -159,7 +148,7 @@ export default {
       loading: false,
       rules: {
         cluster_id: [
-          { required: true, trigger: 'change', message: '请选择集群' }
+          { required: true, trigger: 'change', message: '请选择 K8s 集群' }
         ],
         source: [
           { required: true, trigger: 'change', message: '请选择环境类型' }
@@ -334,12 +323,15 @@ export default {
     bus.$emit('set-topbar-title', {
       title: '',
       breadcrumb: [
-        { title: '项目', url: `/v1/projects/detail/${this.projectName}` },
+        {
+          title: '项目',
+          url: `/v1/projects/detail/${this.projectName}/detail`
+        },
         {
           title: `${this.projectName}`,
-          url: `/v1/projects/detail/${this.projectName}`
+          url: `/v1/projects/detail/${this.projectName}/detail`
         },
-        { title: '集成环境', url: '' },
+        { title: '环境', url: '' },
         { title: '创建', url: '' }
       ]
     })
@@ -366,9 +358,10 @@ export default {
 .create-product-detail-container {
   position: relative;
   flex: 1;
-  padding: 15px 20px;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 16px 24px;
   overflow: auto;
-  font-size: 13px;
 
   .ns-desc {
     display: inline-block;
@@ -384,46 +377,15 @@ export default {
     line-height: 1.5;
   }
 
-  .module-title h1 {
-    margin-bottom: 30px;
-    font-weight: 200;
-    font-size: 1.5rem;
-  }
-
-  .box-card-service {
-    margin-top: 25px;
-    margin-bottom: 25px;
-    border: none;
-    box-shadow: none;
-
-    .chart-value {
-      width: 80%;
-      min-width: 450px;
-      margin-left: 5px;
-    }
-  }
-
-  /deep/.el-card__header {
-    position: relative;
-    box-sizing: border-box;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 0;
-    border-bottom: none;
-
-    &::before {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 400px;
-      height: 1px;
-      border-bottom: 1px solid #eee;
-      content: '';
-    }
-  }
-
-  /deep/.el-collapse-item__header {
-    padding-left: 0;
+  .editButton {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 0 6px;
+    font-size: 14px;
+    line-height: 24px;
+    border: 1px solid rgba(118, 122, 200, 0.5);
+    border-radius: 4px;
+    cursor: pointer;
   }
 
   .no-resources {
@@ -455,84 +417,68 @@ export default {
     position: fixed;
     bottom: 0;
     z-index: 5;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    width: 800px;
-    padding: 15px 60px 10px 0;
-    text-align: left;
-    background-color: #fff;
-    border-top: 1px solid #fff;
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 15px 0 10px;
 
-    .grid-content {
-      min-height: 36px;
-      border-radius: 4px;
+    .description {
+      flex: 0 0 auto;
+      line-height: 36px;
 
-      .description {
+      p {
+        margin: 0;
+        color: #676767;
+        font-size: 16px;
         line-height: 36px;
+        text-align: left;
+      }
+    }
 
-        p {
-          margin: 0;
-          color: #676767;
-          font-size: 16px;
-          line-height: 36px;
-          text-align: left;
-        }
+    .deploy-loading {
+      flex: 0 0 100px;
+      margin-left: 20px;
+      line-height: 36px;
+      text-align: center;
+
+      div {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-right: 4px;
+        background-color: @themeColor;
+        border-radius: 100%;
+        animation: sk-bouncedelay 1.4s infinite ease-in-out both;
       }
 
-      .deploy-loading {
-        width: 100px;
-        margin-left: 70px;
-        line-height: 36px;
-        text-align: center;
+      .spinner__item1 {
+        animation-delay: -0.6s;
+      }
 
-        div {
-          display: inline-block;
-          width: 8px;
-          height: 8px;
-          margin-right: 4px;
-          background-color: #1989fa;
-          border-radius: 100%;
-          animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+      .spinner__item2 {
+        animation-delay: -0.4s;
+      }
+
+      .spinner__item3 {
+        animation-delay: -0.2s;
+      }
+
+      @keyframes sk-bouncedelay {
+        0%,
+        80%,
+        100% {
+          -webkit-transform: scale(0);
+          transform: scale(0);
+          opacity: 0;
         }
 
-        .spinner__item1 {
-          animation-delay: -0.6s;
-        }
-
-        .spinner__item2 {
-          animation-delay: -0.4s;
-        }
-
-        .spinner__item3 {
-          animation-delay: -0.2s;
-        }
-
-        @keyframes sk-bouncedelay {
-          0%,
-          80%,
-          100% {
-            -webkit-transform: scale(0);
-            transform: scale(0);
-            opacity: 0;
-          }
-
-          40% {
-            -webkit-transform: scale(1);
-            transform: scale(1);
-            opacity: 1;
-          }
+        40% {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+          opacity: 1;
         }
       }
     }
-  }
-
-  /deep/.el-input__inner {
-    width: 250px;
-  }
-
-  .second-title {
-    color: #606266;
-    font-size: 14px;
   }
 
   /deep/.el-tag {
@@ -542,12 +488,5 @@ export default {
   .ops {
     margin-top: 25px;
   }
-}
-
-.editButton {
-  display: inline-block;
-  margin-left: 10px;
-  color: #1989fa;
-  cursor: pointer;
 }
 </style>

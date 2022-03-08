@@ -69,18 +69,18 @@ body {
   overflow: hidden;
   overflow-y: auto;
   font-family:
-    "Overpass",
-    "Noto Sans SC",
+    'Overpass',
+    'Noto Sans SC',
     -apple-system,
     BlinkMacSystemFont,
-    "Helvetica Neue",
+    'Helvetica Neue',
     Helvetica,
     Segoe UI,
     Arial,
     Roboto,
-    "PingFang SC",
-    "Hiragino Sans GB",
-    "Microsoft Yahei",
+    'PingFang SC',
+    'Hiragino Sans GB',
+    'Microsoft Yahei',
     sans-serif;
   background-color: #fff;
 

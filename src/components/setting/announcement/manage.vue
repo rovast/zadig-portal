@@ -9,7 +9,7 @@
       <el-form ref="announcement"
                :rules="rules"
                :model="announcement"
-               label-width="80px">
+               label-width="90px">
         <el-form-item label="标题"
                       prop="content.title">
           <el-input v-model="announcement.content.title"></el-input>
@@ -60,7 +60,7 @@
       <el-form ref="swapAnnouncement"
                :rules="rules"
                :model="swapAnnouncement"
-               label-width="80px">
+               label-width="90px">
         <el-form-item label="标题"
                       prop="content.title">
           <el-input v-model="swapAnnouncement.content.title"></el-input>
@@ -152,10 +152,10 @@
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button @click="announcementOperation('edit',scope.row)"
-                           size="mini">编辑</el-button>
+                           size="mini" type="primary" plain>编辑</el-button>
                 <el-button @click="announcementOperation('delete',scope.row)"
                            size="mini"
-                           type="danger">删除</el-button>
+                           type="danger" plain>删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -329,10 +329,7 @@ export default {
   },
   created () {
     bus.$emit(`set-topbar-title`, { title: '公告管理', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getAnnouncements()
   }
 }
@@ -346,12 +343,6 @@ export default {
   overflow: auto;
   font-size: 13px;
 
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
-
   .section {
     margin-bottom: 56px;
 
@@ -361,15 +352,15 @@ export default {
       overflow: hidden;
 
       .el-button--success.is-plain {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
 
       .el-button--success.is-plain:hover {
-        color: #13ce66;
+        color: @themeColor;
         background: #fff;
-        border-color: #13ce66;
+        border-color: @themeColor;
       }
     }
 
@@ -381,7 +372,7 @@ export default {
         width: 10px;
         height: 10px;
         vertical-align: middle;
-        background: #13ce66;
+        background: @themeColor;
         border-radius: 50%;
       }
     }

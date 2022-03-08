@@ -1,6 +1,7 @@
 
 .file-tree-container {
   position: relative;
+  width: 250px;
   padding: 0 5px;
   overflow: auto;
   font-size: 13px;
@@ -57,7 +58,7 @@
 
         &.new,
         &.named {
-          background: #1989fa;
+          background: @themeColor;
         }
 
         &.error {
@@ -66,7 +67,7 @@
       }
 
       .file-type {
-        color: #1989fa;
+        color: @themeColor;
         vertical-align: middle;
       }
 
@@ -110,7 +111,7 @@
   }
 
   .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
-    background-color: #1989fa33;
+    background-color: #06f3;
   }
 
   .add-new-file {

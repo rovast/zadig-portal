@@ -1,5 +1,5 @@
 <template>
-  <div class="auditlog-container">
+  <div class="setting-auditlog-container">
     <el-dialog :title="`API 请求：${currentLog.time}`"
                :visible.sync="payloadDialogVisiable"
                width="500px">
@@ -18,7 +18,7 @@
       </span>
     </el-dialog>
     <div class="section">
-      <div class="function-container">
+      <div class="operation">
         <div class="type">
           <el-select v-model="searchType"
                      size="small"
@@ -226,33 +226,26 @@ export default {
   },
   created () {
     bus.$emit(`set-topbar-title`, { title: '操作日志', breadcrumb: [] })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
     this.getAuditLog('init', this.logPageSize, this.currentPageList)
   }
 }
 </script>
 
 <style lang="less">
-.auditlog-container {
+.setting-auditlog-container {
   position: relative;
   flex: 1;
+  height: 100%;
   padding: 15px 30px;
   overflow: auto;
   font-size: 13px;
 
-  .module-title h1 {
-    margin-bottom: 1.5rem;
-    font-weight: 200;
-    font-size: 2rem;
-  }
-
   .section {
     margin-bottom: 56px;
 
-    .function-container {
+    .operation {
+      margin-bottom: 15px;
+
       .type {
         display: inline-block;
         width: 120px;

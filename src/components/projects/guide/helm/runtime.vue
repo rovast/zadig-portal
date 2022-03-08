@@ -1,13 +1,13 @@
 <template>
   <div class="projects-runtime-container">
     <div class="guide-container">
-      <step :activeStep="2" :stepThreeTitle="`配置环境`"></step>
+      <Step :activeStep="2" :stepThreeTitle="`配置环境`"/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第三步</span>
           <span class="second">配置变量，按需创建环境。后续可在项目中调整。</span>
         </div>
-        <div class="account-integrations cf-block__list">
+        <div class="account-integrations block-list">
           <div class="second">配置以下几套环境：</div>
           <el-tabs v-model="activeName" type="card" @edit="handleTabsEdit">
             <el-tab-pane
@@ -29,16 +29,16 @@
               </span>
             </el-tab-pane>
             <el-tab-pane name="addNew" v-if="canHandle">
-              <span slot="label" @click="handleTabsEdit('', 'add')">新建环境</span>
+              <span slot="label" @click="handleTabsEdit('', 'add')">创建环境</span>
             </el-tab-pane>
           </el-tabs>
           <el-form label-width="100px" ref="createEnvRef" :model="currentInfo" :rules="rules" label-position="left" inline>
-            <el-form-item label="集群：" prop="clusterID">
+            <el-form-item label="集群" prop="clusterID">
               <el-select class="select" filterable v-model="currentInfo.clusterID" size="small" placeholder="请选择集群">
                 <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="镜像仓库：">
+            <el-form-item label="镜像仓库">
               <el-select class="select" v-model.trim="currentInfo.registry_id" placeholder="请选择镜像仓库" size="small">
                 <el-option
                   v-for="registry in imageRegistry"
@@ -55,7 +55,7 @@
             :envNames="envNames"
             :handledEnv="activeName"
             :envScene="`createEnv`"
-          ></HelmEnvTemplate>
+          />
           <div class="ai-bottom">
             <el-button type="primary" size="small" @click="createHelmProductEnv" :loading="isCreating" :disabled="!cantNext">创建环境</el-button>
             <div v-for="(env, index) in createRes" :key="index" class="ai-status">
@@ -69,9 +69,8 @@
     <div class="controls__wrap">
       <div class="controls__right">
         <router-link :to="`/v1/projects/create/${projectName}/helm/delivery`">
-          <button type="primary" class="save-btn" :disabled="cantNext" plain>下一步</button>
+          <el-button type="primary" size="small" :disabled="cantNext">下一步</el-button>
         </router-link>
-        <div class="run-button"></div>
       </div>
     </div>
   </div>
@@ -79,7 +78,7 @@
 <script>
 import HelmEnvTemplate from '@/components/projects/env/env_detail/components/updateHelmEnvTemp.vue'
 import bus from '@utils/eventBus'
-import step from '../common/step.vue'
+import Step from '../common/step.vue'
 import {
   createHelmEnvAPI,
   getEnvironmentsAPI,
@@ -278,10 +277,7 @@ export default {
         { title: this.projectName, url: '' }
       ]
     })
-    bus.$emit(`set-sub-sidebar-title`, {
-      title: '',
-      routerList: []
-    })
+
     this.getProducts()
     this.getClusterAndRegistry()
   },
@@ -289,7 +285,7 @@ export default {
     this.sId = null
   },
   components: {
-    step,
+    Step,
     HelmEnvTemplate
   },
   directives: {
@@ -303,12 +299,13 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .projects-runtime-container {
   position: relative;
   flex: 1;
+  height: 100%;
   overflow: auto;
-  background-color: #f5f7f7;
+  background-color: @globalBackgroundColor;
 
   .guide-container {
     min-height: calc(~'100% - 70px');
@@ -320,13 +317,13 @@ export default {
 
         .first {
           display: inline-block;
-          width: 110px;
+          width: 130px;
           padding: 8px;
           color: #fff;
           font-weight: 300;
-          font-size: 18px;
+          font-size: 16px;
           text-align: center;
-          background: #3289e4;
+          background: @themeColor;
         }
 
         .second {
@@ -343,8 +340,8 @@ export default {
         }
 
         .el-tabs__new-tab {
-          color: #409eff;
-          border-color: #409eff;
+          color: #06f;
+          border-color: #06f;
         }
 
         .tab-label {
@@ -368,7 +365,7 @@ export default {
         }
 
         .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
-          border-bottom-color: #f5f7f7;
+          border-bottom-color: @globalBackgroundColor;
         }
 
         .el-tabs--card > .el-tabs__header .el-tabs__item.is-active,
@@ -400,14 +397,12 @@ export default {
         }
       }
 
-      .cf-block__list {
-        -ms-flex: 1;
+      .block-list {
         flex: 1;
         margin-top: 15px;
         padding: 0 30px;
         overflow-y: auto;
         background-color: inherit;
-        -webkit-box-flex: 1;
       }
     }
   }
@@ -421,30 +416,8 @@ export default {
     display: flex;
     align-items: center;
     height: 60px;
-    margin: 0 15px;
     padding: 0 10px;
     background-color: #fff;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
-
-    .controls__right {
-      .save-btn {
-        padding: 10px 17px;
-        color: #fff;
-        font-weight: bold;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: #1989fa;
-        border: 1px solid #1989fa;
-        cursor: pointer;
-        transition: background-color 300ms, color 300ms, border 300ms;
-      }
-
-      .save-btn[disabled] {
-        background-color: #9ac9f9;
-        border: 1px solid #9ac9f9;
-        cursor: not-allowed;
-      }
-    }
   }
 }
 </style>

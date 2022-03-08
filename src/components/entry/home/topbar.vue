@@ -67,7 +67,7 @@
             <li>
               <a href="https://docs.koderover.com/zadig/env/service/" target="_blank">
                 <i class="icon el-icon-link"></i>
-                <span>集成环境</span>
+                <span>环境</span>
               </a>
             </li>
             <li>

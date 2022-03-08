@@ -2,7 +2,7 @@
   <el-form class="run-workflow"
            label-width="90px">
     <el-form-item prop="productName"
-                  label="集成环境">
+                  label="环境">
       <el-select v-model="runner.envAndNamespace"
                  size="small"
                  :disabled="specificEnv"
@@ -164,7 +164,7 @@ export default {
     },
     checkInput () {
       if (!this.runner.envAndNamespace) {
-        this.$message.error('请选择集成环境')
+        this.$message.error('请选择环境')
         return false
       } else {
         return true

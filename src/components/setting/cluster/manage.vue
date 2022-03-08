@@ -43,7 +43,7 @@
     >
       <el-alert title="注意:" type="warning" style="margin-bottom: 15px;" :closable="false">
         <slot>
-          <span class="tip-item">- 如果指定生产集群为“否”，有集成环境创建权限的用户，可以指定使用哪个集群资源。</span>
+          <span class="tip-item">- 如果指定生产集群为“否”，有环境创建权限的用户，可以指定使用哪个集群资源。</span>
           <span class="tip-item">
             -
             如果指定生产集群为“是”，超级管理员可以通过权限控制集群资源的使用，以实现业务与资源的严格隔离和安全生产管控。

@@ -254,7 +254,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/home.vue'),
             meta: {
               requiresAuth: true,
-              title: '集成环境'
+              title: '环境'
             },
             children: [
               {
@@ -270,7 +270,7 @@ const routes = [
                 component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/envDetail.vue'),
                 meta: {
                   requiresAuth: true,
-                  title: '集成环境'
+                  title: '环境'
                 }
               },
               {
@@ -540,7 +540,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/home.vue'),
         meta: {
           requiresAuth: true,
-          title: '集成环境'
+          title: '环境'
         },
         children: [
           {
@@ -556,7 +556,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/inner_env/envDetail.vue'),
             meta: {
               requiresAuth: true,
-              title: '集成环境'
+              title: '环境'
             }
           },
           {
@@ -870,7 +870,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "Mobile" */ '@/mobile/envs/envs.vue'),
         meta: {
           requiresAuth: true,
-          title: '集成环境'
+          title: '环境'
         }
       },
       {
@@ -878,7 +878,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "Mobile" */ '@/mobile/envs/envDetail'),
         meta: {
           requiresAuth: true,
-          title: '集成环境'
+          title: '环境'
         }
       },
       {

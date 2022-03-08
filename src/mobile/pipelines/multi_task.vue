@@ -31,7 +31,7 @@
       <van-row>
         <van-col span="12">
           <div class="mobile-block">
-            <h2 class="mobile-block-title">集成环境</h2>
+            <h2 class="mobile-block-title">环境</h2>
             <div class="mobile-block-desc"> {{ workflow.product_tmpl_name }} -
               {{ workflow.namespace }}
             </div>

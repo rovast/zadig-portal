@@ -522,12 +522,12 @@ export function workflowPresetAPI (projectName) {
   return http.get(`/api/aslan/workflow/workflow/preset/${projectName}?projectName=${projectName}`)
 }
 
-export function createWorkflowAPI (projectName, data) {
-  return http.post(`/api/aslan/workflow/workflow?projectName=${projectName}`, data)
+export function createWorkflowAPI (data) {
+  return http.post(`/api/aslan/workflow/workflow?projectName=${data.product_tmpl_name}`, data)
 }
 
-export function updateWorkflowAPI (projectName, data) {
-  return http.put(`/api/aslan/workflow/workflow?projectName=${projectName}`, data)
+export function updateWorkflowAPI (data) {
+  return http.put(`/api/aslan/workflow/workflow?projectName=${data.product_tmpl_name}`, data)
 }
 
 export function deleteProductWorkflowAPI (projectName, name) {

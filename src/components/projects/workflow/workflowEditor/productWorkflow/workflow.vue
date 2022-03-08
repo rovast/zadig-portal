@@ -272,7 +272,7 @@ export default {
             this.$set(this.workflowInfo.distribute_stage, 'releases', [])
           }
         }
-        (this.editMode ? updateWorkflowAPI : createWorkflowAPI)(this.workflowInfo.product_tmpl_name, this.workflowInfo).then(res => {
+        (this.editMode ? updateWorkflowAPI : createWorkflowAPI)(this.workflowInfo).then(res => {
           this.$message.success('保存成功')
           if (this.$route.query.from) {
             this.$router.push(this.$route.query.from)

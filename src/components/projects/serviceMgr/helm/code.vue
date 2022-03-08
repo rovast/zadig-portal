@@ -14,7 +14,7 @@
               </el-tooltip>
               <el-tooltip effect="dark" content="服务编排" placement="top">
                 <el-radio-button label="arrange">
-                  <i class="iconfont iconfuwu"></i>
+                  <i class="iconfont iconvery-sort"></i>
                 </el-radio-button>
               </el-tooltip>
             </el-radio-group>

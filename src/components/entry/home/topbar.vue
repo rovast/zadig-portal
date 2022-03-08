@@ -448,7 +448,7 @@ export default {
       }
 
       .project-switcher-container {
-        margin-right: 30px;
+        margin-right: 20px;
 
         .icon-switcher {
           i {

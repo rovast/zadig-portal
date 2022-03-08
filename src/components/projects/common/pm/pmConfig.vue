@@ -954,7 +954,7 @@ export default {
 
 .pm-service-config-container {
   width: calc(~'100% - 250px');
-  padding: 0 15px 30px 15px;
+  padding: 0 10px 30px 10px;
   overflow-x: hidden;
   overflow-y: auto;
 

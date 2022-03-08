@@ -7,6 +7,11 @@
             <Code v-if="currentTab === 'code'" />
           </keep-alive>
         </el-tab-pane>
+        <el-tab-pane name="account" label="账号系统集成">
+          <keep-alive>
+            <Account v-if="currentTab === 'account'" />
+          </keep-alive>
+        </el-tab-pane>
         <el-tab-pane name="githubapp" label="GitHub App 集成">
           <keep-alive>
             <GitHubApp v-if="currentTab === 'githubapp'" />
@@ -25,11 +30,6 @@
         <el-tab-pane name="external" label="其他系统集成">
           <keep-alive>
             <External v-if="currentTab === 'external'" />
-          </keep-alive>
-        </el-tab-pane>
-        <el-tab-pane name="account" label="账号系统集成">
-          <keep-alive>
-            <Account v-if="currentTab === 'account'" />
           </keep-alive>
         </el-tab-pane>
       </el-tabs>

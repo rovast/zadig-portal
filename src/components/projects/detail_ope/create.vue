@@ -71,7 +71,7 @@
               </el-option>
               <el-option label="公开" :value="true">
                 <div class="title">公开</div>
-                <div class="desc">用户默认享有公开权限，可查看项目中的工作流、集成环境、服务、构建、测试等资源。</div>
+                <div class="desc">用户默认享有公开权限，可查看项目中的工作流、环境、服务、构建、测试等资源。</div>
               </el-option>
             </el-select>
           </el-form-item>

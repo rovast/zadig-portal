@@ -3,7 +3,7 @@
            label-position="top">
     <el-form-item prop="productName">
       <slot name="label">
-        <span>集成环境</span>
+        <span>环境</span>
         <el-tooltip v-if="specificEnv"
                     effect="dark"
                     content="该工作流已指定环境运行，可通过修改 工作流->基本信息 来解除指定环境绑定"
@@ -398,7 +398,7 @@ export default {
     },
     checkInput () {
       if (!this.runner.product_tmpl_name || !this.runner.namespace) {
-        Notify({ type: 'warning', message: '请选择集成环境' })
+        Notify({ type: 'warning', message: '请选择环境' })
         return false
       }
 

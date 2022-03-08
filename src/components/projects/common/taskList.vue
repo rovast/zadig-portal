@@ -98,7 +98,7 @@
       </el-table-column>
       <el-table-column v-if="showEnv"
                        min-width="100"
-                       label="集成环境">
+                       label="环境">
         <template slot-scope="scope">
           <span v-if="scope.row.workflow_args">
             {{ scope.row.workflow_args.namespace}}

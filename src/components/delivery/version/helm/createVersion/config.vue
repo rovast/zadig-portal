@@ -1,8 +1,8 @@
 <template>
   <div class="version-config">
     <el-form ref="configRef" :rules="rules" :model="releaseInfo" label-width="90px" inline>
-      <el-form-item label="集成环境" prop="envName">
-        <el-select v-model="releaseInfo.envName" placeholder="请选择集成环境" size="small" @change="getServicesNameByEnv" clearable>
+      <el-form-item label="环境" prop="envName">
+        <el-select v-model="releaseInfo.envName" placeholder="请选择环境" size="small" @change="getServicesNameByEnv" clearable>
           <el-option :label="name" :value="name" v-for="name in envNames" :key="name"></el-option>
         </el-select>
       </el-form-item>

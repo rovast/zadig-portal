@@ -357,7 +357,7 @@ export default {
 }
 </script>
 <style lang="less">
-@normal-blue: #409eff;
+@normal-blue: #0066ff;
 @hover-blue: #66b1ff;
 
 @stat-green: #90d76d;

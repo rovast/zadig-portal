@@ -153,7 +153,7 @@
                      size="small"
                      type="success">新建</el-button>
           <span class="switch-span"
-                :style="{color: proxyInfo.enable_application_proxy?'#1989fa':'#303133'}">启用代理</span>
+                :style="{color: proxyInfo.enable_application_proxy?'#0066ff':'#303133'}">启用代理</span>
           <el-switch size="small"
                      :value="proxyInfo.enable_application_proxy"
                      @change="changeProxy"></el-switch>

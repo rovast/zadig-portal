@@ -329,7 +329,7 @@ export default {
       .el-button {
         padding: 10px 15px;
         color: @themeColor;
-        font-weight: 300;
+        font-weight: 400;
         font-size: 14px;
         background-color: #fff;
         border: 1px solid @themeColor;
@@ -524,7 +524,7 @@ export default {
   .el-dropdown-menu__item {
     margin: 0 10px;
     padding: 0 10px;
-    font-weight: 300;
+    font-weight: 400;
     border-radius: 6px;
   }
 

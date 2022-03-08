@@ -101,7 +101,7 @@
         <span class="item-title">缓存策略</span>
         <div class="divider item"></div>
         <el-form-item label="使用工作空间缓存">
-          <el-switch v-model="buildInfo.job_ctx.clean_workspace" active-color="#409EFF"></el-switch>
+          <el-switch v-model="buildInfo.job_ctx.clean_workspace" active-color="#0066ff"></el-switch>
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -404,7 +404,7 @@ export default {
     }
 
     .variable {
-      color: #409eff;
+      color: #06f;
       font-size: 13px;
       cursor: pointer;
     }

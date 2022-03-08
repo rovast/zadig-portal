@@ -125,7 +125,7 @@ export default {
   }
 
   /deep/.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
-    background-color: #1989fa33;
+    background-color: #06f3;
   }
 }
 </style>

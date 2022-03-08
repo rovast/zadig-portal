@@ -96,7 +96,7 @@ export default {
         return 'color: rgb(193,58,61)'
       }
       if (data.updated) {
-        return 'color: #1989fa'
+        return 'color: #0066ff'
       }
     },
     addExpandFileList (data) {

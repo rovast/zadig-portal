@@ -26,8 +26,8 @@
         </el-form-item>
         <el-form-item label="创建方式" prop="source" v-if="$utils.isEmpty(pmServiceMap)">
           <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
-            <el-option label="新建" value="system"></el-option>
-            <el-option v-if="currentProductDeliveryVersions.length > 0" label="回溯" value="versionBack"></el-option>
+            <el-option label="系统创建" value="system"></el-option>
+            <el-option v-if="currentProductDeliveryVersions.length > 0" label="版本回溯" value="versionBack"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="projectConfig.source==='versionBack'" label="选择版本">
@@ -201,7 +201,7 @@
 </template>
 
 <script>
-import VarList from './varList.vue'
+import VarList from '../k8sPmEnv/varList.vue'
 import {
   imagesAPI,
   productHostingNamespaceAPI,
@@ -734,7 +734,7 @@ export default {
           title: `${this.projectName}`,
           url: `/v1/projects/detail/${this.projectName}/detail`
         },
-        { title: '环境', url: '' },
+        { title: '集成环境', url: '' },
         { title: '创建', url: '' }
       ]
     })

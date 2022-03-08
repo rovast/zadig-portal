@@ -492,7 +492,7 @@ export default {
                   tableData={scope.row.jenkins_build_args.jenkins_build_params}
                   id="id"
                 />
-                <span size="small" style="color: #409EFF" slot="reference">
+                <span size="small" style="color: #0066ff" slot="reference">
                   查看
                 </span>
               </el-popover>

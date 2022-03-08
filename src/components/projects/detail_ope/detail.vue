@@ -15,20 +15,15 @@
           环境信息
         </h4>
         <el-table :data="envList" stripe style="width: 100%;">
-          <el-table-column label="环境名称">
+          <el-table-column label="名称">
             <template slot-scope="{ row }">
               <router-link :to="`/v1/projects/detail/${row.projectName}/envs/detail?envName=${row.name}`">
                 <span class="env-name">{{`${row.name}`}}</span>
               </router-link>
             </template>
           </el-table-column>
-          <el-table-column label="集群归属">
-            <template slot-scope="{ row }">
-              <span v-if="row.clusterName && row.production">{{`${row.production?'生产':'测试'}`}}</span>
-              <span v-else>本地</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="当前状态">
+          <el-table-column label="归属" prop="clusterName"></el-table-column>
+          <el-table-column label="状态">
             <template slot-scope="{ row }">
               <span v-if="row.status" :class="[$translate.calcEnvStatusColor(row.status)]">{{getProdStatus(row.status, row.updatable)}}</span>
               <span v-else>
@@ -36,7 +31,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column width="300" label="更新信息（时间/操作人）">
+          <el-table-column width="300" label="更新">
             <template slot-scope="{ row }">
               <span class="update-time">
                 <i class="icon el-icon-time"></i>
@@ -56,17 +51,17 @@
           工作流信息
         </h4>
         <el-table :data="workflows" stripe style="width: 100%;">
-          <el-table-column label="工作流名称">
+          <el-table-column label="名称">
             <template slot-scope="{ row }">
               <router-link class="pipeline-name" :to="`/v1/projects/detail/${projectName}/pipelines/multi/${row.name}`">{{row.name}}</router-link>
             </template>
           </el-table-column>
-          <el-table-column label="包含步骤">
+          <el-table-column label="步骤">
             <template slot-scope="{ row }">
               <CusTags :values="row.enabledStages.map(stage => wordTranslation(stage, 'workflowStage'))"></CusTags>
             </template>
           </el-table-column>
-          <el-table-column label="当前状态">
+          <el-table-column label="状态">
             <template slot-scope="{ row }">
               <span
                 v-if="row.recentTask"
@@ -75,7 +70,7 @@
               <span v-else>-</span>
             </template>
           </el-table-column>
-          <el-table-column width="300" label="更新信息（时间/操作人）">
+          <el-table-column width="300" label="更新">
             <template slot-scope="{ row }">
               <span class="update-time">
                 <i class="icon el-icon-time"></i>

@@ -98,7 +98,7 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="envs" label="集成环境">
+        <el-table-column prop="envs" label="环境">
           <template slot-scope="scope">{{scope.row.envs.length}}</template>
         </el-table-column>
         <el-table-column label="更新信息">

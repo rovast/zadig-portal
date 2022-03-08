@@ -102,7 +102,7 @@
       </el-table>
     </el-form>
 
-    <div class="secondary-title">集成环境</div>
+    <div class="secondary-title">环境</div>
     <el-form ref="environmentRef" :model="collaborationData" label-width="120px" label-position="left">
       <el-table :data="collaborationData.products" style="width: 100%;">
         <el-table-column label="基准环境">

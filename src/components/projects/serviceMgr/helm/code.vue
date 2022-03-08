@@ -541,7 +541,7 @@ export default {
 
     .left-tree {
       flex: 1 1 auto;
-      max-height: calc(~'100% - 65px');
+      max-height: calc(~'100% - 55px');
       overflow: auto;
 
       .folder {

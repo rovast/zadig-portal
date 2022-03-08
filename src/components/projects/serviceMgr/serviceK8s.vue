@@ -100,17 +100,13 @@
           <div v-if="isOnboarding" class="controls__right">
             <el-button type="primary"
                        size="small"
-                       class="save-btn"
-                       @click="showOnboardingNext"
-                       plain>下一步</el-button>
+                       @click="showOnboardingNext">下一步</el-button>
           </div>
           <div v-else v-hasPermi="{projectName: projectName, action: 'config_environment'}" class="controls__right">
             <el-button type="primary"
                        size="small"
-                       class="save-btn"
                        @click="upgradeEnv"
-                       :disabled="!showNext || !envNameList.length"
-                       plain>环境更新</el-button>
+                       :disabled="!showNext || !envNameList.length">环境更新</el-button>
           </div>
       </div>
     </div>

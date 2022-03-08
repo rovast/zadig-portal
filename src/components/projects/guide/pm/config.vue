@@ -171,7 +171,7 @@ export default {
     display: flex;
     height: calc(~'100% - 230px') !important;
     margin-bottom: 0;
-    padding: 5px 15px 15px 15px;
+    padding: 5px 0 15px 0;
   }
 
   .controls__wrap {
@@ -180,13 +180,10 @@ export default {
     bottom: 0;
     left: 0;
     z-index: 2;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 60px;
-    margin: 0 15px;
     padding: 0 10px;
     background-color: #fff;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
@@ -196,32 +193,8 @@ export default {
     }
 
     .controls__right {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
       align-items: center;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-
-      .save-btn,
-      .next-btn {
-        margin-right: 15px;
-        padding: 10px 17px;
-        color: #fff;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: @themeColor;
-        border: 1px solid @themeColor;
-        cursor: pointer;
-        transition: background-color 300ms, color 300ms, border 300ms;
-      }
-
-      .save-btn[disabled],
-      .next-btn[disabled] {
-        background-color: #9ac9f9;
-        border: 1px solid #9ac9f9;
-        cursor: not-allowed;
-      }
     }
   }
 }

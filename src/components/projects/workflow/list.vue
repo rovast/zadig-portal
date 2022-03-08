@@ -597,7 +597,7 @@ export default {
     }
 
     .step-arrow {
-      color: #409eff;
+      color: #06f;
     }
   }
 

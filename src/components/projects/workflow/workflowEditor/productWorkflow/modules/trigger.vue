@@ -955,8 +955,8 @@ export default {
 
     .env-open-button {
       padding: 7px 7px 7px 10px;
-      color: #409eff;
-      border-color: #409eff;
+      color: #06f;
+      border-color: #06f;
     }
 
     .env-update-list {

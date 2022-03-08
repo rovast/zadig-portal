@@ -195,7 +195,7 @@ export default {
   }
 
   .added {
-    color: #409eff;
+    color: #06f;
   }
 
   .deleted {

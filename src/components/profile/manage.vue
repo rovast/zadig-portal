@@ -43,10 +43,7 @@
         <div class="row">
           <div class="edit-columns">
             <div class="ember-view">
-              <div class="avatar-overlay"></div>
-              <img src="@assets/icons/others/profile.png"
-                   alt=""
-                   class="avatar">
+              <span class="avatar iconfont iconvery-user"></span>
             </div>
           </div>
           <div class="info-tag">
@@ -329,8 +326,8 @@ export default {
 
     .Box {
       padding: 55px 20px;
-      border: 2px solid #f1f1f1;
-      border-radius: 3px;
+      border: 1px solid #f1f1f1;
+      border-radius: 2px;
 
       .username {
         font-weight: 300;
@@ -350,6 +347,11 @@ export default {
         .ember-view {
           float: left;
           width: 300px;
+
+          .avatar {
+            color: @themeColor;
+            font-size: 40px;
+          }
         }
 
         .edit-profile {

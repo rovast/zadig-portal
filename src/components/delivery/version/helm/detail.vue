@@ -146,7 +146,7 @@ export default {
 
         waiting: {
           desc: '等待上传',
-          color: '#409eff'
+          color: '#0066ff'
         },
         uploading: {
           desc: '上传中',
@@ -159,7 +159,7 @@ export default {
         },
         retrying: {
           desc: '重试中',
-          color: '#409eff'
+          color: '#0066ff'
         },
         undefine: {
           desc: '未知',

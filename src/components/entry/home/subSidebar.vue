@@ -210,7 +210,7 @@ export default {
 
               &.selected {
                 background-color: #e1edfa;
-                box-shadow: inset 4px 0 0 #1989fa;
+                box-shadow: inset 4px 0 0 #06f;
               }
 
               .pipeline-name {
@@ -227,7 +227,7 @@ export default {
               &:hover {
                 padding-right: 2px;
                 background-color: #e1edfa;
-                box-shadow: inset 4px 0 0 #1989fa;
+                box-shadow: inset 4px 0 0 #06f;
                 cursor: pointer;
               }
             }
@@ -235,7 +235,7 @@ export default {
             .selected {
               .pipelines-sub-side-bar__item {
                 background-color: #e1edfa;
-                box-shadow: inset 4px 0 0 #1989fa;
+                box-shadow: inset 4px 0 0 #06f;
               }
             }
           }

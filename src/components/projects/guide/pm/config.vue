@@ -116,7 +116,7 @@ export default {
 }
 
 .highlight {
-  background: #409eff57;
+  background: #0066ff57;
 }
 
 .projects-pm-service-container {

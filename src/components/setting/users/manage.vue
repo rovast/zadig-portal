@@ -66,7 +66,7 @@
             <span class="text-title">用户注册:</span>
             <el-switch v-model="registrationStatus"
                        @change="changeRegistration"
-                       active-color="#1989fa">
+                       active-color="#0066ff">
             </el-switch>
           </div>
         </el-col>
@@ -84,7 +84,7 @@
             <div class="name-listing-details">
               <!-- Logo -->
               <div class="avator">
-                <img src="@assets/icons/others/profile.png" alt />
+                <span class="iconfont iconvery-user"></span>
               </div>
               <!-- Details -->
               <div class="name-listing-description">
@@ -409,13 +409,11 @@ export default {
       align-items: center;
       padding: 0;
 
-      .avator img {
+      .avator span {
         position: relative;
-        top: 0;
-        flex: 1;
-        max-width: 25px;
-        margin-right: 25px;
         margin-right: 10px;
+        color: @themeColor;
+        font-size: 25px;
       }
 
       .name-listing-description {

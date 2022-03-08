@@ -340,8 +340,8 @@ export default {
         }
 
         .el-tabs__new-tab {
-          color: #409eff;
-          border-color: #409eff;
+          color: #06f;
+          border-color: #06f;
         }
 
         .tab-label {

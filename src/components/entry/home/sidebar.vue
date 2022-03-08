@@ -320,7 +320,7 @@ export default {
       overflow: hidden;
       color: #888;
       font-weight: 300;
-      font-size: 14px;
+      font-size: 16px;
       white-space: nowrap;
       text-align: left;
       text-transform: uppercase;

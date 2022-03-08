@@ -188,7 +188,7 @@ export default {
     .el-button {
       padding: 10px 15px;
       color: @themeColor;
-      font-weight: 300;
+      font-weight: 400;
       border: 1px solid @themeColor;
       border-radius: 4px;
       box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
@@ -197,7 +197,7 @@ export default {
     .display-btn {
       padding: 10px 15px;
       color: @themeColor;
-      font-weight: 300;
+      font-weight: 400;
       font-size: 14px;
       background-color: #fff;
       border: 1px solid @themeColor;

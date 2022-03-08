@@ -157,7 +157,7 @@ h2 {
 }
 
 .btn-theme:hover {
-  background: #1989fac2;
+  background: #0066ffc2;
 }
 
 .btn-md {

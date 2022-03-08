@@ -9,7 +9,7 @@
     <div v-if="loading"
          class="load-cover">
       <van-loading type="spinner"
-                   color="#1989fa" />
+                   color="#0066ff" />
     </div>
 
     <template v-else>

@@ -581,7 +581,7 @@ export default {
 
         &:hover,
         &.active {
-          background: rgba(160, 160, 255, 0.15);
+          background: rgba(0, 102, 255, 0.07);
 
           .name {
             color: @themeColor;

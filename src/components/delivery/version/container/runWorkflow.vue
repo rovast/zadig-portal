@@ -42,8 +42,9 @@
               empty-text="无"
               class="service-deploy-table">
       <el-table-column prop="serviceName"
-                       label="服务"
+                       label="服务组件(服务名称)"
                        width="150px">
+        <template slot-scope="scope">{{$utils.showServiceName(scope.row.containerName)}}</template>
       </el-table-column>
       <el-table-column label="镜像名称">
         <template slot-scope="scope">

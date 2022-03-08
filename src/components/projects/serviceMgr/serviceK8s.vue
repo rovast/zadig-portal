@@ -65,7 +65,11 @@
                                     @onParseKind="getYamlKind"
                                     @onRefreshService="getServices"
                                     @onRefreshSharedService="getSharedServices"
-                                    @onUpdateService="onUpdateService"/>
+                                    @onUpdateService="onUpdateService"
+                                    class="service-editor-content" />
+                  <div class="modal-block" v-if="service.source === 'template' && showModal">
+                    <el-button type="primary" size="small" @click="showModal = false">预览/编辑</el-button>
+                  </div>
                 </div>
                 <MultipaneResizer/>
                 <aside class="service-aside service-aside-right"
@@ -142,7 +146,8 @@ export default {
       yamlChange: false,
       updateEnvDialogVisible: false,
       integrationCodeDrawer: false,
-      envNameList: []
+      envNameList: [],
+      showModal: true
     }
   },
   methods: {
@@ -160,6 +165,7 @@ export default {
       this.updateEnvDialogVisible = true
     },
     onSelectServiceChange (service) {
+      this.showModal = true
       this.$set(this, 'service', service)
     },
     getServices () {

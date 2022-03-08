@@ -65,7 +65,7 @@
               <template slot="prepend">$WORKSPACE/</template>
             </el-input>
           </el-form-item>
-          <el-form-item v-if="buildConfig.post_build.docker_build.source === 'template'" label="模板选择" prop="template_name">
+          <el-form-item v-if="buildConfig.post_build.docker_build.source === 'template'" label="模板选择" prop="template_id">
             <el-select
               style="width: 90%;"
               size="small"
@@ -177,6 +177,14 @@ export default {
             message: '请填写 Dockerfile 路径',
             required: true,
             trigger: 'blur'
+          }
+        ],
+        template_id: [
+          {
+            type: 'string',
+            message: '请选择模板',
+            required: true,
+            trigger: ['blur', 'change']
           }
         ]
       },

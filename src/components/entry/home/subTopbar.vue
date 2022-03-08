@@ -111,7 +111,7 @@ export default {
   methods: {
     bindComp (comp, type) {
       if (type === 'workflow') {
-        comp.showSelectWorkflowType = true
+        comp.createWorkflow()
       } else if (type === 'env') {
         this.$router.push(`/v1/projects/detail/${this.projectName}/envs/create`)
       } else if (type === 'build') {

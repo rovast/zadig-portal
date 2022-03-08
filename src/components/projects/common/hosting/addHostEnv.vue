@@ -159,7 +159,7 @@ export default {
 }
 </script>
 <style lang='less' scoped>
-@secondaryColor: #8a8a8a;
+@secondaryColor: #888888;
 
 .form-content {
   padding-bottom: 40px;

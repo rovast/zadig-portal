@@ -198,7 +198,7 @@ export default {
 
     .el-table th.el-table__cell {
       padding: 0;
-      color: #8a8a8a;
+      color: #888;
       background: #fff;
     }
   }

@@ -110,14 +110,14 @@ export default {
   position: relative;
   flex: 1;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
 
   .config-container-pm {
     position: relative;
     display: flex;
     height: calc(~'100% - 80px') !important;
     margin-bottom: 0;
-    padding: 5px 15px 15px 15px;
+    padding: 15px 5px 10px 5px;
   }
 
   .controls__wrap {
@@ -126,13 +126,10 @@ export default {
     bottom: 0;
     left: 0;
     z-index: 2;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 60px;
-    margin: 0 15px;
     padding: 0 10px;
     background-color: #fff;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);

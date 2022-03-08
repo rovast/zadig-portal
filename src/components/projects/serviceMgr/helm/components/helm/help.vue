@@ -11,7 +11,7 @@
           1
         </div>
         <p class="service-aside-help__step-list-item-text">
-          新建服务，选择服务配置来源，支持三种方式：Git 仓库/ Chart 仓库/模板库
+          新建服务，支持三种方式：从代码库同步/从 Chart 仓库同步/使用模板新建
         </p>
       </li>
       <li class="service-aside-help__step-list-item">
@@ -19,8 +19,8 @@
           2
         </div>
         <p class="service-aside-help__step-list-item-text">
-          配置可更新镜像 <br>
-          系统可自动从 values.yaml 中解析以下格式的镜像信息
+          配置可更新镜像(服务组件)<br>
+          系统可自动从 values.yaml 中解析以下格式的镜像信息。更多匹配格式，请前往“镜像更新”->“更新匹配规则”配置
         <ul style="padding-left: 5px;">
           <li>
             格式一：<br>

@@ -263,7 +263,7 @@ export default {
 @import url('~@assets/css/common/scroll-bar.less');
 
 @labelWeight: 300;
-@secondaryColor: #8a8a8a;
+@secondaryColor: #888888;
 @formItemBottom: 8px;
 
 .zadig-build-container {

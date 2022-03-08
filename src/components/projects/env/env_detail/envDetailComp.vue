@@ -51,9 +51,10 @@
             <div class="grid-content">{{getProdStatus(productInfo.status,productStatus.updatable)}}</div>
           </el-col>
         </el-row>
-        <!-- host project don't show registry -->
+
         <el-row :gutter="10">
-          <el-col :span="12" v-if="!isPmService">
+          <!-- pm and hosting project don't show registry -->
+          <el-col v-if="!isExternal && !isPmService" :span="12">
             <div class="grid-title">镜像仓库</div>
             <div class="grid-content image-registry">
               <div v-if="editImageRegistry === false">
@@ -568,6 +569,7 @@ export default {
       envLoading: false,
       serviceLoading: false,
       isPmService: false,
+      isExternal: false,
       showStartProductBuild: false,
       helmChartDiffVisible: false,
       currentServiceMeta: null,
@@ -803,9 +805,12 @@ export default {
           if (res.product_feature) {
             if (res.product_feature.basic_facility === 'cloud_host') {
               this.isPmService = true
+            } else if (res.product_feature.create_env_type === 'external') {
+              this.isExternal = true
             }
           } else {
             this.isPmService = false
+            this.isExternal = false
           }
         })
         .catch(err => {

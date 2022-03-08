@@ -262,7 +262,7 @@ export default {
         line-height: 1.5;
 
         .title {
-          color: #8a8a8a;
+          color: #888;
           font-weight: 300;
           font-size: 12px;
         }
@@ -299,7 +299,7 @@ export default {
 
       .er-sub-title {
         margin: 8px 0;
-        color: #8a8a8a;
+        color: #888;
         font-weight: 300;
         font-size: 12px;
       }

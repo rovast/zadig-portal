@@ -50,6 +50,18 @@
 <script>
 import { getSingleProjectAPI, updateSingleProjectAPI } from '@api'
 import CusDeliverable from '../../../detail_ope/components/cusDeliverable.vue'
+const validateDeployTimeout = (rule, value, callback) => {
+  const reg = /^[0-9]+.?[0-9]*/
+  if (!reg.test(value)) {
+    callback(new Error('时间应为数字'))
+  } else {
+    if (value > 0) {
+      callback()
+    } else {
+      callback(new Error('请输入正确的时间范围'))
+    }
+  }
+}
 export default {
   components: {
     CusDeliverable
@@ -59,6 +71,15 @@ export default {
       projectForm: {
         timeout: null,
         custom_image_rule: {}
+      },
+      rules: {
+        timeout: [
+          {
+            required: true,
+            trigger: 'change',
+            validator: validateDeployTimeout
+          }
+        ]
       }
     }
   },

@@ -43,7 +43,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@tagColor: #8a8a8a;
+@tagColor: #888888;
 @borderRadius: 4px;
 
 .cus-tags {

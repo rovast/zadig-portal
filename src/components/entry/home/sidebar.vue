@@ -3,18 +3,20 @@
     <a @click="changeSidebar" class="sidebar-size-toggler">
       <i :class="showSidebar?'el-icon-arrow-right':'el-icon-arrow-left'"></i>
     </a>
-
-    <div v-if="showBackPath" class="sidebar-header" :style="{ width: showSidebar ? '100%' : 'auto'}">
-      <router-link class="sidebar-header back-to" v-if="showSidebar" :to="backUrl">
+    <div class="sidebar-header" :style="{ width: showSidebar ? '100%' : 'auto'}">
+      <router-link to="/v1/status">
+        <img v-if="showSidebar&&!showBackPath" class="logo" src="@assets/icons/logo/logo.svg" />
+        <img v-if="!showSidebar&&!showBackPath" class="logo" src="@assets/icons/logo/small-logo.png" />
+      </router-link>
+      <router-link class="sidebar-header-item back-to" v-show="showSidebar&&showBackPath" :to="backUrl">
         <div class="sidebar-header__icon">
           <i class="icon el-icon-back"></i>
         </div>
         <div class="sidebar-header__info">
           <div class="logo-title">{{backTitle}}</div>
-          <div class="logo-title logo-title_subtitle">返回上一层</div>
         </div>
       </router-link>
-      <router-link class="sidebar-header" v-show="!showSidebar" :to="backUrl">
+      <router-link class="sidebar-header-item" v-show="!showSidebar&&showBackPath"  :to="backUrl">
         <div class="sidebar-header__icon">
           <i class="icon el-icon-back"></i>
         </div>
@@ -313,12 +315,12 @@ export default {
       display: inline-block;
       width: 100%;
       margin-top: 0;
-      margin-bottom: 18px;
-      padding-left: 20px;
+      margin-bottom: 8px;
+      padding-left: 16px;
       overflow: hidden;
-      color: #8a8a8a;
+      color: #888;
       font-weight: 300;
-      font-size: 16px;
+      font-size: 14px;
       white-space: nowrap;
       text-align: left;
       text-transform: uppercase;
@@ -360,11 +362,11 @@ export default {
 
     &.grow-nothing {
       flex-grow: 0;
-      padding: 6px 0;
+      padding: 2px 0;
     }
 
     &.main-menu {
-      margin-top: 19px;
+      margin-top: 14px;
     }
   }
 
@@ -372,7 +374,7 @@ export default {
     position: relative;
     flex: none !important;
     margin-right: @twoSidesWidth;
-    margin-bottom: 50px;
+    margin-bottom: 28px;
     margin-left: @twoSidesWidth;
 
     &:last-child {
@@ -469,7 +471,8 @@ export default {
   }
 
   .sidebar-header__icon {
-    float: left;
+    display: flex;
+    align-items: center;
     color: @themeColor;
     font-weight: normal;
     font-size: 16px;
@@ -480,8 +483,8 @@ export default {
 
     .logo-title {
       color: #434548;
-      font-weight: 300;
-      font-size: 16px;
+      font-weight: 400;
+      font-size: 14px;
       line-height: 22px;
       text-transform: uppercase;
     }
@@ -503,12 +506,19 @@ export default {
     display: flex;
     justify-content: center;
     width: 100%;
-    margin: 10px @twoSidesWidth 0;
 
-    &.back-to {
+    .sidebar-header-item {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 10px 30px;
+    }
+
+    .back-to {
       justify-content: flex-start;
 
       .sidebar-header__info {
+        margin-left: 5px;
         padding: 0;
       }
 
@@ -518,7 +528,8 @@ export default {
     }
 
     .logo {
-      height: 50px;
+      height: 24px;
+      padding: 14px;
       background-size: cover;
 
       &.small {
@@ -550,7 +561,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 12px 0 12px 17px;
+    padding: 10px 17px 10px 17px;
     overflow: hidden;
     outline: none;
 

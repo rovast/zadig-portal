@@ -90,7 +90,7 @@ export default {
   flex-direction: row;
 
   .step-detail {
-    width: 100%;
+    width: 80%;
 
     .guide-title {
       display: flex;

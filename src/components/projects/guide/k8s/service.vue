@@ -57,11 +57,11 @@ export default {
 
 <style lang="less" scoped>
 .projects-guide-service-container {
-  height: 100%;
+  height: calc(~'100% - 40px');
 
   /deep/ .projects-service-mgr {
     .service-wrap {
-      height: calc(~'100% - 280px');
+      height: calc(~'100% - 250px');
     }
   }
 

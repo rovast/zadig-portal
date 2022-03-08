@@ -11,25 +11,12 @@
           1
         </div>
         <p class="service-aside-help__step-list-item-text">
-          点击 + 新建服务，输入服务名称，例如：voting
+          新建服务，支持三种方式：手工输入/从代码库同步/使用模板新建
         </p>
       </li>
       <li class="service-aside-help__step-list-item">
         <div class="service-aside-help__step-list-item-counter">
           2
-        </div>
-        <p class="service-aside-help__step-list-item-text">
-          填写该服务的配置信息，支持三种方式
-        <ul>
-          <li> 方式一：服务的 YAML 保存在平台上</li>
-          <li> 方式二：服务的 YAML 保存在代码仓库中，平台通过配置的代码仓库地址实时获取服务配置</li>
-          <li> 方式三：服务的 YAML 从模板库导入</li>
-        </ul>
-        </p>
-      </li>
-      <li class="service-aside-help__step-list-item">
-        <div class="service-aside-help__step-list-item-counter">
-          3
         </div>
         <p class="service-aside-help__step-list-item-text">
           添加和修改 YAML 中的变量，在运行环境中会被作为环境变量使用
@@ -43,10 +30,10 @@
       </li>
       <li class="service-aside-help__step-list-item">
         <div class="service-aside-help__step-list-item-counter">
-          4
+          3
         </div>
         <p class="service-aside-help__step-list-item-text">
-          添加多个服务，加入运行环境； 也可后续在项目中添加或者删除
+          添加多个服务，更新环境，将服务加入运行环境
         </p>
       </li>
     </ul>

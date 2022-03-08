@@ -188,7 +188,7 @@ export default {
 
       span.desc {
         display: block;
-        color: #8a8a8a;
+        color: #888;
         font-size: 14px;
       }
     }

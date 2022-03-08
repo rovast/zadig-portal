@@ -609,7 +609,7 @@ export default {
 .policy-content {
   min-width: 600px;
   padding: 10px;
-  color: #8a8a8a;
+  color: #888;
   font-size: 16px;
   line-height: 22px;
 
@@ -626,7 +626,7 @@ export default {
   }
 
   .secondary-title {
-    color: #8a8a8a;
+    color: #888;
   }
 
   .top {

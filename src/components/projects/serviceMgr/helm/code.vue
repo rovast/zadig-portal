@@ -97,7 +97,11 @@
             :saveFile="saveFile"
             :changeCodeTxtCache="changeCodeTxtCache"
             :currentCode="currentCode"
+            class="service-editor-content"
           />
+          <div class="modal-block" v-if="currentCode.type==='file' && currentCode.source==='chartTemplate' && showModal">
+            <el-button type="primary" size="small" @click="showModal = false">预览/编辑</el-button>
+          </div>
         </div>
       </div>
       <MultipaneResizer class="multipane-resizer" v-if="service && service.length"/>
@@ -190,7 +194,8 @@ export default {
         top: 0
       },
       searchService: '',
-      mode: 'edit'
+      mode: 'edit',
+      showModal: true
     }
   },
   methods: {
@@ -216,9 +221,12 @@ export default {
       }
       this.expandKey = []
       const params = {
-        serviceName: data.service_name,
-        path: path,
-        projectName: this.projectName
+        payload: {
+          serviceName: data.service_name,
+          path: path,
+          projectName: this.projectName
+        },
+        source: data.source
       }
       this.$store.dispatch('queryFilePath', params).then(res => {
         this.expandKey.push(data.id)
@@ -592,6 +600,7 @@ export default {
     }
 
     .code {
+      position: relative;
       box-sizing: border-box;
       height: calc(~'100% - 55px');
       margin-top: 40px;
@@ -600,6 +609,23 @@ export default {
 
       .code-content {
         padding: 3px;
+      }
+
+      .service-editor-content {
+        position: relative;
+        z-index: 0;
+      }
+
+      .modal-block {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        padding: 14px;
+        background: rgba(234, 234, 234, 0.92);
+        cursor: not-allowed;
       }
     }
   }

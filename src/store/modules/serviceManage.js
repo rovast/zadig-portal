@@ -90,6 +90,7 @@ export default {
             child.service_name = service[0].service_name
             child.txt = ''
             child.type = child.is_dir ? 'folder' : 'file'
+            child.source = service[0].source
             if (child.is_dir) {
               child.children = []
             }
@@ -137,7 +138,7 @@ export default {
         return Promise.resolve(res)
       }
     },
-    async queryFilePath ({ dispatch }, payload) {
+    async queryFilePath ({ dispatch }, { payload, source }) {
       const res = await Api.getHelmChartServiceFilePath(payload).catch(error => console.log(error))
       if (res) {
         res.map((child, index) => {
@@ -146,6 +147,7 @@ export default {
           child.service_name = payload.serviceName
           child.txt = ''
           child.type = child.is_dir ? 'folder' : 'file'
+          child.source = source
           if (child.is_dir) {
             child.children = []
           }

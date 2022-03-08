@@ -12,6 +12,12 @@
       </el-form-item>
       <el-form-item label="选择模板" prop="moduleName">
         <el-select v-model="tempData.moduleName" placeholder="请选择模板" size="small" :disabled="isUpdate" @change="getHelmTemplateVariable">
+          <el-option disabled value="NEWMODULE">
+            <router-link to="/v1/template/charts" class="module-link">
+              <i class="el-icon-circle-plus-outline" style="margin-right: 3px;"></i>
+              新建模板
+            </router-link>
+          </el-option>
           <el-option :label="chart.name" :value="chart.name" v-for="chart in tempCharts" :key="chart.name"></el-option>
         </el-select>
       </el-form-item>
@@ -334,5 +340,13 @@ export default {
       }
     }
   }
+}
+
+.module-link {
+  display: inline-block;
+  width: 100%;
+  height: calc(~'100% - 1px');
+  color: #606266;
+  border-bottom: 1px solid #d2d7dc;
 }
 </style>

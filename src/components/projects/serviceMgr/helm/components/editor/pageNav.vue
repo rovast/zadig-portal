@@ -43,6 +43,7 @@ export default {
     },
     changePage (index, item) {
       this.currentPage = index
+      this.setData('showModal', true)
       if (this.expandFileList.length > 0) {
         this.setData('currentCode', item)
       }

@@ -166,7 +166,7 @@ export default {
 
 <style lang="less">
 .filter-container {
-  margin: 2px 8px;
+  margin: 10px 8px;
 
   .el-checkbox-group {
     display: inline-block;
@@ -176,7 +176,7 @@ export default {
     i {
       color: #909399;
       font-weight: 500;
-      font-size: 25px;
+      font-size: 18px;
       line-height: 22px;
     }
   }

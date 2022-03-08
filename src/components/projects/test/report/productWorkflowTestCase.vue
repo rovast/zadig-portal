@@ -179,19 +179,8 @@ export default {
   position: relative;
   flex: 1;
   height: 100%;
-  padding: 0 20px;
+  padding: 0 10px;
   overflow: auto;
-
-  .el-breadcrumb {
-    font-size: 16px;
-    line-height: 1.35;
-
-    .el-breadcrumb__item__inner a:hover,
-    .el-breadcrumb__item__inner:hover {
-      color: @themeColor;
-      cursor: pointer;
-    }
-  }
 
   .clearfix::before,
   .clearfix::after {
@@ -219,12 +208,9 @@ export default {
   .box-card,
   .task-process {
     margin-top: 15px;
+    padding: 0 10px;
     border: none;
     box-shadow: none;
-  }
-
-  .task-process {
-    width: 100%;
   }
 
   .el-card__header {

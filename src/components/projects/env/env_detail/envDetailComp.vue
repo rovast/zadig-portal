@@ -106,7 +106,7 @@
                 >
                   <template v-if="productInfo.status!=='Creating'">
                     <el-button
-                      v-if="envSource===''||envSource==='spock'"
+                      v-if="envSource===''||envSource==='spock' || envSource==='pm'"
                       type="primary"
                       @click="updateK8sEnv(productInfo)"
                       size="mini"

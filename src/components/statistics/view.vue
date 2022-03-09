@@ -66,7 +66,7 @@
               </h2>
               <p>个</p>
               <span>
-                <i class="icon iconfont iconjiaofu"></i> 交付物
+                <i class="icon iconfont iconvery-deli"></i> 交付物
               </span>
             </div>
           </el-col>

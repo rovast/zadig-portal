@@ -838,8 +838,8 @@ export default {
         padding-left: 10px;
         overflow: hidden;
         background-color: #fff;
+        border-radius: 6px;
         box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.13);
-        filter: progid:dximagetransform.microsoft.dropshadow(OffX=0px, OffY=4px, Color='#21000000');
 
         .stage-header-title {
           width: 50%;
@@ -919,10 +919,10 @@ export default {
 
         .step::before {
           position: absolute;
-          left: 14px;
+          left: 16.5px;
           display: inline-block;
-          width: 15px;
-          height: 15px;
+          width: 10px;
+          height: 10px;
           margin-top: 4px;
           background-color: #ccc;
           border-radius: 50%;

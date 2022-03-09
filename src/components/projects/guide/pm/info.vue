@@ -1,7 +1,7 @@
 <template>
   <div class="projects-guide-info-container">
     <div class="guide-container">
-      <Step :activeStep="0"/>
+      <Step :activeStep="0" envDisabled/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第一步</span>

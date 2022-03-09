@@ -1,7 +1,7 @@
 <template>
   <div class="projects-pm-service-container">
     <div class="guide-container">
-      <Step :activeStep="1" />
+      <Step :activeStep="1" envDisabled/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第二步</span>
@@ -29,7 +29,7 @@
 </template>
 <script>
 import bus from '@utils/eventBus'
-import Step from './container/step.vue'
+import Step from '../common/step.vue'
 import ServiceList from '@/components/projects/common/pm/serviceList.vue'
 import Build from '@/components/projects/common/pm/pmConfig.vue'
 

@@ -6,17 +6,11 @@
           项目初始化向导
         </h4>
       </div>
-      <el-steps :active="activeStep"
-                class="process-container"
-                align-center
-                finish-status="success">
-        <el-step title="配置环境托管"
-                 description=""></el-step>
-        <el-step title="配置服务构建"
-                 description=""></el-step>
-        <el-step title="运行工作流"
-                 description=""></el-step>
-      </el-steps>
+      <OnboardingSteps :active="activeStep" class="steps-container" align-center simple finish-status="success">
+            <OnboardingStep title="配置环境托管" description></OnboardingStep>
+            <OnboardingStep title="配置服务构建" description></OnboardingStep>
+            <OnboardingStep title="运行工作流" description></OnboardingStep>
+      </OnboardingSteps>
     </div>
     <div class="title-container">
       <span class="first">{{stepMap[activeStep].title}}</span>
@@ -27,6 +21,8 @@
   </div>
 </template>
 <script>
+import OnboardingSteps from '@/common/steps/src/steps.vue'
+import OnboardingStep from '@/common/steps/src/step.vue'
 export default {
   data () {
     return {
@@ -47,6 +43,10 @@ export default {
       required: true,
       type: Number
     }
+  },
+  components: {
+    OnboardingSteps,
+    OnboardingStep
   }
 }
 </script>

@@ -139,7 +139,7 @@ export default {
   height: 100%;
   padding: 22px 24px;
   overflow: auto;
-  background: #f6f6f6;
+  background: @globalBackgroundColor;
 
   h3 {
     margin: 0;

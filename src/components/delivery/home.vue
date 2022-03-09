@@ -25,6 +25,6 @@ export default {
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background-color: #f6f6f6;
+  background-color: @globalBackgroundColor;
 }
 </style>

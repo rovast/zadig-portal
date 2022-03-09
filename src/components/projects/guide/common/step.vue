@@ -5,7 +5,7 @@
         <h4>项目初始化向导</h4>
       </div>
       <el-row :gutter="0" class="steps-wrap" type="flex">
-        <el-col :span="18" style="display:flex">
+        <el-col :span="18" style="display: flex;">
           <OnboardingSteps :active="activeStep" class="steps-container" align-center simple finish-status="success">
             <OnboardingStep title="项目配置" description></OnboardingStep>
             <OnboardingStep title="新建服务" description></OnboardingStep>
@@ -87,13 +87,16 @@ export default {
   0% {
     opacity: 0.15;
   }
+
   24% {
     opacity: 1;
   }
+
   48% {
     opacity: 0.15;
   }
 }
+
 .step-container {
   display: flex;
   flex-direction: row;
@@ -106,7 +109,7 @@ export default {
 
       h4 {
         width: 130px;
-        margin: 0 0 0px 20px;
+        margin: 0 0 0 20px;
         padding: 8px;
         color: #fff;
         font-weight: 300;
@@ -117,7 +120,8 @@ export default {
     }
 
     .steps-wrap {
-      padding: 0px 20px;
+      padding: 0 20px;
+
       .steps-container {
         width: 100%;
       }
@@ -126,60 +130,68 @@ export default {
     .envs {
       display: flex;
       margin-bottom: 7px;
+
       &:last-child {
         margin-bottom: 0;
       }
+
       .loaders {
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
         display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
         margin-right: 24px;
+
         span {
+          display: inline-block;
           width: 6px;
           height: 6px;
-          border-radius: 50%;
-          background: #55c32d;
           margin-right: 4px;
-          display: inline-block;
+          background: #55c32d;
+          border-radius: 50%;
           opacity: 0;
           animation-name: pulse;
           animation-duration: 1.2s;
           animation-iteration-count: infinite;
+
           &:nth-child(2) {
             animation-delay: 0.12s;
           }
+
           &:nth-child(3) {
             animation-delay: 0.24s;
           }
+
           &:nth-child(4) {
             animation-delay: 0.36s;
           }
         }
       }
+
       .env-blocks {
-        border: 1px solid rgba(85, 195, 45, 0.25);
-        padding: 6px 16px;
-        border-radius: 2px;
-        margin-bottom: 0;
-        width: 90px;
-        text-align: left;
         display: flex;
         flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
         align-content: center;
+        align-items: center;
+        justify-content: flex-start;
+        width: 90px;
+        margin-bottom: 0;
+        padding: 6px 16px;
+        text-align: left;
+        border: 1px solid rgba(85, 195, 45, 0.25);
+        border-radius: 2px;
 
         i {
+          display: inline-flex;
           color: #5daf34;
           font-size: 16px;
-          display: inline-flex;
         }
+
         .name {
-          font-size: 12px;
           margin-left: 10px;
-          line-height: 16px;
           color: #5daf34;
+          font-size: 12px;
+          line-height: 16px;
         }
       }
     }

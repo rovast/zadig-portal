@@ -67,7 +67,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.el-steps--simple{
+.el-steps--simple {
   padding-right: 0;
   padding-left: 4%;
   background: transparent;

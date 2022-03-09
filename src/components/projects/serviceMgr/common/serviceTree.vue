@@ -285,6 +285,7 @@
       </div>
       <el-tree
         v-if="mode==='arrange' && deployType === 'k8s'"
+        ref="arrangeTreeRef"
         :data="serviceGroup"
         :show-checkbox="false"
         node-key="id"
@@ -296,6 +297,7 @@
         @node-drag-end="endDrag"
         default-expand-all
         :expand-on-click-node="false"
+        class="arrange-tree"
       >
         <span class="service-mgr-tree-node" slot-scope="{ node, data }">
           <span class="service-status" :class="data.status"></span>
@@ -703,10 +705,23 @@ export default {
       this.showSelectPath = true
       this.$refs.sourceForm.resetFields()
     },
-    startDrag () {
+    startDrag (node) {
+      const parent = node.parent
+      this.$refs.arrangeTreeRef.root.childNodes.forEach(child => {
+        if (parent !== child) {
+          child.expanded = false
+        }
+      })
+      this.$refs.arrangeTreeRef.$el.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
       this.showDragContainer = true
     },
     endDrag () {
+      this.$refs.arrangeTreeRef.root.childNodes.forEach(child => {
+        child.expanded = true
+      })
       this.showDragContainer = false
     },
     allowDrag (draggingNode) {

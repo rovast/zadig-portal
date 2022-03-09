@@ -106,7 +106,7 @@
                 >
                   <template v-if="productInfo.status!=='Creating'">
                     <el-button
-                      v-if="envSource===''||envSource==='spock'"
+                      v-if="envSource===''||envSource==='spock' || envSource==='pm'"
                       type="primary"
                       @click="updateK8sEnv(productInfo)"
                       size="mini"
@@ -319,9 +319,11 @@
           <el-table-column align="left" label="镜像信息" min-width="150px">
             <template slot-scope="scope">
               <template>
-                <el-tooltip v-for="(image,index) in scope.row.images" :key="index" effect="dark" :content="image" placement="top">
-                  <span style="display: inline-block;">{{imageNameSplit(image) }}</span>
-                </el-tooltip>
+                <div v-for="(image,index) in scope.row.images" :key="index">
+                  <el-tooltip  effect="dark" :content="image" placement="top">
+                    <span>{{ imageNameSplit(image) }}</span>
+                  </el-tooltip>
+                </div>
               </template>
             </template>
           </el-table-column>

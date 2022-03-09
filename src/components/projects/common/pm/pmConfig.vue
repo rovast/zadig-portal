@@ -118,7 +118,11 @@
                 <div slot="content">使用 SSH Agent 远程部署：安全登录到目标机器，执行部署操作，可在系统设置-主机管理中进行配置</div>
                 <i class="icon el-icon-question"></i>
               </el-tooltip>
-              <el-form-item v-if="useSshKey" prop="sshs" :rules="{required: true, type: 'array', message: '主机不能为空', trigger: 'blur'}">
+              <el-form-item
+                v-if="useSshKey"
+                prop="sshs"
+                :rules="{required: true, type: 'array', message: '主机不能为空', trigger: ['blur', 'change']}"
+              >
                 <el-select v-model="currentBuildConfig.sshs" size="mini" multiple placeholder="请选择主机">
                   <el-option v-for="(item,index) in  allHost" :key="index" :label="item.name" :value="item.id"></el-option>
                 </el-select>
@@ -653,52 +657,68 @@ export default {
       }
     },
     async savePmService () {
-      let buildConfigPayload = await this.$refs.zadigFormRef
-        .validate()
-        .catch(err => console.log(err))
-      if (!buildConfigPayload) {
-        return
+      const refs = [this.$refs.zadigFormRef]
+      if (!this.isEdit) {
+        refs.push(this.$refs.envConfigRef)
       }
-      let pmServicePayload = {}
-      if (this.isEdit) {
-        if (!this.checkStatusEnabled) {
-          delete this.pmService.health_checks
-        }
-        if (!this.useSshKey) {
-          this.currentBuildConfig.sshs = []
-        }
-        pmServicePayload = this.$utils.cloneObj(this.pmService)
-        pmServicePayload.build_name = this.currentBuildConfig.name
-        buildConfigPayload = {
-          ...buildConfigPayload,
-          ...this.currentBuildConfig
-        }
-      } else {
-        buildConfigPayload = {
-          ...buildConfigPayload,
-          ...this.currentBuildConfig,
-          targets: [
-            {
-              product_name: this.projectName,
-              service_name: this.currentBuildConfig.service_name,
-              service_module: this.currentBuildConfig.service_name
-            }
-          ]
-        }
+      if (this.checkStatusEnabled) {
+        refs.push(this.$refs.healthCheckRef)
+      }
+      if (this.useSshKey) {
+        refs.push(this.$refs.deployEnvRef)
+      }
+      const res = await Promise.all(refs.map(r => r.validate())).catch(err => {
+        const errDiv = document.querySelector('.is-error')
+        errDiv.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+        errDiv.querySelector('input').focus()
+        console.log(err)
+      })
+      if (res) {
+        let buildConfigPayload = await this.$refs.zadigFormRef.validate()
+        let pmServicePayload = {}
+        if (this.isEdit) {
+          if (!this.checkStatusEnabled) {
+            delete this.pmService.health_checks
+          }
+          if (!this.useSshKey) {
+            this.currentBuildConfig.sshs = []
+          }
+          pmServicePayload = this.$utils.cloneObj(this.pmService)
+          pmServicePayload.build_name = this.currentBuildConfig.name
+          buildConfigPayload = {
+            ...buildConfigPayload,
+            ...this.currentBuildConfig
+          }
+        } else {
+          buildConfigPayload = {
+            ...buildConfigPayload,
+            ...this.currentBuildConfig,
+            targets: [
+              {
+                product_name: this.projectName,
+                service_name: this.currentBuildConfig.service_name,
+                service_module: this.currentBuildConfig.service_name
+              }
+            ]
+          }
 
-        pmServicePayload = {
-          product_name: this.projectName,
-          service_name: this.currentBuildConfig.service_name,
-          visibility: 'private',
-          type: 'pm',
-          build_name: this.currentBuildConfig.name,
-          health_checks: this.checkStatusEnabled
-            ? this.pmService.health_checks
-            : [],
-          env_configs: this.pmService.env_configs
+          pmServicePayload = {
+            product_name: this.projectName,
+            service_name: this.currentBuildConfig.service_name,
+            visibility: 'private',
+            type: 'pm',
+            build_name: this.currentBuildConfig.name,
+            health_checks: this.checkStatusEnabled
+              ? this.pmService.health_checks
+              : [],
+            env_configs: this.pmService.env_configs
+          }
         }
+        this.handlePmService(buildConfigPayload, pmServicePayload)
       }
-      this.handlePmService(buildConfigPayload, pmServicePayload)
     },
     async handlePmService (buildConfigPayload, pmServicePayload) {
       buildConfigPayload.product_name = this.projectName
@@ -719,57 +739,37 @@ export default {
         pm_service_tmpl: pmServicePayload,
         build: buildConfigPayload
       }
-      const refs = [this.$refs.zadigFormRef]
-      if (!this.isEdit) {
-        refs.push(this.$refs.envConfigRef)
-      }
-      if (this.checkStatusEnabled) {
-        refs.push(this.$refs.healthCheckRef)
-      }
-      if (this.useSshKey) {
-        refs.push(this.$refs.deployEnvRef)
-      }
-      Promise.all(refs.map(r => r.validate()))
-        .then(() => {
-          const buildName = this.currentBuildConfig.name
-          const findItem = this.builds.find(element => {
-            return element.name === buildName
-          })
-          if (!findItem) {
-            delete combinePayload.build.id
-          }
 
-          ;(this.isEdit ? updatePmServiceAPI : createPmServiceAPI)(
-            this.projectName,
-            combinePayload
-          ).then(
-            () => {
-              if (this.changeUpdateEnvDisabled) {
-                this.changeUpdateEnvDisabled()
-              }
-              this.$router.push({
-                query: { serviceName: this.currentBuildConfig.service_name }
-              })
-              this.$emit('listenCreateEvent', 'success')
-              this.$message({
-                type: 'success',
-                message: this.isEdit ? '修改主机服务成功' : '创建主机服务成功'
-              })
-            },
-            () => {
-              this.$emit('listenCreateEvent', 'failed')
-              return false
-            }
-          )
-        })
-        .catch(() => {
-          const errDiv = document.querySelector('.is-error')
-          errDiv.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
+      const buildName = this.currentBuildConfig.name
+      const findItem = this.builds.find(element => {
+        return element.name === buildName
+      })
+      if (!findItem) {
+        delete combinePayload.build.id
+      }
+
+      ;(this.isEdit ? updatePmServiceAPI : createPmServiceAPI)(
+        this.projectName,
+        combinePayload
+      ).then(
+        () => {
+          if (this.changeUpdateEnvDisabled) {
+            this.changeUpdateEnvDisabled()
+          }
+          this.$router.push({
+            query: { serviceName: this.currentBuildConfig.service_name }
           })
-          errDiv.querySelector('input').focus()
-        })
+          this.$emit('listenCreateEvent', 'success')
+          this.$message({
+            type: 'success',
+            message: this.isEdit ? '修改主机服务成功' : '创建主机服务成功'
+          })
+        },
+        () => {
+          this.$emit('listenCreateEvent', 'failed')
+          return false
+        }
+      )
     },
     addNewService (obj) {
       this.currentBuildConfig = {

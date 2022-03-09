@@ -73,7 +73,7 @@
                 <el-popover
                     placement="right-start"
                     width="240"
-                    trigger="click"
+                    trigger="hover"
                     popper-class="repo-detail-popover">
                     <i slot="reference" class="repo-detail-icon el-icon-d-caret"></i>
                     <div class="repo-detail">

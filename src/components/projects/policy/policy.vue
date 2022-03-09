@@ -16,7 +16,7 @@
           >
             <!-- <template slot="prefix">
               <i class="el-icon-search prefix-icon"></i>
-            </template> -->
+            </template>-->
             <el-option disabled value="NEWUSER">
               <router-link :to="`/v1/projects/detail/${projectName}/rbac?addRole=true`" class="env-link">
                 <i class="el-icon-circle-plus-outline" style="margin-right: 3px;"></i>
@@ -288,11 +288,9 @@ export default {
         res.users.forEach(user => {
           user.username = user.name
         })
-        if (search) {
-          this.currentUsers = uniqBy(res.users, 'uid')
-        } else {
-          this.currentUsers = uniqBy(this.userList.concat(uniqBy(res.users, 'uid')), 'uid')
-        }
+        const users = uniqBy(res.users, 'uid')
+        this.userList = uniqBy(this.userList.concat(users), 'uid')
+        this.currentUsers = search ? users : this.userList
       })
     },
     updateCollaborationType (configType, resourceType, row) {

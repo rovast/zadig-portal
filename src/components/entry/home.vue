@@ -150,6 +150,7 @@ body {
         }
 
         .main-content-container {
+          position: relative;
           display: flex;
           flex-direction: column;
           width: calc(~'100% - 176px');
@@ -161,7 +162,8 @@ body {
           }
 
           .announcement-container {
-            position: fixed;
+            position: absolute;
+            top: 40px;
             right: 0;
             left: 0;
             z-index: 1;

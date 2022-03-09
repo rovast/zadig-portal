@@ -22,7 +22,11 @@
               </router-link>
             </template>
           </el-table-column>
-          <el-table-column label="归属" prop="clusterName"></el-table-column>
+          <el-table-column label="归属" prop="clusterName">
+            <template slot-scope="{ row }">
+              <span>{{ row.clusterName.startsWith('local-') ? '本地' : row.clusterName }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="状态">
             <template slot-scope="{ row }">
               <span v-if="row.status" :class="[$translate.calcEnvStatusColor(row.status)]">{{getProdStatus(row.status, row.updatable)}}</span>

@@ -2,7 +2,7 @@
   <div class="variable-list">
     <el-table :data="variables" style="width: 90%; max-width: 800px;">
       <el-table-column label="键" prop="key"></el-table-column>
-      <el-table-column label="值" min-width="40%">
+      <el-table-column label="值">
         <template slot-scope="{ row }">
           <el-input
             size="small"

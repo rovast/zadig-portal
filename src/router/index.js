@@ -59,7 +59,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "Project List" */ '@/components/projects/detail_ope/home.vue'),
         meta: {
           requiresAuth: true,
-          title: '项目列表'
+          title: '项目'
         }
       },
       {
@@ -616,7 +616,7 @@ const routes = [
     component: onboarding_home,
     meta: {
       requiresAuth: true,
-      title: '测试管理'
+      title: '测试中心'
     },
     children: [
       {
@@ -624,7 +624,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/projects/test/common/function/function.vue'),
         meta: {
           requiresAuth: true,
-          title: '测试管理'
+          title: '测试中心'
         }
       }
     ]

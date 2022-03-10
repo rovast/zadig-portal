@@ -160,15 +160,15 @@ const routes = [
           },
           {
             path: 'test',
-            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/function.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/common/function/function.vue'),
             meta: {
               requiresAuth: true,
-              title: '功能测试'
+              title: '测试中心'
             }
           },
           {
             path: 'test/function',
-            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/function.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/common/function/function.vue'),
             meta: {
               requiresAuth: true,
               title: '功能测试'

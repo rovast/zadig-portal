@@ -193,12 +193,6 @@ export default {
       color: @fontLightGray;
       font-weight: 300;
     }
-
-    .el-button--primary {
-      color: @themeColor;
-      background: @themeBackgroundColor;
-      border-color: @themeBorderColor;
-    }
   }
 
   /deep/ .el-button {

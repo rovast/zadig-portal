@@ -293,17 +293,17 @@ export default {
 .setting-profile-container {
   position: relative;
   flex: 1;
-  padding: 60px 30px;
+  padding: 60px 20px;
   overflow: auto;
   font-size: 13px;
   background-color: @globalBackgroundColor;
 
   .section {
     margin-bottom: 56px;
-    background: #fff;
 
     .Box {
       padding: 20px 20px;
+      background: #fff;
       border: 1px solid #f1f1f1;
       border-radius: 6px;
 

@@ -1,41 +1,27 @@
 <template>
-  <div v-loading="loading"
-       element-loading-text="加载中..."
-       element-loading-spinner="iconfont iconfont-loading iconfenzucopy"
-       class="setting-profile-container">
-    <el-dialog title="修改密码"
-               :fullscreen="true"
-               class="modifiled-pwd"
-               :visible.sync="modifiedPwdDialogVisible"
-               center>
+  <div
+    v-loading="loading"
+    element-loading-text="加载中..."
+    element-loading-spinner="iconfont iconfont-loading iconfenzucopy"
+    class="setting-profile-container"
+  >
+    <el-dialog title="修改密码" :fullscreen="true" class="modifiled-pwd" :visible.sync="modifiedPwdDialogVisible" center>
       <div class="modifiled-pwd-container">
-        <el-form label-position="top"
-                 label-width="100px"
-                 :rules="rules"
-                 ref="ruleForm"
-                 :model="pwd">
-          <el-form-item label="旧密码"
-                        prop="oldPassword">
-            <el-input show-password
-                      v-model="pwd.oldPassword"></el-input>
+        <el-form label-position="top" label-width="100px" :rules="rules" ref="ruleForm" :model="pwd">
+          <el-form-item label="旧密码" prop="oldPassword">
+            <el-input show-password v-model="pwd.oldPassword"></el-input>
           </el-form-item>
-          <el-form-item label="新密码"
-                        prop="newPassword">
-            <el-input show-password
-                      v-model="pwd.newPassword"></el-input>
+          <el-form-item label="新密码" prop="newPassword">
+            <el-input show-password v-model="pwd.newPassword"></el-input>
           </el-form-item>
-          <el-form-item label="确认新密码"
-                        prop="confirmPassword">
-            <el-input show-password
-                      v-model="pwd.confirmPassword"></el-input>
+          <el-form-item label="确认新密码" prop="confirmPassword">
+            <el-input show-password v-model="pwd.confirmPassword"></el-input>
           </el-form-item>
         </el-form>
       </div>
-      <span slot="footer"
-            class="dialog-footer">
+      <span slot="footer" class="dialog-footer">
         <el-button @click="cancelUpdateUserInfo">取 消</el-button>
-        <el-button type="primary"
-                   @click="updateUserInfo">确 定</el-button>
+        <el-button type="primary" @click="updateUserInfo">确 定</el-button>
       </span>
     </el-dialog>
     <div class="section">
@@ -47,14 +33,9 @@
             </div>
           </div>
           <div class="info-tag">
-            <span class="username"> {{currentEditUserInfo.name}} </span>
-            <el-tag  v-if="role.includes('admin')"
-                    size="small"
-                    type="warning">管理员</el-tag>
-            <el-tag v-else
-                    size="small"
-                    type="primary">普通用户</el-tag>
-
+            <span class="username">{{currentEditUserInfo.name}}</span>
+            <el-tag v-if="role.includes('admin')" size="small" type="warning">管理员</el-tag>
+            <el-tag v-else size="small" type="primary">普通用户</el-tag>
           </div>
 
           <div class="info-details">
@@ -63,8 +44,7 @@
                 <template>
                   <tr>
                     <td>最近登录</td>
-                    <td class="">{{$utils.convertTimestamp(currentEditUserInfo.lastLoginTime)}}
-                    </td>
+                    <td class>{{$utils.convertTimestamp(currentEditUserInfo.lastLoginTime)}}</td>
                   </tr>
                 </template>
                 <!-- <tr>
@@ -77,67 +57,59 @@
                     <el-button @click="downloadConfig()"
                                type="text">点击下载</el-button>
                   </td>
-                </tr> -->
+                </tr>-->
                 <tr v-if="currentEditUserInfo.identity_type ==='system'">
                   <td>
-                    <span>修改密码
-                    </span>
+                    <span>修改密码</span>
                   </td>
                   <td>
-                    <el-button @click="modifiedPwd"
-                               type="text">点击修改</el-button>
+                    <el-button @click="modifiedPwd" type="text">点击修改</el-button>
                   </td>
                 </tr>
-
                 <tr>
                   <td>
                     <span>API Token</span>
-                    <HelpLink :inline="true"
-                                 :keyword="{location:'个人中心',key:'APIToken'}"></HelpLink>
+                    <HelpLink :inline="true" :keyword="{location:'个人中心',key:'APIToken'}" />
                   </td>
                   <td>
-                    <el-input size="small"
-                              placeholder=""
-                              readonly
-                              type="text"
-                              v-model="currentEditUserInfo.token">
-                      <el-button v-clipboard:copy="currentEditUserInfo.token"
-                                  v-clipboard:success="copySuccess"
-                                  v-clipboard:error="copyError"
-                                  slot="append"
-                                  icon="el-icon-document-copy">复制</el-button>
+                    <el-input size="small" placeholder readonly type="text" v-model="currentEditUserInfo.token">
+                      <el-button
+                        v-clipboard:copy="currentEditUserInfo.token"
+                        v-clipboard:success="copySuccess"
+                        v-clipboard:error="copyError"
+                        slot="append"
+                        icon="el-icon-document-copy"
+                      >复制</el-button>
                     </el-input>
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    <span>
-                      通知设置
-                    </span>
+                    <span>通知设置</span>
                   </td>
                   <td>
-                    <el-checkbox v-model="workflowNoti.pipelinestatus"
-                                 @change="saveSubscribe()"
-                                 true-label="*"
-                                 false-label="">工作流状态变更</el-checkbox>
+                    <el-checkbox v-model="workflowNoti.pipelinestatus" @change="saveSubscribe()" true-label="*" false-label>工作流状态变更</el-checkbox>
                   </td>
                 </tr>
-
               </tbody>
             </table>
           </div>
-
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script>
 import bus from '@utils/eventBus'
 import HelpLink from './common/helpLink.vue'
-import { getCurrentUserInfoAPI, updateCurrentUserInfoAPI, getSubscribeAPI, saveSubscribeAPI, downloadConfigAPI } from '@api'
+import {
+  getCurrentUserInfoAPI,
+  updateCurrentUserInfoAPI,
+  getSubscribeAPI,
+  saveSubscribeAPI,
+  downloadConfigAPI
+} from '@api'
 import { mapState } from 'vuex'
 
 export default {
@@ -173,7 +145,9 @@ export default {
       sysNoti: {},
       workflowNoti: {},
       rules: {
-        oldPassword: [{ required: true, message: '请输入旧密码', trigger: 'blur' }],
+        oldPassword: [
+          { required: true, message: '请输入旧密码', trigger: 'blur' }
+        ],
         newPassword: [
           { required: true, validator: validateNewPass, trigger: 'blur' }
         ],
@@ -185,7 +159,9 @@ export default {
   },
   methods: {
     async getCurrentUserInfo () {
-      const res = await getCurrentUserInfoAPI(this.userinfo.uid).catch(error => console.log(error))
+      const res = await getCurrentUserInfoAPI(this.userinfo.uid).catch(error =>
+        console.log(error)
+      )
       if (res) {
         this.currentEditUserInfo = res
       }
@@ -206,14 +182,14 @@ export default {
       this.modifiedPwdDialogVisible = true
     },
     updateUserInfo () {
-      this.$refs.ruleForm.validate((valid) => {
+      this.$refs.ruleForm.validate(valid => {
         if (valid) {
           const id = this.currentEditUserInfo.uid
           const payload = {
             oldPassword: this.pwd.oldPassword,
             newPassword: this.pwd.newPassword
           }
-          updateCurrentUserInfoAPI(id, payload).then((res) => {
+          updateCurrentUserInfoAPI(id, payload).then(res => {
             this.$message({
               message: '密码修改成功',
               type: 'success'
@@ -239,7 +215,7 @@ export default {
         message: '获取配置中，请稍候...',
         type: 'info'
       })
-      downloadConfigAPI().then((res) => {
+      downloadConfigAPI().then(res => {
         this.$message({
           message: '配置获取完毕，下载后请按照文档使用',
           type: 'success'
@@ -258,14 +234,14 @@ export default {
       })
     },
     getSubscribe () {
-      getSubscribeAPI().then((res) => {
+      getSubscribeAPI().then(res => {
         this.convertData(res)
       })
     },
     saveSubscribe () {
       const payload = this.workflowNoti
       payload.type = 2
-      saveSubscribeAPI(payload).then((res) => {
+      saveSubscribeAPI(payload).then(res => {
         this.$message({
           message: '通知设置保存成功',
           type: 'success'
@@ -287,15 +263,13 @@ export default {
   },
   computed: {
     ...mapState({
-      userinfo: (state) => state.login.userinfo,
-      role: (state) => state.login.role
+      userinfo: state => state.login.userinfo,
+      role: state => state.login.role
     })
   },
   created () {
-    bus.$emit('set-topbar-title', { title: '账号设置', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
+    bus.$emit('set-topbar-title', {
+      breadcrumb: [{ title: '账号设置', url: '' }]
     })
     this.getSubscribe()
     this.getCurrentUserInfo()
@@ -317,17 +291,19 @@ export default {
 .setting-profile-container {
   position: relative;
   flex: 1;
-  padding: 15px 30px;
+  padding: 60px 20px;
   overflow: auto;
   font-size: 13px;
+  background-color: @globalBackgroundColor;
 
   .section {
     margin-bottom: 56px;
 
     .Box {
-      padding: 55px 20px;
+      padding: 20px 20px;
+      background: #fff;
       border: 1px solid #f1f1f1;
-      border-radius: 2px;
+      border-radius: 6px;
 
       .username {
         font-weight: 300;
@@ -370,7 +346,7 @@ export default {
         }
 
         .profile-table {
-          width: 850px;
+          width: 100%;
           margin-top: 15px;
           color: #666f80;
 
@@ -380,6 +356,7 @@ export default {
 
           tbody > tr > td,
           thead > tr > td {
+            padding-left: 0;
             border-top: 1px solid #e6e9f0;
 
             .download-desc {

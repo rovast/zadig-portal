@@ -2,75 +2,65 @@
   <div class="step-container">
     <div class="step-detail">
       <div class="guide-title">
-        <h4>
-          项目初始化向导
-        </h4>
+        <h4>项目初始化向导</h4>
       </div>
-      <el-steps :active="activeStep"
-                class="process-container"
-                align-center
-                finish-status="success">
-        <el-step title="项目配置"
-                 description=""></el-step>
-        <el-step title="新建服务"
-                 description=""></el-step>
-        <el-step :title="stepThreeTitle"
-                 description=""></el-step>
-        <el-step title="执行工作流"
-                 description=""></el-step>
-      </el-steps>
-    </div>
-
-    <div class="el-steps el-steps--vertical env-container">
-      <div class="el-step is-vertical"
-           style="flex-basis: 50%;">
-        <div class="el-step__head">
-          <div class="el-step__line"
-               style="margin-right: 0;"><i class="el-step__line-inner"
-               style=" height: 0%; border-width: 0; transition-delay: 0ms;"></i></div>
-          <div class="el-step__icon is-text">
-            <div class="el-step__icon-inner"></div>
+      <el-row :gutter="0" class="steps-wrap" type="flex">
+        <el-col :span="envDisabled?24:18" style="display: flex;">
+          <OnboardingSteps :active="activeStep" class="steps-container" align-center simple finish-status="success">
+            <OnboardingStep title="项目配置" description></OnboardingStep>
+            <OnboardingStep title="新建服务" description></OnboardingStep>
+            <OnboardingStep :title="stepThreeTitle" description></OnboardingStep>
+            <OnboardingStep title="执行工作流" description></OnboardingStep>
+          </OnboardingSteps>
+        </el-col>
+        <el-col v-if="!envDisabled" :span="6">
+          <div class="envs">
+            <span v-show="activeStep === 3" class="loaders">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+            <span class="env-blocks">
+              <i class="iconfont iconvery-environ"></i>
+              <span class="name">开发环境</span>
+            </span>
           </div>
-        </div>
-        <div class="el-step__main">
-          <div class="el-step__title">开发环境</div>
-        </div>
-      </div>
-      <div class="el-step is-vertical"
-           style="flex-basis: 50%;">
-        <div class="el-step__head">
-          <div class="el-step__line"
-               style="margin-right: 0;"><i class="el-step__line-inner"
-               style=" height: 0%; border-width: 0; transition-delay: -150ms;"></i></div>
-          <div class="el-step__icon is-text">
-            <div class="el-step__icon-inner"></div>
+          <div class="envs">
+            <span v-show="activeStep === 3" class="loaders">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+            <span class="env-blocks">
+              <i class="iconfont iconvery-environ"></i>
+              <span class="name">测试环境</span>
+            </span>
           </div>
-        </div>
-        <div class="el-step__main">
-          <div class="el-step__title">测试环境</div>
-        </div>
-      </div>
-      <div class="el-step is-vertical is-flex"
-           style="flex-basis: 50%;">
-        <div class="el-step__head">
-          <div class="el-step__line"><i class="el-step__line-inner"></i></div>
-          <div class="el-step__icon is-text">
-            <div class="el-step__icon-inner"></div>
+          <div class="envs">
+            <span v-show="activeStep === 3" class="loaders">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+            <span class="env-blocks">
+              <i class="iconfont iconvery-environ"></i>
+              <span class="name">预发布环境</span>
+            </span>
           </div>
-        </div>
-        <div class="el-step__main">
-          <div class="el-step__title">预发布环境</div>
-        </div>
-      </div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
 <script>
+import OnboardingSteps from '@/common/steps/src/steps.vue'
+import OnboardingStep from '@/common/steps/src/step.vue'
 export default {
   data () {
-    return {
-
-    }
+    return {}
   },
   props: {
     activeStep: {
@@ -80,24 +70,46 @@ export default {
     stepThreeTitle: {
       default: '加入运行环境',
       type: String
+    },
+    envDisabled: {
+      default: false,
+      type: Boolean
     }
+  },
+  components: {
+    OnboardingSteps,
+    OnboardingStep
   }
 }
 </script>
 <style lang="less" scoped>
+@keyframes pulse {
+  0% {
+    opacity: 0.15;
+  }
+
+  24% {
+    opacity: 1;
+  }
+
+  48% {
+    opacity: 0.15;
+  }
+}
+
 .step-container {
   display: flex;
   flex-direction: row;
 
   .step-detail {
-    width: 80%;
+    width: 100%;
 
     .guide-title {
       display: flex;
 
       h4 {
         width: 130px;
-        margin: 0 0 10px 20px;
+        margin: 0 0 0 20px;
         padding: 8px;
         color: #fff;
         font-weight: 300;
@@ -107,46 +119,81 @@ export default {
       }
     }
 
-    .process-container {
-      flex-shrink: 1;
-      align-items: flex-end;
-      padding-bottom: 27px;
+    .steps-wrap {
+      padding: 0 20px;
+
+      .steps-container {
+        width: 100%;
+      }
     }
 
-    .el-step__icon {
-      width: 18px;
-      height: 18px;
-      font-size: 12px;
-    }
+    .envs {
+      display: flex;
+      margin-bottom: 7px;
 
-    .el-step__title {
-      font-size: 14px;
-      line-height: 30px;
-    }
-  }
+      &:last-child {
+        margin-bottom: 0;
+      }
 
-  .env-container {
-    .el-step__icon {
-      width: 10px;
-      height: 10px;
-      color: @themeColor;
-      font-size: 12px;
-    }
+      .loaders {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin-right: 24px;
 
-    flex-shrink: 2;
+        span {
+          display: inline-block;
+          width: 6px;
+          height: 6px;
+          margin-right: 4px;
+          background: #55c32d;
+          border-radius: 50%;
+          opacity: 0;
+          animation-name: pulse;
+          animation-duration: 1.2s;
+          animation-iteration-count: infinite;
 
-    .el-step__line {
-      top: 34px;
-      bottom: 0;
-      left: 4px;
-      width: 2px;
-    }
+          &:nth-child(2) {
+            animation-delay: 0.12s;
+          }
 
-    .el-step__title {
-      padding-bottom: 7px;
-      color: #ccc;
-      font-size: 13px;
-      line-height: 36px;
+          &:nth-child(3) {
+            animation-delay: 0.24s;
+          }
+
+          &:nth-child(4) {
+            animation-delay: 0.36s;
+          }
+        }
+      }
+
+      .env-blocks {
+        display: flex;
+        flex-direction: row;
+        align-content: center;
+        align-items: center;
+        justify-content: flex-start;
+        width: 90px;
+        margin-bottom: 0;
+        padding: 6px 16px;
+        text-align: left;
+        border: 1px solid rgba(85, 195, 45, 0.25);
+        border-radius: 2px;
+
+        i {
+          display: inline-flex;
+          color: #5daf34;
+          font-size: 16px;
+        }
+
+        .name {
+          margin-left: 10px;
+          color: #5daf34;
+          font-size: 12px;
+          line-height: 16px;
+        }
+      }
     }
   }
 }

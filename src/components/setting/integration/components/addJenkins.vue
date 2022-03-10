@@ -19,7 +19,7 @@
       :rules="formRules"
       class="form"
       label-position="left"
-      label-width="90px"
+      label-width="100px"
     >
       <el-form-item label="服务地址" prop="url">
         <el-input

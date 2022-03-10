@@ -39,6 +39,7 @@
 
 <script>
 import TestRow from './container/testRow.vue'
+import bus from '@utils/eventBus'
 import moment from 'moment'
 import {
   testsAPI,
@@ -53,7 +54,6 @@ export default {
   data () {
     return {
       testList: [],
-      activeTab: 'function',
       selectWorkflowDialogVisible: false,
       loading: false,
       currentTestName: '',
@@ -189,7 +189,12 @@ export default {
     }
   },
   created () {
-    this.activeTab = 'function'
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '测试中心', url: '' }
+      ]
+    })
     this.fetchTestList()
   },
   components: {

@@ -1,7 +1,7 @@
 <template>
   <div class="projects-delivery-container">
     <div class="guide-container">
-      <Step :activeStep="3"/>
+      <Step :activeStep="3" envDisabled/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第四步</span>
@@ -122,7 +122,7 @@
 </template>
 <script>
 import bus from '@utils/eventBus'
-import Step from './container/step.vue'
+import Step from '../common/step.vue'
 import RunWorkflow from '../../workflow/common/runWorkflow.vue'
 import { wordTranslate } from '@utils/wordTranslate.js'
 import { getProductWorkflowsInProjectAPI, getWorkflowDetailAPI } from '@api'

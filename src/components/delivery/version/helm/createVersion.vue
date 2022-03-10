@@ -22,7 +22,6 @@
 
 <script>
 import bus from '@utils/eventBus'
-
 import Info from './createVersion/info.vue'
 import Config from './createVersion/config.vue'
 import Push from './createVersion/push.vue'

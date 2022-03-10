@@ -606,7 +606,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "project-policy" */ '@/components/projects/policy/home.vue'),
         meta: {
           requiresAuth: true,
-          title: '权限管理'
+          title: '协作模式'
         }
       }
     ]

@@ -1,7 +1,7 @@
 <template>
 <div class="projects-guide-helm-service-container">
     <div class="guide-container">
-      <Step :activeStep="2" :stepThreeTitle="`配置环境`"/>
+      <Step :activeStep="1" :stepThreeTitle="`配置环境`"/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第二步</span>

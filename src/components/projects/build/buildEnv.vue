@@ -36,7 +36,7 @@
     >
       <el-select v-model="currentEnv.installs[appIndex]" placeholder="请选择" size="small" value-key="id" filterable>
         <el-option
-          v-for="(app, index) in currentEnv.installs[appIndex].name ? [currentEnv.installs[appIndex]].concat(lastApps) : lastApps"
+          v-for="(app, index) in currentEnv.installs[appIndex].name ? [currentEnv.installs[appIndex]].concat(remainingApps) : remainingApps"
           :key="index"
           :label="`${app.name} ${app.version} `"
           :value="{'name':app.name,'version':app.version,'id':app.id}"
@@ -80,7 +80,7 @@ export default {
     currentEnv () {
       return this.buildConfig[this.secondaryProp]
     },
-    lastApps () {
+    remainingApps () {
       return differenceBy(this.allApps, this.currentEnv.installs, 'id')
     }
   },

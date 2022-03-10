@@ -1,7 +1,7 @@
 <template>
   <div class="projects-runtime-container">
     <div class="guide-container">
-      <Step :activeStep="2"/>
+      <Step :activeStep="2" envDisabled/>
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第三步</span>
@@ -109,7 +109,7 @@
 </template>
 <script>
 import bus from '@utils/eventBus'
-import Step from './container/step.vue'
+import Step from '../common/step.vue'
 import { generateEnvAPI, generateWorkflowAPI } from '@api'
 export default {
   data () {

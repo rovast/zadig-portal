@@ -75,7 +75,7 @@ export default {
   background-color: @globalBackgroundColor;
 
   .guide-container {
-    margin-top: 20px;
+    margin-top: 10px;
   }
 
   .current-step-container {

@@ -17,7 +17,7 @@
         </div>
         <div class="content" :style="{ 'margin-top' : key === 'updated' ? '10px' : '0' }">
           <div class="role" v-if="key !== 'updated'">
-            <span class="member title-weight" v-for="member in changedInfo[key].members" :key="member">{{ member }}</span>
+            <span class="member" v-for="member in changedInfo[key].members" :key="member">{{ member }}</span>
           </div>
           <div v-for="workflow in changedInfo[key].workflows" :key="workflow.name">
             <!-- <span style="font-style: italic;">{{ workflow.type | desc }}</span> -->
@@ -208,7 +208,7 @@ export default {
 
   .member {
     margin-right: 10px;
-    color: #000;
+    color: #888;
   }
 
   .update-name {

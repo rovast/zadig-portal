@@ -1,7 +1,7 @@
 <template>
-  <el-dialog :title="`设置 ${currentEnv} 环境变量`" :visible.sync="dialogVisible" width="80%">
+  <el-dialog :title="`设置 ${currentEnv} 环境变量`" :visible.sync="dialogVisible" width="850px">
     <div>
-      <VarList :variables="variables" v-if="deployType === 'k8s'"></VarList>
+      <VarList :variables="variables" v-if="deployType === 'k8s'" class="var-list-container"></VarList>
       <HelmEnvTemplate
         v-else-if="deployType === 'helm'"
         class="chart-value"
@@ -100,6 +100,12 @@ export default {
 
   .el-dialog__body {
     padding: 12px 20px;
+
+    .var-list-container {
+      .el-table {
+        margin: auto;
+      }
+    }
   }
 }
 

@@ -36,10 +36,10 @@
     >
       <el-select v-model="currentEnv.installs[appIndex]" placeholder="请选择" size="small" value-key="id" filterable>
         <el-option
-          v-for="(app, index) in allApps"
+          v-for="(app, index) in currentEnv.installs[appIndex].name ? [currentEnv.installs[appIndex]].concat(remainingApps) : remainingApps"
           :key="index"
           :label="`${app.name} ${app.version} `"
-          :value="{'name':app.name,'version':app.version,'id':app.name+app.version}"
+          :value="{'name':app.name,'version':app.version,'id':app.id}"
         ></el-option>
       </el-select>
       <span :class="mini?'':'app-operation'">
@@ -52,6 +52,7 @@
 
 <script>
 import { getImgListAPI, getAllAppsAPI } from '@api'
+import { differenceBy } from 'lodash'
 export default {
   props: {
     buildConfig: Object,
@@ -78,6 +79,9 @@ export default {
   computed: {
     currentEnv () {
       return this.buildConfig[this.secondaryProp]
+    },
+    remainingApps () {
+      return differenceBy(this.allApps, this.currentEnv.installs, 'id')
     }
   },
   methods: {

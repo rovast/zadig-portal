@@ -19,7 +19,7 @@
           :rules="userAccountGitHubRules"
           ref="userAccountGitHubForm"
           label-position="left"
-          label-width="110px"
+          label-width="120px"
         >
           <el-alert type="info" :closable="false" style="margin-bottom: 15px;">
             <slot>
@@ -291,7 +291,7 @@
           :rules="userAccountCustomRules"
           ref="userAccountCustomForm"
           label-position="left"
-          label-width="110px"
+          label-width="120px"
         >
           <!-- <el-alert type="info" :closable="false" style="margin-bottom: 15px;">
             <slot>

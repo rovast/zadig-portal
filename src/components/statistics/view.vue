@@ -66,7 +66,7 @@
               </h2>
               <p>个</p>
               <span>
-                <i class="icon iconfont iconjiaofu"></i> 交付物
+                <i class="icon iconfont iconvery-deli"></i> 交付物
               </span>
             </div>
           </el-col>
@@ -139,7 +139,7 @@ export default {
   height: 100%;
   padding: 22px 24px;
   overflow: auto;
-  background: #f6f6f6;
+  background: @globalBackgroundColor;
 
   h3 {
     margin: 0;

@@ -233,7 +233,7 @@ export default {
           url: `/v1/projects/detail/${this.projectName}`
         },
         {
-          title: '功能测试',
+          title: '测试',
           url: `/v1/projects/detail/${this.projectName}/test/function`
         },
         { title: this.isEdit ? this.name : '添加', url: '' }

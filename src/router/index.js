@@ -59,7 +59,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "Project List" */ '@/components/projects/detail_ope/home.vue'),
         meta: {
           requiresAuth: true,
-          title: '项目列表'
+          title: '项目'
         }
       },
       {
@@ -131,7 +131,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "Project Service" */ '@/components/projects/serviceMgr/service.vue'),
             meta: {
               requiresAuth: true,
-              title: '服务管理'
+              title: '服务'
             }
           },
           {
@@ -160,18 +160,18 @@ const routes = [
           },
           {
             path: 'test',
-            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/function.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/common/function/function.vue'),
             meta: {
               requiresAuth: true,
-              title: '功能测试'
+              title: '测试中心'
             }
           },
           {
             path: 'test/function',
-            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/function.vue'),
+            component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/common/function/function.vue'),
             meta: {
               requiresAuth: true,
-              title: '功能测试'
+              title: '测试'
             }
           },
           {
@@ -179,7 +179,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/functionDetail.vue'),
             meta: {
               requiresAuth: true,
-              title: '功能测试'
+              title: '测试'
             }
           },
           {
@@ -187,7 +187,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/functionDetail.vue'),
             meta: {
               requiresAuth: true,
-              title: '功能测试-添加'
+              title: '测试-添加'
             }
           },
           {
@@ -195,7 +195,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/functionSummary.vue'),
             meta: {
               requiresAuth: true,
-              title: '功能测试-详情统计'
+              title: '测试-详情统计'
             }
           },
           {
@@ -203,7 +203,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/function/functionTaskDetail.vue'),
             meta: {
               requiresAuth: true,
-              title: '功能测试-任务详情'
+              title: '测试-任务详情'
             }
           },
           {
@@ -211,7 +211,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/report/testCase.vue'),
             meta: {
               requiresAuth: true,
-              title: '功能测试-测试报告'
+              title: '测试-测试报告'
             }
           },
           {
@@ -219,7 +219,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "Project Test" */ '@/components/projects/test/report/testCase.vue'),
             meta: {
               requiresAuth: true,
-              title: '功能测试-测试报告'
+              title: '测试-测试报告'
             }
           },
           {
@@ -532,7 +532,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "Project Service" */ '@/components/projects/serviceMgr/service.vue'),
         meta: {
           requiresAuth: true,
-          title: '服务管理'
+          title: '服务'
         }
       },
       {
@@ -606,7 +606,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "project-policy" */ '@/components/projects/policy/home.vue'),
         meta: {
           requiresAuth: true,
-          title: '权限管理'
+          title: '协作模式'
         }
       }
     ]
@@ -616,7 +616,7 @@ const routes = [
     component: onboarding_home,
     meta: {
       requiresAuth: true,
-      title: '测试管理'
+      title: '测试中心'
     },
     children: [
       {
@@ -624,7 +624,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "Quality Manage" */ '@/components/projects/test/common/function/function.vue'),
         meta: {
           requiresAuth: true,
-          title: '测试管理'
+          title: '测试中心'
         }
       }
     ]

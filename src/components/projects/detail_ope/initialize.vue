@@ -1,6 +1,6 @@
 <template>
   <div class="init-resource">
-    <header><i class="iconfont iconvery-handshake"></i>管理员为您配置了以下工作流和环境</header>
+    <header><i class="theme-color iconfont iconvery-handshake"></i>管理员为您配置了以下工作流和环境</header>
     <section>
       <article v-if="collaborationData.workflow.length">
         <div class="title">
@@ -10,9 +10,9 @@
           <div class="item-name">{{ workflow.name }}</div>
         </div>
       </article>
-      <article v-if="collaborationData.product.length">
+      <article v-if="collaborationData.product.length" style="margin-top: 30px;">
         <div class="title">
-          <i class="iconfont iconrongqi"></i>环境
+          <i class="iconfont iconvery-environ"></i>环境
         </div>
         <div v-for="(env, index) in collaborationData.product" :key="index" class="detail-item display-flex">
           <div>
@@ -114,15 +114,6 @@ export default {
       this.dialogVisible = false
       this.currentEnv = ''
       this.currentInfo = null
-    },
-    closeSubSide () {
-      // other page will trigger sub side after the page
-      setTimeout(() => {
-        bus.$emit('set-sub-sidebar-title', {
-          title: '',
-          routerList: []
-        })
-      }, 80)
     }
   },
   created () {
@@ -135,11 +126,7 @@ export default {
         { title: '项目资源', url: '' }
       ]
     })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
-    this.closeSubSide()
+    bus.$emit('show-sidebar', false)
     this.getNewCollaboration()
   },
   components: {
@@ -154,26 +141,33 @@ export default {
 .init-resource {
   flex: 1;
   box-sizing: border-box;
+  min-width: 900px;
   height: 100%;
   padding: 30px;
+  padding-right: 70px;
   overflow: auto;
   color: #4c4c4c;
+  font-weight: 300;
   line-height: 2;
   background: url('~@assets/icons/illustration/collaborationProject.svg') #f5f7f7 no-repeat;
   background-color: #f5f7f7;
-  background-position: right 50px bottom 50px;
+  background-position: right 20px bottom 40px;
   background-size: 300px 250px;
 
   .iconfont {
     margin-right: 10px;
-    color: #ff2868;
+    font-size: 18px;
+
+    &.theme-color {
+      color: #ff2868;
+      font-size: 16px;
+    }
   }
 
   header {
     width: @width;
     margin: 20px auto;
     color: #8a8a8a;
-    font-weight: 300;
     font-size: 16px;
     line-height: 22px;
   }
@@ -183,6 +177,7 @@ export default {
     width: @width;
     margin: auto;
     padding: 20px 30px;
+    font-size: 14px;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 6px;
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
@@ -190,7 +185,7 @@ export default {
     article {
       .title {
         margin: 12px 0 8px;
-        font-size: 15px;
+        font-size: 18px;
       }
 
       .detail-item {
@@ -200,7 +195,6 @@ export default {
 
         .item-name {
           color: #5e6d82;
-          font-weight: 200;
           line-height: 3;
 
           /deep/.el-tag {
@@ -221,11 +215,11 @@ export default {
     }
 
     footer {
-      padding: 40px 60px 10px;
+      padding: 60px 60px 10px;
       text-align: center;
 
       /deep/.confirm-icon {
-        margin-right: 5px;
+        margin-right: 12px;
         font-size: 12px;
       }
     }

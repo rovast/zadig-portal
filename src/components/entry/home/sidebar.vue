@@ -180,7 +180,7 @@ export default {
             {
               name: '交付中心',
               url: 'delivery',
-              icon: 'iconfont iconjiaofu'
+              icon: 'iconfont iconvery-deli'
             }
           ]
         },

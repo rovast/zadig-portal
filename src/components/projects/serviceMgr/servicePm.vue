@@ -139,32 +139,8 @@ export default {
     }
 
     .controls__right {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
       align-items: center;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-
-      .save-btn,
-      .next-btn {
-        margin-right: 15px;
-        padding: 10px 17px;
-        color: #fff;
-        font-size: 13px;
-        text-decoration: none;
-        background-color: @themeColor;
-        border: 1px solid @themeColor;
-        cursor: pointer;
-        transition: background-color 300ms, color 300ms, border 300ms;
-      }
-
-      .save-btn[disabled],
-      .next-btn[disabled] {
-        background-color: #9ac9f9;
-        border: 1px solid #9ac9f9;
-        cursor: not-allowed;
-      }
     }
   }
 }

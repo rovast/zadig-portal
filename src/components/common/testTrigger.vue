@@ -42,6 +42,7 @@
                      size="small"
                      filterable
                      clearable
+                     allow-create
                      placeholder="请选择">
             <el-option v-for="(branch,index) in webhookBranches[webhookSwap.repo.repo_name]"
                        :key="index"

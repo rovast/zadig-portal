@@ -1,11 +1,14 @@
 <template>
   <div class="service-order">
     <el-tree
+      ref="orderTreeRef"
       :props="defaultProps"
       :data="nodeData"
       node-key="label"
       default-expand-all
       draggable
+      @node-drag-start="startDrag"
+      @node-drag-end="endDrag"
       @node-drop="handleDrop"
       :allow-drag="allowDrag"
       :allow-drop="allowDrop"
@@ -71,6 +74,23 @@ export default {
         children: []
       })
       this.nodeData = nodeData
+    },
+    startDrag (node) {
+      const parent = node.parent
+      this.$refs.orderTreeRef.root.childNodes.forEach(child => {
+        if (parent !== child) {
+          child.expanded = false
+        }
+      })
+      this.$refs.orderTreeRef.$el.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+    },
+    endDrag () {
+      this.$refs.orderTreeRef.root.childNodes.forEach(child => {
+        child.expanded = true
+      })
     }
   },
   watch: {
@@ -87,6 +107,9 @@ export default {
 <style lang="less" scoped>
 .service-order {
   /deep/.el-tree {
+    height: 100%;
+    overflow: auto;
+
     .el-tree-node__content {
       height: 30px;
     }

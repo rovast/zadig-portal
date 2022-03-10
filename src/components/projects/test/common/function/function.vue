@@ -1,5 +1,10 @@
 <template>
-  <div v-loading="loading" element-loading-text="加载中..." element-loading-spinner="iconfont iconfont-loading iconvery-testing" class="function-test-manage">
+  <div
+    v-loading="loading"
+    element-loading-text="加载中..."
+    element-loading-spinner="iconfont iconfont-loading iconvery-testing"
+    class="function-test-manage"
+  >
     <el-dialog title="选择关联的工作流" :visible.sync="selectWorkflowDialogVisible" width="30%" center>
       <el-select v-model="selectWorkflow" style="width: 100%;" filterable value-key="name" size="small" placeholder="请选择要关联的工作流，支持搜索">
         <el-option
@@ -39,6 +44,7 @@
 
 <script>
 import TestRow from './container/testRow.vue'
+import bus from '@utils/eventBus'
 import moment from 'moment'
 import {
   testsAPI,
@@ -53,7 +59,6 @@ export default {
   data () {
     return {
       testList: [],
-      activeTab: 'function',
       selectWorkflowDialogVisible: false,
       loading: false,
       currentTestName: '',
@@ -98,7 +103,10 @@ export default {
         workflow.test_stage.enabled = true
         workflow.test_stage.test_names.push(this.currentTestName)
       } else {
-        const res = await singleTestAPI(this.currentTestName, this.currentProjectName)
+        const res = await singleTestAPI(
+          this.currentTestName,
+          this.currentProjectName
+        )
         workflow.test_stage.enabled = true
         workflow.test_stage.tests = workflow.test_stage.tests || []
         workflow.test_stage.tests.push({
@@ -189,7 +197,20 @@ export default {
     }
   },
   created () {
-    this.activeTab = 'function'
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: this.projectName
+        ? [
+          { title: '项目', url: '/v1/projects' },
+          {
+            title: this.projectName,
+            url: `/v1/projects/detail/${this.projectName}/detail`
+          },
+          { title: '测试', url: '' }
+        ]
+        : [{ title: '测试中心', url: '' }]
+    })
+
     this.fetchTestList()
   },
   components: {

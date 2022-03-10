@@ -5,7 +5,7 @@
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第三步</span>
-          <span class="second">配置变量，按需创建环境。后续可在项目中调整。</span>
+          <span class="second">配置变量，按需创建环境，后续可在项目中调整。</span>
         </div>
         <div class="account-integrations block-list">
           <div class="second">配置以下几套环境：</div>

@@ -33,7 +33,7 @@
           3
         </div>
         <p class="service-aside-help__step-list-item-text">
-          添加多个服务，更新环境，将服务加入运行环境
+          添加多个服务，更新环境，将服务加入环境
         </p>
       </li>
     </ul>

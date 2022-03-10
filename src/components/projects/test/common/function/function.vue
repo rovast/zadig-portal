@@ -206,7 +206,7 @@ export default {
             title: this.projectName,
             url: `/v1/projects/detail/${this.projectName}/detail`
           },
-          { title: '测试中心', url: '' }
+          { title: '测试', url: '' }
         ]
         : [{ title: '测试中心', url: '' }]
     })

@@ -51,7 +51,7 @@ export default {
           title: this.projectName,
           url: `/v1/projects/detail/${this.projectName}/detail`
         },
-        { title: '服务管理', url: '' }
+        { title: '服务', url: '' }
       ]
     })
   }

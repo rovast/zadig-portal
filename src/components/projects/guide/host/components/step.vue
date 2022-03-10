@@ -94,10 +94,6 @@ export default {
         background: @themeColor;
       }
     }
-
-    .process-container {
-      margin-top: 10px;
-    }
   }
 }
 </style>

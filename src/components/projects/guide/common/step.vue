@@ -5,7 +5,7 @@
         <h4>项目初始化向导</h4>
       </div>
       <el-row :gutter="0" class="steps-wrap" type="flex">
-        <el-col :span="18" style="display: flex;">
+        <el-col :span="envDisabled?24:18" style="display: flex;">
           <OnboardingSteps :active="activeStep" class="steps-container" align-center simple finish-status="success">
             <OnboardingStep title="项目配置" description></OnboardingStep>
             <OnboardingStep title="新建服务" description></OnboardingStep>

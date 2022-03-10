@@ -192,7 +192,6 @@ export default {
 .el-step__icon.is-text {
   padding: 2px;
   border: 2px solid #eaf2ff;
-  border-color: none;
   border-radius: 50%;
 }
 

@@ -149,7 +149,7 @@ export default {
 
       .first {
         display: inline-block;
-        width: 110px;
+        width: 130px;
         padding: 8px;
         color: #fff;
         font-weight: 300;

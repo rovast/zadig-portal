@@ -46,7 +46,7 @@
                               class="env-item">
                       <span class="env-name">测试环境：{{projectName}}-qa
                       </span>
-                      <span class="desc">，测试环境（自动化测试、业务验收）</span>
+                      <span class="desc">，自动化测试、业务验收</span>
                       <el-link v-if="env.err_message!==''"
                                type="warning">{{env.err_message}}</el-link>
                     </template>

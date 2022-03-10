@@ -259,7 +259,7 @@ export default {
           title: this.projectName,
           url: `/v1/projects/detail/${this.projectName}/detail`
         },
-        { title: '权限', url: '' },
+        { title: '权限管理', url: '' },
         { title: '成员管理', url: '' }
       ]
     })

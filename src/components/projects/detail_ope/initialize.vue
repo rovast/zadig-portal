@@ -12,7 +12,7 @@
       </article>
       <article v-if="collaborationData.product.length" style="margin-top: 30px;">
         <div class="title">
-          <i class="iconfont iconrongqi"></i>环境
+          <i class="iconfont iconvery-environ"></i>环境
         </div>
         <div v-for="(env, index) in collaborationData.product" :key="index" class="detail-item display-flex">
           <div>
@@ -114,15 +114,6 @@ export default {
       this.dialogVisible = false
       this.currentEnv = ''
       this.currentInfo = null
-    },
-    closeSubSide () {
-      // other page will trigger sub side after the page
-      setTimeout(() => {
-        bus.$emit('set-sub-sidebar-title', {
-          title: '',
-          routerList: []
-        })
-      }, 80)
     }
   },
   created () {
@@ -135,11 +126,7 @@ export default {
         { title: '项目资源', url: '' }
       ]
     })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
-    })
-    this.closeSubSide()
+    bus.$emit('show-sidebar', false)
     this.getNewCollaboration()
   },
   components: {
@@ -154,15 +141,17 @@ export default {
 .init-resource {
   flex: 1;
   box-sizing: border-box;
+  min-width: 900px;
   height: 100%;
   padding: 30px;
+  padding-right: 70px;
   overflow: auto;
   color: #4c4c4c;
   font-weight: 300;
   line-height: 2;
   background: url('~@assets/icons/illustration/collaborationProject.svg') #f5f7f7 no-repeat;
   background-color: #f5f7f7;
-  background-position: right 50px bottom 50px;
+  background-position: right 20px bottom 40px;
   background-size: 300px 250px;
 
   .iconfont {

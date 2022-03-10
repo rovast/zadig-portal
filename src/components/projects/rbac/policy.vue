@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import bus from '@utils/eventBus'
 import ViewPolicy from './viewPolicy.vue'
 import { getAllPolicyAPI, queryPolicyDefinitionsAPI } from '@api'
 export default {
@@ -70,6 +71,18 @@ export default {
   created () {
     this.getAllPolicy()
     this.getPolicyDefinitions()
+    bus.$emit(`set-topbar-title`, {
+      title: '',
+      breadcrumb: [
+        { title: '项目', url: '/v1/projects' },
+        {
+          title: this.projectName,
+          url: `/v1/projects/detail/${this.projectName}/detail`
+        },
+        { title: '权限管理', url: '' },
+        { title: '策略管理', url: '' }
+      ]
+    })
   }
 }
 </script>

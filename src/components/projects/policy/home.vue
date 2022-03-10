@@ -255,7 +255,7 @@ export default {
 <style lang="less" scoped>
 .cooperation-container {
   box-sizing: border-box;
-  height: 100%;
+  height: calc(~'100% - 40px');
   padding: 15px 20px 0;
 
   .policy-outer {

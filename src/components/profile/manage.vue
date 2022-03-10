@@ -69,7 +69,7 @@
                 <tr>
                   <td>
                     <span>API Token</span>
-                    <HelpLink :inline="true" :keyword="{location:'个人中心',key:'APIToken'}"></HelpLink>
+                    <HelpLink :inline="true" :keyword="{location:'个人中心',key:'APIToken'}" />
                   </td>
                   <td>
                     <el-input size="small" placeholder readonly type="text" v-model="currentEditUserInfo.token">
@@ -269,9 +269,7 @@ export default {
   },
   created () {
     bus.$emit('set-topbar-title', {
-      breadcrumb: [
-        { title: '账号设置', url: '' }
-      ]
+      breadcrumb: [{ title: '账号设置', url: '' }]
     })
     this.getSubscribe()
     this.getCurrentUserInfo()

@@ -4,7 +4,7 @@
         <div class="service-container">
           <multipane class="vertical-panes"
                      layout="vertical">
-            <div class="file-tree-container">
+            <div class="file-tree-container" :style="{width: '240px', maxWidth: '400px'}">
               <FileTree :files="files"
                            :fileContentChange="fileContentChange"
                            ref="FileTree"

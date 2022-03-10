@@ -6,7 +6,9 @@
     <multipane>
       <div class="pane left" :style="{width: '250px', maxWidth: '400px'}">
         <div class="top">
-          <el-button icon="el-icon-plus" circle size="mini" @click="chartDialogVisible = !chartDialogVisible"></el-button>
+          <el-tooltip effect="dark" content="创建模板" placement="top">
+            <el-button icon="el-icon-plus" circle size="mini" @click="chartDialogVisible = !chartDialogVisible"></el-button>
+          </el-tooltip>
         </div>
         <Folder
           ref="folderRef"

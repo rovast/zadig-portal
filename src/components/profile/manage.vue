@@ -268,10 +268,10 @@ export default {
     })
   },
   created () {
-    bus.$emit('set-topbar-title', { title: '账号设置', breadcrumb: [] })
-    bus.$emit('set-sub-sidebar-title', {
-      title: '',
-      routerList: []
+    bus.$emit('set-topbar-title', {
+      breadcrumb: [
+        { title: '账号设置', url: '' }
+      ]
     })
     this.getSubscribe()
     this.getCurrentUserInfo()

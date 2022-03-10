@@ -68,7 +68,7 @@ export default {
       type: Number
     },
     stepThreeTitle: {
-      default: '加入运行环境',
+      default: '加入环境',
       type: String
     },
     envDisabled: {

@@ -5,7 +5,7 @@
       <div class="current-step-container">
         <div class="title-container">
           <span class="first">第三步</span>
-          <span class="second">将服务加入运行环境，并准备对应的交付工作流，后续均可在项目中进行配置</span>
+          <span class="second">将服务加入环境，并准备对应的交付工作流，后续均可在项目中进行配置</span>
         </div>
         <div class="info-container block-list">
           <div class="title">

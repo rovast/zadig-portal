@@ -272,13 +272,11 @@ export default {
   }
 
   .operation {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     margin-bottom: 16px;
+    text-align: right;
 
     .hook-config {
-      display: flex;
+      display: inline-flex;
       align-items: center;
 
       .hook-switch {

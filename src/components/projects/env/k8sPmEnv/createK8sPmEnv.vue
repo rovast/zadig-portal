@@ -87,13 +87,33 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item
+          label="服务选择"
+          v-if="projectConfig.source==='system' && $utils.isEmpty(pmServiceMap)"
+          prop="selectedService"
+        >
+          <el-select
+            v-model="projectConfig.selectedService"
+            size="small"
+            placeholder="选择服务"
+            filterable
+            clearable
+            multiple
+            collapse-tags
+          >
+            <el-option disabled label="全选" value="ALL" :class="{selected: projectConfig.selectedService.length === serviceNames.length}" style="color: #606266;">
+              <span style=" display: inline-block; width: 100%; font-weight: normal; cursor: pointer;" @click="projectConfig.selectedService = serviceNames">全选</span>
+            </el-option>
+            <el-option v-for="serviceName in serviceNames" :key="serviceName" :label="serviceName" :value="serviceName"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <div
-        v-if="(deployType===''||deployType==='k8s') && projectConfig.vars && projectConfig.vars.length > 0  && !$utils.isEmpty(containerMap) && projectConfig.source==='system'"
+        v-if="variables.length && (deployType===''||deployType==='k8s') && projectConfig.vars && projectConfig.vars.length > 0  && !$utils.isEmpty(containerMap) && projectConfig.source==='system'"
         class="common-parcel-block box-card-service"
       >
         <div class="primary-title">变量列表</div>
-        <VarList :variables="projectConfig.vars" :rollbackMode="rollbackMode"></VarList>
+        <VarList :variables="variables" :rollbackMode="rollbackMode"></VarList>
       </div>
       <div v-if="projectConfig.source==='system'" class="common-parcel-block">
         <div class="primary-title">服务列表</div>
@@ -123,7 +143,7 @@
               </span>
             </div>
             <el-form class="service-form-block" label-width="50%" label-position="left">
-              <div class="service-item" v-for="(typeServiceMap, serviceName) in containerMap" :key="serviceName">
+              <div class="service-item" v-for="(typeServiceMap, serviceName) in selectedContainerMap" :key="serviceName">
                 <div class="primary-title">{{ serviceName }}</div>
                 <div class="service-content">
                   <div v-for="service in typeServiceMap" :key="`${service.service_name}-${service.type}`" class="service-block">
@@ -226,7 +246,7 @@ import {
   getRegistryWhenBuildAPI
 } from '@api'
 import bus from '@utils/eventBus'
-import { uniq, cloneDeep } from 'lodash'
+import { uniq, cloneDeep, intersection } from 'lodash'
 import { serviceTypeMap } from '@utils/wordTranslate'
 
 const validateEnvName = (rule, value, callback) => {
@@ -258,7 +278,9 @@ export default {
         revision: null,
         isPublic: true,
         roleIds: [],
-        registry_id: ''
+        registry_id: '',
+        services: [],
+        selectedService: [] // will be deleted when created
       },
       projectInfo: {},
       hostingNamespace: [],
@@ -291,7 +313,13 @@ export default {
             message: '请选择项目角色',
             trigger: 'change'
           }
-        ]
+        ],
+        selectedService: {
+          type: 'array',
+          required: true,
+          message: '请选择服务',
+          trigger: 'change'
+        }
       },
       addKeyData: [
         {
@@ -334,6 +362,20 @@ export default {
     },
     nsIsExisted () {
       return this.hostingNamespace.includes(this.projectConfig.defaultNamespace)
+    },
+    serviceNames () {
+      return Object.keys(this.containerMap)
+    },
+    variables () {
+      const services = this.projectConfig.selectedService
+      return this.projectConfig.vars.filter(item => (intersection(item.services, services).length))
+    },
+    selectedContainerMap () { // Filtered Container Services
+      const containerMap = {}
+      this.projectConfig.selectedService.forEach(service => {
+        containerMap[service] = this.containerMap[service]
+      })
+      return containerMap
     }
   },
   methods: {
@@ -509,6 +551,7 @@ export default {
       this.containerMap = containerMap
       this.pmServiceMap = pmServiceMap
       this.containerNames = uniq(containerNames)
+      this.projectConfig.selectedService = Object.keys(containerMap)
       this.getImages()
     },
     getImages () {
@@ -640,13 +683,20 @@ export default {
             }
           }
 
+          const selectedServices = [] // filtered service: keep the same format as the original services
+          const selectedServiceNames = this.projectConfig.selectedService
+
           for (const group of this.projectConfig.services) {
+            const currentGroup = []
             for (const ser of group) {
               if (ser.picked) {
                 picked1D.push(ser)
               }
               const containers = ser.containers
               if (containers && ser.picked && ser.type === 'k8s') {
+                if (selectedServiceNames.includes(ser.service_name)) {
+                  currentGroup.push(ser)
+                }
                 for (const con of ser.containers) {
                   if (!con.image) {
                     this.$message.warning(`${con.name}未选择镜像`)
@@ -667,9 +717,16 @@ export default {
                 delete ser.picked
               }
             }
+            selectedServices.push(currentGroup)
           }
+
           picked2D.push(picked1D)
           const payload = this.$utils.cloneObj(this.projectConfig)
+
+          payload.services = cloneDeep(selectedServices) // full service to partial service
+          payload.vars = this.variables // variables referenced by the selected service
+          delete payload.selectedService // unwanted data: selected service name
+
           payload.source = 'spock'
           if (
             this.projectInfo.product_feature &&

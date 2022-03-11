@@ -1272,6 +1272,10 @@ export function autoUpgradeEnvAPI (projectName, payload, force = '') {
   return http.put(`/api/aslan/environment/environments?auto=true&projectName=${projectName}&force=${force}`, payload)
 }
 
+export function deleteEnvServicesAPI (projectName, name, payload) {
+  return http.put(`/api/aslan/environment/environments/${name}/services?projectName=${projectName}`, payload)
+}
+
 // Login
 export function userLoginAPI (payload) {
   return http.post(`/api/v1/login`, payload)

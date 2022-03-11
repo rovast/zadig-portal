@@ -97,24 +97,33 @@
                     <el-button v-else-if="envSource==='helm'" type="primary" @click="openUpdateHelmVar" size="mini" plain>更新环境变量</el-button>
                   </template>
                 </el-tooltip>
-                <el-tooltip
-                  v-hasPermi="{projectName: projectName, action: 'config_environment'}"
-                  v-if="showUpdate(productInfo,productStatus) && productInfo.status!=='Disconnected'"
-                  content="根据最新环境配置更新，包括服务编排和服务配置的改动"
-                  effect="dark"
-                  placement="top"
-                >
-                  <template v-if="productInfo.status!=='Creating'">
+                <template v-if="productInfo.status!=='Disconnected' && productInfo.status!=='Creating'">
+                  <el-dropdown v-if="envSource===''||envSource==='spock'" trigger="click">
+                    <el-button type="primary" plain>
+                      管理服务
+                      <i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="manageServices('add')">添加服务</el-dropdown-item>
+                      <el-dropdown-item @click.native="manageServices('update')">更新服务</el-dropdown-item>
+                      <el-dropdown-item @click.native="manageServices('delete')">删除服务</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                  <el-tooltip
+                    v-else-if="showUpdate(productInfo,productStatus) && (envSource==='pm' || envSource==='helm')"
+                    v-hasPermi="{projectName: projectName, action: 'config_environment'}"
+                    content="根据最新环境配置更新，包括服务编排和服务配置的改动"
+                    effect="dark"
+                    placement="top"
+                  >
                     <el-button
-                      v-if="envSource===''||envSource==='spock' || envSource==='pm'"
                       type="primary"
-                      @click="updateK8sEnv(productInfo)"
+                      @click="envSource==='pm' ? updateK8sEnv(productInfo) : openUpdateHelmEnv"
                       size="mini"
                       plain
                     >更新环境</el-button>
-                    <el-button v-else-if="envSource==='helm'" type="primary" @click="openUpdateHelmEnv" size="mini" plain>更新环境</el-button>
-                  </template>
-                </el-tooltip>
+                  </el-tooltip>
+                </template>
                 <template>
                   <el-button
                     v-hasPermi="{projectName: projectName, action: 'config_environment'}"
@@ -160,21 +169,30 @@
                     plain
                   >更新环境变量</el-button>
                 </el-tooltip>
-                <el-tooltip
-                  v-hasPermi="{projectName: projectName, action: 'config_environment'}"
-                  v-if="showUpdate(productInfo,productStatus) && productInfo.status!=='Disconnected' && (envSource===''||envSource==='spock'|| envSource==='helm')"
-                  content="根据最新环境配置更新，包括服务编排和服务配置的改动"
-                  effect="dark"
-                  placement="top"
+                <template
+                  v-if="productInfo.status!=='Creating' && productInfo.status!=='Disconnected' && (envSource===''||envSource==='spock'|| envSource==='helm')"
                 >
-                  <el-button
-                    v-if="productInfo.status!=='Creating'"
-                    type="primary"
-                    @click="envSource==='helm' ? openUpdateHelmEnv() : updateK8sEnv(productInfo)"
-                    size="mini"
-                    plain
-                  >更新环境</el-button>
-                </el-tooltip>
+                  <el-dropdown v-if="envSource===''||envSource==='spock'" trigger="click">
+                    <el-button type="primary" plain>
+                      管理服务
+                      <i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="manageServices('add')">添加服务</el-dropdown-item>
+                      <el-dropdown-item @click.native="manageServices('update')">更新服务</el-dropdown-item>
+                      <el-dropdown-item @click.native="manageServices('delete')">删除服务</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                  <el-tooltip
+                    v-else-if="showUpdate(productInfo,productStatus) && envSource==='helm'"
+                    v-hasPermi="{projectName: projectName, action: 'config_environment'}"
+                    content="根据最新环境配置更新，包括服务编排和服务配置的改动"
+                    effect="dark"
+                    placement="top"
+                  >
+                    <el-button type="primary" @click="openUpdateHelmEnv" size="mini" plain>更新环境</el-button>
+                  </el-tooltip>
+                </template>
                 <template>
                   <el-button
                     v-hasPermi="{projectName: projectName, action: 'config_environment'}"
@@ -320,7 +338,7 @@
             <template slot-scope="scope">
               <template>
                 <div v-for="(image,index) in scope.row.images" :key="index">
-                  <el-tooltip  effect="dark" :content="image" placement="top">
+                  <el-tooltip effect="dark" :content="image" placement="top">
                     <span>{{ imageNameSplit(image) }}</span>
                   </el-tooltip>
                 </div>
@@ -507,6 +525,7 @@
     />
     <UpdateK8sVarDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="updateK8sVarDialog" />
     <PmServiceLog ref="pmServiceLog" />
+    <ManageServicesDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="manageServicesRef" />
   </div>
 </template>
 
@@ -537,6 +556,8 @@ import PmHostList from './components/pmHostList.vue'
 import UpdateHelmEnvDialog from './components/updateHelmEnvDialog'
 import UpdateHelmVarDialog from './components/updateHelmVarDialog'
 import UpdateK8sVarDialog from './components/updateK8sVarDialog'
+import ManageServicesDialog from './components/manageServicesDialog.vue'
+
 const jsdiff = require('diff')
 
 const validateKey = (rule, value, callback) => {
@@ -711,6 +732,9 @@ export default {
     }
   },
   methods: {
+    manageServices (type) {
+      this.$refs.manageServicesRef.openDialog(type)
+    },
     async editEnvImageRegistry (flag) {
       if (flag === 'cancel') {
         this.productInfo.editRegistryID = this.productInfo.registry_id
@@ -1416,7 +1440,8 @@ export default {
     PmHostList,
     UpdateHelmEnvDialog,
     UpdateHelmVarDialog,
-    UpdateK8sVarDialog
+    UpdateK8sVarDialog,
+    ManageServicesDialog
   },
   props: {
     envBasePath: {

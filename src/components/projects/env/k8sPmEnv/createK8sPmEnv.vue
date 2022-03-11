@@ -130,7 +130,16 @@
                     <template v-if="service.type==='k8s' && service.containers">
                       <el-form-item v-for="con of service.containers" :key="con.name" :label="con.name">
                         <el-select v-model="con.image" :disabled="rollbackMode" filterable size="small">
-                          <el-option v-for="img of imageMap[con.name]" :key="`${img.name}-${img.tag}`" :label="img.tag" :value="img.full"></el-option>
+                          <virtual-scroll-list v-if="imageMap[con.name] && imageMap[con.name].length > 200"
+                                           style="height: 272px; overflow-y: auto;"
+                                           :size="virtualData.size"
+                                           :keeps="virtualData.keeps"
+                                           :start="virtualData.start"
+                                           :dataKey="(img)=>{ return img.name+'-'+img.tag}"
+                                           :dataSources="imageMap[con.name]"
+                                           :dataComponent="itemComponent">
+                          </virtual-scroll-list>
+                          <el-option v-else v-for="img of imageMap[con.name]" :key="`${img.name}-${img.tag}`" :label="img.tag" :value="img.full"></el-option>
                         </el-select>
                       </el-form-item>
                     </template>
@@ -201,6 +210,8 @@
 </template>
 
 <script>
+import virtualListItem from '../../common/imageItem'
+import virtualScrollList from 'vue-virtual-scroll-list'
 import VarList from './varList.vue'
 import {
   imagesAPI,
@@ -232,6 +243,7 @@ const validateEnvName = (rule, value, callback) => {
 export default {
   data () {
     return {
+      itemComponent: virtualListItem,
       selection: '',
       editButtonDisabled: true,
       currentProductDeliveryVersions: [],
@@ -289,7 +301,12 @@ export default {
         }
       ],
       imageRegistry: [],
-      containerNames: []
+      containerNames: [],
+      virtualData: {
+        keeps: 20,
+        size: 34,
+        start: 0
+      }
     }
   },
 
@@ -755,7 +772,8 @@ export default {
     })
   },
   components: {
-    VarList
+    VarList,
+    virtualScrollList
   }
 }
 </script>

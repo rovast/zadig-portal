@@ -96,7 +96,7 @@
 </template>
 <script>
 import { updateK8sEnvAPI } from '@/api'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, flatten, intersection } from 'lodash'
 export default {
   name: 'updateK8sVar',
   props: {
@@ -108,6 +108,7 @@ export default {
       updateK8sEnvVarDialogVisible: false,
       updataK8sEnvVarLoading: false,
       vars: [],
+      services: [],
       varSearch: ''
     }
   },
@@ -125,7 +126,10 @@ export default {
       const projectName = this.productInfo.product_name
       const envName = this.productInfo.env_name
       const envType = this.productInfo.isProd ? 'prod' : ''
-      const payload = { vars: this.vars }
+      const payload = {
+        service_names: this.services,
+        vars: this.vars
+      }
       const force = false
       this.updataK8sEnvVarLoading = true
       updateK8sEnvAPI(projectName, envName, payload, envType, force).then(
@@ -176,7 +180,12 @@ export default {
   watch: {
     updateK8sEnvVarDialogVisible (value) {
       if (value) {
-        this.vars = cloneDeep(this.productInfo.vars)
+        const services = flatten(this.productInfo.services)
+        const vars = this.productInfo.vars.filter(
+          item => intersection(item.services, services).length
+        )
+        this.services = services
+        this.vars = cloneDeep(vars)
       }
     }
   }

@@ -69,7 +69,7 @@
               </div>
               <el-table :data="serviceModules" stripe style="width: 100%;">
                 <el-table-column prop="name" label="服务组件"></el-table-column>
-                <el-table-column prop="image_name" label="镜像名称"></el-table-column>
+                <el-table-column prop="image_name" label="镜像名"></el-table-column>
                 <el-table-column prop="image" label>
                   <template slot="header">
                     <span>当前镜像版本($IMAGE)</span>

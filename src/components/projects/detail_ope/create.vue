@@ -111,7 +111,6 @@ import {
   updateSingleProjectAPI,
   getClusterListAPI
 } from '@api'
-
 const pinyin = require('pinyin')
 const validateProductName = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {
@@ -243,7 +242,7 @@ export default {
         per_page: 200
       }
       usersAPI(payload).then(res => {
-        this.users = this.$utils.deepSortOn(res.users, 'name')
+        this.users = res.users
       })
     },
     remoteMethod (query) {
@@ -254,7 +253,7 @@ export default {
         }
         usersAPI(payload).then(res => {
           this.loading = false
-          this.users = this.$utils.deepSortOn(res.users, 'name')
+          this.users = res.users
         })
       } else {
         this.getUsers()

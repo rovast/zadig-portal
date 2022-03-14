@@ -38,7 +38,6 @@
 </template>
 <script>
 import { usersAPI, addRoleBindingsAPI } from '@/api'
-import { sortBy } from 'lodash'
 export default {
   name: 'addRoleBind',
   props: {

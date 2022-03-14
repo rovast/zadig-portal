@@ -1077,8 +1077,9 @@ export default {
         )
       })
     },
-    getProdStatus (status, updateble) {
-      return translateEnvStatus(status, updateble)
+    getProdStatus (status, updatable) {
+      const hiddenUpdatable = this.envSource === '' || this.envSource === 'spock'
+      return translateEnvStatus(status, hiddenUpdatable ? false : updatable)
     },
     rollbackToVersion () {
       this.$router.push(

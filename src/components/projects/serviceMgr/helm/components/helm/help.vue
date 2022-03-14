@@ -81,7 +81,7 @@
         <el-col :span="8">
           <li class="service-aside-help__step-list-item">
             <a target="_blank"
-               href="https://docs.koderover.com/zadig/project/service/#helm-chart-服务"
+               href="https://docs.koderover.com/zadig/project/service/#k8s-helm-chart-%E6%9C%8D%E5%8A%A1"
                class="service-aside-help__step-list-item-link">
               <i class="icon el-icon-link"></i>
               <span class="service-aside-help__step-list-item-link-text">

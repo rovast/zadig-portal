@@ -201,12 +201,10 @@ export default {
   methods: {
     followUpFn () {
       this.changeExpandFileList('del', this.currentCode)
-      setTimeout(() => {
-        this.$store.dispatch('queryServiceModule', {
-          projectName: this.projectName,
-          serviceName: this.$route.query.service_name
-        })
-      }, 3000)
+      this.$store.dispatch('queryServiceModule', {
+        projectName: this.projectName,
+        serviceName: this.$route.query.service_name
+      })
     },
     closeSelectRepo () {
       this.$store.commit('SERVICE_DIALOG_VISIBLE', false)

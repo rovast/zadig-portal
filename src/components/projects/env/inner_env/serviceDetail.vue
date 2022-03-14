@@ -617,7 +617,7 @@ export default {
     },
     showEditImage (item) {
       this.$set(item, 'edit', true)
-      this.getImages(item.name)
+      this.getImages(item.image_name)
     },
     cancelEditImage (item) {
       this.$set(item, 'edit', false)

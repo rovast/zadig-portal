@@ -182,7 +182,7 @@ export default {
       }
     },
     getServiceImg (services) {
-      const allServiceNames = services.map(service => service.name)
+      const allServiceNames = services.map(service => service.image_name)
       this.getServiceImgs(allServiceNames)
     },
     getServiceImgs (val) {

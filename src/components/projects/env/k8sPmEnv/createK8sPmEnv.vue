@@ -473,7 +473,7 @@ export default {
             const containers = ser.containers
             if (containers) {
               for (const con of containers) {
-                containerNames.push(con.name)
+                containerNames.push(con.image_name)
                 Object.defineProperty(con, 'defaultImage', {
                   value: con.image,
                   enumerable: false,

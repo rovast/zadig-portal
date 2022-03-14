@@ -54,12 +54,13 @@
                        icon="fs-24 iconfont iconArrowUp1-24px">
             </el-button>
           </el-tooltip>
-          <div class="log-tip">
+          <!-- Temporarily not showing kodespace in 1.10.0 --->
+          <!-- <div class="log-tip">
             <span>日志量较大时会出现加载过慢的情况，建议使用 CLI 工具查看</span>
             <a href="https://docs.koderover.com/zadig/cli/search-logs/"
                target="_blank">
               <i class="icon el-icon-question"></i></a>
-          </div>
+          </div> -->
         </div>
       </div>
     </el-card>

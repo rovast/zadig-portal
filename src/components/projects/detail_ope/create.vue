@@ -76,10 +76,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="项目管理员" v-if="!isEdit" prop="admins">
-            <el-select v-model="projectForm.admins" filterable multiple remote :loading="loading" placeholder="请输入用户名搜索用户">
+            <el-select v-model="projectForm.admins" filterable multiple remote :remote-method="remoteMethod" :loading="loading" placeholder="请输入用户名搜索用户">
               <el-option
-                v-for="(user,index) in users"
-                :key="index"
+                v-for="user in users"
+                :key="user.uid"
                 :label="user.name ? `${user.account}(${user.name})` : user.account"
                 :value="user.uid"
               >
@@ -238,7 +238,10 @@ export default {
       }
     },
     getUsers () {
-      const payload = {}
+      const payload = {
+        page: 1,
+        per_page: 200
+      }
       usersAPI(payload).then(res => {
         this.users = this.$utils.deepSortOn(res.users, 'name')
       })
@@ -254,7 +257,7 @@ export default {
           this.users = this.$utils.deepSortOn(res.users, 'name')
         })
       } else {
-        this.users = []
+        this.getUsers()
       }
     },
     handleClose () {

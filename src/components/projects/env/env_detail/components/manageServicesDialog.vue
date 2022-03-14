@@ -89,7 +89,7 @@ export default {
       if (this.opeType !== 'delete') {
         payload = [{
           ...payload,
-          env_names: this.productInfo.env_name,
+          env_name: this.productInfo.env_name,
           vars: this.currentVars
         }]
       }

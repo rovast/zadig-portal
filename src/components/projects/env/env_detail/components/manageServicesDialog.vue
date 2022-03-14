@@ -1,6 +1,6 @@
 <template>
   <el-dialog title :visible.sync="dialogVisible" width="700px" custom-class="manage-service-dialog" :close-on-click-modal="false">
-    <div slot="title">{{ productInfo.env_name }} 环境 - {{ getOperateDesc() }}服务</div>
+    <div slot="title">{{ productInfo.env_name }} 环境 - {{ opeDesc }}服务</div>
     <div class="manage-services-container">
       <el-form ref="serviceFormRef" class="primary-form" :model="updateServices" label-width="100px" label-position="left">
         <el-form-item
@@ -71,19 +71,17 @@ export default {
       return this.currentAllInfo.vars.filter(
         item => intersection(item.services, services).length
       )
+    },
+    opeDesc () {
+      const typeEnum = {
+        add: '添加',
+        update: '更新',
+        delete: '删除'
+      }
+      return typeEnum[this.opeType] || ''
     }
   },
   methods: {
-    getOperateDesc () {
-      const opeType = this.opeType
-      return opeType === 'add'
-        ? '添加'
-        : opeType === 'update'
-          ? '更新'
-          : opeType === 'delete'
-            ? '删除'
-            : ''
-    },
     updateEnvironment () {
       let payload = {
         service_names: cloneDeep(this.updateServices.service_names)
@@ -103,7 +101,7 @@ export default {
         )
         : autoUpgradeEnvAPI(this.projectName, payload, false)
       ).then(res => {
-        this.$message.success(`${this.getOperateDesc()}服务成功！`)
+        this.$message.success(`${this.opeDesc}服务成功！`)
         this.closeDialog()
         this.fetchAllData()
       })

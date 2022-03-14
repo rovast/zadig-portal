@@ -368,7 +368,7 @@ export default {
     },
     variables () {
       const services = this.projectConfig.selectedService
-      return this.projectConfig.vars.filter(item => (intersection(item.services, services).length))
+      return (this.projectConfig.vars || []).filter(item => (intersection(item.services, services).length))
     },
     selectedContainerMap () { // Filtered Container Services
       const containerMap = {}

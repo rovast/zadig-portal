@@ -226,6 +226,11 @@ export default {
           element.key = element.name + '/' + element.service_name
           return element
         }), 'service_name')
+        this.forcedUserInput.artifact_args.forEach(r => {
+          if (!r.image_name) {
+            this.$set(r, 'image_name', r.name)
+          }
+        })
         this.getServiceImgs(this.forcedUserInput.artifact_args.map(r => r.image_name)).then(() => {
           this.forcedUserInput.artifact_args.forEach((art, index) => {
             this.changeVirtualData(false, art, index)

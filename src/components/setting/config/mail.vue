@@ -172,7 +172,7 @@
             <template>支持配置系统邮件，用于消息通知和账号密码找回，详情可参考
               <el-link style="font-size: 14px; vertical-align: baseline;"
                 type="primary"
-                :href="`https://docs.koderover.com/zadig/settings/mail/`"
+                :href="`https://docs.koderover.com/zadig/settings/system-settings/#%E9%82%AE%E4%BB%B6%E9%85%8D%E7%BD%AE`"
                 :underline="false"
                 target="_blank">帮助文档</el-link>
             </template>

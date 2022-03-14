@@ -47,7 +47,7 @@
               <el-row class="build-row">
                 <template>
                   <el-col :span="12">
-                    <el-select v-if="imageMap[scope.row.name] && imageMap[scope.row.name].length > 0"
+                    <el-select v-if="imageMap[scope.row.image_name] && imageMap[scope.row.image_name].length > 0"
                                v-model="scope.row.image"
                                @visible-change="changeVirtualData($event, scope.row, scope.$index)"
                                filterable
@@ -61,7 +61,7 @@
                                            :keeps="virtualData.keeps"
                                            :start="startAll[scope.row.name]"
                                            :dataKey="(img)=>{ return img.name+'-'+img.tag}"
-                                           :dataSources="imageMap[scope.row.name]"
+                                           :dataSources="imageMap[scope.row.image_name]"
                                            :dataComponent="itemComponent">
                       </virtual-scroll-list>
                     </el-select>
@@ -156,7 +156,7 @@ export default {
   methods: {
     changeVirtualData (event, row, index) {
       const opt = event ? 0 : -1
-      const id = this.imageMap[row.name].map(img => img.full).indexOf(row.image) + opt
+      const id = this.imageMap[row.image_name].map(img => img.full).indexOf(row.image) + opt
       if (this.startAll[row.name]) {
         this.startAll[row.name] = id
       } else {
@@ -226,7 +226,7 @@ export default {
           element.key = element.name + '/' + element.service_name
           return element
         }), 'service_name')
-        this.getServiceImgs(this.forcedUserInput.artifact_args.map(r => r.name)).then(() => {
+        this.getServiceImgs(this.forcedUserInput.artifact_args.map(r => r.image_name)).then(() => {
           this.forcedUserInput.artifact_args.forEach((art, index) => {
             this.changeVirtualData(false, art, index)
           })

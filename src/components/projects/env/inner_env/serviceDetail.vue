@@ -159,7 +159,7 @@
                                filterable
                                placeholder="请选择版本"
                                class="select-image">
-                      <el-option v-for="(image,index) in imgBucket[item.name]"
+                      <el-option v-for="(image,index) in imgBucket[item.image_name]"
                                  :value="image.host+'/'+image.owner+'/'+image.name+':'+image.tag"
                                  :label="image.tag"
                                  :key="index">

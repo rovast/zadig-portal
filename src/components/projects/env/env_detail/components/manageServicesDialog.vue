@@ -87,11 +87,11 @@ export default {
         service_names: cloneDeep(this.updateServices.service_names)
       }
       if (this.opeType !== 'delete') {
-        payload = {
+        payload = [{
           ...payload,
-          env_names: [this.productInfo.env_name],
+          env_names: this.productInfo.env_name,
           vars: this.currentVars
-        }
+        }]
       }
       ;(this.opeType === 'delete'
         ? deleteEnvServicesAPI(

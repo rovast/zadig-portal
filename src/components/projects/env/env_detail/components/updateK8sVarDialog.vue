@@ -3,9 +3,20 @@
     title="更新环境变量"
     :visible.sync="updateK8sEnvVarDialogVisible"
     width="40%"
+    class="update-env-variable"
   >
-    <span
-      >全局变量列表
+    <div class="search-variable">
+      <el-input
+        size="mini"
+        class="search-input"
+        clearable
+        v-model="varSearch"
+        placeholder="搜索全局变量"
+      >
+        <i class="el-icon-search el-input__icon" slot="prefix"></i>
+      </el-input>
+    </div>
+    <div>全局变量列表
       <el-tooltip
         effect="dark"
         content="环境所用的变量，您可以修改原有 Value，也可以保持原样"
@@ -13,9 +24,9 @@
       >
         <span class="el-icon-question"></span>
       </el-tooltip>
-    </span>
+    </div>
     <div class="kv-container">
-      <el-table :data="vars" style="width: 100%;">
+      <el-table :data="remainingVars" style="width: 100%;">
         <el-table-column label="Key">
           <template slot-scope="scope">
             <span>{{ scope.row.key }}</span>
@@ -96,7 +107,14 @@ export default {
     return {
       updateK8sEnvVarDialogVisible: false,
       updataK8sEnvVarLoading: false,
-      vars: []
+      vars: [],
+      varSearch: ''
+    }
+  },
+  computed: {
+    remainingVars () {
+      const varSearch = this.varSearch.toLocaleLowerCase()
+      return this.vars.filter(item => item.key.toLocaleLowerCase().includes(varSearch))
     }
   },
   methods: {
@@ -164,3 +182,20 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+.update-env-variable {
+  .search-variable {
+    margin-top: -20px;
+    margin-bottom: 20px;
+
+    /deep/.el-input.search-input {
+      width: 300px;
+    }
+  }
+
+  .kv-container {
+    margin-top: 14px;
+  }
+}
+</style>

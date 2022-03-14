@@ -74,7 +74,7 @@
           <el-col :span="6">
             <div class="grid-content item-desc">
               <span v-if="deploy.service_type==='helm'">
-                {{`${deploy.service_name}/${deploy.container_name}`}}
+                {{`${$utils.showServiceName(deploy.container_name)}`}}
               </span>
               <router-link v-else
                            class="env-link"

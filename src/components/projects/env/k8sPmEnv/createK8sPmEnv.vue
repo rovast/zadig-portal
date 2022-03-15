@@ -371,7 +371,12 @@ export default {
     },
     variables () {
       const services = this.projectConfig.selectedService
-      return (this.projectConfig.vars || []).filter(item => (intersection(item.services, services).length))
+      const currentVars = cloneDeep((this.projectConfig.vars || []).filter(item => (intersection(item.services, services).length)))
+      currentVars.forEach(item => {
+        item.allServices = item.services
+        item.services = intersection(item.services, services)
+      })
+      return currentVars
     },
     selectedContainerMap () { // Filtered Container Services
       const containerMap = {}
@@ -727,6 +732,10 @@ export default {
           const payload = this.$utils.cloneObj(this.projectConfig)
 
           payload.services = cloneDeep(selectedServices) // full service to partial service
+          this.variables.forEach(item => {
+            item.services = item.allServices
+            delete item.allServices
+          })
           payload.vars = this.variables // variables referenced by the selected service
           delete payload.selectedService // unwanted data: selected service name
 

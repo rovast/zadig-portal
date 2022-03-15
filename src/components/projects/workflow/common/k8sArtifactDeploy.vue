@@ -121,7 +121,7 @@
     </div>
 </template>
 <script>
-import virtualListItem from './imageItem'
+import virtualListItem from '../../common/imageItem'
 import virtualScrollList from 'vue-virtual-scroll-list'
 import { getRegistryWhenBuildAPI, imagesAPI } from '@api'
 import { uniq, sortBy } from 'lodash'

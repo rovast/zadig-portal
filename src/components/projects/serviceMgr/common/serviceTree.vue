@@ -401,8 +401,7 @@ export default {
     yamlChange: {
       type: Boolean,
       required: true
-    },
-    envDialogVisible: Boolean
+    }
   },
   data () {
     return {
@@ -571,7 +570,7 @@ export default {
           this.$emit('update:showNext', true)
           this.$message.success('共享服务移除成功')
           if (!this.guideMode) {
-            this.$emit('update:envDialogVisible', true)
+            this.$emit('onDeleteService', data.service_name)
           }
         })
       })
@@ -1029,7 +1028,7 @@ export default {
             this.$message.success('删除成功')
             if (!this.guideMode) {
               this.$emit('update:showNext', true)
-              this.$emit('update:envDialogVisible', true)
+              this.$emit('onDeleteService', data.service_name)
             }
             this.$emit('onRefreshService')
             this.$emit('onRefreshSharedService')

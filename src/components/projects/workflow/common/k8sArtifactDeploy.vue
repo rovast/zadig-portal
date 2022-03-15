@@ -167,8 +167,8 @@ export default {
     changeRegistry (val) {
       if (val) {
         this.imageMap = []
-        const allClickableServeiceNames = this.allServices.map(service => service.name) // .filter(service => service.has_build)
-        imagesAPI(uniq(allClickableServeiceNames), val).then((images) => {
+        const allClickableServiceNames = this.allServices.map(service => service.image_name) // .filter(service => service.has_build)
+        imagesAPI(uniq(allClickableServiceNames), val).then((images) => {
           images = images || []
           for (const image of images) {
             image.full = `${image.name}:${image.tag}`

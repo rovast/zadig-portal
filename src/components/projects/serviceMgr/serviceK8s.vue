@@ -5,6 +5,32 @@
                  direction="rtl">
         <IntegrationCode @cancel="integrationCodeDrawer = false"/>
       </el-drawer>
+      <el-dialog title="是否更新对应环境？"
+                 custom-class="dialog-upgrade-env"
+                 :visible.sync="updateEnvDialogVisible"
+                 width="40%">
+        <div class="title">
+          <el-alert title="勾选需要更新的环境，点击确定之后，该服务将自动在对应的环境中进行更新"
+                    :closable="false"
+                    type="warning">
+          </el-alert>
+          <el-checkbox-group v-model="checkedEnvList">
+            <el-checkbox v-for="(env,index) in envNameList"
+                         :key="index"
+                         :label="env">{{env.name}}</el-checkbox>
+          </el-checkbox-group>
+          <div v-show="checkedEnvList.find(env => env.is_existed)" class="tip-desc">Zadig 中定义的服务将覆盖所选命名空间中的同名服务，请谨慎操作！</div>
+        </div>
+        <span slot="footer"
+              class="dialog-footer">
+          <el-button size="small"
+                     type="primary"
+                     @click="autoUpgradeEnv">确 定</el-button>
+          <el-button size="small"
+                     @click="updateEnvDialogVisible=false">跳过</el-button>
+
+        </span>
+      </el-dialog>
       <el-dialog :title="`选择 ${service.service_name} 需要加入的环境？`"
                  custom-class="dialog-upgrade-env"
                  :visible.sync="joinToEnvDialogVisible"
@@ -47,7 +73,7 @@
                      @click="joinToEnvDialogVisible = false">取消</el-button>
           <el-button size="small"
                      type="primary"
-                     @click="autoUpgradeEnv">确定</el-button>
+                     @click="joinToEnv">确定</el-button>
 
         </span>
       </el-dialog>
@@ -68,10 +94,10 @@
                            @onJumpToKind="jumpToKind"
                            @onRefreshProjectInfo="checkProjectFeature"
                            @onRefreshService="getServices"
+                           @onDeleteService="deleteService"
                            @onRefreshSharedService="getSharedServices"
                            @onSelectServiceChange="onSelectServiceChange"
-                           @updateYaml="updateYaml($event)"
-                           :envDialogVisible.sync="updateEnvDialogVisible"/>
+                           @updateYaml="updateYaml($event)" />
             </div>
             <template v-if="service.service_name  &&  services.length >0">
               <template v-if="service.type==='k8s'">
@@ -165,6 +191,7 @@ export default {
       joinToEnvDialogVisible: false,
       envNameList: [],
       activeEnvTabName: '',
+      deletedService: '',
       showModal: true
     }
   },
@@ -265,7 +292,7 @@ export default {
       const projectName = this.projectName
       this.projectInfo = await getSingleProjectAPI(projectName)
     },
-    autoUpgradeEnv () {
+    joinToEnv () {
       const payload = this.checkedEnvList.map(item => {
         return {
           env_name: item.name,
@@ -277,6 +304,33 @@ export default {
       const force = false
       autoUpgradeEnvAPI(projectName, payload, force).then((res) => {
         this.joinToEnvDialogVisible = false
+        this.$message({
+          message: '更新环境成功',
+          type: 'success'
+        })
+      }).catch(error => {
+        const description = error.response.data.description
+        const res = description.match('the following services are modified since last update')
+        if (res) {
+          this.updateEnv(description)
+        }
+      })
+    },
+    deleteService (serviceName) {
+      this.deletedService = serviceName
+      this.updateEnvDialogVisible = true
+    },
+    autoUpgradeEnv () {
+      const payload = this.checkedEnvList.map(item => {
+        return {
+          env_name: item.name,
+          service_names: [this.deletedService]
+        }
+      })
+      const projectName = this.projectName
+      const force = false
+      autoUpgradeEnvAPI(projectName, payload, force).then((res) => {
+        this.updateEnvDialogVisible = false
         this.$message({
           message: '更新环境成功',
           type: 'success'

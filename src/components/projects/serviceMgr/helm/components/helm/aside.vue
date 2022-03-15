@@ -44,6 +44,9 @@
                 <el-table-column prop="name"
                                  label="服务组件">
                 </el-table-column>
+                <el-table-column prop="image_name"
+                                 label="镜像名">
+                </el-table-column>
                 <el-table-column prop="image"
                                  label="当前镜像版本">
                 </el-table-column>

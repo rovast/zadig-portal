@@ -9,6 +9,7 @@
     </div>
     <el-table :data="serviceModules" stripe style="width: 100%;">
       <el-table-column prop="name" label="服务组件"> </el-table-column>
+      <el-table-column prop="image_name" label="镜像名"> </el-table-column>
       <el-table-column prop="image" label="当前镜像版本"> </el-table-column>
       <el-table-column label="构建信息/操作">
         <template slot-scope="scope">

@@ -436,6 +436,7 @@ export default {
         this.k8sArtifactDeployData.services.forEach(element => {
           payload.artifact_args.push({
             service_name: element.service_name,
+            image_name: element.image_name,
             name: element.name,
             image: element.image,
             deploy: element.deploy

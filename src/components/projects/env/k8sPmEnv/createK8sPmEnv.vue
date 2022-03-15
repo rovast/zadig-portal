@@ -130,7 +130,7 @@
                     <template v-if="service.type==='k8s' && service.containers">
                       <el-form-item v-for="con of service.containers" :key="con.name" :label="con.name">
                         <el-select v-model="con.image" :disabled="rollbackMode" filterable size="small">
-                          <el-option v-for="img of imageMap[con.name]" :key="`${img.name}-${img.tag}`" :label="img.tag" :value="img.full"></el-option>
+                          <el-option v-for="img of imageMap[con.image_name]" :key="`${img.name}-${img.tag}`" :label="img.tag" :value="img.full"></el-option>
                         </el-select>
                       </el-form-item>
                     </template>
@@ -473,7 +473,7 @@ export default {
             const containers = ser.containers
             if (containers) {
               for (const con of containers) {
-                containerNames.push(con.name)
+                containerNames.push(con.image_name)
                 Object.defineProperty(con, 'defaultImage', {
                   value: con.image,
                   enumerable: false,

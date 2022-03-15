@@ -97,8 +97,8 @@
                 <template slot-scope="{ row }">
                   <el-popover placement="left" width="400" trigger="hover">
                     <el-table :data="row.envs" class="blank-background-header">
-                      <el-table-column property="key" label="Key"></el-table-column>
-                      <el-table-column property="value" label="Value"></el-table-column>
+                      <el-table-column prop="key" label="Key"></el-table-column>
+                      <el-table-column prop="value" label="Value"></el-table-column>
                     </el-table>
                     <el-button slot="reference" type="text">查看</el-button>
                   </el-popover>
@@ -651,7 +651,7 @@ export default {
       const envs = {}
       this.workflow.targets &&
         this.workflow.targets.forEach(target => {
-          envs[target.name] = target.envs
+          envs[`${target.name}_${target.service_name}`] = target.envs
         })
       const summary = buildArr.map(element => {
         let currentIssues = jiraIssues.find(item => {

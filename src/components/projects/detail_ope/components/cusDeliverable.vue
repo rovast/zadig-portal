@@ -21,6 +21,7 @@
 </template>
 <script>
 /* eslint-disable no-template-curly-in-string */
+const defaultImage = '{{.IMAGE_NAME}}'
 const defaultValue = '{{.SERVICE}}'
 const placeholder = ['{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.REPO_TAG}}']
 export default {
@@ -35,25 +36,25 @@ export default {
       customerImage: {
         pr: {
           label: 'PR 生成镜像规则',
-          service: defaultValue,
+          service: defaultImage,
           value: placeholder[0],
           placeholder: placeholder[0]
         },
         branch: {
-          label: 'BRNACH 生成镜像规则',
-          service: defaultValue,
+          label: 'BRANCH 生成镜像规则',
+          service: defaultImage,
           value: placeholder[1],
           placeholder: placeholder[1]
         },
         prBranch: {
           label: 'PR + BRANCH 生成镜像规则',
-          service: defaultValue,
+          service: defaultImage,
           value: placeholder[2],
           placeholder: placeholder[2]
         },
         tag: {
           label: 'TAG 生成镜像规则',
-          service: defaultValue,
+          service: defaultImage,
           value: placeholder[3],
           placeholder: placeholder[3]
         }

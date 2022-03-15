@@ -2,7 +2,7 @@
   <el-dialog class="form" title="添加成员" width="550px" :visible.sync="addUserFormVisible">
     <el-form :model="form" ref="form" :rules="formRules" label-width="100px">
       <el-form-item label="用户名称" prop="uids">
-        <el-select class="select" v-model="form.uids" filterable multiple size="small" placeholder="请输入用户名称进行搜索">
+        <el-select class="select" v-model="form.uids" filterable multiple remote :remote-method="remoteMethod" :loading="userSearchLoading" size="small" placeholder="请输入用户名称进行搜索">
           <el-option label="所有用户" value="*">
             <span>所有用户</span>
           </el-option>
@@ -38,7 +38,6 @@
 </template>
 <script>
 import { usersAPI, addRoleBindingsAPI } from '@/api'
-
 export default {
   name: 'addRoleBind',
   props: {
@@ -49,6 +48,7 @@ export default {
   data () {
     return {
       addUserFormVisible: false,
+      userSearchLoading: false,
       users: [],
       form: {
         uids: [],
@@ -85,13 +85,26 @@ export default {
     getUsers () {
       const projectName = this.projectName
       const payload = {
-        name: '',
         page: 1,
-        per_page: 1000000
+        per_page: 200
       }
       usersAPI(payload, projectName).then(res => {
-        this.users = _.uniqBy(res.users, 'uid')
+        this.users = res.users
       })
+    },
+    remoteMethod (query) {
+      if (query !== '') {
+        this.userSearchLoading = true
+        const payload = {
+          name: query
+        }
+        usersAPI(payload).then(res => {
+          this.userSearchLoading = false
+          this.users = res.users
+        })
+      } else {
+        this.getUsers()
+      }
     },
     async addMember () {
       const { uids, name } = this.form

@@ -150,16 +150,16 @@
                     <template v-if="service.type==='k8s' && service.containers">
                       <el-form-item v-for="con of service.containers" :key="con.name" :label="con.name">
                         <el-select v-model="con.image" :disabled="rollbackMode" filterable size="small">
-                          <virtual-scroll-list v-if="imageMap[con.name] && imageMap[con.name].length > 200"
+                          <virtual-scroll-list v-if="imageMap[con.image_name] && imageMap[con.image_name].length > 200"
                                            style="height: 272px; overflow-y: auto;"
                                            :size="virtualData.size"
                                            :keeps="virtualData.keeps"
                                            :start="virtualData.start"
                                            :dataKey="(img)=>{ return img.name+'-'+img.tag}"
-                                           :dataSources="imageMap[con.name]"
+                                           :dataSources="imageMap[con.image_name]"
                                            :dataComponent="itemComponent">
                           </virtual-scroll-list>
-                          <el-option v-else v-for="img of imageMap[con.name]" :key="`${img.name}-${img.tag}`" :label="img.tag" :value="img.full"></el-option>
+                          <el-option v-else v-for="img of imageMap[con.image_name]" :key="`${img.name}-${img.tag}`" :label="img.tag" :value="img.full"></el-option>
                         </el-select>
                       </el-form-item>
                     </template>
@@ -532,7 +532,7 @@ export default {
             const containers = ser.containers
             if (containers) {
               for (const con of containers) {
-                containerNames.push(con.name)
+                containerNames.push(con.image_name)
                 Object.defineProperty(con, 'defaultImage', {
                   value: con.image,
                   enumerable: false,
@@ -781,8 +781,8 @@ export default {
           if (containers) {
             for (const con of ser.containers) {
               if (select === 'latest') {
-                if (this.imageMap[con.name]) {
-                  con.image = this.imageMap[con.name][0].full
+                if (this.imageMap[con.image_name]) {
+                  con.image = this.imageMap[con.image_name][0].full
                 } else {
                   con.image = con.defaultImage
                 }

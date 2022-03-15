@@ -14,7 +14,7 @@
     </div>
     <div class="operation">
       <el-select v-model="selectedProjects" @change="changeProject" size="small" collapse-tags multiple placeholder="筛选项目">
-        <el-option v-for="item in projects" :key="item.name" :label="item.name" :value="item.name"></el-option>
+        <el-option v-for="item in projects" :key="item.name" :label="item.alias" :value="item.name"></el-option>
       </el-select>
       <el-date-picker
         v-model="selectedDuration"

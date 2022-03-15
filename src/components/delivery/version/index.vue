@@ -21,7 +21,7 @@
           <span>
             Hook 配置
             <a
-              href="https://docs.koderover.com/zadig/delivery/version-management/#hook-%E5%A4%96%E9%83%A8%E7%B3%BB%E7%BB%9F"
+              href="https://docs.koderover.com/zadig/project/version/#hook-%E5%A4%96%E9%83%A8%E7%B3%BB%E7%BB%9F"
               target="_blank"
               rel="noopener noreferrer"
             >

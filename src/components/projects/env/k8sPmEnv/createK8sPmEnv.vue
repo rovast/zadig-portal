@@ -92,20 +92,23 @@
           v-if="projectConfig.source==='system' && $utils.isEmpty(pmServiceMap)"
           prop="selectedService"
         >
-          <el-select
-            v-model="projectConfig.selectedService"
-            size="small"
-            placeholder="选择服务"
-            filterable
-            clearable
-            multiple
-            collapse-tags
-          >
-            <el-option disabled label="全选" value="ALL" :class="{selected: projectConfig.selectedService.length === serviceNames.length}" style="color: #606266;">
-              <span style=" display: inline-block; width: 100%; font-weight: normal; cursor: pointer;" @click="projectConfig.selectedService = serviceNames">全选</span>
-            </el-option>
-            <el-option v-for="serviceName in serviceNames" :key="serviceName" :label="serviceName" :value="serviceName"></el-option>
-          </el-select>
+          <div class="select-service">
+            <el-select
+              v-model="projectConfig.selectedService"
+              size="small"
+              placeholder="选择服务"
+              filterable
+              clearable
+              multiple
+              collapse-tags
+            >
+              <el-option disabled label="全选" value="ALL" :class="{selected: projectConfig.selectedService.length === serviceNames.length}" style="color: #606266;">
+                <span style=" display: inline-block; width: 100%; font-weight: normal; cursor: pointer;" @click="projectConfig.selectedService = serviceNames">全选</span>
+              </el-option>
+              <el-option v-for="serviceName in serviceNames" :key="serviceName" :label="serviceName" :value="serviceName"></el-option>
+            </el-select>
+            <el-button size="mini" plain @click="projectConfig.selectedService = []">清空</el-button>
+          </div>
         </el-form-item>
       </el-form>
       <div
@@ -929,6 +932,18 @@ export default {
     p {
       color: #606266;
       font-size: 15px;
+    }
+  }
+
+  .select-service {
+    position: relative;
+    display: inline-block;
+    width: 410px;
+
+    /deep/.el-button {
+      position: absolute;
+      right: 12px;
+      bottom: 6px;
     }
   }
 

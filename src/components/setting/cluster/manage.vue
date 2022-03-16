@@ -181,7 +181,7 @@
               <el-link
                 style="font-size: 14px; vertical-align: baseline;"
                 type="primary"
-                :href="`https://docs.koderover.com/zadig/pages/cluster_manage/`"
+                :href="`https://docs.koderover.com/zadig/pages/cluster_manage/#缓存资源配置`"
                 :underline="false"
                 target="_blank"
               >帮助</el-link>

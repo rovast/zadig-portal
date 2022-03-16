@@ -5,7 +5,7 @@
     element-loading-spinner="iconfont iconfont-loading iconvery-versionmana"
     class="version-list-container"
   >
-    <div v-if="versionList.length > 0" class="operation">
+    <div class="operation">
       <!-- <el-select
         style="width: 160px;"
         v-model="selectedService"
@@ -205,7 +205,7 @@ export default {
           updateSingleProjectAPI(this.projectName, payload).then(res => {
             this.$message({
               type: 'success',
-              message: '更新成功'
+              message: '配置更新成功'
             })
           })
         })
@@ -216,17 +216,17 @@ export default {
       return this.$route.params.project_name
     },
     showHookConfig () {
-      if (!this.projectName) {
-        return false
-      }
       const project = this.$store.getters.projectList.find(
         project => project.name === this.projectName
       )
-      if (project && project.deployType === 'helm') {
+      if (!this.projectName) {
+        return false
+      } else if (project && project.deployType === 'helm') {
         this.initData()
         return true
+      } else {
+        return false
       }
-      return false
     }
   },
   created () {
@@ -273,6 +273,7 @@ export default {
 
   .operation {
     margin-bottom: 16px;
+    line-height: 40px;
     text-align: right;
 
     .hook-config {

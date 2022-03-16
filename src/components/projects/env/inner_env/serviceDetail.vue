@@ -188,7 +188,6 @@
               <template slot-scope="scope">
                 <el-input-number size="mini"
                                  :min="0"
-                                 :max="20"
                                  @change="(currentValue)=>{scaleService(scope.row.name,scope.row.type,currentValue)}"
                                  v-model="scope.row.replicas"></el-input-number>
               </template>

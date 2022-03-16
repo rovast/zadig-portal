@@ -730,14 +730,15 @@ export default {
 
           picked2D.push(picked1D)
           const payload = this.$utils.cloneObj(this.projectConfig)
-
-          payload.services = cloneDeep(selectedServices) // full service to partial service
-          this.variables.forEach(item => {
-            item.services = item.allServices
-            delete item.allServices
-          })
-          payload.vars = this.variables // variables referenced by the selected service
-          delete payload.selectedService // unwanted data: selected service name
+          if (this.$utils.isEmpty(this.pmServiceMap)) {
+            payload.services = cloneDeep(selectedServices) // full service to partial service
+            this.variables.forEach(item => {
+              item.services = item.allServices
+              delete item.allServices
+            })
+            payload.vars = this.variables // variables referenced by the selected service
+            delete payload.selectedService // unwanted data: selected service name
+          }
 
           payload.source = 'spock'
           if (

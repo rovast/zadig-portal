@@ -102,14 +102,11 @@ export default {
           payload
         )
         : autoUpgradeEnvAPI(this.projectName, payload, false)
-      ).then(res => {
-        setTimeout(() => {
-          this.$message.success(`${this.opeDesc}服务成功！`)
-          this.closeDialog()
-          this.fetchAllData()
-          this.loading = false
-        }, 1000)
-      }).catch(() => {
+      ).then(() => {
+        this.$message.success(`${this.opeDesc}服务成功！`)
+        this.closeDialog()
+        this.fetchAllData()
+      }).finally(() => {
         this.loading = false
       })
     },

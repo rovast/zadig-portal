@@ -52,13 +52,11 @@ export default {
       this.updateEnvDialogVisible = true
     },
     autoUpgradeEnv () {
-      const payload = this.checkList.map(env => {
-        return {
-          env_name: env
-        }
-      })
+      const payload = {
+        env_names: this.checkList
+      }
       const projectName = this.projectName
-      autoUpgradeEnvAPI(projectName, payload, false).then((res) => {
+      autoUpgradeEnvAPI(projectName, payload).then((res) => {
         this.$router.push(`/v1/projects/detail/${projectName}/envs`)
         this.$message({
           message: '更新环境成功',

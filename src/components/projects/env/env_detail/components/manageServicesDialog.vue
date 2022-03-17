@@ -100,10 +100,12 @@ export default {
           payload
         )
         : autoUpgradeEnvAPI(this.projectName, payload, false)
-      ).then(res => {
+      ).then(() => {
         this.$message.success(`${this.opeDesc}服务成功！`)
         this.closeDialog()
         this.fetchAllData()
+      }).finally(() => {
+        this.loading = false
       })
     },
     closeDialog () {

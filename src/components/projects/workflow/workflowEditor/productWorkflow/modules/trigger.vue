@@ -548,7 +548,6 @@ export default {
               this.$set(repo, 'branchPRsMap', repoInfo && repoInfo.branchPRsMap)
               this.$set(repo, 'tags', repoInfo && repoInfo.tags)
               this.$set(repo, 'prNumberPropName', 'pr')
-              this.$set(repo, 'releaseMethod', 'branch')
               // make sure branch/pr/tag is reactive
               this.$set(repo, 'branch', repo.branch || '')
               this.$set(
@@ -648,11 +647,6 @@ export default {
         'isGithub',
         'prNumberPropName',
         'id',
-        'releaseMethod',
-        'showBranch',
-        'showTag',
-        'showSwitch',
-        'showPR',
         'pr',
         'branch'
       ]

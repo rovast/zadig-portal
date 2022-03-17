@@ -354,9 +354,11 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const payload = {
-          env_names: this.checkedEnvList.map(env => env.name)
-        }
+        const payload = this.checkedEnvList.map(env => {
+          return {
+            env_name: env.name
+          }
+        })
         const force = true
         const projectName = this.projectName
         autoUpgradeEnvAPI(projectName, payload, force).then((res) => {

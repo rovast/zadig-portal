@@ -14,7 +14,7 @@
           <el-input v-model="filterInfo.search" size="mini" placeholder="搜索" suffix-icon="el-icon-search"></el-input>
           <div class="middle">
             <el-checkbox-group v-model="filterInfo.selectList">
-              <el-checkbox class="filter-item" v-for="(value, index) in filteredList" :key="index" :label="value">{{ value.text || value }}</el-checkbox>
+              <el-checkbox class="filter-item" v-for="(value, index) in filteredList" :key="index" :label="value">{{ value.text || $utils.showServiceName(value) }}</el-checkbox>
             </el-checkbox-group>
           </div>
           <div class="bottom">

@@ -92,20 +92,23 @@
           v-if="projectConfig.source==='system' && $utils.isEmpty(pmServiceMap)"
           prop="selectedService"
         >
-          <el-select
-            v-model="projectConfig.selectedService"
-            size="small"
-            placeholder="选择服务"
-            filterable
-            clearable
-            multiple
-            collapse-tags
-          >
-            <el-option disabled label="全选" value="ALL" :class="{selected: projectConfig.selectedService.length === serviceNames.length}" style="color: #606266;">
-              <span style=" display: inline-block; width: 100%; font-weight: normal; cursor: pointer;" @click="projectConfig.selectedService = serviceNames">全选</span>
-            </el-option>
-            <el-option v-for="serviceName in serviceNames" :key="serviceName" :label="serviceName" :value="serviceName"></el-option>
-          </el-select>
+          <div class="select-service">
+            <el-select
+              v-model="projectConfig.selectedService"
+              size="small"
+              placeholder="选择服务"
+              filterable
+              clearable
+              multiple
+              collapse-tags
+            >
+              <el-option disabled label="全选" value="ALL" :class="{selected: projectConfig.selectedService.length === serviceNames.length}" style="color: #606266;">
+                <span style=" display: inline-block; width: 100%; font-weight: normal; cursor: pointer;" @click="projectConfig.selectedService = serviceNames">全选</span>
+              </el-option>
+              <el-option v-for="serviceName in serviceNames" :key="serviceName" :label="serviceName" :value="serviceName"></el-option>
+            </el-select>
+            <el-button size="mini" plain @click="projectConfig.selectedService = []">清空</el-button>
+          </div>
         </el-form-item>
       </el-form>
       <div
@@ -368,7 +371,12 @@ export default {
     },
     variables () {
       const services = this.projectConfig.selectedService
-      return (this.projectConfig.vars || []).filter(item => (intersection(item.services, services).length))
+      const currentVars = cloneDeep((this.projectConfig.vars || []).filter(item => (intersection(item.services, services).length)))
+      currentVars.forEach(item => {
+        item.allServices = item.services
+        item.services = intersection(item.services, services)
+      })
+      return currentVars
     },
     selectedContainerMap () { // Filtered Container Services
       const containerMap = {}
@@ -722,10 +730,15 @@ export default {
 
           picked2D.push(picked1D)
           const payload = this.$utils.cloneObj(this.projectConfig)
-
-          payload.services = cloneDeep(selectedServices) // full service to partial service
-          payload.vars = this.variables // variables referenced by the selected service
-          delete payload.selectedService // unwanted data: selected service name
+          if (this.$utils.isEmpty(this.pmServiceMap)) {
+            payload.services = cloneDeep(selectedServices) // full service to partial service
+            this.variables.forEach(item => {
+              item.services = item.allServices
+              delete item.allServices
+            })
+            payload.vars = this.variables // variables referenced by the selected service
+            delete payload.selectedService // unwanted data: selected service name
+          }
 
           payload.source = 'spock'
           if (
@@ -929,6 +942,18 @@ export default {
     p {
       color: #606266;
       font-size: 15px;
+    }
+  }
+
+  .select-service {
+    position: relative;
+    display: inline-block;
+    width: 410px;
+
+    /deep/.el-button {
+      position: absolute;
+      right: 12px;
+      bottom: 6px;
     }
   }
 

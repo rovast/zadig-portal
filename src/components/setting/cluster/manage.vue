@@ -56,7 +56,7 @@
               :href="`https://docs.koderover.com/zadig/pages/cluster_manage/`"
               :underline="false"
               target="_blank"
-            >帮助</el-link>查看 Agent 部署样例
+            >帮助</el-link> 查看 Agent 部署样例。
           </span>
           <span class="tip-item">
             - 如需配置工作流任务的“调度策略”和“缓存资源配置”，请在集群正常接入后进行配置，请参阅
@@ -66,8 +66,7 @@
               :href="`https://docs.koderover.com/zadig/pages/cluster_manage/`"
               :underline="false"
               target="_blank"
-            >帮助</el-link>
-            查看具体的配置。
+            >帮助</el-link> 查看具体的配置。
           </span>
         </slot>
       </el-alert>
@@ -255,6 +254,13 @@
                     ></el-option>
                   </el-select>
                 </el-form-item>
+                <el-form-item prop="cache.nfs_properties.path">
+                  <span slot="label">
+                    缓存目录规则
+                  </span>
+                  <el-input v-model="cluster.cache.nfs_properties.path" size="small" placeholder="请输入目录" clearable></el-input>
+                  <span class="tip">支持绝对路径比如 /、/cache 等</span>
+                </el-form-item>
               </template>
             </template>
           </section>
@@ -385,7 +391,8 @@ const clusterInfo = {
       provision_type: 'dynamic',
       storage_class: '',
       storage_size_in_gib: 0,
-      pvc: ''
+      pvc: '',
+      path: ''
     }
   },
   advanced_config: {
@@ -865,6 +872,11 @@ export default {
       .el-radio {
         padding: 5px 0;
       }
+    }
+
+    .tip {
+      color: #909399;
+      font-size: 12px;
     }
   }
 

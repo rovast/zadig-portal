@@ -27,8 +27,8 @@
       </template>
     </div>
     <div slot="footer">
-      <el-button @click="closeDialog" size="small">取 消</el-button>
-      <el-button type="primary" size="small" @click="updateEnvironment">确 定</el-button>
+      <el-button @click="closeDialog" size="small" :disabled="loading">取 消</el-button>
+      <el-button type="primary" size="small" @click="updateEnvironment" :loading="loading">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -59,7 +59,8 @@ export default {
         // env_names: [], // use this parameter when adding or updating services
         service_names: []
         // vars: []  // use this parameter when adding or updating services
-      }
+      },
+      loading: false
     }
   },
   computed: {
@@ -93,6 +94,7 @@ export default {
           vars: this.currentVars
         }]
       }
+      this.loading = true
       ;(this.opeType === 'delete'
         ? deleteEnvServicesAPI(
           this.projectName,
@@ -122,12 +124,12 @@ export default {
       let services = []
       switch (this.opeType) {
         case 'add':
-          vars = cloneDeep(this.allProductInfo.vars)
+          vars = cloneDeep(this.allProductInfo.vars) || []
           services = difference(this.allProductInfo.services, productServices)
           break
         case 'update':
         case 'delete':
-          vars = cloneDeep(this.productInfo.vars)
+          vars = cloneDeep(this.productInfo.vars) || []
           services = productServices
           break
       }

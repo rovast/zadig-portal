@@ -118,7 +118,7 @@
                   >
                     <el-button
                       type="primary"
-                      @click="envSource==='pm' ? updateK8sEnv(productInfo) : openUpdateHelmEnv"
+                      @click="envSource==='pm' ? updateK8sEnv(productInfo) : openUpdateHelmEnv()"
                       size="mini"
                       plain
                     >更新环境</el-button>

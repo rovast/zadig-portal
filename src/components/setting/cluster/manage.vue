@@ -155,7 +155,11 @@
                 <el-option label="优先调度" value="preferred"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item v-if="cluster.advanced_config.strategy && cluster.advanced_config.strategy !== 'normal'" prop="advanced_config.node_labels" label="选择标签">
+            <el-form-item
+              v-if="cluster.advanced_config.strategy && cluster.advanced_config.strategy !== 'normal'"
+              prop="advanced_config.node_labels"
+              label="选择标签"
+            >
               <el-select v-model="cluster.advanced_config.node_labels" placeholder="请选择" multiple style="width: 100%;" size="small">
                 <el-option v-for="node in clusterNodes.labels" :key="node" :label="node" :value="node"></el-option>
               </el-select>
@@ -205,7 +209,7 @@
                   <router-link to="/v1/system/storage" style="color: #606266;">集成对象存储</router-link>
                 </el-option>
               </el-select>
-            </el-form-item> -->
+            </el-form-item>-->
             <template v-if="cluster.cache.medium_type === 'nfs'">
               <el-form-item prop="cache.nfs_properties.provision_type">
                 <span slot="label">选择存储资源</span>
@@ -254,14 +258,25 @@
                     ></el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item prop="cache.nfs_properties.path">
-                  <span slot="label">
-                    缓存目录规则
-                  </span>
-                  <el-input v-model="cluster.cache.nfs_properties.path" size="small" placeholder="请输入目录" clearable></el-input>
-                  <span class="tip">支持绝对路径比如 /、/cache 等</span>
-                </el-form-item>
               </template>
+              <el-form-item prop="cache.nfs_properties.subpath">
+                <span slot="label">
+                  缓存目录规则
+                  <el-tooltip effect="dark" placement="right">
+                    <div slot="content">
+                      缓存目录规则支持以下变量：<br>
+                      $PROJECT   项目名称<br>
+                      $WORKFLOW  工作流名称<br>
+                      $SERVICE   服务组件名称 (单次执行测试任务时，该值可能为空)<br>
+                      也可使用相对路径比如 cache 等来实现共享缓存，空值表示集群存储的根目录
+                    </div>
+                    <i class="el-icon-question tooltip"></i>
+                  </el-tooltip>
+                </span>
+                <el-input v-model="cluster.cache.nfs_properties.subpath" size="small" placeholder="请输入相对路径">
+                  <el-button slot="append" @click="cluster.cache.nfs_properties.subpath = ''" size="mini">重置</el-button>
+                </el-input>
+              </el-form-item>
             </template>
           </section>
         </template>
@@ -363,7 +378,7 @@ import {
 } from '@api'
 import { wordTranslate } from '@utils/wordTranslate'
 import bus from '@utils/eventBus'
-import { cloneDeep, omit } from 'lodash'
+import { cloneDeep, omit, isNil } from 'lodash'
 const validateClusterName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入集群名称'))
@@ -392,7 +407,7 @@ const clusterInfo = {
       storage_class: '',
       storage_size_in_gib: 0,
       pvc: '',
-      path: ''
+      subpath: '$PROJECT/$WORKFLOW/$SERVICE'
     }
   },
   advanced_config: {
@@ -496,6 +511,17 @@ export default {
           required: true,
           message: '请选择 PVC',
           type: 'string'
+        },
+        'cache.nfs_properties.subpath': {
+          required: false,
+          type: 'string',
+          validator: (rule, value, callback) => {
+            if (value.charAt(0) === '/') {
+              callback(new Error('请填写相对路径，不能以 / 开头'))
+            } else {
+              callback()
+            }
+          }
         }
       },
       clusterNodes: {
@@ -545,7 +571,9 @@ export default {
     async getStorage () {
       await getStorageListAPI().then(res => {
         this.allStorage = res
-        this.externalStorage = res.filter(storage => !storage.endpoint.startsWith('zadig-minio.'))
+        this.externalStorage = res.filter(
+          storage => !storage.endpoint.startsWith('zadig-minio.')
+        )
       })
     },
     getClusterNode (clusterId) {
@@ -605,6 +633,10 @@ export default {
       } else if (operate === 'recover') {
         this.recoverCluster(currentCluster.id)
       } else if (operate === 'edit') {
+        // set default value when edit subpath
+        if (isNil(currentCluster.cache.nfs_properties.subpath)) {
+          currentCluster.cache.nfs_properties.subpath = '$PROJECT/$WORKFLOW/$SERVICE'
+        }
         const namesapce = currentCluster.local ? 'unknown' : 'koderover-agent'
         this.cluster = cloneDeep(currentCluster)
         if (this.isConfigurable) {
@@ -613,7 +645,9 @@ export default {
         if (this.cluster.cache.medium_type === 'object') {
           await this.getStorage()
         } else if (this.cluster.cache.medium_type === 'nfs') {
-          this.allStorageClass = await getClusterStorageClassAPI(currentCluster.id)
+          this.allStorageClass = await getClusterStorageClassAPI(
+            currentCluster.id
+          )
           this.allPvc = await getClusterPvcAPI(currentCluster.id, namesapce)
         }
         this.dialogClusterFormVisible = true
@@ -872,11 +906,6 @@ export default {
       .el-radio {
         padding: 5px 0;
       }
-    }
-
-    .tip {
-      color: #909399;
-      font-size: 12px;
     }
   }
 

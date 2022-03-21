@@ -264,10 +264,10 @@
                   缓存目录规则
                   <el-tooltip effect="dark" placement="right">
                     <div slot="content">
-                      缓存目录规则支持以下变量：<br>
-                      $PROJECT   项目名称<br>
-                      $WORKFLOW  工作流名称<br>
-                      $SERVICE_MODULE   服务组件名称 (执行测试工作流时，该值为空)<br>
+                      缓存目录规则支持以下变量：<br><br>
+                      <span style="display: inline-block; width: 120px;">$PROJECT</span><span>项目名称</span><br>
+                      <span style="display: inline-block; width: 120px;">$WORKFLOW</span>工作流名称<br>
+                      <span style="display: inline-block; width: 120px;">$SERVICE_MODULE</span>服务组件名称 (执行测试工作流时，该值为空)<br><br>
                       也可使用相对路径比如 cache 等来实现共享缓存，空值表示集群存储的根目录
                     </div>
                     <i class="el-icon-question tooltip"></i>

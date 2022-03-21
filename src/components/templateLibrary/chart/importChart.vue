@@ -31,7 +31,7 @@
 
 <script>
 import GitRepo from '../../projects/serviceMgr/helm/components/common/gitRepo.vue'
-import { createChartTemplateAPI, updateChartTemplateAPI } from '@api'
+import { createChartTemplateAPI, updateChartTemplateAPI, getRepoFilesAPI } from '@api'
 
 const controlParam = {
   hiddenCreateButton: true,
@@ -67,6 +67,17 @@ export default {
       this.loading = true
       let res
       const name = this.tempData.name
+      if (this.$refs.gitRepo.getGitSource(this.tempData.codeHostID) === 'gerrit') {
+        const params = {
+          codehostId: this.tempData.codeHostID,
+          repoOwner: this.tempData.owner,
+          repoName: this.tempData.repo,
+          branchName: this.tempData.branch,
+          path: this.tempData.path,
+          type: 'gerrit'
+        }
+        await getRepoFilesAPI(params)
+      }
       if (this.isUpdate) {
         res = await updateChartTemplateAPI(
           this.tempData.name,

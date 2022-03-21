@@ -44,6 +44,12 @@ export default {
     }
   },
   methods: {
+    getGitSource (id) {
+      const codehostItem = this.allCodeHosts.find(item => {
+        return item.id === id
+      })
+      return codehostItem ? codehostItem.type : ''
+    },
     async queryCodeSource () {
       const res = await getCodeSourceMaskedAPI().catch(error => console.log(error))
       if (res) {
@@ -104,7 +110,9 @@ export default {
         owner: '',
         repo: '',
         branch: '',
-        valuesPaths: []
+        valuesPaths: [],
+        path: '',
+        isDir: false
       }
       this.$nextTick(() => {
         this.$refs.repoForm && this.$refs.repoForm.clearValidate()

@@ -1807,3 +1807,15 @@ export function getServiceDeploySummaryAPI ({ startDate, endDate, projectNames }
 export function getServiceFailureAPI ({ startDate, endDate, projectNames }) {
   return http.post(`/api/aslan/stat/quality/deployTopFiveFailureMeasure`, { startDate, endDate, productNames: projectNames })
 }
+
+// environment config
+export function getConfigYamlAPI ({ codehostId, repoOwner, repoName, branchName, path, isDir }) {
+  const params = {
+    repoOwner,
+    repoName,
+    branchName,
+    path,
+    isDir
+  }
+  return http.get(`/api/aslan/code/workspace/getcontents/${codehostId}`, { params })
+}

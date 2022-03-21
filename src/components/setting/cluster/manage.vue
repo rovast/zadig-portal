@@ -407,7 +407,7 @@ const clusterInfo = {
       storage_class: '',
       storage_size_in_gib: 0,
       pvc: '',
-      subpath: '$PROJECT/$WORKFLOW/$SERVICE'
+      subpath: '$PROJECT/$WORKFLOW/$SERVICE_MODULE'
     }
   },
   advanced_config: {
@@ -635,7 +635,7 @@ export default {
       } else if (operate === 'edit') {
         // set default value when edit subpath
         if (isNil(currentCluster.cache.nfs_properties.subpath)) {
-          currentCluster.cache.nfs_properties.subpath = '$PROJECT/$WORKFLOW/$SERVICE'
+          currentCluster.cache.nfs_properties.subpath = '$PROJECT/$WORKFLOW/$SERVICE_MODULE'
         }
         const namesapce = currentCluster.local ? 'unknown' : 'koderover-agent'
         this.cluster = cloneDeep(currentCluster)

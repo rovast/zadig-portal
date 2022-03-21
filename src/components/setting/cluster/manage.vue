@@ -267,7 +267,7 @@
                       缓存目录规则支持以下变量：<br>
                       $PROJECT   项目名称<br>
                       $WORKFLOW  工作流名称<br>
-                      $SERVICE_MODULE   服务组件名称 (单次执行测试任务时，该值可能为空)<br>
+                      $SERVICE_MODULE   服务组件名称 (执行测试工作流时，该值为空)<br>
                       也可使用相对路径比如 cache 等来实现共享缓存，空值表示集群存储的根目录
                     </div>
                     <i class="el-icon-question tooltip"></i>

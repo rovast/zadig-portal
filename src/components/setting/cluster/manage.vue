@@ -378,7 +378,7 @@ import {
 } from '@api'
 import { wordTranslate } from '@utils/wordTranslate'
 import bus from '@utils/eventBus'
-import { cloneDeep, omit, isNil } from 'lodash'
+import { cloneDeep, omit } from 'lodash'
 const validateClusterName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入集群名称'))
@@ -634,7 +634,7 @@ export default {
         this.recoverCluster(currentCluster.id)
       } else if (operate === 'edit') {
         // set default value when edit subpath
-        if (isNil(currentCluster.cache.nfs_properties.subpath)) {
+        if (currentCluster.cache.medium_type === '') {
           currentCluster.cache.nfs_properties.subpath = '$PROJECT/$WORKFLOW/$SERVICE_MODULE'
         }
         const namesapce = currentCluster.local ? 'unknown' : 'koderover-agent'

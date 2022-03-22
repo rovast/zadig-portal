@@ -22,79 +22,39 @@
                 </div>
               </el-col>
 
-              <el-col v-if="build.showBranch" :span="7">
-                <el-select v-if="build.branchNames && build.branchNames.length > 0"
-                            v-model.trim="build.branch"
+              <el-col :span="7">
+                <el-select v-model="build.branchOrTag"
                             filterable
                             clearable
-                            allow-create
                             size="small"
-                            placeholder="请选择分支">
-                  <el-option v-for="branch of build.branchNames"
-                              :key="branch"
-                              :label="branch"
-                              :value="branch"></el-option>
+                            value-key="id"
+                            placeholder="请选择分支或标签"
+                            @change="build[build.prNumberPropName] = null">
+                  <el-option-group
+                    v-for="group in build.branchAndTagList"
+                    :key="group.label"
+                    :label="group.label">
+                    <el-option
+                      v-for="(item, index) in group.options"
+                      :key="index"
+                      :label="item.name"
+                      :value="item">
+                    </el-option>
+                  </el-option-group>
                 </el-select>
-                <el-tooltip v-else
-                            content="请求分支失败，请手动输入分支"
-                            placement="top"
-                            popper-class="gray-popper">
-                  <el-input v-model="build.branch"
-                            class="short-input"
-                            size="small"
-                            placeholder="请填写分支"></el-input>
-                </el-tooltip>
               </el-col>
 
-              <el-col v-if="build.showTag" :span="7">
-                <el-select v-if="build.tags && build.tags.length > 0"
-                            v-model="build.tag"
-                            size="small"
-                            placeholder="请选择 Tag"
-                            filterable
-                            clearable>
-                  <el-option v-for="(item,index) in build.tags"
-                              :key="index"
-                              :label="item.name"
-                              :value="item.name">
-                  </el-option>
-                </el-select>
-                <el-tooltip v-else
-                            content="请求 Release Tag 失败，支持手动输入 Release Tag"
-                            placement="top"
-                            popper-class="gray-popper">
-                  <el-input v-model="build.tag"
-                            class="short-input"
-                            size="small"
-                            placeholder="请填写 Tag"></el-input>
-                </el-tooltip>
-              </el-col>
-
-              <el-col v-if="build.showSwitch"
-                      :span="8"
-                      :offset="1"
-                      style="line-height: 32px;">
-                <el-switch v-model="build.releaseMethod"
-                           @change="changeReleaseMethod(build)"
-                           active-text="Branch"
-                           inactive-text="Tag"
-                           active-value="branch"
-                           inactive-value="tag"
-                           active-color="#dcdfe6"
-                           inactive-color="#dcdfe6">
-                </el-switch>
-              </el-col>
-
-              <el-col v-if="build.showPR" :span="7"
+              <el-col :span="7"
                       :offset="1">
                 <el-select v-if="!$utils.isEmpty(build.branchPRsMap)"
                             v-model.number="build[build.prNumberPropName]"
                             size="small"
                             placeholder="请选择 PR"
                             filterable
-                            clearable>
+                            clearable
+                            :disabled="build.branchOrTag && build.branchOrTag.type === 'tag'">
 
-                  <el-tooltip v-for="item in build.branchPRsMap[build.branch]"
+                  <el-tooltip v-for="item in build.branchPRsMap[build.branchOrTag ? build.branchOrTag.name : '']"
                               :key="item[build.prNumberPropName]"
                               placement="left"
                               popper-class="gray-popper">
@@ -116,7 +76,8 @@
                   <el-input v-model.number="build[build.prNumberPropName]"
                             class="short-input"
                             size="small"
-                            placeholder="请填写 PR 号"></el-input>
+                            placeholder="请填写 PR 号"
+                            :disabled="build.branchOrTag && build.branchOrTag.type === 'tag'"></el-input>
                 </el-tooltip>
               </el-col>
 
@@ -284,22 +245,6 @@ export default {
       jenkinsBuild: []
     }
   },
-  methods: {
-    changeReleaseMethod (repo) {
-      if (repo.releaseMethod === 'tag') {
-        repo.showTag = true
-      } else {
-        repo.showTag = false
-      }
-      if (repo.releaseMethod === 'branch') {
-        repo.showBranch = true
-      } else {
-        repo.showBranch = false
-      }
-      repo.tag = ''
-      repo.branch = ''
-    }
-  },
   props: {
     pickedTargets: {
       type: Array,
@@ -316,7 +261,6 @@ export default {
         this.jenkinsBuild = value.filter(item => item.jenkins_build_args)
       },
       immediate: true
-
     }
   }
 }

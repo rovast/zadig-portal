@@ -170,23 +170,6 @@ export default {
       return this.haveForcedInput ? this.$utils.arrayToMap(this.forcedUserInput.targets, 'name') : {}
     }
   },
-  watch: {
-    allRepos: {
-      handler (newVal) {
-        for (const repo of newVal) {
-          this.$set(
-            repo, 'showBranch',
-            (this.runner.distribute_enabled && repo.releaseMethod === 'branch') ||
-            !this.runner.distribute_enabled
-          )
-          this.$set(repo, 'showTag', this.runner.distribute_enabled && repo.releaseMethod === 'tag')
-          this.$set(repo, 'showSwitch', this.runner.distribute_enabled)
-          this.$set(repo, 'showPR', !this.runner.distribute_enabled)
-        }
-      },
-      deep: true
-    }
-  },
   methods: {
     getWorkflow () {
       if (this.workflowType === 'workflow') {
@@ -256,7 +239,7 @@ export default {
 
         this.runner = res
         this.precreateLoading = false
-        getAllBranchInfoAPI({ infos: this.allReposForQuery }, this.distributeEnabled ? 'bt' : 'bp').then(res => {
+        getAllBranchInfoAPI({ infos: this.allReposForQuery }).then(res => {
           // make these repo info more friendly
           res.forEach(repo => {
             if (repo.prs) {
@@ -286,15 +269,51 @@ export default {
             this.$set(repo, 'tags', (repoInfo.tags ? repoInfo.tags : []))
             this.$set(repo, 'prNumberPropName', 'pr')
             this.$set(repo, 'errorMsg', repoInfo.error_msg || '')
-            if (repo.tag) {
-              this.$set(repo, 'releaseMethod', 'tag')
-            } else {
-              this.$set(repo, 'releaseMethod', 'branch')
-            }
             // make sure branch/pr/tag is reactive
             this.$set(repo, 'branch', repo.branch || '')
             this.$set(repo, repo.prNumberPropName, repo[repo.prNumberPropName] || null)
             this.$set(repo, 'tag', repo.tag || '')
+            let branchOrTag = null
+            if (repo.branch) {
+              branchOrTag = {
+                type: 'branch',
+                id: `branch-${repo.branch}`,
+                name: repo.branch
+              }
+            } else if (repo.tag) {
+              branchOrTag = {
+                type: 'tag',
+                id: `tag-${repo.tag}`,
+                name: repo.tag
+              }
+            }
+            this.$set(repo, 'branchOrTag', branchOrTag)
+            const branchAndTagList = []
+            if (repo.branchNames && repo.branchNames.length) {
+              branchAndTagList.push({
+                label: 'Branches',
+                options: (repo.branchNames || []).map(name => {
+                  return {
+                    type: 'branch',
+                    id: `branch-${name}`,
+                    name
+                  }
+                })
+              })
+            }
+            if (repo.tags && repo.tags.length) {
+              branchAndTagList.push({
+                label: 'Tags',
+                options: repo.tags.map(tag => {
+                  return {
+                    type: 'tag',
+                    id: `tag-${tag.name}`,
+                    name: tag.name
+                  }
+                })
+              })
+            }
+            this.$set(repo, 'branchAndTagList', branchAndTagList)
           }
         }).catch(() => {
           this.precreateLoading = false
@@ -321,8 +340,7 @@ export default {
       const clone = this.$utils.cloneObj(this.runner)
 
       const repoKeysToDelete = [
-        '_id_', 'branchNames', 'branchPRsMap', 'tags', 'isGithub', 'prNumberPropName', 'id',
-        'releaseMethod', 'showBranch', 'showTag', 'showSwitch', 'showPR'
+        '_id_', 'branchNames', 'branchPRsMap', 'tags', 'isGithub', 'prNumberPropName', 'id', 'branchOrTag', 'branchAndTagList'
       ]
 
       // filter targets
@@ -335,6 +353,9 @@ export default {
         // trim build repos
         for (const repo of tar.build.repos) {
           repo.pr = repo.pr ? repo.pr : 0
+          repo.branch = ''
+          repo.tag = ''
+          repo[repo.branchOrTag.type] = repo.branchOrTag.name
           for (const key of repoKeysToDelete) {
             delete repo[key]
           }
@@ -385,7 +406,6 @@ export default {
         return false
       }
 
-      const invalidRepo = []
       const emptyValue = []
 
       this.allRepos.forEach(item => {
@@ -393,39 +413,18 @@ export default {
           return
         }
 
-        if (this.showTag && item.tags.length === 0) {
-          invalidRepo.push(item.repo_name)
-        }
-
-        let filled = false
-        if (item.showBranch && item.branch) {
-          filled = true
-        }
-        if (item.showTag && item.tag) {
-          filled = true
-        }
-        if (item.showPR && item[item.prNumberPropName]) {
-          filled = true
-        }
-        if (!filled) {
+        if (!item.branchOrTag) {
           emptyValue.push(item.repo_name)
         }
       })
 
-      if (invalidRepo.length === 0 && emptyValue.length === 0) {
+      if (emptyValue.length === 0) {
         return true
       } else {
-        if (invalidRepo.length > 0) {
-          this.$message({
-            message: invalidRepo.join(',') + ' 代码库不存在 Release Tag,请重新选择构建方式',
-            type: 'error'
-          })
-        } else if (emptyValue.length > 0) {
-          this.$message({
-            message: emptyValue.join(',') + ' 代码库尚未选择构建信息',
-            type: 'error'
-          })
-        }
+        this.$message({
+          message: emptyValue.join(',') + ' 代码库尚未选择构建信息',
+          type: 'error'
+        })
         return false
       }
     }

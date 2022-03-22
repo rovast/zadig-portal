@@ -196,19 +196,19 @@ export default {
           desc: '值恒等于 true，表示在 Zadig 系统上执行脚本'
         },
         {
-          variable: '<REPO>_PR',
-          desc: '构建过程中指定代码仓库使用的 Pull Request 信息'
+          variable: '$<REPO>_PR',
+          desc: '构建过程中指定代码仓库使用的 Pull Request 信息，其中 <REPO> 是具体的代码仓库名称，使用时需要自己填写完整'
         },
         {
-          variable: '<REPO>_BRANCH',
+          variable: '$<REPO>_BRANCH',
           desc: '构建过程中指定代码仓库使用的分支信息'
         },
         {
-          variable: '<REPO>_TAG',
+          variable: '$<REPO>_TAG',
           desc: '构建过程中指定代码仓库使用 Tag 信息'
         },
         {
-          variable: '<REPO>_COMMIT_ID',
+          variable: '$<REPO>_COMMIT_ID',
           desc: '构建过程中指定代码的 commit 信息'
         }
       ],

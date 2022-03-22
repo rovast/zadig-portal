@@ -114,7 +114,7 @@ import {
 } from '@api'
 import bus from '@utils/eventBus'
 import { cloneDeep } from 'lodash'
-import HelmEnvTemplate from './env_detail/components/updateHelmEnvTemp.vue'
+import HelmEnvTemplate from '../env_detail/components/updateHelmEnvTemp.vue'
 
 const validateEnvName = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {

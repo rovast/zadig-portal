@@ -57,12 +57,12 @@
       ></el-input>
     </div>
     <el-table :data="filteredArtifacts" v-show="artifacts.length > 0" style="width: 100%;">
-      <el-table-column label="服务名称">
+      <el-table-column label="名称">
         <template slot-scope="scope">
           <el-tooltip :content="scope.row.image" placement="top" effect="dark">
             <router-link class="artifact-link" :to="`/v1/delivery/artifacts/detail/${scope.row.id}?name=${scope.row.name}`">
               <span v-if="scope.row.type==='image'">{{scope.row.name+':'+scope.row.image_tag}}</span>
-              <span v-else-if="scope.row.type==='file'">{{scope.row.name}}</span>
+              <span v-else-if="scope.row.type==='file'">{{$utils.showServiceName(scope.row.name)}}</span>
             </router-link>
           </el-tooltip>
         </template>

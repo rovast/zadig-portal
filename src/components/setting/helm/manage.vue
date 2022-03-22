@@ -14,7 +14,7 @@
       width="35%"
     >
       <el-form ref="helm" :rules="rules" label-width="90px" tab-position="left" :model="helm">
-        <el-form-item label="URL" prop="url">
+        <el-form-item label="URL">
           <el-input size="small" placeholder="http(s)://example.com" v-model="helm.url"></el-input>
         </el-form-item>
         <el-form-item label="仓库名称" prop="repo_name">

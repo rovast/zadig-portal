@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { initProductAPI, autoUpgradeEnvAPI, deleteEnvServicesAPI } from '@api'
+import { autoUpgradeEnvAPI, deleteEnvServicesAPI, getSingleProjectAPI } from '@api'
 import { cloneDeep, flatten, difference, intersection } from 'lodash'
 export default {
   props: {
@@ -136,16 +136,10 @@ export default {
       this.currentAllInfo = { vars, services }
     },
     getInitProduct () {
-      initProductAPI(this.projectName).then(res => {
-        const services = []
-        for (const group of res.services) {
-          for (const ser of group) {
-            services.push(ser.service_name)
-          }
-        }
+      getSingleProjectAPI(this.projectName).then(res => {
         this.allProductInfo = {
-          services,
-          vars: res.vars
+          services: flatten(res.services),
+          vars: res.vars || []
         }
       })
     }

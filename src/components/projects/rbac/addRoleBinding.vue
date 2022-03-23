@@ -93,12 +93,13 @@ export default {
       })
     },
     remoteMethod (query) {
+      const projectName = this.projectName
       if (query !== '') {
         this.userSearchLoading = true
         const payload = {
           name: query
         }
-        usersAPI(payload).then(res => {
+        usersAPI(payload, projectName).then(res => {
           this.userSearchLoading = false
           this.users = res.users
         })

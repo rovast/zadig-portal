@@ -274,7 +274,7 @@
                   </el-tooltip>
                 </span>
                 <el-input v-model="cluster.cache.nfs_properties.subpath" size="small" placeholder="请输入相对路径">
-                  <el-button slot="append" @click="cluster.cache.nfs_properties.subpath = ''" size="mini">重置</el-button>
+                  <el-button slot="append" @click="cluster.cache.nfs_properties.subpath = '$PROJECT/$WORKFLOW/$SERVICE_MODULE'" size="mini">恢复默认</el-button>
                 </el-input>
               </el-form-item>
             </template>

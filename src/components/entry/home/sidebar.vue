@@ -16,7 +16,7 @@
           <div class="logo-title">{{backTitle}}</div>
         </div>
       </router-link>
-      <router-link class="sidebar-header-item" v-show="!showSidebar&&showBackPath"  :to="backUrl">
+      <router-link class="sidebar-header-item" v-show="!showSidebar&&showBackPath" :to="backUrl">
         <div class="sidebar-header__icon">
           <i class="icon el-icon-back"></i>
         </div>
@@ -42,12 +42,14 @@
                 </div>
               </a>
             </div>
-            <router-link v-else class="nav-item" active-class="active" :to="`/v1/${nav.url}`">
-              <div class="nav-item-icon">
-                <i :class="nav.icon"></i>
-              </div>
-              <div v-show="showSidebar" class="nav-item-label">{{nav.name}}</div>
-            </router-link>
+            <el-tooltip v-else effect="dark" :content="nav.name" placement="right" :disabled="showSidebar">
+              <router-link class="nav-item" active-class="active" :to="`/v1/${nav.url}`">
+                <div class="nav-item-icon">
+                  <i :class="nav.icon"></i>
+                </div>
+                <div v-show="showSidebar" class="nav-item-label">{{nav.name}}</div>
+              </router-link>
+            </el-tooltip>
             <ul v-if="nav.hasSubItem && nav.isOpened" class="sub-menu" style="overflow: hidden;">
               <li class="sub-menu-item-group">
                 <ul>

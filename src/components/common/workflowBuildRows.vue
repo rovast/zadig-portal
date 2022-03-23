@@ -23,23 +23,20 @@
               </el-col>
 
               <el-col :span="7">
-                <el-select v-model="build.branchOrTag"
-                            filterable
-                            clearable
-                            size="small"
-                            value-key="id"
-                            placeholder="请选择分支或标签"
-                            @change="build[build.prNumberPropName] = null">
-                  <el-option-group
-                    v-for="group in build.branchAndTagList"
-                    :key="group.label"
-                    :label="group.label">
-                    <el-option
-                      v-for="(item, index) in group.options"
-                      :key="index"
-                      :label="item.name"
-                      :value="item">
-                    </el-option>
+                <el-select
+                  v-model="build.branchOrTag"
+                  remote
+                  :remote-method="(query)=>{searchRepoInfo(build,query)}"
+                  @clear="searchRepoInfo(build,'')"
+                  filterable
+                  clearable
+                  size="small"
+                  value-key="id"
+                  placeholder="请选择分支或标签"
+                  @change="build[build.prNumberPropName] = null"
+                >
+                  <el-option-group v-for="group in build.branchAndTagList" :key="group.label" :label="group.label">
+                    <el-option v-for="(item, index) in group.options" :key="index" :label="item.name" :value="item"></el-option>
                   </el-option-group>
                 </el-select>
               </el-col>
@@ -238,6 +235,7 @@
 
 <script>
 import DeployIcons from './deployIcons'
+import { getAllBranchInfoAPI } from '@api'
 export default {
   data () {
     return {
@@ -261,6 +259,64 @@ export default {
         this.jenkinsBuild = value.filter(item => item.jenkins_build_args)
       },
       immediate: true
+    }
+  },
+  methods: {
+    async searchRepoInfo (build, query) {
+      let reposQuery = []
+      if (build.source === 'codehub') {
+        reposQuery = [
+          {
+            source: build.source,
+            repo_owner: build.repo_owner,
+            repo: build.repo_name,
+            default_branch: build.branch,
+            project_uuid: build.project_uuid,
+            repo_uuid: build.repo_uuid,
+            repo_id: build.repo_id,
+            codehost_id: build.codehost_id,
+            key: query
+          }
+        ]
+      } else {
+        reposQuery = [
+          {
+            source: build.source,
+            repo_owner: build.repo_owner,
+            repo: build.repo_name,
+            default_branch: build.branch,
+            codehost_id: build.codehost_id,
+            key: query
+          }
+        ]
+      }
+      const payload = { infos: reposQuery }
+      // b = branch, p = pr, t = tag
+      const res = await getAllBranchInfoAPI(payload)
+      const branches = build.branchAndTagList.find(
+        item => item.label === 'Branches'
+      )
+      const tags = build.branchAndTagList.find(item => item.label === 'Tags')
+      if (res && res.length > 0) {
+        build.loading = false
+        branches.options = res[0].branches.map(item => {
+          return {
+            id: 'branch-' + item.name,
+            name: item.name,
+            type: 'branch'
+          }
+        })
+        tags.options = res[0].tags.map(item => {
+          return {
+            id: 'tag-' + item.name,
+            name: item.name,
+            type: 'tag'
+          }
+        })
+      } else {
+        branches.options = []
+        tags.options = []
+      }
     }
   }
 }

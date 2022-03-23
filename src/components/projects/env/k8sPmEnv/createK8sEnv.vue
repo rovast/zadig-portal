@@ -103,6 +103,7 @@
           </div>
         </el-form-item>
       </el-form>
+      <EnvConfig class="common-parcel-block" ref="envConfigRef"></EnvConfig>
       <div
         v-if="variables.length && !$utils.isEmpty(containerMap) && projectConfig.source==='system'"
         class="common-parcel-block box-card-service"
@@ -192,6 +193,7 @@
 </template>
 
 <script>
+import EnvConfig from '../env_detail/common/envConfig.vue'
 import virtualListItem from '../../common/imageItem'
 import virtualScrollList from 'vue-virtual-scroll-list'
 import VarList from './varList.vue'
@@ -543,6 +545,8 @@ export default {
           payload.namespace = payload.defaultNamespace
           payload.is_existed = this.nsIsExisted
 
+          payload.env_config_yamls = this.$refs.envConfigRef.getAllYaml()
+
           this.startDeployLoading = true
           function sleep (time) {
             return new Promise(resolve => setTimeout(resolve, time))
@@ -628,7 +632,8 @@ export default {
   },
   components: {
     VarList,
-    virtualScrollList
+    virtualScrollList,
+    EnvConfig
   }
 }
 </script>

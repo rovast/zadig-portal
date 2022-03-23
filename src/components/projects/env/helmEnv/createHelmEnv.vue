@@ -73,6 +73,7 @@
           <div class="image-secret">imagePullSecret 名称：default-registry-secret</div>
         </el-form-item>
       </el-form>
+      <EnvConfig class="common-parcel-block" ref="envConfigRef"></EnvConfig>
       <HelmEnvTemplate
         class="chart-value"
         ref="helmEnvTemplateRef"
@@ -115,6 +116,7 @@ import {
 import bus from '@utils/eventBus'
 import { cloneDeep } from 'lodash'
 import HelmEnvTemplate from '../env_detail/components/updateHelmEnvTemp.vue'
+import EnvConfig from '../env_detail/common/envConfig.vue'
 
 const validateEnvName = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {
@@ -281,7 +283,8 @@ export default {
             chartValues: valueInfo.chartInfo,
             defaultValues: valueInfo.envInfo[defaultEnv] || '',
             namespace: this.projectConfig.defaultNamespace,
-            is_existed: this.nsIsExisted
+            is_existed: this.nsIsExisted,
+            env_config_yamls: this.$refs.envConfigRef.getAllYaml()
           }
           this.startDeployLoading = true
           function sleep (time) {
@@ -349,7 +352,8 @@ export default {
     })
   },
   components: {
-    HelmEnvTemplate
+    HelmEnvTemplate,
+    EnvConfig
   }
 }
 </script>

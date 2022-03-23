@@ -1,12 +1,12 @@
 <template>
   <div class="values-yaml-container">
     <div class="secondary-title">添加环境配置</div>
-    <div>
+    <div class="values-yaml-content">
       <el-button type="text" class="title-btn" @click="showGitImportDialog = true">从代码库导入</el-button>
+      <Resize class="desc mirror" @sizeChange="$refs.codemirror.refresh()">
+        <codemirror ref="codemirror" v-model="importRepoInfoUse.overrideYaml" :placeholder="placeholder"></codemirror>
+      </Resize>
     </div>
-    <Resize class="desc mirror" @sizeChange="$refs.codemirror.refresh()">
-      <codemirror ref="codemirror" v-model="importRepoInfoUse.overrideYaml"></codemirror>
-    </Resize>
     <el-dialog title="环境配置 - 从代码库导入" :visible.sync="showGitImportDialog" append-to-body>
       <Repository ref="valueRepoRef" :repoSource="importRepoInfoUse.gitRepoConfig" :fileType="'k8sYaml'"></Repository>
       <div slot="footer">
@@ -40,7 +40,9 @@ export default {
   data () {
     return {
       showGitImportDialog: false,
-      loadValueYamls: false
+      loadValueYamls: false,
+      placeholder:
+        '可直接粘贴 Ingress、ConfigMap、Secret、PVC 类型的 K8s YAML 文件'
     }
   },
   props: {
@@ -53,6 +55,7 @@ export default {
         if (!this.importRepoInfo.gitRepoConfig) {
           gitRepoConfig = { gitRepoConfig: cloneDeep(valueInfo.gitRepoConfig) }
         }
+        this.$refs.valueRepoRef && this.$refs.valueRepoRef.resetSource()
         return Object.assign(this.importRepoInfo, gitRepoConfig)
       }
     }
@@ -77,6 +80,7 @@ export default {
         if (res) {
           this.showGitImportDialog = false
           this.importRepoInfoUse.overrideYaml = res
+          this.importRepoInfoUse.initYaml = res
         }
       })
     }
@@ -94,14 +98,18 @@ export default {
   margin: 12px 0;
   line-height: 1;
 
-  .title-btn {
-    font-weight: 300;
-    font-size: 12px;
-  }
+  .values-yaml-content {
+    padding: 0 30px;
 
-  .desc {
-    color: #a1a3a7;
-    font-size: 14px;
+    .title-btn {
+      font-weight: 300;
+      font-size: 12px;
+    }
+
+    .desc {
+      color: #a1a3a7;
+      font-size: 14px;
+    }
   }
 }
 

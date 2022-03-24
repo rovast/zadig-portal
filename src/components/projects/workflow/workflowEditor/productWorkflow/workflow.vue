@@ -32,8 +32,8 @@
             :product_tmpl_name="workflowInfo.product_tmpl_name"/>
       <Distribute v-show="currentTab==='distribute'"
                   :editMode="editMode"
-                  :distribute_stage="workflowInfo.distribute_stage"
-                  :product_tmpl_name="workflowInfo.product_tmpl_name"
+                  :distributeStage="workflowInfo.distribute_stage"
+                  :projectName="workflowInfo.product_tmpl_name"
                   :presets="presets"
                   :buildTargets="buildTargets"/>
       <Notify v-show="currentTab==='notify'"

@@ -1,200 +1,132 @@
 <template>
-  <div class="product-distribute">
+  <div class="workflow-distribute">
     <el-card class="box-card">
-
-      <el-table :data="serviceDists">
-        <el-table-column prop="target"
-                         label="服务">
-          <template slot-scope="{ row }">
-            <span
-                  v-if="row.target">{{`${row.target.service_name}/${row.target.service_module}`}}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column>
-          <template #header>
-            <el-checkbox v-model="preferImageEverywhere"
-                         :indeterminate="isImageIndeterminate"
-                         size="mini"
-                         class="head">
-              镜像分发
-            </el-checkbox>
-          </template>
-          <template slot="default"
-                    slot-scope="{ row }">
-            <el-checkbox v-model="row.image_distribute"
-                         size="mini"></el-checkbox>
-          </template>
-        </el-table-column>
-
-        <el-table-column>
-          <template #header>
-            <el-checkbox v-model="preferStorageEverywhere"
-                         :indeterminate="isStorageIndeterminate"
-                         size="mini"
-                         class="head">
-              存储空间分发
-            </el-checkbox>
-          </template>
-          <template slot="default"
-                    slot-scope="{ row }">
-            <el-checkbox v-model="row.qstack_distribute"
-                         size="mini"></el-checkbox>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="操作"
-                         width="100px">
-          <template slot-scope="{ row }">
-            <el-button @click="removeServiceDist(row.$index)"
-                       type="danger"
-                       icon="el-icon-delete"
-                       size="mini">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <div class="service-adder">
-        <el-select style="width: 360px;"
-                   v-model="serviceToAdd"
-                   filterable
-                   value-key="key"
-                   size="small">
-          <el-option v-for="(tar,index) of unconfiguredTargetsDisplayed"
-                     :key="index"
-                     :label="`${tar.service_name}${tar.service_module?'/'+tar.service_module:''}`"
-                     :value="tar"></el-option>
-        </el-select>
-        <el-button @click="addServiceDist"
-                   type="default"
-                   size="small"
-                   icon="el-icon-plus">添加服务</el-button>
-      </div>
-
-      <div v-show="showImageRepos"
-           class="where-to-dist">
-        <span class="title">
-          镜像仓库：
-        </span>
-        <el-select style="width: 360px;"
-                   value-key="id"
-                   v-model="distribute_stage.releaseIds"
-                   multiple
-                   filterable
-                   clearable
-                   size="small">
-          <el-option v-for="(repo,index) of imageRepos"
-                     :key="index"
-                     :label="`${repo.regAddr.split('://')[1]}/${repo.regNamespace}`"
-                     :value="repo.id"></el-option>
-        </el-select>
-      </div>
-
-      <div v-show="showStorageList"
-           class="where-to-dist">
-        <span class="title">
-          对象存储：
-        </span>
-        <el-select style="width: 360px;"
-                   v-model="distribute_stage.s3_storage_id"
-                   filterable
-                   size="small">
-          <el-option v-for="(storage,index) of storageList"
-                     :key="index"
-                     :label="`${storage.endpoint}/${storage.bucket}`"
-                     :value="storage.id"></el-option>
-        </el-select>
-      </div>
-
+      <el-form ref="distributeForm" :model="distributeStageDetail" label-width="100px">
+        <el-form-item label="服务选择" prop="distributes">
+          <el-select
+            v-model="distributeStageDetail.distributes"
+            multiple
+            filterable
+            collapse-tags
+            clearable
+            placeholder="请选择服务"
+            size="small"
+          >
+            <el-option v-for="service in allTargets" :key="service.key" :label="service.key" :value="service"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="分发方式">
+          <el-select v-model="distributeStageDetail.methods" multiple size="small">
+            <el-option label="镜像分发" value="image"></el-option>
+            <el-option label="对象存储分发" value="object"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="distributeStageDetail.methods && distributeStageDetail.methods.includes('object')" label="对象存储">
+          <el-select v-model="distributeStageDetail.s3_storage_id" filterable size="small">
+            <el-option
+              v-for="(storage,index) of storageList"
+              :key="index"
+              :label="`${storage.endpoint}/${storage.bucket}`"
+              :value="storage.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="distributeStageDetail.methods.includes('image')" label="镜像仓库">
+          <el-row v-for="(release,index) in distributeStageDetail.releases" :key="index" :gutter="0">
+            <el-col :span="6">
+              <div>
+                <el-select value-key="id" v-model="release.repo_id" filterable clearable size="small">
+                  <el-option
+                    v-for="(repo,index) of imageRepos"
+                    :key="index"
+                    :label="`${repo.regAddr.split('://')[1]}/${repo.regNamespace}`"
+                    :value="repo.id"
+                  ></el-option>
+                </el-select>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-switch v-model="release.deploy_enabled"></el-switch>
+                <span>部署到指定环境</span>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-select  v-if="release.deploy_enabled" v-model="release.deploy_env" filterable clearable size="small">
+                  <el-option v-for="(env,index) of envList" :key="index" :label="env.name" :value="env.name"></el-option>
+                </el-select>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-button @click="addImgRepo" size="mini" type="primary" icon="el-icon-plus" circle plain></el-button>
+                <el-button @click="removeImgRepo(index)" size="mini" type="danger" icon="el-icon-minus" circle plain></el-button>
+              </div>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
     </el-card>
   </div>
 </template>
 
 <script type="text/javascript">
 import bus from '@utils/eventBus'
-import { getStorageListAPI, imageReposAPI } from '@api'
-import _ from 'lodash'
+import { cloneDeep } from 'lodash'
+import { getStorageListAPI, imageReposAPI, listProductAPI } from '@api'
 export default {
   data () {
     return {
       imageRepos: [],
       storageList: [],
-      serviceToAdd: null
+      envList: [],
+      distributeStageDetail: {
+        methods: [],
+        distributes: []
+      }
     }
   },
   computed: {
-    serviceDists: {
-      get () {
-        return this.distribute_stage.distributes
-      },
-      set (val) {
-        this.distribute_stage.distributes = val
-      }
-    },
-    serviceDistMap () {
-      return _.keyBy(this.serviceDists, (i) => {
-        return i.target.service_name + '/' + i.target.service_module
-      })
-    },
     allTargets () {
       const targets = this.presets.map(p => p.target)
       targets.forEach(t => {
         t.key = t.service_name + '/' + t.service_module
       })
       return targets
-    },
-    unconfiguredTargetsDisplayed () {
-      return [{ service_name: '同步部署模块的服务' }].concat(this.unconfiguredTargets)
-    },
-    unconfiguredTargets () {
-      const rest = this.allTargets.filter(t => !((t.service_name + '/' + t.service_module) in this.serviceDistMap))
-      return rest
-    },
-    imageChecksStatus () {
-      return this.getCheckStatus('image_distribute')
-    },
-    storageChecksStatus () {
-      return this.getCheckStatus('qstack_distribute')
-    },
-
-    preferImageEverywhere: {
-      get () {
-        return this.imageChecksStatus.allChecked
-      },
-      set (val) {
-        this.toggleAKindOfDist('image_distribute', val, 'isImageIndeterminate')
-      }
-    },
-    preferStorageEverywhere: {
-      get () {
-        return this.storageChecksStatus.allChecked
-      },
-      set (val) {
-        this.toggleAKindOfDist('qstack_distribute', val, 'isStorageIndeterminate')
-      }
-    },
-    isImageIndeterminate () {
-      return this.imageChecksStatus.hasSomeChecked && this.imageChecksStatus.hasSomeUnchecked
-    },
-    isStorageIndeterminate () {
-      return this.storageChecksStatus.hasSomeChecked && this.storageChecksStatus.hasSomeUnchecked
-    },
-    showImageRepos () {
-      return this.serviceDists.some(d => d.image_distribute)
-    },
-    showStorageList () {
-      return this.serviceDists.some(d => d.qstack_distribute)
     }
   },
   watch: {
-    product_tmpl_name (newVal, oldVal) {
-      if (oldVal) {
-        this.serviceDists = []
+    distributeStage: {
+      handler: function (val) {
+        this.distributeStageDetail = cloneDeep(val)
+        if (val.s3_storage_id) {
+          this.$set(this.distributeStageDetail, 'methods', ['object'])
+        } else if (val.releases && val.releases.length > 0) {
+          this.$set(this.distributeStageDetail, 'methods', ['image'])
+        } else if (
+          val.s3_storage_id &&
+          val.releases &&
+          val.releases.length > 0
+        ) {
+          this.$set(this.distributeStageDetail, 'methods', ['image', 'object'])
+        } else {
+          this.$set(this.distributeStageDetail, 'methods', [])
+        }
+      },
+      immediate: true
+    },
+    projectName (newVal, oldVal) {
+      if (newVal) {
+        const projectName = newVal
+        listProductAPI(projectName).then(res => {
+          this.envList = res
+        })
       }
     }
   },
   props: {
-    distribute_stage: {
+    distributeStage: {
       required: true,
       type: Object
     },
@@ -202,7 +134,7 @@ export default {
       required: true,
       type: Boolean
     },
-    product_tmpl_name: {
+    projectName: {
       required: true,
       type: String
     },
@@ -216,76 +148,12 @@ export default {
     }
   },
   methods: {
-    toggleAKindOfDist (backendFieldName, checked) {
-      if (this.serviceDists && this.serviceDists.length > 0) {
-        for (const dist of this.serviceDists) {
-          dist[backendFieldName] = checked
-        }
-      }
-    },
-    getCheckStatus (backendFieldName) {
-      let hasSomeUnchecked = false
-      let hasSomeChecked = false
-      let allChecked = true
-      if (this.serviceDists && this.serviceDists.length > 0) {
-        for (const dist of this.serviceDists) {
-          if (dist[backendFieldName]) {
-            hasSomeChecked = true
-          } else {
-            hasSomeUnchecked = true
-            allChecked = false
-          }
-        }
-      } else {
-        allChecked = false
-      }
-      return {
-        hasSomeUnchecked,
-        hasSomeChecked,
-        allChecked
-      }
-    },
-
-    addServiceDist () {
-      if (this.serviceToAdd.service_name === '同步部署模块的服务') {
-        for (const tar of this.buildTargets) {
-          if (!((tar.service_name + '/' + tar.service_module) in this.serviceDistMap)) {
-            this._addSingleServiceDist(tar)
-          }
-        }
-      } else {
-        this._addSingleServiceDist(this.serviceToAdd)
-        this.serviceToAdd = null
-      }
-    },
-    _addSingleServiceDist (target) {
-      if (target) {
-        this.serviceDists.push({
-          target: target,
-          image_distribute: false,
-          jump_box_distribute: false,
-          qstack_distribute: false
-        })
-      }
-    },
-
-    removeServiceDist (index) {
-      this.serviceDists.splice(index, 1)
-    },
     checkDistribute () {
-      if (this.preferImageEverywhere) {
-        if (!this.distribute_stage.releaseIds || this.distribute_stage.releaseIds.length === 0) {
-          this.$message({
-            message: '尚未选择镜像仓库，请检查',
-            type: 'warning'
-          })
-          bus.$emit('receive-tab-check:distribute', false)
-        } else {
-          bus.$emit('receive-tab-check:distribute', true)
-        }
-      }
       if (this.preferStorageEverywhere) {
-        if (!this.distribute_stage.s3_storage_id || this.distribute_stage.s3_storage_id === '') {
+        if (
+          !this.distributeStageDetail.s3_storage_id ||
+          this.distributeStageDetail.s3_storage_id === ''
+        ) {
           this.$message({
             message: '尚未选择对象存储，请检查',
             type: 'warning'
@@ -297,16 +165,28 @@ export default {
       } else {
         bus.$emit('receive-tab-check:distribute', true)
       }
+    },
+    addImgRepo () {
+      this.distributeStageDetail.releases.push({
+        deploy_enabled: false,
+        deploy_env: '',
+        repo_id: ''
+      })
+    },
+    removeImgRepo (index) {
+      this.distributeStageDetail.releases.splice(index, 1)
     }
   },
-  created () {
+  mounted () {
     imageReposAPI().then(res => {
       this.imageRepos = res
     })
     getStorageListAPI().then(res => {
       this.storageList = res
     })
-    bus.$on('check-tab:distribute', () => { this.checkDistribute() })
+    bus.$on('check-tab:distribute', () => {
+      this.checkDistribute()
+    })
   },
   beforeDestroy () {
     bus.$off('check-tab:distribute')
@@ -315,7 +195,11 @@ export default {
 </script>
 
 <style lang="less">
-.product-distribute {
+.workflow-distribute {
+  .el-select {
+    // width: 400px;
+  }
+
   .service-adder {
     margin-top: 20px;
   }

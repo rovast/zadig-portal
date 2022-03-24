@@ -151,7 +151,7 @@ export default {
     },
     changeRegistry (val) {
       if (val) {
-        this.imageMap = []
+        this.$set(this, 'imageMap', {})
         const allClickableServiceNames = this.allServices.map(
           service => service.image_name
         ) // .filter(service => service.has_build)
@@ -160,10 +160,9 @@ export default {
           for (const image of images) {
             image.full = `${image.name}:${image.tag}`
           }
-          this.imageMap = this.$utils.makeMapOfArray(images, 'name')
+          this.$set(this, 'imageMap', this.$utils.makeMapOfArray(images, 'name'))
           this.pickedTargetServices.forEach(tar => {
-            tar.image = ''
-            this.startAll[tar.name] = 0
+            this.$set(tar, 'image', '')
           })
         })
       }
@@ -180,7 +179,7 @@ export default {
           for (const image of images) {
             image.full = `${image.name}:${image.tag}`
           }
-          this.imageMap = this.$utils.makeMapOfArray(images, 'name')
+          this.$set(this, 'imageMap', this.$utils.makeMapOfArray(images, 'name'))
           resolve()
         })
       })

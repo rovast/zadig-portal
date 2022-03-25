@@ -109,6 +109,7 @@
       <!-- K8s Artifact Deploy -->
       <K8sArtifactDeploy
       v-if="!isPm"
+      ref="k8sArtifactRef"
       v-loading="precreateLoading"
       :forcedUserInput="forcedUserInput"
       :allServices="allServiceNames"
@@ -396,6 +397,12 @@ export default {
     getPresetInfo (projectNameAndEnvName) {
       const [, namespace] = projectNameAndEnvName.split(' / ')
       this.precreateLoading = true
+
+      if (this.currentProjectEnvs.length && this.$refs.k8sArtifactRef) {
+        const registryId = this.currentProjectEnvs.find(env => env.name === namespace).registry_id
+        this.$refs.k8sArtifactRef.changeRegistryId(registryId)
+      }
+
       precreateWorkflowTaskAPI(this.projectName, this.workflowName, namespace).then(res => {
       // Cloning task parameters exist
         if (this.haveForcedInput) {

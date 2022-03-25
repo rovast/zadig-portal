@@ -46,7 +46,7 @@ export default {
   beforeRouteUpdate (to, from, next) {
     if (!this.jumpPath || to.meta.title === '创建环境') {
       next()
-    } else if (!to.params.service_name && !to.query.envName) {
+    } else if (!to.params.service_name && !to.query.envName && !to.params.env_name) {
       next({ path: this.jumpPath })
     } else {
       next()

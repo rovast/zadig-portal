@@ -174,7 +174,7 @@
           <div v-if="!$utils.isEmpty(pmServiceMap)" class="box-card-service" :body-style="{padding: '0px'}">
             <div slot="header" class="clearfix">
               <span class="second-title">单服务或微服务(自定义脚本/Docker 部署)</span>
-              <span class="small-title">(请关联服务的主机资源，后续也可以在服务中进行配置)</span>
+              <span class="small-title">(请关联服务的主机资源)</span>
             </div>
 
             <el-form class="service-form-block" label-width="50%" label-position="left">

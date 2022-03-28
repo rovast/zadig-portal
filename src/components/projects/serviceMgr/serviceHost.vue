@@ -1,24 +1,34 @@
 <template>
   <div class="tab">
+    <div class="policy">
+      <el-button type="primary" size="small" @click="showPolicyDrawer = true" plain>策略</el-button>
+    </div>
     <el-tabs type="card" :value="envName" @tab-click="tabChange">
-      <el-tab-pane v-for="item in envNameList"  :key="item.envName" :label="item.envName" :name="item.envName"></el-tab-pane>
+      <el-tab-pane v-for="item in envNameList" :key="item.envName" :label="item.envName" :name="item.envName"></el-tab-pane>
     </el-tabs>
-    <ServiceBuild v-if="envName" :envName="envName" :serviceName="serviceName" class="serviceBuild"/>
+    <ServiceBuild v-if="envName" :envName="envName" :serviceName="serviceName" class="serviceBuild" />
+    <el-drawer title="策略" custom-class="policy-drawer" :visible.sync="showPolicyDrawer" direction="rtl" size="600px" destroy-on-close>
+      <Policy />
+    </el-drawer>
   </div>
 </template>
 <script>
 import ServiceBuild from '@/components/projects/common/hosting/serviceBuild'
+import Policy from './k8s/container/policy.vue'
+
 import { listProductAPI } from '@/api'
 export default {
   name: 'service_host',
   components: {
-    ServiceBuild
+    ServiceBuild,
+    Policy
   },
   data () {
     return {
       envName: '',
       serviceName: null,
-      envNameList: []
+      envNameList: [],
+      showPolicyDrawer: false
     }
   },
   computed: {
@@ -51,10 +61,32 @@ export default {
 </script>
 <style lang="less" scoped>
 .tab {
-  margin: 40px 10px;
+  margin: 10px 10px 40px;
+
+  .policy {
+    text-align: right;
+
+    /deep/.el-button {
+      width: 30px;
+      margin-bottom: -12px;
+      padding: 12px 5px;
+      white-space: initial;
+    }
+  }
 
   .serviceBuild {
     height: calc(~'100vh - 220px');
+  }
+
+  /deep/.policy-drawer {
+    .el-drawer__header {
+      margin-bottom: 12px;
+    }
+
+    .el-drawer__body {
+      box-sizing: border-box;
+      padding: 0 10px 20px;
+    }
   }
 }
 </style>

@@ -37,7 +37,7 @@
       </div>
     </div>
     <el-drawer title="策略" custom-class="policy-drawer" :visible.sync="showPolicyDrawer" direction="rtl" size="600px" destroy-on-close>
-      <Policy />
+      <Policy :useTar="false" />
     </el-drawer>
   </div>
 </template>

@@ -134,7 +134,7 @@
 </template>
 
 <script>
-import qs from 'qs'
+// import qs from 'qs'
 
 export default {
   data () {

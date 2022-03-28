@@ -109,6 +109,16 @@
                       <el-dropdown-item @click.native="manageServices('delete')">删除服务</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
+                  <el-dropdown v-if="envSource===''||envSource==='spock'" trigger="click">
+                    <el-button type="primary" plain>
+                      更多
+                      <i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="shareEnv('enable')">开启自测模式</el-dropdown-item>
+                      <el-dropdown-item  v-if="isShowDeleteEnv" @click.native="deleteProduct(productInfo.product_name,productInfo.env_name)">删除环境</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
                   <el-tooltip
                     v-else-if="showUpdate(productInfo,productStatus) && (envSource==='pm' || envSource==='helm')"
                     v-hasPermi="{projectName: projectName, action: 'config_environment'}"
@@ -136,16 +146,8 @@
                 </template>
                 <template>
                   <el-button
-                    v-hasPermi="{projectName: projectName, action: 'delete_environment'}"
-                    v-if="isShowDeleteEnv"
-                    type="primary"
-                    @click="deleteProduct(productInfo.product_name,productInfo.env_name)"
-                    size="mini"
-                    plain
-                  >删除环境</el-button>
-                  <el-button
                     v-hasPermi="{projectName: projectName, action: 'config_environment'}"
-                    v-else-if="envSource==='external'"
+                    v-if="envSource==='external'"
                     type="primary"
                     @click="deleteHostingEnv(productInfo.product_name,productInfo.env_name)"
                     size="mini"
@@ -183,6 +185,16 @@
                       <el-dropdown-item @click.native="manageServices('delete')">删除服务</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
+                  <el-dropdown v-if="envSource===''||envSource==='spock'" trigger="click">
+                    <el-button type="primary" plain>
+                      更多
+                      <i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="manageServices('add')">开启自测模式</el-dropdown-item>
+                      <el-dropdown-item  v-if="isShowDeleteEnv" @click.native="deleteProduct(productInfo.product_name,productInfo.env_name)">删除环境</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
                   <el-tooltip
                     v-else-if="showUpdate(productInfo,productStatus) && envSource==='helm'"
                     v-hasPermi="{projectName: projectName, action: 'config_environment'}"
@@ -205,16 +217,8 @@
                 </template>
                 <template>
                   <el-button
-                    v-hasPermi="{projectName: projectName, action: 'delete_environment'}"
-                    v-if="isShowDeleteEnv"
-                    type="primary"
-                    @click="deleteProduct(productInfo.product_name,productInfo.env_name)"
-                    size="mini"
-                    plain
-                  >删除环境</el-button>
-                  <el-button
                     v-hasPermi="{projectName: projectName, action: 'config_environment'}"
-                    v-else-if="envSource==='external'"
+                    v-if="envSource==='external'"
                     type="primary"
                     @click="deleteHostingEnv(productInfo.product_name,productInfo.env_name)"
                     size="mini"
@@ -526,6 +530,7 @@
     <UpdateK8sVarDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="updateK8sVarDialog" />
     <PmServiceLog ref="pmServiceLog" />
     <ManageServicesDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="manageServicesRef" />
+    <ShareEnvDialog :mode="shareEnvDialog.mode" :projectName="productInfo.product_name" :envName="productInfo.env_name" :clusterId="productInfo.cluster_id" ref="shareEnvRef" />
   </div>
 </template>
 
@@ -550,9 +555,10 @@ import {
   updateEnvImageRegistry
 } from '@api'
 import _ from 'lodash'
-import runWorkflow from './runWorkflow.vue'
+import RunWorkflow from './runWorkflow.vue'
 import PmServiceLog from './components/pmLogDialog.vue'
 import PmHostList from './components/pmHostList.vue'
+import ShareEnvDialog from './components/shareEnvDialog.vue'
 import UpdateHelmEnvDialog from './components/updateHelmEnvDialog'
 import UpdateHelmVarDialog from './components/updateHelmVarDialog'
 import UpdateK8sVarDialog from './components/updateK8sVarDialog'
@@ -602,6 +608,10 @@ export default {
       },
       productStatus: {
         updateble: false
+      },
+      shareEnvDialog: {
+        title: '开启自测模式',
+        mode: 'enable'
       },
       keyCheckRule: {
         key: [
@@ -1409,6 +1419,11 @@ export default {
       } else {
         return 'N/A'
       }
+    },
+    shareEnv (operation) {
+      if (operation === 'enable') {
+        this.$refs.shareEnvRef.openDialog()
+      }
     }
   },
   created () {
@@ -1436,13 +1451,14 @@ export default {
     }
   },
   components: {
-    runWorkflow,
+    RunWorkflow,
     PmServiceLog,
     PmHostList,
     UpdateHelmEnvDialog,
     UpdateHelmVarDialog,
     UpdateK8sVarDialog,
-    ManageServicesDialog
+    ManageServicesDialog,
+    ShareEnvDialog
   },
   props: {
     envBasePath: {

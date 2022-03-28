@@ -31,6 +31,7 @@
             :test_stage="workflowInfo.test_stage"
             :product_tmpl_name="workflowInfo.product_tmpl_name"/>
       <Distribute v-show="currentTab==='distribute'"
+                  @saveDistributeDeploy="saveDistributeDeploy($event)"
                   :editMode="editMode"
                   :distributeStage="workflowInfo.distribute_stage"
                   :projectName="workflowInfo.product_tmpl_name"
@@ -144,9 +145,7 @@ export default {
           timeout: 10
         }
       },
-
       presets: [],
-
       currentTab: 'basicInfo',
       currentModules: {
         basicInfo: true,
@@ -262,16 +261,6 @@ export default {
       this.workflowInfo.schedule_enabled = this.workflowInfo.schedules.enabled
       this.workflowInfo.hook_ctl.product_tmpl_name = this.workflowInfo.product_tmpl_name
       this.checkCurrentTab().then(() => {
-        if (this.workflowInfo.distribute_stage.enabled) {
-          if (this.workflowInfo.distribute_stage.releaseIds && this.workflowInfo.distribute_stage.releaseIds.length > 0) {
-            const releases = this.workflowInfo.distribute_stage.releaseIds.map(element => {
-              return { repo_id: element }
-            })
-            this.$set(this.workflowInfo.distribute_stage, 'releases', releases)
-          } else {
-            this.$set(this.workflowInfo.distribute_stage, 'releases', [])
-          }
-        }
         (this.editMode ? updateWorkflowAPI : createWorkflowAPI)(this.workflowInfo).then(res => {
           this.$message.success('保存成功')
           if (this.$route.query.from) {
@@ -282,7 +271,9 @@ export default {
         })
       })
     },
-
+    saveDistributeDeploy ($event) {
+      this.workflowInfo.distribute_stage = $event
+    },
     stepBack () {
       const name = this.workflowName
       if (this.$route.query.from) {

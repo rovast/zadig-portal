@@ -16,7 +16,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="分发方式">
-          <el-select v-model="distributeStageDetail.methods" multiple size="small">
+          <el-select v-model="distributeStageDetail.methods" @change="changeReleaseMethod" multiple size="small">
             <el-option label="镜像分发" value="image"></el-option>
             <el-option label="对象存储分发" value="object"></el-option>
           </el-select>
@@ -100,9 +100,9 @@ export default {
     distributeStage: {
       handler: function (val) {
         this.distributeStageDetail = cloneDeep(val)
-        if (val.s3_storage_id) {
+        if (val.s3_storage_id && val.releases && val.releases.length === 0) {
           this.$set(this.distributeStageDetail, 'methods', ['object'])
-        } else if (val.releases && val.releases.length > 0) {
+        } else if (!val.s3_storage_id && val.releases && val.releases.length > 0) {
           this.$set(this.distributeStageDetail, 'methods', ['image'])
         } else if (
           val.s3_storage_id &&
@@ -149,6 +149,7 @@ export default {
   },
   methods: {
     checkDistribute () {
+      this.$emit('saveDistributeDeploy', this.distributeStageDetail)
       if (this.preferStorageEverywhere) {
         if (
           !this.distributeStageDetail.s3_storage_id ||
@@ -175,6 +176,11 @@ export default {
     },
     removeImgRepo (index) {
       this.distributeStageDetail.releases.splice(index, 1)
+    },
+    changeReleaseMethod (val) {
+      if (!val.includes('object')) {
+        this.$set(this.distributeStageDetail, 's3_storage_id', '')
+      }
     }
   },
   mounted () {

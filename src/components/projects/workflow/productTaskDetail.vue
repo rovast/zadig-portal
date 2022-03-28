@@ -378,7 +378,7 @@
 
           <el-table-column label="分发" min-width="250px">
             <template slot-scope="scope">
-              <span :class="colorTranslation(scope.row.status, 'pipeline', 'task')">{{ myTranslate(scope.row.release_imageSubTask.status) }}</span>
+              <span :class="colorTranslation(scope.row.release_imageSubTask.distribute_info[0].distribute_status, 'pipeline', 'task')">{{ myTranslate(scope.row.release_imageSubTask.distribute_info[0].distribute_status) }}</span>
               <!-- {{ makePrettyElapsedTime(scope.row) }}
               <el-tooltip v-if="calcElapsedTimeNum(scope.row)<0" content="本地系统时间和服务端可能存在不一致，请同步。" placement="top">
                 <i class="el-icon-warning" style="color: red;"></i>
@@ -388,7 +388,7 @@
 
           <el-table-column label="部署" min-width="250px">
             <template slot-scope="scope">
-              <span :class="colorTranslation(scope.row.status, 'pipeline', 'task')">{{ myTranslate(scope.row.release_imageSubTask.status) }}</span>
+              <span :class="colorTranslation(scope.row.release_imageSubTask.distribute_info[0].deploy_status, 'pipeline', 'task')">{{ myTranslate(scope.row.release_imageSubTask.distribute_info[0].deploy_status) }}</span>
               <!-- {{ makePrettyElapsedTime(scope.row) }}
               <el-tooltip v-if="calcElapsedTimeNum(scope.row)<0" content="本地系统时间和服务端可能存在不一致，请同步。" placement="top">
                 <i class="el-icon-warning" style="color: red;"></i>

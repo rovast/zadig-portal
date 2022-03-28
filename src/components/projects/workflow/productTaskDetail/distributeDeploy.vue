@@ -3,7 +3,7 @@
     <el-card class="box-card task-process" :body-style="{ margin: '15px 0 0 0' }">
       <div slot="header" class="clearfix subtask-header">
         <span>分发</span>
-        <div class="loader">
+        <div v-if="distributeDeploy.release_imageSubTask.distribute_info[0].distribute_status === 'running'" class="loader">
           <div class="ball-scale-multiple">
             <div></div>
             <div></div>
@@ -24,38 +24,41 @@
           <el-col :span="6">
             <div
               class="grid-content item-desc"
-              :class="$translate.calcTaskStatusColor(distributeDeploy.status)"
-            >{{distributeDeploy.status?$translate.translateTaskStatus(distributeDeploy.status):"未运行"}}</div>
+              :class="$translate.calcTaskStatusColor(distributeDeploy.release_imageSubTask.distribute_info[0].distribute_status)"
+            >{{distributeDeploy.release_imageSubTask.distribute_info[0].distribute_status?$translate.translateTaskStatus(distributeDeploy.release_imageSubTask.distribute_info[0].distribute_status):"未运行"}}</div>
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-title">
-              <i class="iconfont iconjiqun1"></i> 分发方式
+              <i class="iconfont iconjiqun1"></i> 持续时间
             </div>
           </el-col>
           <el-col :span="6">
-            <div class="grid-content item-desc"></div>
+            <div
+              class="grid-content item-desc"
+            >{{$utils.timeFormat(distributeDeploy.release_imageSubTask.distribute_info[0].distribute_end_time - distributeDeploy.release_imageSubTask.distribute_info[0].distribute_start_time)}}</div>
           </el-col>
         </el-row>
         <el-row :gutter="0">
           <el-col :span="6">
             <div class="grid-content item-title">
-              <i class="iconfont iconSliceCopy"></i> 镜像信息
+              <i class="iconfont iconSliceCopy"></i> 分发方式
             </div>
           </el-col>
           <el-col :span="6">
-            <el-tooltip effect="dark" :content="distributeDeploy.image" placement="top">
-              <!-- <div class="grid-content item-desc">{{distributeDeploy.image?distributeDeploy.image.split('/')[2]:"*"}}</div> -->
-            </el-tooltip>
+            <div class="grid-content item-desc">镜像分发</div>
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-title">
-              <i class="iconfont iconfuwu"></i> 服务名称
+              <i class="iconfont iconfuwu"></i> 镜像信息
             </div>
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-desc">
-              <!-- <span v-if="distributeDeploy.service_type==='helm'">{{`${$utils.showServiceName(distributeDeploy.container_name)}`}}</span>
-              <router-link v-else class="env-link" :to="serviceUrl(deploy)">{{distributeDeploy.service_name}}</router-link>-->
+              <el-tooltip effect="dark" :content="distributeDeploy.release_imageSubTask.distribute_info[0].image" placement="top">
+                <div
+                  class="grid-content item-desc"
+                >{{distributeDeploy.release_imageSubTask.distribute_info[0].image?distributeDeploy.release_imageSubTask.distribute_info[0].image.split('/')[2]:"*"}}</div>
+              </el-tooltip>
             </div>
           </el-col>
         </el-row>
@@ -64,7 +67,7 @@
     <el-card class="box-card task-process" :body-style="{ margin: '15px 0 0 0' }">
       <div slot="header" class="clearfix subtask-header">
         <span>部署</span>
-        <div class="loader">
+        <div v-if="distributeDeploy.release_imageSubTask.distribute_info[0].deploy_status === 'running'" class="loader">
           <div class="ball-scale-multiple">
             <div></div>
             <div></div>
@@ -85,8 +88,8 @@
           <el-col :span="6">
             <div
               class="grid-content item-desc"
-              :class="$translate.calcTaskStatusColor(distributeDeploy.status)"
-            >{{distributeDeploy.status?$translate.translateTaskStatus(distributeDeploy.status):"未运行"}}</div>
+              :class="$translate.calcTaskStatusColor(distributeDeploy.release_imageSubTask.distribute_info[0].deploy_status)"
+            >{{distributeDeploy.release_imageSubTask.distribute_info[0].deploy_status?$translate.translateTaskStatus(distributeDeploy.release_imageSubTask.distribute_info[0].deploy_status):"未运行"}}</div>
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-title">
@@ -94,19 +97,21 @@
             </div>
           </el-col>
           <el-col :span="6">
-            <div class="grid-content item-desc"></div>
+            <div class="grid-content item-desc">
+              {{distributeDeploy.release_imageSubTask.distribute_info[0].deploy_env}}
+            </div>
           </el-col>
         </el-row>
         <el-row :gutter="0">
           <el-col :span="6">
             <div class="grid-content item-title">
-              <i class="iconfont iconfuwu "></i> 服务名称
+              <i class="iconfont iconfuwu"></i> 服务名称
             </div>
           </el-col>
           <el-col :span="6">
-            <el-tooltip effect="dark" :content="distributeDeploy.image" placement="top">
-              <!-- <div class="grid-content item-desc">{{distributeDeploy.image?distributeDeploy.image.split('/')[2]:"*"}}</div> -->
-            </el-tooltip>
+            <div class="grid-content item-desc">
+              {{distributeDeploy.release_imageSubTask.distribute_info[0].deploy_service_name}}
+            </div>
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-title">
@@ -115,8 +120,11 @@
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-desc">
-              <!-- <span v-if="distributeDeploy.service_type==='helm'">{{`${$utils.showServiceName(distributeDeploy.container_name)}`}}</span>
-              <router-link v-else class="env-link" :to="serviceUrl(deploy)">{{distributeDeploy.service_name}}</router-link>-->
+              <el-tooltip effect="dark" :content="distributeDeploy.release_imageSubTask.distribute_info[0].image" placement="top">
+                <div
+                  class="grid-content item-desc"
+                >{{distributeDeploy.release_imageSubTask.distribute_info[0].image?distributeDeploy.release_imageSubTask.distribute_info[0].image.split('/')[2]:"*"}}</div>
+              </el-tooltip>
             </div>
           </el-col>
         </el-row>

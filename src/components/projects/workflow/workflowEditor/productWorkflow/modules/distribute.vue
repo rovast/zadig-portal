@@ -114,7 +114,8 @@ export default {
           this.$set(this.distributeStageDetail, 'methods', [])
         }
       },
-      immediate: true
+      immediate: true,
+      deep: true
     },
     projectName (newVal, oldVal) {
       if (newVal) {

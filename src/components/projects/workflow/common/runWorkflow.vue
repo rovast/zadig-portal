@@ -229,7 +229,6 @@ export default {
       return !this.isHelm && !this.isPm
     },
     imageRegistryByEnv () {
-      // host environment does't have registry
       if (this.isPm || !this.currentProjectEnvs.length || !this.runner.namespace) {
         return
       }

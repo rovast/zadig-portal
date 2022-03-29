@@ -245,7 +245,7 @@ export function taskPendingSSEAPI () {
   return makeEventSource('/api/aslan/workflow/sse/tasks/pending')
 }
 
-// Env
+//  Env
 export function listProductAPI (projectName = '', envType = '') {
   if (envType) {
     return http.get(`/api/aslan/environment/environments?projectName=${projectName}&envType=${envType}`)
@@ -593,9 +593,9 @@ export function getBuildTargetsAPI (projectName) {
 
 export function runWorkflowAPI (projectName, data, isArtifact = false) {
   if (isArtifact) {
-    return http.put(`/api/aslan/workflow/workflowtask?projectName=${projectName}`, data)
+    return http.put(`/api/aslan/workflow/workflowtask/${data.workflow_name}?projectName=${projectName}`, data)
   } else {
-    return http.post(`/api/aslan/workflow/workflowtask?projectName=${projectName}`, data)
+    return http.post(`/api/aslan/workflow/workflowtask/${data.workflow_name}?projectName=${projectName}`, data)
   }
 }
 

@@ -76,6 +76,11 @@
                 <span>{{scope.row.name}}</span>
               </template>
             </el-table-column>
+            <el-table-column label="状态">
+              <template slot-scope="{ row }">
+                <el-tag size="small" effect="dark" :type="row.status === 'normal' ? 'success' : 'danger'">{{row.status === 'normal' ? '正常' : '异常'}}</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column label="标签">
               <template slot-scope="scope">
                 <el-tag v-if="scope.row.label"
@@ -125,6 +130,7 @@ export default {
         provider: null,
         label: '',
         ip: '',
+        port: 22,
         is_prod: false,
         user_name: '',
         private_key: ''

@@ -308,7 +308,7 @@ export default {
         !isEmpty(workflow.distribute_stage) &&
         workflow.distribute_stage.enabled
       ) {
-        stages.push('分发')
+        stages.push('分发部署')
       }
       this.stages = stages
     }

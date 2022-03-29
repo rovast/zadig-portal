@@ -29,7 +29,7 @@
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-title">
-              <i class="iconfont iconjiqun1"></i> 持续时间
+              <i class="iconfont iconshijian"></i> 持续时间
             </div>
           </el-col>
           <el-col :span="6">
@@ -41,7 +41,7 @@
         <el-row :gutter="0">
           <el-col :span="6">
             <div class="grid-content item-title">
-              <i class="iconfont iconSliceCopy"></i> 分发方式
+              <i class="iconfont iconshengji"></i> 分发方式
             </div>
           </el-col>
           <el-col :span="6">
@@ -49,7 +49,7 @@
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-title">
-              <i class="iconfont iconfuwu"></i> 镜像信息
+              <i class="iconfont iconSliceCopy "></i> 镜像信息
             </div>
           </el-col>
           <el-col :span="6">
@@ -125,6 +125,66 @@
                   class="grid-content item-desc"
                 >{{distributeDeploy.release_imageSubTask.distribute_info[0].image?distributeDeploy.release_imageSubTask.distribute_info[0].image.split('/')[2]:"*"}}</div>
               </el-tooltip>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-card>
+    <el-card v-if="distributeDeploy.distribute2kodoSubTask && distributeDeploy.distribute2kodoSubTask.enabled" class="box-card task-process" :body-style="{ margin: '15px 0 0 0' }">
+      <div slot="header" class="clearfix subtask-header">
+        <span>分发</span>
+        <div v-if="distributeDeploy.distribute2kodoSubTask.status === 'running'" class="loader">
+          <div class="ball-scale-multiple">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+      <div class="deploy-item">
+        <div class="error-wrapper">
+          <el-alert v-if="distributeDeploy.distribute2kodoSubTask.error" title="错误信息" :description="distributeDeploy.distribute2kodoSubTask.error" type="error" close-text="知道了"></el-alert>
+        </div>
+        <el-row :gutter="0">
+          <el-col :span="6">
+            <div class="grid-content item-title">
+              <i class="iconfont iconzhuangtai"></i> 分发状态
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div
+              class="grid-content item-desc"
+              :class="$translate.calcTaskStatusColor(distributeDeploy.distribute2kodoSubTask.status)"
+            >{{distributeDeploy.distribute2kodoSubTask.status?$translate.translateTaskStatus(distributeDeploy.distribute2kodoSubTask.status):"未运行"}}</div>
+          </el-col>
+          <!-- <el-col :span="6">
+            <div class="grid-content item-title">
+              <i class="iconfont iconjiqun1"></i> 持续时间
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div
+              class="grid-content item-desc"
+            >{{$utils.timeFormat(distributeDeploy.distribute2kodoSubTask.end_time - distributeDeploy.distribute2kodoSubTask.start_time)}}</div>
+          </el-col> -->
+        </el-row>
+        <el-row :gutter="0">
+          <el-col :span="6">
+            <div class="grid-content item-title">
+              <i class="iconfont iconshengji"></i> 分发方式
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="grid-content item-desc">对象存储</div>
+          </el-col>
+          <el-col :span="6">
+            <div class="grid-content item-title">
+              <i class="iconfont iconbaoguanli"></i> 二进制包
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="grid-content item-desc">
+              <div class="grid-content item-desc">{{distributeDeploy.distribute2kodoSubTask.package_file}}</div>
             </div>
           </el-col>
         </el-row>

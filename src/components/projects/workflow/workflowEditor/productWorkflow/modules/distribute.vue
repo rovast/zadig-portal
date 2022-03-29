@@ -2,15 +2,16 @@
   <div class="workflow-distribute">
     <el-card class="box-card">
       <el-form ref="distributeForm" :model="distributeStageDetail" label-width="100px">
-        <el-form-item label="服务选择" prop="distributes">
+        <el-form-item label="服务选择" prop="serviceTargets">
           <el-select
-            v-model="distributeStageDetail.distributes"
+            v-model="distributeStageDetail.serviceTargets"
             multiple
             filterable
             collapse-tags
             clearable
             placeholder="请选择服务"
             size="small"
+            value-key="key"
           >
             <el-option v-for="service in allTargets" :key="service.key" :label="service.key" :value="service"></el-option>
           </el-select>
@@ -83,7 +84,7 @@ export default {
       envList: [],
       distributeStageDetail: {
         methods: [],
-        distributes: []
+        serviceTargets: []
       }
     }
   },
@@ -99,7 +100,11 @@ export default {
   watch: {
     distributeStage: {
       handler: function (val) {
-        this.distributeStageDetail = cloneDeep(val)
+        this.$set(this, 'distributeStageDetail', cloneDeep(val))
+        this.$set(this.distributeStageDetail, 'serviceTargets', cloneDeep(val).distributes.map(d => d.target))
+        this.distributeStageDetail.serviceTargets.forEach(t => {
+          t.key = t.service_name + '/' + t.service_module
+        })
         if (val.s3_storage_id && val.releases && val.releases.length === 0) {
           this.$set(this.distributeStageDetail, 'methods', ['object'])
         } else if (!val.s3_storage_id && val.releases && val.releases.length > 0) {
@@ -150,23 +155,15 @@ export default {
   },
   methods: {
     checkDistribute () {
-      this.$emit('saveDistributeDeploy', this.distributeStageDetail)
-      if (this.preferStorageEverywhere) {
-        if (
-          !this.distributeStageDetail.s3_storage_id ||
-          this.distributeStageDetail.s3_storage_id === ''
-        ) {
-          this.$message({
-            message: '尚未选择对象存储，请检查',
-            type: 'warning'
-          })
-          bus.$emit('receive-tab-check:distribute', false)
-        } else {
-          bus.$emit('receive-tab-check:distribute', true)
+      this.distributeStageDetail.distributes = this.distributeStageDetail.serviceTargets.map(t => {
+        return {
+          target: t,
+          image_distribute: this.distributeStageDetail.methods.includes('image'),
+          qstack_distribute: this.distributeStageDetail.methods.includes('object')
         }
-      } else {
-        bus.$emit('receive-tab-check:distribute', true)
-      }
+      })
+      this.$emit('saveDistributeDeploy', this.distributeStageDetail)
+      bus.$emit('receive-tab-check:distribute', true)
     },
     addImgRepo () {
       this.distributeStageDetail.releases.push({
@@ -181,6 +178,13 @@ export default {
     changeReleaseMethod (val) {
       if (!val.includes('object')) {
         this.$set(this.distributeStageDetail, 's3_storage_id', '')
+      }
+      if (val.includes('image') && !this.distributeStageDetail.releases) {
+        this.$set(this.distributeStageDetail, 'releases', [{
+          deploy_enabled: false,
+          deploy_env: '',
+          repo_id: ''
+        }])
       }
     }
   },

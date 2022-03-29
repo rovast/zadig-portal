@@ -16,6 +16,26 @@
           </span>
           <span class="recheck" @click="checkingClusterIstio">重新检测</span>
         </li>
+        <li>
+          服务调用链检测情况
+          <span class="result">
+            <i v-if="checkWorkloadsResult === 'success'" class="success el-icon-circle-check"></i>
+            <el-tooltip v-if="checkWorkloadsResult === 'failed'" placement="top">
+              <div slot="content">
+                服务 {{ serviceWithoutWorkloads.join(',') }} 没有 K8s Service，请参考
+                <a
+                  href="https://docs.koderover.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >文档</a>
+                ，确认是否满足自测模式开启条件
+              </div>
+              <i class="warning el-icon-warning-outline"></i>
+            </el-tooltip>
+            <i v-if="checkWorkloadsLoading" class="el-icon-loading"></i>
+          </span>
+          <span class="recheck" @click="checkingWorkloads">重新检测</span>
+        </li>
       </ul>
       <el-alert v-if="checkIstioResult === 'failed'" show-icon :closable="false" type="error">
         <span slot="title">
@@ -29,7 +49,7 @@
       </el-alert>
     </div>
     <div v-if="mode === 'disable'">
-        <span class="title">关闭 {{envName}} 环境自测模式，子环境会被全部删除，请确认</span>
+      <span class="desc">关闭 {{envName}} 环境自测模式，子环境会被全部删除，请确认</span>
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button size="small" @click="shareEnvDialogVisible = false">取消</el-button>
@@ -68,7 +88,8 @@ export default {
       checkIstioLoading: false,
       checkWorkloadsLoading: false,
       checkIstioResult: '',
-      checkWorkloadsResult: ''
+      checkWorkloadsResult: '',
+      serviceWithoutWorkloads: []
     }
   },
   methods: {
@@ -77,8 +98,12 @@ export default {
       this.checkingClusterIstio()
       this.checkingWorkloads()
     },
+    closeDialog () {
+      this.shareEnvDialogVisible = true
+    },
     async checkingClusterIstio () {
       this.checkIstioLoading = true
+      this.checkIstioResult = ''
       const clusterId = this.clusterId
       const result = await checkingClusterIstioAPI(clusterId).catch(err => {
         this.checkIstioLoading = false
@@ -93,6 +118,8 @@ export default {
     },
     async checkingWorkloads () {
       this.checkWorkloadsLoading = true
+      this.serviceWithoutWorkloads = []
+      this.checkWorkloadsResult = ''
       const projectName = this.projectName
       const envName = this.envName
       const result = await checkingK8sServiceWorkloadsAPI(
@@ -100,13 +127,15 @@ export default {
         projectName
       ).catch(err => {
         this.checkWorkloadsLoading = false
+        this.serviceWithoutWorkloads = []
         console.log(err)
       })
       this.checkWorkloadsLoading = false
-      if (result) {
+      if (result && result.length === 0) {
         this.checkWorkloadsResult = 'success'
       } else {
         this.checkWorkloadsResult = 'failed'
+        this.serviceWithoutWorkloads = result.map(item => item.split('/')[0])
       }
     },
     async enableShareEnv () {
@@ -167,6 +196,10 @@ export default {
 
           .failed {
             color: #f56c6c;
+          }
+
+          .warning {
+            color: #e6a23c;
           }
         }
 

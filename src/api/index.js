@@ -1339,12 +1339,16 @@ export function checkingK8sServiceWorkloadsAPI (envName, projectName) {
   return http.get(`/api/environment/environments/${envName}/check/workloads/k8services?projectName=${projectName}`)
 }
 
+export function checkingShareEnvStatusAPI (envName, projectName, operation) {
+  return http.get(`/api/environment/environments/${envName}/check/sharenv/${operation}/ready?projectName=${projectName}`)
+}
+
 export function enableShareEnvAPI (envName, projectName) {
   return http.post(`/api/environment/environments/${envName}/share/enable?projectName=${projectName}`)
 }
 
 export function disableShareEnvAPI (envName, projectName) {
-  return http.delete(`/api/environment/environments/${envName}/share/enable?projectName=${projectName}`)
+  return http.delete(`/api/environment/environments/${envName}/share/disable?projectName=${projectName}`)
 }
 
 // Login

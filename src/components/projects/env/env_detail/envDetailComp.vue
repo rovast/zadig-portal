@@ -1,5 +1,5 @@
 <template>
-  <div class="product-detail-container" ref="envContainer">
+  <div class="env-detail-container" ref="envContainer">
     <PmHostList ref="pmHostList" :currentPmServiceData="currentPmServiceData" @success="refreshServiceList"></PmHostList>
     <el-dialog title="通过工作流升级服务" :visible.sync="showStartProductBuild" custom-class="run-workflow" width="60%">
       <run-workflow
@@ -18,11 +18,20 @@
             {{ tab.name }}
             <el-tag v-if="tab.production" effect="light" size="mini" type="danger">生产</el-tag>
             <el-tag v-if="tab.source==='external'" effect="light" size="mini" type="primary">托管</el-tag>
+            <el-tag v-if="!_.isNil(tab.share_env_is_base) && tab.share_env_is_base" effect="light" size="mini" type="primary">基准环境</el-tag>
+            <el-tag v-if="!tab.share_env_is_base && !_.isNil(tab.share_env_base_env) && tab.share_env_base_env !==''" effect="light" size="mini" type="primary">子环境</el-tag>
           </span>
         </template>
       </ChromeTabs>
     </div>
-    <div style="padding: 0 20px;">
+    <div class="banner">
+      <el-alert v-if="productInfo.share_env && productInfo.share_env.base_env!==''" :closable="false" type="warning">
+        <span slot="title">{{`注意：使用基准环境 ${productInfo.share_env.base_env}的访问地址，并在请求的 Header 中加上 x-env=${productInfo.env_name}， 即可将流量转发到当前环境中。如何操作？`}}</span>
+      </el-alert>
+      <el-alert v-if="!_.isNil(shareEnvStatus) && !shareEnvStatus.is_ready" title="注意：自测模式正在开启，过程中服务会重启，短时间内会影响服务的正常访问，请耐心等待。" :closable="false" type="warning"></el-alert>
+    </div>
+
+    <div class="info-container">
       <!--start of basicinfo-->
       <div
         v-loading="envLoading"
@@ -97,6 +106,11 @@
                     <el-button v-else-if="envSource==='helm'" type="primary" @click="openUpdateHelmVar" size="mini" plain>更新环境变量</el-button>
                   </template>
                 </el-tooltip>
+                <template v-if="productInfo.share_env && productInfo.share_env.is_base">
+                  <router-link :to="`/v1/projects/detail/${projectName}/envs/create?createShare=true&baseEnvName=${productInfo.env_name}&clusterId=${productInfo.cluster_id}`">
+                    <el-button type="primary" size="mini" plain>创建子环境</el-button>
+                  </router-link>
+                </template>
                 <template v-if="productInfo.status!=='Disconnected' && productInfo.status!=='Creating'">
                   <el-dropdown v-if="envSource===''||envSource==='spock'" trigger="click">
                     <el-button type="primary" plain>
@@ -115,8 +129,9 @@
                       <i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="shareEnv('enable')">开启自测模式</el-dropdown-item>
-                      <el-dropdown-item  v-if="isShowDeleteEnv" @click.native="deleteProduct(productInfo.product_name,productInfo.env_name)">删除环境</el-dropdown-item>
+                      <el-dropdown-item  @click.native="shareEnv('enable')">开启自测模式</el-dropdown-item>
+                      <el-dropdown-item v-if="productInfo.share_env && productInfo.share_env.enable" @click.native="shareEnv('disable')">关闭自测模式</el-dropdown-item>
+                      <el-dropdown-item v-if="isShowDeleteEnv" @click.native="deleteProduct(productInfo.product_name,productInfo.env_name)">删除环境</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                   <el-tooltip
@@ -552,7 +567,8 @@ import {
   initSource,
   rmSource,
   getRegistryWhenBuildAPI,
-  updateEnvImageRegistry
+  updateEnvImageRegistry,
+  checkingShareEnvStatusAPI
 } from '@api'
 import _ from 'lodash'
 import RunWorkflow from './runWorkflow.vue'
@@ -646,7 +662,8 @@ export default {
       scrollGetFlag: true,
       scrollFinish: false,
       editImageRegistry: false,
-      imageRegistry: []
+      imageRegistry: [],
+      shareEnvStatus: null
     }
   },
   computed: {
@@ -853,6 +870,19 @@ export default {
           if (err === 'CANCEL') {
             console.log(err)
           }
+        })
+    },
+    checkingShareEnvStatus () {
+      const projectName = this.projectName
+      const envName = this.envName
+      const operation = 'enable'
+      this.shareEnvStatus = null
+      checkingShareEnvStatusAPI(envName, projectName, operation)
+        .then(res => {
+          this.shareEnvStatus = res
+        })
+        .catch(err => {
+          console.log(err)
         })
     },
     fetchAllData () {
@@ -1422,7 +1452,11 @@ export default {
     },
     shareEnv (operation) {
       if (operation === 'enable') {
+        this.shareEnvDialog.mode = 'enable'
         this.$refs.shareEnvRef.openDialog()
+      } else if (operation === 'disable') {
+        this.shareEnvDialog.mode = 'disable'
+        this.$refs.shareEnvRef.closeDialog()
       }
     }
   },

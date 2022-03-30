@@ -54,7 +54,7 @@
             </el-col>
             <el-col :span="6">
               <div>
-                <el-select  v-if="release.deploy_enabled" v-model="release.deploy_env" filterable clearable size="small">
+                <el-select v-if="release.deploy_enabled" v-model="release.deploy_env" filterable clearable size="small">
                   <el-option v-for="(env,index) of envList" :key="index" :label="env.name" :value="env.name"></el-option>
                 </el-select>
               </div>
@@ -66,6 +66,15 @@
               </div>
             </el-col>
           </el-row>
+          <el-button
+            v-if="distributeStageDetail.releases.length === 0"
+            @click="addImgRepo"
+            size="mini"
+            type="primary"
+            icon="el-icon-plus"
+            circle
+            plain
+          ></el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -101,13 +110,21 @@ export default {
     distributeStage: {
       handler: function (val) {
         this.$set(this, 'distributeStageDetail', cloneDeep(val))
-        this.$set(this.distributeStageDetail, 'serviceTargets', cloneDeep(val).distributes.map(d => d.target))
+        this.$set(
+          this.distributeStageDetail,
+          'serviceTargets',
+          cloneDeep(val).distributes.map(d => d.target)
+        )
         this.distributeStageDetail.serviceTargets.forEach(t => {
           t.key = t.service_name + '/' + t.service_module
         })
         if (val.s3_storage_id && val.releases && val.releases.length === 0) {
           this.$set(this.distributeStageDetail, 'methods', ['object'])
-        } else if (!val.s3_storage_id && val.releases && val.releases.length > 0) {
+        } else if (
+          !val.s3_storage_id &&
+          val.releases &&
+          val.releases.length > 0
+        ) {
           this.$set(this.distributeStageDetail, 'methods', ['image'])
         } else if (
           val.s3_storage_id &&
@@ -155,15 +172,65 @@ export default {
   },
   methods: {
     checkDistribute () {
-      this.distributeStageDetail.distributes = this.distributeStageDetail.serviceTargets.map(t => {
-        return {
-          target: t,
-          image_distribute: this.distributeStageDetail.methods.includes('image'),
-          qstack_distribute: this.distributeStageDetail.methods.includes('object')
+      const errors = []
+      this.distributeStageDetail.distributes = this.distributeStageDetail.serviceTargets.map(
+        t => {
+          return {
+            target: t,
+            image_distribute: this.distributeStageDetail.methods.includes(
+              'image'
+            ),
+            qstack_distribute: this.distributeStageDetail.methods.includes(
+              'object'
+            )
+          }
         }
-      })
-      this.$emit('saveDistributeDeploy', this.distributeStageDetail)
-      bus.$emit('receive-tab-check:distribute', true)
+      )
+      if (this.distributeStageDetail.methods.includes('object')) {
+        if (this.distributeStageDetail.s3_storage_id === '') {
+          this.$message({
+            message: '请选择对象存储',
+            type: 'warning'
+          })
+          errors.push('object')
+        }
+      }
+      if (this.distributeStageDetail.methods.includes('image')) {
+        const emptyRepos = this.distributeStageDetail.releases.filter(
+          r => !r.repo_id || r.repo_id === ''
+        )
+        const emptyEnvs = this.distributeStageDetail.releases.filter(
+          r => r.deploy_enabled && (!r.deploy_env || r.deploy_env === '')
+        )
+        console.log(emptyEnvs)
+        console.log(emptyRepos)
+        if (this.distributeStageDetail.releases.length === 0) {
+          this.$message({
+            message: '尚未添加镜像仓库，请检查',
+            type: 'warning'
+          })
+          errors.push('image')
+        } else if (emptyRepos.length > 0) {
+          this.$message({
+            message: '镜像仓库不能为空，请检查',
+            type: 'warning'
+          })
+          errors.push('image')
+        } else if (emptyEnvs.length > 0) {
+          this.$message({
+            message: '部署环境不能为空，请检查',
+            type: 'warning'
+          })
+          errors.push('image')
+        }
+      }
+      console.log(errors)
+      if (errors.length === 0) {
+        bus.$emit('receive-tab-check:distribute', true)
+        this.$emit('saveDistributeDeploy', this.distributeStageDetail)
+      } else {
+        bus.$emit('receive-tab-check:distribute', false)
+      }
     },
     addImgRepo () {
       this.distributeStageDetail.releases.push({
@@ -180,11 +247,13 @@ export default {
         this.$set(this.distributeStageDetail, 's3_storage_id', '')
       }
       if (val.includes('image') && !this.distributeStageDetail.releases) {
-        this.$set(this.distributeStageDetail, 'releases', [{
-          deploy_enabled: false,
-          deploy_env: '',
-          repo_id: ''
-        }])
+        this.$set(this.distributeStageDetail, 'releases', [
+          {
+            deploy_enabled: false,
+            deploy_env: '',
+            repo_id: ''
+          }
+        ])
       }
     }
   },

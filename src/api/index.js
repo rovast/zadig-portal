@@ -1348,7 +1348,7 @@ export function enableShareEnvAPI (envName, projectName) {
 }
 
 export function disableShareEnvAPI (envName, projectName) {
-  return http.delete(`/api/aslan/environment/environments/${envName}/share/disable?projectName=${projectName}`)
+  return http.delete(`/api/aslan/environment/environments/${envName}/share/enable?projectName=${projectName}`)
 }
 
 // Login

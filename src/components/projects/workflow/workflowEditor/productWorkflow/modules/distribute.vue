@@ -202,8 +202,6 @@ export default {
         const emptyEnvs = this.distributeStageDetail.releases.filter(
           r => r.deploy_enabled && (!r.deploy_env || r.deploy_env === '')
         )
-        console.log(emptyEnvs)
-        console.log(emptyRepos)
         if (this.distributeStageDetail.releases.length === 0) {
           this.$message({
             message: '尚未添加镜像仓库，请检查',

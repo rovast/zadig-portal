@@ -32,9 +32,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="distributeStageDetail.methods.includes('image')" label="镜像仓库">
-          <el-row v-for="(release,index) in distributeStageDetail.releases" :key="index" :gutter="0">
-            <el-col :span="6">
+        <el-form-item v-if="distributeStageDetail.methods.includes('image')" label="镜像仓库" class="repo-form">
+          <el-row v-for="(release,index) in distributeStageDetail.releases" :key="index" :gutter="0" class="row">
+            <el-col :span="8">
               <div>
                 <el-select value-key="id" v-model="release.repo_id" filterable clearable size="small">
                   <el-option
@@ -47,19 +47,19 @@
               </div>
             </el-col>
             <el-col :span="6">
-              <div>
+              <div style="padding: 0 15px;">
                 <el-switch v-model="release.deploy_enabled"></el-switch>
-                <span>部署到指定环境</span>
+                <span style="color: #909199; font-size: 14px;">部署到指定环境</span>
               </div>
             </el-col>
             <el-col :span="6">
-              <div>
+              <div style="padding: 0 15px;">
                 <el-select v-if="release.deploy_enabled" v-model="release.deploy_env" filterable clearable size="small">
                   <el-option v-for="(env,index) of envList" :key="index" :label="env.name" :value="env.name"></el-option>
                 </el-select>
               </div>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="4">
               <div>
                 <el-button @click="addImgRepo" size="mini" type="primary" icon="el-icon-plus" circle plain></el-button>
                 <el-button @click="removeImgRepo(index)" size="mini" type="danger" icon="el-icon-minus" circle plain></el-button>
@@ -103,6 +103,14 @@ export default {
       targets.forEach(t => {
         t.key = t.service_name + '/' + t.service_module
       })
+      if (!this.editMode && this.distributeStage.distributes.length === 0) {
+        console.log(targets)
+        this.$set(
+          this.distributeStageDetail,
+          'serviceTargets',
+          cloneDeep(targets)
+        )
+      }
       return targets
     }
   },
@@ -110,14 +118,16 @@ export default {
     distributeStage: {
       handler: function (val) {
         this.$set(this, 'distributeStageDetail', cloneDeep(val))
-        this.$set(
-          this.distributeStageDetail,
-          'serviceTargets',
-          cloneDeep(val).distributes.map(d => d.target)
-        )
-        this.distributeStageDetail.serviceTargets.forEach(t => {
-          t.key = t.service_name + '/' + t.service_module
-        })
+        if (cloneDeep(val).distributes.length > 0) {
+          this.$set(
+            this.distributeStageDetail,
+            'serviceTargets',
+            cloneDeep(val).distributes.map(d => d.target)
+          )
+          this.distributeStageDetail.serviceTargets.forEach(t => {
+            t.key = t.service_name + '/' + t.service_module
+          })
+        }
         if (val.s3_storage_id && val.releases && val.releases.length === 0) {
           this.$set(this.distributeStageDetail, 'methods', ['object'])
         } else if (
@@ -275,25 +285,13 @@ export default {
 <style lang="less">
 .workflow-distribute {
   .el-select {
-    // width: 400px;
+    width: 100%;
   }
 
-  .service-adder {
-    margin-top: 20px;
-  }
-
-  .el-checkbox.head {
-    color: #909399;
-  }
-
-  .where-to-dist {
-    .title {
-      display: inline-block;
-      color: #606266;
-      font-size: 14px;
+  .repo-form {
+    .row {
+      width: 100%;
     }
-
-    margin-top: 10px;
   }
 }
 </style>

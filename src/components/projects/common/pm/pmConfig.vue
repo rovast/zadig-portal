@@ -308,6 +308,10 @@ export default {
         desc: 'SSH Agent 目标服务器的 IP 地址'
       },
       {
+        variable: '$<AGENT_NAME>_PORT',
+        desc: 'SSH Agent 目标服务器的端口'
+      },
+      {
         variable: '$<ENV>_HOST_IPs',
         desc: '变量支持获取指定环境关联的所有主机 IP'
       },
@@ -330,6 +334,10 @@ export default {
       {
         variable: '$<HOST_NAME>_IP',
         desc: '获取主机 IP'
+      },
+      {
+        variable: '$<HOST_NAME>_PORT',
+        desc: '获取主机端口'
       },
       {
         variable: '',

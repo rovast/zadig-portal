@@ -78,7 +78,7 @@
             </el-table-column>
             <el-table-column label="状态">
               <template slot-scope="{ row }">
-                <el-tag size="small" effect="dark" :type="row.status === 'normal' ? 'success' : 'danger'">{{row.status === 'normal' ? '正常' : '异常'}}</el-tag>
+                <el-tag size="small" effect="dark" :type="row.status === 'normal' ? 'success' : 'danger'">{{row.status === 'normal' ? '在线' : '离线'}}</el-tag>
               </template>
             </el-table-column>
             <el-table-column label="标签">

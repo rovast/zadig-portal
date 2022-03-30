@@ -312,7 +312,7 @@ export default {
         const description = error.response.data.description
         const res = description.match('the following services are modified since last update')
         if (res) {
-          this.updateEnv(description)
+          this.updateEnvByForce(payload, description)
         }
       })
     },
@@ -357,6 +357,7 @@ export default {
         const force = true
         autoUpgradeEnvAPI(this.projectName, payload, force).then((res) => {
           this.updateEnvDialogVisible = false
+          this.joinToEnvDialogVisible = false
           this.$message({
             message: '更新环境成功',
             type: 'success'

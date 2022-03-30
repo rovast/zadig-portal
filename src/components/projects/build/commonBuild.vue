@@ -302,8 +302,8 @@ export default {
   box-sizing: border-box;
   height: calc(~'100% - 50px');
   margin-right: -3px;
-  margin-bottom: 50px;
   padding-top: 2px;
+  padding-bottom: 50px;
   overflow: auto;
   background-color: @globalBackgroundColor;
 

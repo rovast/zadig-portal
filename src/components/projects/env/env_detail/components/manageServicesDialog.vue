@@ -103,7 +103,7 @@ export default {
         }).finally(() => {
           this.loading = false
         })
-      } else if (this.opeType === 'add') {
+      } else if (this.opeType === 'add' || this.opeType === 'update') {
         autoUpgradeEnvAPI(this.projectName, payload, false).then(() => {
           this.$message.success(`${this.opeDesc}服务成功！`)
           this.closeDialog()

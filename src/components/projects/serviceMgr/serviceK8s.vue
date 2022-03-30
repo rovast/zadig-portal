@@ -148,8 +148,8 @@
           </Multipane>
         </div>
       </div>
-      <div class="controls__wrap">
-          <div v-if="isOnboarding" class="controls__right">
+      <div v-if="isOnboarding" class="controls__wrap">
+          <div class="controls__right">
             <el-button type="primary"
                        size="small"
                        @click="showOnboardingNext">下一步</el-button>

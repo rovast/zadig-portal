@@ -29,7 +29,7 @@
       <li>
         <a @click="addModule('distribute')"
            href="javascript:"
-           class="title">分发
+           class="title">分发部署
           <i class="operation el-icon-circle-plus-outline"></i>
         </a>
       </li>

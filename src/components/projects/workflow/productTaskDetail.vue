@@ -329,10 +329,7 @@
 
           <el-table-column label="测试报告">
             <template slot-scope="scope">
-              <span
-                v-if="scope.row.testingv2SubTask.report_ready === true"
-                class="show-test-result"
-              >
+              <span v-if="scope.row.testingv2SubTask.report_ready === true" class="show-test-result">
                 <router-link :to="getTestReport(scope.row.testingv2SubTask, scope.row._target)">查看</router-link>
               </span>
             </template>
@@ -350,48 +347,52 @@
         </el-table>
       </template>
 
-      <template v-if="distributeArrayExpanded.length > 0">
-        <div class="primary-title not-first-child">分发</div>
+      <template v-if="distributeArray.length > 0">
+        <div class="primary-title not-first-child">分发部署</div>
 
         <el-table
-          :data="distributeArrayExpanded"
-          :span-method="distributeSpanMethod"
+          :data="distributeArray"
           row-class-name="my-table-row"
+          row-key="_target"
+          :expand-row-keys="expandedDistributeDeploys"
+          @expand-change="updateDistributeDeployExpanded"
           empty-text="无"
           style="width: 100%;"
           class="release-table"
         >
-          <el-table-column prop="_target" label="服务" width="200px">
+          <el-table-column type="expand">
+            <template slot-scope="scope">
+              <TaskDetailDistributeDeploy
+                :distributeDeploy="scope.row"
+                :serviceName="scope.row._target"
+                :projectName="projectName"
+                ref="distributeDeployComp"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column prop="_target" label="服务" min-width="200px">
             <template slot-scope="scope">
               <span>{{$utils.showServiceName(scope.row._target)}}</span>
             </template>
           </el-table-column>
 
-          <el-table-column label="运行状态" width="180px">
+          <el-table-column label="分发" min-width="250px">
             <template slot-scope="scope">
-              <span :class="colorTranslation(scope.row.status, 'pipeline', 'task')">{{ myTranslate(scope.row.status) }}</span>
-              {{ makePrettyElapsedTime(scope.row) }}
+              <span :class="colorTranslation(scope.row.release_imageSubTask.distribute_info[0].distribute_status, 'pipeline', 'task')">{{ myTranslate(scope.row.release_imageSubTask.distribute_info[0].distribute_status) }}</span>
+              <!-- {{ makePrettyElapsedTime(scope.row) }}
               <el-tooltip v-if="calcElapsedTimeNum(scope.row)<0" content="本地系统时间和服务端可能存在不一致，请同步。" placement="top">
                 <i class="el-icon-warning" style="color: red;"></i>
-              </el-tooltip>
+              </el-tooltip> -->
             </template>
           </el-table-column>
 
-          <el-table-column label="分发方式" width="120px">
-            <template slot-scope="scope">{{ $translate.translateSubTaskType(scope.row.type) }}</template>
-          </el-table-column>
-          <el-table-column label="输出">
+          <el-table-column label="部署" min-width="250px">
             <template slot-scope="scope">
-              <template v-if="typeof scope.row.location === 'object'">
-                <span style="display: block;" v-for="(item,index) in scope.row.location" :key="index">{{ item.name }}</span>
-              </template>
-              <span v-else-if="typeof scope.row.location === 'string'">{{ scope.row.location }}</span>
-              <el-popover v-else-if="scope.row.error" placement="top" trigger="hover" :content="scope.row.error">
-                <span class="distribute-error" slot="reference">
-                  错误
-                  <i class="icon error el-icon-warning"></i>
-                </span>
-              </el-popover>
+              <span :class="colorTranslation(scope.row.release_imageSubTask.distribute_info[0].deploy_status, 'pipeline', 'task')">{{ myTranslate(scope.row.release_imageSubTask.distribute_info[0].deploy_status) }}</span>
+              <!-- {{ makePrettyElapsedTime(scope.row) }}
+              <el-tooltip v-if="calcElapsedTimeNum(scope.row)<0" content="本地系统时间和服务端可能存在不一致，请同步。" placement="top">
+                <i class="el-icon-warning" style="color: red;"></i>
+              </el-tooltip> -->
             </template>
           </el-table-column>
         </el-table>
@@ -416,6 +417,7 @@ import ArtifactDownload from '@/components/common/artifactDownload.vue'
 import TaskDetailBuild from './productTaskDetail/build.vue'
 import TaskDetailDeploy from './productTaskDetail/deploy.vue'
 import TaskDetailArtifactDeploy from './productTaskDetail/artifactDeploy.vue'
+import TaskDetailDistributeDeploy from './productTaskDetail/distributeDeploy.vue'
 import TaskDetailTest from './productTaskDetail/test.vue'
 import TaskDetailExtension from './productTaskDetail/extension.vue'
 import RepoJump from '@/components/projects/workflow/common/repoJump.vue'
@@ -482,6 +484,7 @@ export default {
       versionList: [],
       expandedBuildDeploys: [],
       expandedArtifactDeploys: [],
+      expandedDistributeDeploys: [],
       expandedTests: []
     }
   },
@@ -715,46 +718,6 @@ export default {
       }
       return arr
     },
-    distributeArrayExpanded () {
-      const wanted = [
-        'distribute2kodoSubTask',
-        'release_imageSubTask',
-        'distributeSubTask'
-      ]
-
-      const outputKeys = {
-        distribute2kodoSubTask: 'package_file',
-        release_imageSubTask: '_image',
-        distributeSubTask: 'package_file'
-      }
-      const locationKeys = {
-        distribute2kodoSubTask: 'distribute2kodoPath',
-        release_imageSubTask: 'image_repo',
-        distributeSubTask: 'dist_host'
-      }
-
-      const twoD = this.distributeArray.map(map => {
-        let typeCount = 0
-        const arr = []
-        for (const key of wanted) {
-          if (key in map) {
-            typeCount++
-            const item = map[key]
-            item._target = map._target
-            item.output = item[outputKeys[key]]
-            if (key === 'release_imageSubTask') {
-              item.location = item.releases ? item.releases : item.image_release
-            } else {
-              item.location = item[locationKeys[key]]
-            }
-            arr.push(item)
-          }
-        }
-        arr[0].typeCount = typeCount
-        return arr
-      })
-      return this.$utils.flattenArray(twoD)
-    },
     extensionStage () {
       const extension = this.taskDetail.stages.find(
         stage => stage.type === 'extension'
@@ -920,30 +883,14 @@ export default {
       return this.$utils.timeFormat(this.calcElapsedTimeNum(subTask))
     },
 
-    distributeSpanMethod ({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 0) {
-        if ('typeCount' in row) {
-          return {
-            rowspan: row.typeCount,
-            colspan: 1
-          }
-        }
-        return {
-          rowspan: 0,
-          colspan: 1
-        }
-      }
-      return {
-        rowspan: 1,
-        colspan: 1
-      }
-    },
-
     updateBuildDeployExpanded (row, expandedRows) {
       this.expandedBuildDeploys = expandedRows.map(r => r._target)
     },
     updateArtifactDeployExpanded (row, expandedRows) {
       this.expandedBuildDeploys = expandedRows.map(r => r._target)
+    },
+    updateDistributeDeployExpanded (row, expandedRows) {
+      this.expandedDistributeDeploys = expandedRows.map(r => r._target)
     },
     updateTestExpanded (row, expandedRows) {
       this.expandedTests = expandedRows.map(r => r._target)
@@ -965,7 +912,7 @@ export default {
 
       if (
         this.taskDetail.status === 'passed' &&
-        this.distributeArrayExpanded.length > 0
+        this.distributeArray.length > 0
       ) {
         return true
       }
@@ -1030,6 +977,7 @@ export default {
     TaskDetailBuild,
     TaskDetailDeploy,
     TaskDetailArtifactDeploy,
+    TaskDetailDistributeDeploy,
     TaskDetailTest,
     TaskDetailExtension,
     Etable,

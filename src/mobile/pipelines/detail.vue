@@ -44,7 +44,7 @@
               <van-tag v-if="!$utils.isEmpty(workflow.artifact_stage) && workflow.artifact_stage.enabled"
                        type="primary">交付物部署</van-tag>
               <van-tag v-if="!$utils.isEmpty(workflow.distribute_stage) &&  workflow.distribute_stage.enabled"
-                       type="primary">分发</van-tag>
+                       type="primary">分发部署</van-tag>
             </div>
           </div>
         </van-col>

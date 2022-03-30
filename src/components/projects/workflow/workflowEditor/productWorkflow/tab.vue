@@ -52,7 +52,7 @@
       <div @click="changeTab('distribute')"
            class="tab"
            :class="{'active-tab':currentTab==='distribute' }">
-        <span class="number">分发</span>
+        <span class="number">分发部署</span>
       </div>
       <span class="operation">
         <i @click="deleteModule('distribute')"

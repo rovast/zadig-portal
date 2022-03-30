@@ -64,10 +64,10 @@
         </el-row>
       </div>
     </el-card>
-    <el-card class="box-card task-process" :body-style="{ margin: '15px 0 0 0' }">
+    <el-card v-for="(deploy,index) in distributeDeploy.release_imageSubTask.distribute_info" :key="index" class="box-card task-process" :body-style="{ margin: '15px 0 0 0' }">
       <div slot="header" class="clearfix subtask-header">
         <span>部署</span>
-        <div v-if="distributeDeploy.release_imageSubTask.distribute_info[0].deploy_status === 'running'" class="loader">
+        <div v-if="deploy.deploy_status === 'running'" class="loader">
           <div class="ball-scale-multiple">
             <div></div>
             <div></div>
@@ -88,8 +88,8 @@
           <el-col :span="6">
             <div
               class="grid-content item-desc"
-              :class="$translate.calcTaskStatusColor(distributeDeploy.release_imageSubTask.distribute_info[0].deploy_status)"
-            >{{distributeDeploy.release_imageSubTask.distribute_info[0].deploy_status?$translate.translateTaskStatus(distributeDeploy.release_imageSubTask.distribute_info[0].deploy_status):"未运行"}}</div>
+              :class="$translate.calcTaskStatusColor(deploy.deploy_status)"
+            >{{deploy.deploy_status?$translate.translateTaskStatus(deploy.deploy_status):"未运行"}}</div>
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-title">
@@ -98,7 +98,7 @@
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-desc">
-              {{distributeDeploy.release_imageSubTask.distribute_info[0].deploy_env}}
+              {{deploy.deploy_env}}
             </div>
           </el-col>
         </el-row>
@@ -110,7 +110,7 @@
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-desc">
-              {{distributeDeploy.release_imageSubTask.distribute_info[0].deploy_service_name}}
+              {{deploy.deploy_service_name}}
             </div>
           </el-col>
           <el-col :span="6">
@@ -120,10 +120,10 @@
           </el-col>
           <el-col :span="6">
             <div class="grid-content item-desc">
-              <el-tooltip effect="dark" :content="distributeDeploy.release_imageSubTask.distribute_info[0].image" placement="top">
+              <el-tooltip effect="dark" :content="deploy.image" placement="top">
                 <div
                   class="grid-content item-desc"
-                >{{distributeDeploy.release_imageSubTask.distribute_info[0].image?distributeDeploy.release_imageSubTask.distribute_info[0].image.split('/')[2]:"*"}}</div>
+                >{{deploy.image?deploy.image.split('/')[2]:"*"}}</div>
               </el-tooltip>
             </div>
           </el-col>

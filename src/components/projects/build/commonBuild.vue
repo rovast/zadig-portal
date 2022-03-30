@@ -151,7 +151,7 @@ export default {
         })
         .catch(err => {
           console.log('傻了吧', err)
-          this.saveLoading = true
+          this.saveLoading = false
         })
     },
     async loadBuild (buildConfigName) {

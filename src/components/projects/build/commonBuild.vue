@@ -2,7 +2,6 @@
   <div class="build-config-container" :class="{'mini-width': mini}">
     <div v-if="jenkinsEnabled" class="build-source" :class="{'small-padding': mini}">
       <span class="build-source-title">构建方式</span>
-      <!-- TODO loadBuild(buildName) buildName -->
       <el-select v-model="source" size="small" value-key="key" :disabled="isEdit" @change="loadBuild(buildName)" filterable>
         <el-option v-for="(item,index) in originOptions" :key="index" :label="item.label" :value="item.value"></el-option>
       </el-select>
@@ -157,10 +156,10 @@ export default {
     },
     async loadBuild (buildConfigName) {
       this.buildConfig = {
-        name: this.defaultBuildName
+        name: buildConfigName || this.defaultBuildName
       }
       this.jenkinsBuild = {
-        name: this.defaultBuildName
+        name: buildConfigName || this.defaultBuildName
       }
 
       this.configDataLoading = true

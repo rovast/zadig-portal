@@ -123,9 +123,9 @@ export default {
       const message = JSON.parse(description.match(/{.+}/g)[0])
       const key = Object.keys(message)[0]
       const value = message[key].map(item => {
-        return item.name + ';'
+        return item.name
       })
-      this.$confirm(`您的更新操作将覆盖环境中${key}的${value}服务变更，确认继续?`, '提示', {
+      this.$confirm(`您的更新操作将覆盖环境中 ${key} 的 ${value} 服务变更，确认继续?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

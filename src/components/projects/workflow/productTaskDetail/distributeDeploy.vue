@@ -27,12 +27,12 @@
               :class="$translate.calcTaskStatusColor(distributeDeploy.release_imageSubTask.distribute_info[0].distribute_status)"
             >{{distributeDeploy.release_imageSubTask.distribute_info[0].distribute_status?$translate.translateTaskStatus(distributeDeploy.release_imageSubTask.distribute_info[0].distribute_status):"未运行"}}</div>
           </el-col>
-          <el-col :span="6">
+          <el-col v-if=" distributeDeploy.release_imageSubTask.distribute_info[0].distribute_status && distributeDeploy.release_imageSubTask.distribute_info[0].distribute_status !=='running'" :span="6">
             <div class="grid-content item-title">
               <i class="iconfont iconshijian"></i> 持续时间
             </div>
           </el-col>
-          <el-col :span="6">
+          <el-col v-if="distributeDeploy.release_imageSubTask.distribute_info[0].distribute_status && distributeDeploy.release_imageSubTask.distribute_info[0].distribute_status !=='running'" :span="6">
             <div
               class="grid-content item-desc"
             >{{$utils.timeFormat(distributeDeploy.release_imageSubTask.distribute_info[0].distribute_end_time - distributeDeploy.release_imageSubTask.distribute_info[0].distribute_start_time)}}</div>

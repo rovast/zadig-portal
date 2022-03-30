@@ -10,6 +10,7 @@
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import 'xterm/css/xterm.css'
+import store from 'storejs'
 export default {
   name: 'PmExec',
   data () {
@@ -27,7 +28,8 @@ export default {
     initTerm () {
       let wsLink = false
       const hostname = this.getLogWSUrl()
-      const url = `/api/aslan/environment/environments/${this.envName}/services/${this.serviceName}/pmexec?projectName=${this.productName}&ip=${this.address}`
+      const token = store.get('userInfo').token
+      const url = `/api/aslan/environment/environments/${this.envName}/services/${this.serviceName}/pmexec?projectName=${this.productName}&ip=${this.address}&token=${token}`
       this.ws = new WebSocket(hostname + url)
 
       this.$nextTick(() => {

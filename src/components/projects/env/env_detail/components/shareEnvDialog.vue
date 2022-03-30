@@ -144,6 +144,10 @@ export default {
       await enableShareEnvAPI(envName, projectName).catch(err => {
         console.log(err)
       })
+      this.$message({
+        type: 'success',
+        message: '自测模式开启成功'
+      })
       this.shareEnvDialogVisible = false
     },
     async disableShareEnv () {
@@ -151,6 +155,10 @@ export default {
       const envName = this.envName
       await disableShareEnvAPI(envName, projectName).catch(err => {
         console.log(err)
+      })
+      this.$message({
+        type: 'success',
+        message: '自测模式关闭成功'
       })
       this.shareEnvDialogVisible = false
     }

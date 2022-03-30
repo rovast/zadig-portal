@@ -25,8 +25,8 @@
       </ChromeTabs>
     </div>
     <div class="banner">
-      <el-alert v-if="productInfo.share_env && productInfo.share_env.base_env!==''" :closable="false" type="warning">
-        <span slot="title">{{`注意：使用基准环境 ${productInfo.share_env.base_env}的访问地址，并在请求的 Header 中加上 x-env=${productInfo.env_name}， 即可将流量转发到当前环境中。如何操作？`}}</span>
+      <el-alert v-if="productInfo.share_env_enable && productInfo.share_env_base_env!==''" :closable="false" type="warning">
+        <span slot="title">{{`注意：使用基准环境 ${productInfo.share_env_base_env}的访问地址，并在请求的 Header 中加上 x-env=${productInfo.env_name}， 即可将流量转发到当前环境中。如何操作？`}}</span>
       </el-alert>
       <el-alert v-if="!_.isNil(shareEnvStatus) && !shareEnvStatus.is_ready" title="注意：自测模式正在开启，过程中服务会重启，短时间内会影响服务的正常访问，请耐心等待。" :closable="false" type="warning"></el-alert>
     </div>
@@ -106,7 +106,7 @@
                     <el-button v-else-if="envSource==='helm'" type="primary" @click="openUpdateHelmVar" size="mini" plain>更新环境变量</el-button>
                   </template>
                 </el-tooltip>
-                <template v-if="productInfo.share_env && productInfo.share_env.is_base">
+                <template v-if="productInfo.share_env_enable && productInfo.share_env_is_base">
                   <router-link :to="`/v1/projects/detail/${projectName}/envs/create?createShare=true&baseEnvName=${productInfo.env_name}&clusterId=${productInfo.cluster_id}`">
                     <el-button type="primary" size="mini" plain>创建子环境</el-button>
                   </router-link>
@@ -129,8 +129,8 @@
                       <i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item  @click.native="shareEnv('enable')">开启自测模式</el-dropdown-item>
-                      <el-dropdown-item v-if="productInfo.share_env && productInfo.share_env.enable" @click.native="shareEnv('disable')">关闭自测模式</el-dropdown-item>
+                      <el-dropdown-item v-if="!productInfo.share_env_enable && productInfo.share_env_is_base" @click.native="shareEnv('enable')">开启自测模式</el-dropdown-item>
+                      <el-dropdown-item v-if="productInfo.share_env_enable && productInfo.share_env_is_base" @click.native="shareEnv('disable')">关闭自测模式</el-dropdown-item>
                       <el-dropdown-item v-if="isShowDeleteEnv" @click.native="deleteProduct(productInfo.product_name,productInfo.env_name)">删除环境</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>

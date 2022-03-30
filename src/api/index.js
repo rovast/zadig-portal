@@ -7,6 +7,7 @@ import Store from '../store'
 import Router from '../router'
 const specialAPIs = ['/api/aslan/system/operation', '/api/aslan/delivery/artifacts', '/api/aslan/environment/kube/workloads']
 const ignoreErrReq = '/api/aslan/services/validateUpdate/'
+const ignoreErrResponse = 'the following services are modified since last update:'
 const reqExps = [/api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/workloads/, /api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/groups/]
 const analyticsReq = 'https://api.koderover.com/api/operation/upload'
 const userInitEnvRoute = '/v1/projects/initialize/'
@@ -123,7 +124,8 @@ http.interceptors.response.use(
     if (
       error.response &&
       error.response.config.url !== analyticsReq &&
-      !error.response.config.url.includes(ignoreErrReq)
+      !error.response.config.url.includes(ignoreErrReq) &&
+      !error.response.data.description.includes(ignoreErrResponse)
     ) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx

@@ -215,7 +215,7 @@ export default {
 <style lang="less">
 @import "~@assets/css/component/service-detail.less";
 
-.login-icon {
+.login-icon.iconfont {
   padding-right: 8px;
   font-size: 12px;
 }

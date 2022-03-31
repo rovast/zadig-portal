@@ -312,7 +312,7 @@ export default {
         const description = error.response.data.description
         const res = description.match('the following services are modified since last update')
         if (res) {
-          this.updateEnv(description)
+          this.updateEnvByForce(payload, description)
         }
       })
     },
@@ -339,30 +339,25 @@ export default {
         const description = error.response.data.description
         const res = description.match('the following services are modified since last update')
         if (res) {
-          this.updateEnv(description)
+          this.updateEnvupdateEnvByForce(payload, description)
         }
       })
     },
-    updateEnv (res) {
-      const message = JSON.parse(res.match(/{.+}/g)[0])
+    updateEnvByForce (payload, description) {
+      const message = JSON.parse(description.match(/{.+}/g)[0])
       const key = Object.keys(message)[0]
       const value = message[key].map(item => {
-        return item.name + ';'
+        return item.name
       })
-      this.$confirm(`您的更新操作将覆盖环境中${key}的${value}服务变更，确认继续?`, '提示', {
+      this.$confirm(`您的更新操作将覆盖环境中 ${key} 的 ${value} 服务变更，确认继续?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const payload = this.checkedEnvList.map(env => {
-          return {
-            env_name: env.name
-          }
-        })
         const force = true
-        const projectName = this.projectName
-        autoUpgradeEnvAPI(projectName, payload, force).then((res) => {
-          this.$router.push(`/v1/projects/detail/${projectName}/envs`)
+        autoUpgradeEnvAPI(this.projectName, payload, force).then((res) => {
+          this.updateEnvDialogVisible = false
+          this.joinToEnvDialogVisible = false
           this.$message({
             message: '更新环境成功',
             type: 'success'

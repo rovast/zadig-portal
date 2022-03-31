@@ -40,7 +40,6 @@
             :customImageRule="projectForm.custom_image_rule"
             :customTarRule="projectForm.custom_tar_rule"
             ref="cusDeliverable"
-            :useTar="useTar"
           />
         </el-form-item>
       </el-form>
@@ -68,12 +67,6 @@ const validateDeployTimeout = (rule, value, callback) => {
 export default {
   components: {
     CusDeliverable
-  },
-  props: {
-    useTar: {
-      default: true,
-      type: Boolean
-    }
   },
   data () {
     return {

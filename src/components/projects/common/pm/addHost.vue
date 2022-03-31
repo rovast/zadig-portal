@@ -178,6 +178,17 @@ export default {
         callback()
       }
     }
+
+    const validateIP = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入主机 IP'))
+      } else if (!/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/.test(value)) {
+        callback(new Error('请输入正确的 IP 地址'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       rules: {
         name: [
@@ -209,8 +220,7 @@ export default {
         ip: [
           {
             type: 'string',
-            required: true,
-            message: '请输入主机 IP'
+            validator: validateIP
           }
         ],
         port: [

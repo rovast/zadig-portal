@@ -46,7 +46,7 @@
         <el-row :gutter="10" style="margin-left: 0;" class="ip-host-row">
           <el-col :span="16" style="padding-left: 0;">
             <el-form-item prop="ip" required>
-              <el-input size="small" v-model.trim="host.ip" placeholder="请输入主机 IP"></el-input>
+              <el-input size="small" v-model.trim="host.ip" placeholder="请输入主机地址"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="1" style="text-align: center;">:</el-col>
@@ -210,7 +210,7 @@ export default {
           {
             type: 'string',
             required: true,
-            message: '请输入主机 IP'
+            message: '请输入主机地址'
           }
         ],
         port: [

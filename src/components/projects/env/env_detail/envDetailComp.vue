@@ -129,7 +129,7 @@
                       <i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item v-if="!productInfo.share_env_enable && productInfo.share_env_is_base" @click.native="shareEnv('enable')">开启自测模式</el-dropdown-item>
+                      <el-dropdown-item v-if="!productInfo.share_env_enable" @click.native="shareEnv('enable')">开启自测模式</el-dropdown-item>
                       <el-dropdown-item v-if="productInfo.share_env_enable && productInfo.share_env_is_base" @click.native="shareEnv('disable')">关闭自测模式</el-dropdown-item>
                       <el-dropdown-item v-if="isShowDeleteEnv" @click.native="deleteProduct(productInfo.product_name,productInfo.env_name)">删除环境</el-dropdown-item>
                     </el-dropdown-menu>

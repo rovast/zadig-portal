@@ -76,6 +76,7 @@
 <script>
 import { createHostAPI, updateHostAPI } from '@api'
 import { cloneDeep } from 'lodash'
+import isIP from 'validator/lib/isIP'
 const shellKeywords = [
   'alias',
   'bg',
@@ -182,7 +183,7 @@ export default {
     const validateIP = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请输入主机 IP'))
-      } else if (!/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/.test(value)) {
+      } else if (!isIP(value)) {
         callback(new Error('请输入正确的 IP 地址'))
       } else {
         callback()

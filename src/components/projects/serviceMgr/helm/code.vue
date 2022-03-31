@@ -551,7 +551,7 @@ export default {
       overflow: auto;
 
       .folder {
-        height: calc(~'100% - 55px');
+        height: calc(~'100% - 40px');
         overflow: auto;
       }
     }
@@ -600,13 +600,13 @@ export default {
     .code {
       position: relative;
       box-sizing: border-box;
-      height: calc(~'100% - 55px');
+      height: calc(~'100% - 40px');
       margin-top: 40px;
       overflow-y: scroll;
       background-color: #fff;
 
       .code-content {
-        padding: 3px;
+        padding: 3px 3px 50px;
       }
 
       .service-editor-content {

@@ -9,7 +9,7 @@
          <span class="reset" @click="resetFiled('customerImage',key)">重置</span>
      </div>
     </div>
-    <div class="tar-content" v-if="useTar">
+    <div class="tar-content">
       <div class="title">TAR 包名称规则</div>
       <div class="item" v-for="key of Object.keys(tar)" :key="'tar'+key">
           <div class="label">{{tar[key].label}}</div>
@@ -28,11 +28,7 @@ export default {
   name: 'Deliverable',
   props: {
     customImageRule: Object,
-    customTarRule: Object,
-    useTar: {
-      default: true,
-      type: Boolean
-    }
+    customTarRule: Object
   },
   data () {
     return {

@@ -79,6 +79,7 @@
                    :address="execModal.address"
                    :envName="execModal.envName"
                    :serviceName="serviceName"
+                   :hostId='execModal.hostId'
                    :visible="execModal.visible"
                    ref="debug"/>
     </el-dialog>
@@ -112,7 +113,8 @@ export default {
       execModal: {
         visible: false,
         envName: '',
-        address: ''
+        address: '',
+        hostId: ''
       }
     }
   },
@@ -189,6 +191,7 @@ export default {
       this.execModal.visible = true
       this.execModal.envName = current.env_name
       this.execModal.address = current.address
+      this.execModal.hostId = current.host_id
     }
   },
   created () {

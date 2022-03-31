@@ -29,7 +29,7 @@ export default {
       let wsLink = false
       const hostname = this.getLogWSUrl()
       const token = store.get('userInfo').token
-      const url = `/api/aslan/environment/environments/${this.envName}/services/${this.serviceName}/pmexec?projectName=${this.productName}&ip=${this.address}&token=${token}`
+      const url = `/api/aslan/environment/environments/${this.envName}/services/${this.serviceName}/pmexec?projectName=${this.projectName}&ip=${this.address}&token=${token}`
       this.ws = new WebSocket(hostname + url)
 
       this.$nextTick(() => {
@@ -113,7 +113,7 @@ export default {
       required: true,
       type: Boolean
     },
-    productName: {
+    projectName: {
       required: true,
       type: String
     },

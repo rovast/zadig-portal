@@ -75,7 +75,7 @@
            @click="fullScreen(execModal.address +'-debug')"></i>
       </span>
       <PmXtermDebug :id="execModal.address +'-debug'"
-                   :productName="projectName"
+                   :projectName="projectName"
                    :address="execModal.address"
                    :envName="execModal.envName"
                    :serviceName="serviceName"

@@ -148,6 +148,7 @@ export default {
         type: 'success',
         message: '自测模式开启成功'
       })
+      this.$emit('statusChange', 'enable')
       this.shareEnvDialogVisible = false
     },
     async disableShareEnv () {
@@ -160,6 +161,7 @@ export default {
         type: 'success',
         message: '自测模式关闭成功'
       })
+      this.$emit('statusChange', 'disable')
       this.shareEnvDialogVisible = false
     }
   }

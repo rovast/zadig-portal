@@ -28,7 +28,7 @@
       <el-alert v-if="productInfo.share_env_enable && productInfo.share_env_base_env!==''" :closable="false" type="warning">
         <span slot="title">{{`注意：使用基准环境 ${productInfo.share_env_base_env}的访问地址，并在请求的 Header 中加上 x-env=${productInfo.env_name}， 即可将流量转发到当前环境中。如何操作？`}}</span>
       </el-alert>
-      <el-alert v-if="!_.isNil(shareEnvStatus) && !shareEnvStatus.is_ready" title="注意：自测模式正在开启，过程中服务会重启，短时间内会影响服务的正常访问，请耐心等待。" :closable="false" type="warning"></el-alert>
+      <el-alert v-if="!_.isNil(shareEnvStatus) && !shareEnvStatus.is_ready" :title="`注意：自测模式正在${shareEnvStatus.operation ==='enable'?'开启':'关闭'}，过程中服务会重启，短时间内会影响服务的正常访问，请耐心等待。`" :closable="false" type="warning"></el-alert>
     </div>
 
     <div class="info-container">
@@ -545,7 +545,7 @@
     <UpdateK8sVarDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="updateK8sVarDialog" />
     <PmServiceLog ref="pmServiceLog" />
     <ManageServicesDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="manageServicesRef" />
-    <ShareEnvDialog :mode="shareEnvDialog.mode" :projectName="productInfo.product_name" :envName="productInfo.env_name" :clusterId="productInfo.cluster_id" ref="shareEnvRef" />
+    <ShareEnvDialog :mode="shareEnvDialog.mode" :projectName="productInfo.product_name" :envName="productInfo.env_name" :clusterId="productInfo.cluster_id" @statusChange="shareEnvCallback" ref="shareEnvRef" />
   </div>
 </template>
 
@@ -663,7 +663,8 @@ export default {
       scrollFinish: false,
       editImageRegistry: false,
       imageRegistry: [],
-      shareEnvStatus: null
+      shareEnvStatus: null,
+      shareEnvStatusId: null
     }
   },
   computed: {
@@ -872,18 +873,27 @@ export default {
           }
         })
     },
-    checkingShareEnvStatus () {
+    async checkingShareEnvStatus (operation) {
       const projectName = this.projectName
       const envName = this.envName
-      const operation = 'enable'
-      this.shareEnvStatus = null
-      checkingShareEnvStatusAPI(envName, projectName, operation)
-        .then(res => {
+      if (operation) {
+        const res = await checkingShareEnvStatusAPI(envName, projectName, operation)
+          .catch(err => {
+            console.log(err)
+            clearTimeout(this.shareEnvStatusId)
+          })
+        if (res) {
           this.shareEnvStatus = res
-        })
-        .catch(err => {
-          console.log(err)
-        })
+          this.shareEnvStatus.operation = operation
+          if (!res.is_ready) {
+            this.shareEnvStatusId = setTimeout(() => { return this.checkingShareEnvStatus(operation) }, 2000)
+          } else if (res.is_ready) {
+            clearTimeout(this.shareEnvStatusId)
+            this.shareEnvStatusId = null
+            this.fetchAllData()
+          }
+        }
+      }
     },
     fetchAllData () {
       try {
@@ -1458,6 +1468,9 @@ export default {
         this.shareEnvDialog.mode = 'disable'
         this.$refs.shareEnvRef.closeDialog()
       }
+    },
+    shareEnvCallback (operation) {
+      this.checkingShareEnvStatus(operation)
     }
   },
   created () {

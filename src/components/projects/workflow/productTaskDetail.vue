@@ -727,6 +727,8 @@ export default {
           error: extension.sub_tasks.extension.error,
           status: extension.status,
           payload: extension.sub_tasks.extension.payload,
+          response_code: extension.sub_tasks.extension.response_code,
+          response_body: extension.sub_tasks.extension.response_body,
           duration: this.$utils.timeFormat(
             extension.sub_tasks.extension.end_time -
               extension.sub_tasks.extension.start_time

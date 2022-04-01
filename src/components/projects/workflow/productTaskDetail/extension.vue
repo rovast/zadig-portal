@@ -39,7 +39,7 @@
       <el-col :span="6">
         <el-popover popper-class="payload-popover" placement="top" width="400" trigger="click">
           <div v-if="extensionStage.response_code" style="margin: 10px 0;">
-            <span style="display: inline-block; color: #000; font-size: 16px;">Reponse Code</span>
+            <span style="display: inline-block; color: #000; font-size: 16px;">Reponse Code:</span>
             <div>
               <el-tag v-if="extensionStage.response_code <=299" type="success" size="mini" effect="dark">{{ extensionStage.response_code }}</el-tag>
               <el-tag
@@ -51,8 +51,9 @@
             </div>
           </div>
           <div v-if="extensionStage.response_body" style="margin: 10px 0;">
-            <span style="display: inline-block; color: #000; font-size: 16px;">Reponse Body</span>
-            <VueJsonPretty :data="JSON.parse(extensionStage.response_body)" />
+            <span style="display: inline-block; color: #000; font-size: 16px;">Reponse Body:</span>
+            <VueJsonPretty v-if="checkJSON(extensionStage.response_body)" :data="JSON.parse(extensionStage.response_body)" />
+            <pre v-else style="max-height: 400px; overflow: auto;">{{extensionStage.response_body}}</pre>
           </div>
           <span slot="reference" class="btn">查看</span>
         </el-popover>
@@ -63,6 +64,7 @@
 <script>
 import { wordTranslate, colorTranslate } from '@utils/wordTranslate.js'
 import VueJsonPretty from 'vue-json-pretty'
+import isJSON from 'validator/lib/isJSON'
 export default {
   props: {
     extensionStage: {
@@ -76,6 +78,9 @@ export default {
     },
     myTranslate (word) {
       return wordTranslate(word, 'pipeline', 'task')
+    },
+    checkJSON (str) {
+      return isJSON(str)
     }
   },
   components: {

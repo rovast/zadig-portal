@@ -6,6 +6,16 @@
 </template>
 
 <script>
+import {
+  getIngressObjectAPI,
+  getConfigMapObjectAPI,
+  getSecretObjectAPI,
+  getPvcObjectAPI,
+  addConfigObjectAPI,
+  updateConfigObjectAPI,
+  deleteConfigObjectAPI,
+  getObjectHistoryVersionAPI
+} from '@api'
 import ETable from '@/components/common/etable/index.vue'
 export default {
   props: {
@@ -16,6 +26,8 @@ export default {
       configInfos: {
         Ingress: {
           id: 'ingress_name',
+          getAPI: getIngressObjectAPI,
+          commonEnvCfgType: 'ingress',
           tableData: [],
           tableColumns: [
             {
@@ -42,6 +54,8 @@ export default {
         },
         ConfigMap: {
           id: 'cm_name',
+          getAPI: getConfigMapObjectAPI,
+          commonEnvCfgType: 'configMap',
           tableData: [],
           tableColumns: [
             {
@@ -63,6 +77,8 @@ export default {
         },
         Secret: {
           id: 'secret_name',
+          getAPI: getSecretObjectAPI,
+          commonEnvCfgType: 'secret',
           tableData: [],
           tableColumns: [
             {
@@ -88,6 +104,8 @@ export default {
         },
         PVC: {
           id: 'pvc_name',
+          getAPI: getPvcObjectAPI,
+          commonEnvCfgType: 'pvc',
           tableData: [],
           tableColumns: [
             {
@@ -135,10 +153,18 @@ export default {
       return (
         this.configInfos[this.currentType] || {
           id: 'id',
+          getAPI: null,
+          commonEnvCfgType: '',
           tableData: [],
           tableColumns: []
         }
       )
+    },
+    projectName () {
+      return this.$route.params.project_name
+    },
+    envName () {
+      return this.$route.params.env_name
     }
   },
   methods: {
@@ -173,7 +199,7 @@ export default {
           <el-button
             type="text"
             onClick={() => {
-              this.deleteConfig(scope.$index)
+              this.deleteConfig(scope.row)
             }}
           >
             删除
@@ -181,28 +207,118 @@ export default {
         </div>
       )
     },
-    getAllConfig () {
-      console.log('请求所有的  配置')
+    operateConfig (action, row) {
+      const data =
+        action !== 'add'
+          ? {
+            yamlData: row.yaml_data,
+            name: row[this.currentInfos.id],
+            services: row.services || []
+          }
+          : {}
+      this.$emit('actionConfig', {
+        type: action, // view/edit/add
+        ...data
+      })
     },
-    deleteConfig (index) {
-      console.log('删除', index)
-      this.getAllConfig()
-    },
-    operateConfig (ope) {
-      if (ope === 'view') {
-        console.log('查看  配置, 提交事件')
-      } else if (ope === 'edit') {
-        console.log('编辑  配置, 提交事件')
-      } else if (ope === 'add') {
-        this.$emit('addConfig')
+    getConfigByType (type = '*') {
+      let allType = []
+      if (type === '*') {
+        allType = ['Ingress', 'ConfigMap', 'Secret', 'PVC']
+      } else {
+        allType = [type]
       }
+
+      const projectName = this.projectName
+      const envName = this.envName
+
+      allType.forEach(type => {
+        const currentInfo = this.configInfos[type]
+        currentInfo
+          .getAPI(projectName, envName)
+          .then(res => {
+            currentInfo.tableData = res
+          })
+          .catch(err => {
+            console.log(err)
+            currentInfo.tableData = []
+          })
+      })
+    },
+    async deleteConfig (row) {
+      console.log('删除', row, row[this.currentInfos.id])
+      const objectName = row[this.currentInfos.id]
+      this.$confirm(
+        `确定要删除 ${this.envName} 环境中 ${objectName} 配置?`,
+        '删除',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(async () => {
+        const params = {
+          objectName,
+          projectName: this.projectName,
+          envName: this.envName,
+          commonEnvCfgType: this.currentType
+        }
+        const res = await deleteConfigObjectAPI(params).catch(err =>
+          console.log(err)
+        )
+        if (res) {
+          this.$message.success(`删除 ${objectName} 成功！`)
+          this.getConfigByType(this.currentType)
+        }
+      })
+    },
+    createConfigByType ({ yamlData }) {
+      const payload = {
+        env_name: this.envName,
+        product_name: this.projectName,
+        common_env_cfg_type: this.currentInfos.commonEnvCfgType,
+        yaml_data: yamlData
+      }
+      return addConfigObjectAPI(payload)
+        .then(res => {
+          this.$message.success(`添加配置成功！`)
+        })
+        .catch(err => {
+          console.log(err)
+          return 'error'
+        })
+    },
+    updateConfigByType ({
+      name,
+      restart_associated_svc = false,
+      services,
+      yamlData
+    }) {
+      const payload = {
+        service_name: '',
+        name,
+        restart_associated_svc,
+        services,
+        env_name: this.envName,
+        product_name: this.projectName,
+        common_env_cfg_type: this.currentInfos.commonEnvCfgType,
+        yaml_data: yamlData
+      }
+      return updateConfigObjectAPI(payload)
+        .then(res => {
+          this.$message.success(`更新配置成功！`)
+        })
+        .catch(err => {
+          console.log(err)
+          return 'error'
+        })
     },
     viewHistoryVersion () {
       console.log('对比历史版本')
     }
   },
   created () {
-    this.getAllConfig()
+    this.getConfigByType()
   },
   components: {
     ETable

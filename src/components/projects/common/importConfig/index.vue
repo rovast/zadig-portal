@@ -1,11 +1,14 @@
 <template>
   <div class="values-yaml-container">
-    <div class="secondary-title">添加环境配置</div>
+    <div class="secondary-title">{{ importRepoInfoUse.title }}</div>
     <div class="values-yaml-content">
-      <el-button type="text" class="title-btn" @click="showGitImportDialog = true">从代码库导入</el-button>
+      <el-button v-if="importRepoInfoUse.showImport" type="text" class="title-btn" @click="showGitImportDialog = true">从代码库导入</el-button>
       <Resize class="desc mirror" @sizeChange="$refs.codemirror.refresh()">
         <codemirror ref="codemirror" v-model="importRepoInfoUse.overrideYaml" :placeholder="placeholder"></codemirror>
       </Resize>
+      <div v-if="importRepoInfoUse.checkAssociated && (importRepoInfoUse.services && importRepoInfoUse.services.length)">
+        <el-checkbox v-model="importRepoInfoUse.restart_associated_svc">重启关联服务 {{ importRepoInfoUse.services.join('、') }}</el-checkbox>
+      </div>
     </div>
     <el-dialog title="环境配置 - 从代码库导入" :visible.sync="showGitImportDialog" append-to-body>
       <Repository ref="valueRepoRef" :repoSource="importRepoInfoUse.gitRepoConfig" :fileType="'k8sYaml'"></Repository>
@@ -36,6 +39,12 @@ const valueInfo = {
   }
 }
 
+const pageParam = {
+  title: '添加环境配置',
+  showImport: true,
+  checkAssociated: false
+}
+
 export default {
   data () {
     return {
@@ -56,7 +65,11 @@ export default {
           gitRepoConfig = { gitRepoConfig: cloneDeep(valueInfo.gitRepoConfig) }
         }
         this.$refs.valueRepoRef && this.$refs.valueRepoRef.resetSource()
-        return Object.assign(this.importRepoInfo, gitRepoConfig)
+        return Object.assign(
+          this.importRepoInfo,
+          cloneDeep(pageParam),
+          gitRepoConfig
+        )
       }
     }
   },

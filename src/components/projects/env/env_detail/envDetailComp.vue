@@ -26,7 +26,11 @@
     </div>
     <div class="banner">
       <el-alert v-if="productInfo.share_env_enable && productInfo.share_env_base_env!==''" :closable="false" type="warning">
-        <span slot="title">{{`注意：使用基准环境 ${productInfo.share_env_base_env}的访问地址，并在请求的 Header 中加上 x-env=${productInfo.env_name}， 即可将流量转发到当前环境中。如何操作？`}}</span>
+        <span slot="title">
+          注意：使用基准环境<span class="bold"> {{productInfo.share_env_base_env}} </span>的访问地址，并在请求的 Header 中加上
+          <span class="bold"> {{`x-env=${productInfo.env_name}`}} </span>即可将流量转发到当前环境中。
+          <a href="http://docs.koderover.com" target="_blank" rel="noopener noreferrer">如何操作？</a>
+        </span>
       </el-alert>
       <el-alert v-if="!_.isNil(shareEnvStatus) && !shareEnvStatus.is_ready" :title="`注意：自测模式正在${shareEnvStatus.operation ==='enable'?'开启':'关闭'}，过程中服务会重启，短时间内会影响服务的正常访问，请耐心等待。`" :closable="false" type="warning"></el-alert>
     </div>

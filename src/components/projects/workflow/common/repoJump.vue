@@ -5,8 +5,13 @@
       <span v-if="build.tag" class="link">
         <i v-if="showIcon && build.tag" class="iconfont icontag1 repo-icon"></i>
         <a
-          v-if="build.source==='github'||build.source==='gitee'||build.source==='gitlab'"
+          v-if="build.source==='github'||build.source==='gitlab'"
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tags/${build.tag}`"
+          target="_blank"
+        >{{showIcon ? '' : "Tag-"}}{{build.tag }}</a>
+        <a
+          v-else-if="build.source==='gitee'"
+          :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tree/${build.tag}`"
           target="_blank"
         >{{showIcon ? '' : "Tag-"}}{{build.tag }}</a>
         <span v-if="build.source==='gerrit'">{{ showIcon ? '' : "Tag-"}}{{build.tag}}</span>
@@ -24,7 +29,7 @@
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tree/${build.branch}`"
           target="_blank"
         >{{showIcon ? '' : "Branch-"}}{{build.branch}}</a>
-        <span v-if="build.source==='gerrit'">{{showIcon ? '' : "Branch-" }}{{build.branch}}</span>
+        <span v-else-if="build.source==='gerrit'">{{showIcon ? '' : "Branch-" }}{{build.branch}}</span>
         <a
           v-if="!build.source"
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tree/${build.branch}`"
@@ -40,13 +45,18 @@
     <el-tooltip :content="`在 ${build.source} 上查看 PR`" placement="top" effect="dark">
       <span v-if="build.pr && build.pr>0" class="link">
         <a
-          v-if="build.source==='github'||build.source==='gitee'"
+          v-if="build.source==='github'"
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/pull/${build.pr}`"
           target="_blank"
         >{{"PR-"+build.pr}}</a>
         <a
-          v-if="build.source==='gitlab'"
+          v-else-if="build.source==='gitlab'"
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/merge_requests/${build.pr}`"
+          target="_blank"
+        >{{"PR-"+build.pr}}</a>
+        <a
+          v-else-if="build.source==='gitee'"
+          :href="`${build.address}/${build.repo_owner}/${build.repo_name}/pulls/${build.pr}`"
           target="_blank"
         >{{"PR-"+build.pr}}</a>
         <a

@@ -725,6 +725,8 @@ export default {
           const provider = this.codeAdd.type
           if (provider === 'github') {
             payload.address = 'https://github.com'
+          } else if (provider === 'gitee') {
+            payload.address = 'https://gitee.com'
           }
           createCodeSourceAPI(payload).then((res) => {
             const codehostId = res.id
@@ -752,6 +754,8 @@ export default {
           const provider = this.codeEdit.type
           if (provider === 'github') {
             payload.address = 'https://github.com'
+          } else if (provider === 'gitee') {
+            payload.address = 'https://gitee.com'
           }
           updateCodeSourceAPI(codehostId, payload).then((res) => {
             this.getCodeConfig()

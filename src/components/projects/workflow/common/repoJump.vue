@@ -3,9 +3,9 @@
     <slot></slot>
     <el-tooltip :content="build.source==='gerrit'?`暂不支持在该类型上查看 Release`:`在 ${build.source} 上查看 Release`" placement="top" effect="dark">
       <span v-if="build.tag" class="link">
-        <i v-if="showIcon" class="iconfont icontag1 repo-icon"></i>
+        <i v-if="showIcon && build.tag" class="iconfont icontag1 repo-icon"></i>
         <a
-          v-if="build.source==='github'||build.source==='gitlab'"
+          v-if="build.source==='github'||build.source==='gitee'||build.source==='gitlab'"
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tags/${build.tag}`"
           target="_blank"
         >{{showIcon ? '' : "Tag-"}}{{build.tag }}</a>
@@ -18,9 +18,9 @@
       effect="dark"
     >
       <span v-if="build.branch && !build.tag" class="link">
-        <i v-if="showIcon" class="iconfont iconicon_git-branch repo-icon"></i>
+        <i v-if="showIcon && build.branch" class="iconfont iconicon_git-branch repo-icon"></i>
         <a
-          v-if="build.source==='github'||build.source==='gitlab'"
+          v-if="build.source==='github'||build.source==='gitee'||build.source==='gitlab'"
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/tree/${build.branch}`"
           target="_blank"
         >{{showIcon ? '' : "Branch-"}}{{build.branch}}</a>
@@ -40,7 +40,7 @@
     <el-tooltip :content="`在 ${build.source} 上查看 PR`" placement="top" effect="dark">
       <span v-if="build.pr && build.pr>0" class="link">
         <a
-          v-if="build.source==='github'"
+          v-if="build.source==='github'||build.source==='gitee'"
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/pull/${build.pr}`"
           target="_blank"
         >{{"PR-"+build.pr}}</a>
@@ -56,7 +56,7 @@
         >{{"PR-"+build.pr}}</a>
       </span>
     </el-tooltip>
-    <i v-if="showIcon" class="iconfont iconicon_git-commit repo-icon"></i>
+    <i v-if="showIcon && build.commit_id" class="iconfont iconicon_git-commit repo-icon"></i>
     <el-tooltip
       :content="(build.source==='gerrit'&& (!build.pr || build.pr===0))||build.source==='codehub'?`暂不支持在该类型上查看 Commit`:`在 ${build.source} 上查看 Commit`"
       placement="top"
@@ -64,7 +64,7 @@
     >
       <span v-if="build.commit_id" class="link">
         <a
-          v-if="build.source==='github'||build.source==='gitlab'"
+          v-if="build.source==='github'||build.source==='gitee'||build.source==='gitlab'"
           :href="`${build.address}/${build.repo_owner}/${build.repo_name}/commit/${build.commit_id}`"
           target="_blank"
         >{{showCommit ? "Commit-" : ''}}{{build.commit_id.substring(0, 10)}}</a>

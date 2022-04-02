@@ -729,6 +729,7 @@ export default {
           payload: extension.sub_tasks.extension.payload,
           response_code: extension.sub_tasks.extension.response_code,
           response_body: extension.sub_tasks.extension.response_body,
+          request_header: extension.sub_tasks.extension.headers,
           duration: this.$utils.timeFormat(
             extension.sub_tasks.extension.end_time -
               extension.sub_tasks.extension.start_time

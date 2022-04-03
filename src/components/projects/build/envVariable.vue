@@ -1,8 +1,14 @@
 <template>
   <div>
     <el-form ref="buildEnv" :inline="true" :model="preEnvs" class="variable-form" label-position="top" label-width="80px">
-      <span class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义{{ isTest ? '测试' : '构建' }}变量</span>
-      <el-button v-if="preEnvs.envs.length===0" @click="addFirstBuildEnv()" type="primary" size="mini" plain>新增</el-button>
+      <span v-if="!isJenkins" class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义{{ isTest ? '测试' : '构建' }}变量</span>
+      <el-button
+        v-if="preEnvs.envs && preEnvs.envs.length===0 && !isJenkins"
+        @click="addFirstBuildEnv()"
+        type="primary"
+        size="mini"
+        plain
+      >新增</el-button>
       <el-row v-for="(app,build_env_index) in preEnvs.envs" :key="build_env_index" :gutter="2">
         <el-col :span="4">
           <el-form-item class="display-flex">
@@ -43,10 +49,26 @@
             >
               <el-option v-for="option in preEnvs.envs[build_env_index].choice_option" :key="option" :label="option" :value="option"></el-option>
             </el-select>
-            <el-input v-else placeholder="值" v-model="preEnvs.envs[build_env_index].value" size="small"></el-input>
+            <el-input
+              v-else
+              :disabled="isJenkins&&preEnvs.envs[build_env_index].auauto_generate"
+              placeholder="值"
+              v-model="preEnvs.envs[build_env_index].value"
+              size="small"
+            ></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="mini ? 4 : 3" v-show="preEnvs.envs[build_env_index].type!=='choice'">
+        <el-col :span="12" v-if="isJenkins&&preEnvs.envs[build_env_index].type!=='choice'" class="tip">
+          <el-checkbox v-model="preEnvs.envs[build_env_index].auauto_generate">使用系统内置变量 $IMAGE,具体详见</el-checkbox>
+          <el-link
+            class="link"
+            type="primary"
+            :href="`https://docs.koderover.com/zadig/settings/image-registry/`"
+            :underline="false"
+            target="_blank"
+          >镜像名称规则</el-link>
+        </el-col>
+        <el-col :span="mini ? 4 : 3" v-show="preEnvs.envs[build_env_index].type!=='choice'" v-if="!isJenkins">
           <el-form-item prop="is_credential">
             <el-checkbox v-model="preEnvs.envs[build_env_index].is_credential">
               敏感信息
@@ -56,7 +78,7 @@
             </el-checkbox>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="8" v-if="!isJenkins">
           <el-form-item style="margin-right: 0;">
             <div class="app-operation">
               <el-button v-if="preEnvs.envs.length >= 1" @click="deleteBuildEnv(build_env_index)" type="danger" size="small" plain>删除</el-button>
@@ -80,7 +102,7 @@
         <el-button type="primary" @click="saveVariable" size="small">确 定</el-button>
       </div>
     </el-dialog>
-    <section class="inner-variable">
+    <section class="inner-variable" v-if="!isJenkins">
       <div @click="showBuildInEnvVar = !showBuildInEnvVar" class="item-title inner-title">
         内置{{ isTest ? '测试' : '构建' }}变量
         <i
@@ -109,6 +131,7 @@
 <script>
 import { cloneDeep } from 'lodash'
 export default {
+  components: {},
   props: {
     preEnvs: Object,
     isTest: {
@@ -125,6 +148,10 @@ export default {
       default: null
     },
     fromServicePage: {
+      type: Boolean,
+      default: false
+    },
+    isJenkins: {
       type: Boolean,
       default: false
     }
@@ -197,7 +224,8 @@ export default {
         },
         {
           variable: '$<REPO>_PR',
-          desc: '构建过程中指定代码仓库使用的 Pull Request 信息，其中 <REPO> 是具体的代码仓库名称，使用时需要自己填写完整'
+          desc:
+            '构建过程中指定代码仓库使用的 Pull Request 信息，其中 <REPO> 是具体的代码仓库名称，使用时需要自己填写完整'
         },
         {
           variable: '$<REPO>_BRANCH',
@@ -232,7 +260,8 @@ export default {
         {
           variable: '$SERVICES',
           desc:
-            '通过工作流任务更新的服务组，服务名以 “,” 分隔，形如 service1,service2,service3。推荐使用 array=(${SERVICES//,/ ' + '} 方式转化成数组'
+            '通过工作流任务更新的服务组，服务名以 “,” 分隔，形如 service1,service2,service3。推荐使用 array=(${SERVICES//,/ ' +
+            '} 方式转化成数组'
         },
         {
           variable: '$CI',
@@ -309,12 +338,16 @@ export default {
     }
   },
   watch: {
-    'preEnvs.envs' (env) {
-      env.forEach(e => {
-        if (!e.type) {
-          this.$set(e, 'type', 'string')
-        }
-      })
+    preEnvs: {
+      handler (newValue, oldValue) {
+        newValue.envs.forEach(e => {
+          if (!e.type) {
+            this.$set(e, 'type', 'string')
+          }
+        })
+        this.$forceUpdate()
+      },
+      deep: true
     }
   },
   created () {
@@ -404,7 +437,19 @@ export default {
 
 .variable-form {
   /deep/.el-form-item {
+    width: 100%;
     margin-bottom: 8px;
+  }
+
+  .tip {
+    height: 42px;
+    color: @secondaryColor;
+    font-size: 14px;
+    line-height: 42px;
+
+    .link {
+      margin-top: -3px;
+    }
   }
 }
 </style>

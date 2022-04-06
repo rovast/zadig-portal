@@ -48,7 +48,7 @@
             </el-select>
             <el-input
               v-else
-              :disabled="isJenkins&&preEnvs.envs[build_env_index].auauto_generate"
+              :disabled="isJenkins&&preEnvs.envs[build_env_index].auto_generate"
               placeholder="值"
               v-model="preEnvs.envs[build_env_index].value"
               size="small"
@@ -56,7 +56,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12" v-if="isJenkins&&preEnvs.envs[build_env_index].name==='IMAGE'" class="tip">
-          <el-checkbox v-model="preEnvs.envs[build_env_index].auauto_generate">使用系统内置变量 $IMAGE,具体详见</el-checkbox>
+          <el-checkbox v-model="preEnvs.envs[build_env_index].auto_generate">使用系统内置变量 $IMAGE,具体详见</el-checkbox>
           <el-link
             class="link"
             type="primary"

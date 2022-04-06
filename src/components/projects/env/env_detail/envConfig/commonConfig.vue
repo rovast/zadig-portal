@@ -300,6 +300,7 @@ export default {
       return addConfigObjectAPI(payload)
         .then(res => {
           this.$message.success(`添加配置成功！`)
+          this.getConfigByType(this.currentType)
         })
         .catch(err => {
           console.log(err)
@@ -325,6 +326,7 @@ export default {
       return updateConfigObjectAPI(payload)
         .then(res => {
           this.$message.success(`更新配置成功！`)
+          this.getConfigByType(this.currentType)
         })
         .catch(err => {
           console.log(err)

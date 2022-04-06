@@ -56,7 +56,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12" v-if="isJenkins&&preEnvs.envs[build_env_index].name==='IMAGE'" class="tip">
-          <el-checkbox v-model="preEnvs.envs[build_env_index].auto_generate">使用系统内置变量 $IMAGE,具体详见</el-checkbox>
+          <el-checkbox v-model="preEnvs.envs[build_env_index].auto_generate"></el-checkbox>使用系统内置变量 $IMAGE，具体详见
           <router-link v-hasPermi="{projectName: projectName, action: 'get_service'}"
                        :to="`/v1/projects/detail/${$route.params.project_name}/services?service_name=${$route.params.build_name}&rightbar=policy`">
           镜像名称规则

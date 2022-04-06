@@ -127,8 +127,15 @@ export default {
         this.customerImage.prBranch.value = value.pr_and_branch_rule.split(':')[1]
         this.customerImage.tag.service = value.tag_rule.split(':')[0]
         this.customerImage.tag.value = value.tag_rule.split(':')[1]
-        this.customerImage.jenkins.service = value.jenkins_rule.split(':')[0]
-        this.customerImage.jenkins.value = value.jenkins_rule.split(':')[1]
+        // 如果jenkins集成了 则展示
+        if (value.jenkins_rule) {
+          this.customerImage.jenkins.service = value.jenkins_rule.split(':')[0]
+          this.customerImage.jenkins.value = value.jenkins_rule.split(':')[1]
+        } else {
+          this.$delete(this.customerImage, 'jenkins')
+        }
+      } else {
+        this.$delete(this.customerImage, 'jenkins')
       }
     },
     customTarRule (value) {

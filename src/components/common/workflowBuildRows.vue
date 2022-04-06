@@ -229,7 +229,7 @@
                     <div v-else>
                       <el-input
                             size="small"
-                            v-if="row.name!=='IMAGE'"
+                            v-if="!(row.name=='IMAGE'&&row.auto_generate)"
                             v-model="row.value"
                             placeholder="请输入 value"></el-input>
                     </div>

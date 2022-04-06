@@ -226,10 +226,13 @@
                     >
                       <el-option v-for="option in row.choice_option" :key="option" :label="option" :value="option"></el-option>
                     </el-select>
-                  <el-input v-else
+                    <div v-else>
+                      <el-input
                             size="small"
+                            v-if="row.name!=='IMAGE'"
                             v-model="row.value"
                             placeholder="请输入 value"></el-input>
+                    </div>
                 </template>
               </el-table-column>
             </el-table>

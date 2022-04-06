@@ -1829,7 +1829,7 @@ export function getSecretObjectAPI (projectName, envName) {
 }
 
 export function getPvcObjectAPI (projectName, envName) {
-  return http.get(`/api/aslan/environment/pvc?projectName=${projectName}&envName=${envName}`)
+  return http.get(`/api/aslan/environment/pvcs?projectName=${projectName}&envName=${envName}`)
 }
 
 export function addConfigObjectAPI (payload) {

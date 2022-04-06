@@ -134,7 +134,7 @@ export default {
     transformParams (jenkins_build_params) {
       this.jenkinsBuild.jenkins_build.jenkins_build_params = jenkins_build_params.map(item => {
         item.key = item.name
-        this.$set(item, 'auauto_generate', false)
+        this.$set(item, 'auto_generate', false)
         return item
       })
       this.jenkinsBuild.jenkins_build.envs = this.jenkinsBuild.jenkins_build.jenkins_build_params

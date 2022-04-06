@@ -1285,8 +1285,8 @@ export function deleteProductEnvAPI (projectName, envName, envType = '') {
   return http.delete(`/api/aslan/environment/environments/${envName}?projectName=${projectName}&envType=${envType}`)
 }
 
-export function restartPodAPI (podName, projectName, envType = '') {
-  return http.delete(`/api/aslan/environment/kube/pods/${podName}?projectName=${projectName}&envType=${envType}`)
+export function restartPodAPI (podName, projectName, envName, envType = '') {
+  return http.delete(`/api/aslan/environment/kube/${envName}/pods/${podName}?projectName=${projectName}&envType=${envType}`)
 }
 
 export function restartServiceOriginAPI (projectName, serviceName, envName = '', envType = '') {
@@ -1369,8 +1369,8 @@ export function downloadConfigAPI () {
   return http.get('/api/v1/picket/kubeconfig')
 }
 
-export function updateServiceImageAPI (payload, type, projectName, envType = '') {
-  return http.post(`/api/aslan/environment/image/${type}?projectName=${projectName}&envType=${envType}`, payload)
+export function updateServiceImageAPI (payload, type, projectName, envName, envType = '') {
+  return http.post(`/api/aslan/environment/image/${type}/${envName}?projectName=${projectName}&envType=${envType}`, payload)
 }
 
 // Notification

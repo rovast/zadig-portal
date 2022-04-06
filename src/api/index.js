@@ -124,9 +124,7 @@ http.interceptors.response.use(
     if (
       error.response &&
       error.response.config.url !== analyticsReq &&
-      !error.response.config.url.includes(ignoreErrReq) &&
-      !error.response.data.description.includes(ignoreErrResponse)
-    ) {
+      !error.response.config.url.includes(ignoreErrReq)) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       console.log(error.response)
@@ -139,7 +137,7 @@ http.interceptors.response.use(
           window.location.href = `/signin?redirect=${redirectPath}`
         } else if (error.response.status === 403) {
           Element.Message.error('暂无权限')
-        } else if (error.response.data.code !== 6168) {
+        } else if (error.response.data.code !== 6168 && !error.response.data.description.includes(ignoreErrResponse)) {
           displayError(error)
         }
       } else if (document.title === '登录') {

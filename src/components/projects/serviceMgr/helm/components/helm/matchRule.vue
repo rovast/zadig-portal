@@ -38,17 +38,17 @@
                 <el-form-item>
                   <el-input v-model="rule.repo" placeholder="仓库地址/命名空间" size="mini"></el-input>
                 </el-form-item>
-                <span class="warning" v-if="rule.showWarningText">请至少填入一个选项</span>
+                <span class="warning" v-if="rule.showWarningText">仓库地址/命名空间 和 镜像名称 至少填写一项</span>
               </el-col>
               <el-col :span="1" class="separator">/</el-col>
               <el-col :span="4">
-                <el-form-item :prop="'matchRules.'+ index +'.image'" :rules="{ required: true, message: '镜像名称不能为空', trigger: 'blur' }">
+                <el-form-item :prop="'matchRules.'+ index +'.image'" >
                   <el-input v-model="rule.image" placeholder="镜像名" size="mini"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="1" class="separator">:</el-col>
               <el-col :span="4">
-                <el-form-item :prop="'matchRules.'+ index +'.tag'" :rules="{ required: true, message: '标签名称不能为空', trigger: 'blur' }">
+                <el-form-item :prop="'matchRules.'+ index +'.tag'" >
                   <el-input v-model="rule.tag" placeholder="标签名" size="mini"></el-input>
                 </el-form-item>
               </el-col>
@@ -160,9 +160,7 @@ export default {
       handler (newVal, oldVal) {
         const curItem = newVal[newVal.length - 1]
         if (
-          !curItem.image &&
-            !curItem.tag &&
-            !curItem.repo
+          !curItem.image && !curItem.repo
         ) {
           curItem.showWarningText = true
         } else {
@@ -191,9 +189,7 @@ export default {
         // 至少填入一个表单 即可通过检验
         const curItem = this.formModel.matchRules[this.formModel.matchRules.length - 1]
         if (
-          !curItem.image &&
-          !curItem.tag &&
-          !curItem.repo
+          !curItem.image && !curItem.repo
         ) {
           curItem.showWarningText = true
         } else {

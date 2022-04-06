@@ -23,7 +23,7 @@
 /* eslint-disable no-template-curly-in-string */
 const defaultImage = '{{.IMAGE_NAME}}'
 const defaultValue = '{{.SERVICE}}'
-const placeholder = ['{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.REPO_TAG}}']
+const placeholder = ['{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.REPO_TAG}}', '{{.TIMESTAMP}}']
 export default {
   name: 'Deliverable',
   props: {
@@ -57,6 +57,12 @@ export default {
           service: defaultImage,
           value: placeholder[3],
           placeholder: placeholder[3]
+        },
+        jenkins: {
+          label: 'JENKINS 生成镜像规则',
+          service: defaultImage,
+          value: placeholder[4],
+          placeholder: placeholder[4]
         }
       },
       tar: {
@@ -98,7 +104,9 @@ export default {
         pr_rule: (customerImage.pr.service || defaultValue) + ':' + (customerImage.pr.value || placeholder[0]),
         branch_rule: (customerImage.branch.service || defaultValue) + ':' + (customerImage.branch.value || placeholder[1]),
         pr_and_branch_rule: (customerImage.prBranch.service || defaultValue) + ':' + (customerImage.prBranch.value || placeholder[2]),
-        tag_rule: (customerImage.tag.service || defaultValue) + ':' + (customerImage.tag.value || placeholder[3])
+        tag_rule: (customerImage.tag.service || defaultValue) + ':' + (customerImage.tag.value || placeholder[3]),
+        jenkins_rule: (customerImage.jenkins.service || defaultValue) + ':' + (customerImage.jenkins.value || placeholder[4])
+
       }
       this.custom_tar_rule = {
         pr_rule: tar.pr.value || `${defaultValue}-${placeholder[0]}`,
@@ -119,6 +127,8 @@ export default {
         this.customerImage.prBranch.value = value.pr_and_branch_rule.split(':')[1]
         this.customerImage.tag.service = value.tag_rule.split(':')[0]
         this.customerImage.tag.value = value.tag_rule.split(':')[1]
+        this.customerImage.jenkins.service = value.jenkins_rule.split(':')[0]
+        this.customerImage.jenkins.value = value.jenkins_rule.split(':')[1]
       }
     },
     customTarRule (value) {

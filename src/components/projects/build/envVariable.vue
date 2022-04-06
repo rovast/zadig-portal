@@ -57,13 +57,10 @@
         </el-col>
         <el-col :span="12" v-if="isJenkins&&preEnvs.envs[build_env_index].name==='IMAGE'" class="tip">
           <el-checkbox v-model="preEnvs.envs[build_env_index].auto_generate">使用系统内置变量 $IMAGE,具体详见</el-checkbox>
-          <el-link
-            class="link"
-            type="primary"
-            :href="`https://docs.koderover.com/zadig/settings/image-registry/`"
-            :underline="false"
-            target="_blank"
-          >镜像名称规则</el-link>
+          <router-link v-hasPermi="{projectName: projectName, action: 'get_service'}"
+                       :to="`/v1/projects/detail/${$route.params.project_name}/services?service_name=${$route.params.build_name}&rightbar=policy`">
+          镜像名称规则
+          </router-link>
         </el-col>
         <el-col :span="mini ? 4 : 3" v-show="preEnvs.envs[build_env_index].type!=='choice'" v-if="!isJenkins">
           <el-form-item prop="is_credential">

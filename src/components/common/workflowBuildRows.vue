@@ -214,7 +214,8 @@
             <!-- jenkins构建 -->
             <el-table :data="scope.row.jenkins_build_args.jenkins_build_params">
               <el-table-column property="name"
-                               label="name"></el-table-column>
+                               label="name">
+                                <template slot-scope="{ row }" v-if="!(row.name==='IMAGE'&&row.auto_generate)">{{row.name}}</template></el-table-column>
               <el-table-column label="Value">
                 <template slot-scope="{ row }">
                    <el-select
@@ -228,8 +229,8 @@
                     </el-select>
                     <div v-else>
                       <el-input
+                            v-if="!(row.name==='IMAGE'&&row.auto_generate)"
                             size="small"
-                            v-if="!(row.name=='IMAGE'&&row.auto_generate)"
                             v-model="row.value"
                             placeholder="请输入 value"></el-input>
                     </div>
@@ -270,6 +271,12 @@ export default {
       handler (value) {
         this.zadigBuild = value.filter(item => !item.jenkins_build_args)
         this.jenkinsBuild = value.filter(item => item.jenkins_build_args)
+        // console.log(res[0])
+        // res[0].jenkins_build_args.jenkins_build_params.map(item => {
+        //   return !(item.name = 'IMAGE' && item.auto_generate)
+        // })
+        // console.log(res)
+        // this.jenkinsBuild = res
       },
       immediate: true
     }

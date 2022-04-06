@@ -10,23 +10,29 @@
                   type="info"
                   :closable="false">
           <slot>
-            <span class="tips">点击
+            <span class="tips">- 具体配置可参考
               <el-link style="font-size: 14px; vertical-align: baseline;"
                        type="primary"
-                       href="https://support.huaweicloud.com/devg-apisign/api-sign-provide-aksk.html"
+                       href="https://docs.koderover.com/zadig/settings/codehost/codehub/"
                        :underline="false"
-                       target="_blank">帮助</el-link> 查看如何获取 Access Key 和 Secret Key
-            </span>
-            <span class="tips">点击
-              <el-link style="font-size: 14px; vertical-align: baseline;"
-                       type="primary"
-                       href="https://support.huaweicloud.com/usermanual-codehub/codehub_ug_8003.html"
-                       :underline="false"
-                       target="_blank">帮助</el-link> 查看如何获取用户名和密码
+                       target="_blank">帮助文档</el-link>
             </span>
           </slot>
         </el-alert>
-        <el-alert v-else
+        <el-alert v-if="codeEdit.type === 'gerrit'"
+                  type="info"
+                  :closable="false">
+          <slot>
+            <span class="tips">- 具体配置可参考
+              <el-link style="font-size: 14px; vertical-align: baseline;"
+                       type="primary"
+                       href="https://docs.koderover.com/zadig/settings/codehost/gerrit/"
+                       :underline="false"
+                       target="_blank">帮助文档</el-link>
+            </span>
+          </slot>
+        </el-alert>
+        <el-alert v-else-if="codeEdit.type === 'gitlab'"
                   type="info"
                   :closable="false">
           <slot>
@@ -39,12 +45,55 @@
                     class="el-icon-document-copy copy"></span>
             </span>
             <span class="tips">- 应用权限请勾选：api、read_user、read_repository</span>
-            <span class="tips">- 其他配置可以点击
+            <span class="tips">- 更多配置可参考
               <el-link style="font-size: 14px; vertical-align: baseline;"
                        type="primary"
                        :href="`https://docs.koderover.com/zadig/settings/codehost/gitlab/`"
                        :underline="false"
-                       target="_blank">帮助</el-link> 查看配置样例
+                       target="_blank">帮助文档</el-link>
+            </span>
+          </slot>
+        </el-alert>
+        <el-alert v-else-if="codeEdit.type === 'gitee'"
+                  type="info"
+                  :closable="false">
+          <slot>
+            <span class="tips">{{`- 应用授权的回调地址请填写:`}}</span>
+            <span class="tips code-line">
+              {{`${$utils.getOrigin()}/api/directory/codehosts/callback`}}
+              <span v-clipboard:copy="`${$utils.getOrigin()}/api/directory/codehosts/callback`"
+                    v-clipboard:success="copyCommandSuccess"
+                    v-clipboard:error="copyCommandError"
+                    class="el-icon-document-copy copy"></span>
+            </span>
+            <span class="tips">- 应用权限请勾选：projects、groups、pull_requests、hook</span>
+            <span class="tips">- 更多配置可参考
+              <el-link style="font-size: 14px; vertical-align: baseline;"
+                       type="primary"
+                       :href="`https://docs.koderover.com/zadig/settings/codehost/gitee/`"
+                       :underline="false"
+                       target="_blank">帮助文档</el-link>
+            </span>
+          </slot>
+        </el-alert>
+        <el-alert v-else-if="codeEdit.type === 'github'"
+                  type="info"
+                  :closable="false">
+          <slot>
+            <span class="tips">{{`- 应用授权的回调地址请填写:`}}</span>
+            <span class="tips code-line">
+              {{`${$utils.getOrigin()}/api/directory/codehosts/callback`}}
+              <span v-clipboard:copy="`${$utils.getOrigin()}/api/directory/codehosts/callback`"
+                    v-clipboard:success="copyCommandSuccess"
+                    v-clipboard:error="copyCommandError"
+                    class="el-icon-document-copy copy"></span>
+            </span>
+            <span class="tips">- 更多配置可参考
+              <el-link style="font-size: 14px; vertical-align: baseline;"
+                       type="primary"
+                       :href="`https://docs.koderover.com/zadig/settings/codehost/github/`"
+                       :underline="false"
+                       target="_blank">帮助文档</el-link>
             </span>
           </slot>
         </el-alert>
@@ -112,6 +161,26 @@
                         prop="password">
             <el-input v-model="codeEdit.password"
                       placeholder="Password"
+                      auto-complete="off"></el-input>
+          </el-form-item>
+        </template>
+        <template v-else-if="codeEdit.type==='gitee'">
+          <el-form-item label="Client ID"
+                        prop="application_id">
+            <el-input v-model="codeEdit.application_id"
+                      placeholder="Client ID"
+                      auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="Client Secret"
+                        prop="client_secret">
+            <el-input v-model="codeEdit.client_secret"
+                      placeholder="Client Secret"
+                      auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="组织/用户名称"
+                        prop="namespace">
+            <el-input v-model="codeEdit.namespace"
+                      placeholder="组织/用户名称"
                       auto-complete="off"></el-input>
           </el-form-item>
         </template>
@@ -186,23 +255,29 @@
                   type="info"
                   :closable="false">
           <slot>
-            <span class="tips">点击
+            <span class="tips">- 具体配置可参考
               <el-link style="font-size: 14px; vertical-align: baseline;"
                        type="primary"
-                       href="https://support.huaweicloud.com/devg-apisign/api-sign-provide-aksk.html"
+                       href="https://docs.koderover.com/zadig/settings/codehost/codehub/"
                        :underline="false"
-                       target="_blank">帮助</el-link> 查看如何获取 Access Key 和 Secret Key
-            </span>
-            <span class="tips">点击
-              <el-link style="font-size: 14px; vertical-align: baseline;"
-                       type="primary"
-                       href="https://support.huaweicloud.com/usermanual-codehub/codehub_ug_8003.html"
-                       :underline="false"
-                       target="_blank">帮助</el-link> 查看如何获取用户名和密码
+                       target="_blank">帮助文档</el-link>
             </span>
           </slot>
         </el-alert>
-        <el-alert v-else
+        <el-alert v-if="codeAdd.type === 'gerrit'"
+                  type="info"
+                  :closable="false">
+          <slot>
+            <span class="tips">- 具体配置可参考
+              <el-link style="font-size: 14px; vertical-align: baseline;"
+                       type="primary"
+                       href="https://docs.koderover.com/zadig/settings/codehost/gerrit/"
+                       :underline="false"
+                       target="_blank">帮助文档</el-link>
+            </span>
+          </slot>
+        </el-alert>
+        <el-alert v-else-if="codeAdd.type === 'gitlab'"
                   type="info"
                   :closable="false">
           <slot>
@@ -215,12 +290,55 @@
                     class="el-icon-document-copy copy"></span>
             </span>
             <span class="tips">- 应用权限请勾选：api、read_user、read_repository</span>
-            <span class="tips">- 其他配置可以点击
+            <span class="tips">- 更多配置可参考
               <el-link style="font-size: 14px; vertical-align: baseline;"
                        type="primary"
                        :href="`https://docs.koderover.com/zadig/settings/codehost/gitlab/`"
                        :underline="false"
-                       target="_blank">帮助</el-link> 查看配置样例
+                       target="_blank">帮助文档</el-link>
+            </span>
+          </slot>
+        </el-alert>
+        <el-alert v-else-if="codeAdd.type === 'gitee'"
+                  type="info"
+                  :closable="false">
+          <slot>
+            <span class="tips">{{`- 应用授权的回调地址请填写:`}}</span>
+            <span class="tips code-line">
+              {{`${$utils.getOrigin()}/api/directory/codehosts/callback`}}
+              <span v-clipboard:copy="`${$utils.getOrigin()}/api/directory/codehosts/callback`"
+                    v-clipboard:success="copyCommandSuccess"
+                    v-clipboard:error="copyCommandError"
+                    class="el-icon-document-copy copy"></span>
+            </span>
+            <span class="tips">- 应用权限请勾选：projects、groups、pull_requests、hook</span>
+            <span class="tips">- 更多配置可参考
+              <el-link style="font-size: 14px; vertical-align: baseline;"
+                       type="primary"
+                       :href="`https://docs.koderover.com/zadig/settings/codehost/gitee/`"
+                       :underline="false"
+                       target="_blank">帮助文档</el-link>
+            </span>
+          </slot>
+        </el-alert>
+        <el-alert v-else-if="codeAdd.type === 'github'"
+                  type="info"
+                  :closable="false">
+          <slot>
+            <span class="tips">{{`- 应用授权的回调地址请填写:`}}</span>
+            <span class="tips code-line">
+              {{`${$utils.getOrigin()}/api/directory/codehosts/callback`}}
+              <span v-clipboard:copy="`${$utils.getOrigin()}/api/directory/codehosts/callback`"
+                    v-clipboard:success="copyCommandSuccess"
+                    v-clipboard:error="copyCommandError"
+                    class="el-icon-document-copy copy"></span>
+            </span>
+            <span class="tips">- 更多配置可参考
+              <el-link style="font-size: 14px; vertical-align: baseline;"
+                       type="primary"
+                       :href="`https://docs.koderover.com/zadig/settings/codehost/github/`"
+                       :underline="false"
+                       target="_blank">帮助文档</el-link>
             </span>
           </slot>
         </el-alert>
@@ -240,6 +358,8 @@
                        value="codehub"></el-option>
             <el-option label="Gerrit"
                        value="gerrit"></el-option>
+            <el-option label="Gitee"
+                       value="gitee"></el-option>
           </el-select>
         </el-form-item>
         <template v-if="codeAdd.type==='gitlab' || codeAdd.type ==='github'">
@@ -287,6 +407,26 @@
                         prop="password">
             <el-input v-model="codeAdd.password"
                       placeholder="Password"
+                      auto-complete="off"></el-input>
+          </el-form-item>
+        </template>
+        <template v-else-if="codeAdd.type==='gitee'">
+          <el-form-item label="Client ID"
+                        prop="application_id">
+            <el-input v-model="codeAdd.application_id"
+                      placeholder="Client ID"
+                      auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="Client Secret"
+                        prop="client_secret">
+            <el-input v-model="codeAdd.client_secret"
+                      placeholder="Client Secret"
+                      auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="组织/用户名称"
+                        prop="namespace">
+            <el-input v-model="codeAdd.namespace"
+                      placeholder="组织/用户名称"
                       auto-complete="off"></el-input>
           </el-form-item>
         </template>
@@ -376,7 +516,7 @@
               <span
                     v-if="scope.row.type==='gitlab'||scope.row.type==='gerrit'||scope.row.type==='codehub'">{{scope.row.type}}</span>
               <span
-                    v-if="scope.row.type==='github'">{{scope.row.type}}({{scope.row.namespace}})</span>
+                    v-if="scope.row.type==='github'||scope.row.type==='gitee'">{{scope.row.type}}({{scope.row.namespace}})</span>
             </template>
           </el-table-column>
           <el-table-column label="URL">
@@ -585,6 +725,8 @@ export default {
           const provider = this.codeAdd.type
           if (provider === 'github') {
             payload.address = 'https://github.com'
+          } else if (provider === 'gitee') {
+            payload.address = 'https://gitee.com'
           }
           createCodeSourceAPI(payload).then((res) => {
             const codehostId = res.id
@@ -593,7 +735,7 @@ export default {
               message: '代码源添加成功',
               type: 'success'
             })
-            if (payload.type === 'gitlab' || payload.type === 'github') {
+            if (payload.type === 'gitlab' || payload.type === 'gitee' || payload.type === 'github') {
               this.goToCodeHostAuth(codehostId, redirectUrl)
             }
             this.handleCodeCancel()
@@ -612,10 +754,12 @@ export default {
           const provider = this.codeEdit.type
           if (provider === 'github') {
             payload.address = 'https://github.com'
+          } else if (provider === 'gitee') {
+            payload.address = 'https://gitee.com'
           }
           updateCodeSourceAPI(codehostId, payload).then((res) => {
             this.getCodeConfig()
-            if (payload.type === 'gitlab' || payload.type === 'github') {
+            if (payload.type === 'gitlab' || payload.type === 'gitee' || payload.type === 'github') {
               this.$message({
                 message: '代码源修改成功，正在前往授权',
                 type: 'success'

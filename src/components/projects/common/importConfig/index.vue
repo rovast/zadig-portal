@@ -1,12 +1,18 @@
 <template>
   <div class="values-yaml-container">
-    <div class="secondary-title">{{ importRepoInfoUse.title }}</div>
+    <div
+      class="secondary-title"
+      :style="{ 'margin-bottom': importRepoInfoUse.showParams.showImport ? '0' : '16px'}"
+    >{{ importRepoInfoUse.showParams.title }}</div>
     <div class="values-yaml-content">
-      <el-button v-if="importRepoInfoUse.showImport" type="text" class="title-btn" @click="showGitImportDialog = true">从代码库导入</el-button>
+      <el-button v-if="importRepoInfoUse.showParams.showImport" type="text" class="title-btn" @click="showGitImportDialog = true">从代码库导入</el-button>
       <Resize class="desc mirror" @sizeChange="$refs.codemirror.refresh()">
-        <codemirror ref="codemirror" v-model="importRepoInfoUse.overrideYaml" :placeholder="placeholder"></codemirror>
+        <codemirror ref="codemirror" v-model="importRepoInfoUse.overrideYaml" :placeholder="placeholder" :cmOption="cmOption"></codemirror>
       </Resize>
-      <div v-if="importRepoInfoUse.checkAssociated && (importRepoInfoUse.services && importRepoInfoUse.services.length)">
+      <div
+        v-if="importRepoInfoUse.showParams.checkAssociated && (importRepoInfoUse.services && importRepoInfoUse.services.length)"
+        style="margin-top: 16px;"
+      >
         <el-checkbox v-model="importRepoInfoUse.restart_associated_svc">重启关联服务 {{ importRepoInfoUse.services.join('、') }}</el-checkbox>
       </div>
     </div>
@@ -39,7 +45,7 @@ const valueInfo = {
   }
 }
 
-const pageParam = {
+const showParams = {
   title: '添加环境配置',
   showImport: true,
   checkAssociated: false
@@ -55,21 +61,28 @@ export default {
     }
   },
   props: {
-    importRepoInfo: Object
+    importRepoInfo: Object,
+    cmOption: {
+      type: Object,
+      default: () => {
+        return {
+          readOnly: false
+        }
+      }
+    }
   },
   computed: {
     importRepoInfoUse: {
       get () {
-        let gitRepoConfig = {}
+        const defaultParams = {}
         if (!this.importRepoInfo.gitRepoConfig) {
-          gitRepoConfig = { gitRepoConfig: cloneDeep(valueInfo.gitRepoConfig) }
+          defaultParams.gitRepoConfig = cloneDeep(valueInfo.gitRepoConfig)
+        }
+        if (!this.importRepoInfo.showParams) {
+          defaultParams.showParams = cloneDeep(showParams)
         }
         this.$refs.valueRepoRef && this.$refs.valueRepoRef.resetSource()
-        return Object.assign(
-          this.importRepoInfo,
-          cloneDeep(pageParam),
-          gitRepoConfig
-        )
+        return Object.assign(this.importRepoInfo, defaultParams)
       }
     }
   },
@@ -112,7 +125,7 @@ export default {
   line-height: 1;
 
   .values-yaml-content {
-    padding: 0 30px;
+    padding: 0 20px;
 
     .title-btn {
       font-weight: 300;

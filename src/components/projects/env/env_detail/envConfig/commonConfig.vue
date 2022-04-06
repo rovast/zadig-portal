@@ -13,8 +13,7 @@ import {
   getPvcObjectAPI,
   addConfigObjectAPI,
   updateConfigObjectAPI,
-  deleteConfigObjectAPI,
-  getObjectHistoryVersionAPI
+  deleteConfigObjectAPI
 } from '@api'
 import ETable from '@/components/common/etable/index.vue'
 export default {
@@ -27,7 +26,6 @@ export default {
         Ingress: {
           id: 'ingress_name',
           getAPI: getIngressObjectAPI,
-          commonEnvCfgType: 'ingress',
           tableData: [],
           tableColumns: [
             {
@@ -55,7 +53,6 @@ export default {
         ConfigMap: {
           id: 'cm_name',
           getAPI: getConfigMapObjectAPI,
-          commonEnvCfgType: 'configMap',
           tableData: [],
           tableColumns: [
             {
@@ -78,7 +75,6 @@ export default {
         Secret: {
           id: 'secret_name',
           getAPI: getSecretObjectAPI,
-          commonEnvCfgType: 'secret',
           tableData: [],
           tableColumns: [
             {
@@ -105,7 +101,6 @@ export default {
         PVC: {
           id: 'pvc_name',
           getAPI: getPvcObjectAPI,
-          commonEnvCfgType: 'pvc',
           tableData: [],
           tableColumns: [
             {
@@ -154,7 +149,6 @@ export default {
         this.configInfos[this.currentType] || {
           id: 'id',
           getAPI: null,
-          commonEnvCfgType: '',
           tableData: [],
           tableColumns: []
         }
@@ -191,7 +185,7 @@ export default {
           <el-button
             type="text"
             onClick={() => {
-              this.viewHistoryVersion(scope.row, scope.$index)
+              this.operateConfig('history', scope.row, scope.$index)
             }}
           >
             历史版本
@@ -208,18 +202,22 @@ export default {
       )
     },
     operateConfig (action, row) {
-      const data =
-        action !== 'add'
-          ? {
-            yamlData: row.yaml_data,
-            name: row[this.currentInfos.id],
-            services: row.services || []
-          }
-          : {}
-      this.$emit('actionConfig', {
-        type: action, // view/edit/add
-        ...data
-      })
+      // action : view/edit/add/history
+      if (action === 'add') {
+        this.$emit('actionConfig', {
+          actionType: action, // add
+          showImport: true
+        })
+      } else {
+        this.$emit('actionConfig', {
+          actionType: action, // view/edit/history
+          name: row[this.currentInfos.id],
+          yamlData: row.yaml_data,
+          services: row.services || [],
+          showImport: action === 'edit',
+          readOnly: action === 'view'
+        })
+      }
     },
     getConfigByType (type = '*') {
       let allType = []
@@ -232,17 +230,37 @@ export default {
       const projectName = this.projectName
       const envName = this.envName
 
+      const apiArr = []
+
       allType.forEach(type => {
         const currentInfo = this.configInfos[type]
-        currentInfo
-          .getAPI(projectName, envName)
-          .then(res => {
-            currentInfo.tableData = res
-          })
-          .catch(err => {
-            console.log(err)
-            currentInfo.tableData = []
-          })
+        apiArr.push(
+          currentInfo
+            .getAPI(projectName, envName)
+            .then(res => {
+              currentInfo.tableData = res
+            })
+            .catch(err => {
+              console.log(err)
+              currentInfo.tableData = []
+            })
+        )
+      })
+
+      Promise.all(apiArr).then(() => {
+        // type=ConfigMap&cmName=&action=edit/history
+        const query = this.$route.query
+        if (type === '*' && query.type === 'ConfigMap' && query.cmName) {
+          const current = this.configInfos.ConfigMap.tableData.find(
+            data => data.cm_name === query.cmName
+          )
+          if (current) {
+            this.operateConfig(query.action, {
+              name: query.cmName,
+              current
+            })
+          }
+        }
       })
     },
     async deleteConfig (row) {
@@ -276,7 +294,7 @@ export default {
       const payload = {
         env_name: this.envName,
         product_name: this.projectName,
-        common_env_cfg_type: this.currentInfos.commonEnvCfgType,
+        common_env_cfg_type: this.currentType,
         yaml_data: yamlData
       }
       return addConfigObjectAPI(payload)
@@ -301,7 +319,7 @@ export default {
         services,
         env_name: this.envName,
         product_name: this.projectName,
-        common_env_cfg_type: this.currentInfos.commonEnvCfgType,
+        common_env_cfg_type: this.currentType,
         yaml_data: yamlData
       }
       return updateConfigObjectAPI(payload)
@@ -312,9 +330,6 @@ export default {
           console.log(err)
           return 'error'
         })
-    },
-    viewHistoryVersion () {
-      console.log('对比历史版本')
     }
   },
   created () {

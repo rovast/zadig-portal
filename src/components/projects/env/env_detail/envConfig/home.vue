@@ -7,18 +7,20 @@
       <CommonConfig ref="commonConfigRef" :currentType="currentConfig" @actionConfig="actionConfig"></CommonConfig>
     </div>
     <el-dialog :visible.sync="dialogVisible" width="60%" custom-class="env-config-dialog" append-to-body>
-      <ImportConfig :importRepoInfo="repoConfig"></ImportConfig>
+      <ImportConfig :importRepoInfo="repoConfig" :cmOption="cmOption"></ImportConfig>
       <div slot="footer">
         <el-button size="small" :disabled="dialogBtnLoading" @click="dialogVisible = false" v-show="repoConfig.actionType !== 'view'">取 消</el-button>
         <el-button size="small" type="primary" :loading="dialogBtnLoading" @click="handleConfig">确 定</el-button>
       </div>
     </el-dialog>
+    <VersionHistory ref="versionRef" @actionConfig="actionConfig"></VersionHistory>
   </div>
 </template>
 
 <script>
 import CommonConfig from '@/components/projects/env/env_detail/envConfig/commonConfig'
 import ImportConfig from '@/components/projects/common/importConfig/index.vue'
+import VersionHistory from './versionHistory.vue'
 import bus from '@utils/eventBus'
 export default {
   data () {
@@ -28,7 +30,9 @@ export default {
 
       dialogVisible: false,
       repoConfig: {},
-      dialogBtnLoading: false
+      dialogBtnLoading: false,
+
+      cmOption: {}
     }
   },
   methods: {
@@ -36,21 +40,38 @@ export default {
       this.$router.push({ query: { type: this.currentConfig } })
     },
     actionConfig (evt) {
-      this.repoConfig = {
-        actionType: evt.type,
-        overrideYaml: evt.yamlData || '',
-        restart_associated_svc: false,
-        ...evt.data,
+      if (evt.actionType === 'history') {
+        this.$refs.versionRef.showVersionList(evt.name, this.currentConfig)
+      } else {
+        this.repoConfig = {
+          actionType: evt.actionType,
+          overrideYaml: evt.yamlData || '',
 
-        title:
-          evt.type === 'add'
-            ? '添加环境配置'
-            : `${evt.type === 'view' ? '查看' : '编辑'} ${evt.name} 配置`,
-        showImport: evt.type !== 'view',
-        checkAssociated: this.currentConfig !== 'Ingress' && evt.type === 'edit'
+          restart_associated_svc: evt.actionType === 'edit',
+
+          name: evt.name,
+          services: evt.services,
+          commonEnvCfgType: this.currentConfig,
+
+          showParams: {
+            title:
+              evt.actionType === 'add'
+                ? '添加环境配置'
+                : `${evt.actionType === 'view' ? '查看' : '编辑'} ${
+                  evt.name
+                } 配置`,
+
+            showImport: evt.showImport || false,
+            checkAssociated:
+              this.currentConfig !== 'Ingress' && evt.actionType === 'edit'
+          }
+        }
+        this.cmOption = {
+          readOnly: evt.readOnly || false
+        }
+        this.dialogVisible = true
+        console.log('actionConfig', evt, this.repoConfig)
       }
-      this.dialogVisible = true
-      console.log('actionConfig', evt, this.repoConfig)
     },
     handleConfig () {
       const actionType = this.repoConfig.actionType
@@ -113,7 +134,8 @@ export default {
   },
   components: {
     CommonConfig,
-    ImportConfig
+    ImportConfig,
+    VersionHistory
   }
 }
 </script>

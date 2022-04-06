@@ -216,9 +216,19 @@
               <el-table-column property="name"
                                label="name"></el-table-column>
               <el-table-column label="Value">
-                <template slot-scope="scope">
-                  <el-input size="small"
-                            v-model="scope.row.value"
+                <template slot-scope="{ row }">
+                   <el-select
+                      style="width: 100%;"
+                      v-if="row.type==='choice'"
+                      v-model="row.value"
+                      placeholder="默认值"
+                      size="small"
+                    >
+                      <el-option v-for="option in row.choice_option" :key="option" :label="option" :value="option"></el-option>
+                    </el-select>
+                  <el-input v-else
+                            size="small"
+                            v-model="row.value"
                             placeholder="请输入 value"></el-input>
                 </template>
               </el-table-column>

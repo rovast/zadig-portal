@@ -54,7 +54,7 @@ export function wordTranslate (word, category, subitem = '') {
       build: '构建部署',
       artifact: '交付物部署',
       test: '测试',
-      distribute: '分发'
+      distribute: '分发部署'
     }
   }
   if (subitem === '') {

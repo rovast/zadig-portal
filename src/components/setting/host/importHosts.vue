@@ -100,6 +100,7 @@ export default {
         {
           主机名称: '',
           IP: '',
+          PORT: 22,
           用户名: '',
           标签: '',
           'SSH 私钥': '',
@@ -173,6 +174,7 @@ export default {
             provider: provider,
             label: item['标签'],
             ip: item.IP,
+            port: item.PORT ? parseInt(item.PORT) : 22,
             is_prod: item['是否生产机器(y/n)'] === 'y',
             user_name: item['用户名'],
             private_key: window.btoa(item['SSH 私钥'])

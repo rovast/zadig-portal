@@ -78,7 +78,7 @@ export default {
 <style lang="less" scoped>
 .config-detail-container {
   &.build-config-container {
-    padding: 16px 40px 10px;
+    padding: 16px 40px 60px;
   }
 
   .build-footer {

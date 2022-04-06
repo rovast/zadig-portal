@@ -819,18 +819,6 @@ export default {
 <style lang="less" scoped>
 @import "~@assets/css/component/service-detail.less";
 
-.screen {
-  float: right;
-  margin-right: 30px;
-  color: #909399;
-  font-size: 20px;
-  cursor: pointer;
-
-  &:hover {
-    color: #06f;
-  }
-}
-
 /deep/.el-dialog__headerbtn {
   top: 18px;
   font-size: 20px;

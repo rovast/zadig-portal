@@ -7,6 +7,7 @@ import Store from '../store'
 import Router from '../router'
 const specialAPIs = ['/api/aslan/system/operation', '/api/aslan/delivery/artifacts', '/api/aslan/environment/kube/workloads']
 const ignoreErrReq = '/api/aslan/services/validateUpdate/'
+const ignoreErrResponse = 'the following services are modified since last update:'
 const reqExps = [/api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/workloads/, /api\/aslan\/environment\/environments\/[a-z-A-Z-0-9]+\/groups/]
 const analyticsReq = 'https://api.koderover.com/api/operation/upload'
 const userInitEnvRoute = '/v1/projects/initialize/'
@@ -123,8 +124,7 @@ http.interceptors.response.use(
     if (
       error.response &&
       error.response.config.url !== analyticsReq &&
-      !error.response.config.url.includes(ignoreErrReq)
-    ) {
+      !error.response.config.url.includes(ignoreErrReq)) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       console.log(error.response)
@@ -137,7 +137,7 @@ http.interceptors.response.use(
           window.location.href = `/signin?redirect=${redirectPath}`
         } else if (error.response.status === 403) {
           Element.Message.error('暂无权限')
-        } else if (error.response.data.code !== 6168) {
+        } else if (error.response.data.code !== 6168 && !error.response.data.description.includes(ignoreErrResponse)) {
           displayError(error)
         }
       } else if (document.title === '登录') {
@@ -245,7 +245,7 @@ export function taskPendingSSEAPI () {
   return makeEventSource('/api/aslan/workflow/sse/tasks/pending')
 }
 
-// Env
+//  Env
 export function listProductAPI (projectName = '', envType = '') {
   if (envType) {
     return http.get(`/api/aslan/environment/environments?projectName=${projectName}&envType=${envType}`)
@@ -593,9 +593,9 @@ export function getBuildTargetsAPI (projectName) {
 
 export function runWorkflowAPI (projectName, data, isArtifact = false) {
   if (isArtifact) {
-    return http.put(`/api/aslan/workflow/workflowtask?projectName=${projectName}`, data)
+    return http.put(`/api/aslan/workflow/workflowtask/${data.workflow_name}?projectName=${projectName}`, data)
   } else {
-    return http.post(`/api/aslan/workflow/workflowtask?projectName=${projectName}`, data)
+    return http.post(`/api/aslan/workflow/workflowtask/${data.workflow_name}?projectName=${projectName}`, data)
   }
 }
 

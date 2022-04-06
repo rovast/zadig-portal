@@ -2,7 +2,6 @@
   <div class="build-config-container" :class="{'mini-width': mini}">
     <div v-if="jenkinsEnabled" class="build-source" :class="{'small-padding': mini}">
       <span class="build-source-title">构建方式</span>
-      <!-- TODO loadBuild(buildName) buildName -->
       <el-select v-model="source" size="small" value-key="key" :disabled="isEdit" @change="loadBuild(buildName)" filterable>
         <el-option v-for="(item,index) in originOptions" :key="index" :label="item.label" :value="item.value"></el-option>
       </el-select>
@@ -152,15 +151,15 @@ export default {
         })
         .catch(err => {
           console.log('傻了吧', err)
-          this.saveLoading = true
+          this.saveLoading = false
         })
     },
     async loadBuild (buildConfigName) {
       this.buildConfig = {
-        name: this.defaultBuildName
+        name: buildConfigName || this.defaultBuildName
       }
       this.jenkinsBuild = {
-        name: this.defaultBuildName
+        name: buildConfigName || this.defaultBuildName
       }
 
       this.configDataLoading = true
@@ -303,8 +302,8 @@ export default {
   box-sizing: border-box;
   height: calc(~'100% - 50px');
   margin-right: -3px;
-  margin-bottom: 50px;
   padding-top: 2px;
+  padding-bottom: 50px;
   overflow: auto;
   background-color: @globalBackgroundColor;
 

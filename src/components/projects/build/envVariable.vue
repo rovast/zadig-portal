@@ -36,10 +36,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="4">
-          <el-form-item
-            :prop="'envs.' + build_env_index + '.value'"
-            :rules="{required: true, message: '值 不能为空', trigger: ['blur', 'change']}"
-          >
+          <el-form-item>
             <el-select
               v-if="preEnvs.envs[build_env_index].type==='choice'"
               v-model="preEnvs.envs[build_env_index].value"
@@ -289,7 +286,7 @@ export default {
       })
     },
     validate () {
-      return this.$refs.buildEnv.validate()
+      return this.$refs.buildEnvRef.validate()
     },
     addBuildEnv () {
       this.validate().then(valid => {

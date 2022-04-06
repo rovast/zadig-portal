@@ -114,6 +114,10 @@ export default {
       required: true,
       type: String
     },
+    envName: {
+      required: true,
+      type: String
+    },
     namespace: {
       required: true,
       type: String

@@ -271,12 +271,6 @@ export default {
       handler (value) {
         this.zadigBuild = value.filter(item => !item.jenkins_build_args)
         this.jenkinsBuild = value.filter(item => item.jenkins_build_args)
-        // console.log(res[0])
-        // res[0].jenkins_build_args.jenkins_build_params.map(item => {
-        //   return !(item.name = 'IMAGE' && item.auto_generate)
-        // })
-        // console.log(res)
-        // this.jenkinsBuild = res
       },
       immediate: true
     }

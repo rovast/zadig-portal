@@ -93,7 +93,7 @@
                        type="primary"
                        :href="`https://docs.koderover.com/zadig/settings/codehost/github/`"
                        :underline="false"
-                       target="_blank">帮助帮助</el-link>
+                       target="_blank">帮助文档</el-link>
             </span>
           </slot>
         </el-alert>
@@ -338,7 +338,7 @@
                        type="primary"
                        :href="`https://docs.koderover.com/zadig/settings/codehost/github/`"
                        :underline="false"
-                       target="_blank">帮助帮助</el-link>
+                       target="_blank">帮助文档</el-link>
             </span>
           </slot>
         </el-alert>

@@ -291,45 +291,53 @@ export default {
         desc: '构建脚本中的变量均可使用，其他内置可用变量如下'
       },
       {
-        variable: 'ENV_NAME',
+        variable: '$ENV_NAME',
         desc: '环境名称，用于区分不同的环境，系统内置环境：dev，qa'
       },
       {
-        variable: '<AGENT_NAME>_PK',
+        variable: '$<AGENT_NAME>_PK',
         desc:
-          '通过 SSH Agent 远程登录服务器使用的私钥 id_rsa，其中 AGENT_NAME 为 SSH AGENT 名称，使用时需要自己填写完整'
+          '通过 SSH Agent 远程登录服务器使用的私钥 id_rsa，其中 <AGENT_NAME> 为 SSH Agent 名称，使用时需要自己填写完整'
       },
       {
-        variable: '<AGENT_NAME>_USERNAME',
+        variable: '$<AGENT_NAME>_USERNAME',
         desc: '通过 SSH Agent 远程登录到服务器的用户名称'
       },
       {
-        variable: '<AGENT_NAME>_IP',
+        variable: '$<AGENT_NAME>_IP',
         desc: 'SSH Agent 目标服务器的 IP 地址'
       },
       {
-        variable: '<ENV>_HOST_IPs',
+        variable: '$<AGENT_NAME>_PORT',
+        desc: 'SSH Agent 目标服务器的端口'
+      },
+      {
+        variable: '$<ENV>_HOST_IPs',
         desc: '变量支持获取指定环境关联的所有主机 IP'
       },
       {
-        variable: 'ARTIFACT',
+        variable: '$ARTIFACT',
         desc: '部署的交付物包，通过该变量可获取交付物包'
       },
       {
-        variable: '<ENV>_HOST_NAMEs',
+        variable: '$<ENV>_HOST_NAMEs',
         desc: '获取指定环境关联的所有主机名称'
       },
       {
-        variable: '<HOST_NAME>_PK',
+        variable: '$<HOST_NAME>_PK',
         desc: '获取主机密钥'
       },
       {
-        variable: '<HOST_NAME>_USERNAME',
+        variable: '$<HOST_NAME>_USERNAME',
         desc: '获取主机用户名'
       },
       {
-        variable: '<HOST_NAME>_IP',
+        variable: '$<HOST_NAME>_IP',
         desc: '获取主机 IP'
+      },
+      {
+        variable: '$<HOST_NAME>_PORT',
+        desc: '获取主机端口'
       },
       {
         variable: '',

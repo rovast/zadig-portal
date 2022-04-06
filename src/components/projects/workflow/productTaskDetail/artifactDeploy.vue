@@ -80,9 +80,9 @@
           <el-col :span="6">
             <div class="grid-content item-desc">
               <router-link v-if="deploy.service_type === 'pm'" class="env-link"
-                           :to="`/v1/projects/detail/${deploy.product_name}/envs/detail/${deploy.service_name}/pm?envName=${deploy.env_name}&projectName=${deploy.product_name}&namespace=${deploy.namespace}`">{{deploy.service_name}}</router-link>
+                           :to="`/v1/projects/detail/${deploy.product_name}/envs/detail/${deploy.service_name}/pm?envName=${deploy.env_name}&projectName=${deploy.product_name}&namespace=${deploy.namespace}`">{{$utils.showServiceName(deploy.service_name)}}</router-link>
               <router-link v-else class="env-link"
-                           :to="`/v1/projects/detail/${deploy.product_name}/envs/detail/${deploy.service_name}?envName=${deploy.env_name}&projectName=${deploy.product_name}&namespace=${deploy.namespace}`">{{deploy.service_name}}</router-link>
+                           :to="`/v1/projects/detail/${deploy.product_name}/envs/detail/${deploy.service_name}?envName=${deploy.env_name}&projectName=${deploy.product_name}&namespace=${deploy.namespace}`">{{$utils.showServiceName(deploy.service_name)}}</router-link>
             </div>
           </el-col>
         </el-row>

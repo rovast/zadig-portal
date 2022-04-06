@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="buildEnv" :inline="true" :model="preEnvs" class="variable-form" label-position="top" label-width="80px">
+    <el-form ref="buildEnvRef" :inline="true" :model="preEnvs" class="variable-form" label-position="top" label-width="80px">
       <span class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义{{ isTest ? '测试' : '构建' }}变量</span>
       <el-button v-if="preEnvs.envs.length===0" @click="addFirstBuildEnv()" type="primary" size="mini" plain>新增</el-button>
       <el-row v-for="(app,build_env_index) in preEnvs.envs" :key="build_env_index" :gutter="2">
@@ -30,10 +30,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="4">
-          <el-form-item
-            :prop="'envs.' + build_env_index + '.value'"
-            :rules="{required: true, message: '值 不能为空', trigger: ['blur', 'change']}"
-          >
+          <el-form-item>
             <el-select
               v-if="preEnvs.envs[build_env_index].type==='choice'"
               v-model="preEnvs.envs[build_env_index].value"
@@ -196,19 +193,20 @@ export default {
           desc: '值恒等于 true，表示在 Zadig 系统上执行脚本'
         },
         {
-          variable: '<REPO>_PR',
-          desc: '构建过程中指定代码仓库使用的 Pull Request 信息'
+          variable: '$<REPO>_PR',
+          desc:
+            '构建过程中指定代码仓库使用的 Pull Request 信息，其中 <REPO> 是具体的代码仓库名称，使用时需要自己填写完整'
         },
         {
-          variable: '<REPO>_BRANCH',
+          variable: '$<REPO>_BRANCH',
           desc: '构建过程中指定代码仓库使用的分支信息'
         },
         {
-          variable: '<REPO>_TAG',
+          variable: '$<REPO>_TAG',
           desc: '构建过程中指定代码仓库使用 Tag 信息'
         },
         {
-          variable: '<REPO>_COMMIT_ID',
+          variable: '$<REPO>_COMMIT_ID',
           desc: '构建过程中指定代码的 commit 信息'
         }
       ],
@@ -232,7 +230,8 @@ export default {
         {
           variable: '$SERVICES',
           desc:
-            '通过工作流任务更新的服务组，服务名以 “,” 分隔，形如 service1,service2,service3。推荐使用 array=(${SERVICES//,/ ' + '} 方式转化成数组'
+            '通过工作流任务更新的服务组，服务名以 “,” 分隔，形如 service1,service2,service3。推荐使用 array=(${SERVICES//,/ ' +
+            '} 方式转化成数组'
         },
         {
           variable: '$CI',
@@ -260,7 +259,7 @@ export default {
       })
     },
     validate () {
-      return this.$refs.buildEnv.validate()
+      return this.$refs.buildEnvRef.validate()
     },
     addBuildEnv () {
       this.validate().then(valid => {

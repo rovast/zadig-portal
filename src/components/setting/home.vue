@@ -1,19 +1,18 @@
 <template>
-  <div class="container-home">
-
-  </div>
+  <div class="system-setting-container"></div>
 </template>
 <script>
+import bus from '@utils/eventBus'
 export default {
-  methods: {},
   mounted () {
+    bus.$emit('show-sidebar', true)
     this.$router.replace('/v1/system/integration')
   }
 }
 </script>
 
 <style lang="less" >
-.container-home {
+.system-setting-container {
   position: relative;
   flex: 1;
   width: 100%;

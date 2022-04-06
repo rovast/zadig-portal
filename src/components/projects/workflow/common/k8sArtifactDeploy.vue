@@ -1,55 +1,58 @@
 <template>
-    <div >
-      <el-form-item label="服务">
-        <el-select v-model="pickedTargetServices"
-                   @change="getServiceImg"
-                   value-key="key"
-                   filterable
-                   multiple
-                   clearable
-                   size="medium"
-                   class="full-width">
-          <el-option v-for="(ser,index) of allServices"
-                     :key="index"
-                     :label="ser.name"
-                     :value="ser">
-            <span>
-              <span>{{ser.name}}</span><span style="color: #ccc;"> ({{ser.service_name}})</span>
-            </span>
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="镜像仓库" >
-        <el-select v-model="pickedRegistry"
-                   filterable
-                   clearable
-                   @change="changeRegistry"
-                   size="medium"
-                   class="full-width">
-          <el-option v-for="(reg,index) of allRegistry"
-                     :key="index"
-                     :label="`${reg.reg_addr}/${reg.namespace}`"
-                     :value="reg.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-table v-if="pickedTargetServices.length > 0"
-                :data="pickedTargetServices"
-                empty-text="无"
-                class="service-deploy-table">
-        <el-table-column prop="name"
-                         label="服务"
-                         width="150px">
-        </el-table-column>
-        <el-table-column label="镜像">
-          <template slot-scope="scope">
-            <div class="workflow-build-rows">
-              <el-row class="build-row">
-                <template>
-                  <el-col :span="12">
-                    <el-select v-if="imageMap[scope.row.image_name] && imageMap[scope.row.image_name].length > 0"
+  <div>
+    <el-form-item label="服务">
+      <el-select
+        v-model="pickedTargetServices"
+        @change="getServiceImg"
+        value-key="key"
+        filterable
+        multiple
+        clearable
+        size="medium"
+        class="full-width"
+      >
+        <el-option v-for="(ser,index) of allServices" :key="index" :label="ser.name" :value="ser">
+          <span>
+            <span>{{ser.name}}</span>
+            <span style="color: #ccc;">({{ser.service_name}})</span>
+          </span>
+        </el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="镜像仓库">
+      <el-select v-model="pickedRegistry" filterable clearable @change="changeRegistry" size="medium" class="full-width">
+        <el-option v-for="(reg,index) of allRegistry" :key="index" :label="`${reg.reg_addr}/${reg.namespace}`" :value="reg.id"></el-option>
+      </el-select>
+    </el-form-item>
+    <el-table v-if="pickedTargetServices.length > 0" :data="pickedTargetServices" empty-text="无" class="service-deploy-table">
+      <el-table-column prop="name" label="服务" width="150px"></el-table-column>
+      <el-table-column label="镜像">
+        <template slot-scope="scope">
+          <div class="workflow-build-rows">
+            <el-row class="build-row">
+              <template>
+                <el-col :span="12">
+                  <el-select
+                    v-if="imageMap[scope.row.image_name] && imageMap[scope.row.image_name].length > 0"
+                    v-model="scope.row.image"
+                    filterable
+                    clearable
+                    size="small"
+                    style="width: 100%;"
+                    placeholder="请选择镜像"
+                  >
+                    <el-option
+                      v-for="item in imageMap[scope.row.image_name]"
+                      :key="`${item.name}-${item.tag}`"
+                      :label="item.tag"
+                      :value="item.full"
+                    ></el-option>
+                  </el-select>
+                  <!-- Todo: use virtual-list -->
+                  <!-- <el-select v-if="imageMap[scope.row.image_name] && imageMap[scope.row.image_name].length > 0"
                                v-model="scope.row.image"
                                @visible-change="changeVirtualData($event, scope.row, scope.$index)"
+                               :filter-method="(val) =>{return imageFilter(scope.row.image_name,val)}"
                                filterable
                                clearable
                                size="small"
@@ -64,61 +67,34 @@
                                            :dataSources="imageMap[scope.row.image_name]"
                                            :dataComponent="itemComponent">
                       </virtual-scroll-list>
-                    </el-select>
-                    <el-tooltip v-else
-                                content="请求镜像失败，请手动输入镜像"
-                                placement="top"
-                                popper-class="gray-popper">
-                      <el-input v-model="scope.row.image"
-                                class="short-input"
-                                size="small"
-                                placeholder="请填写镜像"></el-input>
-                    </el-tooltip>
-                  </el-col>
-                </template>
-              </el-row>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div v-if="showCreateVersion"
-          class="create-version">
-        <div class="create-checkbox">
-          <el-checkbox v-model="versionInfo.enabled">创建版本</el-checkbox>
-        </div>
-        <el-form v-if="versionInfo.enabled"
-                  :model="versionInfo"
-                  label-width="90px"
-                  ref="versionForm"
-                  :rules="versionRules">
-          <el-form-item label="版本名称"
-                        prop="version">
-            <el-input class="full-width"
-                      v-model="versionInfo.version"
-                      size="small"
-                      autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="版本描述"
-                        prop="desc">
-            <el-input class="full-width"
-                      type="textarea"
-                      autosize
-                      placeholder="请输入版本描述"
-                      v-model="versionInfo.desc">
-            </el-input>
-          </el-form-item>
-          <el-form-item label="标签"
-                        prop="labels">
-            <el-input class="full-width"
-                      type="textarea"
-                      autosize
-                      placeholder="请输入版本标签，多个标签用 ; 分割"
-                      v-model="versionInfo.labelStr">
-            </el-input>
-          </el-form-item>
-        </el-form>
+                  </el-select>-->
+                  <el-tooltip v-else content="请求镜像失败，请手动输入镜像" placement="top" popper-class="gray-popper">
+                    <el-input v-model="scope.row.image" class="short-input" size="small" placeholder="请填写镜像"></el-input>
+                  </el-tooltip>
+                </el-col>
+              </template>
+            </el-row>
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div v-if="showCreateVersion" class="create-version">
+      <div class="create-checkbox">
+        <el-checkbox v-model="versionInfo.enabled">创建版本</el-checkbox>
       </div>
+      <el-form v-if="versionInfo.enabled" :model="versionInfo" label-width="90px" ref="versionForm" :rules="versionRules">
+        <el-form-item label="版本名称" prop="version">
+          <el-input class="full-width" v-model="versionInfo.version" size="small" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="版本描述" prop="desc">
+          <el-input class="full-width" type="textarea" autosize placeholder="请输入版本描述" v-model="versionInfo.desc"></el-input>
+        </el-form-item>
+        <el-form-item label="标签" prop="labels">
+          <el-input class="full-width" type="textarea" autosize placeholder="请输入版本标签，多个标签用 ; 分割" v-model="versionInfo.labelStr"></el-input>
+        </el-form-item>
+      </el-form>
     </div>
+  </div>
 </template>
 <script>
 import virtualListItem from '../../common/imageItem'
@@ -129,7 +105,7 @@ export default {
   data () {
     return {
       itemComponent: virtualListItem,
-      imageMap: [],
+      imageMap: {},
       allRegistry: [],
       pickedTargetServices: [],
       pickedRegistry: '',
@@ -142,7 +118,11 @@ export default {
       },
       versionRules: {
         version: [
-          { required: true, message: '请填写版本名称', trigger: ['blur', 'change'] }
+          {
+            required: true,
+            message: '请填写版本名称',
+            trigger: ['blur', 'change']
+          }
         ]
       },
       virtualData: {
@@ -154,29 +134,41 @@ export default {
     }
   },
   methods: {
+    changeRegistryId (id) {
+      if (id && this.pickedRegistry !== id) {
+        this.pickedRegistry = id
+        this.changeRegistry(id)
+      }
+    },
     changeVirtualData (event, row, index) {
       const opt = event ? 0 : -1
-      const id = this.imageMap[row.image_name].map(img => img.full).indexOf(row.image) + opt
+      const id =
+        this.imageMap[row.image_name].map(img => img.full).indexOf(row.image) +
+        opt
       if (this.startAll[row.name]) {
         this.startAll[row.name] = id
       } else {
         this.$set(this.startAll, row.name, id)
       }
-      this.$refs[`scrollListRef${index}`].virtual.updateRange(id, id + this.virtualData.keeps)
+      this.$refs[`scrollListRef${index}`].virtual.updateRange(
+        id,
+        id + this.virtualData.keeps
+      )
     },
     changeRegistry (val) {
       if (val) {
-        this.imageMap = []
-        const allClickableServiceNames = this.allServices.map(service => service.image_name) // .filter(service => service.has_build)
-        imagesAPI(uniq(allClickableServiceNames), val).then((images) => {
+        this.$set(this, 'imageMap', {})
+        const allClickableServiceNames = this.allServices.map(
+          service => service.image_name
+        ) // .filter(service => service.has_build)
+        imagesAPI(uniq(allClickableServiceNames), val).then(images => {
           images = images || []
           for (const image of images) {
             image.full = `${image.name}:${image.tag}`
           }
-          this.imageMap = this.$utils.makeMapOfArray(images, 'name')
+          this.$set(this, 'imageMap', this.$utils.makeMapOfArray(images, 'name'))
           this.pickedTargetServices.forEach(tar => {
-            tar.image = ''
-            this.startAll[tar.name] = 0
+            this.$set(tar, 'image', '')
           })
         })
       }
@@ -188,15 +180,25 @@ export default {
     getServiceImgs (val) {
       return new Promise((resolve, reject) => {
         const registryId = this.pickedRegistry
-        imagesAPI(uniq(val), registryId).then((images) => {
+        imagesAPI(uniq(val), registryId).then(images => {
           images = images || []
           for (const image of images) {
             image.full = `${image.name}:${image.tag}`
           }
-          this.imageMap = this.$utils.makeMapOfArray(images, 'name')
+          this.$set(this, 'imageMap', this.$utils.makeMapOfArray(images, 'name'))
           resolve()
         })
       })
+    },
+    // Todo
+    imageFilter (serviceName, val) {
+      if (val) {
+        this.filteredImages = this.imageMap[serviceName].filter(
+          img => img.tag.indexOf(val) > -1
+        )
+      } else {
+        this.filteredImages = this.imageMap[serviceName]
+      }
     }
   },
   computed: {
@@ -213,25 +215,33 @@ export default {
   },
   created () {
     // 如果 K8s 交付物部署开启则获取对应服务和镜像仓库
-    getRegistryWhenBuildAPI(this.projectName).then((res) => {
+    getRegistryWhenBuildAPI(this.projectName).then(res => {
       this.allRegistry = res
       // 克隆任务数据
-      if (this.forcedUserInput.version_args && this.forcedUserInput.version_args.version) {
+      if (
+        this.forcedUserInput.version_args &&
+        this.forcedUserInput.version_args.version
+      ) {
         Object.assign(this.versionInfo, this.forcedUserInput.version_args)
         this.versionInfo.labelStr = this.versionInfo.labels.join(';')
       }
       if (this.forcedUserInput.registry_id) {
         this.pickedRegistry = this.forcedUserInput.registry_id
-        this.pickedTargetServices = sortBy(this.forcedUserInput.artifact_args.map(element => {
-          element.key = element.name + '/' + element.service_name
-          return element
-        }), 'service_name')
+        this.pickedTargetServices = sortBy(
+          this.forcedUserInput.artifact_args.map(element => {
+            element.key = element.name + '/' + element.service_name
+            return element
+          }),
+          'service_name'
+        )
         this.forcedUserInput.artifact_args.forEach(r => {
           if (!r.image_name) {
             this.$set(r, 'image_name', r.name)
           }
         })
-        this.getServiceImgs(this.forcedUserInput.artifact_args.map(r => r.image_name)).then(() => {
+        this.getServiceImgs(
+          this.forcedUserInput.artifact_args.map(r => r.image_name)
+        ).then(() => {
           this.forcedUserInput.artifact_args.forEach((art, index) => {
             this.changeVirtualData(false, art, index)
           })
@@ -241,9 +251,9 @@ export default {
       if (res && res.length > 0) {
         for (let i = 0; i < res.length; i++) {
           if (res[i].is_default) {
-            this.pickedRegistry = res[i].id
+            this.pickedRegistry = this.pickedRegistry || res[i].id
             break
-          };
+          }
         }
       }
     })

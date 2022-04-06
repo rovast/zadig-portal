@@ -111,8 +111,17 @@ import {
   deleteHelmAPI
 } from '@api'
 import bus from '@utils/eventBus'
+
 export default {
   data () {
+    const protocolValid = (rule, value, callback) => {
+      if (!/^(http|https|acr):\/\//.test(value.trim())) {
+        callback(new Error('请确保协议以 http/https/acr 开头'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       allHelmRepos: [],
       helm: {
@@ -138,8 +147,7 @@ export default {
             trigger: 'blur'
           },
           {
-            type: 'url',
-            message: '请输入正确的 URL，包含协议',
+            validator: protocolValid,
             trigger: ['blur', 'change']
           }
         ],

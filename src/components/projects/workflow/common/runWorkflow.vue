@@ -109,6 +109,7 @@
       <!-- K8s Artifact Deploy -->
       <K8sArtifactDeploy
       v-if="!isPm"
+      ref="k8sArtifactRef"
       v-loading="precreateLoading"
       :forcedUserInput="forcedUserInput"
       :allServices="allServiceNames"
@@ -228,7 +229,6 @@ export default {
       return !this.isHelm && !this.isPm
     },
     imageRegistryByEnv () {
-      // host environment does't have registry
       if (this.isPm || !this.currentProjectEnvs.length || !this.runner.namespace) {
         return
       }
@@ -286,30 +286,14 @@ export default {
     pickBuildService (services) {
       // Get service repo info
       const buildRepos = flattenDeep(services.map(tar => tar.build.repos))
-      const requestQuery = this.distributeEnabled ? 'bt' : 'bp'
-      for (const repo of buildRepos) {
-        this.$set(repo, 'showBranch', !this.distributeEnabled)
-        this.$set(repo, 'showTag', false)
-        this.$set(repo, 'showSwitch', this.distributeEnabled)
-        this.$set(repo, 'showPR', !this.distributeEnabled)
-      }
-      this.getRepoInfo(buildRepos, requestQuery)
+      this.getRepoInfo(buildRepos)
     },
     pickTestService (tests) {
       // Get test repo info
       const testRepos = flattenDeep(tests.map(test => test.builds))
-      const requestQuery = 'bp'
-      for (const repo of testRepos) {
-        this.$set(repo, 'showBranch', false)
-        // The test code will not be changed according to the distribution
-        this.$set(repo, 'showTag', false)
-        this.$set(repo, 'showSwitch', false)
-        this.$set(repo, 'showPR', true)
-      }
-
-      this.getRepoInfo(testRepos, requestQuery)
+      this.getRepoInfo(testRepos)
     },
-    async getRepoInfo (originRepos, requestQuery = 'bt') {
+    async getRepoInfo (originRepos) {
       const reposQuery = originRepos.map(re => {
         if (re.source === 'codehub') {
           return {
@@ -334,7 +318,7 @@ export default {
       })
       const payload = { infos: reposQuery }
       // b = branch, p = pr, t = tag
-      const res = await getAllBranchInfoAPI(payload, requestQuery)
+      const res = await getAllBranchInfoAPI(payload)
       // make these repo info more friendly
       res.forEach(repo => {
         if (repo.prs) {
@@ -363,25 +347,61 @@ export default {
         this.$set(repo, 'tags', (repoInfo && repoInfo.tags) ? repoInfo.tags : [])
         this.$set(repo, 'prNumberPropName', 'pr')
         this.$set(repo, 'errorMsg', repoInfo.error_msg || '')
-        if (repo.tag) {
-          this.$set(repo, 'releaseMethod', 'tag')
-        } else {
-          this.$set(repo, 'releaseMethod', 'branch')
-        }
         this.$set(repo, 'branch', repo.branch || '')
         this.$set(repo, repo.prNumberPropName, repo[repo.prNumberPropName] || null)
         this.$set(repo, 'tag', repo.tag || '')
-        this.$set(
-          repo, 'showBranch',
-          (this.distributeEnabled && repo.releaseMethod === 'branch') ||
-            !this.distributeEnabled
-        )
-        this.$set(repo, 'showTag', this.distributeEnabled && repo.releaseMethod === 'tag')
+        let branchOrTag = null
+        if (repo.branch) {
+          branchOrTag = {
+            type: 'branch',
+            id: `branch-${repo.branch}`,
+            name: repo.branch
+          }
+        } else if (repo.tag) {
+          branchOrTag = {
+            type: 'tag',
+            id: `tag-${repo.tag}`,
+            name: repo.tag
+          }
+        }
+        this.$set(repo, 'branchOrTag', branchOrTag)
+        const branchAndTagList = []
+        if (repo.branchNames && repo.branchNames.length) {
+          branchAndTagList.push({
+            label: 'Branches',
+            options: (repo.branchNames || []).map(name => {
+              return {
+                type: 'branch',
+                id: `branch-${name}`,
+                name
+              }
+            })
+          })
+        }
+        if (repo.tags && repo.tags.length) {
+          branchAndTagList.push({
+            label: 'Tags',
+            options: repo.tags.map(tag => {
+              return {
+                type: 'tag',
+                id: `tag-${tag.name}`,
+                name: tag.name
+              }
+            })
+          })
+        }
+        this.$set(repo, 'branchAndTagList', branchAndTagList)
       }
     },
     getPresetInfo (projectNameAndEnvName) {
       const [, namespace] = projectNameAndEnvName.split(' / ')
       this.precreateLoading = true
+
+      if (this.currentProjectEnvs.length && this.$refs.k8sArtifactRef) {
+        const registryId = this.currentProjectEnvs.find(env => env.name === namespace).registry_id
+        this.$refs.k8sArtifactRef.changeRegistryId(registryId)
+      }
+
       precreateWorkflowTaskAPI(this.projectName, this.workflowName, namespace).then(res => {
       // Cloning task parameters exist
         if (this.haveForcedInput) {
@@ -425,8 +445,7 @@ export default {
     },
     startTask () {
       const repoKeysToDelete = [
-        '_id_', 'branchNames', 'branchPRsMap', 'tags', 'isGithub', 'prNumberPropName', 'id',
-        'releaseMethod', 'showBranch', 'showTag', 'showSwitch', 'showPR'
+        '_id_', 'branchNames', 'branchPRsMap', 'tags', 'isGithub', 'prNumberPropName', 'id', 'branchOrTag', 'branchAndTagList'
       ]
       this.runner.targets = this.pickedTargets
       const payload = cloneDeep(this.runner)
@@ -468,6 +487,9 @@ export default {
           // trim build repos
           for (const repo of tar.build.repos) {
             repo.pr = repo.pr ? repo.pr : 0
+            repo.branch = ''
+            repo.tag = ''
+            repo[repo.branchOrTag.type] = repo.branchOrTag.name
             for (const key of repoKeysToDelete) {
               delete repo[key]
             }

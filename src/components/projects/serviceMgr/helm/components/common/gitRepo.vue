@@ -283,12 +283,7 @@ export default {
       this.source.repoOwner = ''
       this.source.repoName = ''
       this.source.branchName = ''
-      const codehostItem = this.allCodeHosts.find(item => {
-        return item.id === id
-      })
-      if (codehostItem) {
-        this.codehostSource = codehostItem.type
-      }
+      this.getGitSource(id)
       const res = await getRepoOwnerByIdAPI(id, key).catch(error =>
         console.log(error)
       )
@@ -377,15 +372,19 @@ export default {
       }
       this.$emit('selectPath', emitParams)
     },
-    async addService () {
-      this.loading = true
-      const projectName = this.$route.params.project_name
+    getGitSource (codehostId) {
       const codehostItem = this.allCodeHosts.find(item => {
-        return item.id === this.source.codehostId
+        return item.id === codehostId
       })
       if (codehostItem) {
         this.codehostSource = codehostItem.type
       }
+      return codehostItem ? codehostItem.type : ''
+    },
+    async addService () {
+      this.loading = true
+      const projectName = this.$route.params.project_name
+      this.getGitSource(this.source.codehostId)
       if (this.codehostSource === 'gerrit') {
         const params = {
           codehostId: this.source.codehostId,

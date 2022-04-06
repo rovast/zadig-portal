@@ -54,7 +54,7 @@
 
         <el-row :gutter="10">
           <!-- pm and hosting project don't show registry -->
-          <el-col v-if="!isExternal && !isPmService" :span="12">
+          <el-col v-if="!isPmService" :span="12">
             <div class="grid-title">镜像仓库</div>
             <div class="grid-content image-registry">
               <div v-if="editImageRegistry === false">

@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { initProductAPI, autoUpgradeEnvAPI, deleteEnvServicesAPI } from '@api'
+import { autoUpgradeEnvAPI, deleteEnvServicesAPI, getSingleProjectAPI } from '@api'
 import { cloneDeep, flatten, difference, intersection } from 'lodash'
 export default {
   props: {
@@ -95,19 +95,50 @@ export default {
         }]
       }
       this.loading = true
-      ;(this.opeType === 'delete'
-        ? deleteEnvServicesAPI(
-          this.projectName,
-          this.productInfo.env_name,
-          payload
-        )
-        : autoUpgradeEnvAPI(this.projectName, payload, false)
-      ).then(() => {
-        this.$message.success(`${this.opeDesc}服务成功！`)
-        this.closeDialog()
-        this.fetchAllData()
-      }).finally(() => {
-        this.loading = false
+      if (this.opeType === 'delete') {
+        deleteEnvServicesAPI(this.projectName, this.productInfo.env_name, payload).then(() => {
+          this.$message.success(`${this.opeDesc}服务成功！`)
+          this.closeDialog()
+          this.fetchAllData()
+        }).finally(() => {
+          this.loading = false
+        })
+      } else if (this.opeType === 'add' || this.opeType === 'update') {
+        autoUpgradeEnvAPI(this.projectName, payload, false).then(() => {
+          this.$message.success(`${this.opeDesc}服务成功！`)
+          this.closeDialog()
+          this.fetchAllData()
+        }).catch(error => {
+          const description = error.response.data.description
+          const res = description.match('the following services are modified since last update')
+          if (res) {
+            this.updateEnvByForce(payload, description)
+          }
+        }).finally(() => {
+          this.loading = false
+        })
+      }
+    },
+    updateEnvByForce (payload, description) {
+      const message = JSON.parse(description.match(/{.+}/g)[0])
+      const key = Object.keys(message)[0]
+      const value = message[key].map(item => {
+        return item.name
+      })
+      this.$confirm(`您的更新操作将覆盖环境中 ${key} 的 ${value} 服务变更，确认继续?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const force = true
+        autoUpgradeEnvAPI(this.projectName, payload, force).then((res) => {
+          this.closeDialog()
+          this.fetchAllData()
+          this.$message({
+            message: '更新环境成功',
+            type: 'success'
+          })
+        })
       })
     },
     closeDialog () {
@@ -136,16 +167,10 @@ export default {
       this.currentAllInfo = { vars, services }
     },
     getInitProduct () {
-      initProductAPI(this.projectName).then(res => {
-        const services = []
-        for (const group of res.services) {
-          for (const ser of group) {
-            services.push(ser.service_name)
-          }
-        }
+      getSingleProjectAPI(this.projectName).then(res => {
         this.allProductInfo = {
-          services,
-          vars: res.vars
+          services: flatten(res.services),
+          vars: res.vars || []
         }
       })
     }

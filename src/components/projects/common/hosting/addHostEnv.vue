@@ -4,6 +4,16 @@
       <el-form-item prop="env_name" label="环境名称">
         <el-input v-model="form.env_name" placeholder="请输入环境名称" size="small"></el-input>
       </el-form-item>
+      <el-form-item prop="env_name" label="关联镜像仓库">
+        <el-select class="select" v-model.trim="form.registry_id" placeholder="请选择关联的镜像仓库" size="small">
+            <el-option
+              v-for="registry in imageRegistry"
+              :key="registry.id"
+              :label="`${registry.reg_addr}/${registry.namespace}`"
+              :value="registry.id"
+            ></el-option>
+          </el-select>
+      </el-form-item>
       <el-form-item label="K8s 集群">
         <el-select filterable v-model="form.cluster_id" placeholder="请选择集群" @change="changeCluster" size="small">
           <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
@@ -31,18 +41,21 @@ import {
   getClusterListAPI,
   productHostingNamespaceAPI,
   queryWorkloads,
-  postWorkloads
+  postWorkloads,
+  getRegistryWhenBuildAPI
 } from '@/api'
 export default {
   name: 'hostEnvConfig',
   data () {
     return {
       allCluster: [],
+      imageRegistry: [],
       hostingNamespace: [],
       form: {
         env_name: null,
         cluster_id: null,
-        namespace: null
+        namespace: null,
+        registry_id: ''
       },
       rules: {
         env_name: [
@@ -144,9 +157,7 @@ export default {
         return this.selectService.includes(item.key)
       })
       const params = {
-        env_name: this.form.env_name,
-        cluster_id: this.form.cluster_id,
-        namespace: this.form.namespace,
+        ...this.form,
         workloads: workloads,
         product_name: this.projectName
       }
@@ -155,6 +166,11 @@ export default {
   },
   created () {
     this.getCluster()
+    getRegistryWhenBuildAPI(this.projectName).then(res => {
+      this.imageRegistry = res
+      const registry = res.find(reg => reg.is_default)
+      this.form.registry_id = registry ? registry.id : ''
+    })
   }
 }
 </script>

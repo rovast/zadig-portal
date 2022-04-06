@@ -138,12 +138,6 @@ export default {
     return {
     }
   },
-  methods: {
-    changeReleaseMethod (repo) {
-      repo.tag = ''
-      repo.branch = ''
-    }
-  },
   props: {
     runnerTests: {
       type: Array,

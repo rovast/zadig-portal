@@ -268,7 +268,6 @@ export default {
       })
     },
     async deleteConfig (row) {
-      console.log('删除', row, row[this.currentInfos.id])
       const objectName = row[this.currentInfos.id]
       this.$confirm(
         `确定要删除 ${this.envName} 环境中 ${objectName} 配置?`,

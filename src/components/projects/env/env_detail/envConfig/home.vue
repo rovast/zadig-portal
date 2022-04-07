@@ -70,7 +70,6 @@ export default {
           readOnly: evt.readOnly || false
         }
         this.dialogVisible = true
-        console.log('actionConfig', evt, this.repoConfig)
       }
     },
     handleConfig () {

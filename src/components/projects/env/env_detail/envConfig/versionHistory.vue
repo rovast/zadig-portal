@@ -24,11 +24,11 @@
 
     <el-dialog :title="diffTitle" :visible.sync="diffVisible" width="60%" class="log-diff-container">
       <div class="diff-content">
-        <pre><!--
+        <pre :style="{ width: maxWidth || '100%' }"><!--
        --><div v-for="(section, index) in configDiff" :key="index" :class="{ 'added': section.added, 'removed': section.removed }"><!--
          --><span v-if="section.added" class="code-line-prefix"> + </span><!--
          --><span v-if="section.removed" class="code-line-prefix"> - </span><!--
-         --><span class="yaml-content">{{ section.value }}</span><!--
+         --><span id="yaml-content">{{ section.value }}</span><!--
        --></div><!--
      --></pre>
       </div>
@@ -52,7 +52,8 @@ export default {
       configDiff: [],
 
       srcConfigName: null,
-      historyLoading: false
+      historyLoading: false,
+      maxWidth: ''
     }
   },
   computed: {
@@ -85,6 +86,7 @@ export default {
   },
   methods: {
     showDiff () {
+      this.maxWidth = ''
       const candidates = this.selectedHistories
       if (candidates.length !== 2) {
         this.$message({
@@ -96,13 +98,21 @@ export default {
 
       this.diffVisible = true
       this.configDiff = jsdiff.diffLines(
-        this.orderedHistoriesDesc[1].yaml_data
+        this.orderedHistoriesDesc[0].yaml_data
           .replace(/\\n/g, '\n')
           .replace(/\\t/g, '\t'),
-        this.orderedHistoriesDesc[0].yaml_data
+        this.orderedHistoriesDesc[1].yaml_data
           .replace(/\\n/g, '\n')
           .replace(/\\t/g, '\t')
       )
+      this.$nextTick(() => {
+        const arr = document.querySelectorAll('.log-diff-container #yaml-content')
+        let maxWidth = 0
+        arr.forEach(ele => {
+          maxWidth = Math.max(maxWidth, ele.offsetWidth)
+        })
+        this.maxWidth = maxWidth + 'px'
+      })
     },
     selectionChanged (val) {
       if (val.length > 2) {
@@ -144,7 +154,7 @@ export default {
         this.histories = res.map((re, index) => {
           return {
             ...re,
-            version: `版本 ${index + 1}`
+            version: index === 0 ? '当前版本' : `版本 ${index}`
           }
         })
       }
@@ -178,18 +188,10 @@ export default {
 
     .added {
       background-color: #b4e2b4;
-
-      .yaml-content {
-        background-color: #b4e2b4;
-      }
     }
 
     .removed {
       background-color: #ffb6ba;
-
-      .yaml-content {
-        background-color: #ffb6ba;
-      }
     }
   }
 }

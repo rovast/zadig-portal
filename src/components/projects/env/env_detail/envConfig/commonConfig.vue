@@ -43,10 +43,10 @@ export default {
               prop: 'address',
               label: '地址'
             },
-            {
-              prop: 'ports',
-              label: '端口'
-            },
+            // {
+            //   prop: 'ports',
+            //   label: '端口'
+            // },
             {
               width: '210',
               render: this.operation

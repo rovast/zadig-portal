@@ -188,6 +188,7 @@ export default {
           variables: this.variables
         },
         valuesData: {
+          yamlSource: 'repo',
           gitRepoConfig: this.importRepoInfo.gitRepoConfig,
           autoSync: this.importRepoInfo.gitRepoConfig.autoSync
         }
@@ -228,6 +229,7 @@ export default {
         source: 'chartTemplate',
         createFrom: { templateName: this.tempData.moduleName },
         valuesData: {
+          yamlSource: 'repo',
           gitRepoConfig: this.importRepoInfo.gitRepoConfig,
           autoSync: this.importRepoInfo.gitRepoConfig.autoSync
         }

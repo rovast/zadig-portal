@@ -212,14 +212,27 @@
                       width="450"
                       trigger="click">
             <!-- jenkins构建 -->
-            <el-table :data="scope.row.jenkins_build_args.jenkins_build_params">
+            <el-table :data="scope.row.jenkins_build_args.jenkins_build_params" :row-style="rowStyle">
               <el-table-column property="name"
-                               label="name"></el-table-column>
+                               label="name">
+                               </el-table-column>
               <el-table-column label="Value">
-                <template slot-scope="scope">
-                  <el-input size="small"
-                            v-model="scope.row.value"
+                <template slot-scope="{ row }">
+                   <el-select
+                      style="width: 100%;"
+                      v-if="row.type==='choice'"
+                      v-model="row.value"
+                      placeholder="默认值"
+                      size="small"
+                    >
+                      <el-option v-for="option in row.choice_option" :key="option" :label="option" :value="option"></el-option>
+                    </el-select>
+                    <div v-else>
+                      <el-input
+                            size="small"
+                            v-model="row.value"
                             placeholder="请输入 value"></el-input>
+                    </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -316,6 +329,14 @@ export default {
       } else {
         branches.options = []
         tags.options = []
+      }
+    },
+    // 如果是勾选的不需要展示当前行 这里不处理数据  通过样式隐藏当前行
+    rowStyle ({ row, rowIndex }) {
+      if (row.name === 'IMAGE' && row.auto_generate) {
+        return { visibility: 'collapse' }
+      } else {
+        return {}
       }
     }
   }

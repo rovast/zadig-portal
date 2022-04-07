@@ -114,7 +114,7 @@ export default {
   created () {
     this.sourceRules = sourceRules
     this.queryCodeSource()
-    if (this.source) {
+    if (this.source && this.source.codehostID && this.source.owner && this.source.repo) {
       const codehostId = this.source.codehostID
       const repoOwner = this.source.owner
       const repoName = this.source.repo

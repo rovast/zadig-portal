@@ -1,7 +1,9 @@
 <template>
   <div class="env-common-config-container">
     <el-button type="primary" size="small" plain @click="operateConfig('add')" style="margin-bottom: 12px;">添加</el-button>
-    <ETable :tableData="currentInfos.tableData" :tableColumns="currentInfos.tableColumns" :id="currentInfos.id"></ETable>
+    <div v-loading="configLoading">
+      <ETable :tableData="currentInfos.tableData" :tableColumns="currentInfos.tableColumns" :id="currentInfos.id"></ETable>
+    </div>
   </div>
 </template>
 
@@ -22,6 +24,7 @@ export default {
   },
   data () {
     return {
+      configLoading: false,
       configInfos: {
         Ingress: {
           id: 'ingress_name',
@@ -246,7 +249,7 @@ export default {
             })
         )
       })
-
+      this.configLoading = true
       Promise.all(apiArr).then(() => {
         // type=ConfigMap&cmName=&action=edit/history
         const query = this.$route.query
@@ -261,6 +264,7 @@ export default {
             })
           }
         }
+        this.configLoading = false
       })
     },
     async deleteConfig (row) {

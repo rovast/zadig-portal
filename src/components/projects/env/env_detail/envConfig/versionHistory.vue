@@ -5,7 +5,7 @@
         <el-button @click="showDiff" type="primary" plain size="mini" icon="el-icon-view">比较所选版本</el-button>
       </div>
 
-      <el-table :data="histories" @selection-change="selectionChanged" ref="configHistoryTable">
+      <el-table v-loading="historyLoading" :data="histories" @selection-change="selectionChanged" ref="configHistoryTable">
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="version" label="版本"></el-table-column>
         <el-table-column prop="create_time" label="创建时间">
@@ -28,7 +28,7 @@
        --><div v-for="(section, index) in configDiff" :key="index" :class="{ 'added': section.added, 'removed': section.removed }"><!--
          --><span v-if="section.added" class="code-line-prefix"> + </span><!--
          --><span v-if="section.removed" class="code-line-prefix"> - </span><!--
-         --><span>{{ section.value }}</span><!--
+         --><span class="yaml-content">{{ section.value }}</span><!--
        --></div><!--
      --></pre>
       </div>
@@ -51,7 +51,8 @@ export default {
       diffVisible: false,
       configDiff: [],
 
-      srcConfigName: null
+      srcConfigName: null,
+      historyLoading: false
     }
   },
   computed: {
@@ -133,17 +134,26 @@ export default {
         envName: this.envName,
         commonEnvCfgType
       }
+      this.historyLoading = true
       const res = await getObjectHistoryVersionAPI(params).catch(err =>
         console.log(err)
       )
+
       if (res) {
+        this.historyLoading = false
         this.histories = res.map((re, index) => {
           return {
             ...re,
             version: `版本 ${index + 1}`
           }
         })
-        console.log('getHistory: ', res)
+      }
+    }
+  },
+  watch: {
+    historyVisible (nVal) {
+      if (!nVal) {
+        this.histories = []
       }
     }
   }
@@ -168,10 +178,18 @@ export default {
 
     .added {
       background-color: #b4e2b4;
+
+      .yaml-content {
+        background-color: #b4e2b4;
+      }
     }
 
     .removed {
       background-color: #ffb6ba;
+
+      .yaml-content {
+        background-color: #ffb6ba;
+      }
     }
   }
 }

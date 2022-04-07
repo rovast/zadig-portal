@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="buildEnv" :inline="true" :model="preEnvs" class="variable-form" label-position="top" label-width="80px">
+    <el-form ref="buildEnvRef" :inline="true" :model="preEnvs" class="variable-form" label-position="top" label-width="80px">
       <span v-if="!isJenkins" class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义{{ isTest ? '测试' : '构建' }}变量</span>
       <el-button
         v-if="preEnvs.envs && preEnvs.envs.length===0 && !isJenkins"

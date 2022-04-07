@@ -10,7 +10,7 @@
         <el-table-column prop="version" label="版本"></el-table-column>
         <el-table-column prop="create_time" label="创建时间">
           <template slot-scope="scope">
-            <span>{{moment(scope.row.create_time).format('YYYY-MM-DD HH:mm')}}</span>
+            <span>{{moment(scope.row.create_time*1000).format('YYYY-MM-DD HH:mm')}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="update_user_name" label="最后修改"></el-table-column>

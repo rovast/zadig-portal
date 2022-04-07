@@ -794,7 +794,8 @@ export default {
               status: 'named',
               service_name: val,
               type: this.deployType ? this.deployType : 'k8s',
-              visibility: 'private'
+              visibility: 'private',
+              product_name: this.projectName
             }
             this.services.push(data)
             this.setServiceSelected(data.service_name)

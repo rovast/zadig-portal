@@ -3,6 +3,7 @@
        class="download-artifact-container">
 
     <el-table :data="fileList.file_names"
+              height="300"
               style="width: 100%;">
       <el-table-column label="文件列表">
         <template slot-scope="scope">

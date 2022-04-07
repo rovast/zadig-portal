@@ -284,7 +284,9 @@ export default {
       })
     },
     validate () {
-      return this.$refs.buildEnvRef.validate()
+      this.$nextTick(() => {
+        return this.$refs.buildEnvRef.validate()
+      })
     },
     addBuildEnv () {
       this.validate().then(valid => {

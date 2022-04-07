@@ -59,7 +59,7 @@
           <el-checkbox v-model="preEnvs.envs[build_env_index].auto_generate"></el-checkbox>
           <span>使用系统内置变量 $IMAGE，具体详见</span>
           <router-link
-                       :to="`/v1/projects/detail/${$route.params.project_name}/services?service_name=${$route.params.build_name}&rightbar=policy`">
+                       :to="`/v1/projects/detail/${$route.params.project_name}/services?service_name=${serviceName.length>0?serviceName[0].service_name : ''}&rightbar=policy`">
           镜像名称规则
           </router-link>
         </el-col>
@@ -149,6 +149,10 @@ export default {
     isJenkins: {
       type: Boolean,
       default: false
+    },
+    serviceName: {
+      type: Array,
+      default: () => [{ service_name: '' }]
     }
   },
   data () {

@@ -187,7 +187,8 @@ export default {
           variables: this.variables
         },
         valuesData: {
-          gitRepoConfig: this.importRepoInfo.gitRepoConfig
+          gitRepoConfig: this.importRepoInfo.gitRepoConfig,
+          autoSync: this.importRepoInfo.gitRepoConfig.autoSync
         }
       }
 
@@ -226,7 +227,8 @@ export default {
         source: 'chartTemplate',
         createFrom: { templateName: this.tempData.moduleName },
         valuesData: {
-          gitRepoConfig: this.importRepoInfo.gitRepoConfig
+          gitRepoConfig: this.importRepoInfo.gitRepoConfig,
+          autoSync: this.importRepoInfo.gitRepoConfig.autoSync
         }
       }
       const sId = setTimeout(() => {

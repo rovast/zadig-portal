@@ -264,6 +264,7 @@ export default {
           ])
           values.valuesData = {
             yamlSource: 'repo',
+            autoSync: chartInfo[envName].gitRepoConfig.autoSync,
             gitRepoConfig: chartInfo[envName].gitRepoConfig
           }
           values.overrideYaml =
@@ -341,7 +342,8 @@ export default {
               codehostID: envInfo.yaml_data.source_detail.git_repo_config.codehost_id,
               owner: envInfo.yaml_data.source_detail.git_repo_config.owner,
               repo: envInfo.yaml_data.source_detail.git_repo_config.repo,
-              valuesPaths: [envInfo.yaml_data.source_detail.load_path]
+              valuesPaths: [envInfo.yaml_data.source_detail.load_path],
+              autoSync: envInfo.yaml_data.autoSync
             }
           }
           const allChartNameInfo = {}

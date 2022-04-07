@@ -137,11 +137,11 @@
             <el-button type="text" @click="removeObject" icon="el-icon-delete"></el-button>
           </span>
           <el-form-item label="对象存储" prop="object_storage_id">
-            <el-select size="small" v-model="buildConfig.post_build.object_storage_upload.object_storage_id" placeholder="请选择对象存储" @change="$refs.dockerBuildRef.clearValidate()">
+            <el-select size="small" v-model="buildConfig.post_build.object_storage_upload.object_storage_id" placeholder="请选择对象存储" @change="$refs.objectStorageRef.clearValidate()">
               <el-option v-for="(item,index) in objectStorageList" :key="index" :label="`${item.endpoint}/${item.bucket}`" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="上传文件">
+          <el-form-item label="上传文件" prop="upload_detail">
             <template v-if="buildConfig.post_build.object_storage_upload.upload_detail.length > 0" >
               <el-row v-for="(item,index) in buildConfig.post_build.object_storage_upload.upload_detail" :key="index">
                 <el-col :span="11">
@@ -251,6 +251,25 @@ export default {
             message: '请选择对象存储',
             required: true,
             trigger: 'blur'
+          }
+        ],
+        upload_detail: [
+          {
+            type: 'array',
+            required: true,
+            validator: (rule, value, callback) => {
+              const empty = value.every(item => {
+                return !item.file_path || !item.dest_path
+              })
+              console.log(empty)
+              if (value.length === 0) {
+                callback(new Error('请至少添加一个上传文件'))
+              } else if (empty) {
+                callback(new Error('上传文件路径为空，请检查'))
+              } else {
+                callback()
+              }
+            }
           }
         ]
       },
@@ -383,6 +402,10 @@ export default {
       if (this.binary_enabled) {
         valid.push(this.$refs.fileArchiveRef.validate())
       }
+
+      if (this.object_storage_upload_enabled) {
+        valid.push(this.$refs.objectStorageRef.validate())
+      }
       return Promise.all(valid)
     }
   },
@@ -418,6 +441,10 @@ export default {
       .el-input,
       .el-select {
         width: 100%;
+      }
+
+      .el-form-item {
+        margin-bottom: 15px;
       }
     }
   }

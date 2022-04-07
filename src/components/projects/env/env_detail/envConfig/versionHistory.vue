@@ -136,7 +136,7 @@ export default {
         readOnly: true
       })
     },
-    async showVersionList (objectName, commonEnvCfgType) {
+    async showVersionList (objectName, commonEnvCfgType, services) {
       this.historyVisible = true
       const params = {
         objectName,
@@ -154,10 +154,14 @@ export default {
         this.histories = res.map((re, index) => {
           return {
             ...re,
+            services,
             version: index === 0 ? '当前版本' : `版本 ${index}`
           }
         })
       }
+    },
+    closeHistoryDialog () {
+      this.historyVisible = false
     }
   },
   watch: {

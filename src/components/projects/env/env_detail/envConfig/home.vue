@@ -41,7 +41,7 @@ export default {
     },
     actionConfig (evt) {
       if (evt.actionType === 'history') {
-        this.$refs.versionRef.showVersionList(evt.name, this.currentConfig)
+        this.$refs.versionRef.showVersionList(evt.name, this.currentConfig, evt.services)
       } else {
         this.repoConfig = {
           actionType: evt.actionType,
@@ -100,6 +100,7 @@ export default {
         this.dialogBtnLoading = false
         if (!err) {
           this.dialogVisible = false
+          this.$refs.versionRef.closeHistoryDialog()
         }
       })
     }

@@ -55,9 +55,7 @@ export default {
   data () {
     return {
       showGitImportDialog: false,
-      loadValueYamls: false,
-      placeholder:
-        '可直接粘贴 Ingress、ConfigMap、Secret、PVC 类型的 K8s YAML 文件'
+      loadValueYamls: false
     }
   },
   props: {
@@ -69,6 +67,10 @@ export default {
           readOnly: false
         }
       }
+    },
+    placeholder: {
+      type: String,
+      default: '可直接粘贴 Ingress、ConfigMap、Secret、PVC 类型的 K8s YAML 文件'
     }
   },
   computed: {

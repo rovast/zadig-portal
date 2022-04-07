@@ -260,7 +260,7 @@ export default {
           if (current) {
             this.operateConfig(query.action, {
               name: query.cmName,
-              current
+              ...current
             })
           }
         }

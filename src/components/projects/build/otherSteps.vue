@@ -27,11 +27,12 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="docker" :disabled="docker_enabled">镜像构建</el-dropdown-item>
           <el-dropdown-item command="binary" :disabled="binary_enabled">二进制包存储</el-dropdown-item>
+          <el-dropdown-item command="object" :disabled="object_storage_upload_enabled">文件存储</el-dropdown-item>
           <el-dropdown-item command="script" v-if="!usedToHost" :disabled="post_script_enabled">Shell 脚本执行</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <div class="common-parcel-block" v-if="docker_enabled || binary_enabled || post_script_enabled">
+    <div class="common-parcel-block" v-if="docker_enabled || binary_enabled || object_storage_upload_enabled ||post_script_enabled">
       <el-form
         v-if="docker_enabled && buildConfig.post_build.docker_build"
         :model="buildConfig.post_build.docker_build"
@@ -121,6 +122,50 @@
           </el-form-item>
         </div>
       </el-form>
+    <el-form
+        v-if="object_storage_upload_enabled && buildConfig.post_build.object_storage_upload"
+        :model="buildConfig.post_build.object_storage_upload"
+        :rules="object_storage_rules"
+        ref="objectStorageRef"
+        label-width="170px"
+        class="secondary-form"
+        :label-position="mini ? 'top' : 'left'"
+      >
+        <div class="dashed-container">
+          <span class="primary-title">
+            文件存储
+            <el-button type="text" @click="removeObject" icon="el-icon-delete"></el-button>
+          </span>
+          <el-form-item label="对象存储" prop="object_storage_id">
+            <el-select size="small" v-model="buildConfig.post_build.object_storage_upload.object_storage_id" placeholder="请选择对象存储" @change="$refs.objectStorageRef.clearValidate()">
+              <el-option v-for="(item,index) in objectStorageList" :key="index" :label="`${item.endpoint}/${item.bucket}`" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="上传文件" prop="upload_detail">
+            <template v-if="buildConfig.post_build.object_storage_upload.upload_detail.length > 0" >
+              <el-row v-for="(item,index) in buildConfig.post_build.object_storage_upload.upload_detail" :key="index">
+                <el-col :span="11">
+                    <el-input v-model="item.file_path" style="max-width: 100%;" size="small">
+                      <template slot="prepend">$WORKSPACE/</template>
+                    </el-input>
+                </el-col>
+                <el-col :span="1" style="text-align: center;">to</el-col>
+                <el-col :span="8">
+                    <el-input v-model="item.dest_path" size="small">
+                    </el-input>
+                </el-col>
+                <el-col :span="4">
+                  <div class="">
+                    <el-button @click="removeObjectStorage(index)" type="danger" icon="el-icon-minus"  size="mini" circle plain></el-button>
+                    <el-button v-if="index === buildConfig.post_build.object_storage_upload.upload_detail.length - 1" type="primary" icon="el-icon-plus"  @click="addObjectStorage" size="mini" circle plain></el-button>
+                  </div>
+                </el-col>
+              </el-row>
+            </template>
+            <el-button v-else type="plain" icon="el-icon-plus" @click="addObjectStorage" size="mini" circle plain></el-button>
+          </el-form-item>
+        </div>
+      </el-form>
       <el-form
         v-if="post_script_enabled && buildConfig.post_build.scripts"
         :model="buildConfig.post_build"
@@ -151,7 +196,8 @@ import Codemirror from '@/components/projects/common/codemirror.vue'
 import {
   getDockerfileAPI,
   getDockerfileTemplatesAPI,
-  getRegistryWhenBuildAPI
+  getRegistryWhenBuildAPI,
+  getStorageListAPI
 } from '@api'
 export default {
   props: {
@@ -198,9 +244,40 @@ export default {
           }
         ]
       },
+      object_storage_rules: {
+        object_storage_id: [
+          {
+            type: 'string',
+            message: '请选择对象存储',
+            required: true,
+            trigger: 'blur'
+          }
+        ],
+        upload_detail: [
+          {
+            type: 'array',
+            required: true,
+            validator: (rule, value, callback) => {
+              const empty = value.every(item => {
+                return !item.file_path || !item.dest_path
+              })
+              console.log(empty)
+              if (value.length === 0) {
+                callback(new Error('请至少添加一个上传文件'))
+              } else if (empty) {
+                callback(new Error('上传文件路径为空，请检查'))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
+      },
       allRegistry: [],
       dockerfileTemplates: [],
+      objectStorageList: [],
       showDockerfile: false,
+      object_storage_upload_enabled: false,
       post_script_enabled: false,
       docker_enabled: false,
       binary_enabled: false,
@@ -224,6 +301,11 @@ export default {
         this.binary_enabled = true
       } else {
         this.binary_enabled = false
+      }
+      if (buildConfig.post_build.object_storage_upload) {
+        this.object_storage_upload_enabled = true
+      } else {
+        this.object_storage_upload_enabled = false
       }
       if (buildConfig.post_build.scripts) {
         this.post_script_enabled = true
@@ -251,6 +333,14 @@ export default {
         this.post_script_enabled = true
         this.$set(this.buildConfig.post_build, 'scripts', '#!/bin/bash\nset -e')
       }
+      if (command === 'object') {
+        this.object_storage_upload_enabled = true
+        this.$set(this.buildConfig.post_build, 'object_storage_upload', {
+          enabled: true,
+          object_storage_id: '',
+          upload_detail: []
+        })
+      }
       this.$nextTick(() => {
         document.querySelector('.other-step-container').scrollIntoView({
           behavior: 'smooth'
@@ -268,6 +358,19 @@ export default {
     removeScript () {
       this.post_script_enabled = false
       delete this.buildConfig.post_build.scripts
+    },
+    removeObject () {
+      this.object_storage_upload_enabled = false
+      delete this.buildConfig.post_build.object_storage_upload
+    },
+    addObjectStorage () {
+      this.buildConfig.post_build.object_storage_upload.upload_detail.push({
+        file_path: '',
+        dest_path: ''
+      })
+    },
+    removeObjectStorage (index) {
+      this.buildConfig.post_build.object_storage_upload.upload_detail.splice(index, 1)
     },
     async getDockerfileTemplate (id) {
       const res = await getDockerfileAPI(id).catch(err => {
@@ -287,6 +390,9 @@ export default {
       getDockerfileTemplatesAPI().then(res => {
         this.dockerfileTemplates = res.dockerfile_template
       })
+      getStorageListAPI().then(res => {
+        this.objectStorageList = res
+      })
     },
     validate () {
       const valid = []
@@ -295,6 +401,10 @@ export default {
       }
       if (this.binary_enabled) {
         valid.push(this.$refs.fileArchiveRef.validate())
+      }
+
+      if (this.object_storage_upload_enabled) {
+        valid.push(this.$refs.objectStorageRef.validate())
       }
       return Promise.all(valid)
     }
@@ -332,6 +442,16 @@ export default {
       .el-select {
         width: 100%;
       }
+
+      .el-form-item {
+        margin-bottom: 15px;
+      }
+    }
+  }
+
+  /deep/.el-form-item__content {
+    .el-input-group {
+      vertical-align: baseline;
     }
   }
 

@@ -123,6 +123,7 @@ export default {
                 codehostID: createFrom.yaml_data.source_detail.git_repo_config.codehost_id,
                 owner: createFrom.yaml_data.source_detail.git_repo_config.owner,
                 repo: createFrom.yaml_data.source_detail.git_repo_config.repo,
+                autoSync: createFrom.yaml_data.auto_sync,
                 valuesPaths: [createFrom.yaml_data.source_detail.load_path]
               }
             }

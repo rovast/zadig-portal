@@ -335,7 +335,15 @@ export default {
             envName,
             yamlSource: re.overrideYaml ? 'freeEdit' : 'default'
           }
-
+          if (envInfo.yaml_data && envInfo.yaml_data.source_detail) {
+            envInfo.gitRepoConfig = {
+              branch: envInfo.yaml_data.source_detail.git_repo_config.branch,
+              codehostID: envInfo.yaml_data.source_detail.git_repo_config.codehost_id,
+              owner: envInfo.yaml_data.source_detail.git_repo_config.owner,
+              repo: envInfo.yaml_data.source_detail.git_repo_config.repo,
+              valuesPaths: [envInfo.yaml_data.source_detail.load_path]
+            }
+          }
           const allChartNameInfo = {}
 
           allChartNameInfo[re.serviceName] = {

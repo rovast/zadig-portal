@@ -280,6 +280,7 @@ export default {
             baseEnvName: isCopy ? baseEnvName : '',
             chartValues: valueInfo.chartInfo,
             defaultValues: valueInfo.envInfo[defaultEnv] || '',
+            valuesData: { gitRepoConfig: valueInfo.gitInfo },
             namespace: this.projectConfig.defaultNamespace,
             is_existed: this.nsIsExisted
           }

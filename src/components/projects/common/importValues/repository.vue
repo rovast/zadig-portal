@@ -19,6 +19,7 @@
           placeholder="请选择代码源"
           @change="queryRepoOwnerById(source.codehostID)"
           filterable
+          clearable
         >
           <el-option
             v-for="(host, index) in allCodeHosts"
@@ -43,6 +44,7 @@
           @change="getRepoNameById(source.codehostID, source.owner)"
           placeholder="请选择代码库拥有者"
           filterable
+          clearable
         >
           <el-option v-for="(repo, index) in codeInfo['repoOwners']" :key="index" :label="repo.path" :value="repo.path"></el-option>
         </el-select>

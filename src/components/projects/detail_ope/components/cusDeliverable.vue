@@ -104,13 +104,15 @@ export default {
     saveConfig () {
       const customerImage = this.customerImage
       const tar = this.tar
+      console.log(this.customerImage)
       this.custom_image_rule = {
         pr_rule: (customerImage.pr.service || defaultValue) + ':' + (customerImage.pr.value || placeholder[0]),
         branch_rule: (customerImage.branch.service || defaultValue) + ':' + (customerImage.branch.value || placeholder[1]),
         pr_and_branch_rule: (customerImage.prBranch.service || defaultValue) + ':' + (customerImage.prBranch.value || placeholder[2]),
-        tag_rule: (customerImage.tag.service || defaultValue) + ':' + (customerImage.tag.value || placeholder[3]),
-        jenkins_rule: (customerImage.jenkins.service || defaultValue) + ':' + (customerImage.jenkins.value || placeholder[4])
-
+        tag_rule: (customerImage.tag.service || defaultValue) + ':' + (customerImage.tag.value || placeholder[3])
+      }
+      if (customerImage.jenkins) {
+        this.custom_image_rule.jenkins_rule = (customerImage.jenkins.service || defaultValue) + ':' + (customerImage.jenkins.value || placeholder[4])
       }
       this.custom_tar_rule = {
         pr_rule: tar.pr.value || `${defaultValue}-${placeholder[0]}`,

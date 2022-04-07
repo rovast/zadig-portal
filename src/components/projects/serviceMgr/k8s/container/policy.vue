@@ -72,7 +72,9 @@ export default {
   props: {
     service: {
       type: Array,
-      default: () => []
+      default: () => [
+        { build_name: '' }
+      ]
     }
   },
   data () {
@@ -89,7 +91,8 @@ export default {
             validator: validateDeployTimeout
           }
         ]
-      }
+      },
+      isJenkinsBuild: false
     }
   },
   computed: {
@@ -137,7 +140,9 @@ export default {
     }
   },
   mounted () {
-    this.getBuildConfigDetail()
+    this.$nextTick(() => {
+      this.getBuildConfigDetail()
+    })
     this.getPolicy(this.projectName)
   }
 }

@@ -58,12 +58,14 @@ export default {
     },
     addEnvConfig () {
       const index = this.configInfo.index || 1
-      this.configInfo.push({
+      const next = {
         name: `配置 ${index}`,
         overrideYaml: '',
         initYaml: ''
-      })
+      }
+      this.configInfo.push(next)
       this.configInfo.index = index + 1
+      this.editConfig(next)
     },
     getAllYaml () {
       return this.configInfo.map(info => info.initYaml).filter(info => info)

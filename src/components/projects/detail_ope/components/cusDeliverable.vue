@@ -28,7 +28,11 @@ export default {
   name: 'Deliverable',
   props: {
     customImageRule: Object,
-    customTarRule: Object
+    customTarRule: Object,
+    isJenkins: {
+      type: Boolean,
+      default: false
+    }// 初始化页面 未保存之前判断是否集成jenkins构建
   },
   data () {
     return {
@@ -128,14 +132,16 @@ export default {
         this.customerImage.tag.service = value.tag_rule.split(':')[0]
         this.customerImage.tag.value = value.tag_rule.split(':')[1]
         // 如果jenkins集成了 则展示
-        if (value.jenkins_rule) {
+        if (value.jenkins_rule || this.isJenkins) {
           this.customerImage.jenkins.service = value.jenkins_rule.split(':')[0]
           this.customerImage.jenkins.value = value.jenkins_rule.split(':')[1]
         } else {
           this.$delete(this.customerImage, 'jenkins')
         }
       } else {
-        this.$delete(this.customerImage, 'jenkins')
+        if (!this.isJenkins) {
+          this.$delete(this.customerImage, 'jenkins')
+        }
       }
     },
     customTarRule (value) {

@@ -238,7 +238,7 @@
             <div class="service-aside-box__title">策略</div>
           </header>
           <div class="service-aside-help__content">
-            <Policy />
+            <Policy :service="serviceModules"/>
           </div>
         </div>
         <div v-if="selected === 'help'" class="service-aside--variables">

@@ -39,6 +39,7 @@
           <CusDeliverable
             :customImageRule="projectForm.custom_image_rule"
             :customTarRule="projectForm.custom_tar_rule"
+            :isJenkins = "isJenkinsBuild"
             ref="cusDeliverable"
           />
         </el-form-item>
@@ -50,7 +51,7 @@
   </div>
 </template>
 <script>
-import { getSingleProjectAPI, updateSingleProjectAPI } from '@api'
+import { getSingleProjectAPI, updateSingleProjectAPI, getBuildConfigDetailAPI } from '@api'
 import CusDeliverable from '../../../detail_ope/components/cusDeliverable.vue'
 const validateDeployTimeout = (rule, value, callback) => {
   const reg = /^[0-9]+.?[0-9]*/
@@ -67,6 +68,12 @@ const validateDeployTimeout = (rule, value, callback) => {
 export default {
   components: {
     CusDeliverable
+  },
+  props: {
+    service: {
+      type: Array,
+      default: () => []
+    }
   },
   data () {
     return {
@@ -107,6 +114,12 @@ export default {
         })
       })
     },
+    getBuildConfigDetail () {
+      // 从上级页面传来buildName信息然后结合projectName 获取是否集成jenkins 再传给policy组件
+      getBuildConfigDetailAPI(this.service[0].build_name, this.projectName).then(res => {
+        this.isJenkinsBuild = !!res.jenkins_build
+      })
+    },
     submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -124,6 +137,7 @@ export default {
     }
   },
   mounted () {
+    this.getBuildConfigDetail()
     this.getPolicy(this.projectName)
   }
 }

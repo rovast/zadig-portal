@@ -32,7 +32,7 @@ export default {
       } else {
         this.jumpPath = `/v1/projects/detail/${this.projectName}/envs/create`
       }
-      if (this.$route.params.service_name || this.$route.query.envName) {
+      if (this.$route.params.service_name || this.$route.query.envName || this.$route.params.env_name) {
         return
       }
       this.jumpPath && this.$router.push(this.jumpPath)

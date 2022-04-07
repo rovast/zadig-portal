@@ -121,7 +121,8 @@ export default {
     getAllInfo () {
       return {
         envInfo: this.defaultEnvsValues,
-        chartInfo: this.$refs.chartValuesRef.getAllChartNameInfo()
+        chartInfo: this.$refs.chartValuesRef.getAllChartNameInfo(),
+        gitInfo: this.$refs.envValuesRef.envVariable.gitRepoConfig
       }
     }
   },

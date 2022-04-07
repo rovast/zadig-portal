@@ -262,6 +262,10 @@ export default {
             'chartVersion',
             'overrideValues'
           ])
+          values.valuesData = {
+            yamlSource: 'repo',
+            gitRepoConfig: chartInfo[envName].gitRepoConfig
+          }
           values.overrideYaml =
             chartInfo[envName].yamlSource !== 'default'
               ? chartInfo[envName].overrideYaml

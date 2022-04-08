@@ -74,6 +74,16 @@ export default {
           yamlSource: res.defaultValues ? 'freeEdit' : 'default',
           overrideYaml: res.defaultValues
         }
+        if (res.yaml_data && res.yaml_data.source_detail && res.yaml_data.source_detail.git_repo_config && res.yaml_data.source_detail.git_repo_config.codehost_id) {
+          this.envVariable.gitRepoConfig = {
+            branch: res.yaml_data.source_detail.git_repo_config.branch,
+            codehostID: res.yaml_data.source_detail.git_repo_config.codehost_id,
+            owner: res.yaml_data.source_detail.git_repo_config.owner,
+            repo: res.yaml_data.source_detail.git_repo_config.repo,
+            autoSync: res.yaml_data.auto_sync,
+            valuesPaths: [res.yaml_data.source_detail.load_path]
+          }
+        }
       }
     },
     initEnvVariablesYaml (envName, baseEnvName) {

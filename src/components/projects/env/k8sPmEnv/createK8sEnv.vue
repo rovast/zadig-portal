@@ -24,7 +24,7 @@
         <el-form-item label="环境名称" prop="env_name">
           <el-input @input="changeEnvName" v-model="projectConfig.env_name" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="创建方式" prop="source">
+        <el-form-item label="创建方式" prop="source" v-if="!createShare">
           <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
             <el-option label="新建" value="system"></el-option>
             <el-option v-if="currentProductDeliveryVersions.length > 0" label="回溯" value="versionBack"></el-option>
@@ -49,6 +49,7 @@
             @change="changeCluster"
             v-model="projectConfig.cluster_id"
             size="small"
+            :disabled="createShare"
             placeholder="请选择 K8s 集群"
           >
             <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
@@ -314,6 +315,15 @@ export default {
         containerMap[service] = this.containerMap[service]
       })
       return containerMap
+    },
+    createShare () {
+      return this.$route.query.createShare === 'true'
+    },
+    clusterId () {
+      return this.$route.query.clusterId
+    },
+    baseEnvName () {
+      return this.$route.query.baseEnvName
     }
   },
   methods: {
@@ -328,11 +338,17 @@ export default {
       const cluster_id = this.projectConfig.cluster_id
       if (!this.rollbackMode) {
         this.allCluster = res.filter(element => {
-          if (element.local && !cluster_id) {
-            this.projectConfig.cluster_id = element.id
-          }
           return element.status === 'normal'
         })
+        if (this.createShare && this.clusterId) {
+          this.projectConfig.cluster_id = this.clusterId
+        } else {
+          res.forEach(element => {
+            if (element.local && !cluster_id) {
+              this.projectConfig.cluster_id = element.id
+            }
+          })
+        }
       } else if (this.rollbackMode) {
         this.allCluster = res.filter(element => {
           if (element.local && !cluster_id) {
@@ -446,7 +462,11 @@ export default {
       this.projectConfig.services = template.services
       this.containerMap = containerMap
       this.containerNames = uniq(containerNames)
-      this.projectConfig.selectedService = Object.keys(containerMap)
+      if (this.createShare) {
+        this.projectConfig.selectedService = []
+      } else {
+        this.projectConfig.selectedService = Object.keys(containerMap)
+      }
       this.getImages()
     },
     getImages () {
@@ -547,6 +567,13 @@ export default {
 
           payload.env_config_yamls = this.$refs.envConfigRef.getAllYaml()
 
+          if (this.createShare && this.baseEnvName) {
+            payload.share_env = {
+              enable: true,
+              isBase: false,
+              base_env: this.baseEnvName
+            }
+          }
           this.startDeployLoading = true
           function sleep (time) {
             return new Promise(resolve => setTimeout(resolve, time))
@@ -613,7 +640,7 @@ export default {
           url: `/v1/projects/detail/${this.projectName}/detail`
         },
         { title: '环境', url: '' },
-        { title: '创建', url: '' }
+        { title: this.createShare ? '创建子环境' : '创建环境', url: '' }
       ]
     })
     this.getVersionList()

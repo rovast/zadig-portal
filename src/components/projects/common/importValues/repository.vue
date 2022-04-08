@@ -19,6 +19,7 @@
           placeholder="请选择代码源"
           @change="queryRepoOwnerById(source.codehostID)"
           filterable
+          clearable
         >
           <el-option
             v-for="(host, index) in allCodeHosts"
@@ -43,6 +44,7 @@
           @change="getRepoNameById(source.codehostID, source.owner)"
           placeholder="请选择拥有者"
           filterable
+          clearable
         >
           <el-option v-for="(repo, index) in codeInfo['repoOwners']" :key="index" :label="repo.path" :value="repo.path"></el-option>
         </el-select>
@@ -90,6 +92,15 @@
           </div>
           <el-button :disabled="canSelectFile" type="primary" round plain size="mini" @click="showFileSelectDialog = true">选择 values 文件</el-button>
           <span v-show="showErrorTip" class="error-tip">请选择 values 文件</span>
+        </el-form-item>
+        <el-form-item prop="autoSync" label="自动同步">
+          <span slot="label">
+            <span>自动同步</span>
+            <el-tooltip effect="dark" content="开启后，Zadig 会定时从代码库拉取 Values 文件并将其自动更新到环境中，目前只支持 GitHub/GitLab" placement="top">
+              <i class="pointer el-icon-question"></i>
+            </el-tooltip>
+          </span>
+          <el-switch v-model="source.autoSync"></el-switch>
         </el-form-item>
       </template>
       <template v-else-if="fileType === 'k8sYaml'">
@@ -175,8 +186,11 @@ export default {
         return
       }
       const checkedKeys = data.map(d => d.full_path)
+      // todo  单选也只支持一个文件了  这个pr里修复  merge先不改
       if (this.fileType === 'valuesYaml') {
-        this.source.valuesPaths = uniq(this.source.valuesPaths.concat(checkedKeys))
+        this.source.valuesPaths = uniq(
+          this.source.valuesPaths.concat(checkedKeys)
+        )
         if (this.source.valuesPaths.length) {
           this.showErrorTip = false
         }
@@ -191,7 +205,10 @@ export default {
     validate () {
       const valid = []
       this.showErrorTip = false
-      if (this.fileType === 'valuesYaml' && this.source.valuesPaths.length === 0) {
+      if (
+        this.fileType === 'valuesYaml' &&
+        this.source.valuesPaths.length === 0
+      ) {
         this.showErrorTip = true
         valid.push(Promise.reject())
       } else if (this.fileType === 'k8sYaml' && this.source.path === '') {

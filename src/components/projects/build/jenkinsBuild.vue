@@ -40,17 +40,15 @@
         type="warning"
       ></el-alert>
       <div class="divider item"></div>
-      <div v-for="(item) in jenkinsBuild.jenkins_build.jenkins_build_params" :key="item.name">
-        <el-form-item :label="item.name" class="form-item">
-          <el-input size="medium" v-model="item.value" placeholder="请输入值"></el-input>
-        </el-form-item>
-      </div>
+      <EnvVariable :preEnvs="jenkinsBuild.jenkins_build" :serviceName="jenkinsBuild.targets" isJenkins :mini="mini"></EnvVariable>
     </el-form>
   </section>
 </template>
 
 <script>
 import { queryJenkinsJob, queryJenkinsParams } from '@api'
+import EnvVariable from './envVariable.vue'
+
 const validName = (rule, value, callback) => {
   if (value === '') {
     callback(new Error('请输入构建名称'))
@@ -69,6 +67,7 @@ export default {
     serviceTargets: Array,
     mini: Boolean
   },
+  components: { EnvVariable },
   data () {
     return {
       jenkinsJobList: [],
@@ -80,7 +79,8 @@ export default {
         timeout: 60,
         jenkins_build: {
           job_name: '',
-          jenkins_build_params: []
+          jenkins_build_params: [],
+          envs: []
         },
         pre_build: {
           res_req: 'low'
@@ -91,6 +91,13 @@ export default {
   computed: {
     jenkinsBuild () {
       return Object.assign(this.initJenkinsBuild, this.jenkinsBuildData)
+    }
+  },
+  watch: {
+    jenkinsBuild (newVal, oldVal) {
+      if (!newVal.jenkins_build.envs) {
+        this.transformParams(newVal.jenkins_build.jenkins_build_params)
+      }
     }
   },
   methods: {
@@ -120,8 +127,17 @@ export default {
         console.log(error)
       )
       if (res) {
-        this.jenkinsBuild.jenkins_build.jenkins_build_params = res
+        this.transformParams(res)
       }
+    },
+    // 变量组件需要envs参数 转换envs参数
+    transformParams (jenkins_build_params) {
+      this.jenkinsBuild.jenkins_build.jenkins_build_params = jenkins_build_params.map(item => {
+        item.key = item.name
+        this.$set(item, 'auto_generate', item.auto_generate || false)
+        return item
+      })
+      this.jenkinsBuild.jenkins_build.envs = this.jenkinsBuild.jenkins_build.jenkins_build_params
     }
   },
   created () {

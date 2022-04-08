@@ -26,7 +26,7 @@
         <el-form-item label="环境名称" prop="env_name">
           <el-input @input="changeEnvName" v-model="projectConfig.env_name" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="创建方式" prop="source">
+        <el-form-item v-if="!createShare" label="创建方式" prop="source">
           <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
             <el-option label="新建" value="system"></el-option>
             <el-option label="复制" value="copy"></el-option>
@@ -39,7 +39,7 @@
         </el-form-item>
         <div class="primary-title">资源选择</div>
         <el-form-item label="K8s 集群" prop="cluster_id" class="secondary-label">
-          <el-select class="select" filterable v-model="projectConfig.cluster_id" size="small" placeholder="请选择 K8s 集群">
+          <el-select class="select" filterable :disabled="createShare" v-model="projectConfig.cluster_id" size="small" placeholder="请选择 K8s 集群">
             <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
           </el-select>
         </el-form-item>
@@ -188,6 +188,15 @@ export default {
     },
     nsIsExisted () {
       return this.hostingNamespace.includes(this.projectConfig.defaultNamespace)
+    },
+    createShare () {
+      return this.$route.query.createShare === 'true'
+    },
+    clusterId () {
+      return this.$route.query.clusterId
+    },
+    baseEnvName () {
+      return this.$route.query.baseEnvName
     }
   },
   methods: {
@@ -199,11 +208,17 @@ export default {
       const res = await getClusterListAPI(projectName)
       const cluster_id = this.projectConfig.cluster_id
       this.allCluster = res.filter(element => {
-        if (element.local && !cluster_id) {
-          this.projectConfig.cluster_id = element.id
-        }
         return element.status === 'normal'
       })
+      if (this.createShare && this.clusterId) {
+        this.projectConfig.cluster_id = this.clusterId
+      } else {
+        res.forEach(element => {
+          if (element.local && !cluster_id) {
+            this.projectConfig.cluster_id = element.id
+          }
+        })
+      }
       if (this.projectConfig.cluster_id) {
         this.changeCluster(this.projectConfig.cluster_id)
       }
@@ -282,9 +297,17 @@ export default {
             baseEnvName: isCopy ? baseEnvName : '',
             chartValues: valueInfo.chartInfo,
             defaultValues: valueInfo.envInfo[defaultEnv] || '',
+            valuesData: { autoSync: valueInfo.gitInfo.autoSync, yamlSource: 'repo', gitRepoConfig: valueInfo.gitInfo },
             namespace: this.projectConfig.defaultNamespace,
             is_existed: this.nsIsExisted,
             env_config_yamls: this.$refs.envConfigRef.getAllYaml()
+          }
+          if (this.createShare && this.baseEnvName) {
+            payload.share_env = {
+              enable: true,
+              isBase: false,
+              base_env: this.baseEnvName
+            }
           }
           this.startDeployLoading = true
           function sleep (time) {

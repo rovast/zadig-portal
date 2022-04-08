@@ -23,12 +23,16 @@
 /* eslint-disable no-template-curly-in-string */
 const defaultImage = '{{.IMAGE_NAME}}'
 const defaultValue = '{{.SERVICE}}'
-const placeholder = ['{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.REPO_TAG}}']
+const placeholder = ['{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.REPO_TAG}}', '{{.TIMESTAMP}}']
 export default {
   name: 'Deliverable',
   props: {
     customImageRule: Object,
-    customTarRule: Object
+    customTarRule: Object,
+    isJenkins: {
+      type: Boolean,
+      default: false
+    }// 初始化页面 未保存之前判断是否集成jenkins构建
   },
   data () {
     return {
@@ -57,6 +61,12 @@ export default {
           service: defaultImage,
           value: placeholder[3],
           placeholder: placeholder[3]
+        },
+        jenkins: {
+          label: 'JENKINS 生成镜像规则',
+          service: defaultImage,
+          value: placeholder[4],
+          placeholder: placeholder[4]
         }
       },
       tar: {
@@ -94,11 +104,15 @@ export default {
     saveConfig () {
       const customerImage = this.customerImage
       const tar = this.tar
+      console.log(this.customerImage)
       this.custom_image_rule = {
         pr_rule: (customerImage.pr.service || defaultValue) + ':' + (customerImage.pr.value || placeholder[0]),
         branch_rule: (customerImage.branch.service || defaultValue) + ':' + (customerImage.branch.value || placeholder[1]),
         pr_and_branch_rule: (customerImage.prBranch.service || defaultValue) + ':' + (customerImage.prBranch.value || placeholder[2]),
         tag_rule: (customerImage.tag.service || defaultValue) + ':' + (customerImage.tag.value || placeholder[3])
+      }
+      if (customerImage.jenkins) {
+        this.custom_image_rule.jenkins_rule = (customerImage.jenkins.service || defaultValue) + ':' + (customerImage.jenkins.value || placeholder[4])
       }
       this.custom_tar_rule = {
         pr_rule: tar.pr.value || `${defaultValue}-${placeholder[0]}`,
@@ -119,6 +133,17 @@ export default {
         this.customerImage.prBranch.value = value.pr_and_branch_rule.split(':')[1]
         this.customerImage.tag.service = value.tag_rule.split(':')[0]
         this.customerImage.tag.value = value.tag_rule.split(':')[1]
+        // 如果jenkins集成了 则展示
+        if (value.jenkins_rule || this.isJenkins) {
+          this.customerImage.jenkins.service = value.jenkins_rule.split(':')[0]
+          this.customerImage.jenkins.value = value.jenkins_rule.split(':')[1]
+        } else {
+          this.$delete(this.customerImage, 'jenkins')
+        }
+      } else {
+        if (!this.isJenkins) {
+          this.$delete(this.customerImage, 'jenkins')
+        }
       }
     },
     customTarRule (value) {

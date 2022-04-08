@@ -1,8 +1,14 @@
 <template>
   <div>
     <el-form ref="buildEnvRef" :inline="true" :model="preEnvs" class="variable-form" label-position="top" label-width="80px">
-      <span class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义{{ isTest ? '测试' : '构建' }}变量</span>
-      <el-button v-if="preEnvs.envs.length===0" @click="addFirstBuildEnv()" type="primary" size="mini" plain>新增</el-button>
+      <span v-if="!isJenkins" class="item-title" :style="{'margin-bottom': isTest ? '12px' : '0px'}">自定义{{ isTest ? '测试' : '构建' }}变量</span>
+      <el-button
+        v-if="preEnvs.envs && preEnvs.envs.length===0 && !isJenkins"
+        @click="addFirstBuildEnv()"
+        type="primary"
+        size="mini"
+        plain
+      >新增</el-button>
       <el-row v-for="(app,build_env_index) in preEnvs.envs" :key="build_env_index" :gutter="2">
         <el-col :span="4">
           <el-form-item class="display-flex">
@@ -40,10 +46,24 @@
             >
               <el-option v-for="option in preEnvs.envs[build_env_index].choice_option" :key="option" :label="option" :value="option"></el-option>
             </el-select>
-            <el-input v-else placeholder="值" v-model="preEnvs.envs[build_env_index].value" size="small"></el-input>
+            <el-input
+              v-else
+              :disabled="isJenkins&&preEnvs.envs[build_env_index].auto_generate"
+              placeholder="值"
+              v-model="preEnvs.envs[build_env_index].value"
+              size="small"
+            ></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="mini ? 4 : 3" v-show="preEnvs.envs[build_env_index].type!=='choice'">
+        <el-col :span="12" v-if="isJenkins&&preEnvs.envs[build_env_index].name==='IMAGE'" class="tip">
+          <el-checkbox v-model="preEnvs.envs[build_env_index].auto_generate"></el-checkbox>
+          <span>使用系统内置变量 $IMAGE，具体详见</span>
+          <router-link
+                       :to="`/v1/projects/detail/${$route.params.project_name}/services?service_name=${serviceName.length>0?serviceName[0].service_name : ''}&rightbar=policy`">
+          镜像名称规则
+          </router-link>
+        </el-col>
+        <el-col :span="mini ? 4 : 3" v-show="preEnvs.envs[build_env_index].type!=='choice'" v-if="!isJenkins">
           <el-form-item prop="is_credential">
             <el-checkbox v-model="preEnvs.envs[build_env_index].is_credential">
               敏感信息
@@ -53,7 +73,7 @@
             </el-checkbox>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="8" v-if="!isJenkins">
           <el-form-item style="margin-right: 0;">
             <div class="app-operation">
               <el-button v-if="preEnvs.envs.length >= 1" @click="deleteBuildEnv(build_env_index)" type="danger" size="small" plain>删除</el-button>
@@ -77,7 +97,7 @@
         <el-button type="primary" @click="saveVariable" size="small">确 定</el-button>
       </div>
     </el-dialog>
-    <section class="inner-variable">
+    <section class="inner-variable" v-if="!isJenkins">
       <div @click="showBuildInEnvVar = !showBuildInEnvVar" class="item-title inner-title">
         内置{{ isTest ? '测试' : '构建' }}变量
         <i
@@ -106,6 +126,7 @@
 <script>
 import { cloneDeep } from 'lodash'
 export default {
+  components: {},
   props: {
     preEnvs: Object,
     isTest: {
@@ -124,6 +145,14 @@ export default {
     fromServicePage: {
       type: Boolean,
       default: false
+    },
+    isJenkins: {
+      type: Boolean,
+      default: false
+    },
+    serviceName: {
+      type: Array,
+      default: () => [{ service_name: '' }]
     }
   },
   data () {
@@ -259,7 +288,9 @@ export default {
       })
     },
     validate () {
-      return this.$refs.buildEnvRef.validate()
+      this.$nextTick(() => {
+        return this.$refs.buildEnvRef.validate()
+      })
     },
     addBuildEnv () {
       this.validate().then(valid => {
@@ -308,12 +339,16 @@ export default {
     }
   },
   watch: {
-    'preEnvs.envs' (env) {
-      env.forEach(e => {
-        if (!e.type) {
-          this.$set(e, 'type', 'string')
-        }
-      })
+    preEnvs: {
+      handler (newValue, oldValue) {
+        newValue.envs.forEach(e => {
+          if (!e.type) {
+            this.$set(e, 'type', 'string')
+          }
+        })
+        this.$forceUpdate()
+      },
+      deep: true
     }
   },
   created () {
@@ -403,7 +438,19 @@ export default {
 
 .variable-form {
   /deep/.el-form-item {
+    width: 100%;
     margin-bottom: 8px;
+  }
+
+  .tip {
+    height: 42px;
+    color: @secondaryColor;
+    font-size: 14px;
+    line-height: 42px;
+
+    .link {
+      margin-top: -3px;
+    }
   }
 }
 </style>

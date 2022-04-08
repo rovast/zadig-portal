@@ -153,7 +153,9 @@ export default {
   methods: {
     checkedPath (data) {
       this.showFileSelectDialog = false
-      this.source.valuesPaths = uniq(this.source.valuesPaths.concat(data))
+      // Todo:Multi-selection support
+      // this.source.valuesPaths = uniq(this.source.valuesPaths.concat(data))
+      this.source.valuesPaths = uniq(data)
       if (this.source.valuesPaths.length) {
         this.showErrorTip = false
       }

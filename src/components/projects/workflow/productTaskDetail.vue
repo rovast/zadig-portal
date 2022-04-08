@@ -451,6 +451,9 @@ export default {
         {
           prop: 'service_name',
           label: '服务',
+          render: scope => {
+            return <div>{this.$utils.showServiceName(scope.row.service_name)}</div>
+          },
           width: 160
         },
         {

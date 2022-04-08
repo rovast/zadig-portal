@@ -95,7 +95,7 @@
       <el-form-item prop="autoSync" label="自动同步">
         <span slot="label">
           <span>自动同步</span>
-          <el-tooltip effect="dark" content="开启后，Zadig 会定时从代码库拉取 Values 文件并将其自动更新到环境中" placement="top">
+          <el-tooltip effect="dark" content="开启后，Zadig 会定时从代码库拉取 Values 文件并将其自动更新到环境中，目前只支持 GitHub/GitLab" placement="top">
             <i class="pointer el-icon-question"></i>
           </el-tooltip>
         </span>

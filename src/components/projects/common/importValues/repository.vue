@@ -125,7 +125,6 @@
 <script>
 import RepoMixin from '../mixin/importRepo'
 import TreeFile from './treeFile.vue'
-import { uniq } from 'lodash'
 
 export default {
   props: {

@@ -33,8 +33,8 @@
       <el-alert v-if="productInfo.share_env_enable && productInfo.share_env_base_env!==''" :closable="false" type="warning">
         <span slot="title">
           注意：使用基准环境
-          <span class="bold">{{productInfo.share_env_base_env}}</span>的访问地址，并在请求的 Header 中加上
-          <span class="bold">{{`x-env=${productInfo.env_name}`}}</span>即可将流量转发到当前环境中。
+          <span class="bold">{{`${productInfo.share_env_base_env} `}}</span>的访问地址，并在请求的 Header 中加上
+          <span class="bold">{{`x-env=${productInfo.env_name} `}}</span>即可将流量转发到当前环境中。
           <a href="http://docs.koderover.com" target="_blank" rel="noopener noreferrer">如何操作？</a>
         </span>
       </el-alert>

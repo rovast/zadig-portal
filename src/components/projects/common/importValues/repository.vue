@@ -189,12 +189,8 @@ export default {
       if (!data.length) {
         return
       }
-      const checkedKeys = data.map(d => d.full_path)
-      // todo  单选也只支持一个文件了  这个pr里修复  merge先不改
       if (this.fileType === 'valuesYaml') {
-        this.source.valuesPaths = uniq(
-          this.source.valuesPaths.concat(checkedKeys)
-        )
+        this.source.valuesPaths = data.map(d => d.full_path)
         if (this.source.valuesPaths.length) {
           this.showErrorTip = false
         }

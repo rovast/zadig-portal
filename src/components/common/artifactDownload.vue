@@ -2,7 +2,8 @@
   <div v-loading="loading"
        class="download-artifact-container">
 
-    <el-table :data="fileList"
+    <el-table :data="fileList.file_names"
+              height="300"
               style="width: 100%;">
       <el-table-column label="文件列表">
         <template slot-scope="scope">
@@ -16,7 +17,7 @@
            download>
           <el-button size="small"
                      type="primary"
-                     :disabled="fileList.length===0"
+                     :disabled="fileList.file_names.length===0"
                      plain>下载</el-button>
         </a>
 
@@ -47,12 +48,8 @@ export default {
   },
   data () {
     return {
-      fileTree: [],
-      fileList: [],
+      fileList: {},
       loading: true,
-      innerVisible: false,
-      deleteLoading: false,
-      selectPath: '',
       defaultProps: {
         children: 'children',
         label: 'name',
@@ -79,13 +76,12 @@ export default {
     downloadUrl () {
       const projectName = this.projectName
       const token = store.get('userInfo').token
-      return `/api/aslan/workflow/v2/tasks/workflow/${this.workflowName}/taskId/${this.taskId}?token=${token}&projectName=${projectName}`
+      return `/api/aslan/workflow/v2/tasks/workflow/${this.workflowName}/taskId/${this.taskId}?token=${token}&projectName=${projectName}&notHistoryFileFlag=${this.fileList.not_history_file_flag}`
     }
   },
   mounted () {
     this.getArtifactWorkspace()
-  },
-  components: {}
+  }
 }
 </script>
 

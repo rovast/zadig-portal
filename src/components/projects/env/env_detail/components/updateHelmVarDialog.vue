@@ -52,7 +52,8 @@ export default {
       const valueInfo = this.$refs.helmEnvTemplateRef.getAllInfo()
       const payload = {
         chartValues: valueInfo.chartInfo,
-        defaultValues: valueInfo.envInfo[this.envName]
+        defaultValues: valueInfo.envInfo[this.envName],
+        valuesData: { yamlSource: 'repo', autoSync: valueInfo.gitInfo.autoSync, gitRepoConfig: valueInfo.gitInfo }
       }
       this.updataHelmEnvVarLoading = true
       updateHelmEnvVarAPI(projectName, this.productInfo.env_name, payload)

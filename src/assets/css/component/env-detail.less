@@ -55,7 +55,7 @@
   }
 }
 
-.product-detail-container {
+.env-detail-container {
   position: relative;
   flex: 1;
   overflow: auto;
@@ -119,6 +119,22 @@
 
       .unimportant {
         color: #999;
+      }
+    }
+  }
+
+  .banner,
+  .info-container {
+    padding: 0 20px;
+
+    .el-alert {
+      .el-alert__title {
+        color: #dc901d;
+        font-weight: 400;
+
+        .bold {
+          font-weight: 600;
+        }
       }
     }
   }
@@ -270,7 +286,7 @@
       width: calc(~'100% - 125px');
       color: #4a4a4a;
 
-      .operation {
+      &.operation {
         white-space: nowrap;
 
         .el-button {

@@ -794,7 +794,8 @@ export default {
               status: 'named',
               service_name: val,
               type: this.deployType ? this.deployType : 'k8s',
-              visibility: 'private'
+              visibility: 'private',
+              product_name: this.projectName
             }
             this.services.push(data)
             this.setServiceSelected(data.service_name)
@@ -1118,7 +1119,7 @@ export default {
           this.$router.replace({
             query: {
               service_name: parentService.service_name,
-              rightbar: 'var',
+              rightbar: (this.$route.query.rightbar ? this.$route.query.rightbar : 'var'),
               kind: data.kind
             }
           })
@@ -1127,7 +1128,7 @@ export default {
         this.$emit('onJumpToKind', data)
       } else {
         this.$router.replace({
-          query: { service_name: data.service_name, rightbar: 'var' }
+          query: { service_name: data.service_name, rightbar: (this.$route.query.rightbar ? this.$route.query.rightbar : 'var') }
         })
         this.$emit('onSelectServiceChange', data)
       }
@@ -1141,7 +1142,7 @@ export default {
       this.$emit('update:showNext', true)
       this.$emit('onRefreshService')
       this.$router.replace({
-        query: { service_name: serviceName, rightbar: 'var' }
+        query: { service_name: serviceName, rightbar: (this.$route.query.rightbar ? this.$route.query.rightbar : 'var') }
       })
     },
     listenResize () {
@@ -1228,11 +1229,12 @@ export default {
           }
           if (data && !this.showNewServiceInput) {
             this.setServiceSelected(data.service_name)
+            const query = {
+              service_name: data.service_name,
+              rightbar: data.status === 'named' ? 'help' : (this.$route.query.rightbar ? this.$route.query.rightbar : 'var')
+            }
             this.$router.replace({
-              query: {
-                service_name: data.service_name,
-                rightbar: data.status === 'named' ? 'help' : 'var'
-              }
+              query: query
             })
             this.$emit('onSelectServiceChange', data)
           }

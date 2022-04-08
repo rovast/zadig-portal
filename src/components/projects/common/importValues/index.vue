@@ -35,7 +35,8 @@ const valueInfo = {
     owner: '',
     repo: '',
     branch: '',
-    valuesPaths: []
+    valuesPaths: [],
+    autoSync: false
   }
 }
 

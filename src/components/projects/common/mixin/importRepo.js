@@ -114,5 +114,27 @@ export default {
   created () {
     this.sourceRules = sourceRules
     this.queryCodeSource()
+    if (this.source && this.source.codehostID && this.source.owner && this.source.repo) {
+      const codehostId = this.source.codehostID
+      const repoOwner = this.source.owner
+      const repoName = this.source.repo
+      getRepoOwnerByIdAPI(codehostId).then(res => {
+        if (res) {
+          this.$set(this.codeInfo, 'repoOwners', res)
+          const item = this.codeInfo.repoOwners.find(item => {
+            return item.path === repoOwner
+          })
+          const type = item ? item.kind : 'group'
+          getRepoNameByIdAPI(codehostId, type, encodeURI(repoOwner)).then(res => {
+            this.$set(this.codeInfo, 'repos', res)
+          })
+          getBranchInfoByIdAPI(codehostId, repoOwner, repoName).then(res => {
+            if (res) {
+              this.$set(this.codeInfo, 'branches', res)
+            }
+          })
+        }
+      })
+    }
   }
 }

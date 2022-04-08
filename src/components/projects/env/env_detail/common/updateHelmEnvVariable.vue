@@ -72,7 +72,15 @@ export default {
       if (res) {
         this.envVariable = {
           yamlSource: res.defaultValues ? 'freeEdit' : 'default',
-          overrideYaml: res.defaultValues
+          overrideYaml: res.defaultValues,
+          gitRepoConfig: {
+            branch: res.yaml_data.source_detail.git_repo_config.branch,
+            codehostID: res.yaml_data.source_detail.git_repo_config.codehost_id,
+            owner: res.yaml_data.source_detail.git_repo_config.owner,
+            repo: res.yaml_data.source_detail.git_repo_config.repo,
+            autoSync: res.yaml_data.auto_sync,
+            valuesPaths: [res.yaml_data.source_detail.load_path]
+          }
         }
       }
     },

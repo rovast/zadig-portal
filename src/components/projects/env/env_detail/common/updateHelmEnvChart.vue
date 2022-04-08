@@ -262,6 +262,11 @@ export default {
             'chartVersion',
             'overrideValues'
           ])
+          values.valuesData = {
+            yamlSource: 'repo',
+            autoSync: chartInfo[envName].gitRepoConfig && chartInfo[envName].gitRepoConfig.autoSync ? chartInfo[envName].gitRepoConfig.autoSync : false,
+            gitRepoConfig: chartInfo[envName].gitRepoConfig
+          }
           values.overrideYaml =
             chartInfo[envName].yamlSource !== 'default'
               ? chartInfo[envName].overrideYaml
@@ -331,7 +336,16 @@ export default {
             envName,
             yamlSource: re.overrideYaml ? 'freeEdit' : 'default'
           }
-
+          if (envInfo.yaml_data && envInfo.yaml_data.source_detail) {
+            envInfo.gitRepoConfig = {
+              branch: envInfo.yaml_data.source_detail.git_repo_config.branch,
+              codehostID: envInfo.yaml_data.source_detail.git_repo_config.codehost_id,
+              owner: envInfo.yaml_data.source_detail.git_repo_config.owner,
+              repo: envInfo.yaml_data.source_detail.git_repo_config.repo,
+              valuesPaths: [envInfo.yaml_data.source_detail.load_path],
+              autoSync: envInfo.yaml_data.auto_sync
+            }
+          }
           const allChartNameInfo = {}
 
           allChartNameInfo[re.serviceName] = {

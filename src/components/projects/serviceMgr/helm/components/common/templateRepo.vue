@@ -118,7 +118,14 @@ export default {
                 ? 'freeEdit'
                 : 'default',
               overrideYaml: createFrom.yaml_data.yaml_content,
-              gitRepoConfig: null
+              gitRepoConfig: {
+                branch: createFrom.yaml_data.source_detail.git_repo_config.branch,
+                codehostID: createFrom.yaml_data.source_detail.git_repo_config.codehost_id,
+                owner: createFrom.yaml_data.source_detail.git_repo_config.owner,
+                repo: createFrom.yaml_data.source_detail.git_repo_config.repo,
+                autoSync: createFrom.yaml_data.auto_sync,
+                valuesPaths: [createFrom.yaml_data.source_detail.load_path]
+              }
             }
           }
           this.variables = createFrom.variables || []
@@ -179,6 +186,11 @@ export default {
               ? ''
               : this.importRepoInfo.overrideYaml,
           variables: this.variables
+        },
+        valuesData: {
+          yamlSource: 'repo',
+          gitRepoConfig: this.importRepoInfo.gitRepoConfig,
+          autoSync: this.importRepoInfo.gitRepoConfig.autoSync
         }
       }
 
@@ -217,7 +229,9 @@ export default {
         source: 'chartTemplate',
         createFrom: { templateName: this.tempData.moduleName },
         valuesData: {
-          gitRepoConfig: this.importRepoInfo.gitRepoConfig
+          yamlSource: 'repo',
+          gitRepoConfig: this.importRepoInfo.gitRepoConfig,
+          autoSync: this.importRepoInfo.gitRepoConfig.autoSync
         }
       }
       const sId = setTimeout(() => {

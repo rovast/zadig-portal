@@ -19,6 +19,7 @@
           placeholder="请选择代码源"
           @change="queryRepoOwnerById(source.codehostID)"
           filterable
+          clearable
         >
           <el-option
             v-for="(host, index) in allCodeHosts"
@@ -43,6 +44,7 @@
           @change="getRepoNameById(source.codehostID, source.owner)"
           placeholder="请选择代码库拥有者"
           filterable
+          clearable
         >
           <el-option v-for="(repo, index) in codeInfo['repoOwners']" :key="index" :label="repo.path" :value="repo.path"></el-option>
         </el-select>
@@ -89,6 +91,9 @@
         </div>
         <el-button :disabled="canSelectFile" type="primary" round plain size="mini" @click="showFileSelectDialog = true">选择 values 文件</el-button>
         <span v-show="showErrorTip" class="error-tip">请选择 values 文件</span>
+      </el-form-item>
+      <el-form-item prop="autoSync" label="自动同步">
+        <el-switch v-model="source.autoSync"></el-switch>
       </el-form-item>
       <el-dialog title="请选择服务的 values 文件" :visible.sync="showFileSelectDialog" append-to-body>
         <TreeFile :gitRepoConfig="source" @checkedPath="checkedPath" :checkOne="!substantial"></TreeFile>

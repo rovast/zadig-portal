@@ -93,6 +93,12 @@
         <span v-show="showErrorTip" class="error-tip">请选择 values 文件</span>
       </el-form-item>
       <el-form-item prop="autoSync" label="自动同步">
+        <span slot="label">
+          <span>自动同步</span>
+          <el-tooltip effect="dark" content="开启后，Zadig 会定时从代码库拉取 Values 文件并将其自动更新到环境中" placement="top">
+            <i class="pointer el-icon-question"></i>
+          </el-tooltip>
+        </span>
         <el-switch v-model="source.autoSync"></el-switch>
       </el-form-item>
       <el-dialog title="请选择服务的 values 文件" :visible.sync="showFileSelectDialog" append-to-body>

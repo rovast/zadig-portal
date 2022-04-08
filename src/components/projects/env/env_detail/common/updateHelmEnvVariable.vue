@@ -5,6 +5,7 @@
       :resize="{direction: 'vertical'}"
       :importRepoInfo="envVariable"
       @closeValueEdit="envVariable.overrideYaml = ''"
+      showAutoSync
       style="margin-top: 0;"
     ></ImportValues>
   </div>

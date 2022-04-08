@@ -26,6 +26,7 @@
           <ImportValues
             v-show="usedChartNameInfo.yamlSource !== 'default'"
             showDelete
+            showAutoSync
             ref="importValuesRef"
             :resize="{direction: 'vertical'}"
             :importRepoInfo="usedChartNameInfo"

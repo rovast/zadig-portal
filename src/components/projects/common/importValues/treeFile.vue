@@ -4,7 +4,6 @@
     <el-alert type="warning" :closable="false" v-if="!checkOne">提示：一份 values 文件会被定义成一个服务，服务名称即为 values 文件名称。</el-alert>
     <el-tree
       ref="tree"
-      v-if="showTree"
       :props="defaultProps"
       :load="loadNode"
       lazy
@@ -35,11 +34,11 @@ export default {
         isLeaf: 'leaf'
       },
       loading: true,
-      defaultExpanded: [],
-      showTree: true
+      defaultExpanded: []
     }
   },
   props: {
+    getGitSource: Function,
     gitRepoConfig: {
       require: true,
       type: Object,
@@ -55,6 +54,10 @@ export default {
     checkOne: {
       default: false,
       type: Boolean
+    },
+    fileType: {
+      default: '.yaml',
+      type: String
     }
   },
   methods: {
@@ -68,17 +71,13 @@ export default {
       }
     },
     emitCheckedPath () {
-      const checkedKeys = this.$refs.tree
-        .getCheckedKeys()
-        .filter(key => key.endsWith('.yaml'))
+      const checkedNodes = this.$refs.tree
+        .getCheckedNodes()
+        .filter(node => node.full_path.endsWith(this.fileType))
       this.$refs.tree.setCheckedKeys([])
-      this.$emit('checkedPath', checkedKeys)
+      this.$emit('checkedPath', checkedNodes)
 
       this.defaultExpanded = []
-      this.showTree = false
-      this.$nextTick(() => {
-        this.showTree = true
-      })
     },
     loadNode (node, resolve) {
       const path = (node.data && node.data.full_path) || ''
@@ -88,7 +87,7 @@ export default {
         repoName: this.gitRepoConfig.repo,
         branchName: this.gitRepoConfig.branch,
         path,
-        type: 'helm'
+        type: this.getGitSource(this.gitRepoConfig.codehostID) || 'helm'
       }
       getRepoFilesAPI(params).then(res => {
         if (path === '') {

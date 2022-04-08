@@ -1,13 +1,13 @@
 <template>
   <div class="create-product-detail-container" v-loading="loading" element-loading-text="正在加载中" element-loading-spinner="el-icon-loading">
-    <div v-if="serviceNotAvailable && !loading" class="no-resources">
+    <div v-if="$utils.isEmpty(this.containerMap) && !loading" class="no-resources">
       <img src="@assets/icons/illustration/environment.svg" alt />
       <div class="description">
         <p>
           该环境暂无服务，请点击
           <router-link :to="`/v1/projects/detail/${projectName}/services`">
             <el-button type="primary" size="mini" round plain>服务</el-button>
-          </router-link> 新建服务
+          </router-link>新建服务
         </p>
       </div>
     </div>
@@ -24,7 +24,7 @@
         <el-form-item label="环境名称" prop="env_name">
           <el-input @input="changeEnvName" v-model="projectConfig.env_name" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="创建方式" prop="source" v-if="$utils.isEmpty(pmServiceMap) && !createShare">
+        <el-form-item label="创建方式" prop="source" v-if="!createShare">
           <el-select class="select" @change="changeCreateMethod" v-model="projectConfig.source" size="small" placeholder="请选择环境类型">
             <el-option label="新建" value="system"></el-option>
             <el-option v-if="currentProductDeliveryVersions.length > 0" label="回溯" value="versionBack"></el-option>
@@ -41,8 +41,8 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <div v-if="$utils.isEmpty(pmServiceMap)" class="primary-title">资源选择</div>
-        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="K8s 集群" prop="cluster_id" class="secondary-label">
+        <div class="primary-title">资源选择</div>
+        <el-form-item label="K8s 集群" prop="cluster_id" class="secondary-label">
           <el-select
             class="select"
             filterable
@@ -55,12 +55,7 @@
             <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="K8s 命名空间"
-          v-if="projectConfig.source==='system' && $utils.isEmpty(pmServiceMap)"
-          prop="defaultNamespace"
-          class="secondary-label"
-        >
+        <el-form-item label="K8s 命名空间" v-if="projectConfig.source==='system'" prop="defaultNamespace" class="secondary-label">
           <el-select
             v-model="projectConfig.defaultNamespace"
             :disabled="editButtonDisabled"
@@ -78,7 +73,7 @@
           </span>
           <span class="ns-desc" v-show="nsIsExisted">Zadig 中定义的服务将覆盖所选命名空间中的同名服务，请谨慎操作！</span>
         </el-form-item>
-        <el-form-item v-if="$utils.isEmpty(pmServiceMap)" label="镜像仓库" class="secondary-label">
+        <el-form-item label="镜像仓库" class="secondary-label">
           <el-select class="select" v-model.trim="projectConfig.registry_id" placeholder="请选择镜像仓库" size="small" @change="getImages">
             <el-option
               v-for="registry in imageRegistry"
@@ -88,23 +83,20 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="服务选择"
-          v-if="projectConfig.source==='system' && $utils.isEmpty(pmServiceMap)"
-          prop="selectedService"
-        >
+        <el-form-item label="服务选择" v-if="projectConfig.source==='system'" prop="selectedService">
           <div class="select-service">
-            <el-select
-              v-model="projectConfig.selectedService"
-              size="small"
-              placeholder="选择服务"
-              filterable
-              clearable
-              multiple
-              collapse-tags
-            >
-              <el-option disabled label="全选" value="ALL" :class="{selected: projectConfig.selectedService.length === serviceNames.length}" style="color: #606266;">
-                <span style=" display: inline-block; width: 100%; font-weight: normal; cursor: pointer;" @click="projectConfig.selectedService = serviceNames">全选</span>
+            <el-select v-model="projectConfig.selectedService" size="small" placeholder="选择服务" filterable clearable multiple collapse-tags>
+              <el-option
+                disabled
+                label="全选"
+                value="ALL"
+                :class="{selected: projectConfig.selectedService.length === serviceNames.length}"
+                style="color: #606266;"
+              >
+                <span
+                  style=" display: inline-block; width: 100%; font-weight: normal; cursor: pointer;"
+                  @click="projectConfig.selectedService = serviceNames"
+                >全选</span>
               </el-option>
               <el-option v-for="serviceName in serviceNames" :key="serviceName" :label="serviceName" :value="serviceName"></el-option>
             </el-select>
@@ -112,8 +104,9 @@
           </div>
         </el-form-item>
       </el-form>
+      <EnvConfig class="common-parcel-block" ref="envConfigRef"></EnvConfig>
       <div
-        v-if="variables.length && (deployType===''||deployType==='k8s') && projectConfig.vars && projectConfig.vars.length > 0  && !$utils.isEmpty(containerMap) && projectConfig.source==='system'"
+        v-if="variables.length && !$utils.isEmpty(containerMap) && projectConfig.source==='system'"
         class="common-parcel-block box-card-service"
       >
         <div class="primary-title">变量列表</div>
@@ -121,101 +114,68 @@
       </div>
       <div v-if="projectConfig.source==='system'" class="common-parcel-block">
         <div class="primary-title">服务列表</div>
-        <template v-if="deployType==='k8s'">
-          <div v-if="!$utils.isEmpty(containerMap)">
-            <div class="service-filter-block">
-              <span class="service-filter">
-                快速过滤:
-                <el-tooltip class="img-tooltip" effect="dark" placement="top">
-                  <div slot="content">
-                    智能选择会优先选择最新的容器镜像，如果在 Registry
-                    <br />下不存在该容器镜像，则会选择模板中的默认镜像进行填充
-                  </div>
-                  <i class="el-icon-info"></i>
-                </el-tooltip>
-                <el-select
-                  :disabled="rollbackMode"
-                  size="small"
-                  class="img-select"
-                  v-model="quickSelection"
-                  placeholder="请选择"
-                  @change="quickInitImage"
-                >
-                  <el-option label="全容器-智能选择镜像" value="latest"></el-option>
-                  <el-option label="全容器-全部默认镜像" value="default"></el-option>
-                </el-select>
-              </span>
-            </div>
-            <el-form class="service-form-block" label-width="50%" label-position="left">
-              <div class="service-item" v-for="(typeServiceMap, serviceName) in selectedContainerMap" :key="serviceName">
-                <div class="primary-title">{{ serviceName }}</div>
-                <div class="service-content">
-                  <div v-for="service in typeServiceMap" :key="`${service.service_name}-${service.type}`" class="service-block">
-                    <template v-if="service.type==='k8s' && service.containers">
-                      <el-form-item v-for="con of service.containers" :key="con.name" :label="con.name">
-                        <el-select v-model="con.image" :disabled="rollbackMode" filterable size="small">
-                          <virtual-scroll-list v-if="imageMap[con.image_name] && imageMap[con.image_name].length > 200"
-                                           style="height: 272px; overflow-y: auto;"
-                                           :size="virtualData.size"
-                                           :keeps="virtualData.keeps"
-                                           :start="virtualData.start"
-                                           :dataKey="(img)=>{ return img.name+'-'+img.tag}"
-                                           :dataSources="imageMap[con.image_name]"
-                                           :dataComponent="itemComponent">
-                          </virtual-scroll-list>
-                          <el-option v-else v-for="img of imageMap[con.image_name]" :key="`${img.name}-${img.tag}`" :label="img.tag" :value="img.full"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </template>
-                  </div>
+        <div>
+          <div class="service-filter-block">
+            <span class="service-filter">
+              快速过滤:
+              <el-tooltip class="img-tooltip" effect="dark" placement="top">
+                <div slot="content">
+                  智能选择会优先选择最新的容器镜像，如果在 Registry
+                  <br />下不存在该容器镜像，则会选择模板中的默认镜像进行填充
                 </div>
-              </div>
-            </el-form>
+                <i class="el-icon-info"></i>
+              </el-tooltip>
+              <el-select
+                :disabled="rollbackMode"
+                size="small"
+                class="img-select"
+                v-model="quickSelection"
+                placeholder="请选择"
+                @change="quickInitImage"
+              >
+                <el-option label="全容器-智能选择镜像" value="latest"></el-option>
+                <el-option label="全容器-全部默认镜像" value="default"></el-option>
+              </el-select>
+            </span>
           </div>
-          <div v-if="!$utils.isEmpty(pmServiceMap)" class="box-card-service" :body-style="{padding: '0px'}">
-            <div slot="header" class="clearfix">
-              <span class="second-title">单服务或微服务(自定义脚本/Docker 部署)</span>
-              <span class="small-title">(请关联服务的主机资源)</span>
-            </div>
-
-            <el-form class="service-form-block" label-width="50%" label-position="left">
-              <div class="service-item" v-for="(typeServiceMap, serviceName) in pmServiceMap" :key="serviceName">
-                <div class="primary-title">{{ serviceName }}</div>
-                <div class="service-content">
-                  <div v-for="service in typeServiceMap" :key="`${service.service_name}-${service.type}`" class="service-block">
-                    <template v-if="service.type==='pm'" class="container-images">
-                      <el-form-item label="请关联主机资源">
-                        <el-button v-if="allHost.length === 0" @click="createHost" type="text">创建主机</el-button>
-                        <el-select
+          <el-form class="service-form-block" label-width="50%" label-position="left">
+            <div class="service-item" v-for="(typeServiceMap, serviceName) in selectedContainerMap" :key="serviceName">
+              <div class="primary-title">{{ serviceName }}</div>
+              <div class="service-content">
+                <div v-for="service in typeServiceMap" :key="`${service.service_name}-${service.type}`" class="service-block">
+                  <template v-if="service.type==='k8s' && service.containers">
+                    <el-form-item v-for="con of service.containers" :key="con.name" :label="con.name">
+                      <el-select v-model="con.image" :disabled="rollbackMode" filterable size="small">
+                        <virtual-scroll-list
+                          v-if="imageMap[con.image_name] && imageMap[con.image_name].length > 200"
+                          style="height: 272px; overflow-y: auto;"
+                          :size="virtualData.size"
+                          :keeps="virtualData.keeps"
+                          :start="virtualData.start"
+                          :dataKey="(img)=>{ return img.name+'-'+img.tag}"
+                          :dataSources="imageMap[con.image_name]"
+                          :dataComponent="itemComponent"
+                        ></virtual-scroll-list>
+                        <el-option
                           v-else
-                          v-model="service.host_with_labels"
-                          :disabled="rollbackMode"
-                          filterable
-                          multiple
-                          @change="addHost(service)"
-                          placeholder="请选择要关联的主机"
-                          size="small"
-                        >
-                          <el-option-group label="主机标签">
-                            <el-option v-for="(item,index) in allHostLabels" :key="index" :label="`${item}`" :value="item"></el-option>
-                          </el-option-group>
-                          <el-option-group label="主机列表">
-                            <el-option v-for="(host,index) in  allHost" :key="index" :label="`${host.name}-${host.ip}`" :value="host.id"></el-option>
-                          </el-option-group>
-                        </el-select>
-                      </el-form-item>
-                    </template>
-                  </div>
+                          v-for="img of imageMap[con.image_name]"
+                          :key="`${img.name}-${img.tag}`"
+                          :label="img.tag"
+                          :value="img.full"
+                        ></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </template>
                 </div>
               </div>
-            </el-form>
-          </div>
-        </template>
+            </div>
+          </el-form>
+        </div>
       </div>
       <el-form label-width="35%" class="ops">
         <el-form-item>
-          <el-button @click="goBack" :loading="startDeployLoading" size="medium">取消</el-button>
-          <el-button @click="startDeploy" :loading="startDeployLoading" type="primary" size="medium">立即创建</el-button>
+          <el-button @click="$router.back()" :loading="startDeployLoading" size="medium">取消</el-button>
+          <el-button @click="deployK8sEnv" :loading="startDeployLoading" type="primary" size="medium">立即创建</el-button>
         </el-form-item>
       </el-form>
       <footer v-if="startDeployLoading" class="create-footer">
@@ -234,6 +194,7 @@
 </template>
 
 <script>
+import EnvConfig from '../env_detail/common/envConfig.vue'
 import virtualListItem from '../../common/imageItem'
 import virtualScrollList from 'vue-virtual-scroll-list'
 import VarList from './varList.vue'
@@ -244,9 +205,6 @@ import {
   getVersionListAPI,
   getClusterListAPI,
   createProductAPI,
-  getSingleProjectAPI,
-  getHostListAPI,
-  getHostLabelListAPI,
   getRegistryWhenBuildAPI
 } from '@api'
 import bus from '@utils/eventBus'
@@ -286,17 +244,14 @@ export default {
         services: [],
         selectedService: [] // will be deleted when created
       },
-      projectInfo: {},
       hostingNamespace: [],
-      allHost: [],
       allCluster: [],
       startDeployLoading: false,
       loading: false,
       imageMap: {},
       containerMap: {},
-      pmServiceMap: {},
       quickSelection: '',
-      serviceTypeMap: serviceTypeMap,
+      serviceTypeMap,
       rules: {
         cluster_id: [
           { required: true, trigger: 'change', message: '请选择 K8s 集群' }
@@ -310,14 +265,6 @@ export default {
         env_name: [
           { required: true, trigger: 'change', validator: validateEnvName }
         ],
-        roleIds: [
-          {
-            type: 'array',
-            required: true,
-            message: '请选择项目角色',
-            trigger: 'change'
-          }
-        ],
         selectedService: {
           type: 'array',
           required: true,
@@ -325,13 +272,6 @@ export default {
           trigger: 'change'
         }
       },
-      addKeyData: [
-        {
-          key: '',
-          value: '',
-          state: 'unused'
-        }
-      ],
       imageRegistry: [],
       containerNames: [],
       virtualData: {
@@ -346,23 +286,8 @@ export default {
     projectName () {
       return this.$route.params.project_name
     },
-    deployType () {
-      return this.projectInfo.product_feature
-        ? this.projectInfo.product_feature.deploy_type
-        : 'k8s'
-    },
-    rollbackId () {
-      return this.$route.query.rollbackId
-    },
     rollbackMode () {
       return this.projectConfig.source === 'versionBack'
-    },
-    serviceNotAvailable () {
-      return (
-        this.$utils.isEmpty(this.containerMap) &&
-        this.$utils.isEmpty(this.pmServiceMap) &&
-        this.projectConfig.source !== 'external'
-      )
     },
     nsIsExisted () {
       return this.hostingNamespace.includes(this.projectConfig.defaultNamespace)
@@ -372,14 +297,19 @@ export default {
     },
     variables () {
       const services = this.projectConfig.selectedService
-      const currentVars = cloneDeep((this.projectConfig.vars || []).filter(item => (intersection(item.services, services).length)))
+      const currentVars = cloneDeep(
+        (this.projectConfig.vars || []).filter(
+          item => intersection(item.services, services).length
+        )
+      )
       currentVars.forEach(item => {
         item.allServices = item.services
         item.services = intersection(item.services, services)
       })
       return currentVars
     },
-    selectedContainerMap () { // Filtered Container Services
+    selectedContainerMap () {
+      // Filtered Container Services
       const containerMap = {}
       this.projectConfig.selectedService.forEach(service => {
         containerMap[service] = this.containerMap[service]
@@ -398,11 +328,7 @@ export default {
   },
   methods: {
     changeEnvName (value) {
-      if (
-        this.projectConfig.source === 'system' &&
-        this.$utils.isEmpty(this.pmServiceMap) &&
-        !this.nsIsExisted
-      ) {
+      if (this.projectConfig.source === 'system' && !this.nsIsExisted) {
         this.projectConfig.defaultNamespace = this.projectName + '-env-' + value
       }
     },
@@ -434,31 +360,6 @@ export default {
       if (this.projectConfig.cluster_id) {
         this.changeCluster(this.projectConfig.cluster_id)
       }
-    },
-    getHosts () {
-      getHostLabelListAPI().then(res => {
-        this.allHostLabels = res
-      })
-      getHostListAPI().then(res => {
-        this.allHost = res
-      })
-    },
-    addHost (service) {
-      const allHostIds = this.allHost.map(item => {
-        return item.id
-      })
-      const labels = service.host_with_labels.filter(item => {
-        return allHostIds.indexOf(item) < 0
-      })
-      const hostIds = service.host_with_labels.filter(item => {
-        return allHostIds.indexOf(item) >= 0
-      })
-      service.host_ids = hostIds
-      service.labels = labels
-    },
-    async checkProjectFeature () {
-      const projectName = this.projectName
-      this.projectInfo = await getSingleProjectAPI(projectName)
     },
     changeSelectValue (versionInfo) {
       const template = versionInfo.productEnvInfo
@@ -498,11 +399,7 @@ export default {
           }
         }
       }
-      if (
-        template.source === '' ||
-        template.source === 'spock' ||
-        template.source === 'pm'
-      ) {
+      if (template.source === '' || template.source === 'spock') {
         this.projectConfig.source = 'system'
       }
       if (source === 'versionBack') {
@@ -524,11 +421,7 @@ export default {
       this.loading = false
       this.projectConfig.revision = template.revision
       this.projectConfig.vars = template.vars
-      if (
-        template.source === '' ||
-        template.source === 'spock' ||
-        template.source === 'pm'
-      ) {
+      if (template.source === '' || template.source === 'spock') {
         this.projectConfig.source = 'system'
       }
       for (const group of template.services) {
@@ -544,7 +437,6 @@ export default {
       }
 
       const containerMap = {}
-      const pmServiceMap = {}
       const containerNames = []
       for (const group of template.services) {
         for (const ser of group) {
@@ -564,16 +456,11 @@ export default {
                 })
               }
             }
-          } else if (ser.type === 'pm') {
-            pmServiceMap[ser.service_name] =
-              pmServiceMap[ser.service_name] || {}
-            pmServiceMap[ser.service_name][ser.type] = ser
           }
         }
       }
       this.projectConfig.services = template.services
       this.containerMap = containerMap
-      this.pmServiceMap = pmServiceMap
       this.containerNames = uniq(containerNames)
       if (this.createShare) {
         this.projectConfig.selectedService = []
@@ -609,87 +496,21 @@ export default {
       }
       return map
     },
-    mapImgToprojectConfig (product_tpl, container_img_selected) {
-      for (const service_con_img in container_img_selected) {
-        for (const container in container_img_selected[service_con_img]) {
-          product_tpl.services.forEach(service_group => {
-            service_group.forEach(service => {
-              service.containers.forEach((con, index_con) => {
-                if (con.name === container) {
-                  service.containers[index_con] = {
-                    name: con.name,
-                    image:
-                      container_img_selected[service.service_name][con.name]
-                  }
-                }
-              })
-            })
-          })
-        }
-      }
-    },
-    startDeploy () {
-      if (this.projectConfig.source === 'versionBack') {
-        this.projectConfig.source = 'system'
-      }
-      const selectType = this.projectConfig.source
-      const projectType = this.deployType
-      if (projectType === 'k8s' && selectType === 'system') {
-        this.deployK8sEnv()
-      } else if (selectType === 'external') {
-        this.loadHosting()
-      }
-    },
     changeCluster (clusterId) {
       productHostingNamespaceAPI(clusterId, 'create').then(res => {
         this.hostingNamespace = res.map(ns => ns.name)
       })
     },
-    changeCreateMethodWhenServiceEmpty () {
-      this.projectConfig.source = 'external'
-      this.changeCreateMethod('external')
-    },
-    changeCreateMethod (source) {
-      const clusterId = this.projectConfig.cluster_id
+    changeCreateMethod () {
       if (this.selection) {
         this.getTemplateAndImg()
       }
       this.selection = ''
-      if (source === 'external') {
-        this.changeCluster(clusterId)
-      }
-    },
-    loadHosting () {
-      this.$refs.createEnvRef.validate(valid => {
-        if (valid) {
-          const payload = this.$utils.cloneObj(this.projectConfig)
-          payload.services = []
-          payload.vars = []
-          payload.source = 'external'
-          const envType = 'test'
-          this.startDeployLoading = true
-          createProductAPI(payload, envType).then(
-            res => {
-              const envName = payload.env_name
-              this.startDeployLoading = false
-              this.$message({
-                message: '创建环境成功',
-                type: 'success'
-              })
-              this.$router.push(
-                `/v1/projects/detail/${this.projectName}/envs/detail?envName=${envName}`
-              )
-            },
-            () => {
-              this.startDeployLoading = false
-            }
-          )
-        }
-      })
     },
     deployK8sEnv () {
-      const picked2D = []
-      const picked1D = []
+      if (this.projectConfig.source === 'versionBack') {
+        this.projectConfig.source = 'system'
+      }
       this.$refs.createEnvRef.validate(valid => {
         if (valid) {
           // 同名至少要选一个
@@ -699,9 +520,6 @@ export default {
             for (const type in typeServiceMap) {
               const service = typeServiceMap[type]
               if (service.type === 'k8s' && service.picked) {
-                atLeastOnePicked = true
-              } else if (service.type === 'pm') {
-                // 物理机默认设置勾选
                 atLeastOnePicked = true
               }
             }
@@ -717,9 +535,6 @@ export default {
           for (const group of this.projectConfig.services) {
             const currentGroup = []
             for (const ser of group) {
-              if (ser.picked) {
-                picked1D.push(ser)
-              }
               const containers = ser.containers
               if (containers && ser.picked && ser.type === 'k8s') {
                 if (selectedServiceNames.includes(ser.service_name)) {
@@ -731,44 +546,27 @@ export default {
                     return
                   }
                 }
-              } else if (ser.type === 'pm') {
-                ser.env_configs = [
-                  {
-                    env_name: this.projectConfig.env_name,
-                    host_ids: ser.host_ids,
-                    labels: ser.labels
-                  }
-                ]
-                delete ser.host_ids
-                delete ser.labels
-                delete ser.host_with_labels
-                delete ser.picked
               }
             }
             selectedServices.push(currentGroup)
           }
-
-          picked2D.push(picked1D)
           const payload = this.$utils.cloneObj(this.projectConfig)
-          if (this.$utils.isEmpty(this.pmServiceMap)) {
-            payload.services = cloneDeep(selectedServices) // full service to partial service
-            this.variables.forEach(item => {
-              item.services = item.allServices
-              delete item.allServices
-            })
-            payload.vars = this.variables // variables referenced by the selected service
-            delete payload.selectedService // unwanted data: selected service name
-          }
+
+          payload.services = cloneDeep(selectedServices) // full service to partial service
+          this.variables.forEach(item => {
+            item.services = item.allServices
+            delete item.allServices
+          })
+          payload.vars = this.variables // variables referenced by the selected service
+          delete payload.selectedService // unwanted data: selected service name
 
           payload.source = 'spock'
-          if (
-            this.projectInfo.product_feature &&
-            this.projectInfo.product_feature.basic_facility === 'cloud_host'
-          ) {
-            payload.source = 'pm'
-          }
+
           payload.namespace = payload.defaultNamespace
           payload.is_existed = this.nsIsExisted
+
+          payload.env_config_yamls = this.$refs.envConfigRef.getAllYaml()
+
           if (this.createShare && this.baseEnvName) {
             payload.share_env = {
               enable: true,
@@ -776,12 +574,11 @@ export default {
               base_env: this.baseEnvName
             }
           }
-          const envType = 'test'
           this.startDeployLoading = true
           function sleep (time) {
             return new Promise(resolve => setTimeout(resolve, time))
           }
-          createProductAPI(payload, envType).then(
+          createProductAPI(payload).then(
             res => {
               // Add delay to solve the back-end permission synchronization problem
               sleep(5000).then(() => {
@@ -804,12 +601,6 @@ export default {
           console.log('not-valid')
         }
       })
-    },
-    goBack () {
-      this.$router.back()
-    },
-    createHost () {
-      this.$router.push('/v1/system/host')
     },
     quickInitImage () {
       const select = this.quickSelection
@@ -854,9 +645,7 @@ export default {
     })
     this.getVersionList()
     this.projectConfig.product_name = this.projectName
-    this.checkProjectFeature()
     this.getCluster()
-    this.getHosts()
     getRegistryWhenBuildAPI(this.projectName).then(res => {
       this.imageRegistry = res
       if (!this.projectConfig.registry_id) {
@@ -870,16 +659,13 @@ export default {
   },
   components: {
     VarList,
-    virtualScrollList
+    virtualScrollList,
+    EnvConfig
   }
 }
 </script>
 
 <style lang="less" scoped>
-@secondaryColor: #888888;
-@primaryColor: #000;
-@darkBackgroundColor: rgba(246, 246, 246, 0.6);
-
 .create-product-detail-container {
   position: relative;
   flex: 1;
@@ -1050,23 +836,6 @@ export default {
         }
       }
     }
-  }
-
-  .second-title {
-    color: #606266;
-    font-size: 14px;
-  }
-
-  .small-title {
-    color: #969799;
-    font-size: 12px;
-  }
-
-  .container-images {
-    margin: 5px 0 0 0;
-    padding: 10px 10px 0 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
   }
 
   .ops {

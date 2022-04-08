@@ -3,8 +3,9 @@
 </template>
 <script>
 import CreateHostEnv from './hostEnv/createHostEnv.vue'
-import CreateEnvDetail from './k8sPmEnv/createK8sPmEnv.vue'
-import CreateHelmEnv from './createHelmEnv.vue'
+import CreateK8sEnv from './k8sPmEnv/createK8sEnv.vue'
+import CreatePmEnv from './pmEnv/createPmEnv.vue'
+import CreateHelmEnv from './helmEnv/createHelmEnv.vue'
 import { getSingleProjectAPI } from '@/api'
 
 export default {
@@ -24,11 +25,13 @@ export default {
           this.currentComponents = CreateHostEnv
         } else if (feature.deploy_type === 'helm') {
           this.currentComponents = CreateHelmEnv
+        } else if (feature.basic_facility === 'cloud_host') {
+          this.currentComponents = CreatePmEnv
         } else {
-          this.currentComponents = CreateEnvDetail
-        }// Compatible with old project
+          this.currentComponents = CreateK8sEnv
+        } // Compatible with old project
       } else {
-        this.currentComponents = CreateEnvDetail
+        this.currentComponents = CreateK8sEnv
       }
     }
   },

@@ -304,6 +304,14 @@ const routes = [
                   requiresAuth: true,
                   title: '配置详情'
                 }
+              },
+              {
+                path: 'detail/:env_name/envConfig',
+                component: () => import(/* webpackChunkName: "Project Env" */ '@/components/projects/env/env_detail/envConfig/home.vue'),
+                meta: {
+                  requiresAuth: true,
+                  title: '环境配置'
+                }
               }
             ]
           }

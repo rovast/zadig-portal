@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="mode ==='enable'?'开启自测模式':'关闭自测模式'" :visible.sync="shareEnvDialogVisible" width="700px" class="share-env-dialog">
+  <el-dialog :title="mode ==='enable'?'开启自测模式':'关闭自测模式'" :visible.sync="shareEnvDialogVisible" width="750px" class="share-env-dialog">
     <div v-if="mode === 'enable' " class>
       <span class="title">满足以下两个条件即可开启环境自测模式</span>
       <ul class="requirements">
@@ -39,7 +39,7 @@
       </ul>
       <el-alert v-if="checkIstioResult === 'failed'" show-icon :closable="false" type="error">
         <span slot="title">
-          环境中未检测到 Istio 组件，请使用以下命令安装 Istio，Istio 相关知识请参考
+          环境中未检测到 Istio 组件，通过下述方法使用 istioctl 工具快速安装 Istio，Istio 相关知识请参考
           <a
             href="https://istio.io/latest/docs/setup/install/"
             target="_blank"
@@ -47,6 +47,15 @@
           >Istio 文档</a>
         </span>
       </el-alert>
+      <div class="command">
+        istioctl install --set profile=demo -y
+        <span
+          v-clipboard:copy="`istioctl install --set profile=demo -y`"
+          v-clipboard:success="copyCommandSuccess"
+          v-clipboard:error="copyCommandError"
+          class="el-icon-document-copy copy"
+        ></span>
+      </div>
     </div>
     <div v-if="mode === 'disable'">
       <span class="desc">关闭 {{envName}} 环境的自测模式，子环境会被全部删除，请确认</span>
@@ -163,6 +172,18 @@ export default {
       })
       this.$emit('statusChange', 'disable')
       this.shareEnvDialogVisible = false
+    },
+    copyCommandSuccess (event) {
+      this.$message({
+        message: '命令已成功复制到剪贴板',
+        type: 'success'
+      })
+    },
+    copyCommandError (event) {
+      this.$message({
+        message: '命令复制失败',
+        type: 'error'
+      })
     }
   }
 }
@@ -229,6 +250,19 @@ export default {
           color: #999;
           font-size: 12px;
         }
+      }
+    }
+
+    .command {
+      margin-top: 5px;
+      padding: 5px 10px;
+      font-size: 16px;
+      background: #f5f7fa;
+      border-radius: 3px;
+
+      .copy {
+        color: @themeColor;
+        cursor: pointer;
       }
     }
   }

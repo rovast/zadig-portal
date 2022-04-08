@@ -37,24 +37,26 @@
           <span class="recheck" @click="checkingWorkloads">重新检测</span>
         </li>
       </ul>
-      <el-alert v-if="checkIstioResult === 'failed'" show-icon :closable="false" type="error">
-        <span slot="title">
-          环境中未检测到 Istio 组件，通过下述方法使用 istioctl 工具快速安装 Istio，Istio 相关知识请参考
-          <a
-            href="https://istio.io/latest/docs/setup/install/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >Istio 文档</a>
-        </span>
-      </el-alert>
-      <div class="command">
-        istioctl install --set profile=demo -y
-        <span
-          v-clipboard:copy="`istioctl install --set profile=demo -y`"
-          v-clipboard:success="copyCommandSuccess"
-          v-clipboard:error="copyCommandError"
-          class="el-icon-document-copy copy"
-        ></span>
+      <div v-if="checkIstioResult === 'failed'">
+        <el-alert show-icon :closable="false" type="error">
+          <span slot="title">
+            环境中未检测到 Istio 组件，通过下述方法使用 istioctl 工具快速安装 Istio，Istio 相关知识请参考
+            <a
+              href="https://istio.io/latest/docs/setup/install/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Istio 文档</a>
+          </span>
+        </el-alert>
+        <div class="command">
+          istioctl install --set profile=demo -y
+          <span
+            v-clipboard:copy="`istioctl install --set profile=demo -y`"
+            v-clipboard:success="copyCommandSuccess"
+            v-clipboard:error="copyCommandError"
+            class="el-icon-document-copy copy"
+          ></span>
+        </div>
       </div>
     </div>
     <div v-if="mode === 'disable'">

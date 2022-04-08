@@ -336,7 +336,7 @@ export default {
             envName,
             yamlSource: re.overrideYaml ? 'freeEdit' : 'default'
           }
-          if (envInfo.yaml_data && envInfo.yaml_data.source_detail) {
+          if (envInfo.yaml_data && envInfo.yaml_data.source_detail && envInfo.yaml_data.source_detail.git_repo_config && envInfo.yaml_data.source_detail.git_repo_config.codehost_id) {
             envInfo.gitRepoConfig = {
               branch: envInfo.yaml_data.source_detail.git_repo_config.branch,
               codehostID: envInfo.yaml_data.source_detail.git_repo_config.codehost_id,

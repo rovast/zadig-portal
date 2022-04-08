@@ -148,8 +148,19 @@ export default {
   },
   computed: {
     currentInfos () {
+      const current = this.configInfos[this.currentType]
+      const isHelm = this.isHelm
+      if (current) {
+        // hidden services column
+        current.tableColumns = current.tableColumns.filter(column => {
+          if (isHelm && column.prop === 'services') {
+            return false
+          }
+          return true
+        })
+      }
       return (
-        this.configInfos[this.currentType] || {
+        current || {
           id: 'id',
           getAPI: null,
           tableData: [],
@@ -162,6 +173,12 @@ export default {
     },
     envName () {
       return this.$route.params.env_name
+    },
+    isHelm () {
+      const current = this.$store.getters.projectList.find(
+        project => project.name === this.projectName
+      )
+      return current ? current.deployType === 'helm' : false
     }
   },
   methods: {

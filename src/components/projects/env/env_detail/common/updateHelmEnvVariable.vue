@@ -72,8 +72,10 @@ export default {
       if (res) {
         this.envVariable = {
           yamlSource: res.defaultValues ? 'freeEdit' : 'default',
-          overrideYaml: res.defaultValues,
-          gitRepoConfig: {
+          overrideYaml: res.defaultValues
+        }
+        if (res.yaml_data && res.yaml_data.source_detail && res.yaml_data.source_detail.git_repo_config && res.yaml_data.source_detail.git_repo_config.codehost_id) {
+          this.envVariable.gitRepoConfig = {
             branch: res.yaml_data.source_detail.git_repo_config.branch,
             codehostID: res.yaml_data.source_detail.git_repo_config.codehost_id,
             owner: res.yaml_data.source_detail.git_repo_config.owner,

@@ -21,18 +21,16 @@
 </template>
 <script>
 /* eslint-disable no-template-curly-in-string */
+import { queryJenkins } from '@api'
 const defaultImage = '{{.IMAGE_NAME}}'
 const defaultValue = '{{.SERVICE}}'
 const placeholder = ['{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}', '{{.TIMESTAMP}}-{{.TASK_ID}}-{{.REPO_BRANCH}}-{{.REPO_PR}}', '{{.TIMESTAMP}}-{{.REPO_TAG}}', '{{.TIMESTAMP}}']
+
 export default {
   name: 'Deliverable',
   props: {
     customImageRule: Object,
-    customTarRule: Object,
-    isJenkins: {
-      type: Boolean,
-      default: false
-    }// 初始化页面 未保存之前判断是否集成jenkins构建
+    customTarRule: Object
   },
   data () {
     return {
@@ -104,7 +102,6 @@ export default {
     saveConfig () {
       const customerImage = this.customerImage
       const tar = this.tar
-      console.log(this.customerImage)
       this.custom_image_rule = {
         pr_rule: (customerImage.pr.service || defaultValue) + ':' + (customerImage.pr.value || placeholder[0]),
         branch_rule: (customerImage.branch.service || defaultValue) + ':' + (customerImage.branch.value || placeholder[1]),
@@ -120,7 +117,16 @@ export default {
         pr_and_branch_rule: tar.prBranch.value || `${defaultValue}-${placeholder[2]}`,
         tag_rule: tar.tag.value || `${defaultValue}-${placeholder[3]}`
       }
+    },
+    // 是否jenkins构建
+    queryJenkinsConfig () {
+      queryJenkins().then(res => {
+        this.isJenkins = res.length > 0
+      })
     }
+  },
+  mounted () {
+    this.queryJenkinsConfig()
   },
   watch: {
     customImageRule (value) {

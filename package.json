@@ -13,6 +13,7 @@
     "postinstall": "husky install"
   },
   "dependencies": {
+    "aes-js": "^3.1.2",
     "axios": "0.18.0",
     "countup.js": "2.0.5",
     "diff": "3.5.0",

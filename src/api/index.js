@@ -945,8 +945,9 @@ export function deleteExternalSystemAPI (id) {
 }
 
 // Mail
-export function getEmailHostAPI () {
-  return http.get(`/api/v1/emails/internal/host`)
+export function getEmailHostAPI (key) {
+  console.log(key)
+  return http.get(`/api/v1/emails/internal/host?encryptedKey=${key}`)
 }
 
 export function deleteEmailHostAPI () {
@@ -1348,6 +1349,9 @@ export function checkRegistrationAPI () {
   return http.get(`/api/v1/features/RegisterTrigger`)
 }
 
+export function getPublicKey () {
+  return http.get(`/api/aslan/system/rsaKey/publicKey`)
+}
 // Profile
 export function getCurrentUserInfoAPI (uid) {
   return http.get(`/api/v1/users/${uid}/personal`)

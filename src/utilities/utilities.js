@@ -1,5 +1,7 @@
 import store from 'storejs'
 import { isEmpty } from 'lodash'
+import { JSEncrypt } from 'jsencrypt'
+const aesjs = require('aes-js')
 
 const entitiesRegexp = /[&"'<>]/g
 const entityMap = {
@@ -9,7 +11,6 @@ const entityMap = {
   '<': '&lt;',
   '>': '&gt;'
 }
-
 const utils = {
   /**
    *
@@ -70,7 +71,7 @@ const utils = {
     }
   },
   /* // Speed up calls to hasOwnProperty
-     var hasOwnProperty = Object.prototype.hasOwnProperty; */
+     const hasOwnProperty = Object.prototype.hasOwnProperty; */
   isEmpty,
   /**
    *
@@ -690,6 +691,74 @@ const utils = {
     } else {
       return serviceName
     }
+  },
+  RndNum (n) {
+    const rnd = []
+    for (let i = 0; i < n; i++) {
+      rnd.push(Math.floor(Math.random() * 10))
+    }
+    return rnd
+  },
+  strToHexCharCode (str) {
+    if (str === '') { return '' }
+    const hexCharCode = []
+    // hexCharCode.push('0x')
+    for (let i = 0; i < str.length; i++) {
+      hexCharCode.push((str.charCodeAt(i)).toString(16))
+    }
+    return hexCharCode.join('')
+  },
+  /**
+ * aes加密方法
+ * @param {string} text 待加密的字符串
+ * @param {array} key 加密key
+ */
+  aesEncrypt (text = '') {
+    const publicKey = JSON.parse(localStorage.getItem('publicKey'))
+    const aesKey = this.RndNum(16)
+    console.log(aesKey)
+    const iv = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
+
+    // aes cfb 对称加密
+    const textBytes = aesjs.utils.utf8.toBytes(text)
+    console.log(aesjs.utils.utf8.toBytes)
+    const segmentSize = 8
+    // eslint-disable-next-line new-cap
+    const aesCfb = new aesjs.ModeOfOperation.cfb(aesKey, iv, segmentSize)
+    let encryptedBytes = aesCfb.encrypt(textBytes)
+    const encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes)
+
+    encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex)
+    // eslint-disable-next-line new-cap
+    // const decryptedBytes = aesCfb.decrypt(encryptedBytes)
+    // const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes)
+    console.log(encryptedBytes)
+
+    // rsa非对称加密
+    const encryptor = new JSEncrypt()
+    encryptor.setPublicKey(publicKey)
+    const encryptData = encryptor.encrypt(aesKey.toString(), 'RSAES-PKCS1-V1_5')
+    console.log(encryptData)
+    // 转16进制
+    const res = this.strToHexCharCode(encryptData)
+    console.log(res)
+
+    return res
+  },
+
+  /**
+ * aes解密方法
+ * @param {string} encryptedHex 加密的字符串
+ * @param {array} key 加密key
+ */
+  aesDecrypt (encryptedHex) {
+    const publicKey = JSON.parse(localStorage.getItem('publicKey'))
+    const encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex) // 把十六进制数据转成二进制
+    // eslint-disable-next-line new-cap
+    const aesCfb = new aesjs.ModeOfOperation.cfb(publicKey, new aesjs.Counter(5))
+    const decryptedBytes = aesCfb.decrypt(encryptedBytes) // 进行解密
+    const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes) // 把二进制数据转成utf-8字符串
+    return decryptedText
   }
 
 }

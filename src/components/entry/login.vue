@@ -68,7 +68,7 @@
 <script>
 import moment from 'moment'
 import { isMobile } from 'mobile-device-detect'
-import { checkConnectorsAPI, checkRegistrationAPI } from '@api'
+import { checkConnectorsAPI, checkRegistrationAPI, getPublicKey } from '@api'
 import ForgetPassword from './components/forgetPassword.vue'
 import SignUp from './components/signUp.vue'
 import store from 'storejs'
@@ -116,6 +116,7 @@ export default {
           if (res) {
             this.loading = false
             this.redirectByDevice()
+            this.getPublicKey()
           } else {
             this.loading = false
           }
@@ -141,6 +142,11 @@ export default {
       if (connectorsCheck && connectorsCheck.enabled) {
         window.location.href = '/api/v1/login'
       }
+    },
+    async getPublicKey () {
+      const res = await getPublicKey()
+      const storage = window.localStorage
+      storage.setItem('publicKey', JSON.stringify(res.publicKey))
     },
     redirectByDevice () {
       if (isMobile) {

@@ -1,6 +1,8 @@
 import store from 'storejs'
 import { isEmpty } from 'lodash'
-import { JSEncrypt } from 'jsencrypt'
+// import { JSEncrypt } from 'jsencrypt'
+const forge = require('node-forge') // rsa加密
+
 const aesjs = require('aes-js')
 
 const entitiesRegexp = /[&"'<>]/g
@@ -692,57 +694,30 @@ const utils = {
       return serviceName
     }
   },
-  RndNum (n) {
-    const rnd = []
-    for (let i = 0; i < n; i++) {
-      rnd.push(Math.floor(Math.random() * 10))
+  // 随机生成32位aesKey
+  generateAesKey (len = 16) {
+    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    let num = ''
+    for (let i = 0; i < len; i++) {
+      num += arr[parseInt(Math.random() * len)]
     }
-    return rnd
-  },
-  strToHexCharCode (str) {
-    if (str === '') { return '' }
-    const hexCharCode = []
-    // hexCharCode.push('0x')
-    for (let i = 0; i < str.length; i++) {
-      hexCharCode.push((str.charCodeAt(i)).toString(16))
-    }
-    return hexCharCode.join('')
+    return num
   },
   /**
  * aes加密方法
  * @param {string} text 待加密的字符串
  * @param {array} key 加密key
  */
-  aesEncrypt (text = '') {
-    const publicKey = JSON.parse(localStorage.getItem('publicKey'))
-    const aesKey = this.RndNum(16)
-    console.log(aesKey)
-    const iv = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
-
-    // aes cfb 对称加密
-    const textBytes = aesjs.utils.utf8.toBytes(text)
-    console.log(aesjs.utils.utf8.toBytes)
-    const segmentSize = 8
-    // eslint-disable-next-line new-cap
-    const aesCfb = new aesjs.ModeOfOperation.cfb(aesKey, iv, segmentSize)
-    let encryptedBytes = aesCfb.encrypt(textBytes)
-    const encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes)
-
-    encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex)
-    // eslint-disable-next-line new-cap
-    // const decryptedBytes = aesCfb.decrypt(encryptedBytes)
-    // const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes)
-    console.log(encryptedBytes)
-
-    // rsa非对称加密
-    const encryptor = new JSEncrypt()
-    encryptor.setPublicKey(publicKey)
-    const encryptData = encryptor.encrypt(aesKey.toString(), 'RSAES-PKCS1-V1_5')
-    console.log(encryptData)
-    // 转16进制
-    const res = this.strToHexCharCode(encryptData)
-    console.log(res)
-
+  rsaEncrypt () {
+    const aesKey = this.generateAesKey(16)
+    localStorage.setItem('aesKey', aesKey)
+    const localPublicKey = JSON.parse(localStorage.getItem('publicKey')) // 取出本地publicKey
+    const publicKey = forge.pki.publicKeyFromPem(localPublicKey)
+    const buffer = forge.util.createBuffer(aesKey)
+    const bytes = buffer.getBytes()
+    const encrypted = publicKey.encrypt(bytes, 'RSAES-PKCS1-V1_5')
+    const b64Encoded = forge.util.encode64(encrypted) // 转base64
+    const res = encodeURIComponent(b64Encoded) // base64有空格问题 再编码一下
     return res
   },
 
@@ -751,14 +726,16 @@ const utils = {
  * @param {string} encryptedHex 加密的字符串
  * @param {array} key 加密key
  */
-  aesDecrypt (encryptedHex) {
-    const publicKey = JSON.parse(localStorage.getItem('publicKey'))
-    const encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex) // 把十六进制数据转成二进制
+  rsaDecrypt (datamsg) {
+    const aesKey = localStorage.getItem('aesKey')
+    // const encryptedBytes = aesjs.utils.hex.toBytes(datamsg) // 把十六进制数据转成二进制
+    // console.log(encryptedBytes)
     // eslint-disable-next-line new-cap
-    const aesCfb = new aesjs.ModeOfOperation.cfb(publicKey, new aesjs.Counter(5))
-    const decryptedBytes = aesCfb.decrypt(encryptedBytes) // 进行解密
-    const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes) // 把二进制数据转成utf-8字符串
-    return decryptedText
+    const aesCtr = new aesjs.ModeOfOperation.cfb(aesKey, new aesjs.Counter(5))
+    const decryptedBytes = aesCtr.decrypt(datamsg) // 进行解密
+    // const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes) // 把二进制数据转成utf-8字符串
+    console.log(decryptedBytes)
+    return decryptedBytes
   }
 
 }

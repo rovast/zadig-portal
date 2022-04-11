@@ -338,9 +338,10 @@ export default {
       })
     },
     getMailHostConfig () {
-      const key = this.$utils.aesEncrypt()
-      console.log(key)
+      const key = this.$utils.rsaEncrypt()
       getEmailHostAPI(key).then((res) => {
+        console.log(this.$utils.rsaDecrypt(res.password))
+
         if (!res.resultCode) {
           this.$set(this.mailHosts, [0], res)
         } else {

@@ -189,9 +189,11 @@ export default {
         },
         valuesData: {
           yamlSource: 'repo',
-          gitRepoConfig: this.importRepoInfo.gitRepoConfig,
-          autoSync: this.importRepoInfo.gitRepoConfig.autoSync
+          gitRepoConfig: this.importRepoInfo.gitRepoConfig
         }
+      }
+      if (this.importRepoInfo.gitRepoConfig && this.importRepoInfo.gitRepoConfig.autoSync) {
+        payload.valuesData.autoSync = this.importRepoInfo.gitRepoConfig.autoSync
       }
 
       const res = await createTemplateServiceAPI(projectName, payload).catch(
@@ -230,9 +232,11 @@ export default {
         createFrom: { templateName: this.tempData.moduleName },
         valuesData: {
           yamlSource: 'repo',
-          gitRepoConfig: this.importRepoInfo.gitRepoConfig,
-          autoSync: this.importRepoInfo.gitRepoConfig.autoSync
+          gitRepoConfig: this.importRepoInfo.gitRepoConfig
         }
+      }
+      if (this.importRepoInfo.gitRepoConfig && this.importRepoInfo.gitRepoConfig.autoSync) {
+        payload.valuesData.autoSync = this.importRepoInfo.gitRepoConfig.autoSync
       }
       const sId = setTimeout(() => {
         this.$message.info('服务过多，请耐心等待！')

@@ -11,7 +11,7 @@
       <codemirror ref="codemirror" v-model="importRepoInfoUse.overrideYaml"></codemirror>
     </Resize>
     <el-dialog title="从代码库导入" :visible.sync="showGitImportDialog" append-to-body>
-      <Repository ref="valueRepoRef" :repoSource="importRepoInfoUse.gitRepoConfig"></Repository>
+      <Repository ref="valueRepoRef" :repoSource="importRepoInfoUse.gitRepoConfig" :showAutoSync="showAutoSync"></Repository>
       <div slot="footer">
         <el-button @click="showGitImportDialog = false" size="small">取 消</el-button>
         <el-button type="primary" @click="importOverrideYaml" size="small" :loading="loadValueYamls">导 入</el-button>
@@ -35,7 +35,8 @@ const valueInfo = {
     owner: '',
     repo: '',
     branch: '',
-    valuesPaths: []
+    valuesPaths: [],
+    autoSync: false
   }
 }
 
@@ -48,6 +49,10 @@ export default {
   },
   props: {
     showDelete: {
+      default: false,
+      type: Boolean
+    },
+    showAutoSync: {
       default: false,
       type: Boolean
     },

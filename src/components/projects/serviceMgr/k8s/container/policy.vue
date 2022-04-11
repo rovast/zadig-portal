@@ -68,6 +68,14 @@ export default {
   components: {
     CusDeliverable
   },
+  props: {
+    service: {
+      type: Array,
+      default: () => [
+        { build_name: '' }
+      ]
+    }
+  },
   data () {
     return {
       projectForm: {
@@ -137,6 +145,7 @@ export default {
   .form-container {
     display: flex;
     flex: 1;
+    box-sizing: border-box;
     width: 100%;
     margin-bottom: 10px;
     padding: 10px;

@@ -60,7 +60,7 @@
                           class="step-arrow"><i class="el-icon-right"></i></span>
                   </span>
                   <el-tag v-if="!$utils.isEmpty(scope.row.distribute_stage) &&  scope.row.distribute_stage.enabled"
-                          size="small">分发</el-tag>
+                          size="small">分发部署</el-tag>
                 </span>
               </template>
             </el-table-column>

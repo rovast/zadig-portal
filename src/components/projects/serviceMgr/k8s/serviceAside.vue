@@ -238,7 +238,7 @@
             <div class="service-aside-box__title">策略</div>
           </header>
           <div class="service-aside-help__content">
-            <Policy />
+            <Policy :service="serviceModules"/>
           </div>
         </div>
         <div v-if="selected === 'help'" class="service-aside--variables">
@@ -338,7 +338,7 @@ export default {
           {},
           qs.parse(window.location.search, { ignoreQueryPrefix: true }),
           {
-            rightbar: 'var'
+            rightbar: (this.$route.query.rightbar ? this.$route.query.rightbar : 'var')
           }
         )
       })
@@ -359,7 +359,6 @@ export default {
         this.service.type === 'k8s' &&
         this.service.status === 'added'
       ) {
-        this.changeRoute('var')
         serviceTemplateWithConfigAPI(
           this.service.service_name,
           this.projectNameOfService
@@ -367,6 +366,9 @@ export default {
           this.serviceModules = res.service_module
           this.sysEnvs = res.system_variable
         })
+      }
+      if (this.service.status === 'named') {
+        this.changeRoute('var')
       }
     },
     changeRoute (step) {
@@ -485,6 +487,11 @@ export default {
   created () {
     this.getProject()
     this.getServiceTemplateWithConfig()
+    if (this.$route.query.rightbar) {
+      this.changeRoute(this.$route.query.rightbar)
+    } else {
+      this.changeRoute('var')
+    }
     bus.$on(`save-var`, () => {
       this.projectForm.vars = this.detectedEnvs
       this.updateEnvTemplate(this.projectName, this.projectForm)
@@ -529,6 +536,7 @@ export default {
     service (val) {
       if (val) {
         this.getServiceTemplateWithConfig()
+        this.changeRoute('var')
       }
     }
   },

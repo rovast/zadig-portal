@@ -1,6 +1,9 @@
 <template>
   <div class="projects-pm-service-container">
     <UpdateEnv ref="updateEnv"/>
+    <div class="policy">
+      <el-button type="primary" size="small" @click="showPolicyDrawer = true" plain>策略</el-button>
+    </div>
     <div class="config-container-pm">
       <ServiceList
         ref="serviceList"
@@ -33,12 +36,16 @@
         </el-button>
       </div>
     </div>
+    <el-drawer title="策略" custom-class="policy-drawer" :visible.sync="showPolicyDrawer" direction="rtl" size="600px" destroy-on-close>
+      <Policy />
+    </el-drawer>
   </div>
 </template>
 <script>
 import ServiceList from '@/components/projects/common/pm/serviceList.vue'
 import PmConfig from '@/components/projects/common/pm/pmConfig.vue'
 import UpdateEnv from './pm/updateEnv'
+import Policy from './k8s/container/policy.vue'
 export default {
   data () {
     return {
@@ -46,7 +53,8 @@ export default {
       isEdit: false,
       serviceName: '',
       updateEnvDisabled: true,
-      showBuild: true
+      showBuild: true,
+      showPolicyDrawer: false
     }
   },
   methods: {
@@ -80,7 +88,8 @@ export default {
   components: {
     PmConfig,
     ServiceList,
-    UpdateEnv
+    UpdateEnv,
+    Policy
   }
 }
 </script>
@@ -112,6 +121,20 @@ export default {
   height: 100%;
   overflow: hidden;
 
+  .policy {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    z-index: 1;
+
+    .el-button {
+      width: 30px;
+      margin-bottom: -12px;
+      padding: 12px 5px;
+      white-space: initial;
+    }
+  }
+
   .config-container-pm {
     position: relative;
     display: flex;
@@ -141,6 +164,17 @@ export default {
     .controls__right {
       display: flex;
       align-items: center;
+    }
+  }
+
+  .policy-drawer {
+    .el-drawer__header {
+      margin-bottom: 12px;
+    }
+
+    .el-drawer__body {
+      box-sizing: border-box;
+      padding: 0 10px 20px;
     }
   }
 }

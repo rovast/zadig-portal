@@ -134,6 +134,12 @@ export default {
     }
   },
   methods: {
+    changeRegistryId (id) {
+      if (id && this.pickedRegistry !== id) {
+        this.pickedRegistry = id
+        this.changeRegistry(id)
+      }
+    },
     changeVirtualData (event, row, index) {
       const opt = event ? 0 : -1
       const id =
@@ -245,7 +251,7 @@ export default {
       if (res && res.length > 0) {
         for (let i = 0; i < res.length; i++) {
           if (res[i].is_default) {
-            this.pickedRegistry = res[i].id
+            this.pickedRegistry = this.pickedRegistry || res[i].id
             break
           }
         }

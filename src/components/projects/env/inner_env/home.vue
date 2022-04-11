@@ -32,7 +32,7 @@ export default {
       } else {
         this.jumpPath = `/v1/projects/detail/${this.projectName}/envs/create`
       }
-      if (this.$route.params.service_name || this.$route.query.envName) {
+      if (this.$route.params.service_name || this.$route.query.envName || this.$route.params.env_name) {
         return
       }
       this.jumpPath && this.$router.push(this.jumpPath)
@@ -46,7 +46,7 @@ export default {
   beforeRouteUpdate (to, from, next) {
     if (!this.jumpPath || to.meta.title === '创建环境') {
       next()
-    } else if (!to.params.service_name && !to.query.envName) {
+    } else if (!to.params.service_name && !to.query.envName && !to.params.env_name) {
       next({ path: this.jumpPath })
     } else {
       next()

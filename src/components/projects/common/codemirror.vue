@@ -1,5 +1,6 @@
 <template>
   <div class="codemirror-container" @keydown.meta.83.prevent="handleSave">
+    <div class="yaml-desc" v-if="placeholder" v-show="!value">{{ placeholder }}</div>
     <codemirror class="codemirror" ref="cmEditor" :value="value" :options="options" @input="handleInput"></codemirror>
   </div>
 </template>
@@ -27,7 +28,16 @@ export default {
       default: '',
       type: String
     },
-    cmOption: { type: Object, default: () => { return {} } }
+    cmOption: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    placeholder: {
+      type: String,
+      default: ''
+    }
   },
   computed: {
     options () {
@@ -56,7 +66,17 @@ export default {
 
 <style lang="less" scoped>
 .codemirror-container {
+  position: relative;
   height: 100%;
+
+  .yaml-desc {
+    position: absolute;
+    z-index: 1;
+    padding: 4px 38px;
+    color: #ccc;
+    font-size: 14px;
+    line-height: 20px;
+  }
 
   .codemirror {
     height: calc(~'100% + 5px');

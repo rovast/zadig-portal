@@ -49,21 +49,53 @@
                       :class="statusColorMap[scope.row.status]">{{statusTranslation[scope.row.status]}}</span>
               </template>
             </el-table-column>
+            <el-table-column>
+              <template slot-scope="{ row, $index }">
+                <el-button v-hasPermi="{projectName: projectName, action: 'manage_environment'}" @click="showContainerExec($index,row)"
+                           icon="iconfont iconTerminal login-icon"
+                           size="small">登录</el-button>
+              </template>
+            </el-table-column>
 
           </el-table>
         </template>
       </div>
     </div>
+
+    <el-dialog :visible.sync="execModal.visible"
+               width="70%"
+               :close-on-click-modal="false"
+               title="Pod 调试"
+               class="log-dialog">
+      <span slot="title"
+            class="modal-title">
+        <span class="unimportant">主机 IP:</span>
+        {{execModal.address}}
+        <i class="el-icon-full-screen screen"
+           @click="fullScreen(execModal.address +'-debug')"></i>
+      </span>
+      <PmXtermDebug :id="execModal.address +'-debug'"
+                   :projectName="projectName"
+                   :address="execModal.address"
+                   :envName="execModal.envName"
+                   :serviceName="serviceName"
+                   :hostId='execModal.hostId'
+                   :visible="execModal.visible"
+                   ref="debug"/>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import PmXtermDebug from '../env_detail/common/pmXtermDebug.vue'
 import { serviceTemplateAPI } from '@api'
 import bus from '@utils/eventBus'
 import { sortBy } from 'lodash'
+import { fullScreen } from '@/utilities/fullScreen'
 export default {
   data () {
     return {
+      fullScreen,
       currentService: {},
       getEnvLoading: false,
       envStatus: [],
@@ -77,6 +109,12 @@ export default {
       statusTranslation: {
         Running: '健康',
         Error: '不健康'
+      },
+      execModal: {
+        visible: false,
+        envName: '',
+        address: '',
+        hostId: ''
       }
     }
   },
@@ -148,6 +186,12 @@ export default {
           colspan: _col
         }
       }
+    },
+    showContainerExec (index, current) {
+      this.execModal.visible = true
+      this.execModal.envName = current.env_name
+      this.execModal.address = current.address
+      this.execModal.hostId = current.host_id
     }
   },
   created () {
@@ -163,6 +207,9 @@ export default {
           { title: this.serviceName, url: `` }
         ]
       })
+  },
+  components: {
+    PmXtermDebug
   }
 }
 
@@ -170,4 +217,9 @@ export default {
 
 <style lang="less">
 @import "~@assets/css/component/service-detail.less";
+
+.login-icon.iconfont {
+  padding-right: 8px;
+  font-size: 12px;
+}
 </style>

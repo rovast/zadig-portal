@@ -86,7 +86,7 @@
 
 <script>
 import {
-  initProductAPI,
+  initProjectEnvAPI,
   createProductAPI,
   getHostListAPI,
   getHostLabelListAPI
@@ -157,7 +157,7 @@ export default {
     },
     async getTemplateAndImg () {
       this.loading = true
-      const template = await initProductAPI(this.projectName, this.isStcov)
+      const template = await initProjectEnvAPI(this.projectName, this.isStcov)
       this.loading = false
       this.projectConfig.revision = template.revision
       for (const group of template.services) {

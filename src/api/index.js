@@ -137,7 +137,7 @@ http.interceptors.response.use(
           window.location.href = `/signin?redirect=${redirectPath}`
         } else if (error.response.status === 403) {
           Element.Message.error('暂无权限')
-        } else if (error.response.data.code !== 6168 && !error.response.data.description.includes(ignoreErrResponse)) {
+        } else if (error.response.data.code !== 6168 && error.response.data.code !== 6094 && !error.response.data.description.includes(ignoreErrResponse)) {
           displayError(error)
         }
       } else if (document.title === '登录') {
@@ -380,8 +380,8 @@ export function imagesAPI (payload, registry = '') {
   return http.post(`/api/aslan/system/registry/images?registryId=${registry}`, { names: payload })
 }
 
-export function initProductAPI (templateName, isStcov) {
-  return http.get(`/api/aslan/environment/init_info/${templateName}${isStcov ? '?stcov=true' : '?'}&projectName=${templateName}`)
+export function initProjectEnvAPI (projectName, isStcov, envType = 'general', isBaseEnv, baseEnvName) {
+  return http.get(`/api/aslan/environment/init_info/${projectName}${isStcov ? '?stcov=true' : '?'}envType=${envType}&isBaseEnv=${isBaseEnv}&baseEnv=${baseEnvName}&projectName=${projectName}`)
 }
 
 // Build
@@ -1216,8 +1216,8 @@ export function addArtifactActivitiesAPI (id, payload) {
 }
 
 // Project
-export function getSingleProjectAPI (projectName) {
-  return http.get(`/api/aslan/project/products/${projectName}/services?projectName=${projectName}`)
+export function getSingleProjectAPI (projectName, envType = 'general', isBaseEnv, baseEnvName) {
+  return http.get(`/api/aslan/project/products/${projectName}/services?projectName=${projectName}&envType=${envType}&isBaseEnv=${isBaseEnv}&baseEnv=${baseEnvName}`)
 }
 
 export function getProjectInfoAPI (projectName) {
@@ -1263,6 +1263,10 @@ export function updateServiceAPI (projectName, serviceName, serviceType, envName
 
 export function updateK8sEnvAPI (projectName, envName, payload, envType = '', force = '') {
   return http.put(`/api/aslan/environment/environments/${envName}?projectName=${projectName}&envType=${envType}&force=${force}`, payload)
+}
+
+export function getServiceDeployableEnvsAPI (projectName, serviceName) {
+  return http.get(`/api/aslan/service/services/${serviceName}/environments/deployable?projectName=${projectName}`)
 }
 
 export function getHelmEnvChartDiffAPI (projectName, envName) {

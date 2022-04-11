@@ -37,7 +37,7 @@
                  width="40%">
         <div class="title">
           <el-checkbox-group v-model="checkedEnvList" @change="changeUpgradeEnv">
-            <el-checkbox v-for="(env,index) in envNameListWithVars"
+            <el-checkbox v-for="(env,index) in deployableEnvListWithVars"
                          :key="index"
                          :label="env">{{env.name}}</el-checkbox>
           </el-checkbox-group>
@@ -164,7 +164,7 @@ import ServiceEditor from './k8s/serviceEditor.vue'
 import ServiceTree from './common/serviceTree.vue'
 import IntegrationCode from './common/integrationCode.vue'
 import { sortBy, cloneDeep } from 'lodash'
-import { getSingleProjectAPI, getServiceTemplatesAPI, getServicesTemplateWithSharedAPI, serviceTemplateWithConfigAPI, autoUpgradeEnvAPI, listProductAPI } from '@api'
+import { getSingleProjectAPI, getServiceTemplatesAPI, getServicesTemplateWithSharedAPI, serviceTemplateWithConfigAPI, autoUpgradeEnvAPI, listProductAPI, getServiceDeployableEnvsAPI } from '@api'
 import { Multipane, MultipaneResizer } from 'vue-multipane'
 export default {
   props: {
@@ -190,6 +190,7 @@ export default {
       integrationCodeDrawer: false,
       joinToEnvDialogVisible: false,
       envNameList: [],
+      deployableEnvs: [],
       activeEnvTabName: '',
       deletedService: '',
       showModal: true
@@ -245,6 +246,7 @@ export default {
     },
     showJoinToEnvDialog () {
       this.checkedEnvList = []
+      this.getServiceDeployableEnvs()
       this.joinToEnvDialogVisible = true
     },
     changeUpgradeEnv (val) {
@@ -377,6 +379,17 @@ export default {
         })
       }
     },
+    getServiceDeployableEnvs () {
+      const projectName = this.projectName
+      const serviceName = this.service.service_name
+      getServiceDeployableEnvsAPI(projectName, serviceName).then(res => {
+        this.deployableEnvs = res.map(env => {
+          return {
+            name: env
+          }
+        })
+      })
+    },
     showOnboardingNext () {
       this.$router.push(`/v1/projects/create/${this.projectName}/k8s/runtime?serviceName=${this.serviceName}`)
     }
@@ -388,8 +401,8 @@ export default {
     serviceName () {
       return this.$route.query.service_name
     },
-    envNameListWithVars () {
-      return this.envNameList.map(env => {
+    deployableEnvListWithVars () {
+      return this.deployableEnvs.map(env => {
         env.vars = cloneDeep(this.detectedEnvs.filter(item => item.services.includes(this.service.service_name)))
         return env
       })

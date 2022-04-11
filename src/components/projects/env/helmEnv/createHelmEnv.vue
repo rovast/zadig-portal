@@ -105,7 +105,7 @@
 
 <script>
 import {
-  initProductAPI,
+  initProjectEnvAPI,
   getClusterListAPI,
   getSingleProjectAPI,
   createHelmEnvAPI,
@@ -229,7 +229,7 @@ export default {
     },
     async getTemplateAndImg () {
       this.loading = true
-      const template = await initProductAPI(this.projectName, this.isStcov)
+      const template = await initProjectEnvAPI(this.projectName, this.isStcov)
       this.loading = false
       this.projectChartNames = template.chart_infos
         ? template.chart_infos.map(chart => {

@@ -201,7 +201,7 @@ import VarList from './varList.vue'
 import {
   imagesAPI,
   productHostingNamespaceAPI,
-  initProductAPI,
+  initProjectEnvAPI,
   getVersionListAPI,
   getClusterListAPI,
   createProductAPI,
@@ -324,6 +324,12 @@ export default {
     },
     baseEnvName () {
       return this.$route.query.baseEnvName
+    },
+    createEnvType () {
+      return this.createShare ? 'share' : 'general'
+    },
+    isBaseEnv () {
+      return !!this.baseEnvName
     }
   },
   methods: {
@@ -416,8 +422,13 @@ export default {
       })
     },
     async getTemplateAndImg () {
+      const projectName = this.projectName
+      const isStcov = this.isStcov
+      const createEnvType = this.createEnvType
+      const isBaseEnv = this.isBaseEnv
+      const baseEnvName = this.baseEnvName
       this.loading = true
-      const template = await initProductAPI(this.projectName, this.isStcov)
+      const template = await initProjectEnvAPI(projectName, isStcov, createEnvType, isBaseEnv, baseEnvName)
       this.loading = false
       this.projectConfig.revision = template.revision
       this.projectConfig.vars = template.vars

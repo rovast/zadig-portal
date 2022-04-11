@@ -14,7 +14,7 @@
         </template>
       </el-tab-pane>
     </el-tabs>
-    <div class="values" v-if="selectedChart && serviceNames.length" :class="{hidden: serviceNotHandle}">
+    <div class="values" :class="{hidden: serviceNotHandle}">
       <div class="values-content">
         <el-tabs v-if="showEnvTabs" v-model="selectedEnv" :before-leave="switchTabs">
           <el-tab-pane :label="env" :name="env" v-for="env in envNames" :key="env" :disabled="disabledEnv.includes(env)"></el-tab-pane>
@@ -177,11 +177,13 @@ export default {
       )
     },
     serviceNotHandle () {
+      const current = this.serviceNames.find(
+        service => service.serviceName === this.selectedChart
+      )
       return (
-        this.serviceNames.find(
-          service => service.serviceName === this.selectedChart
-        ).type === 'delete' ||
-        (this.showEnvTabs && this.selectedEnv === 'DEFAULT')
+        (current && current.type === 'delete') ||
+        (this.showEnvTabs && this.selectedEnv === 'DEFAULT') ||
+        (!this.selectedChart && !this.serviceNames.length)
       )
     }
   },
@@ -265,7 +267,11 @@ export default {
           ])
           values.valuesData = {
             yamlSource: 'repo',
-            autoSync: chartInfo[envName].gitRepoConfig && chartInfo[envName].gitRepoConfig.autoSync ? chartInfo[envName].gitRepoConfig.autoSync : false,
+            autoSync:
+              chartInfo[envName].gitRepoConfig &&
+              chartInfo[envName].gitRepoConfig.autoSync
+                ? chartInfo[envName].gitRepoConfig.autoSync
+                : false,
             gitRepoConfig: chartInfo[envName].gitRepoConfig
           }
           values.overrideYaml =
@@ -298,7 +304,9 @@ export default {
           ...envInfos
         })
       })
-      this.selectedChart = Object.keys(this.allChartNameInfo)[0]
+      this.selectedChart = this.chartNames.length
+        ? this.chartNames[0].serviceName
+        : ''
     },
     validate () {
       const valid = []
@@ -337,10 +345,16 @@ export default {
             envName,
             yamlSource: re.overrideYaml ? 'freeEdit' : 'default'
           }
-          if (envInfo.yaml_data && envInfo.yaml_data.source_detail && envInfo.yaml_data.source_detail.git_repo_config && envInfo.yaml_data.source_detail.git_repo_config.codehost_id) {
+          if (
+            envInfo.yaml_data &&
+            envInfo.yaml_data.source_detail &&
+            envInfo.yaml_data.source_detail.git_repo_config &&
+            envInfo.yaml_data.source_detail.git_repo_config.codehost_id
+          ) {
             envInfo.gitRepoConfig = {
               branch: envInfo.yaml_data.source_detail.git_repo_config.branch,
-              codehostID: envInfo.yaml_data.source_detail.git_repo_config.codehost_id,
+              codehostID:
+                envInfo.yaml_data.source_detail.git_repo_config.codehost_id,
               owner: envInfo.yaml_data.source_detail.git_repo_config.owner,
               repo: envInfo.yaml_data.source_detail.git_repo_config.repo,
               valuesPaths: [envInfo.yaml_data.source_detail.load_path],

@@ -3,8 +3,9 @@ import { isEmpty } from 'lodash'
 // import { JSEncrypt } from 'jsencrypt'
 const forge = require('node-forge') // rsa加密
 
-const aesjs = require('aes-js')
-
+// const aesjs = require('aes-js')
+const CryptoJS = require('crypto-js')
+// const algorithm = 'aes-256-cfb'
 const entitiesRegexp = /[&"'<>]/g
 const entityMap = {
   '&': '&amp;',
@@ -709,7 +710,7 @@ const utils = {
  * @param {array} key 加密key
  */
   rsaEncrypt () {
-    const aesKey = this.generateAesKey(16)
+    const aesKey = this.generateAesKey(32)
     localStorage.setItem('aesKey', aesKey)
     const localPublicKey = JSON.parse(localStorage.getItem('publicKey')) // 取出本地publicKey
     const publicKey = forge.pki.publicKeyFromPem(localPublicKey)
@@ -728,14 +729,21 @@ const utils = {
  */
   rsaDecrypt (datamsg) {
     const aesKey = localStorage.getItem('aesKey')
-    // const encryptedBytes = aesjs.utils.hex.toBytes(datamsg) // 把十六进制数据转成二进制
-    // console.log(encryptedBytes)
+    const encryptedBytes = aesjs.utils.hex.toBytes(datamsg)
+    console.log(aesKey.substr(0, 16))
+    const iv = aesjs.utils.utf8.toBytes(aesKey.substr(0, 16))
+    const text = aesjs.utils.utf8.toBytes(aesKey)
+    console.log(aesKey)
+    console.log(text)
     // eslint-disable-next-line new-cap
-    const aesCtr = new aesjs.ModeOfOperation.cfb(aesKey, new aesjs.Counter(5))
-    const decryptedBytes = aesCtr.decrypt(datamsg) // 进行解密
-    // const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes) // 把二进制数据转成utf-8字符串
+    const aesCfb = new aesjs.ModeOfOperation.cfb(text, iv, 16)
+    const decryptedBytes = aesCfb.decrypt(encryptedBytes)
     console.log(decryptedBytes)
-    return decryptedBytes
+    const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes.slice(16))
+    console.log(decryptedText)
+
+    // return decryptedStr.toString()
+    // return decryptedText
   }
 
 }

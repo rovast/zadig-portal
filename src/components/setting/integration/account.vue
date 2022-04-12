@@ -723,6 +723,11 @@ export default {
           required: true,
           message: '请填写用户邮箱属性',
           trigger: ['blur', 'change']
+        },
+        scopes: {
+          required: true,
+          message: '请输入 Scopes',
+          trigger: ['blur', 'change']
         }
       }
     }
@@ -1125,11 +1130,6 @@ export default {
             const payload = this.userAccountOAuth
             payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
             payload.config.claimMapping.preferredUsernameKey = payload.config.userIDKey
-            payload.config.scopes = [
-              payload.config.userIDKey,
-              payload.config.claimMapping.userNameKey,
-              payload.config.claimMapping.emailKey
-            ]
             updateConnectorAPI(payload.id, payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()

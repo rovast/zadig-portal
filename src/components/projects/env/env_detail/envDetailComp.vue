@@ -125,7 +125,7 @@
                 </router-link>
               </template>
               <template v-if="productInfo.status!=='Disconnected' && productInfo.status!=='Creating'">
-                <el-dropdown v-if="envSource===''||envSource==='spock'" trigger="click">
+                <el-dropdown v-if="envSource===''||envSource==='spock' || envSource==='helm'" trigger="click">
                   <el-button type="primary" plain>
                     管理服务
                     <i class="el-icon-arrow-down el-icon--right"></i>
@@ -137,18 +137,13 @@
                   </el-dropdown-menu>
                 </el-dropdown>
                 <el-tooltip
-                  v-else-if="showUpdate(productInfo,productStatus) && ((!productInfo.is_prod && envSource==='pm') || envSource==='helm')"
+                  v-else-if="showUpdate(productInfo,productStatus) && (!productInfo.is_prod && envSource==='pm')"
                   v-hasPermi="{projectName: projectName, action: 'config_environment'}"
                   content="根据最新环境配置更新，包括服务编排和服务配置的改动"
                   effect="dark"
                   placement="top"
                 >
-                  <el-button
-                    type="primary"
-                    @click="envSource==='pm' ? updateK8sEnv(productInfo) : openUpdateHelmEnv()"
-                    size="mini"
-                    plain
-                  >更新环境</el-button>
+                  <el-button type="primary" @click="updateK8sEnv(productInfo)" size="mini" plain>更新环境</el-button>
                 </el-tooltip>
               </template>
               <template v-if="envSource==='' || envSource==='spock' || envSource === 'helm'">
@@ -501,7 +496,6 @@
         <p v-if="scrollFinish && page > 2" class="scroll-finish-class">数据已加载完毕 ~</p>
       </div>
     </div>
-    <UpdateHelmEnvDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="updateHelmEnvDialog" />
     <UpdateHelmVarDialog
       :fetchAllData="fetchAllData"
       :productInfo="productInfo"
@@ -511,7 +505,8 @@
     />
     <UpdateK8sVarDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="updateK8sVarDialog" />
     <PmServiceLog ref="pmServiceLog" />
-    <ManageServicesDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="manageServicesRef" />
+    <ManageK8sServicesDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="manageK8sServicesRef" />
+    <ManageHelmServicesDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="manageHelmServicesRef" />
     <ShareEnvDialog
       :mode="shareEnvDialog.mode"
       :projectName="productInfo.product_name"
@@ -549,10 +544,10 @@ import RunWorkflow from './runWorkflow.vue'
 import PmServiceLog from './components/pmLogDialog.vue'
 import PmHostList from './components/pmHostList.vue'
 import ShareEnvDialog from './components/shareEnvDialog.vue'
-import UpdateHelmEnvDialog from './components/updateHelmEnvDialog'
 import UpdateHelmVarDialog from './components/updateHelmVarDialog'
 import UpdateK8sVarDialog from './components/updateK8sVarDialog'
-import ManageServicesDialog from './components/manageServicesDialog.vue'
+import ManageK8sServicesDialog from './components/manageK8sServicesDialog.vue'
+import ManageHelmServicesDialog from './components/manageHelmServicesDialog.vue'
 
 const jsdiff = require('diff')
 
@@ -740,7 +735,11 @@ export default {
       )
     },
     manageServices (type) {
-      this.$refs.manageServicesRef.openDialog(type)
+      if (this.envSource === 'helm') {
+        this.$refs.manageHelmServicesRef.openDialog(type)
+      } else {
+        this.$refs.manageK8sServicesRef.openDialog(type)
+      }
     },
     async editEnvImageRegistry (flag) {
       if (flag === 'cancel') {
@@ -781,9 +780,6 @@ export default {
         path: `/v1/projects/detail/${this.projectName}/envs/externalConfig`,
         query: params
       })
-    },
-    openUpdateHelmEnv () {
-      this.$refs.updateHelmEnvDialog.openDialog()
     },
     openUpdateHelmVar () {
       this.$refs.updateHelmVarDialog.openDialog()
@@ -1486,10 +1482,10 @@ export default {
     RunWorkflow,
     PmServiceLog,
     PmHostList,
-    UpdateHelmEnvDialog,
     UpdateHelmVarDialog,
     UpdateK8sVarDialog,
-    ManageServicesDialog,
+    ManageK8sServicesDialog,
+    ManageHelmServicesDialog,
     ShareEnvDialog
   },
   props: {

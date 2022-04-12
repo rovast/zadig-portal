@@ -299,12 +299,19 @@ export default {
       chartNames.forEach(chart => {
         const envInfos = {}
         envName = envName || chart.envName || 'DEFAULT' // priority: envName -> chart.envName -> 'DEFAULT'
-        const initInfo = get(this.allChartNameInfo, `${chart.serviceName}.${envName}.initInfo`, null)
+        const initInfo = get(
+          this.allChartNameInfo,
+          `${chart.serviceName}.${envName}.initInfo`,
+          null
+        )
         envInfos[envName] = {
           ...cloneDeep(initInfo || chartInfoTemp),
           ...cloneDeep(chart),
           envName: envName === 'DEFAULT' ? '' : envName,
-          yamlSource: (initInfo && initInfo.overrideYaml) || chart.overrideYaml ? 'freeEdit' : 'default',
+          yamlSource:
+            (initInfo && initInfo.overrideYaml) || chart.overrideYaml
+              ? 'freeEdit'
+              : 'default',
           initInfo
         }
         this.$set(this.allChartNameInfo, chart.serviceName, {
@@ -387,10 +394,11 @@ export default {
             allChartNameInfo[re.serviceName]
           )
         })
-        this.selectedChart =
-          this.chartNames && this.chartNames.length
+        this.selectedChart = this.chartNames
+          ? this.chartNames.length
             ? this.chartNames[0].serviceName
-            : res[0].serviceName
+            : ''
+          : res[0].serviceName
       }
     },
     copyEnvChartInfo (envName, initEnvName) {
@@ -454,7 +462,10 @@ export default {
           const chartNames = oldV
             ? differenceBy(newV, oldV, 'serviceName')
             : newV
-          this.initAllChartNameInfo(chartNames, this.selectedEnv || this.handledEnv)
+          this.initAllChartNameInfo(
+            chartNames,
+            this.selectedEnv || this.handledEnv
+          )
         }
       },
       immediate: true

@@ -1,20 +1,22 @@
 <template>
   <div class="helm-chart-yaml-content">
-    <el-input class="search-service" v-model="searchService" placeholder="搜索服务" suffix-icon="el-icon-search" size="small"></el-input>
-    <el-tabs class="service-list" tab-position="left" type="border-card" v-model="selectedChart" :before-leave="switchTabs">
-      <el-tab-pane :name="name.serviceName" v-for="name in filteredServiceNames" :key="name.serviceName" :disabled="name.type==='delete'">
-        <template slot="label">
-          <el-tooltip effect="dark" :content="name.serviceName" placement="top">
-            <span class="tab-title">{{name.serviceName}}</span>
-          </el-tooltip>
-          <i
-            class="icon"
-            :class="{'el-icon-delete': name.type==='delete', 'el-icon-refresh': name.type==='update', 'el-icon-folder-add': name.type==='create'}"
-          ></i>
-        </template>
-      </el-tab-pane>
-    </el-tabs>
-    <div class="values" :class="{hidden: serviceNotHandle}">
+    <template v-if="showServicesTab">
+      <el-input class="search-service" v-model="searchService" placeholder="搜索服务" suffix-icon="el-icon-search" size="small"></el-input>
+      <el-tabs class="service-list" tab-position="left" type="border-card" v-model="selectedChart" :before-leave="switchTabs">
+        <el-tab-pane :name="name.serviceName" v-for="name in filteredServiceNames" :key="name.serviceName" :disabled="name.type==='delete'">
+          <template slot="label">
+            <el-tooltip effect="dark" :content="name.serviceName" placement="top">
+              <span class="tab-title">{{name.serviceName}}</span>
+            </el-tooltip>
+            <i
+              class="icon"
+              :class="{'el-icon-delete': name.type==='delete', 'el-icon-refresh': name.type==='update', 'el-icon-folder-add': name.type==='create'}"
+            ></i>
+          </template>
+        </el-tab-pane>
+      </el-tabs>
+    </template>
+    <div class="values" :class="{hidden: serviceNotHandle, 'max-width': !showServicesTab}">
       <div class="values-content">
         <el-tabs v-if="showEnvTabs" v-model="selectedEnv" :before-leave="switchTabs">
           <el-tab-pane :label="env" :name="env" v-for="env in envNames" :key="env" :disabled="disabledEnv.includes(env)"></el-tab-pane>
@@ -126,6 +128,10 @@ export default {
       // used for envNames is different from initEnvNames(which used to request api)
       type: Object,
       default: () => null // {envName: baseEvnName}
+    },
+    showServicesTab: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -584,6 +590,10 @@ export default {
           border-radius: 5px;
         }
       }
+    }
+
+    &.max-width {
+      width: 100%;
     }
 
     &.hidden {

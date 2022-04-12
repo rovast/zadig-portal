@@ -329,7 +329,7 @@ export default {
       return this.createShare ? 'share' : 'general'
     },
     isBaseEnv () {
-      return !!this.baseEnvName
+      return !this.baseEnvName
     }
   },
   methods: {

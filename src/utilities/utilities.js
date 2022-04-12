@@ -1,11 +1,7 @@
 import store from 'storejs'
 import { isEmpty } from 'lodash'
-// import { JSEncrypt } from 'jsencrypt'
 const forge = require('node-forge') // rsa加密
-
-// const aesjs = require('aes-js')
-const CryptoJS = require('crypto-js')
-// const algorithm = 'aes-256-cfb'
+const aesjs = require('aes-js')
 const entitiesRegexp = /[&"'<>]/g
 const entityMap = {
   '&': '&amp;',
@@ -730,22 +726,14 @@ const utils = {
   rsaDecrypt (datamsg) {
     const aesKey = localStorage.getItem('aesKey')
     const encryptedBytes = aesjs.utils.hex.toBytes(datamsg)
-    console.log(aesKey.substr(0, 16))
     const iv = aesjs.utils.utf8.toBytes(aesKey.substr(0, 16))
     const text = aesjs.utils.utf8.toBytes(aesKey)
-    console.log(aesKey)
-    console.log(text)
     // eslint-disable-next-line new-cap
     const aesCfb = new aesjs.ModeOfOperation.cfb(text, iv, 16)
     const decryptedBytes = aesCfb.decrypt(encryptedBytes)
-    console.log(decryptedBytes)
-    const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes.slice(16))
-    console.log(decryptedText)
-
-    // return decryptedStr.toString()
-    // return decryptedText
+    const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes.slice(16)) // 截取后16位
+    return decryptedText
   }
-
 }
 
 export default utils

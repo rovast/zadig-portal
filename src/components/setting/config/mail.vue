@@ -40,6 +40,8 @@
           <el-input v-model="mailHostEdit.password"
                     placeholder="请输入新密码"
                     autofocus
+                    show-password
+                    type="password"
                     auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="TLS"
@@ -340,9 +342,8 @@ export default {
     getMailHostConfig () {
       const key = this.$utils.rsaEncrypt()
       getEmailHostAPI(key).then((res) => {
-        console.log(this.$utils.rsaDecrypt(res.password))
-
         if (!res.resultCode) {
+          res.password = this.$utils.rsaDecrypt(res.password)
           this.$set(this.mailHosts, [0], res)
         } else {
           this.$set(this, 'mailHosts', [])

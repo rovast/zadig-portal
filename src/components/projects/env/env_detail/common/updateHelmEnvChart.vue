@@ -65,7 +65,7 @@ import {
   getAllChartValuesYamlAPI,
   getCalculatedValuesYamlAPI
 } from '@api'
-import { cloneDeep, pick } from 'lodash'
+import { cloneDeep, pick, differenceBy, get } from 'lodash'
 
 const chartInfoTemp = {
   envName: '', // ?: String
@@ -292,18 +292,20 @@ export default {
     resetAllChartNameInfo () {
       this.allChartNameInfo = {}
     },
-    initAllChartNameInfo (envName = '') {
-      if (!this.chartNames) {
+    initAllChartNameInfo (chartNames, envName = '') {
+      if (!chartNames) {
         return
       }
-      this.chartNames.forEach(chart => {
+      chartNames.forEach(chart => {
         const envInfos = {}
         envName = envName || chart.envName || 'DEFAULT' // priority: envName -> chart.envName -> 'DEFAULT'
+        const initInfo = get(this.allChartNameInfo, `${chart.serviceName}.${envName}.initInfo`, null)
         envInfos[envName] = {
-          ...cloneDeep(chartInfoTemp),
+          ...cloneDeep(initInfo || chartInfoTemp),
           ...cloneDeep(chart),
           envName: envName === 'DEFAULT' ? '' : envName,
-          yamlSource: chart.overrideYaml ? 'freeEdit' : 'default'
+          yamlSource: (initInfo && initInfo.overrideYaml) || chart.overrideYaml ? 'freeEdit' : 'default',
+          initInfo
         }
         this.$set(this.allChartNameInfo, chart.serviceName, {
           ...this.allChartNameInfo[chart.serviceName],
@@ -328,9 +330,11 @@ export default {
         this.envScene === 'updateRenderSet'
           ? getChartValuesYamlAPI // get current env info
           : getAllChartValuesYamlAPI // get current project info
+
       const serviceNames = this.chartNames
         ? this.chartNames.map(chart => chart.serviceName)
         : [] // get all service info in current env
+
       const res = await fn(this.projectName, envName, serviceNames).catch(
         err => {
           this.disabledEnv.push(envName)
@@ -372,7 +376,10 @@ export default {
           allChartNameInfo[re.serviceName] = {
             ...this.allChartNameInfo[re.serviceName]
           }
-          allChartNameInfo[re.serviceName][envName] = envInfo
+          allChartNameInfo[re.serviceName][envName] = {
+            ...envInfo,
+            initInfo: cloneDeep(envInfo)
+          }
 
           this.$set(
             this.allChartNameInfo,
@@ -380,7 +387,10 @@ export default {
             allChartNameInfo[re.serviceName]
           )
         })
-        this.selectedChart = Object.keys(this.allChartNameInfo)[0]
+        this.selectedChart =
+          this.chartNames && this.chartNames.length
+            ? this.chartNames[0].serviceName
+            : res[0].serviceName
       }
     },
     copyEnvChartInfo (envName, initEnvName) {
@@ -441,7 +451,10 @@ export default {
           if (newV[0] && newV[0].envName) {
             this.selectedEnv = newV[0].envName
           }
-          this.initAllChartNameInfo()
+          const chartNames = oldV
+            ? differenceBy(newV, oldV, 'serviceName')
+            : newV
+          this.initAllChartNameInfo(chartNames, this.selectedEnv || this.handledEnv)
         }
       },
       immediate: true

@@ -79,7 +79,7 @@
           </el-select>
           <div class="image-secret">imagePullSecret 名称：default-registry-secret</div>
         </el-form-item>
-        <el-form-item v-if="projectConfig.source === 'system'" label="服务选择" prop="selectedService">
+        <el-form-item label="服务选择" prop="selectedService">
           <div class="select-service">
             <el-select
               v-model="projectConfig.selectedService"
@@ -307,7 +307,7 @@ export default {
       }
     },
     changeBaseEnv () {
-      this.projectConfig.selectedService = null
+      this.projectConfig.selectedService = this.projectChartNames
       this.envNames = [this.projectConfig.baseEnvName]
       this.envName = this.projectConfig.baseEnvName
       this.envScene = 'updateRenderSet'
@@ -331,21 +331,21 @@ export default {
             valueInfo.chartInfo.forEach(info => {
               info.envName = ''
             })
-          } else {
-            const selectedServices = this.projectConfig.selectedService.map(
-              service => service.serviceName
-            )
-            valueInfo.chartInfo = valueInfo.chartInfo.filter(chart =>
-              selectedServices.includes(chart.serviceName)
-            )
           }
+          const selectedServices = this.projectConfig.selectedService.map(
+            service => service.serviceName
+          )
+          valueInfo.chartInfo = valueInfo.chartInfo.filter(chart =>
+            selectedServices.includes(chart.serviceName)
+          )
+
           const defaultEnv = isCopy ? baseEnvName : 'DEFAULT'
           const payload = {
             envName: this.projectConfig.env_name,
             clusterID: this.projectConfig.cluster_id,
             registry_id: this.projectConfig.registry_id,
             baseEnvName: isCopy ? baseEnvName : '',
-            chartValues: valueInfo.chartInfo, // todo 传递部分
+            chartValues: valueInfo.chartInfo,
             defaultValues: valueInfo.envInfo[defaultEnv] || '',
             valuesData: {
               autoSync: valueInfo.gitInfo.autoSync,

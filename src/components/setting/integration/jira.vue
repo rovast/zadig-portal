@@ -33,6 +33,8 @@
           <el-input v-model="jiraEdit.access_token"
                     placeholder="用户密码"
                     autofocus
+                    show-password
+                    type="password"
                     auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -82,6 +84,8 @@
           <el-input v-model="jiraAdd.access_token"
                     placeholder="用户密码"
                     autofocus
+                    show-password
+                    type="password"
                     auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -222,6 +226,7 @@ export default {
     getJiraConfig () {
       getJiraAPI().then((res) => {
         if (res) {
+          res.access_token = this.$utils.aesDecrypt(res.access_token)
           this.$set(this.jira, [0], res)
         } else {
           this.$set(this, 'jira', [])

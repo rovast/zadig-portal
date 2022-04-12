@@ -58,6 +58,8 @@
         <el-form-item label="SK"
                       prop="sk">
           <el-input size="small"
+                    show-password
+                    type="password"
                     v-model="storage.sk"
                     placeholder="请输入 Secret Key"></el-input>
         </el-form-item>
@@ -154,6 +156,8 @@
                       prop="sk">
           <el-input size="small"
                     v-model="swapStorage.sk"
+                    type="passsword"
+                    show-password
                     placeholder="请输入 Secret Key"></el-input>
         </el-form-item>
         <el-form-item label="Bucket"
@@ -430,6 +434,9 @@ export default {
       this.loading = true
       getStorageListAPI().then((res) => {
         this.loading = false
+        res.forEach(item => {
+          item.sk = this.$utils.aesDecrypt(item.sk)
+        })
         this.allStorage = res
       })
     }

@@ -49,6 +49,8 @@
               v-model="userAccountGitHub.config.clientSecret"
               placeholder="输入 OAuth App Client Secret"
               autofocus
+              show-password
+              type="password"
               clearable
               auto-complete="off"
             ></el-input>
@@ -88,7 +90,8 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="管理员密码" prop="bindPW">
-            <el-input v-model="userAccountAD.config.bindPW" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
+            <el-input v-model="userAccountAD.config.bindPW"   show-password
+                      type="password" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item prop="startTLS" label="使用 SSL">
             <el-checkbox v-model="userAccountAD.config.startTLS"></el-checkbox>
@@ -165,7 +168,8 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="管理员密码" prop="bindPW">
-            <el-input v-model="userAccountLDAP.config.bindPW" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
+            <el-input v-model="userAccountLDAP.config.bindPW"  show-password
+                      type="password" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item prop="startTLS" label="使用 SSL">
             <el-checkbox v-model="userAccountLDAP.config.startTLS"></el-checkbox>
@@ -243,6 +247,8 @@
           <el-form-item label="Client Secret" prop="clientSecret">
             <el-input
               v-model="userAccountOAuth.config.clientSecret"
+              show-password
+              type="password"
               placeholder="输入 OAuth Client Secret"
               autofocus
               clearable
@@ -948,6 +954,7 @@ export default {
     },
     getAccountConfig () {
       getConnectorsAPI().then(res => {
+        // TODO:
         this.$set(this, 'accounts', res)
       })
     },

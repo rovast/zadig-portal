@@ -215,7 +215,7 @@ export default {
       getHostListAPI().then((res) => {
         this.loading = false
         res.forEach(element => {
-          element.private_key = window.atob(element.private_key)
+          element.private_key = this.$utils.aesDecrypt(element.private_key)
         })
         this.allHost = res
       })

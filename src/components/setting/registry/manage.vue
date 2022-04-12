@@ -66,6 +66,7 @@
           <el-input size="small"
                     clearable
                     type="passsword"
+                    show-password
                     v-model="registry.secret_key"></el-input>
         </el-form-item>
       </el-form>
@@ -366,6 +367,9 @@ export default {
       this.loading = true
       getRegistryListAPI().then((res) => {
         this.loading = false
+        res.forEach(item => {
+          item.secret_key = this.$utils.aesDecrypt(item.secret_key)
+        })
         this.allRegistry = res
       })
     }

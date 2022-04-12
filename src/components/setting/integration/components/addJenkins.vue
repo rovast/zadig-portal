@@ -40,6 +40,8 @@
           @change="validate(checkPassword)"
           v-model="addForm.password"
           :suffix-icon="showCheckIcon"
+          show-password
+          type="password"
           placeholder="Jenkins API Token"
           class="input"
         ></el-input>
@@ -91,6 +93,7 @@ export default {
       this.dialogVisible = true
       if (data) {
         this.isEdit = true
+        data.password = this.$utils.aesDecrypt(data.password)
         this.addForm = data
       } else {
         this.isEdit = false

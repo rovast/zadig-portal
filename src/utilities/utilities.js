@@ -723,15 +723,16 @@ const utils = {
  * @param {string} encryptedHex 加密的字符串
  * @param {array} key 加密key
  */
-  rsaDecrypt (datamsg) {
+  aesDecrypt (data) {
     const aesKey = localStorage.getItem('aesKey')
-    const encryptedBytes = aesjs.utils.hex.toBytes(datamsg)
+    const encryptedBytes = aesjs.utils.hex.toBytes(data)
     const iv = aesjs.utils.utf8.toBytes(aesKey.substr(0, 16))
     const text = aesjs.utils.utf8.toBytes(aesKey)
     // eslint-disable-next-line new-cap
     const aesCfb = new aesjs.ModeOfOperation.cfb(text, iv, 16)
     const decryptedBytes = aesCfb.decrypt(encryptedBytes)
     const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes.slice(16)) // 截取后16位
+    console.log(decryptedText)
     return decryptedText
   }
 }

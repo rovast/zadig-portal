@@ -24,7 +24,7 @@
           <el-input size="small" placeholder="请输入用户名" v-model="helm.username"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input size="small" type="passsword" placeholder="请输入密码" v-model="helm.password"></el-input>
+          <el-input size="small" type="passsword"  show-password  placeholder="请输入密码" v-model="helm.password"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -53,7 +53,8 @@
           <el-input size="small" placeholder="请输入用户名" v-model="swapHelm.username"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input size="small" type="passsword" placeholder="请输入密码" v-model="swapHelm.password"></el-input>
+          <el-input size="small"  type="passsword"
+                    show-password  placeholder="请输入密码" v-model="swapHelm.password"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -226,6 +227,9 @@ export default {
       this.loading = true
       getHelmRepoAPI().then(res => {
         this.loading = false
+        res.forEach(item => {
+          item.password = this.$utils.aesDecrypt(item.password)
+        })
         this.allHelmRepos = res
       })
     }

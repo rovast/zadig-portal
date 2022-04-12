@@ -113,10 +113,14 @@ export default {
     bus.$emit(`set-topbar-title`, {
       title: '',
       breadcrumb: [
-        { title: '版本管理', url: `` },
+        { title: '项目', url: `/v1/projects` },
         {
           title: projectName,
-          url: `/v1/delivery/version/${projectName}?deployType=helm`
+          url: `/v1/projects/detail/${projectName}/detail`
+        },
+        {
+          title: '版本管理',
+          url: `/v1/projects/detail/${projectName}/version`
         },
         { title: '创建版本', url: `` }
       ]
@@ -155,7 +159,7 @@ export default {
 
   .step-content {
     min-height: calc(~'100% - 200px');
-    margin: 30px 8% 20px;
+    padding: 30px 8% 20px;
   }
 
   .footer {

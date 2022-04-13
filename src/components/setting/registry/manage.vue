@@ -68,6 +68,18 @@
                     type="passsword"
                     v-model="registry.secret_key"></el-input>
         </el-form-item>
+        <el-button type="text" size="small" @click="isShowHighSetting = !isShowHighSetting">
+          高级配置
+          <i :class="[isShowHighSetting ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
+        </el-button>
+        <template v-if="isShowHighSetting">
+          <el-form-item label="TLS证书内容(公钥)" prop="secret_key">
+            <el-input type="textarea" rows="4" clearable v-model="registry.advanced_setting.tls_cert"></el-input>
+          </el-form-item>
+          <el-form-item label="TLS私钥内容" prop="secret_key">
+            <el-input type="textarea" rows="4" clearable v-model="registry.advanced_setting.tls_key"></el-input>
+          </el-form-item>
+        </template>
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -167,7 +179,11 @@ export default {
         secret_key: '',
         reg_provider: '',
         region: '',
-        is_default: false
+        is_default: false,
+        advanced_setting: {
+          tls_cert: '', // 证书内容
+          tls_key: '' // 证书私钥
+        }
       },
       providers: [
         {
@@ -253,7 +269,8 @@ export default {
         }],
         region: [{ required: true, message: '请输入区域', trigger: ['blur'] }],
         namespace: [{ required: true, message: '请输入 Namespace', trigger: ['blur'] }]
-      }
+      },
+      isShowHighSetting: false
     }
   },
   computed: {
@@ -270,7 +287,12 @@ export default {
         secret_key: '',
         reg_provider: '',
         region: '',
-        is_default: this.allRegistry.length === 0
+        is_default: this.allRegistry.length === 0,
+        advanced_setting: {
+          tls_cert: '', // 证书内容
+          tls_key: '' // 证书私钥
+        }
+
       }
       this.mode = 'create'
       this.dialogRegistryFormVisible = true
@@ -292,7 +314,11 @@ export default {
           secret_key: '',
           reg_provider: val,
           region: '',
-          is_default: this.registry.is_default
+          is_default: this.registry.is_default,
+          advanced_setting: {
+            tls_cert: '', // 证书内容
+            tls_key: '' // 证书私钥
+          }
         }
         this.$refs.registry.clearValidate()
       })
@@ -366,6 +392,14 @@ export default {
       this.loading = true
       getRegistryListAPI().then((res) => {
         this.loading = false
+        res.forEach(item => {
+          if (!item.advanced_setting) {
+            item.advanced_setting = {
+              tls_cert: '', // 证书内容
+              tls_key: '' // 证书私钥
+            }
+          }
+        })
         this.allRegistry = res
       })
     }

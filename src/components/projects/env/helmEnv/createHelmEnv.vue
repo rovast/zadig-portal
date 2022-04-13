@@ -116,7 +116,7 @@
         :chartNames="projectConfig.selectedService"
         :envNames="envNames"
         :handledEnv="envName"
-        :envScene="envScene"
+        :envScene="`createEnv`"
       ></HelmEnvTemplate>
       <el-form label-width="35%" class="ops">
         <el-form-item>
@@ -216,7 +216,6 @@ export default {
       // chartNames: null, // envNames and envName || chartNames
       envNames: [],
       envName: '',
-      envScene: 'createEnv', // updateRenderSet
       imageRegistry: [],
       hostingNamespace: []
     }
@@ -297,7 +296,6 @@ export default {
         this.projectConfig.selectedService = this.projectChartNames
         this.envNames = []
         this.envName = ''
-        this.envScene = 'createEnv'
         // this.getTemplateAndImg()
       } else if (source === 'copy') {
         if (!this.projectConfig.baseEnvName) {
@@ -310,7 +308,6 @@ export default {
       this.projectConfig.selectedService = this.projectChartNames
       this.envNames = [this.projectConfig.baseEnvName]
       this.envName = this.projectConfig.baseEnvName
-      this.envScene = 'updateRenderSet'
     },
     async deployHelmEnv () {
       const res = await this.$refs.helmEnvTemplateRef.validate().catch(err => {

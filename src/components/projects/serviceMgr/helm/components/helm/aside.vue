@@ -91,7 +91,8 @@
                   </span>
                 </el-tooltip>
               </span>
-              <el-input size="small"  style="display: inline-block;" v-model="input" placeholder="请输入 Release 名称"></el-input>
+              <el-input size="mini"  style="display: inline-block;" :value="currentService.release_naming" @input="handleInputChange" placeholder="请输入 Release 名称"></el-input>
+              <el-button size="mini" @click="renamingHelmRelease" type="primary" plain>保存</el-button>
             </div>
           </div>
         </div>
@@ -123,20 +124,14 @@ import { mapState } from 'vuex'
 import Policy from '../../../k8s/container/policy.vue'
 import Help from './help.vue'
 import MatchRule from './matchRule.vue'
+import { cloneDeep } from 'lodash'
+import { renamingHelmReleaseAPI } from '@api'
 export default {
   props: {
     changeExpandFileList: Function
   },
   data () {
     return {
-      allRegistry: [],
-      chartValues: [],
-      detectedServices: [],
-      showBuild: false,
-      serviceName: null,
-      name: null,
-      buildName: null,
-      isEdit: false,
       updateMatchRuleFlag: false
     }
   },
@@ -164,6 +159,21 @@ export default {
       }
       this.changeExpandFileList('add', item)
     },
+    handleInputChange (value) {
+      const service = cloneDeep(this.currentService)
+      service.release_naming = value
+      this.$store.commit('CURRENT_SERVICE', service)
+    },
+    renamingHelmRelease () {
+      const projectName = this.projectName
+      const payload = {
+        service_name: this.serviceName,
+        naming: this.currentService.release_naming
+      }
+      renamingHelmReleaseAPI(projectName, payload).then((res) => {
+        this.fileList = res
+      })
+    },
     changeRoute (step) {
       this.$router.replace({
         query: Object.assign(
@@ -176,22 +186,23 @@ export default {
       })
     }
   },
-  beforeDestroy () {
-    bus.$off('save-var')
-  },
   computed: {
     projectName () {
       return this.$route.params.project_name
     },
     ...mapState({
-      serviceModules: state => state.serviceManage.serviceModules
+      serviceModules: state => state.serviceManage.serviceModules,
+      currentService: state => state.serviceManage.currentService
     }),
-    serviceType () {
-      return this.service.type
+    serviceName () {
+      return this.$route.query.service_name
     },
     selected () {
       return this.$route.query.rightbar || 'var'
     }
+  },
+  beforeDestroy () {
+    bus.$off('save-var')
   },
   components: {
     Policy,

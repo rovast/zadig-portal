@@ -376,6 +376,10 @@ export function getHelmRepoChartAPI (repoName) {
   return http.get(`/api/aslan/system/helm/${repoName}/index`)
 }
 
+export function renamingHelmReleaseAPI (projectName) {
+  return http.put(`/api/aslan/service/helm/services/releaseNaming?projectName=${projectName}`)
+}
+
 export function imagesAPI (payload, registry = '') {
   return http.post(`/api/aslan/system/registry/images?registryId=${registry}`, { names: payload })
 }

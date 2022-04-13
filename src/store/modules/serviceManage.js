@@ -165,6 +165,7 @@ export default {
     queryServiceModule ({ commit }, payload) {
       return Api.getHelmChartServiceModule(payload.projectName, payload.serviceName).then(ret => {
         commit(Mutation.QUERY_SERVICE_MODULE, ret.service_modules)
+        commit(Mutation.CURRENT_SERVICE, ret.service)
       })
     },
     resetServiceModule ({ commit }, payload) {

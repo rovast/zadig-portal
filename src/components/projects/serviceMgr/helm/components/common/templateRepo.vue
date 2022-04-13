@@ -190,7 +190,7 @@ export default {
         valuesData: {
           yamlSource: 'repo',
           gitRepoConfig: this.importRepoInfo.gitRepoConfig,
-          autoSync: this.importRepoInfo.gitRepoConfig.autoSync
+          autoSync: this.importRepoInfo.gitRepoConfig ? this.importRepoInfo.gitRepoConfig.autoSync : false
         }
       }
 
@@ -214,7 +214,6 @@ export default {
           showServiceName: payload.name
         })
 
-        this.$store.commit('UPDATE_ENV_BUTTON', true)
         this.$store.commit('CHART_NAMES', res.successServices.map(service => {
           return {
             serviceName: service,
@@ -231,7 +230,7 @@ export default {
         valuesData: {
           yamlSource: 'repo',
           gitRepoConfig: this.importRepoInfo.gitRepoConfig,
-          autoSync: this.importRepoInfo.gitRepoConfig.autoSync
+          autoSync: this.importRepoInfo.gitRepoConfig ? this.importRepoInfo.gitRepoConfig.autoSync : false
         }
       }
       const sId = setTimeout(() => {
@@ -253,7 +252,6 @@ export default {
           showServiceName: res.successServices[0]
         })
 
-        this.$store.commit('UPDATE_ENV_BUTTON', true)
         this.$store.commit('CHART_NAMES', res.successServices.map(service => {
           return {
             serviceName: service,

@@ -35,8 +35,6 @@ export const CHART_NAMES = 'CHART_NAMES'
 
 export const RESET_CHART_NAMES = 'RESET_CHART_NAMES'
 
-export const UPDATE_ENV_BUTTON = 'UPDATE_ENV_BUTTON'
-
 export const QUERY_ORDER_SERVICE = 'QUERY_ORDER_SERVICE'
 
 // External Link

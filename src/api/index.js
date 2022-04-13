@@ -1067,7 +1067,10 @@ export function setCapacityAPI (payload) {
 export function cleanCacheAPI () {
   return http.post('/api/aslan/system/cleanCache/oneClick')
 }
-
+// 定时清理
+export function timingCleanAPI (payload) {
+  return http.post('/api/aslan/system/cleanCache/setCron', payload)
+}
 export function getCleanCacheStatusAPI () {
   return http.get('/api/aslan/system/cleanCache/state')
 }

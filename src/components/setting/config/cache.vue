@@ -22,6 +22,14 @@
                  :disabled="cleanStatus && cleanStatus.status === 'cleaning'"
                  plain
                  round>一键清理</el-button>
+      <div class="timing">
+        <span>定时清理</span>
+        <el-switch v-model="cleanStatus.cron_enabled"></el-switch>
+        <span v-if="cleanStatus.cron_enabled">
+          <el-input style="width: 200px;" size="small" v-model="cleanStatus.cron"  placeholder="Cron表达式"></el-input>
+          <el-button size="mini" type="primary" @click="timingClean" plain round>保存</el-button>
+        </span>
+      </div>
       <template v-if="cleanStatus">
         <div class="desc">
           <span class="title">状态：</span>
@@ -67,12 +75,15 @@
   </div>
 </template>
 <script>
-import { cleanCacheAPI, getCleanCacheStatusAPI } from '@api'
+import { cleanCacheAPI, getCleanCacheStatusAPI, timingCleanAPI } from '@api'
 import moment from 'moment'
 export default {
   data () {
     return {
-      cleanStatus: null,
+      cleanStatus: {
+        cron_enabled: false,
+        cron: ''
+      },
       timerId: null,
       finishedReq: false,
       statusMap: {
@@ -125,6 +136,25 @@ export default {
         })
       })
     },
+    timingClean () {
+      const { cron, cron_enabled } = this.cleanStatus
+      const params = {
+        cron, cron_enabled
+      }
+      if (cron_enabled && !cron) {
+        this.$message({
+          type: 'warning',
+          message: '请填入cron'
+        })
+        return
+      }
+      timingCleanAPI(params).then(res => {
+        this.$message({
+          type: 'success',
+          message: '设置成功'
+        })
+      })
+    },
     convertTimestamp (value) {
       return moment.unix(value).format('YYYY-MM-DD HH:mm:ss')
     }
@@ -153,6 +183,12 @@ export default {
     .item {
       color: #303133;
       font-size: 16px;
+    }
+
+    .timing {
+      height: 46px;
+      margin: 16px 0;
+      line-height: 46px;
     }
 
     .desc {

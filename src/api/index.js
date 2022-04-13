@@ -1472,6 +1472,10 @@ export function getChartLastVersionAPI (projectName, chartRepoName, chartName) {
   return http.get(`/api/aslan/delivery/releases/helm/charts/version?projectName=${projectName}&chartName=${chartName.join(',')}&chartRepoName=${chartRepoName}`)
 }
 
+export function getChartServiceImgsAPI (projectName, envName, chartName) {
+  return http.get(`/api/aslan/environment/environments/${envName}/helm/images?projectName=${projectName}&serviceName=${chartName}`)
+}
+
 // Forgot password
 export function retrievePasswordAPI (account) {
   return http.get(`/api/v1/retrieve?account=${account}`)

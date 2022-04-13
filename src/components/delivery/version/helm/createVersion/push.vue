@@ -12,18 +12,36 @@
         </el-select>
       </el-form-item>
       <el-form-item label="填写 Chart 版本号"></el-form-item>
-      <el-form-item
-        v-for="(chart, index) in releaseInfo.chartDatas"
-        :key="chart.serviceName"
-        :label="chart.serviceName"
-        :prop="`chartDatas[${index}].version`"
-        :rules="[{
+      <div v-for="(chart, index) in releaseInfo.chartDatas" :key="chart.serviceName">
+        <el-form-item
+          :label="chart.serviceName"
+          :prop="`chartDatas[${index}].version`"
+          :rules="[{
           required: true, message: `请输入 Chart ${chart.serviceName} 版本号`, trigger: ['change', 'blur']
         }]"
-      >
-        <el-input v-model="chart.version" placeholder="请输入 Chart 版本号" size="small"></el-input>
-        <span class="last-version">上个版本：{{chart.lastVersion || '无'}}</span>
-      </el-form-item>
+        >
+          <el-input v-model="chart.version" placeholder="请输入 Chart 版本号" size="small"></el-input>
+          <span class="last-version">上个版本：{{chart.lastVersion || '无'}}</span>
+          <span class="config-btn" @click="showAdvancedConfig(chart.serviceName,index)">
+            配置镜像 Tag
+            <i v-if="advancedConfigVisible[chart.serviceName]" class="icon el-icon-arrow-up"></i>
+            <i v-else-if="!advancedConfigVisible[chart.serviceName]" class="icon el-icon-arrow-down"></i>
+          </span>
+        </el-form-item>
+        <div v-if="advancedConfigVisible[chart.serviceName]" class="advanced-config">
+          <span class="title">配置镜像 Tag</span>
+          <el-row v-for="(service,chartServiceImgIndex) in chart.imageData" :key="chartServiceImgIndex" class="img-row">
+            <el-col :span="4">
+              <span class="service-name">{{service.imageName}}</span>
+            </el-col>
+            <el-col :span="16">
+              <el-input v-model="service.imageTag" placeholder="请输入镜像 Tag" size="small" clearable></el-input>
+              <span v-if="chartServiceImgIndex === 0" @click="applyInputTagToAll(service.imageTag,chart.imageData)" class="config-btn">应用全部</span>
+            </el-col>
+          </el-row>
+        </div>
+      </div>
+
       <!-- <div>
         <el-button type="text" @click="showEnhanced = !showEnhanced">
           高级功能
@@ -50,7 +68,8 @@ import {
   getStorageListAPI,
   getHelmRepoAPI,
   getRegistryListAPI,
-  getChartLastVersionAPI
+  getChartLastVersionAPI,
+  getChartServiceImgsAPI
 } from '@api'
 import { keyBy } from 'lodash'
 
@@ -80,7 +99,9 @@ export default {
       showEnhanced: false,
       helmRepoList: [],
       storageList: [],
-      imageRegistryList: []
+      imageRegistryList: [],
+      chartServiceImgs: {},
+      advancedConfigVisible: {}
     }
   },
   methods: {
@@ -112,12 +133,46 @@ export default {
         chart.version = ''
         return chart.serviceName
       })
-      getChartLastVersionAPI(this.releaseInfo.productName, chartRepoName, chartName).then(res => {
+      getChartLastVersionAPI(
+        this.releaseInfo.productName,
+        chartRepoName,
+        chartName
+      ).then(res => {
         const resObj = keyBy(res, 'chartName')
         this.releaseInfo.chartDatas.forEach(chart => {
           chart.lastVersion = resObj[chart.serviceName].chartVersion
           chart.version = resObj[chart.serviceName].nextChartVersion
         })
+      })
+    },
+    getChartServiceImgs (chartName, chartIndex) {
+      const projectName = this.releaseInfo.productName
+      const envName = this.releaseInfo.envName
+      getChartServiceImgsAPI(projectName, envName, chartName).then(res => {
+        if (res.serviceImages && res.serviceImages.length > 0) {
+          this.$set(
+            this.releaseInfo.chartDatas[chartIndex],
+            'imageData',
+            res.serviceImages[0].imageData
+          )
+        } else {
+          this.$set(this.releaseInfo.chartDatas[chartIndex], 'imageData', [])
+        }
+      })
+    },
+    showAdvancedConfig (chartName, chartIndex) {
+      this.$set(
+        this.advancedConfigVisible,
+        chartName,
+        !this.advancedConfigVisible[chartName]
+      )
+      if (this.advancedConfigVisible[chartName]) {
+        this.getChartServiceImgs(chartName, chartIndex)
+      }
+    },
+    applyInputTagToAll (input, imageData) {
+      imageData.forEach(img => {
+        img.imageTag = input
       })
     }
   },
@@ -144,15 +199,47 @@ export default {
 
   .last-version {
     display: inline-block;
-    margin-left: 8px;
     color: #606266;
     font-size: 12px;
+  }
+
+  .config-btn {
+    display: inline-block;
+    margin-left: 10px;
+    color: @themeColor;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .advanced-config {
+    margin-bottom: 22px;
+    margin-left: 160px;
+    padding: 10px 20px;
+    background: #fff;
+    border-radius: 6px;
+
+    .title {
+      display: inline-block;
+      margin-bottom: 5px;
+      color: #303133;
+      font-size: 14px;
+    }
+
+    .img-row {
+      margin-bottom: 10px;
+
+      .service-name {
+        color: #606266;
+        font-size: 13px;
+        line-height: 30px;
+      }
+    }
   }
 
   /deep/.el-input,
   .el-textarea,
   .el-select {
-    width: calc(~'100% - 150px');
+    width: calc(~'100% - 200px');
   }
 
   /deep/.el-select > .el-input {

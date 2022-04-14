@@ -171,7 +171,11 @@
       <el-table-column prop="name"
                        label="服务"
                        width="100px"
-                       ></el-table-column>
+                       >
+        <div slot-scope="scope">
+          {{$utils.showServiceName(scope.row.name)}}
+        </div>
+      </el-table-column>
       <el-table-column
                        label="Jenkins Job Name"
                        >

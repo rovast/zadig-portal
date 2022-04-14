@@ -3,7 +3,7 @@
     <el-form ref="pushRef" :rules="rules" :model="releaseInfo" label-width="160px">
       <el-form-item label="选择镜像仓库" prop="imageRegistryID">
         <el-select v-model="releaseInfo.imageRegistryID" placeholder="选择镜像仓库" size="small">
-          <el-option :label="`${image.reg_addr}/${image.namespace}`" :value="image.id" v-for="image in imageRegistryList" :key="image.id"></el-option>
+          <el-option :label="image.namespace ? `${image.reg_addr}/${image.namespace}` : image.reg_addr" :value="image.id" v-for="image in imageRegistryList" :key="image.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="选择 Chart 仓库" prop="chartRepoName">
@@ -67,7 +67,7 @@
 import {
   getStorageListAPI,
   getHelmRepoAPI,
-  getRegistryListAPI,
+  getRegistryWhenBuildAPI,
   getChartLastVersionAPI,
   getChartServiceImgsAPI
 } from '@api'
@@ -119,7 +119,7 @@ export default {
       })
     },
     getRegistryList () {
-      getRegistryListAPI().then(res => {
+      getRegistryWhenBuildAPI().then(res => {
         this.imageRegistryList = res
       })
     },

@@ -5,7 +5,6 @@ import Element from 'element-ui'
 import errorMap from '@/utilities/errorMap'
 import Store from '../store'
 import Router from '../router'
-import utils from '@/utilities/utilities'
 const specialAPIs = ['/api/aslan/system/operation', '/api/aslan/delivery/artifacts', '/api/aslan/environment/kube/workloads']
 const ignoreErrReq = '/api/aslan/services/validateUpdate/'
 const ignoreErrResponse = 'the following services are modified since last update:'
@@ -14,7 +13,6 @@ const analyticsReq = 'https://api.koderover.com/api/operation/upload'
 const userInitEnvRoute = '/v1/projects/initialize/'
 const http = axios.create()
 const CancelToken = axios.CancelToken
-const key = utils.rsaEncrypt()
 let source = null
 export function initSource () {
   source = CancelToken.source()
@@ -772,7 +770,7 @@ export function getCodeSourceMaskedAPI () {
 }
 
 // Return details and only for admin
-export function getCodeProviderAPI () {
+export function getCodeProviderAPI (key) {
   return http.get(`/api/v1/codehosts?encryptedKey=${key}`)
 }
 
@@ -854,7 +852,7 @@ export function deleteGithubAppAPI (id) {
 }
 
 // Account
-export function getConnectorsAPI () {
+export function getConnectorsAPI (key) {
   return http.get(`/api/v1/connectors?encryptedKey=${key}`)
 }
 
@@ -875,7 +873,7 @@ export function syncLDAPAPI (id) {
 }
 
 // Jira
-export function getJiraAPI () {
+export function getJiraAPI (key) {
   return http.get(`/api/v1/jira?encryptedKey=${key}`)
 }
 
@@ -908,7 +906,7 @@ export function checkJenkinsConfigExistsAPI () {
   return http.get('/api/aslan/system/jenkins/exist')
 }
 
-export function queryJenkins () {
+export function queryJenkins (key) {
   return http.get(`/api/aslan/system/jenkins/integration?encryptedKey=${key}`)
 }
 
@@ -929,7 +927,7 @@ export function createExternalSystemAPI (payload) {
   return http.post(`/api/aslan/system/external`, payload)
 }
 
-export function getExternalSystemsAPI (page_num = 1, page_size = 100) {
+export function getExternalSystemsAPI (key, page_num = 1, page_size = 100) {
   return http.get(`/api/aslan/system/external?page_num=${page_num}&page_size=${page_size}&encryptedKey=${key}`)
 }
 
@@ -946,10 +944,12 @@ export function deleteExternalSystemAPI (id) {
 }
 
 // Mail
-export function getEmailHostAPI () {
+export function getEmailHostAPI (key) {
   return http.get(`/api/v1/emails/internal/host?encryptedKey=${key}`)
 }
-
+export function checkEmailHostAPI () {
+  return http.get(`/api/v1/emails/host`)
+}
 export function deleteEmailHostAPI () {
   return http.delete(`/api/v1/emails/host`)
 }
@@ -1091,7 +1091,7 @@ export function deleteExternalLinkAPI (id) {
 }
 
 // Registry
-export function getRegistryListAPI () {
+export function getRegistryListAPI (key) {
   return http.get(`/api/aslan/system/registry/namespaces?encryptedKey=${key}`)
 }
 
@@ -1108,7 +1108,7 @@ export function deleteRegistryAPI (id) {
 }
 
 // OSS
-export function getStorageListAPI () {
+export function getStorageListAPI (key) {
   return http.get(`/api/aslan/system/s3storage?encryptedKey=${key}`)
 }
 
@@ -1125,7 +1125,7 @@ export function deleteStorageAPI (id) {
 }
 
 // System setting : HELM
-export function getHelmRepoAPI () {
+export function getHelmRepoAPI (key) {
   return http.get(`/api/aslan/system/helm?encryptedKey=${key}`)
 }
 
@@ -1179,7 +1179,7 @@ export function getClusterPvcAPI (clusterId, namespace) {
 }
 
 // Host
-export function getHostListAPI () {
+export function getHostListAPI (key) {
   return http.get(`/api/aslan/system/privateKey?encryptedKey=${key}`)
 }
 

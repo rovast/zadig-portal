@@ -130,10 +130,11 @@
                       :placeholder="codeEdit.type==='gitlab'?'Application ID':'Client ID'"
                       auto-complete="off"></el-input>
           </el-form-item>
+          <!-- v-if dialogCodeEditFormVisible是为了每次打开弹窗使小眼睛都关闭 -->
           <el-form-item :label="codeEdit.type==='gitlab'?'Secret':'Client Secret'"
                         prop="client_secret">
             <el-input v-model="codeEdit.client_secret"
-                      show-password
+                      show-password v-if='dialogCodeEditFormVisible'
                       type="password"
                       :placeholder="codeEdit.type==='gitlab'?'Secret':'Client Secret'"
                       auto-complete="off"></el-input>
@@ -176,7 +177,7 @@
           <el-form-item label="Client Secret"
                         prop="client_secret">
             <el-input v-model="codeEdit.client_secret"
-                      show-password
+                      show-password v-if='dialogCodeEditFormVisible'
                       type="password"
                       placeholder="Client Secret"
                       auto-complete="off"></el-input>
@@ -212,7 +213,7 @@
                         label="Secret Key"
                         prop="client_secret">
             <el-input v-model="codeEdit.client_secret"
-                      show-password
+                      show-password v-if='dialogCodeEditFormVisible'
                       type="password"
                       placeholder="Secret Key"
                       auto-complete="off"></el-input>
@@ -384,7 +385,7 @@
           </el-form-item>
           <el-form-item :label="codeAdd.type==='gitlab'?'Secret':'Client Secret'"
                         prop="client_secret">
-            <el-input v-model="codeAdd.client_secret"     show-password
+            <el-input v-model="codeAdd.client_secret"     show-password v-if='dialogCodeEditFormVisible'
                       type="password"
                       :placeholder="codeAdd.type==='gitlab'?'Secret':'Client Secret'"
                       auto-complete="off"></el-input>
@@ -428,7 +429,7 @@
                         prop="client_secret">
             <el-input v-model="codeAdd.client_secret"
                       placeholder="Client Secret"
-                      show-password
+                      show-password v-if='dialogCodeEditFormVisible'
                       type="password"
                       auto-complete="off"></el-input>
           </el-form-item>
@@ -464,7 +465,7 @@
                         prop="client_secret">
             <el-input v-model="codeAdd.client_secret"
                       placeholder="Secret Key"
-                      show-password
+                      show-password v-if='dialogCodeEditFormVisible'
                       type="password"
                       auto-complete="off"></el-input>
           </el-form-item>
@@ -790,7 +791,8 @@ export default {
       })
     },
     getCodeConfig () {
-      getCodeProviderAPI().then((res) => {
+      const key = this.$utils.rsaEncrypt()
+      getCodeProviderAPI(key).then((res) => {
         res.forEach(item => {
           item.client_secret = this.$utils.aesDecrypt(item.client_secret)
         })

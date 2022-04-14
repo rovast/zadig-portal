@@ -59,6 +59,7 @@
                       prop="sk">
           <el-input size="small"
                     show-password
+                    v-if="dialogStorageCreateFormVisible"
                     type="password"
                     v-model="storage.sk"
                     placeholder="请输入 Secret Key"></el-input>
@@ -158,6 +159,7 @@
                     v-model="swapStorage.sk"
                     type="passsword"
                     show-password
+                    v-if="dialogStorageEditFormVisible"
                     placeholder="请输入 Secret Key"></el-input>
         </el-form-item>
         <el-form-item label="Bucket"
@@ -432,7 +434,8 @@ export default {
     },
     getStorage () {
       this.loading = true
-      getStorageListAPI().then((res) => {
+      const key = this.$utils.rsaEncrypt()
+      getStorageListAPI(key).then((res) => {
         this.loading = false
         res.forEach(item => {
           item.sk = this.$utils.aesDecrypt(item.sk)

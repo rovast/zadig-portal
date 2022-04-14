@@ -90,7 +90,7 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="管理员密码" prop="bindPW">
-            <el-input v-model="userAccountAD.config.bindPW"   show-password
+            <el-input v-model="userAccountAD.config.bindPW"   show-password v-if="dialogUserAccountFormVisible && userAccount.name ==='Microsoft Active Directory'"
                       type="password" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item prop="startTLS" label="使用 SSL">
@@ -168,7 +168,7 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="管理员密码" prop="bindPW">
-            <el-input v-model="userAccountLDAP.config.bindPW"  show-password
+            <el-input v-model="userAccountLDAP.config.bindPW"  show-password v-if="dialogUserAccountFormVisible && userAccount.name ==='OpenLDAP'"
                       type="password" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item prop="startTLS" label="使用 SSL">
@@ -953,8 +953,13 @@ export default {
       })
     },
     getAccountConfig () {
-      getConnectorsAPI().then(res => {
+      const key = this.$utils.rsaEncrypt()
+      getConnectorsAPI(key).then(res => {
+        console.log(res)
         // TODO:
+        res.forEach(item => {
+          item.config.bindPW = this.$utils.aesDecrypt(item.config.bindPW)
+        })
         this.$set(this, 'accounts', res)
       })
     },

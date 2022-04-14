@@ -693,7 +693,7 @@ const utils = {
   },
   // 随机生成32位aesKey
   generateAesKey (len = 16) {
-    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     let num = ''
     for (let i = 0; i < len; i++) {
       num += arr[parseInt(Math.random() * len)]
@@ -732,7 +732,7 @@ const utils = {
     const aesCfb = new aesjs.ModeOfOperation.cfb(text, iv, 16)
     const decryptedBytes = aesCfb.decrypt(encryptedBytes)
     const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes.slice(16)) // 截取后16位
-    console.log(decryptedText)
+    // base64
     return decryptedText
   }
 }

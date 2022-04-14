@@ -212,7 +212,8 @@ export default {
     },
     getHost () {
       this.loading = true
-      getHostListAPI().then((res) => {
+      const key = this.$utils.rsaEncrypt()
+      getHostListAPI(key).then((res) => {
         this.loading = false
         res.forEach(element => {
           element.private_key = this.$utils.aesDecrypt(element.private_key)

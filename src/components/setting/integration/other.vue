@@ -9,8 +9,7 @@
           <el-input v-model="externalEdit.server" placeholder="输入系统访问地址" size="small"></el-input>
         </el-form-item>
         <el-form-item label="API Token" prop="api_token">
-          <el-input v-model="externalEdit.api_token"   show-password
-                    type="password" placeholder="输入 API Token" size="small"></el-input>
+          <el-input v-model="externalEdit.api_token" show-password v-if="dialogExternalVisible" type="password" placeholder="输入 API Token" size="small"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -118,9 +117,11 @@ export default {
   },
   methods: {
     getExternalConfig () {
-      getExternalSystemsAPI().then(res => {
+      const key = this.$utils.rsaEncrypt()
+      getExternalSystemsAPI(key).then(res => {
         res.external_system.forEach(item => {
           item.id = this.$utils.aesDecrypt(item.id)
+          item.api_token = this.$utils.aesDecrypt(item.api_token)
         })
         this.external = res.external_system
       })

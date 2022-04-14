@@ -26,7 +26,7 @@
         <span>定时清理</span>
         <el-switch v-model="cleanStatus.cron_enabled"></el-switch>
         <span v-if="cleanStatus.cron_enabled">
-          <el-input style="width: 200px;" size="small" v-model="cleanStatus.cron"  placeholder="Cron表达式"></el-input>
+          <el-input style="width: 200px;" size="small" v-model="cleanStatus.cron"  placeholder="Cron 表达式"></el-input>
           <el-button size="mini" type="primary" @click="timingClean" plain round>保存</el-button>
         </span>
       </div>
@@ -144,7 +144,7 @@ export default {
       if (cron_enabled && !cron) {
         this.$message({
           type: 'warning',
-          message: '请填入cron'
+          message: '请填入 Cron 表达式'
         })
         return
       }

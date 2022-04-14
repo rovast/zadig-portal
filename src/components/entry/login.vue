@@ -114,6 +114,7 @@ export default {
           const payload = this.loginForm
           const res = await this.$store.dispatch('LOGIN', payload)
           if (res) {
+            this.getPublicKey()
             this.loading = false
             this.redirectByDevice()
             this.getPublicKey()
@@ -126,6 +127,7 @@ export default {
       })
     },
     async checkLogin () {
+      this.getPublicKey()
       const userInfo = store.get('userInfo')
       if (userInfo) {
         this.redirectByDevice()
@@ -201,7 +203,7 @@ export default {
         this.redirectByDevice()
       }
     } else {
-      this.checkLogin()
+      // this.checkLogin()
     }
   }
 }

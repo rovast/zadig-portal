@@ -52,6 +52,7 @@
               show-password
               type="password"
               clearable
+              v-if="dialogUserAccountFormVisible"
               auto-complete="off"
             ></el-input>
           </el-form-item>
@@ -246,6 +247,7 @@
           </el-form-item>
           <el-form-item label="Client Secret" prop="clientSecret">
             <el-input
+              v-if="dialogUserAccountFormVisible"
               v-model="userAccountOAuth.config.clientSecret"
               show-password
               type="password"
@@ -956,9 +958,14 @@ export default {
       const key = this.$utils.rsaEncrypt()
       getConnectorsAPI(key).then(res => {
         console.log(res)
-        // TODO:
+
         res.forEach(item => {
-          item.config.bindPW = this.$utils.aesDecrypt(item.config.bindPW)
+          if (item.config.bindPW) {
+            item.config.bindPW = this.$utils.aesDecrypt(item.config.bindPW)
+          }
+          if (item.config.clientSecret) {
+            item.config.clientSecret = this.$utils.aesDecrypt(item.config.clientSecret)
+          }
         })
         this.$set(this, 'accounts', res)
       })

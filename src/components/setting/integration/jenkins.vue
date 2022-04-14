@@ -102,9 +102,6 @@ export default {
       const key = this.$utils.rsaEncrypt()
       const res = await queryJenkins(key).catch(error => console.log(error))
       if (res) {
-        res.forEach(item => {
-          item.password = this.$utils.aesDecrypt(item.password)
-        })
         this.tableData = res
       }
     }

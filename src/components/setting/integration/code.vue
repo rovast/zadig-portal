@@ -1,6 +1,6 @@
 <template>
   <div class="integration-code-container">
-    <!--start of edit code dialog-->{{dialogCodeEditFormVisible}}
+    <!--start of edit code dialog-->
     <el-dialog title="代码管理-编辑"
                custom-class="edit-form-dialog"
                :close-on-click-modal="false"

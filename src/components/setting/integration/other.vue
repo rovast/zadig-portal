@@ -120,7 +120,6 @@ export default {
       const key = this.$utils.rsaEncrypt()
       getExternalSystemsAPI(key).then(res => {
         res.external_system.forEach(item => {
-          item.id = this.$utils.aesDecrypt(item.id)
           item.api_token = this.$utils.aesDecrypt(item.api_token)
         })
         this.external = res.external_system

@@ -68,16 +68,20 @@
                     type="passsword"
                     v-model="registry.secret_key"></el-input>
         </el-form-item>
-        <el-button type="text" size="small" @click="isShowHighSetting = !isShowHighSetting">
+        <el-button type="text" @click="registry.advanced_setting.modified = !registry.advanced_setting.modified" >
           高级配置
-          <i :class="[isShowHighSetting ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
+          <i :class="[registry.advanced_setting.modified ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
         </el-button>
-        <template v-if="isShowHighSetting">
-          <el-form-item label="TLS证书内容(公钥)" prop="secret_key">
-            <el-input type="textarea" rows="4" clearable v-model="registry.advanced_setting.tls_cert"></el-input>
+        <template v-if="registry.advanced_setting.modified">
+          <el-form-item label="开启 SSL 校验" prop="enable_tls">
+            <el-switch v-model='registry.advanced_setting.enable_tls'></el-switch>
           </el-form-item>
-          <el-form-item label="TLS私钥内容" prop="secret_key">
-            <el-input type="textarea" rows="4" clearable v-model="registry.advanced_setting.tls_key"></el-input>
+          <span></span>
+          <el-form-item label="TLS 证书内容(公钥)" prop="secret_key" v-if="registry.advanced_setting.enable_tls">
+            <el-input type="textarea" placeholder="选填" rows="4" clearable v-model="registry.advanced_setting.tls_cert"></el-input>
+          </el-form-item>
+          <el-form-item label="TLS 私钥内容" prop="secret_key" v-if="registry.advanced_setting.enable_tls">
+            <el-input type="textarea" placeholder="选填" rows="4" clearable v-model="registry.advanced_setting.tls_key"></el-input>
           </el-form-item>
         </template>
       </el-form>
@@ -181,6 +185,8 @@ export default {
         region: '',
         is_default: false,
         advanced_setting: {
+          modified: false, // 是否启用高级设置
+          enable_tls: true, // 是否开启 TLS
           tls_cert: '', // 证书内容
           tls_key: '' // 证书私钥
         }
@@ -289,8 +295,10 @@ export default {
         region: '',
         is_default: this.allRegistry.length === 0,
         advanced_setting: {
-          tls_cert: '', // 证书内容
-          tls_key: '' // 证书私钥
+          modified: false,
+          enable_tls: true,
+          tls_cert: '',
+          tls_key: ''
         }
 
       }
@@ -316,14 +324,21 @@ export default {
           region: '',
           is_default: this.registry.is_default,
           advanced_setting: {
-            tls_cert: '', // 证书内容
-            tls_key: '' // 证书私钥
+            modified: false,
+            enable_tls: true,
+            tls_cert: '',
+            tls_key: ''
           }
         }
         this.$refs.registry.clearValidate()
       })
     },
     registryAction (action, registry) {
+      // 关闭ssl隐藏输入框 没保存前依然保留上次填入的结果
+      if (!this.registry.advanced_setting.enable_tls) {
+        this.registry.advanced_setting.tls_cert = ''
+        this.registry.advanced_setting.tls_key = ''
+      }
       if (action === 'add') {
         this.$refs.registry.validate(valid => {
           if (valid) {
@@ -395,8 +410,10 @@ export default {
         res.forEach(item => {
           if (!item.advanced_setting) {
             item.advanced_setting = {
-              tls_cert: '', // 证书内容
-              tls_key: '' // 证书私钥
+              modified: false,
+              enable_tls: true,
+              tls_cert: '',
+              tls_key: ''
             }
           }
         })

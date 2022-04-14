@@ -1069,7 +1069,7 @@ export function cleanCacheAPI () {
 }
 // 定时清理
 export function timingCleanAPI (payload) {
-  return http.post('/api/aslan/system/cleanCache/setCron', payload)
+  return http.post('/api/aslan/system/cleanCache/cron', payload)
 }
 export function getCleanCacheStatusAPI () {
   return http.get('/api/aslan/system/cleanCache/state')

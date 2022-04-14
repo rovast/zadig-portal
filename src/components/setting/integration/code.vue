@@ -1,6 +1,6 @@
 <template>
   <div class="integration-code-container">
-    <!--start of edit code dialog-->
+    <!--start of edit code dialog-->{{dialogCodeEditFormVisible}}
     <el-dialog title="代码管理-编辑"
                custom-class="edit-form-dialog"
                :close-on-click-modal="false"
@@ -385,7 +385,7 @@
           </el-form-item>
           <el-form-item :label="codeAdd.type==='gitlab'?'Secret':'Client Secret'"
                         prop="client_secret">
-            <el-input v-model="codeAdd.client_secret"     show-password v-if='dialogCodeEditFormVisible'
+            <el-input v-model="codeAdd.client_secret"  show-password v-if='dialogCodeAddFormVisible'
                       type="password"
                       :placeholder="codeAdd.type==='gitlab'?'Secret':'Client Secret'"
                       auto-complete="off"></el-input>

@@ -237,7 +237,7 @@ export default {
       if (registryId) {
         const registry = this.imageRegistry.find(registry => registry.id === registryId)
         if (registry) {
-          return `${registry.reg_addr}/${registry.namespace}`
+          return registry.namespace ? `${registry.reg_addr}/${registry.namespace}` : registry.reg_addr
         }
       }
       return ''

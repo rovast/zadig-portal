@@ -43,7 +43,7 @@
                 <el-option
                   v-for="registry in imageRegistry"
                   :key="registry.id"
-                  :label="`${registry.reg_addr}/${registry.namespace}`"
+                  :label="registry.namespace ? `${registry.reg_addr}/${registry.namespace}` : registry.reg_addr"
                   :value="registry.id"
                 ></el-option>
               </el-select>

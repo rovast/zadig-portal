@@ -171,7 +171,10 @@ export default {
         naming: this.currentService.release_naming
       }
       renamingHelmReleaseAPI(projectName, payload).then((res) => {
-        this.fileList = res
+        this.$message({
+          message: 'Release 名称保存成功',
+          type: 'success'
+        })
       })
     },
     changeRoute (step) {

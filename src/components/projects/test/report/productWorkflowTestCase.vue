@@ -148,7 +148,7 @@ export default {
       title: '',
       breadcrumb: [
         { title: '项目', url: '/v1/projects' },
-        { title: this.projectName, url: `/v1/projects/detail/${this.projectName}/detail` },
+        { title: this.projectName, isProjectName: true, url: `/v1/projects/detail/${this.projectName}/detail` },
         { title: '工作流', url: `/v1/projects/detail/${this.projectName}/pipelines` },
         { title: this.workflowName, url: `/v1/projects/detail/${this.projectName}/pipelines/multi/${this.workflowName}` },
         { title: `#${this.taskId}`, url: `/v1/projects/detail/${this.projectName}/pipelines/multi/${this.workflowName}/${this.taskId}` },

@@ -122,7 +122,7 @@ export default {
       title: '',
       breadcrumb: [
         { title: '项目', url: '/v1/projects' },
-        { title: this.projectName, url: '' },
+        { title: this.projectName, isProjectName: true, url: '' },
         { title: '项目资源', url: '' }
       ]
     })

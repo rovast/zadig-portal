@@ -208,7 +208,7 @@ export default {
         this.generateEnv(this.projectName, this.envType)
       }, 1000)
     };
-    bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, url: '' }] })
+    bus.$emit('set-topbar-title', { title: '', breadcrumb: [{ title: '项目', url: '/v1/projects' }, { title: this.projectName, isProjectName: true, url: '' }] })
   },
   beforeDestroy () {
     clearInterval(this.envTimer)

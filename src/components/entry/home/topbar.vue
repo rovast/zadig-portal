@@ -31,9 +31,8 @@
         </div>
         <div class="breadcrumb-container">
           <div class="project-switcher"></div>
-          <!-- <span v-if="content.title" class="kr-topbar-title">{{content.title}}</span> -->
           <el-breadcrumb v-if="content.breadcrumb && content.breadcrumb.length > 0" separator=">">
-            <el-breadcrumb-item v-for="(item,index) in content.breadcrumb" :to="item.url" :key="index">{{item.title}}</el-breadcrumb-item>
+            <el-breadcrumb-item v-for="(item,index) in content.breadcrumb" :to="item.url" :key="index">{{parseTitle(item)}}</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
       </div>
@@ -238,6 +237,19 @@ export default {
     },
     changeTitle (params) {
       this.content = params
+    },
+    parseTitle (item) {
+      if (item.isProjectName) {
+        const project = this.projectList.find(i => {
+          return item.title === i.name
+        })
+        if (project) {
+          const alias = project.alias || project.name
+          return alias
+        }
+      } else {
+        return item.title
+      }
     }
   },
   created () {

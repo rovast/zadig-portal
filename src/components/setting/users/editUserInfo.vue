@@ -17,10 +17,9 @@
         <el-input size="small" v-model="clonedUserInfo.phone"></el-input>
       </el-form-item>
       <el-form-item label="角色" prop="isAdmin">
-        <el-radio-group v-model="clonedUserInfo.role">
-          <el-radio label="admin">管理员</el-radio>
-          <el-radio label="">普通用户</el-radio>
-        </el-radio-group>
+        <el-checkbox-group v-model="clonedUserInfo.isAdmin">
+          <el-checkbox :label="item.type"  v-for="item in roleList" :key="item.desc">{{item.desc}}</el-checkbox>
+        </el-checkbox-group>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -33,7 +32,8 @@
 import {
   addSystemRoleBindingsAPI,
   deleteSystemRoleBindingsAPI,
-  updateUserAPI
+  updateUserAPI,
+  getRoleListAPI
 } from '@api'
 import { cloneDeep } from 'lodash'
 export default {
@@ -78,8 +78,12 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      roleList: []
     }
+  },
+  created () {
+    this.getRoleList()
   },
   methods: {
     async handleUserInfoUpdate () {
@@ -112,6 +116,20 @@ export default {
       await addSystemRoleBindingsAPI(payload).catch(error =>
         console.log(error)
       )
+    },
+    async getRoleList (page_size = 0, page_index = 0) {
+      this.loading = true
+      const payload = {
+        page: page_index,
+        per_page: page_size
+      }
+      const res = await getRoleListAPI(payload).catch(error =>
+        console.log(error)
+      )
+
+      if (res) {
+        this.roleList = res
+      }
     }
   },
   watch: {

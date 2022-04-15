@@ -729,6 +729,13 @@ export function getTestReportAPI (projectName, workflowName, taskID, testJobName
 export function usersAPI (payload, projectName = '') {
   return http.post(`/api/v1/users/search?projectName=${projectName}`, payload)
 }
+export function getUsersAPI (payload, projectName = '') {
+  return http.post(`/api/v1/picket/user?projectName=${projectName}`, payload)
+}
+
+export function updateSystemRoleAPI (userID = '', payload) {
+  return http.post(`/api/v1/system-rolebindings/update?userID=${userID}`, payload)
+}
 
 export function queryUserAPI (uid) {
   return http.get(`/api/v1/users/${uid}`)
@@ -1872,4 +1879,17 @@ export function deleteConfigObjectAPI ({ objectName, projectName, envName, commo
 
 export function getObjectHistoryVersionAPI ({ objectName, projectName, envName, commonEnvCfgType }) {
   return http.get(`/api/aslan/environment/envcfgs/${objectName}?projectName=${projectName}&envName=${envName}&commonEnvCfgType=${commonEnvCfgType}`)
+}
+
+// 获取角色定义列表
+export function getRolePolicyListAPI (role) {
+  return http.get(`/api/v1/policy-definitions?resourceScore=${role}`)
+}
+// 获取角色列表
+export function getRoleListAPI () {
+  return http.get(`/api/v1/system-roles`)
+}
+// 新增角色
+export function addSystemRoleAPI (payload) {
+  return http.post(`/api/v1/system-roles `, payload)
 }

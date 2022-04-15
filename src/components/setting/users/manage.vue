@@ -27,10 +27,9 @@
           <el-input size="small" v-model="addUser.phone"></el-input>
         </el-form-item>
         <el-form-item label="角色" prop="isAdmin">
-          <el-radio-group v-model="addUser.isAdmin">
-            <el-radio :label="true">管理员</el-radio>
-            <el-radio :label="false">普通用户</el-radio>
-          </el-radio-group>
+          <el-checkbox-group v-model="addUser.isAdmin">
+            <el-checkbox :label="item.type"  v-for="item in roleList" :key="item.desc">{{item.desc}}</el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -152,12 +151,13 @@
 <script>
 import {
   addUserAPI,
-  usersAPI,
+  getUsersAPI,
   deleteUserAPI,
   getSystemRoleBindingsAPI,
   addSystemRoleBindingsAPI,
   checkRegistrationAPI,
-  changeRegistrationAPI
+  changeRegistrationAPI,
+  getRoleListAPI
 } from '@api'
 import bus from '@utils/eventBus'
 import EditUserRole from './editUserInfo.vue'
@@ -233,7 +233,8 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      roleList: []
     }
   },
   methods: {
@@ -255,13 +256,13 @@ export default {
         per_page: page_size,
         name: keyword
       }
-      const usersData = await usersAPI(payload).catch(error =>
+      const usersData = await getUsersAPI(payload).catch(error =>
         console.log(error)
       )
-      const rolesData = await getSystemRoleBindingsAPI().catch(error =>
-        console.log(error)
-      )
-      if (usersData && rolesData) {
+      // const rolesData = await getSystemRoleBindingsAPI().catch(error =>
+      //   console.log(error)
+      // )
+      if (usersData) {
         this.totalUser = usersData.totalCount
         this.users = sortBy(
           usersData.users.map(user => {
@@ -371,6 +372,20 @@ export default {
     handleCurrentChange (val) {
       this.currentPageList = val
       this.getUsers(this.userPageSize, this.currentPageList, this.searchUser)
+    },
+    async getRoleList (page_size = 0, page_index = 0) {
+      this.loading = true
+      const payload = {
+        page: page_index,
+        per_page: page_size
+      }
+      const res = await getRoleListAPI(payload).catch(error =>
+        console.log(error)
+      )
+
+      if (res) {
+        this.roleList = res
+      }
     }
   },
   watch: {
@@ -383,6 +398,7 @@ export default {
 
     this.getUsers(this.userPageSize, this.currentPageList, this.searchUser)
     this.checkRegistration()
+    this.getRoleList()
   }
 }
 </script>
@@ -391,7 +407,7 @@ export default {
 .users-overview-container {
   position: relative;
   flex: 1;
-  padding: 15px 30px;
+  // padding: 15px 30px;
   overflow: auto;
   font-size: 13px;
 

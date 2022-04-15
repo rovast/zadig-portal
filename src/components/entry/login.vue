@@ -114,10 +114,8 @@ export default {
           const payload = this.loginForm
           const res = await this.$store.dispatch('LOGIN', payload)
           if (res) {
-            this.getPublicKey()
             this.loading = false
             this.redirectByDevice()
-            this.getPublicKey()
           } else {
             this.loading = false
           }
@@ -127,7 +125,6 @@ export default {
       })
     },
     async checkLogin () {
-      this.getPublicKey()
       const userInfo = store.get('userInfo')
       if (userInfo) {
         this.redirectByDevice()
@@ -151,6 +148,7 @@ export default {
       storage.setItem('publicKey', JSON.stringify(res.publicKey))
     },
     redirectByDevice () {
+      this.getPublicKey()
       if (isMobile) {
         this.$router.push('/mobile')
       } else {

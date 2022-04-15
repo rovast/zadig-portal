@@ -15,7 +15,7 @@
           <span>
             <i v-if="tab.source==='helm'" class="iconfont iconhelmrepo"></i>
             <i v-else-if="tab.source==='spock'" class="el-icon-cloudy"></i>
-            {{ tab.name }}
+            {{ $utils.tailCut(tab.name,14) }}
             <el-tag v-if="tab.production" effect="light" size="mini" type="danger">生产</el-tag>
             <el-tag v-if="tab.source==='external'" effect="light" size="mini" type="primary">托管</el-tag>
             <el-tag v-if="!_.isNil(tab.share_env_is_base) && tab.share_env_is_base" effect="light" size="mini" type="primary">基准环境</el-tag>

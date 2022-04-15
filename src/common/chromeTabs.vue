@@ -31,8 +31,8 @@
               <slot v-bind:tab="tab"></slot>
               <template slot="content">
                 <span>{{tab.name}}</span>
-                <span v-if="!_.isNil(tab.share_env_is_base) && tab.share_env_is_base" >- 基准环境</span>
-                <span v-if="!tab.share_env_is_base && !_.isNil(tab.share_env_base_env) && tab.share_env_base_env !==''">- 子环境</span>
+                <span v-if="!_.isNil(tab.share_env_is_base) && tab.share_env_is_base" >基准环境</span>
+                <span v-if="!tab.share_env_is_base && !_.isNil(tab.share_env_base_env) && tab.share_env_base_env !==''">子环境</span>
               </template>
             </el-tooltip>
           </div>
@@ -106,7 +106,6 @@ export default {
         z-index: 2;
         width: calc(~'100% - 40px');
         overflow: hidden;
-        text-overflow: ellipsis;
       }
 
       .custom-tab-svg {

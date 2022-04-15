@@ -7,7 +7,9 @@ export default {
     serviceModules: [],
     showNext: false,
     serviceDialogVisible: false,
-    currentService: null,
+    currentService: {
+      release_naming: ''
+    },
     chartNames: [],
     updateEnv: false,
     serviceSource: '',

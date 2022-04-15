@@ -313,11 +313,10 @@ export default {
     createConfigByType ({ yamlData }) {
       const payload = {
         env_name: this.envName,
-        product_name: this.projectName,
         common_env_cfg_type: this.currentType,
         yaml_data: yamlData
       }
-      return addConfigObjectAPI(payload)
+      return addConfigObjectAPI(this.projectName, payload)
         .then(res => {
           this.$message.success(`添加配置成功！`)
           this.getConfigByType(this.currentType)
@@ -339,11 +338,10 @@ export default {
         restart_associated_svc,
         services,
         env_name: this.envName,
-        product_name: this.projectName,
         common_env_cfg_type: this.currentType,
         yaml_data: yamlData
       }
-      return updateConfigObjectAPI(payload)
+      return updateConfigObjectAPI(this.projectName, payload)
         .then(res => {
           this.$message.success(`更新配置成功！`)
           this.getConfigByType(this.currentType)

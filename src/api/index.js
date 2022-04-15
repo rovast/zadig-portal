@@ -1863,13 +1863,13 @@ export function getPvcObjectAPI (projectName, envName) {
   return http.get(`/api/aslan/environment/pvcs/${envName}?projectName=${projectName}`)
 }
 
-export function addConfigObjectAPI (payload) {
-  // payload: { env_name, product_name, common_env_cfg_type[Secret|Ingress|ConfigMap|PVC], yaml_data }
-  return http.post(`/api/aslan/environment/envcfgs/${payload.env_name}`, payload)
+export function addConfigObjectAPI (projectName, payload) {
+  // payload: { env_name, common_env_cfg_type[Secret|Ingress|ConfigMap|PVC], yaml_data }
+  return http.post(`/api/aslan/environment/envcfgs/${payload.env_name}?projectName=${projectName}`, payload)
 }
 
-export function updateConfigObjectAPI (payload) {
-  return http.put(`/api/aslan/environment/envcfgs/${payload.env_name}`, payload)
+export function updateConfigObjectAPI (projectName, payload) {
+  return http.put(`/api/aslan/environment/envcfgs/${payload.env_name}?projectName=${projectName}`, payload)
 }
 
 export function deleteConfigObjectAPI ({ objectName, projectName, envName, commonEnvCfgType }) {

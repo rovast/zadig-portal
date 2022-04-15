@@ -7,7 +7,9 @@ export default {
     serviceModules: [],
     showNext: false,
     serviceDialogVisible: false,
-    currentService: null,
+    currentService: {
+      release_naming: ''
+    },
     chartNames: [],
     updateEnv: false,
     serviceSource: '',
@@ -165,6 +167,7 @@ export default {
     queryServiceModule ({ commit }, payload) {
       return Api.getHelmChartServiceModule(payload.projectName, payload.serviceName).then(ret => {
         commit(Mutation.QUERY_SERVICE_MODULE, ret.service_modules)
+        commit(Mutation.CURRENT_SERVICE, ret.service)
       })
     },
     resetServiceModule ({ commit }, payload) {

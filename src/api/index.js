@@ -730,7 +730,7 @@ export function usersAPI (payload, projectName = '') {
   return http.post(`/api/v1/users/search?projectName=${projectName}`, payload)
 }
 export function getUsersAPI (payload, projectName = '') {
-  return http.post(`/api/v1/picket/user?projectName=${projectName}`, payload)
+  return http.post(`/api/v1/picket/users?projectName=${projectName}`, payload)
 }
 
 export function updateSystemRoleAPI (userID = '', payload) {

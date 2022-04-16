@@ -27,9 +27,10 @@
           <el-input size="small" v-model="addUser.phone"></el-input>
         </el-form-item>
         <el-form-item label="角色" prop="isAdmin">
-          <el-checkbox-group v-model="addUser.isAdmin">
-            <el-checkbox :label="item.type"  v-for="item in roleList" :key="item.desc">{{item.desc}}</el-checkbox>
-          </el-checkbox-group>
+          <el-select v-model="addUser.isAdmin" multiple placeholder="请选择">
+            <el-option :label="item.name" :value="item.name"  v-for="item in roleList" :key="item.desc">
+          </el-option>
+        </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -264,21 +265,23 @@ export default {
       // )
       if (usersData) {
         this.totalUser = usersData.totalCount
-        this.users = sortBy(
-          usersData.users.map(user => {
-            const roleInfo = rolesData.find(role => {
-              return role.uid === user.uid
-            })
-            if (roleInfo) {
-              user.role = roleInfo.role
-              user.roleBindingName = roleInfo.name
-            } else {
-              user.role = ''
-            }
-            return user
-          }),
-          'account'
-        )
+        this.users = usersData.users
+        // this.users = sortBy(
+        //   usersData.users.map(user => {
+        //     const roleInfo = rolesData.find(role => {
+        //       return role.uid === user.uid
+        //     })
+        //     if (roleInfo) {
+        //       user.role = roleInfo.role
+        //       user.roleBindingName = roleInfo.name
+        //     } else {
+        //       user.role = ''
+        //     }
+        //     return user
+        //   }),
+        //   'account'
+        // )
+        console.log(this.users)
       }
       this.loading = false
     },

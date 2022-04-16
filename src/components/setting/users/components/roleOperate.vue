@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="title" custom-class="create-user-dialog" :close-on-click-modal="false" :visible.sync="isShowDialogRoleVisible">
+  <el-dialog :title=" isEdit ? '编辑':'新增' " custom-class="create-user-dialog" :close-on-click-modal="false" :visible.sync="isShowDialogRoleVisible">
     <el-form
       :model="form"
       @submit.native.prevent
@@ -46,15 +46,28 @@
   </el-dialog>
 </template>
 <script>
-import { getRolePolicyListAPI, addSystemRoleAPI } from '@api'
-const resources = {}
+import { getRolePolicyListAPI, addSystemRoleAPI, queryRoleDetailAPI, updateRoleAPI } from '@api'
+import { cloneDeep } from 'lodash'
 
+const resources = {}
+const initFormData = {
+  name: '',
+  desc: '',
+  permissions: []
+
+}
 export default {
   name: 'RoleOperate',
   props: {
     title: {
       type: String,
       default: ''
+    },
+    currentRole: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data () {
@@ -85,6 +98,20 @@ export default {
     this.getPolicyDefinitions()
   },
   methods: {
+    initNewForm () {
+      this.form = cloneDeep(initFormData)
+    },
+    async getRoleDetail (role) {
+      let res = null
+      res = await queryRoleDetailAPI(role.name, '*').catch(error => console.log(error))
+      res.rules.forEach(item => {
+        if (item.kind === 'resource') {
+          item.verbs.forEach(action => {
+            this.form.permissions.push(`${item.resources[0]}/${action}`)
+          })
+        }
+      })
+    },
     handlePermissionGroupChange (rules) {
       for (let i = 0; i < rules.length; i++) {
         if (this.form.permissions.includes(rules[i].uniqueAction)) {
@@ -162,18 +189,45 @@ export default {
             })
           }
         }
-        const { name, desc } = this.form
-        const result = await addSystemRoleAPI({
-          name,
-          desc,
-          rules: rules
-        }).catch(error => console.log(error))
-        if (result) {
-          this.$message.success('添加成功')
-          this.isShowDialogRoleVisible = false
-          this.$emit('refreshUserList')
+        if (this.isEdit) {
+          let result = null
+          result = await updateRoleAPI({ name: this.form.name, rules: rules }).catch(error => console.log(error))
+          if (result) {
+            this.$message.success('修改成功')
+            this.isShowDialogRoleVisible = false
+            this.getRoles()
+          }
+        } else {
+          const { name, desc } = this.form
+          const result = await addSystemRoleAPI({
+            name,
+            desc,
+            rules: rules
+          }).catch(error => console.log(error))
+          if (result) {
+            this.$message.success('添加成功')
+            this.isShowDialogRoleVisible = false
+            this.$emit('refreshUserList')
+          }
         }
       }
+    }
+  },
+  watch: {
+    isShowDialogRoleVisible: {
+      handler: function (newVal, oldVal) {
+        console.log(this.currentRole)
+        if (newVal && this.currentRole) {
+          this.isEdit = true
+          this.getRoleDetail(this.currentRole)
+          this.form.name = this.currentRole.name
+          this.form.desc = this.currentRole.desc
+        } else {
+          this.isEdit = false
+          this.initNewForm()
+        }
+      },
+      immediate: true
     }
   }
 }

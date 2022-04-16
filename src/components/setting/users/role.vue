@@ -26,25 +26,10 @@
           </template>
         </el-table-column>
       </el-table>
-      <!--start of page-divide -->
-      <div class="user-table-pagination">
-        <el-pagination
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPageList"
-          :page-sizes="[10, 20, 30, 40]"
-          :page-size="userPageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalUser"
-        ></el-pagination>
-      </div>
-      <!--page divide-->
     </div>
     <Operate-role
       ref="roleOperate"
-      :title="dialogTitle"
-      :editUser="editUser"
+      :currentRole="currentRole"
       @refreshUserList="getRoleList(userPageSize, currentPageList, searchUser)"
     />
   </div>
@@ -53,11 +38,8 @@
 <script>
 import {
   getRoleListAPI,
-  addUserAPI,
-  updateSystemRoleAPI,
-  addSystemRoleBindingsAPI,
-  checkRegistrationAPI,
-  changeRegistrationAPI
+  deleteSystemRoleBindingsAPI,
+  checkRegistrationAPI
 } from '@api'
 import bus from '@utils/eventBus'
 import OperateRole from './components/roleOperate.vue'
@@ -80,21 +62,19 @@ export default {
         account: ''
       },
       searchUser: '',
-      totalUser: 0,
-      userPageSize: 10,
-      currentPageList: 1,
       isShowDialogRoleVisible: false,
       dialogAddUserVisible: false,
       searchInputVisible: true,
       registrationStatus: false,
       loading: true,
-      dialogTitle: '新增'
+      currentRole: {}
     }
   },
   methods: {
     roleOperate (type, row) {
+      this.currentRole = row
+      console.log(this.currentRole)
       this.$refs.roleOperate.isShowDialogRoleVisible = true
-      this.dialogTitle = type === 'add' ? '新增' : '编辑'
     },
     editUserInfo (user) {
       this.editUser = user
@@ -134,7 +114,8 @@ export default {
         }
       )
         .then(() => {
-          updateSystemRoleAPI(this.$store.state.login.userinfo.uid).then(res => {
+          console.log(row)
+          deleteSystemRoleBindingsAPI(row.name).then(res => {
             this.$message({
               type: 'success',
               message: '系统角色删除成功'
@@ -150,63 +131,10 @@ export default {
           })
         })
     },
-    addUserOperation () {
-      this.$refs.addUserForm.validate(valid => {
-        if (valid) {
-          const payload = this.addUser
-          addUserAPI(payload).then(async res => {
-            this.dialogAddUserVisible = false
-            if (payload.isAdmin) {
-              const payload = {
-                name: `user:${res.uid},role:admin`,
-                role: 'admin',
-                uid: res.uid
-              }
-              await addSystemRoleBindingsAPI(payload).catch(error =>
-                console.log(error)
-              )
-            }
-            this.$refs.addUserForm.resetFields()
-            this.getRoleList(
-              this.userPageSize,
-              this.currentPageList,
-              this.searchUser
-            )
-            this.$message({
-              type: 'success',
-              message: '新建系统角色成功'
-            })
-          })
-        } else {
-          return false
-        }
-      })
-    },
     checkRegistration () {
       checkRegistrationAPI().then(res => {
         this.registrationStatus = res.enabled
       })
-    },
-    changeRegistration (val) {
-      const payload = {
-        name: 'RegisterTrigger',
-        enabled: val
-      }
-      changeRegistrationAPI(payload).then(res => {
-        this.checkRegistration()
-        this.$message({
-          type: 'success',
-          message: '更改成功'
-        })
-      })
-    },
-    handleSizeChange (val) {
-      this.userPageSize = val
-      this.getRoleList(this.userPageSize, this.currentPageList, this.searchUser)
-    },
-    handleCurrentChange (val) {
-      this.currentPageList = val
-      this.getRoleList(this.userPageSize, this.currentPageList, this.searchUser)
     }
   },
   watch: {

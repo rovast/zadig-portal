@@ -17,9 +17,14 @@
         <el-input size="small" v-model="clonedUserInfo.phone"></el-input>
       </el-form-item>
       <el-form-item label="角色" prop="isAdmin">
-        <el-checkbox-group v-model="clonedUserInfo.isAdmin">
-          <el-checkbox :label="item.type"  v-for="item in roleList" :key="item.desc">{{item.desc}}</el-checkbox>
-        </el-checkbox-group>
+        <el-select v-model="clonedUserInfo.isAdmin" multiple placeholder="请选择">
+          <el-option
+            v-for="item in roleList"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name">
+          </el-option>
+        </el-select>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -82,7 +87,7 @@ export default {
       roleList: []
     }
   },
-  created () {
+  mounted () {
     this.getRoleList()
   },
   methods: {
@@ -128,6 +133,8 @@ export default {
       )
 
       if (res) {
+        console.log(res)
+        // res.forEach((item)=>{item})
         this.roleList = res
       }
     }
@@ -135,6 +142,7 @@ export default {
   watch: {
     dialogEditRoleVisible (value) {
       if (value) {
+        console.log(value)
         this.clonedUserInfo = cloneDeep(this.editUser)
       }
     }

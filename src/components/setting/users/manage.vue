@@ -154,7 +154,7 @@ import {
   addUserAPI,
   getUsersAPI,
   deleteUserAPI,
-  getSystemRoleBindingsAPI,
+  // getSystemRoleBindingsAPI,
   addSystemRoleBindingsAPI,
   checkRegistrationAPI,
   changeRegistrationAPI,

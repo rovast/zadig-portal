@@ -6,7 +6,7 @@
     <div class="search-user">
       <el-row :gutter="10">
         <el-col :span="3">
-          <el-button @click="roleOperate('add')" size="small" plain type="primary">新建系统角色</el-button>
+          <el-button @click="roleOperate('add',null)" size="small" plain type="primary">新建系统角色</el-button>
         </el-col>
       </el-row>
     </div>

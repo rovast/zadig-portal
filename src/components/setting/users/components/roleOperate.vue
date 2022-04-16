@@ -195,7 +195,7 @@ export default {
           if (result) {
             this.$message.success('修改成功')
             this.isShowDialogRoleVisible = false
-            this.getRoles()
+            this.$emit('refreshUserList')
           }
         } else {
           const { name, desc } = this.form

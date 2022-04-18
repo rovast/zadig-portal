@@ -138,7 +138,8 @@ export default {
       getHostLabelListAPI().then(res => {
         this.allHostLabels = res
       })
-      getHostListAPI().then(res => {
+      const key = this.$utils.rsaEncrypt()
+      getHostListAPI(key).then(res => {
         this.allHost = res
       })
     },

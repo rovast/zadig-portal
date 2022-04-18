@@ -159,6 +159,13 @@ export default {
       return moment.unix(value).format('YYYY-MM-DD HH:mm:ss')
     }
   },
+  watch: {
+    'cleanStatus.cron_enabled' (newVal, oldVal) {
+      if (!newVal) {
+        this.timingClean()
+      }
+    }
+  },
   activated () {
     this.getCleanStatus()
   },

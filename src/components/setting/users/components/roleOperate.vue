@@ -3,13 +3,13 @@
     <el-form
       :model="form"
       @submit.native.prevent
-      :rules="roleRule"
+
       ref="roleForm"
       label-position="left"
       label-width="120px"
       class="primary-form"
     >
-      <el-form-item label="角色名称" prop="name">
+      <el-form-item label="角色名称" prop="name" :rules="{ required: true, trigger: 'change', validator: validateRoleName }">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
       <el-form-item label="描述信息" prop="account">
@@ -57,6 +57,17 @@ const initFormData = {
   permissions: []
 
 }
+const validateRoleName = (rule, value, callback) => {
+  if (typeof value === 'undefined' || value === '') {
+    callback(new Error('填写角色名称'))
+  } else {
+    if (!/^[a-z0-9-]+$/.test(value)) {
+      callback(new Error('角色名称只支持小写字母和数字，特殊字符只支持中划线'))
+    } else {
+      callback()
+    }
+  }
+}
 export default {
   name: 'RoleOperate',
   props: {
@@ -83,16 +94,7 @@ export default {
         permissions: [],
         isPublic: false
       },
-      roleRule: {
-        name: [
-          {
-            type: 'string',
-            required: true,
-            message: '请输入角色名称',
-            trigger: 'blur'
-          }
-        ]
-      }
+      validateRoleName
     }
   },
   mounted () {

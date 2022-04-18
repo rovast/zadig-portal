@@ -768,8 +768,8 @@ export function getSystemRoleBindingsAPI () {
 export function addSystemRoleBindingsAPI (payload) {
   return http.post(`/api/v1/system-rolebindings`, payload)
 }
-export function updateSystemRoleBindingsAPI (payload) {
-  return http.post(`/api/v1/system-rolebindings/update?userID=${payload[0].uid}`, payload)
+export function updateSystemRoleBindingsAPI (uid, payload) {
+  return http.post(`/api/v1/system-rolebindings/update?userID=${uid}`, payload)
 }
 
 export function deleteSystemRoleBindingsAPI (name) {
@@ -1673,8 +1673,8 @@ export function editWorkloads (payload) {
 }
 
 // RBAC APIs
-export function queryPolicyDefinitionsAPI (projectName) {
-  return http.get(`/api/v1/policy-definitions?projectName=${projectName}`)
+export function queryPolicyDefinitionsAPI (projectName, project = '') {
+  return http.get(`/api/v1/policy-definitions?projectName=${projectName}&resourceScope=${project}`)
 }
 
 export function addRoleAPI (payload) {

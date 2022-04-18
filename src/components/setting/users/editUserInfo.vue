@@ -104,17 +104,23 @@ export default {
         //   }
         // }
         const params = []
-        this.clonedUserInfo.isAdmin.forEach((item, index) => {
-          const obj = {
-            name: `user:${payload.uid},role:admin`,
-            role: item,
-            uid: payload.uid
-          }
-          params.push(obj)
-        })
-        await updateSystemRoleBindingsAPI(params).catch(error =>
-          console.log(error)
-        )
+        if (this.clonedUserInfo.isAdmin.length > 0) {
+          this.clonedUserInfo.isAdmin.forEach((item, index) => {
+            const obj = {
+              name: `user:${payload.uid},role:${item}`,
+              role: item,
+              uid: payload.uid
+            }
+            params.push(obj)
+          })
+          await updateSystemRoleBindingsAPI(payload.uid, params).catch(error =>
+            console.log(error)
+          )
+        } else {
+          await updateSystemRoleBindingsAPI(payload.uid, []).catch(error =>
+            console.log(error)
+          )
+        }
         this.$message.success('用户信息修改成功')
         this.$emit('refreshUserList')
         this.dialogEditRoleVisible = false

@@ -336,14 +336,14 @@ export default {
               // }
               this.addUser.isAdmin.forEach((item, index) => {
                 const obj = {
-                  name: `user:${res.uid},role:admin`,
+                  name: `user:${res.uid},role:${item}`,
                   role: item,
                   uid: res.uid
                 }
                 params.push(obj)
               })
 
-              await updateSystemRoleBindingsAPI(params).catch(error =>
+              await updateSystemRoleBindingsAPI(res.uid, params).catch(error =>
                 console.log(error)
               )
             }

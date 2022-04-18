@@ -22,7 +22,7 @@
         <el-table-column label="操作" width="280">
           <template slot-scope="scope">
             <el-button @click="roleOperate('edit',scope.row)" type="primary" size="mini" plain>编辑</el-button>
-            <el-button @click="deleteRole(scope.row)" type="danger" size="mini" plain>删除</el-button>
+            <el-button :disabled="scope.row.name === 'admin'" @click="deleteRole(scope.row)" type="danger" size="mini" plain>删除</el-button>
           </template>
         </el-table-column>
       </el-table>

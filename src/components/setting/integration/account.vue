@@ -957,8 +957,6 @@ export default {
     getAccountConfig () {
       const key = this.$utils.rsaEncrypt()
       getConnectorsAPI(key).then(res => {
-        console.log(res)
-
         res.forEach(item => {
           if (item.config.bindPW) {
             item.config.bindPW = this.$utils.aesDecrypt(item.config.bindPW)

@@ -59,7 +59,8 @@ import ChartValues from '../common/updateHelmEnvChart.vue'
 import {
   updateHelmEnvAPI,
   deleteEnvServicesAPI,
-  getSingleProjectAPI
+  getSingleProjectAPI,
+  getHelmEnvChartDiffAPI
 } from '@api'
 import { flatten, difference } from 'lodash'
 export default {
@@ -151,7 +152,7 @@ export default {
       this.updateServices.service_names = []
       done && done()
     },
-    openDialog (type) {
+    async openDialog (type) {
       this.dialogVisible = true
       this.opeType = type
 
@@ -163,17 +164,49 @@ export default {
           services = difference(this.allServices, productServices)
           break
         case 'update':
+          services = await this.getHelmEnvChartDiff()
+          break
         case 'delete':
           services = productServices
           break
       }
       this.currentServices = services.map(service => {
-        return {
-          serviceName: service,
-          chartVersion: '',
-          type: 'common'
+        if (service.serviceName) {
+          return service
+        } else {
+          return {
+            serviceName: service,
+            chartVersion: '',
+            type: 'common'
+          }
         }
       })
+    },
+    async getHelmEnvChartDiff () {
+      const res = await getHelmEnvChartDiffAPI(
+        this.projectName,
+        this.productInfo.env_name
+      ).catch(error => console.log(error))
+      if (res) {
+        const chartNames = []
+        res.forEach(re => {
+          let type = 'common'
+          if (re.latest_version && re.current_version) {
+            type = 'update'
+          } else if (re.latest_version) {
+            type = 'create'
+          } else if (re.current_version) {
+            type = 'delete'
+          }
+          chartNames.push({
+            serviceName: re.service_name,
+            chartVersion: re.latest_version,
+            type
+          })
+        })
+        return chartNames
+      }
+      return []
     },
     getInitProduct () {
       getSingleProjectAPI(this.projectName).then(res => {

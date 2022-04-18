@@ -59,14 +59,14 @@ import ChartValues from '../common/updateHelmEnvChart.vue'
 import {
   updateHelmEnvAPI,
   deleteEnvServicesAPI,
-  getSingleProjectAPI,
-  getHelmEnvChartDiffAPI
+  getSingleProjectAPI
 } from '@api'
 import { flatten, difference } from 'lodash'
 export default {
   props: {
     fetchAllData: Function,
-    productInfo: Object
+    productInfo: Object,
+    productStatus: Object
   },
   data () {
     return {
@@ -164,49 +164,25 @@ export default {
           services = difference(this.allServices, productServices)
           break
         case 'update':
-          services = await this.getHelmEnvChartDiff()
+          services = (this.productStatus.services || [])
+            .filter(
+              service =>
+                service.updatable === true &&
+                (service.new === false) & (service.deleted === false)
+            )
+            .map(service => service.service_name)
           break
         case 'delete':
           services = productServices
           break
       }
       this.currentServices = services.map(service => {
-        if (service.serviceName) {
-          return service
-        } else {
-          return {
-            serviceName: service,
-            chartVersion: '',
-            type: 'common'
-          }
+        return {
+          serviceName: service,
+          chartVersion: '',
+          type: 'common'
         }
       })
-    },
-    async getHelmEnvChartDiff () {
-      const res = await getHelmEnvChartDiffAPI(
-        this.projectName,
-        this.productInfo.env_name
-      ).catch(error => console.log(error))
-      if (res) {
-        const chartNames = []
-        res.forEach(re => {
-          let type = 'common'
-          if (re.latest_version && re.current_version) {
-            type = 'update'
-          } else if (re.latest_version) {
-            type = 'create'
-          } else if (re.current_version) {
-            type = 'delete'
-          }
-          chartNames.push({
-            serviceName: re.service_name,
-            chartVersion: re.latest_version,
-            type
-          })
-        })
-        return chartNames
-      }
-      return []
     },
     getInitProduct () {
       getSingleProjectAPI(this.projectName).then(res => {

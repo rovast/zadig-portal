@@ -1277,10 +1277,6 @@ export function getServiceDeployableEnvsAPI (projectName, serviceName) {
   return http.get(`/api/aslan/service/services/${serviceName}/environments/deployable?projectName=${projectName}`)
 }
 
-export function getHelmEnvChartDiffAPI (projectName, envName) {
-  return http.get(`/api/aslan/environment/environments/${envName}/helmChartVersions?projectName=${projectName}`)
-}
-
 export function updateConfigmapAPI (envType = '', payload) {
   return http.put(`/api/aslan/environment/configmaps?projectName=${payload.product_name}&envType=${envType}`, payload)
 }

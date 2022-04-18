@@ -18,9 +18,10 @@ import permissionMixin from '@/mixin/permissionMixin'
 
 import '@utils/traversal'
 import directive from '@/directive'
+import localStore from 'storejs'
 
 import App from './App.vue'
-import { analyticsRequestAPI } from '@api'
+import { analyticsRequestAPI, getPublicKeyAPI } from '@api'
 import { JSEncrypt } from 'jsencrypt'
 import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill'
 global.EventSource = EventSourcePolyfill || NativeEventSource
@@ -89,7 +90,6 @@ const analyticsRequest = (to, from) => {
       })
   }
 }
-
 router.beforeEach(async (to, from, next) => {
   // disable permission temporary
   // if (to.params.project_name) {
@@ -113,7 +113,15 @@ router.beforeEach(async (to, from, next) => {
         path: from.fullPath
       })
     } else {
-      next()
+      // 只有管理员才会调用publicKey接口 集群第一次升级登陆状态可能会没有publicKey 所以需要判断是否存在publicKey
+      if (!localStore.get('publicKey')) {
+        getPublicKeyAPI().then(res => {
+          localStore.set('publicKey', res.publicKey)
+          next()
+        })
+      } else {
+        next()
+      }
     }
   } else {
     analyticsRequest(to, from)

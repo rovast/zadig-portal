@@ -1365,7 +1365,7 @@ export function checkRegistrationAPI () {
   return http.get(`/api/v1/features/RegisterTrigger`)
 }
 
-export function getPublicKey () {
+export function getPublicKeyAPI () {
   return http.get(`/api/aslan/system/rsaKey/publicKey`)
 }
 // Profile

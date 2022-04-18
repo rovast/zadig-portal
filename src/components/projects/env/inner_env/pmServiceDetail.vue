@@ -27,9 +27,19 @@
                     :data="envStatus"
                     :span-method="objectSpanMethod"
                     style="width: 100%;">
-            <el-table-column label="主机资源">
+            <el-table-column label="主机名称">
+              <template slot-scope="scope">
+                <span>{{ scope.row.pm_info.name }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="主机地址">
               <template slot-scope="scope">
                 <span>{{ scope.row.address }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="主机标签">
+              <template slot-scope="scope">
+                <span>{{ scope.row.pm_info.label }}</span>
               </template>
             </el-table-column>
             <el-table-column label="探活配置">

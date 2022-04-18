@@ -38,7 +38,7 @@
 <script>
 import {
   getRoleListAPI,
-  deleteSystemRoleBindingsAPI,
+  deleteSystemRoleAPI,
   checkRegistrationAPI
 } from '@api'
 import bus from '@utils/eventBus'
@@ -115,7 +115,7 @@ export default {
       )
         .then(() => {
           console.log(row)
-          deleteSystemRoleBindingsAPI(row.name).then(res => {
+          deleteSystemRoleAPI(row.name).then(res => {
             this.$message({
               type: 'success',
               message: '系统角色删除成功'

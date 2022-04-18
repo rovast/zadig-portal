@@ -48,6 +48,7 @@
 <script>
 import { getRolePolicyListAPI, addSystemRoleAPI, queryRoleDetailAPI, updateRoleAPI } from '@api'
 import { cloneDeep } from 'lodash'
+import store from 'storejs'
 
 const resources = {}
 const initFormData = {
@@ -161,7 +162,7 @@ export default {
     async submit () {
       const res = await this.$refs.roleForm.validate()
       const resource = []
-      const projectName = this.projectName
+      // const projectName = this.projectName
       Object.keys(resources).forEach(i => {
         if (resources[i]) {
           resource.push(i)
@@ -191,7 +192,7 @@ export default {
         }
         if (this.isEdit) {
           let result = null
-          result = await updateRoleAPI({ name: this.form.name, rules: rules }).catch(error => console.log(error))
+          result = await updateRoleAPI({ userID: store.get('userInfo').uid, name: this.form.name, rules: rules, projectName: '*' }).catch(error => console.log(error))
           if (result) {
             this.$message.success('修改成功')
             this.isShowDialogRoleVisible = false

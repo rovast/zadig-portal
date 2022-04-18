@@ -90,7 +90,7 @@
               <div class="name-listing-description">
                 <h3 class="name-listing-title">
                   {{ scope.row.name ? `${scope.row.name}(${scope.row.account})`: scope.row.account }}
-                  <el-tag size="mini" effect="plain">{{ scope.row.role === 'admin'?'管理员':'普通用户' }}</el-tag>
+                  <el-tag size="mini" effect="plain">{{ scope.row.role === 'admin'?'管理员':'' }}</el-tag>
                 </h3>
                 <!-- Name Listing Footer -->
                 <div class="name-listing-footer">
@@ -156,6 +156,7 @@ import {
   deleteUserAPI,
   // getSystemRoleBindingsAPI,
   addSystemRoleBindingsAPI,
+  updateSystemRoleBindingsAPI,
   checkRegistrationAPI,
   changeRegistrationAPI,
   getRoleListAPI
@@ -321,16 +322,27 @@ export default {
     addUserOperation () {
       this.$refs.addUserForm.validate(valid => {
         if (valid) {
+          const params = []
           const payload = this.addUser
+          console.log(this.addUser)
           addUserAPI(payload).then(async res => {
             this.dialogAddUserVisible = false
             if (payload.isAdmin) {
-              const payload = {
-                name: `user:${res.uid},role:admin`,
-                role: 'admin',
-                uid: res.uid
-              }
-              await addSystemRoleBindingsAPI(payload).catch(error =>
+              // const payload = {
+              //   name: `user:${res.uid},role:admin`,
+              //   role: this.addUser.isAdmin,
+              //   uid: res.uid
+              // }
+              this.addUser.isAdmin.forEach((item, index) => {
+                const obj = {
+                  name: `user:${res.uid},role:admin`,
+                  role: item,
+                  uid: res.uid
+                }
+                params.push(obj)
+              })
+
+              await updateSystemRoleBindingsAPI(params).catch(error =>
                 console.log(error)
               )
             }

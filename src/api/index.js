@@ -733,8 +733,12 @@ export function getUsersAPI (payload, projectName = '') {
   return http.post(`/api/v1/picket/users?projectName=${projectName}`, payload)
 }
 
-export function updateSystemRoleAPI (userID = '', payload) {
-  return http.post(`/api/v1/system-rolebindings/update?userID=${userID}`, payload)
+export function updateSystemRoleAPI (payload) {
+  return http.post(`/api/v1/system-rolebindings/update?userID=${payload.userID}`, payload)
+}
+
+export function deleteSystemRoleAPI (name) {
+  return http.delete(`/api/v1/system-roles/${name} `)
 }
 
 export function queryUserAPI (uid) {
@@ -763,6 +767,9 @@ export function getSystemRoleBindingsAPI () {
 
 export function addSystemRoleBindingsAPI (payload) {
   return http.post(`/api/v1/system-rolebindings`, payload)
+}
+export function updateSystemRoleBindingsAPI (payload) {
+  return http.post(`/api/v1/system-rolebindings/update?userID=${payload[0].uid}`, payload)
 }
 
 export function deleteSystemRoleBindingsAPI (name) {

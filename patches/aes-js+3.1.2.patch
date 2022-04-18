@@ -1,14 +1,17 @@
 diff --git a/node_modules/aes-js/index.js b/node_modules/aes-js/index.js
-index 61fcc00..63eaa64 100644
+index 61fcc00..05aa612 100644
 --- a/node_modules/aes-js/index.js
 +++ b/node_modules/aes-js/index.js
-@@ -543,9 +543,6 @@
+@@ -543,9 +543,9 @@
      }
  
      ModeOfOperationCFB.prototype.decrypt = function(ciphertext) {
 -        if ((ciphertext.length % this.segmentSize) != 0) {
 -            throw new Error('invalid ciphertext size (must be segmentSize bytes)');
 -        }
++        // if ((ciphertext.length % this.segmentSize) != 0) {
++        //     throw new Error('invalid ciphertext size (must be segmentSize bytes)');
++        // }
  
          var plaintext = coerceArray(ciphertext, true);
  

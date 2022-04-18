@@ -707,8 +707,8 @@ const utils = {
  */
   rsaEncrypt () {
     const aesKey = this.generateAesKey(32)
-    localStorage.setItem('aesKey', aesKey)
-    const localPublicKey = JSON.parse(localStorage.getItem('publicKey')) // 取出本地publicKey
+    store.set('aesKey', aesKey)
+    const localPublicKey = store.get('publicKey') // 取出本地publicKey
     const publicKey = forge.pki.publicKeyFromPem(localPublicKey)
     const buffer = forge.util.createBuffer(aesKey)
     const bytes = buffer.getBytes()
@@ -724,7 +724,7 @@ const utils = {
  * @param {array} key 加密key
  */
   aesDecrypt (data) {
-    const aesKey = localStorage.getItem('aesKey')
+    const aesKey = store.get('aesKey')
     const encryptedBytes = aesjs.utils.hex.toBytes(data)
     const iv = aesjs.utils.utf8.toBytes(aesKey.substr(0, 16))
     const text = aesjs.utils.utf8.toBytes(aesKey)

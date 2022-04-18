@@ -65,7 +65,8 @@ import { flatten, difference } from 'lodash'
 export default {
   props: {
     fetchAllData: Function,
-    productInfo: Object
+    productInfo: Object,
+    productStatus: Object
   },
   data () {
     return {
@@ -163,6 +164,14 @@ export default {
           services = difference(this.allServices, productServices)
           break
         case 'update':
+          services = (this.productStatus.services || [])
+            .filter(
+              service =>
+                service.updatable === true &&
+                (service.new === false) & (service.deleted === false)
+            )
+            .map(service => service.service_name)
+          break
         case 'delete':
           services = productServices
           break

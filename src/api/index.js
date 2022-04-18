@@ -769,8 +769,8 @@ export function deleteSystemRoleBindingsAPI (name) {
 
 // Code
 // Information is masked no detail
-export function getCodeSourceMaskedAPI () {
-  return http.get(`/api/v1/picket/codehosts`)
+export function getCodeSourceMaskedAPI (key) {
+  return http.get(`/api/v1/codehosts?encryptedKey=${key}`)
 }
 
 // Return details and only for admin

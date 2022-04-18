@@ -241,7 +241,8 @@ export default {
       ]
     })
     this.test.product_name = this.projectName
-    getCodeSourceMaskedAPI().then(response => {
+    const key = this.$utils.rsaEncrypt()
+    getCodeSourceMaskedAPI(key).then(response => {
       this.allCodeHosts = response
     })
 

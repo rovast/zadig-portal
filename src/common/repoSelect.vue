@@ -566,7 +566,8 @@ export default {
     }
   },
   mounted () {
-    getCodeSourceMaskedAPI().then(response => {
+    const key = this.$utils.rsaEncrypt()
+    getCodeSourceMaskedAPI(key).then(response => {
       this.allCodeHosts = response
     })
     this.showFirstLine &&

@@ -90,7 +90,7 @@
               <div class="name-listing-description">
                 <h3 class="name-listing-title">
                   {{ scope.row.name ? `${scope.row.name}(${scope.row.account})`: scope.row.account }}
-                  <el-tag size="mini" effect="plain">{{ scope.row.role === 'admin'?'管理员':'' }}</el-tag>
+                  <el-tag size="mini" v-if="scope.row.admin"  effect="plain">{{ '管理员' }}</el-tag>
                 </h3>
                 <!-- Name Listing Footer -->
                 <div class="name-listing-footer">
@@ -241,6 +241,7 @@ export default {
   },
   methods: {
     editUserInfo (user) {
+      user.isAdmin = user.system_role_bindings.map(item => item.role)
       this.editUser = user
       this.$refs.editUserInfo.dialogEditRoleVisible = true
     },

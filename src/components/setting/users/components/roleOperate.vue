@@ -145,8 +145,7 @@ export default {
       return false
     },
     async getPolicyDefinitions () {
-      const projectName = this.projectName
-      const res = await getRolePolicyListAPI(projectName).catch(error =>
+      const res = await getRolePolicyListAPI('system').catch(error =>
         console.log(error)
       )
       if (res) {

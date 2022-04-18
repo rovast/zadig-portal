@@ -38,7 +38,8 @@ import {
   addSystemRoleBindingsAPI,
   deleteSystemRoleBindingsAPI,
   updateUserAPI,
-  getRoleListAPI
+  getRoleListAPI,
+  updateSystemRoleBindingsAPI
 } from '@api'
 import { cloneDeep } from 'lodash'
 export default {
@@ -95,13 +96,25 @@ export default {
       const payload = cloneDeep(this.clonedUserInfo)
       const userRes = await updateUserAPI(payload.uid, payload)
       if (userRes) {
-        if (this.editUser.role !== payload.role) {
-          if (this.editUser.role === 'admin' && payload.role === '') {
-            this.deleteBindings(payload.roleBindingName)
-          } else if (this.editUser.role === '' && payload.role === 'admin') {
-            this.addBindings()
+        // if (this.editUser.role !== payload.role) {
+        //   if (this.editUser.role === 'admin' && payload.role === '') {
+        //     this.deleteBindings(payload.roleBindingName)
+        //   } else if (this.editUser.role === '' && payload.role === 'admin') {
+        //     this.addBindings()
+        //   }
+        // }
+        const params = []
+        this.clonedUserInfo.isAdmin.forEach((item, index) => {
+          const obj = {
+            name: `user:${payload.uid},role:admin`,
+            role: item,
+            uid: payload.uid
           }
-        }
+          params.push(obj)
+        })
+        await updateSystemRoleBindingsAPI(params).catch(error =>
+          console.log(error)
+        )
         this.$message.success('用户信息修改成功')
         this.$emit('refreshUserList')
         this.dialogEditRoleVisible = false

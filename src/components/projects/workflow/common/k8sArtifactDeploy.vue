@@ -21,7 +21,7 @@
     </el-form-item>
     <el-form-item label="镜像仓库">
       <el-select v-model="pickedRegistry" filterable clearable @change="changeRegistry" size="medium" class="full-width">
-        <el-option v-for="(reg,index) of allRegistry" :key="index" :label="`${reg.reg_addr}/${reg.namespace}`" :value="reg.id"></el-option>
+        <el-option v-for="(reg,index) of allRegistry" :key="index" :label="reg.namespace ? `${reg.reg_addr}/${reg.namespace}` : reg.reg_addr" :value="reg.id"></el-option>
       </el-select>
     </el-form-item>
     <el-table v-if="pickedTargetServices.length > 0" :data="pickedTargetServices" empty-text="无" class="service-deploy-table">

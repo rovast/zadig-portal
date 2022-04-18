@@ -49,7 +49,10 @@
               v-model="userAccountGitHub.config.clientSecret"
               placeholder="输入 OAuth App Client Secret"
               autofocus
+              show-password
+              type="password"
               clearable
+              v-if="dialogUserAccountFormVisible"
               auto-complete="off"
             ></el-input>
           </el-form-item>
@@ -88,7 +91,8 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="管理员密码" prop="bindPW">
-            <el-input v-model="userAccountAD.config.bindPW" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
+            <el-input v-model="userAccountAD.config.bindPW"   show-password v-if="dialogUserAccountFormVisible && userAccount.name ==='Microsoft Active Directory'"
+                      type="password" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item prop="startTLS" label="使用 SSL">
             <el-checkbox v-model="userAccountAD.config.startTLS"></el-checkbox>
@@ -165,7 +169,8 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="管理员密码" prop="bindPW">
-            <el-input v-model="userAccountLDAP.config.bindPW" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
+            <el-input v-model="userAccountLDAP.config.bindPW"  show-password v-if="dialogUserAccountFormVisible && userAccount.name ==='OpenLDAP'"
+                      type="password" placeholder="管理员密码" autofocus clearable auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item prop="startTLS" label="使用 SSL">
             <el-checkbox v-model="userAccountLDAP.config.startTLS"></el-checkbox>
@@ -242,7 +247,10 @@
           </el-form-item>
           <el-form-item label="Client Secret" prop="clientSecret">
             <el-input
+              v-if="dialogUserAccountFormVisible"
               v-model="userAccountOAuth.config.clientSecret"
+              show-password
+              type="password"
               placeholder="输入 OAuth Client Secret"
               autofocus
               clearable
@@ -723,6 +731,11 @@ export default {
           required: true,
           message: '请填写用户邮箱属性',
           trigger: ['blur', 'change']
+        },
+        scopes: {
+          required: true,
+          message: '请输入 Scopes',
+          trigger: ['blur', 'change']
         }
       }
     }
@@ -947,7 +960,16 @@ export default {
       })
     },
     getAccountConfig () {
-      getConnectorsAPI().then(res => {
+      const key = this.$utils.rsaEncrypt()
+      getConnectorsAPI(key).then(res => {
+        res.forEach(item => {
+          if (item.config.bindPW) {
+            item.config.bindPW = this.$utils.aesDecrypt(item.config.bindPW)
+          }
+          if (item.config.clientSecret) {
+            item.config.clientSecret = this.$utils.aesDecrypt(item.config.clientSecret)
+          }
+        })
         this.$set(this, 'accounts', res)
       })
     },
@@ -1125,11 +1147,6 @@ export default {
             const payload = this.userAccountOAuth
             payload.config.redirectURI = `${this.$utils.getOrigin()}/dex/callback`
             payload.config.claimMapping.preferredUsernameKey = payload.config.userIDKey
-            payload.config.scopes = [
-              payload.config.userIDKey,
-              payload.config.claimMapping.userNameKey,
-              payload.config.claimMapping.emailKey
-            ]
             updateConnectorAPI(payload.id, payload).then(res => {
               this.getAccountConfig()
               this.handleUserAccountCancel()

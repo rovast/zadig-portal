@@ -10,9 +10,10 @@
     "build": "eslint --ext .js,.vue src && stylelint src && node build/build.js",
     "eslint": "eslint --fix --ext .js,.vue src",
     "stylelint": "stylelint --fix src",
-    "postinstall": "husky install"
+    "postinstall": "husky install && patch-package"
   },
   "dependencies": {
+    "aes-js": "^3.1.2",
     "axios": "0.18.0",
     "countup.js": "2.0.5",
     "diff": "3.5.0",
@@ -28,7 +29,9 @@
     "lodash": "4.17.21",
     "mobile-device-detect": "0.3.3",
     "moment": "2.29.1",
+    "node-forge": "^1.3.1",
     "normalize.css": "8.0.1",
+    "patch-package": "^6.4.7",
     "pinyin": "2.9.0",
     "qrcode.vue": "1.7.0",
     "qs": "^6.10.1",

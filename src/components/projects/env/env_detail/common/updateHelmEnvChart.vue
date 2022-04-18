@@ -1,20 +1,22 @@
 <template>
   <div class="helm-chart-yaml-content">
-    <el-input class="search-service" v-model="searchService" placeholder="搜索服务" suffix-icon="el-icon-search" size="small"></el-input>
-    <el-tabs class="service-list" tab-position="left" type="border-card" v-model="selectedChart" :before-leave="switchTabs">
-      <el-tab-pane :name="name.serviceName" v-for="name in filteredServiceNames" :key="name.serviceName" :disabled="name.type==='delete'">
-        <template slot="label">
-          <el-tooltip effect="dark" :content="name.serviceName" placement="top">
-            <span class="tab-title">{{name.serviceName}}</span>
-          </el-tooltip>
-          <i
-            class="icon"
-            :class="{'el-icon-delete': name.type==='delete', 'el-icon-refresh': name.type==='update', 'el-icon-folder-add': name.type==='create'}"
-          ></i>
-        </template>
-      </el-tab-pane>
-    </el-tabs>
-    <div class="values" v-if="selectedChart && serviceNames.length" :class="{hidden: serviceNotHandle}">
+    <template v-if="showServicesTab">
+      <el-input class="search-service" v-model="searchService" placeholder="搜索服务" suffix-icon="el-icon-search" size="small"></el-input>
+      <el-tabs class="service-list" tab-position="left" type="border-card" v-model="selectedChart" :before-leave="switchTabs">
+        <el-tab-pane :name="name.serviceName" v-for="name in filteredServiceNames" :key="name.serviceName" :disabled="name.type==='delete'">
+          <template slot="label">
+            <el-tooltip effect="dark" :content="name.serviceName" placement="top">
+              <span class="tab-title">{{name.serviceName}}</span>
+            </el-tooltip>
+            <i
+              class="icon"
+              :class="{'el-icon-delete': name.type==='delete', 'el-icon-refresh': name.type==='update', 'el-icon-folder-add': name.type==='create'}"
+            ></i>
+          </template>
+        </el-tab-pane>
+      </el-tabs>
+    </template>
+    <div class="values" :class="{hidden: serviceNotHandle, 'max-width': !showServicesTab}">
       <div class="values-content">
         <el-tabs v-if="showEnvTabs" v-model="selectedEnv" :before-leave="switchTabs">
           <el-tab-pane :label="env" :name="env" v-for="env in envNames" :key="env" :disabled="disabledEnv.includes(env)"></el-tab-pane>
@@ -63,7 +65,7 @@ import {
   getAllChartValuesYamlAPI,
   getCalculatedValuesYamlAPI
 } from '@api'
-import { cloneDeep, pick } from 'lodash'
+import { cloneDeep, pick, differenceBy, get } from 'lodash'
 
 const chartInfoTemp = {
   envName: '', // ?: String
@@ -126,6 +128,10 @@ export default {
       // used for envNames is different from initEnvNames(which used to request api)
       type: Object,
       default: () => null // {envName: baseEvnName}
+    },
+    showServicesTab: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -177,11 +183,13 @@ export default {
       )
     },
     serviceNotHandle () {
+      const current = this.serviceNames.find(
+        service => service.serviceName === this.selectedChart
+      )
       return (
-        this.serviceNames.find(
-          service => service.serviceName === this.selectedChart
-        ).type === 'delete' ||
-        (this.showEnvTabs && this.selectedEnv === 'DEFAULT')
+        (current && current.type === 'delete') ||
+        (this.showEnvTabs && this.selectedEnv === 'DEFAULT') ||
+        (!this.selectedChart && !this.serviceNames.length)
       )
     }
   },
@@ -265,7 +273,11 @@ export default {
           ])
           values.valuesData = {
             yamlSource: 'repo',
-            autoSync: chartInfo[envName].gitRepoConfig && chartInfo[envName].gitRepoConfig.autoSync ? chartInfo[envName].gitRepoConfig.autoSync : false,
+            autoSync:
+              chartInfo[envName].gitRepoConfig &&
+              chartInfo[envName].gitRepoConfig.autoSync
+                ? chartInfo[envName].gitRepoConfig.autoSync
+                : false,
             gitRepoConfig: chartInfo[envName].gitRepoConfig
           }
           values.overrideYaml =
@@ -280,25 +292,36 @@ export default {
     resetAllChartNameInfo () {
       this.allChartNameInfo = {}
     },
-    initAllChartNameInfo (envName = '') {
-      if (!this.chartNames) {
+    initAllChartNameInfo (chartNames, envName = '') {
+      if (!chartNames) {
         return
       }
-      this.chartNames.forEach(chart => {
+      chartNames.forEach(chart => {
         const envInfos = {}
         envName = envName || chart.envName || 'DEFAULT' // priority: envName -> chart.envName -> 'DEFAULT'
+        const initInfo = get(
+          this.allChartNameInfo,
+          `${chart.serviceName}.${envName}.initInfo`,
+          null
+        )
         envInfos[envName] = {
-          ...cloneDeep(chartInfoTemp),
+          ...cloneDeep(initInfo || chartInfoTemp),
           ...cloneDeep(chart),
           envName: envName === 'DEFAULT' ? '' : envName,
-          yamlSource: chart.overrideYaml ? 'freeEdit' : 'default'
+          yamlSource:
+            (initInfo && initInfo.overrideYaml) || chart.overrideYaml
+              ? 'freeEdit'
+              : 'default',
+          initInfo
         }
         this.$set(this.allChartNameInfo, chart.serviceName, {
           ...this.allChartNameInfo[chart.serviceName],
           ...envInfos
         })
       })
-      this.selectedChart = Object.keys(this.allChartNameInfo)[0]
+      this.selectedChart = this.chartNames.length
+        ? this.chartNames[0].serviceName
+        : ''
     },
     validate () {
       const valid = []
@@ -314,9 +337,11 @@ export default {
         this.envScene === 'updateRenderSet'
           ? getChartValuesYamlAPI // get current env info
           : getAllChartValuesYamlAPI // get current project info
+
       const serviceNames = this.chartNames
         ? this.chartNames.map(chart => chart.serviceName)
         : [] // get all service info in current env
+
       const res = await fn(this.projectName, envName, serviceNames).catch(
         err => {
           this.disabledEnv.push(envName)
@@ -337,10 +362,16 @@ export default {
             envName,
             yamlSource: re.overrideYaml ? 'freeEdit' : 'default'
           }
-          if (envInfo.yaml_data && envInfo.yaml_data.source_detail && envInfo.yaml_data.source_detail.git_repo_config && envInfo.yaml_data.source_detail.git_repo_config.codehost_id) {
+          if (
+            envInfo.yaml_data &&
+            envInfo.yaml_data.source_detail &&
+            envInfo.yaml_data.source_detail.git_repo_config &&
+            envInfo.yaml_data.source_detail.git_repo_config.codehost_id
+          ) {
             envInfo.gitRepoConfig = {
               branch: envInfo.yaml_data.source_detail.git_repo_config.branch,
-              codehostID: envInfo.yaml_data.source_detail.git_repo_config.codehost_id,
+              codehostID:
+                envInfo.yaml_data.source_detail.git_repo_config.codehost_id,
               owner: envInfo.yaml_data.source_detail.git_repo_config.owner,
               repo: envInfo.yaml_data.source_detail.git_repo_config.repo,
               valuesPaths: [envInfo.yaml_data.source_detail.load_path],
@@ -352,7 +383,10 @@ export default {
           allChartNameInfo[re.serviceName] = {
             ...this.allChartNameInfo[re.serviceName]
           }
-          allChartNameInfo[re.serviceName][envName] = envInfo
+          allChartNameInfo[re.serviceName][envName] = {
+            ...envInfo,
+            initInfo: cloneDeep(envInfo)
+          }
 
           this.$set(
             this.allChartNameInfo,
@@ -360,7 +394,11 @@ export default {
             allChartNameInfo[re.serviceName]
           )
         })
-        this.selectedChart = Object.keys(this.allChartNameInfo)[0]
+        this.selectedChart = this.chartNames
+          ? this.chartNames.length
+            ? this.chartNames[0].serviceName
+            : ''
+          : res[0].serviceName
       }
     },
     copyEnvChartInfo (envName, initEnvName) {
@@ -421,7 +459,13 @@ export default {
           if (newV[0] && newV[0].envName) {
             this.selectedEnv = newV[0].envName
           }
-          this.initAllChartNameInfo()
+          const chartNames = oldV
+            ? differenceBy(newV, oldV, 'serviceName')
+            : newV
+          this.initAllChartNameInfo(
+            chartNames,
+            this.selectedEnv || this.handledEnv
+          )
         }
       },
       immediate: true
@@ -570,6 +614,10 @@ export default {
           border-radius: 5px;
         }
       }
+    }
+
+    &.max-width {
+      width: 100%;
     }
 
     &.hidden {

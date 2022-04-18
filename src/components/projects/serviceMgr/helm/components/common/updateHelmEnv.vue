@@ -1,19 +1,17 @@
 <template>
-  <el-dialog title="是否更新对应环境？" :visible.sync="updateHelmEnvDialogVisible" width="60%">
-    <div class="title">
-      <el-alert title="勾选需要更新的环境，点击确定之后，该服务将自动在对应的环境中进行更新" :closable="false" type="warning"></el-alert>
-    </div>
+  <el-dialog :title="`选择 ${chartInfo.actionServiceName} 需要加入的环境`" :visible.sync="updateHelmEnvDialogVisible" width="60%">
     <div class="content">
       <el-checkbox-group v-model="checkedEnvList">
         <el-checkbox v-for="(env, index) in envList" :key="index" :label="env">{{env.name}}</el-checkbox>
       </el-checkbox-group>
       <ChartValues
-        v-if="chartNames"
+        v-if="chartInfo.type !== 'delete' && chartInfo.chartNames.length"
         class="chart-value"
         ref="chartValuesRef"
         :envNames="checkedEnvList.map(env => env.name)"
-        :chartNames="chartNames"
+        :chartNames="chartInfo.chartNames"
         showEnvTabs
+        :showServicesTab="false"
         :envScene="`updateEnv`"
       ></ChartValues>
     </div>
@@ -29,12 +27,13 @@
 <script>
 import ChartValues from '@/components/projects/env/env_detail/common/updateHelmEnvChart.vue'
 import { updateHelmEnvAPI, listProductAPI } from '@api'
-import { mapState, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'updateHelmEnv',
   props: {
-    value: Boolean
+    value: Boolean,
+    chartInfo: Object
   },
   data () {
     return {
@@ -44,24 +43,39 @@ export default {
   },
   methods: {
     async autoUpgradeEnv () {
-      const res = await this.$refs.chartValuesRef.validate().catch(err => {
-        console.log(err)
-      })
-      if (!res) {
-        return
+      const payload = {
+        envNames: this.checkedEnvList.map(env => env.name),
+        replacePolicy: 'notUseEnvImage',
+        chartValues: [],
+        deletedServices: []
       }
+      if (this.chartInfo.type !== 'delete') {
+        const res = await this.$refs.chartValuesRef.validate().catch(err => {
+          console.log(err)
+        })
+        if (!res) {
+          return
+        }
+        payload.chartValues = this.$refs.chartValuesRef.getAllChartNameInfo()
+      } else {
+        payload.deletedServices = [this.chartInfo.actionServiceName]
+      }
+
       this.$confirm('更新环境, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const payload = {
-          envNames: this.checkedEnvList.map(env => env.name),
-          replacePolicy: 'notUseEnvImage',
-          chartValues: this.$refs.chartValuesRef.getAllChartNameInfo()
-        }
+        this.$store.commit('CHART_NAMES', [
+          {
+            serviceName: this.chartInfo.actionServiceName,
+            type: 'clear'
+          }
+        ])
         const projectName = this.projectName
+
         updateHelmEnvAPI(projectName, payload).then(res => {
+          this.updateHelmEnvDialogVisible = false
           this.$router.push(`/v1/projects/detail/${projectName}/envs`)
           this.$message({
             message: '更新环境成功',
@@ -90,9 +104,6 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      chartNames: state => state.serviceManage.chartNames
-    }),
     updateHelmEnvDialogVisible: {
       get: function () {
         if (!this.value) {

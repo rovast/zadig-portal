@@ -18,10 +18,6 @@ import 'xterm/css/xterm.css'
 import store from 'storejs'
 export default {
   name: 'Exec',
-  data () {
-    return {
-    }
-  },
   methods: {
     getLogWSUrl () {
       const host = window.location.host
@@ -38,7 +34,7 @@ export default {
       let wsLink = false
       const hostname = this.getLogWSUrl()
       const token = store.get('userInfo').token
-      const url = `/api/podexec/${this.productName}/${this.namespace}/${this.podName}/${this.containerName}/podExec?projectName=${this.productName}&clusterId=${this.clusterId}&token=${token}`
+      const url = `/api/podexec/${this.projectName}/${this.namespace}/${this.podName}/${this.containerName}/podExec/${this.envName}?projectName=${this.projectName}&clusterId=${this.clusterId}&token=${token}`
       this.ws = new WebSocket(hostname + url)
 
       this.$nextTick(() => {
@@ -106,7 +102,7 @@ export default {
       required: true,
       type: String
     },
-    productName: {
+    projectName: {
       required: true,
       type: String
     },
@@ -115,6 +111,10 @@ export default {
       type: String
     },
     serviceName: {
+      required: true,
+      type: String
+    },
+    envName: {
       required: true,
       type: String
     },

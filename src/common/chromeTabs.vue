@@ -29,7 +29,11 @@
           <div class="custom-tab-title">
             <el-tooltip effect="dark" placement="bottom">
               <slot v-bind:tab="tab"></slot>
-              <template slot="content">{{tab.name}}</template>
+              <template slot="content">
+                <span>{{tab.name}}</span>
+                <span v-if="!_.isNil(tab.share_env_is_base) && tab.share_env_is_base" >基准环境</span>
+                <span v-if="!tab.share_env_is_base && !_.isNil(tab.share_env_base_env) && tab.share_env_base_env !==''">子环境</span>
+              </template>
             </el-tooltip>
           </div>
         </template>
@@ -37,8 +41,8 @@
     </el-tabs>
   </div>
 </template>
-
 <script>
+import _ from 'lodash'
 export default {
   model: {
     prop: 'currentTab',
@@ -53,6 +57,11 @@ export default {
   methods: {
     updateCurrent (current) {
       this.$emit('updateTab', current)
+    }
+  },
+  computed: {
+    _ () {
+      return _
     }
   }
 }
@@ -97,7 +106,6 @@ export default {
         z-index: 2;
         width: calc(~'100% - 40px');
         overflow: hidden;
-        text-overflow: ellipsis;
       }
 
       .custom-tab-svg {

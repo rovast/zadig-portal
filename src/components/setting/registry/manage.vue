@@ -66,6 +66,8 @@
           <el-input size="small"
                     clearable
                     type="passsword"
+                    show-password
+                    v-if="dialogRegistryFormVisible"
                     v-model="registry.secret_key"></el-input>
         </el-form-item>
         <el-button type="text" @click="registry.advanced_setting.modified = !registry.advanced_setting.modified" >
@@ -82,7 +84,7 @@
             <el-switch v-model='registry.advanced_setting.enable_tls'></el-switch>
           </el-form-item>
           <span></span>
-          <el-form-item label="TLS 证书内容(公钥)" prop="secret_key" v-if="registry.advanced_setting.enable_tls">
+          <el-form-item label="TLS 证书内容（公钥）" prop="secret_key" v-if="registry.advanced_setting.enable_tls">
             <el-input type="textarea" placeholder="选填" rows="4" clearable v-model="registry.advanced_setting.tls_cert"></el-input>
           </el-form-item>
         </template>
@@ -415,17 +417,18 @@ export default {
     },
     getRegistry () {
       this.loading = true
-      getRegistryListAPI().then((res) => {
+      const key = this.$utils.rsaEncrypt()
+      getRegistryListAPI(key).then((res) => {
         this.loading = false
         res.forEach(item => {
           if (!item.advanced_setting) {
             item.advanced_setting = {
               modified: false,
               enable_tls: true,
-              tls_cert: '',
-              tls_key: ''
+              tls_cert: ''
             }
           }
+          item.secret_key = this.$utils.aesDecrypt(item.secret_key)
         })
         this.allRegistry = res
       })

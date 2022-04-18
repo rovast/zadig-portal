@@ -13,7 +13,6 @@ const analyticsReq = 'https://api.koderover.com/api/operation/upload'
 const userInitEnvRoute = '/v1/projects/initialize/'
 const http = axios.create()
 const CancelToken = axios.CancelToken
-
 let source = null
 export function initSource () {
   source = CancelToken.source()
@@ -137,7 +136,7 @@ http.interceptors.response.use(
           window.location.href = `/signin?redirect=${redirectPath}`
         } else if (error.response.status === 403) {
           Element.Message.error('暂无权限')
-        } else if (error.response.data.code !== 6168 && !error.response.data.description.includes(ignoreErrResponse)) {
+        } else if (error.response.data.code !== 6168 && error.response.data.code !== 6094 && !error.response.data.description.includes(ignoreErrResponse)) {
           displayError(error)
         }
       } else if (document.title === '登录') {
@@ -376,12 +375,16 @@ export function getHelmRepoChartAPI (repoName) {
   return http.get(`/api/aslan/system/helm/${repoName}/index`)
 }
 
+export function renamingHelmReleaseAPI (projectName, payload) {
+  return http.put(`/api/aslan/service/helm/services/releaseNaming?projectName=${projectName}`, payload)
+}
+
 export function imagesAPI (payload, registry = '') {
   return http.post(`/api/aslan/system/registry/images?registryId=${registry}`, { names: payload })
 }
 
-export function initProductAPI (templateName, isStcov) {
-  return http.get(`/api/aslan/environment/init_info/${templateName}${isStcov ? '?stcov=true' : '?'}&projectName=${templateName}`)
+export function initProjectEnvAPI (projectName, isStcov, envType = 'general', isBaseEnv, baseEnvName) {
+  return http.get(`/api/aslan/environment/init_info/${projectName}${isStcov ? '?stcov=true' : '?'}envType=${envType}&isBaseEnv=${isBaseEnv}&baseEnv=${baseEnvName}&projectName=${projectName}`)
 }
 
 // Build
@@ -561,7 +564,7 @@ export function createWorkflowAPI (data) {
 }
 
 export function updateWorkflowAPI (data, ifPassFilter = false) {
-  return http.put(`/api/aslan/workflow/workflow?projectName=${data.product_tmpl_name}&ifPassFilter=${ifPassFilter}`, data)
+  return http.put(`/api/aslan/workflow/workflow/${data.name}?projectName=${data.product_tmpl_name}&ifPassFilter=${ifPassFilter}`, data)
 }
 
 export function deleteProductWorkflowAPI (projectName, name) {
@@ -771,8 +774,8 @@ export function getCodeSourceMaskedAPI () {
 }
 
 // Return details and only for admin
-export function getCodeProviderAPI () {
-  return http.get(`/api/v1/codehosts`)
+export function getCodeProviderAPI (key) {
+  return http.get(`/api/v1/codehosts?encryptedKey=${key}`)
 }
 
 export function createCodeSourceAPI (payload) {
@@ -853,8 +856,8 @@ export function deleteGithubAppAPI (id) {
 }
 
 // Account
-export function getConnectorsAPI () {
-  return http.get(`/api/v1/connectors`)
+export function getConnectorsAPI (key) {
+  return http.get(`/api/v1/connectors?encryptedKey=${key}`)
 }
 
 export function deleteConnectorAPI (id) {
@@ -874,8 +877,8 @@ export function syncLDAPAPI (id) {
 }
 
 // Jira
-export function getJiraAPI () {
-  return http.get(`/api/v1/jira`)
+export function getJiraAPI (key) {
+  return http.get(`/api/v1/jira?encryptedKey=${key}`)
 }
 
 export function updateJiraAPI (payload) {
@@ -907,8 +910,8 @@ export function checkJenkinsConfigExistsAPI () {
   return http.get('/api/aslan/system/jenkins/exist')
 }
 
-export function queryJenkins () {
-  return http.get('/api/aslan/system/jenkins/integration')
+export function queryJenkins (key) {
+  return http.get(`/api/aslan/system/jenkins/integration?encryptedKey=${key}`)
 }
 
 export function jenkinsConnection (payload) {
@@ -928,8 +931,8 @@ export function createExternalSystemAPI (payload) {
   return http.post(`/api/aslan/system/external`, payload)
 }
 
-export function getExternalSystemsAPI (page_num = 1, page_size = 100) {
-  return http.get(`/api/aslan/system/external?page_num=${page_num}&page_size=${page_size}`)
+export function getExternalSystemsAPI (key, page_num = 1, page_size = 100) {
+  return http.get(`/api/aslan/system/external?page_num=${page_num}&page_size=${page_size}&encryptedKey=${key}`)
 }
 
 export function getExternalSystemByIdAPI (id) {
@@ -945,10 +948,12 @@ export function deleteExternalSystemAPI (id) {
 }
 
 // Mail
-export function getEmailHostAPI () {
-  return http.get(`/api/v1/emails/internal/host`)
+export function getEmailHostAPI (key) {
+  return http.get(`/api/v1/emails/internal/host?encryptedKey=${key}`)
 }
-
+export function checkEmailHostAPI () {
+  return http.get(`/api/v1/emails/host`)
+}
 export function deleteEmailHostAPI () {
   return http.delete(`/api/v1/emails/host`)
 }
@@ -1067,7 +1072,10 @@ export function setCapacityAPI (payload) {
 export function cleanCacheAPI () {
   return http.post('/api/aslan/system/cleanCache/oneClick')
 }
-
+// 定时清理
+export function timingCleanAPI (payload) {
+  return http.post('/api/aslan/system/cleanCache/cron', payload)
+}
 export function getCleanCacheStatusAPI () {
   return http.get('/api/aslan/system/cleanCache/state')
 }
@@ -1090,8 +1098,8 @@ export function deleteExternalLinkAPI (id) {
 }
 
 // Registry
-export function getRegistryListAPI () {
-  return http.get('/api/aslan/system/registry/namespaces')
+export function getRegistryListAPI (key) {
+  return http.get(`/api/aslan/system/registry/namespaces?encryptedKey=${key}`)
 }
 
 export function createRegistryAPI (payload) {
@@ -1107,8 +1115,8 @@ export function deleteRegistryAPI (id) {
 }
 
 // OSS
-export function getStorageListAPI () {
-  return http.get('/api/aslan/system/s3storage')
+export function getStorageListAPI (key) {
+  return http.get(`/api/aslan/system/s3storage?encryptedKey=${key}`)
 }
 
 export function createStorageAPI (payload) {
@@ -1124,8 +1132,8 @@ export function deleteStorageAPI (id) {
 }
 
 // System setting : HELM
-export function getHelmRepoAPI () {
-  return http.get(`/api/aslan/system/helm`)
+export function getHelmRepoAPI (key) {
+  return http.get(`/api/aslan/system/helm?encryptedKey=${key}`)
 }
 
 export function createHelmAPI (payload) {
@@ -1178,8 +1186,8 @@ export function getClusterPvcAPI (clusterId, namespace) {
 }
 
 // Host
-export function getHostListAPI () {
-  return http.get(`/api/aslan/system/privateKey`)
+export function getHostListAPI (key) {
+  return http.get(`/api/aslan/system/privateKey?encryptedKey=${key}`)
 }
 
 export function getHostLabelListAPI () {
@@ -1216,8 +1224,8 @@ export function addArtifactActivitiesAPI (id, payload) {
 }
 
 // Project
-export function getSingleProjectAPI (projectName) {
-  return http.get(`/api/aslan/project/products/${projectName}/services?projectName=${projectName}`)
+export function getSingleProjectAPI (projectName, envType = 'general', isBaseEnv, baseEnvName) {
+  return http.get(`/api/aslan/project/products/${projectName}/services?projectName=${projectName}&envType=${envType}&isBaseEnv=${isBaseEnv}&baseEnv=${baseEnvName}`)
 }
 
 export function getProjectInfoAPI (projectName) {
@@ -1265,6 +1273,10 @@ export function updateK8sEnvAPI (projectName, envName, payload, envType = '', fo
   return http.put(`/api/aslan/environment/environments/${envName}?projectName=${projectName}&envType=${envType}&force=${force}`, payload)
 }
 
+export function getServiceDeployableEnvsAPI (projectName, serviceName) {
+  return http.get(`/api/aslan/service/services/${serviceName}/environments/deployable?projectName=${projectName}`)
+}
+
 export function getHelmEnvChartDiffAPI (projectName, envName) {
   return http.get(`/api/aslan/environment/environments/${envName}/helmChartVersions?projectName=${projectName}`)
 }
@@ -1281,8 +1293,8 @@ export function deleteProductEnvAPI (projectName, envName, envType = '') {
   return http.delete(`/api/aslan/environment/environments/${envName}?projectName=${projectName}&envType=${envType}`)
 }
 
-export function restartPodAPI (podName, projectName, envType = '') {
-  return http.delete(`/api/aslan/environment/kube/pods/${podName}?projectName=${projectName}&envType=${envType}`)
+export function restartPodAPI (podName, projectName, envName, envType = '') {
+  return http.delete(`/api/aslan/environment/kube/${envName}/pods/${podName}?projectName=${projectName}&envType=${envType}`)
 }
 
 export function restartServiceOriginAPI (projectName, serviceName, envName = '', envType = '') {
@@ -1364,6 +1376,9 @@ export function checkRegistrationAPI () {
   return http.get(`/api/v1/features/RegisterTrigger`)
 }
 
+export function getPublicKeyAPI () {
+  return http.get(`/api/aslan/system/rsaKey/publicKey`)
+}
 // Profile
 export function getCurrentUserInfoAPI (uid) {
   return http.get(`/api/v1/users/${uid}/personal`)
@@ -1385,8 +1400,8 @@ export function downloadConfigAPI () {
   return http.get('/api/v1/picket/kubeconfig')
 }
 
-export function updateServiceImageAPI (payload, type, projectName, envType = '') {
-  return http.post(`/api/aslan/environment/image/${type}?projectName=${projectName}&envType=${envType}`, payload)
+export function updateServiceImageAPI (payload, type, projectName, envName, envType = '') {
+  return http.post(`/api/aslan/environment/image/${type}/${envName}?projectName=${projectName}&envType=${envType}`, payload)
 }
 
 // Notification
@@ -1466,6 +1481,10 @@ export function useGlobalVariablesAPI (projectName, payload) {
 
 export function getChartLastVersionAPI (projectName, chartRepoName, chartName) {
   return http.get(`/api/aslan/delivery/releases/helm/charts/version?projectName=${projectName}&chartName=${chartName.join(',')}&chartRepoName=${chartRepoName}`)
+}
+
+export function getChartServiceImgsAPI (projectName, envName, chartName) {
+  return http.get(`/api/aslan/environment/environments/${envName}/helm/images?projectName=${projectName}&serviceName=${chartName}`)
 }
 
 // Forgot password
@@ -1837,35 +1856,35 @@ export function getConfigYamlAPI ({ codehostId, repoOwner, repoName, branchName,
 }
 
 export function getIngressObjectAPI (projectName, envName) {
-  return http.get(`/api/aslan/environment/ingresses?projectName=${projectName}&envName=${envName}`)
+  return http.get(`/api/aslan/environment/ingresses/${envName}?projectName=${projectName}`)
 }
 
 export function getConfigMapObjectAPI (projectName, envName, serviceName = '') {
-  return http.get(`/api/aslan/environment/configmaps?projectName=${projectName}&envName=${envName}&serviceName=${serviceName}`)
+  return http.get(`/api/aslan/environment/configmaps/${envName}?projectName=${projectName}&serviceName=${serviceName}`)
 }
 
 export function getSecretObjectAPI (projectName, envName) {
-  return http.get(`/api/aslan/environment/secrets?projectName=${projectName}&envName=${envName}`)
+  return http.get(`/api/aslan/environment/secrets/${envName}?projectName=${projectName}`)
 }
 
 export function getPvcObjectAPI (projectName, envName) {
-  return http.get(`/api/aslan/environment/pvcs?projectName=${projectName}&envName=${envName}`)
+  return http.get(`/api/aslan/environment/pvcs/${envName}?projectName=${projectName}`)
 }
 
-export function addConfigObjectAPI (payload) {
-  // payload: { env_name, product_name, common_env_cfg_type[Secret|Ingress|ConfigMap|PVC], yaml_data }
-  return http.post(`/api/aslan/environment/envcfgs`, payload)
+export function addConfigObjectAPI (projectName, payload) {
+  // payload: { env_name, common_env_cfg_type[Secret|Ingress|ConfigMap|PVC], yaml_data }
+  return http.post(`/api/aslan/environment/envcfgs/${payload.env_name}?projectName=${projectName}`, payload)
 }
 
-export function updateConfigObjectAPI (payload) {
-  return http.put(`/api/aslan/environment/envcfgs`, payload)
+export function updateConfigObjectAPI (projectName, payload) {
+  return http.put(`/api/aslan/environment/envcfgs/${payload.env_name}?projectName=${projectName}`, payload)
 }
 
 export function deleteConfigObjectAPI ({ objectName, projectName, envName, commonEnvCfgType }) {
   // commonEnvCfgType: Secret|Ingress|ConfigMap|PVC
-  return http.delete(`/api/aslan/environment/envcfgs/${objectName}?projectName=${projectName}&envName=${envName}&commonEnvCfgType=${commonEnvCfgType}`)
+  return http.delete(`/api/aslan/environment/envcfgs/${envName}/cfg/${objectName}?projectName=${projectName}&commonEnvCfgType=${commonEnvCfgType}`)
 }
 
 export function getObjectHistoryVersionAPI ({ objectName, projectName, envName, commonEnvCfgType }) {
-  return http.get(`/api/aslan/environment/envcfgs/${objectName}?projectName=${projectName}&envName=${envName}&commonEnvCfgType=${commonEnvCfgType}`)
+  return http.get(`/api/aslan/environment/envcfgs/${envName}/cfg/${objectName}?projectName=${projectName}&commonEnvCfgType=${commonEnvCfgType}`)
 }

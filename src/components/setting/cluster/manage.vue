@@ -569,7 +569,8 @@ export default {
   },
   methods: {
     async getStorage () {
-      await getStorageListAPI().then(res => {
+      const key = this.$utils.rsaEncrypt()
+      await getStorageListAPI(key).then(res => {
         this.allStorage = res
         this.externalStorage = res.filter(
           storage => !storage.endpoint.startsWith('zadig-minio.')

@@ -120,7 +120,8 @@ export default {
     },
     // 是否jenkins构建
     queryJenkinsConfig () {
-      queryJenkins().then(res => {
+      const key = this.$utils.rsaEncrypt()
+      queryJenkins(key).then(res => {
         this.isJenkins = res.length > 0
       })
     }

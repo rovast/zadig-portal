@@ -322,7 +322,8 @@ export default {
   },
   methods: {
     async addBuild (item) {
-      const res = await getCodeProviderAPI(0)
+      const key = this.$utils.rsaEncrypt()
+      const res = await getCodeProviderAPI(key)
       if (res && res.length > 0) {
         this.$router.push(
           `${this.buildBaseUrl}?rightbar=build&service_name=${item.name}&build_add=true`

@@ -82,7 +82,8 @@ export default {
     getHelmRepo () {
       this.chartWithVersion = []
       this.currentRepoVersions = []
-      getHelmRepoAPI().then(res => {
+      const key = this.$utils.rsaEncrypt()
+      getHelmRepoAPI(key).then(res => {
         this.repos = res
       })
     },

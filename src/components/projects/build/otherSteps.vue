@@ -390,7 +390,8 @@ export default {
       getDockerfileTemplatesAPI().then(res => {
         this.dockerfileTemplates = res.dockerfile_template
       })
-      getStorageListAPI().then(res => {
+      const key = this.$utils.rsaEncrypt()
+      getStorageListAPI(key).then(res => {
         this.objectStorageList = res
       })
     },

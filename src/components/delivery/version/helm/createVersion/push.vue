@@ -109,12 +109,14 @@ export default {
       return this.$refs.pushRef.validate()
     },
     getStorageList () {
-      getStorageListAPI().then(res => {
+      const key = this.$utils.rsaEncrypt()
+      getStorageListAPI(key).then(res => {
         this.storageList = res
       })
     },
     getHelmRepo () {
-      getHelmRepoAPI().then(res => {
+      const key = this.$utils.rsaEncrypt()
+      getHelmRepoAPI(key).then(res => {
         this.helmRepoList = res
       })
     },

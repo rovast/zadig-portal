@@ -755,7 +755,8 @@ export default {
         this.askSaveYamlConfig()
         return
       }
-      const res = await getCodeProviderAPI(0)
+      const key = this.$utils.rsaEncrypt()
+      const res = await getCodeProviderAPI(key)
       if (cmd && this.deployType === 'k8s') {
         if (cmd === 'platform') {
           this.showNewServiceInput = true

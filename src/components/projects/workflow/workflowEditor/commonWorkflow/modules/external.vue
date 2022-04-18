@@ -109,7 +109,8 @@ export default {
     }
   },
   created () {
-    getExternalSystemsAPI().then(res => {
+    const key = this.$utils.rsaEncrypt()
+    getExternalSystemsAPI(key).then(res => {
       this.externalList = res.external_system
     })
   },

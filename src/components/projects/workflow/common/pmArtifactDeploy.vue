@@ -141,7 +141,8 @@ export default {
   },
   created () {
     // 如果 PM 交付物部署开启则获取对应服务和对象仓库
-    getStorageListAPI().then((res) => {
+    const key = this.$utils.rsaEncrypt()
+    getStorageListAPI(key).then((res) => {
       this.objectstorageList = res
       // 克隆任务数据
       if (this.forcedUserInput.storage_id) {

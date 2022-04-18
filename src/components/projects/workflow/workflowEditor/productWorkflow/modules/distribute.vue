@@ -269,7 +269,8 @@ export default {
     imageReposAPI().then(res => {
       this.imageRepos = res
     })
-    getStorageListAPI().then(res => {
+    const key = this.$utils.rsaEncrypt()
+    getStorageListAPI(key).then(res => {
       this.storageList = res
     })
     bus.$on('check-tab:distribute', () => {

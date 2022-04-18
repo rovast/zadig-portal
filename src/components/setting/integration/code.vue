@@ -164,6 +164,9 @@
                         prop="password">
             <el-input v-model="codeEdit.password"
                       placeholder="Password"
+                      show-password
+                      v-if='dialogCodeEditFormVisible'
+                      type="password"
                       auto-complete="off"></el-input>
           </el-form-item>
         </template>

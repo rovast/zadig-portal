@@ -179,7 +179,8 @@ export default {
         if (!res.timeout) {
           this.projectForm.timeout = 10
         }
-        getExternalSystemsAPI().then(res => {
+        const key = this.$utils.rsaEncrypt()
+        getExternalSystemsAPI(key).then(res => {
           this.externalList = res.external_system
         })
         if (!this.projectForm.delivery_version_hook) {

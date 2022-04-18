@@ -329,7 +329,8 @@
            @click="fullScreen(execModal.podName +'-debug')"></i>
       </span>
       <XtermDebug :id="execModal.podName +'-debug'"
-                   :productName="projectName"
+                   :projectName="projectName"
+                   :envName="envName"
                    :namespace="namespace"
                    :serviceName="serviceName"
                    :containerName="execModal.containerName"
@@ -623,6 +624,7 @@ export default {
     },
     saveImage (item, scaleName, typeUppercase) {
       const envType = this.isProd ? 'prod' : ''
+      const envName = this.envName
       const projectName = this.projectName
       const type = typeUppercase.toLowerCase()
       item.edit = false
@@ -640,7 +642,7 @@ export default {
       if (this.envName) {
         payload.env_name = this.envName
       }
-      updateServiceImageAPI(payload, type, projectName, envType).then((res) => {
+      updateServiceImageAPI(payload, type, projectName, envName, envType).then((res) => {
         this.fetchServiceData()
         this.$message({
           message: '镜像更新成功',
@@ -689,8 +691,9 @@ export default {
       const ownerQuery = this.envName ? `&envName=${this.envName}` : ''
       const projectName = `${this.projectName}${ownerQuery}`
       const podName = pod.name
+      const envName = this.envName
       const envType = this.isProd ? 'prod' : ''
-      restartPodAPI(podName, projectName, envType).then((res) => {
+      restartPodAPI(podName, projectName, envName, envType).then((res) => {
         this.fetchServiceData()
         this.$message({
           message: '重启成功',
@@ -802,7 +805,7 @@ export default {
         title: '',
         breadcrumb: [
           { title: '项目', url: '/v1/projects' },
-          { title: this.projectName, url: `/v1/projects/detail/${this.projectName}/detail` },
+          { title: this.projectName, isProjectName: true, url: `/v1/projects/detail/${this.projectName}/detail` },
           { title: '环境', url: `/v1/projects/detail/${this.projectName}/envs/detail` },
           { title: this.envName, url: `/v1/projects/detail/${this.projectName}/envs/detail?envName=${this.envName}` },
           { title: this.serviceName, url: '' }

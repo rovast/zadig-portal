@@ -1,51 +1,39 @@
 <template>
   <div class="code-content">
-    <Multipane class="custom-resizer" :class="{'limit-height': !isCreate}" layout="vertical">
+    <Multipane class="custom-resizer" layout="vertical">
       <div class="left">
         <div class="title">
-        <el-row style="width: 100%;">
-        <el-col :span="10">
-          <div class="source-dropdown">
-            <el-radio-group v-model="mode" size="mini">
-              <el-tooltip effect="dark" content="服务管理" placement="top">
-                <el-radio-button label="edit">
-                  <i class="iconfont iconiconlog"></i>
-                </el-radio-button>
-              </el-tooltip>
-              <el-tooltip effect="dark" content="服务编排" placement="top">
-                <el-radio-button label="arrange">
-                  <i class="iconfont iconvery-sort"></i>
-                </el-radio-button>
-              </el-tooltip>
-            </el-radio-group>
-          </div>
-        </el-col>
-        <el-col  :span="14" class="text-right">
-          <div style="line-height: 32px;">
-            <el-tooltip effect="dark" content="从代码库同步" placement="top">
-              <el-button  size="mini"  icon="iconfont icon icongit" @click="openRepoModal('git')" plain circle></el-button>
-            </el-tooltip>
-            <el-tooltip effect="dark" content="从 Chart 仓库同步" placement="top">
-              <el-button
-                @click="openRepoModal('chart')"
-                size="mini"
-                icon="iconfont icon iconhelmrepo"
-                plain
-                circle
-              ></el-button>
-            </el-tooltip>
-            <el-tooltip effect="dark" content="使用模板新建" placement="top">
-              <el-button
-                @click="openRepoModal('chartTemplate')"
-                size="mini"
-                icon="iconfont icon iconvery-template"
-                plain
-                circle
-              ></el-button>
-            </el-tooltip>
-          </div>
-        </el-col>
-      </el-row>
+          <el-row style="width: 100%;">
+            <el-col :span="10">
+              <div class="source-dropdown">
+                <el-radio-group v-model="mode" size="mini">
+                  <el-tooltip effect="dark" content="服务管理" placement="top">
+                    <el-radio-button label="edit">
+                      <i class="iconfont iconiconlog"></i>
+                    </el-radio-button>
+                  </el-tooltip>
+                  <el-tooltip effect="dark" content="服务编排" placement="top">
+                    <el-radio-button label="arrange">
+                      <i class="iconfont iconvery-sort"></i>
+                    </el-radio-button>
+                  </el-tooltip>
+                </el-radio-group>
+              </div>
+            </el-col>
+            <el-col :span="14" class="text-right">
+              <div style="line-height: 32px;">
+                <el-tooltip effect="dark" content="从代码库同步" placement="top">
+                  <el-button size="mini" icon="iconfont icon icongit" @click="openRepoModal('git')" plain circle></el-button>
+                </el-tooltip>
+                <el-tooltip effect="dark" content="从 Chart 仓库同步" placement="top">
+                  <el-button @click="openRepoModal('chart')" size="mini" icon="iconfont icon iconhelmrepo" plain circle></el-button>
+                </el-tooltip>
+                <el-tooltip effect="dark" content="使用模板新建" placement="top">
+                  <el-button @click="openRepoModal('chartTemplate')" size="mini" icon="iconfont icon iconvery-template" plain circle></el-button>
+                </el-tooltip>
+              </div>
+            </el-col>
+          </el-row>
         </div>
         <div class="left-tree" v-show="mode === 'edit'">
           <Folder
@@ -69,7 +57,7 @@
         </div>
         <order class="left-tree" v-show="mode === 'arrange'"></order>
       </div>
-      <MultipaneResizer class="multipane-resizer"/>
+      <MultipaneResizer class="multipane-resizer" />
       <div class="center">
         <div class="header">
           <PageNav
@@ -103,20 +91,25 @@
             <el-button type="primary" size="small" @click="showModal = false">预览/编辑</el-button>
           </div>
         </div>
+        <div class="footer" v-if="!isCreate">
+          <!-- <el-button size="small" type="primary" @click="commit" :disabled="!commitCache.length">保存</el-button> -->
+          <el-button size="small" type="primary" :disabled="!updateEnv.length || !envNameList.length" @click="update()">加入环境</el-button>
+        </div>
       </div>
-      <MultipaneResizer class="multipane-resizer" v-if="service && service.length"/>
+      <MultipaneResizer class="multipane-resizer" v-if="service && service.length" />
 
       <div :style="{ flexGrow: 1, minWidth: '372px' }" class="right">
         <ServiceAside :changeExpandFileList="changeExpandFileList" ref="aside" slot="aside" :isCreate="isCreate" />
       </div>
     </Multipane>
-
-    <div class="env-bottom" v-if="!isCreate">
-      <!-- <el-button size="small" type="primary" @click="commit" :disabled="!commitCache.length">保存</el-button> -->
-      <el-button size="small" type="primary" :disabled="!updateEnv || !envNameList.length" @click="update">更新环境</el-button>
-    </div>
-    <UpdateHelmEnv v-model="updateHelmEnvDialogVisible" />
-    <el-dialog :title="currentService ? '更新服务' : '新建服务'" :visible="dialogVisible" center @close="closeSelectRepo" custom-class="dialog-source">
+    <UpdateHelmEnv v-model="updateHelmEnvDialogVisible" :chartInfo="chartInfo" />
+    <el-dialog
+      :title="currentService ? '更新服务' : '新建服务'"
+      :visible="dialogVisible"
+      center
+      @close="closeSelectRepo"
+      custom-class="dialog-source"
+    >
       <Repo ref="repo" @triggleAction="changeExpandFileList('clear');clearCommitCache()" />
       <!-- 代码库弹窗 -->
     </el-dialog>
@@ -195,7 +188,12 @@ export default {
       },
       searchService: '',
       mode: 'edit',
-      showModal: true
+      showModal: true,
+      chartInfo: {
+        chartNames: [],
+        actionServiceName: '',
+        type: ''
+      }
     }
   },
   methods: {
@@ -304,9 +302,7 @@ export default {
         )
           .then(res => {
             if (res) {
-              if (this.envNameList.length) {
-                this.$store.commit('UPDATE_ENV_BUTTON', true)
-              }
+              this.update('delete', currentData.service_name)
               this.$store.dispatch('queryService', {
                 projectName: this.projectName
               })
@@ -385,7 +381,6 @@ export default {
         commitCache: this.commitCache
       }
       this.$store.dispatch('updateHelmChart', params).then(res => {
-        this.$store.commit('UPDATE_ENV_BUTTON', true)
         this.clearCommitCache()
       })
     },
@@ -413,17 +408,36 @@ export default {
     },
     openRepoModal (source, currentService = null) {
       this.$store.commit('SERVICE_SOURCE', source)
-      this.$store.commit('CURRENT_SERVICE', currentService ? cloneDeep(currentService) : null)
+      this.$store.commit(
+        'CURRENT_SERVICE',
+        currentService ? cloneDeep(currentService) : null
+      )
       this.$store.commit('SERVICE_DIALOG_VISIBLE', true)
     },
-    update () {
-      this.updateHelmEnvDialogVisible = true
+    update (type, serviceName) {
+      if (type === 'delete') {
+        this.chartInfo = {
+          chartNames: this.$store.state.serviceManage.chartNames.filter(
+            chart => chart.serviceName === serviceName
+          ),
+          actionServiceName: serviceName,
+          type: 'delete'
+        }
+      } else {
+        this.chartInfo = {
+          chartNames: this.updateEnv,
+          actionServiceName: this.$route.query.service_name,
+          type: ''
+        }
+      }
+      if (this.chartInfo.chartNames.length) {
+        this.updateHelmEnvDialogVisible = true
+      }
     },
     autoShowValuesYaml (node) {
       const data =
-        node.children.filter(
-          node => node.label === 'values.yaml'
-        )[0] || node.children[0]
+        node.children.filter(node => node.label === 'values.yaml')[0] ||
+        node.children[0]
       this.$refs.folder.addExpandFileList(data)
     }
   },
@@ -473,12 +487,18 @@ export default {
       serviceSource: state => state.serviceManage.serviceSource,
       dialogVisible: state => state.serviceManage.serviceDialogVisible,
       currentService: state => state.serviceManage.currentService,
-      updateEnv: state => state.serviceManage.updateEnv
+      chartNames: state => state.serviceManage.chartNames
     }),
     filteredNodeData () {
       return this.nodeData.filter(node => {
         return node.service_name.includes(this.searchService)
       })
+    },
+    updateEnv () {
+      const serviceName = this.$route.query.service_name
+      return this.$store.state.serviceManage.chartNames.filter(
+        chart => chart.type !== 'delete' && chart.serviceName === serviceName
+      )
     }
   },
   mounted () {
@@ -600,7 +620,7 @@ export default {
     .code {
       position: relative;
       box-sizing: border-box;
-      height: calc(~'100% - 40px');
+      height: calc(~'100% - 85px');
       margin-top: 40px;
       overflow-y: scroll;
       background-color: #fff;
@@ -626,6 +646,16 @@ export default {
         cursor: not-allowed;
       }
     }
+
+    .footer {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 45px;
+      padding: 0 10px;
+      background: #fff;
+    }
   }
 
   .center::-webkit-scrollbar {
@@ -638,25 +668,11 @@ export default {
     min-width: 200px;
     background-color: #fff;
   }
-
-  .env-bottom {
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    height: 55px;
-    padding-left: 10px;
-    background-color: #fff;
-    border-top: 1px solid #dbdbdb;
-  }
 }
 
 .custom-resizer {
   width: 100%;
   height: 100%;
-
-  &.limit-height {
-    height: calc(~'100% - 56px');
-  }
 }
 
 ::-webkit-scrollbar {

@@ -11,7 +11,7 @@
                width="35%">
       <el-form ref="registry"
                :rules="rules"
-               label-width="150px"
+               label-width="160px"
                label-position="left"
                :model="registry">
         <el-form-item label="默认使用"
@@ -70,6 +70,24 @@
                     v-if="dialogRegistryFormVisible"
                     v-model="registry.secret_key"></el-input>
         </el-form-item>
+        <el-button type="text" @click="registry.advanced_setting.modified = !registry.advanced_setting.modified" >
+          高级配置
+          <i :class="[registry.advanced_setting.modified ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
+        </el-button>
+        <template v-if="registry.advanced_setting.modified">
+          <el-alert type="info" :closable="false">
+            <template>
+              <div >修改以下配置后，如使用跨集群构建功能，需重启对应集群中 koderover-agent 命名空间下的 koderover-agent-node-agent 服务，修改后的配置方可生效</div>
+            </template>
+          </el-alert>
+          <el-form-item label="开启 SSL 校验" prop="enable_tls">
+            <el-switch v-model='registry.advanced_setting.enable_tls'></el-switch>
+          </el-form-item>
+          <span></span>
+          <el-form-item label="TLS 证书内容（公钥）" prop="secret_key" v-if="registry.advanced_setting.enable_tls">
+            <el-input type="textarea" placeholder="选填" rows="4" clearable v-model="registry.advanced_setting.tls_cert"></el-input>
+          </el-form-item>
+        </template>
       </el-form>
       <div slot="footer"
            class="dialog-footer">
@@ -169,7 +187,12 @@ export default {
         secret_key: '',
         reg_provider: '',
         region: '',
-        is_default: false
+        is_default: false,
+        advanced_setting: {
+          modified: false, // 是否启用高级设置
+          enable_tls: true, // 是否开启 TLS
+          tls_cert: '' // 证书内容
+        }
       },
       providers: [
         {
@@ -255,7 +278,8 @@ export default {
         }],
         region: [{ required: true, message: '请输入区域', trigger: ['blur'] }],
         namespace: [{ required: true, message: '请输入 Namespace', trigger: ['blur'] }]
-      }
+      },
+      isShowHighSetting: false
     }
   },
   computed: {
@@ -272,7 +296,13 @@ export default {
         secret_key: '',
         reg_provider: '',
         region: '',
-        is_default: this.allRegistry.length === 0
+        is_default: this.allRegistry.length === 0,
+        advanced_setting: {
+          modified: false,
+          enable_tls: true,
+          tls_cert: ''
+        }
+
       }
       this.mode = 'create'
       this.dialogRegistryFormVisible = true
@@ -294,18 +324,33 @@ export default {
           secret_key: '',
           reg_provider: val,
           region: '',
-          is_default: this.registry.is_default
+          is_default: this.registry.is_default,
+          advanced_setting: {
+            modified: false,
+            enable_tls: true,
+            tls_cert: ''
+          }
         }
         this.$refs.registry.clearValidate()
       })
     },
     registryAction (action, registry) {
+      // 关闭ssl隐藏输入框 没保存前依然保留上次填入的结果
+      if (!this.registry.advanced_setting.enable_tls) {
+        this.registry.advanced_setting.tls_cert = ''
+      }
       if (action === 'add') {
         this.$refs.registry.validate(valid => {
           if (valid) {
-            const payload = this.registry
-            this.dialogRegistryFormVisible = false
-            this.addRegistry(payload)
+            this.$confirm(`修改「开启 SSL 校验」或 「TLS 证书内容（公钥）」会对正在运行的工作流任务产生影响，确认修改？`, '确认', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              const payload = this.registry
+              this.dialogRegistryFormVisible = false
+              this.addRegistry(payload)
+            })
           } else {
             return false
           }
@@ -320,10 +365,16 @@ export default {
       } else if (action === 'update') {
         this.$refs.registry.validate(valid => {
           if (valid) {
-            const id = this.registry.id
-            const payload = this.registry
-            this.dialogRegistryFormVisible = false
-            this.updateRegistry(id, payload)
+            this.$confirm(`修改「开启 SSL 校验」或 「TLS 证书内容（公钥）」会对正在运行的工作流任务产生影响，确认修改？`, '确认', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              const id = this.registry.id
+              const payload = this.registry
+              this.dialogRegistryFormVisible = false
+              this.updateRegistry(id, payload)
+            })
           } else {
             return false
           }
@@ -370,6 +421,13 @@ export default {
       getRegistryListAPI(key).then((res) => {
         this.loading = false
         res.forEach(item => {
+          if (!item.advanced_setting) {
+            item.advanced_setting = {
+              modified: false,
+              enable_tls: true,
+              tls_cert: ''
+            }
+          }
           item.secret_key = this.$utils.aesDecrypt(item.secret_key)
         })
         this.allRegistry = res

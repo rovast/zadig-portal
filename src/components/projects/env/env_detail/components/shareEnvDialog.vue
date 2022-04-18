@@ -152,28 +152,34 @@ export default {
     async enableShareEnv () {
       const projectName = this.projectName
       const envName = this.envName
-      await enableShareEnvAPI(envName, projectName).catch(err => {
+      const res = await enableShareEnvAPI(envName, projectName).catch(err => {
         console.log(err)
+        this.shareEnvDialogVisible = false
       })
-      this.$message({
-        type: 'success',
-        message: '自测模式开启成功'
-      })
-      this.$emit('statusChange', 'enable')
-      this.shareEnvDialogVisible = false
+      if (res) {
+        this.$message({
+          type: 'success',
+          message: '自测模式开启成功'
+        })
+        this.$emit('statusChange', 'enable')
+        this.shareEnvDialogVisible = false
+      }
     },
     async disableShareEnv () {
       const projectName = this.projectName
       const envName = this.envName
-      await disableShareEnvAPI(envName, projectName).catch(err => {
+      const res = await disableShareEnvAPI(envName, projectName).catch(err => {
+        this.shareEnvDialogVisible = false
         console.log(err)
       })
-      this.$message({
-        type: 'success',
-        message: '自测模式关闭成功'
-      })
-      this.$emit('statusChange', 'disable')
-      this.shareEnvDialogVisible = false
+      if (res) {
+        this.$message({
+          type: 'success',
+          message: '自测模式关闭成功'
+        })
+        this.$emit('statusChange', 'disable')
+        this.shareEnvDialogVisible = false
+      }
     },
     copyCommandSuccess (event) {
       this.$message({

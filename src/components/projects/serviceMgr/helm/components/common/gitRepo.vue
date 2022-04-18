@@ -352,7 +352,6 @@ export default {
         }
       })
 
-      this.$store.commit('UPDATE_ENV_BUTTON', true)
       this.$store.commit('CHART_NAMES', services)
 
       this.$emit('triggleAction')

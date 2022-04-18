@@ -216,7 +216,6 @@ export default {
           showServiceName: payload.name
         })
 
-        this.$store.commit('UPDATE_ENV_BUTTON', true)
         this.$store.commit('CHART_NAMES', res.successServices.map(service => {
           return {
             serviceName: service,
@@ -257,7 +256,6 @@ export default {
           showServiceName: res.successServices[0]
         })
 
-        this.$store.commit('UPDATE_ENV_BUTTON', true)
         this.$store.commit('CHART_NAMES', res.successServices.map(service => {
           return {
             serviceName: service,

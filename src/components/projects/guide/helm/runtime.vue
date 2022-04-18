@@ -43,7 +43,7 @@
                 <el-option
                   v-for="registry in imageRegistry"
                   :key="registry.id"
-                  :label="`${registry.reg_addr}/${registry.namespace}`"
+                  :label="registry.namespace ? `${registry.reg_addr}/${registry.namespace}` : registry.reg_addr"
                   :value="registry.id"
                 ></el-option>
               </el-select>
@@ -274,7 +274,7 @@ export default {
       title: '',
       breadcrumb: [
         { title: '项目', url: '/v1/projects' },
-        { title: this.projectName, url: '' }
+        { title: this.projectName, isProjectName: true, url: '' }
       ]
     })
 

@@ -137,7 +137,6 @@ export default {
             showServiceName: payload.createFrom.chartName
           })
           this.$store.commit('SERVICE_DIALOG_VISIBLE', false)
-          this.$store.commit('UPDATE_ENV_BUTTON', true)
           this.$store.commit('CHART_NAMES', res.successServices.map(service => {
             return {
               serviceName: service,

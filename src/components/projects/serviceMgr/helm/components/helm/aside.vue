@@ -1,95 +1,120 @@
 <template>
   <div class="helm-aside-container">
-    <div class="service-aside-right--resizable">
-    </div>
+    <div class="service-aside-right--resizable"></div>
     <div class="aside__inner">
       <div class="aside-bar">
         <div class="tabs__wrap tabs__wrap_vertical">
-          <div class="tabs__item"
-               :class="{'selected': selected === 'var'}"
-               @click="changeRoute('var')">
+          <div class="tabs__item" :class="{'selected': selected === 'var'}" @click="changeRoute('var')">
             <span class="step-name">镜像更新</span>
           </div>
-          <div class="tabs__item"
-               :class="{'selected': selected === 'policy'}"
-               @click="changeRoute('policy')">
+          <div class="tabs__item" :class="{'selected': selected === 'policy'}" @click="changeRoute('policy')">
             <span class="step-name">策略</span>
           </div>
-          <div class="tabs__item"
-               :class="{'selected': selected === 'help'}"
-               @click="changeRoute('help')">
+          <div class="tabs__item" :class="{'selected': selected === 'help'}" @click="changeRoute('help')">
             <span class="step-name">帮助</span>
           </div>
         </div>
       </div>
       <div class="aside__content">
-        <div v-if="selected === 'var'"
-             class="service-aside--variables">
+        <div v-if="selected === 'var'" class="service-aside--variables">
           <header class="service-aside-box__header">
             <div class="service-aside-box__title">镜像更新</div>
           </header>
-         <div class="service-aside-box__content">
-              <h4>
-                <span><i class="iconfont iconfuwu"></i></span> 检测到的服务组件
-                <el-tooltip effect="dark"
-                            placement="top">
-                  <div slot="content">values.yaml 中可被更新的镜像</div>
-                  <span><i class="el-icon-question"></i></span>
+          <div class="service-aside-box__content">
+            <h4>
+              <span>
+                <i class="iconfont iconfuwu"></i>
+              </span> 检测到的服务组件
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">values.yaml 中可被更新的镜像</div>
+                <span>
+                  <i class="el-icon-question"></i>
+                </span>
+              </el-tooltip>
+              <el-button type="text" size="small" @click="updateMatchRuleFlag = true">更新匹配规则</el-button>
+            </h4>
+            <el-table :data="serviceModules" stripe style="width: 100%;">
+              <el-table-column prop="name" label="服务组件"></el-table-column>
+              <el-table-column prop="image_name" label="镜像名"></el-table-column>
+              <el-table-column prop="image" label="当前镜像版本"></el-table-column>
+              <el-table-column label="构建信息/操作">
+                <template slot-scope="scope">
+                  <!-- <router-link v-if="scope.row.build_name"
+                  :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_name=${scope.row.build_name}`">-->
+                  <el-button
+                    size="small"
+                    v-if="scope.row.build_name"
+                    @click="editBuild(scope.row.name, scope.row.build_name)"
+                    type="text"
+                  >{{scope.row.build_name}}</el-button>
+                  <!-- </router-link> -->
+                  <!-- <router-link v-else
+                  :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_add=true`">-->
+                  <el-button size="small" v-else type="text" @click="addBuild(scope.row.name)">添加构建</el-button>
+                  <!-- </router-link> -->
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <div class="service-aside-box__content">
+            <h4>
+              <span>
+                <i class="iconfont iconfuwu"></i>
+              </span> Helm Release 名称配置
+            </h4>
+            <div class="release-name-config">
+              <span class="title">
+                Release 名称
+                <el-tooltip effect="dark" placement="top">
+                  <div slot="content">
+                    <span>支持如下内置变量和常量：</span>
+                    <br />
+                    <span>
+                      <span style="display: inline-block; width: 100px;">$Product$</span>项目名称
+                    </span>
+                    <br />
+                    <span>
+                      <span style="display: inline-block; width: 100px;">$Service$</span>服务名称
+                    </span>
+                    <br />
+                    <span>
+                      <span style="display: inline-block; width: 100px;">$Namespace$</span>命名空间
+                    </span>
+                    <br />
+                    <span>
+                      <span style="display: inline-block; width: 100px;">$EnvName$</span>环境名称
+                    </span>
+                    <br />
+                  </div>
+                  <span>
+                    <i class="icon el-icon-question"></i>
+                  </span>
                 </el-tooltip>
-                <el-button type="text" size="small" @click="updateMatchRuleFlag = true">更新匹配规则</el-button>
-              </h4>
-              <el-table :data="serviceModules"
-                        stripe
-                        style="width: 100%;">
-                <el-table-column prop="name"
-                                 label="服务组件">
-                </el-table-column>
-                <el-table-column prop="image_name"
-                                 label="镜像名">
-                </el-table-column>
-                <el-table-column prop="image"
-                                 label="当前镜像版本">
-                </el-table-column>
-                <el-table-column label="构建信息/操作">
-                  <template slot-scope="scope">
-                    <!-- <router-link v-if="scope.row.build_name"
-                                 :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_name=${scope.row.build_name}`"> -->
-                      <el-button size="small"  v-if="scope.row.build_name"  @click="editBuild(scope.row.name, scope.row.build_name)"
-                                 type="text">{{scope.row.build_name}}</el-button>
-                    <!-- </router-link> -->
-                    <!-- <router-link v-else
-                                 :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_add=true`"> -->
-                      <el-button size="small"  v-else
-                                 type="text" @click="addBuild(scope.row.name)">添加构建</el-button>
-                    <!-- </router-link> -->
-
-                  </template>
-
-                </el-table-column>
-              </el-table>
-         </div>
+              </span>
+              <el-input size="mini"  style="display: inline-block;" :value="currentService.release_naming" @input="handleInputChange" placeholder="请输入 Release 名称"></el-input>
+              <el-button size="mini" @click="renamingHelmRelease" type="primary" plain>保存</el-button>
+            </div>
+          </div>
         </div>
-        <div v-else-if="selected === 'policy'"
-             class="service-aside--variables">
+        <div v-else-if="selected === 'policy'" class="service-aside--variables">
           <header class="service-aside-box__header">
             <div class="service-aside-box__title">策略</div>
           </header>
           <div class="service-aside-help__content">
-            <Policy/>
+            <Policy />
           </div>
         </div>
-        <div v-else-if="selected === 'help'"
-             class="service-aside--variables">
+        <div v-else-if="selected === 'help'" class="service-aside--variables">
           <header class="service-aside-box__header">
             <div class="service-aside-box__title">帮助</div>
           </header>
           <div class="service-aside-help__content">
-            <Help/>
+            <Help />
           </div>
         </div>
       </div>
     </div>
-    <MatchRule :value.sync="updateMatchRuleFlag"/>
+    <MatchRule :value.sync="updateMatchRuleFlag" />
   </div>
 </template>
 <script>
@@ -99,20 +124,14 @@ import { mapState } from 'vuex'
 import Policy from '../../../k8s/container/policy.vue'
 import Help from './help.vue'
 import MatchRule from './matchRule.vue'
+import { cloneDeep } from 'lodash'
+import { renamingHelmReleaseAPI } from '@api'
 export default {
   props: {
     changeExpandFileList: Function
   },
   data () {
     return {
-      allRegistry: [],
-      chartValues: [],
-      detectedServices: [],
-      showBuild: false,
-      serviceName: null,
-      name: null,
-      buildName: null,
-      isEdit: false,
       updateMatchRuleFlag: false
     }
   },
@@ -140,6 +159,24 @@ export default {
       }
       this.changeExpandFileList('add', item)
     },
+    handleInputChange (value) {
+      const service = cloneDeep(this.currentService)
+      service.release_naming = value
+      this.$store.commit('CURRENT_SERVICE', service)
+    },
+    renamingHelmRelease () {
+      const projectName = this.projectName
+      const payload = {
+        service_name: this.serviceName,
+        naming: this.currentService.release_naming
+      }
+      renamingHelmReleaseAPI(projectName, payload).then((res) => {
+        this.$message({
+          message: 'Release 名称保存成功',
+          type: 'success'
+        })
+      })
+    },
     changeRoute (step) {
       this.$router.replace({
         query: Object.assign(
@@ -147,26 +184,28 @@ export default {
           qs.parse(window.location.search, { ignoreQueryPrefix: true }),
           {
             rightbar: step
-          })
+          }
+        )
       })
     }
-  },
-  beforeDestroy () {
-    bus.$off('save-var')
   },
   computed: {
     projectName () {
       return this.$route.params.project_name
     },
     ...mapState({
-      serviceModules: (state) => state.serviceManage.serviceModules
+      serviceModules: state => state.serviceManage.serviceModules,
+      currentService: state => state.serviceManage.currentService
     }),
-    serviceType () {
-      return this.service.type
+    serviceName () {
+      return this.$route.query.service_name
     },
     selected () {
       return this.$route.query.rightbar || 'var'
     }
+  },
+  beforeDestroy () {
+    bus.$off('save-var')
   },
   components: {
     Policy,
@@ -308,9 +347,6 @@ export default {
         }
 
         .service-aside-box__content {
-          flex-grow: 1;
-          -webkit-box-flex: 1;
-          -ms-flex-positive: 1;
           padding: 12px 16px;
 
           h4 {
@@ -318,6 +354,24 @@ export default {
             padding: 0;
             color: #909399;
             font-weight: 300;
+          }
+
+          .release-name-config {
+            margin-top: 10px;
+            margin-bottom: 10px;
+
+            .icon {
+              cursor: pointer;
+            }
+
+            .title {
+              color: #606266;
+              font-size: 13px;
+            }
+
+            .el-input {
+              width: 60%;
+            }
           }
 
           .el-table td,

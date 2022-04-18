@@ -80,6 +80,15 @@ export default {
         delete: '删除'
       }
       return typeEnum[this.opeType] || ''
+    },
+    isBaseEnv () {
+      return this.productInfo.share_env_is_base
+    },
+    baseEnvName () {
+      return this.productInfo.share_env_base_env
+    },
+    envType () {
+      return this.productInfo.share_env_enable ? 'share' : 'general'
     }
   },
   methods: {
@@ -100,6 +109,24 @@ export default {
           this.$message.success(`${this.opeDesc}服务成功！`)
           this.closeDialog()
           this.fetchAllData()
+        }).catch(error => {
+          console.log(error)
+          if (error.response && error.response.data.code === 6094) {
+            const HtmlStrings = []
+            for (const service in error.response.data.extra) {
+              if (Object.hasOwnProperty.call(error.response.data.extra, service)) {
+                const envNames = error.response.data.extra[service]
+                HtmlStrings.push(`服务 ${service} 存在于子环境 ${envNames.join(',')} 中`)
+              }
+            }
+            const HtmlTemplate = `<p>待删除服务存在于子环境中，请先删除引用后再进行${this.opeDesc}操作！</p><br><p>${HtmlStrings.join('<br>')}</p>`
+            this.$message({
+              message: HtmlTemplate,
+              type: 'warning',
+              dangerouslyUseHTMLString: true,
+              duration: 5000
+            })
+          }
         }).finally(() => {
           this.loading = false
         })
@@ -145,7 +172,18 @@ export default {
       this.dialogVisible = false
       this.updateServices.service_names = []
     },
-    openDialog (type) {
+    async openDialog (type) {
+      const projectName = this.projectName
+      const isBaseEnv = this.isBaseEnv
+      const baseEnvName = this.baseEnvName
+      const envType = this.envType
+      const res = await getSingleProjectAPI(projectName, envType, isBaseEnv, baseEnvName)
+      if (res) {
+        this.allProductInfo = {
+          services: flatten(res.services),
+          vars: res.vars || []
+        }
+      }
       this.dialogVisible = true
       this.opeType = type
 
@@ -165,18 +203,7 @@ export default {
           break
       }
       this.currentAllInfo = { vars, services }
-    },
-    getInitProduct () {
-      getSingleProjectAPI(this.projectName).then(res => {
-        this.allProductInfo = {
-          services: flatten(res.services),
-          vars: res.vars || []
-        }
-      })
     }
-  },
-  created () {
-    this.getInitProduct()
   }
 }
 </script>

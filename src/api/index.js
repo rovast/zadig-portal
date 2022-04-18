@@ -13,7 +13,6 @@ const analyticsReq = 'https://api.koderover.com/api/operation/upload'
 const userInitEnvRoute = '/v1/projects/initialize/'
 const http = axios.create()
 const CancelToken = axios.CancelToken
-
 let source = null
 export function initSource () {
   source = CancelToken.source()
@@ -775,8 +774,8 @@ export function getCodeSourceMaskedAPI () {
 }
 
 // Return details and only for admin
-export function getCodeProviderAPI () {
-  return http.get(`/api/v1/codehosts`)
+export function getCodeProviderAPI (key) {
+  return http.get(`/api/v1/codehosts?encryptedKey=${key}`)
 }
 
 export function createCodeSourceAPI (payload) {
@@ -857,8 +856,8 @@ export function deleteGithubAppAPI (id) {
 }
 
 // Account
-export function getConnectorsAPI () {
-  return http.get(`/api/v1/connectors`)
+export function getConnectorsAPI (key) {
+  return http.get(`/api/v1/connectors?encryptedKey=${key}`)
 }
 
 export function deleteConnectorAPI (id) {
@@ -878,8 +877,8 @@ export function syncLDAPAPI (id) {
 }
 
 // Jira
-export function getJiraAPI () {
-  return http.get(`/api/v1/jira`)
+export function getJiraAPI (key) {
+  return http.get(`/api/v1/jira?encryptedKey=${key}`)
 }
 
 export function updateJiraAPI (payload) {
@@ -911,8 +910,8 @@ export function checkJenkinsConfigExistsAPI () {
   return http.get('/api/aslan/system/jenkins/exist')
 }
 
-export function queryJenkins () {
-  return http.get('/api/aslan/system/jenkins/integration')
+export function queryJenkins (key) {
+  return http.get(`/api/aslan/system/jenkins/integration?encryptedKey=${key}`)
 }
 
 export function jenkinsConnection (payload) {
@@ -932,8 +931,8 @@ export function createExternalSystemAPI (payload) {
   return http.post(`/api/aslan/system/external`, payload)
 }
 
-export function getExternalSystemsAPI (page_num = 1, page_size = 100) {
-  return http.get(`/api/aslan/system/external?page_num=${page_num}&page_size=${page_size}`)
+export function getExternalSystemsAPI (key, page_num = 1, page_size = 100) {
+  return http.get(`/api/aslan/system/external?page_num=${page_num}&page_size=${page_size}&encryptedKey=${key}`)
 }
 
 export function getExternalSystemByIdAPI (id) {
@@ -949,10 +948,12 @@ export function deleteExternalSystemAPI (id) {
 }
 
 // Mail
-export function getEmailHostAPI () {
-  return http.get(`/api/v1/emails/internal/host`)
+export function getEmailHostAPI (key) {
+  return http.get(`/api/v1/emails/internal/host?encryptedKey=${key}`)
 }
-
+export function checkEmailHostAPI () {
+  return http.get(`/api/v1/emails/host`)
+}
 export function deleteEmailHostAPI () {
   return http.delete(`/api/v1/emails/host`)
 }
@@ -1097,8 +1098,8 @@ export function deleteExternalLinkAPI (id) {
 }
 
 // Registry
-export function getRegistryListAPI () {
-  return http.get('/api/aslan/system/registry/namespaces')
+export function getRegistryListAPI (key) {
+  return http.get(`/api/aslan/system/registry/namespaces?encryptedKey=${key}`)
 }
 
 export function createRegistryAPI (payload) {
@@ -1114,8 +1115,8 @@ export function deleteRegistryAPI (id) {
 }
 
 // OSS
-export function getStorageListAPI () {
-  return http.get('/api/aslan/system/s3storage')
+export function getStorageListAPI (key) {
+  return http.get(`/api/aslan/system/s3storage?encryptedKey=${key}`)
 }
 
 export function createStorageAPI (payload) {
@@ -1131,8 +1132,8 @@ export function deleteStorageAPI (id) {
 }
 
 // System setting : HELM
-export function getHelmRepoAPI () {
-  return http.get(`/api/aslan/system/helm`)
+export function getHelmRepoAPI (key) {
+  return http.get(`/api/aslan/system/helm?encryptedKey=${key}`)
 }
 
 export function createHelmAPI (payload) {
@@ -1185,8 +1186,8 @@ export function getClusterPvcAPI (clusterId, namespace) {
 }
 
 // Host
-export function getHostListAPI () {
-  return http.get(`/api/aslan/system/privateKey`)
+export function getHostListAPI (key) {
+  return http.get(`/api/aslan/system/privateKey?encryptedKey=${key}`)
 }
 
 export function getHostLabelListAPI () {
@@ -1375,6 +1376,9 @@ export function checkRegistrationAPI () {
   return http.get(`/api/v1/features/RegisterTrigger`)
 }
 
+export function getPublicKeyAPI () {
+  return http.get(`/api/aslan/system/rsaKey/publicKey`)
+}
 // Profile
 export function getCurrentUserInfoAPI (uid) {
   return http.get(`/api/v1/users/${uid}/personal`)

@@ -99,7 +99,8 @@ export default {
       this.$refs.jenkinsref.openDialog(_.cloneDeep(data))
     },
     async getJenkins () {
-      const res = await queryJenkins().catch(error => console.log(error))
+      const key = this.$utils.rsaEncrypt()
+      const res = await queryJenkins(key).catch(error => console.log(error))
       if (res) {
         this.tableData = res
       }

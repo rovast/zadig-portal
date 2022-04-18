@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { getAnnouncementsAPI, getEmailHostAPI } from '@api'
+import { getAnnouncementsAPI, checkEmailHostAPI } from '@api'
 import Sidebar from './home/sidebar.vue'
 import Topbar from './home/topbar.vue'
 import BottomBar from './home/bottomBar.vue'
@@ -46,7 +46,7 @@ export default {
       })
     },
     async checkSMTP () {
-      const res = await getEmailHostAPI()
+      const res = await checkEmailHostAPI()
       if (res) {
         this.SMTPDisabled = false
       } else {

@@ -1,6 +1,7 @@
 import store from 'storejs'
 import { isEmpty } from 'lodash'
-
+const forge = require('node-forge') // rsa加密
+const aesjs = require('aes-js')
 const entitiesRegexp = /[&"'<>]/g
 const entityMap = {
   '&': '&amp;',
@@ -9,7 +10,6 @@ const entityMap = {
   '<': '&lt;',
   '>': '&gt;'
 }
-
 const utils = {
   /**
    *
@@ -70,7 +70,7 @@ const utils = {
     }
   },
   /* // Speed up calls to hasOwnProperty
-     var hasOwnProperty = Object.prototype.hasOwnProperty; */
+     const hasOwnProperty = Object.prototype.hasOwnProperty; */
   isEmpty,
   /**
    *
@@ -690,8 +690,51 @@ const utils = {
     } else {
       return serviceName
     }
-  }
+  },
+  // 随机生成32位aesKey
+  generateAesKey (len = 16) {
+    const arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    let num = ''
+    for (let i = 0; i < len; i++) {
+      num += arr[parseInt(Math.random() * len)]
+    }
+    return num
+  },
+  /**
+ * aes加密方法
+ * @param {string} text 待加密的字符串
+ * @param {array} key 加密key
+ */
+  rsaEncrypt () {
+    const aesKey = this.generateAesKey(32)
+    store.set('aesKey', aesKey)
+    const localPublicKey = store.get('publicKey') // 取出本地publicKey
+    const publicKey = forge.pki.publicKeyFromPem(localPublicKey)
+    const buffer = forge.util.createBuffer(aesKey)
+    const bytes = buffer.getBytes()
+    const encrypted = publicKey.encrypt(bytes, 'RSAES-PKCS1-V1_5')
+    const b64Encoded = forge.util.encode64(encrypted) // 转base64
+    const res = encodeURIComponent(b64Encoded) // base64有空格问题 再编码一下
+    return res
+  },
 
+  /**
+ * aes解密方法
+ * @param {string} encryptedHex 加密的字符串
+ * @param {array} key 加密key
+ */
+  aesDecrypt (data) {
+    const aesKey = store.get('aesKey')
+    const encryptedBytes = aesjs.utils.hex.toBytes(data)
+    const iv = aesjs.utils.utf8.toBytes(aesKey.substr(0, 16))
+    const text = aesjs.utils.utf8.toBytes(aesKey)
+    // eslint-disable-next-line new-cap
+    const aesCfb = new aesjs.ModeOfOperation.cfb(text, iv, 16)
+    const decryptedBytes = aesCfb.decrypt(encryptedBytes)
+    const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes.slice(16)) // 截取后16位
+    // base64
+    return decryptedText
+  }
 }
 
 export default utils

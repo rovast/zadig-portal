@@ -771,7 +771,8 @@ export default {
             this.mode = 'edit'
             this.showSelectPath = true
             this.disabledReload = false
-            getCodeSourceMaskedAPI().then(res => {
+            const key = this.$utils.rsaEncrypt()
+            getCodeSourceMaskedAPI(key).then(res => {
               this.allCodeHosts = res.filter(element => {
                 return element
               })
@@ -834,7 +835,8 @@ export default {
         repos: [],
         branches: []
       })
-      getCodeSourceMaskedAPI().then(res => {
+      const key = this.$utils.rsaEncrypt()
+      getCodeSourceMaskedAPI(key).then(res => {
         this.allCodeHosts = res.filter(element => {
           return element
         })

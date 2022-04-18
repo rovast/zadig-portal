@@ -272,7 +272,8 @@ export default {
       this.$refs.sourceForm.resetFields()
     },
     async queryCodeSource () {
-      const res = await getCodeSourceMaskedAPI().catch(error =>
+      const key = this.$utils.rsaEncrypt()
+      const res = await getCodeSourceMaskedAPI(key).catch(error =>
         console.log(error)
       )
       if (res) {

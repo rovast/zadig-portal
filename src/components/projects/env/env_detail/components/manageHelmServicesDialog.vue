@@ -152,7 +152,7 @@ export default {
       this.updateServices.service_names = []
       done && done()
     },
-    async openDialog (type) {
+    openDialog (type) {
       this.dialogVisible = true
       this.opeType = type
 

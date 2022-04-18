@@ -11,7 +11,6 @@ export default {
       release_naming: ''
     },
     chartNames: [],
-    updateEnv: false,
     serviceSource: '',
     services: [] // used for service order
   },
@@ -40,9 +39,12 @@ export default {
     [Mutation.CHART_NAMES] (state, services) {
       const chartNames = state.chartNames
       services.forEach(service => {
-        const serviceNames = chartNames.map(chart => chart.serviceName)
-        const index = serviceNames.indexOf(service.serviceName)
+        const index = chartNames.map(chart => chart.serviceName).indexOf(service.serviceName)
         const type = service.type
+        if (index !== -1 && type === 'clear') {
+          chartNames.splice(index, 1)
+          return
+        }
         if (type === 'delete') {
           if (index !== -1) {
             chartNames.splice(index, 1)
@@ -57,10 +59,6 @@ export default {
     },
     [Mutation.RESET_CHART_NAMES] (state, services) {
       state.chartNames = []
-      state.updateEnv = false
-    },
-    [Mutation.UPDATE_ENV_BUTTON] (state, payload) {
-      state.updateEnv = payload
     },
     [Mutation.QUERY_ORDER_SERVICE] (state, payload) {
       state.services = payload

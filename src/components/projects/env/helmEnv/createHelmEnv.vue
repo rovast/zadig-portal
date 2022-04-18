@@ -9,7 +9,7 @@
           该环境暂无服务，请点击
           <router-link :to="`/v1/projects/detail/${projectName}/services`">
             <el-button type="primary" size="mini" round plain>项目->服务</el-button>
-          </router-link> 添加服务
+          </router-link>添加服务
         </p>
       </div>
     </div>
@@ -39,19 +39,26 @@
         </el-form-item>
         <div class="primary-title">资源选择</div>
         <el-form-item label="K8s 集群" prop="cluster_id" class="secondary-label">
-          <el-select class="select" filterable :disabled="createShare" v-model="projectConfig.cluster_id" size="small" placeholder="请选择 K8s 集群">
+          <el-select
+            class="select"
+            filterable
+            :disabled="createShare"
+            v-model="projectConfig.cluster_id"
+            size="small"
+            placeholder="请选择 K8s 集群"
+          >
             <el-option v-for="cluster in allCluster" :key="cluster.id" :label="$utils.showClusterName(cluster)" :value="cluster.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="K8s 命名空间" prop="defaultNamespace" class="secondary-label">
           <el-select
-              v-model="projectConfig.defaultNamespace"
-              :disabled="editButtonDisabled"
-              size="small"
-              placeholder="选择已有或自定义命名空间"
-              filterable
-              allow-create
-              clearable
+            v-model="projectConfig.defaultNamespace"
+            :disabled="editButtonDisabled"
+            size="small"
+            placeholder="选择已有或自定义命名空间"
+            filterable
+            allow-create
+            clearable
           >
             <el-option :value="`${projectName}-env-${projectConfig.env_name}`">{{ projectName }}-env-{{ projectConfig.env_name }}</el-option>
             <el-option v-for="(ns,index) in hostingNamespace" :key="index" :label="ns" :value="ns"></el-option>
@@ -72,15 +79,44 @@
           </el-select>
           <div class="image-secret">imagePullSecret 名称：default-registry-secret</div>
         </el-form-item>
+        <el-form-item label="服务选择" prop="selectedService">
+          <div class="select-service">
+            <el-select
+              v-model="projectConfig.selectedService"
+              size="small"
+              placeholder="选择服务"
+              value-key="serviceName"
+              filterable
+              clearable
+              multiple
+              collapse-tags
+            >
+              <el-option
+                disabled
+                label="全选"
+                value="ALL"
+                :class="{selected: projectConfig.selectedService.length === projectChartNames.length}"
+                style="color: #606266;"
+              >
+                <span
+                  style=" display: inline-block; width: 100%; font-weight: normal; cursor: pointer;"
+                  @click="projectConfig.selectedService = projectChartNames"
+                >全选</span>
+              </el-option>
+              <el-option v-for="(chartName, index) in projectChartNames" :key="index" :label="chartName.serviceName" :value="chartName"></el-option>
+            </el-select>
+            <el-button size="mini" plain @click="projectConfig.selectedService = []">清空</el-button>
+          </div>
+        </el-form-item>
       </el-form>
       <EnvConfig class="common-parcel-block" ref="envConfigRef"></EnvConfig>
       <HelmEnvTemplate
         class="chart-value"
         ref="helmEnvTemplateRef"
-        :chartNames="chartNames"
+        :chartNames="projectConfig.selectedService"
         :envNames="envNames"
         :handledEnv="envName"
-        :envScene="envScene"
+        :envScene="`createEnv`"
       ></HelmEnvTemplate>
       <el-form label-width="35%" class="ops">
         <el-form-item>
@@ -142,7 +178,8 @@ export default {
         namespace: '',
         defaultNamespace: '',
         isPublic: true,
-        registry_id: ''
+        registry_id: '',
+        selectedService: [] // will delete
       },
       projectInfo: {},
       allCluster: [],
@@ -166,14 +203,19 @@ export default {
         ],
         env_name: [
           { required: true, trigger: 'change', validator: validateEnvName }
-        ]
+        ],
+        selectedService: {
+          type: 'array',
+          required: true,
+          message: '请选择服务',
+          trigger: 'change'
+        }
       },
       projectEnvNames: [],
       projectChartNames: [],
-      chartNames: null, // envNames and envName || chartNames
+      // chartNames: null, // envNames and envName || chartNames
       envNames: [],
       envName: '',
-      envScene: 'createEnv', // updateRenderSet
       imageRegistry: [],
       hostingNamespace: []
     }
@@ -240,7 +282,7 @@ export default {
           }
         })
         : []
-      this.chartNames = this.projectChartNames
+      this.projectConfig.selectedService = this.projectChartNames
       this.projectConfig.source = 'system'
     },
     changeCluster (clusterId) {
@@ -251,10 +293,9 @@ export default {
     changeCreateMethod () {
       const source = this.projectConfig.source
       if (source === 'system') {
-        this.chartNames = this.projectChartNames
+        this.projectConfig.selectedService = this.projectChartNames
         this.envNames = []
         this.envName = ''
-        this.envScene = 'createEnv'
         // this.getTemplateAndImg()
       } else if (source === 'copy') {
         if (!this.projectConfig.baseEnvName) {
@@ -264,10 +305,9 @@ export default {
       }
     },
     changeBaseEnv () {
-      this.chartNames = null
+      this.projectConfig.selectedService = this.projectChartNames
       this.envNames = [this.projectConfig.baseEnvName]
       this.envName = this.projectConfig.baseEnvName
-      this.envScene = 'updateRenderSet'
     },
     async deployHelmEnv () {
       const res = await this.$refs.helmEnvTemplateRef.validate().catch(err => {
@@ -289,6 +329,13 @@ export default {
               info.envName = ''
             })
           }
+          const selectedServices = this.projectConfig.selectedService.map(
+            service => service.serviceName
+          )
+          valueInfo.chartInfo = valueInfo.chartInfo.filter(chart =>
+            selectedServices.includes(chart.serviceName)
+          )
+
           const defaultEnv = isCopy ? baseEnvName : 'DEFAULT'
           const payload = {
             envName: this.projectConfig.env_name,
@@ -297,7 +344,11 @@ export default {
             baseEnvName: isCopy ? baseEnvName : '',
             chartValues: valueInfo.chartInfo,
             defaultValues: valueInfo.envInfo[defaultEnv] || '',
-            valuesData: { autoSync: valueInfo.gitInfo.autoSync, yamlSource: 'repo', gitRepoConfig: valueInfo.gitInfo },
+            valuesData: {
+              autoSync: valueInfo.gitInfo.autoSync,
+              yamlSource: 'repo',
+              gitRepoConfig: valueInfo.gitInfo
+            },
             namespace: this.projectConfig.defaultNamespace,
             is_existed: this.nsIsExisted,
             env_config_yamls: this.$refs.envConfigRef.getAllYaml()
@@ -413,6 +464,18 @@ export default {
     border: 1px solid rgba(118, 122, 200, 0.5);
     border-radius: 4px;
     cursor: pointer;
+  }
+
+  .select-service {
+    position: relative;
+    display: inline-block;
+    width: 410px;
+
+    /deep/.el-button {
+      position: absolute;
+      right: 12px;
+      bottom: 6px;
+    }
   }
 
   .no-resources {

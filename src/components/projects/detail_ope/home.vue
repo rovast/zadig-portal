@@ -136,8 +136,7 @@ import {
   getBuildConfigsAPI,
   getSingleProjectAPI,
   getServiceTemplatesAPI,
-  deleteProjectAPI,
-  getPublicKeyAPI
+  deleteProjectAPI
 } from '@api'
 import { mapGetters } from 'vuex'
 import { get } from 'lodash'
@@ -157,11 +156,6 @@ export default {
     }
   },
   methods: {
-    getPublicKey () {
-      getPublicKeyAPI().then(res => {
-        localStore.set('publicKey', res.publicKey)
-      })
-    },
     toProject (project) {
       this.$router.push(`/v1/projects/detail/${project.name}/detail`)
     },
@@ -267,9 +261,6 @@ export default {
   },
   mounted () {
     this.$store.dispatch('getProjectList')
-    if (!localStore.get('publicKey')) {
-      this.getPublicKey()
-    }
     bus.$emit('set-topbar-title', { title: '项目', breadcrumb: [] })
   }
 }

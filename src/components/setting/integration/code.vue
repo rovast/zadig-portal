@@ -468,7 +468,7 @@
                         prop="client_secret">
             <el-input v-model="codeAdd.client_secret"
                       placeholder="Secret Key"
-                      show-password v-if='dialogCodeEditFormVisible'
+                      show-password v-if='dialogCodeAddFormVisible'
                       type="password"
                       auto-complete="off"></el-input>
           </el-form-item>

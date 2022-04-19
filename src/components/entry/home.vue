@@ -77,9 +77,7 @@ export default {
         if (val) {
           // 检查 SMTP 配置
           this.checkSMTP()
-          if (!localStore.get('publicKey')) {
-            this.getPublicKey()
-          }
+          this.getPublicKey()
         }
       },
       immediate: true

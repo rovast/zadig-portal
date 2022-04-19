@@ -11,7 +11,7 @@
                :close-on-click-modal="false"
                width="45%">
       <AddHost ref="add-host"
-               :host="host"></AddHost>
+               :host="host" :isVisible="dialogHostFormVisible"></AddHost>
       <div slot="footer"
            class="dialog-footer">
         <el-button size="small"

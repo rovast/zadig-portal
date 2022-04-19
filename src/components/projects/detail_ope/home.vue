@@ -140,7 +140,6 @@ import {
 } from '@api'
 import { mapGetters } from 'vuex'
 import { get } from 'lodash'
-import localStore from 'storejs'
 
 export default {
   data () {

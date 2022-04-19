@@ -77,7 +77,6 @@ export default {
         if (val) {
           // 检查 SMTP 配置
           this.checkSMTP()
-          this.getPublicKey()
         }
       },
       immediate: true
@@ -94,6 +93,7 @@ export default {
     this.$store.dispatch('GETUSERINFO')
     this.$store.dispatch('getProjectList')
     this.getAnnouncements()
+    this.getPublicKey()
   }
 }
 </script>

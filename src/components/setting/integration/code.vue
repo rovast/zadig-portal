@@ -798,6 +798,9 @@ export default {
       getCodeProviderAPI(key).then((res) => {
         res.forEach(item => {
           item.client_secret = this.$utils.aesDecrypt(item.client_secret)
+          if (item.password) {
+            item.password = this.$utils.aesDecrypt(item.password)
+          }
         })
         this.code = res
       })

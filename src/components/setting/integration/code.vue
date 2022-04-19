@@ -432,7 +432,7 @@
                         prop="client_secret">
             <el-input v-model="codeAdd.client_secret"
                       placeholder="Client Secret"
-                      show-password v-if='codeAdd.type==="gitee"'
+                      show-password v-if='dialogCodeAddFormVisible'
                       type="password"
                       auto-complete="off"></el-input>
           </el-form-item>

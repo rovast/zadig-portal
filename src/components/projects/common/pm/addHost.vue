@@ -160,10 +160,6 @@ export default {
           private_key: ''
         }
       }
-    },
-    isVisible: {
-      type: Boolean,
-      default: false
     }
   },
   data () {
@@ -238,6 +234,7 @@ export default {
     saveHost () {
       return this.$refs.host.validate().then(async () => {
         const payload = cloneDeep(this.host)
+        payload.private_key = window.btoa(payload.private_key)
         const res = await createHostAPI(payload).catch(err => {
           console.log(err)
         })
@@ -256,6 +253,7 @@ export default {
       return this.$refs.host.validate().then(async () => {
         const id = this.host.id
         const payload = cloneDeep(this.host)
+        payload.private_key = window.btoa(payload.private_key)
         delete payload.origin_private_key
         const res = await updateHostAPI(id, payload).catch(err => {
           console.log(err)

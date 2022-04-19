@@ -506,7 +506,7 @@
     <UpdateK8sVarDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="updateK8sVarDialog" />
     <PmServiceLog ref="pmServiceLog" />
     <ManageK8sServicesDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="manageK8sServicesRef" />
-    <ManageHelmServicesDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="manageHelmServicesRef" />
+    <ManageHelmServicesDialog :fetchAllData="fetchAllData" :productInfo="productInfo" ref="manageHelmServicesRef" :productStatus="productStatus" />
     <ShareEnvDialog
       :mode="shareEnvDialog.mode"
       :projectName="productInfo.product_name"

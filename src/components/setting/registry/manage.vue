@@ -77,7 +77,7 @@
         <template v-if="registry.advanced_setting.modified">
           <el-alert type="info" :closable="false">
             <template>
-              <div >修改以下配置后，如使用跨集群构建功能，需重启对应集群中 koderover-agent 命名空间下的 koderover-agent-node-agent 服务，修改后的配置方可生效</div>
+              <div >修改以下配置后，如使用跨集群构建功能，需重启对应集群中 koderover-agent 命名空间下的 koderover-agent-node-agent 服务，重启后配置方可生效</div>
             </template>
           </el-alert>
           <el-form-item label="开启 SSL 校验" prop="enable_tls">

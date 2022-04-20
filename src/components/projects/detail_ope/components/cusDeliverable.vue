@@ -35,6 +35,7 @@ export default {
   data () {
     return {
       dialogVisible: false,
+      isJenkins: false,
       customerImage: {
         pr: {
           label: 'PR 生成镜像规则',

@@ -723,11 +723,11 @@ export default {
     handleCodeCancel () {
       if (this.$refs.codeForm) {
         this.$refs.codeForm.resetFields()
-        this.dialogCodeAddFormVisible = false
       } else if (this.$refs.codeUpdateForm) {
         this.$refs.codeUpdateForm.resetFields()
-        this.dialogCodeEditFormVisible = false
       }
+      this.dialogCodeEditFormVisible = false
+      this.dialogCodeAddFormVisible = false
     },
     clearValidate (ref) {
       this.$refs[ref].clearValidate()

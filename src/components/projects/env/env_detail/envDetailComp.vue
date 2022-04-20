@@ -1135,7 +1135,17 @@ export default {
         const projectName = envInfo.product_name
         const envName = envInfo.env_name
         const envType = this.isProd ? 'prod' : ''
-        const payload = { vars: envInfo.vars }
+        const payload = { vars: null }
+        // Todo:partial service update for pm
+        if (this.isPmService) {
+          payload.vars = [{
+            services: this.pmServiceList.map(item => {
+              return item.service_name
+            })
+          }]
+        } else {
+          payload.vars = envInfo.vars
+        }
         const force = false
         updateK8sEnvAPI(projectName, envName, payload, envType, force)
           .then(response => {

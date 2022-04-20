@@ -109,7 +109,7 @@ export default {
         pr_and_branch_rule: (customerImage.prBranch.service || defaultValue) + ':' + (customerImage.prBranch.value || placeholder[2]),
         tag_rule: (customerImage.tag.service || defaultValue) + ':' + (customerImage.tag.value || placeholder[3])
       }
-      if (customerImage.jenkins) {
+      if (this.isJenkins) {
         this.custom_image_rule.jenkins_rule = (customerImage.jenkins.service || defaultValue) + ':' + (customerImage.jenkins.value || placeholder[4])
       }
       this.custom_tar_rule = {
@@ -124,6 +124,12 @@ export default {
       const key = this.$utils.rsaEncrypt()
       queryJenkins(key).then(res => {
         this.isJenkins = res.length > 0
+        if (this.isJenkins) {
+          this.customerImage.jenkins.service = this.customerImage.jenkins_rule.split(':')[0]
+          this.customerImage.jenkins.value = this.customerImage.jenkins_rule.split(':')[1]
+        } else {
+          this.$delete(this.customerImage, 'jenkins')
+        }
       })
     }
   },
@@ -142,15 +148,9 @@ export default {
         this.customerImage.tag.service = value.tag_rule.split(':')[0]
         this.customerImage.tag.value = value.tag_rule.split(':')[1]
         // 如果jenkins集成了 则展示
-        if (value.jenkins_rule || this.isJenkins) {
+        if (value.jenkins_rule) {
           this.customerImage.jenkins.service = value.jenkins_rule.split(':')[0]
           this.customerImage.jenkins.value = value.jenkins_rule.split(':')[1]
-        } else {
-          this.$delete(this.customerImage, 'jenkins')
-        }
-      } else {
-        if (!this.isJenkins) {
-          this.$delete(this.customerImage, 'jenkins')
         }
       }
     },

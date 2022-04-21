@@ -55,7 +55,7 @@
           </el-button>
         </el-form-item>
       </el-form>
-      <codemirror v-if="previewYamlFile"  v-model="importYaml.content" :options="importTemplateEditorOption" ></codemirror>
+      <codemirror v-if="previewYamlFile" v-model="renderedYaml" :options="importTemplateEditorOption"></codemirror>
       <div slot="footer" class="dialog-footer">
         <el-button plain native-type="submit" @click="$emit('update:dialogImportFromYamlVisible',false)" size="small">取消</el-button>
         <el-button type="primary" native-type="submit" size="small" class="start-create" @click="loadServiceFromKubernetesTemplate">新建</el-button>
@@ -156,6 +156,30 @@ export default {
           this.$emit('importYamlSuccess', serviceName)
         }
       }
+    }
+  },
+  computed: {
+    renderedYaml () {
+      const keywords = this.importYaml.variables.map(item => {
+        return { key: `{{.${item.key}}}`, value: item.value }
+      })
+      const variables = [
+        {
+          key: '$T-Project$',
+          value: this.projectName
+        },
+        {
+          key: '$T-Service$',
+          value: this.importYaml.serviceName
+        }
+      ].concat(keywords)
+      let originYaml = this.importYaml.content
+      variables.forEach(item => {
+        if (item.value) {
+          originYaml = originYaml.replaceAll(item.key, item.value)
+        }
+      })
+      return originYaml
     }
   },
   mounted () {

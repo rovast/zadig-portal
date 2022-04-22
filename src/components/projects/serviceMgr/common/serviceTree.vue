@@ -138,6 +138,7 @@
     </el-dialog>
     <ImportFromTemplate
       :projectName="projectName"
+      :currentUpdatedServiceName="currentUpdatedServiceName"
       :dialogImportFromYamlVisible.sync="openImportYamlDialog"
       @importYamlSuccess="importYamlSuccess"
     />
@@ -168,7 +169,7 @@
               <el-button v-if="deployType==='k8s'" size="mini" @click="createService('repo')" icon="iconfont icon icongit" plain circle></el-button>
             </el-tooltip>
             <el-tooltip effect="dark" content="使用模板新建" placement="top">
-              <el-button size="mini" @click="openImportYamlDialog = true" icon="iconfont icon iconvery-template" plain circle></el-button>
+              <el-button size="mini" @click="createService('template')" icon="iconfont icon iconvery-template" plain circle></el-button>
             </el-tooltip>
           </div>
         </el-col>
@@ -255,7 +256,7 @@
                 ></el-button>
                 <el-button
                   v-hasPermi="{projectName: projectName, action: 'edit_service'}"
-                  v-if="data.source && (data.source === 'gerrit'|| data.source === 'gitlab' || data.source==='github' || data.source==='codehub' ) && data.type==='k8s' && data.product_name=== projectName "
+                  v-if="data.source && (data.source === 'gerrit'|| data.source === 'gitlab' || data.source==='github' || data.source==='codehub' || data.source==='template' ) && data.type==='k8s' && data.product_name=== projectName "
                   type="text"
                   size="mini"
                   icon="el-icon-refresh"
@@ -411,6 +412,7 @@ export default {
       },
       showHover: {},
       searchService: '',
+      currentUpdatedServiceName: '',
       serviceGroup: [],
       allCodeHosts: [],
       openImportYamlDialog: false,
@@ -783,6 +785,9 @@ export default {
           } else {
             this.$emit('onAddCodeSource', true)
           }
+        } else if (cmd === 'template') {
+          this.currentUpdatedServiceName = ''
+          this.openImportYamlDialog = true
         }
       }
     },
@@ -980,35 +985,40 @@ export default {
       }
     },
     refreshService (node, data) {
-      this.dialogImportFromRepoVisible = true
-      this.source.codehostId = data.codehost_id
-      this.source.repoOwner = data.repo_owner
-      this.source.repoName = data.repo_name
-      this.source.repoUUID = data.repo_uuid
-      this.source.branchName = data.branch_name
-      this.source.path = data.load_path
-      this.source.gitType = data.source
-      this.source.isDir = data.is_dir
-      this.source.serviceName = data.service_name
-      this.getInitRepoInfo(this.source)
-      validPreloadService(
-        data.codehost_id,
-        data.repo_owner,
-        data.repo_name,
-        data.branch_name,
-        data.load_path,
-        data.service_name,
-        data.is_dir,
-        data.remote_name,
-        data.repo_uuid
-      ).then(
-        res => {
-          this.disabledReload = false
-        },
-        () => {
-          this.disabledReload = true
-        }
-      )
+      if (data.source === 'template') {
+        this.currentUpdatedServiceName = data.service_name
+        this.openImportYamlDialog = true
+      } else {
+        this.dialogImportFromRepoVisible = true
+        this.source.codehostId = data.codehost_id
+        this.source.repoOwner = data.repo_owner
+        this.source.repoName = data.repo_name
+        this.source.repoUUID = data.repo_uuid
+        this.source.branchName = data.branch_name
+        this.source.path = data.load_path
+        this.source.gitType = data.source
+        this.source.isDir = data.is_dir
+        this.source.serviceName = data.service_name
+        this.getInitRepoInfo(this.source)
+        validPreloadService(
+          data.codehost_id,
+          data.repo_owner,
+          data.repo_name,
+          data.branch_name,
+          data.load_path,
+          data.service_name,
+          data.is_dir,
+          data.remote_name,
+          data.repo_uuid
+        ).then(
+          res => {
+            this.disabledReload = false
+          },
+          () => {
+            this.disabledReload = true
+          }
+        )
+      }
     },
     deleteService (node, data) {
       this.previousNodeKey = ''

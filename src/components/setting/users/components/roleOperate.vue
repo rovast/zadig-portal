@@ -193,7 +193,9 @@ export default {
         }
         if (this.isEdit) {
           let result = null
-          result = await updateRoleAPI({ userID: store.get('userInfo').uid, name: this.form.name, rules: rules, projectName: '*' }).catch(error => console.log(error))
+          const { name, desc } = this.form
+          const params = { userID: store.get('userInfo').uid, rules: rules, projectName: '*', name, desc }
+          result = await updateRoleAPI(params).catch(error => console.log(error))
           if (result) {
             this.$message.success('修改成功')
             this.isShowDialogRoleVisible = false

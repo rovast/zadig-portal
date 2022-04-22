@@ -154,8 +154,6 @@ import {
   addUserAPI,
   getUsersAPI,
   deleteUserAPI,
-  // getSystemRoleBindingsAPI,
-  addSystemRoleBindingsAPI,
   updateSystemRoleBindingsAPI,
   checkRegistrationAPI,
   changeRegistrationAPI,
@@ -163,7 +161,6 @@ import {
 } from '@api'
 import bus from '@utils/eventBus'
 import EditUserRole from './editUserInfo.vue'
-import { sortBy } from 'lodash'
 export default {
   components: {
     EditUserRole

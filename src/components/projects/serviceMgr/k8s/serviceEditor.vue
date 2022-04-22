@@ -61,9 +61,7 @@ import 'codemirror/addon/search/search.js'
 import {
   validateYamlAPI,
   serviceTemplateAPI,
-  saveServiceTemplateAPI,
-  loadServiceFromKubernetesTemplateAPI,
-  reloadServiceFromKubernetesTemplateAPI
+  saveServiceTemplateAPI
 } from '@api'
 export default {
   props: {
@@ -111,13 +109,7 @@ export default {
       initYaml: '',
       dialogImportYamlVisible: false,
       previewYamlFile: false,
-      showModal: true,
-      importYaml: {
-        id: '',
-        yamls: [],
-        variables: [],
-        content: ''
-      }
+      showModal: true
     }
   },
   methods: {
@@ -229,49 +221,6 @@ export default {
     },
     editorFocus () {
       this.codemirror.focus()
-    },
-    async loadServiceFromKubernetesTemplate () {
-      const serviceName = this.serviceName
-      const projectName = this.projectName
-      const templateId = this.importYaml.id
-      const variables = this.importYaml.variables
-      const status = this.serviceInTree.status
-      const payload = {
-        service_name: serviceName,
-        project_name: projectName,
-        template_id: templateId,
-        variables: variables
-      }
-      if (status === 'named') {
-        const res = await loadServiceFromKubernetesTemplateAPI(payload).catch(
-          err => {
-            console.log(err)
-          }
-        )
-        if (res) {
-          this.dialogImportYamlVisible = false
-          this.$message({
-            type: 'success',
-            message: `服务模板 ${payload.service_name} 导入成功`
-          })
-        }
-      } else if (status === 'added') {
-        const res = await reloadServiceFromKubernetesTemplateAPI(payload).catch(
-          err => {
-            console.log(err)
-          }
-        )
-        if (res) {
-          this.dialogImportYamlVisible = false
-          this.$message({
-            type: 'success',
-            message: `服务模板 ${payload.service_name} 更新成功`
-          })
-        }
-      }
-      this.showJoinToEnvBtn = true
-      this.$emit('update:showNext', true)
-      this.$emit('onRefreshService')
     }
   },
   computed: {

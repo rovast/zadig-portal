@@ -84,6 +84,7 @@
       <el-button
         size="small"
         type="primary"
+        :disabled="remainingVars.length === 0"
         :loading="updataK8sEnvVarLoading"
         @click="updateK8sEnvVar"
         >更新</el-button

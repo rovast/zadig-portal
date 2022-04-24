@@ -1,7 +1,7 @@
 <template>
   <div class="import-from-template-container">
     <el-dialog
-      title="新建服务 - 使用模板新建"
+      :title="currentUpdatedServiceName?'更新服务':'新建服务 - 使用模板新建'"
       :close-on-click-modal="false"
       append-to-body
       center
@@ -12,7 +12,7 @@
     >
       <el-form :model="importYaml" @submit.native.prevent ref="importYamlForm">
         <el-form-item label="服务名称" prop="serviceName" :rules="{ required: true, message: '服务名称不能为空', trigger: ['change','blur'] }">
-          <el-input style="width: 400px;" v-model.trim="importYaml.serviceName" size="small" placeholder="请输入服务名称" clearable></el-input>
+          <el-input style="width: 400px;" v-model.trim="importYaml.serviceName" size="small" :disabled="currentUpdatedServiceName!==''?true:false" placeholder="请输入服务名称" clearable></el-input>
         </el-form-item>
         <el-form-item label="选择模板" prop="id" :rules="{ required: true, message: '请选择模板', trigger: ['change','blur'] }">
           <el-select style="width: 400px;" size="small" v-model="importYaml.id" placeholder="请选择模板" @change="getKubernetesTemplate">
@@ -58,7 +58,7 @@
       <codemirror v-if="previewYamlFile" v-model="renderedYaml" :options="importTemplateEditorOption"></codemirror>
       <div slot="footer" class="dialog-footer">
         <el-button plain native-type="submit" @click="$emit('update:dialogImportFromYamlVisible',false)" size="small">取消</el-button>
-        <el-button type="primary" native-type="submit" size="small" class="start-create" @click="loadServiceFromKubernetesTemplate">新建</el-button>
+        <el-button type="primary" native-type="submit" size="small" class="start-create" @click="loadServiceFromKubernetesTemplate">{{currentUpdatedServiceName?'更新':'新建'}}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -69,6 +69,7 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/yaml/yaml.js'
 import {
   loadServiceFromKubernetesTemplateAPI,
+  reloadServiceFromKubernetesTemplateAPI,
   getKubernetesTemplatesAPI,
   getKubernetesTemplateDetailAPI
 } from '@api'
@@ -105,6 +106,14 @@ export default {
     dialogImportFromYamlVisible: {
       type: Boolean,
       default: false
+    },
+    currentUpdatedServiceName: {
+      type: String,
+      required: false
+    },
+    currentUpdatedServiceTemplateId: {
+      type: String,
+      required: false
     }
   },
   methods: {
@@ -127,7 +136,7 @@ export default {
       }
     },
     async loadServiceFromKubernetesTemplate () {
-      const serviceName = this.importYaml.serviceName
+      const serviceName = this.currentUpdatedServiceName ? this.currentUpdatedServiceName : this.importYaml.serviceName
       const projectName = this.projectName
       const templateId = this.importYaml.id
       const variables = this.importYaml.variables
@@ -139,11 +148,18 @@ export default {
       }
       const valid = await this.$refs.importYamlForm.validate().catch((err) => { return err })
       if (valid) {
-        const res = await loadServiceFromKubernetesTemplateAPI(payload).catch(
-          err => {
-            console.log(err)
-          }
-        )
+        const res = this.currentUpdatedServiceName
+          ? await reloadServiceFromKubernetesTemplateAPI(payload).catch(
+            err => {
+              console.log(err)
+            }
+          )
+          : await loadServiceFromKubernetesTemplateAPI(payload).catch(
+            err => {
+              console.log(err)
+            }
+          )
+
         if (res) {
           this.$refs.importYamlForm.resetFields()
           this.importYaml.variables = []
@@ -151,7 +167,7 @@ export default {
           this.$emit('update:dialogImportFromYamlVisible', false)
           this.$message({
             type: 'success',
-            message: `服务模板 ${payload.service_name} 导入成功`
+            message: `服务模板 ${payload.service_name} ${this.currentUpdatedServiceName ? '更新' : '导入'}成功`
           })
           this.$emit('importYamlSuccess', serviceName)
         }
@@ -180,6 +196,23 @@ export default {
         }
       })
       return originYaml
+    }
+  },
+  watch: {
+    currentUpdatedServiceName (val) {
+      if (val) {
+        this.importYaml.serviceName = val
+      } else {
+        this.importYaml.serviceName = ''
+      }
+    },
+    currentUpdatedServiceTemplateId (val) {
+      if (val) {
+        this.importYaml.id = val
+        this.getKubernetesTemplate(val)
+      } else {
+        this.importYaml.id = ''
+      }
     }
   },
   mounted () {

@@ -110,6 +110,7 @@
                                     :yamlChange.sync="yamlChange"
                                     :isOnboarding="isOnboarding"
                                     :showJoinToEnvBtn.sync="showJoinToEnvBtn"
+                                    @onGetTemplateId="getTemplateId"
                                     @onParseKind="getYamlKind"
                                     @onRefreshService="getServices"
                                     @onRefreshSharedService="getSharedServices"
@@ -280,6 +281,15 @@ export default {
     },
     getYamlKind (payload) {
       this.currentServiceYamlKinds = payload
+    },
+    getTemplateId (payload) {
+      if (payload) {
+        this.services.forEach(service => {
+          if (service.service_name === payload.service_name) {
+            this.$set(service, 'template_id', payload.template_id)
+          }
+        })
+      }
     },
     jumpToKind (payload) {
       this.$nextTick(() => {

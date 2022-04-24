@@ -139,6 +139,7 @@
     <ImportFromTemplate
       :projectName="projectName"
       :currentUpdatedServiceName="currentUpdatedServiceName"
+      :currentUpdatedServiceTemplateId="currentUpdatedServiceTemplateId"
       :dialogImportFromYamlVisible.sync="openImportYamlDialog"
       @importYamlSuccess="importYamlSuccess"
     />
@@ -394,11 +395,6 @@ export default {
       type: String,
       required: true
     },
-    guideMode: {
-      type: Boolean,
-      default: false,
-      required: false
-    },
     yamlChange: {
       type: Boolean,
       required: true
@@ -413,6 +409,7 @@ export default {
       showHover: {},
       searchService: '',
       currentUpdatedServiceName: '',
+      currentUpdatedServiceTemplateId: '',
       serviceGroup: [],
       allCodeHosts: [],
       openImportYamlDialog: false,
@@ -571,9 +568,7 @@ export default {
           this.$emit('onRefreshService')
           this.$emit('update:showNext', true)
           this.$message.success('共享服务移除成功')
-          if (!this.guideMode) {
-            this.$emit('onDeleteService', data.service_name)
-          }
+          this.$emit('onDeleteService', data.service_name)
         })
       })
     },
@@ -987,6 +982,7 @@ export default {
     refreshService (node, data) {
       if (data.source === 'template') {
         this.currentUpdatedServiceName = data.service_name
+        this.currentUpdatedServiceTemplateId = data.template_id
         this.openImportYamlDialog = true
       } else {
         this.dialogImportFromRepoVisible = true
@@ -1043,10 +1039,8 @@ export default {
             data.visibility
           ).then(() => {
             this.$message.success('删除成功')
-            if (!this.guideMode) {
-              this.$emit('update:showNext', true)
-              this.$emit('onDeleteService', data.service_name)
-            }
+            this.$emit('update:showNext', true)
+            this.$emit('onDeleteService', data.service_name)
             this.$emit('onRefreshService')
             this.$emit('onRefreshSharedService')
             this.getServiceGroup()
@@ -1166,9 +1160,7 @@ export default {
       window.screenHeight = document.body.clientHeight
       const serviceTree = this.$refs.serviceTree
       const serviceSharedTree = this.$refs.serviceSharedTree
-      const screenHeight = this.guideMode
-        ? window.screenHeight - 560
-        : window.screenHeight - 400
+      const screenHeight = window.screenHeight - 400
       this.$nextTick(() => {
         if (serviceSharedTree) {
           serviceSharedTree.$el.style.maxHeight = 150 + 'px'

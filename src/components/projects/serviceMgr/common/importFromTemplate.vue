@@ -110,6 +110,10 @@ export default {
     currentUpdatedServiceName: {
       type: String,
       required: false
+    },
+    currentUpdatedServiceTemplateId: {
+      type: String,
+      required: false
     }
   },
   methods: {
@@ -200,6 +204,14 @@ export default {
         this.importYaml.serviceName = val
       } else {
         this.importYaml.serviceName = ''
+      }
+    },
+    currentUpdatedServiceTemplateId (val) {
+      if (val) {
+        this.importYaml.id = val
+        this.getKubernetesTemplate(val)
+      } else {
+        this.importYaml.id = ''
       }
     }
   },

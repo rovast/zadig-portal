@@ -125,6 +125,10 @@ export default {
       if (val && serviceType) {
         serviceTemplateAPI(serviceName, serviceType, projectName).then(res => {
           this.service = res
+          // emit template id to tree
+          if (res.template_id) {
+            this.$emit('onGetTemplateId', { service_name: res.service_name, template_id: res.template_id })
+          }
           this.keepInitYaml(res.yaml)
           if (this.$route.query.kind) {
             this.jumpToWord(`kind: ${this.$route.query.kind}`)

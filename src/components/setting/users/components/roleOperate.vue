@@ -1,14 +1,11 @@
 <template>
-  <el-dialog :title=" isEdit ? '编辑':'新增' " custom-class="create-user-dialog" :close-on-click-modal="false" :visible.sync="isShowDialogRoleVisible">
-    <el-form
-      :model="form"
-      @submit.native.prevent
-
-      ref="roleForm"
-      label-position="left"
-      label-width="120px"
-      class="primary-form"
-    >
+  <el-dialog
+    :title=" isEdit ? '编辑':'新增' "
+    custom-class="create-user-dialog"
+    :close-on-click-modal="false"
+    :visible.sync="isShowDialogRoleVisible"
+  >
+    <el-form :model="form" @submit.native.prevent ref="roleForm" label-position="left" label-width="120px" class="primary-form">
       <el-form-item label="角色名称" prop="name" :rules="{ required: true, trigger: 'change', validator: validateRoleName }">
         <el-input v-model="form.name" :disabled="isEdit"></el-input>
       </el-form-item>
@@ -26,14 +23,14 @@
           >{{group.alias}}</el-checkbox>
           <div class="sub-permissions">
             <el-checkbox-group v-model="form.permissions">
-              <div>
+              <span  v-for="(subPermission,sub_index) in   group.rules" :key="sub_index" >
+                <span style="margin-left: 20px; font-size: 14px;" v-if="subPermission.parent">{{subPermission.parent}}</span>
                 <el-checkbox
                   class="sub-permissions-checkbox"
-                  v-for="(subPermission,sub_index) in   group.rules"
-                  :key="sub_index"
-                  :label="subPermission. uniqueAction"
-                >{{subPermission.alias}}</el-checkbox>
-              </div>
+                  :label="subPermission.uniqueAction"
+                >{{(subPermission.parent|| subPermission.isChild) ? subPermission.alias.split('|')[1]:subPermission.alias}}</el-checkbox>
+                <br v-if="subPermission.parent" />
+              </span>
             </el-checkbox-group>
           </div>
         </div>
@@ -46,7 +43,12 @@
   </el-dialog>
 </template>
 <script>
-import { getRolePolicyListAPI, addSystemRoleAPI, queryRoleDetailAPI, updateRoleAPI } from '@api'
+import {
+  getRolePolicyListAPI,
+  addSystemRoleAPI,
+  queryRoleDetailAPI,
+  updateRoleAPI
+} from '@api'
 import { cloneDeep } from 'lodash'
 import store from 'storejs'
 
@@ -55,7 +57,6 @@ const initFormData = {
   name: '',
   desc: '',
   permissions: []
-
 }
 const validateRoleName = (rule, value, callback) => {
   if (typeof value === 'undefined' || value === '') {
@@ -106,7 +107,9 @@ export default {
     },
     async getRoleDetail (role) {
       let res = null
-      res = await queryRoleDetailAPI(role.name, '*').catch(error => console.log(error))
+      res = await queryRoleDetailAPI(role.name, '*').catch(error =>
+        console.log(error)
+      )
       res.rules.forEach(item => {
         if (item.kind === 'resource') {
           item.verbs.forEach(action => {
@@ -152,9 +155,16 @@ export default {
       )
       if (res) {
         res.forEach(group => {
-          group.rules.forEach(item => {
+          group.rules.forEach((item, index) => {
             item.uniqueAction = `${group.resource}/${item.action}`
             item.resource = group.resource
+            item.parent = item.alias.includes('|')
+              ? item.alias.split('|')[0]
+              : null
+            if (item.alias.includes(group.rules[index - 1] && group.rules[index - 1].parent)) {
+              item.parent = ''
+              item.isChild = true
+            }
           })
         })
         this.permissionGroups = res
@@ -194,8 +204,16 @@ export default {
         if (this.isEdit) {
           let result = null
           const { name, desc } = this.form
-          const params = { userID: store.get('userInfo').uid, rules: rules, projectName: '*', name, desc }
-          result = await updateRoleAPI(params).catch(error => console.log(error))
+          const params = {
+            userID: store.get('userInfo').uid,
+            rules: rules,
+            projectName: '*',
+            name,
+            desc
+          }
+          result = await updateRoleAPI(params).catch(error =>
+            console.log(error)
+          )
           if (result) {
             this.$message.success('修改成功')
             this.isShowDialogRoleVisible = false
@@ -239,7 +257,10 @@ export default {
 <style lang="less" scoped>
 .permissions-group {
   .sub-permissions {
-    margin-left: 25px;
+    .sub-permissions-checkbox {
+      display: inline-block;
+      margin-left: 25px;
+    }
   }
 }
 </style>

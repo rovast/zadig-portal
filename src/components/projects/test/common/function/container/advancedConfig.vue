@@ -78,18 +78,12 @@
       <div class="notify">
         <el-form-item>
           <template slot="label">通知配置</template>
-          <el-button
-            @click="testConfig.notify_ctl.enabled = !testConfig.notify_ctl.enabled"
-            type="primary"
-            size="small"
-            plain
-          >{{testConfig.notify_ctl.enabled ? '删除': '添加'}}</el-button>
         </el-form-item>
         <Notify
-          v-if="testConfig.notify_ctl.enabled"
+          v-if="testConfig.notify_ctls.length > 0"
           ref="notifyComp"
           :editMode="isEdit"
-          :notify="testConfig.notify_ctl"
+          :notify="testConfig.notify_ctls"
           :showTitle="false"
           :fromWorkflow="false"
           class="notify-content"
@@ -187,7 +181,7 @@ export default {
         padding: 10px 20px;
 
         .notify-container {
-          margin: 0;
+          margin: 16px 0;
         }
       }
     }

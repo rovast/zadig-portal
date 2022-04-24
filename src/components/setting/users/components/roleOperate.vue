@@ -10,7 +10,7 @@
       class="primary-form"
     >
       <el-form-item label="角色名称" prop="name" :rules="{ required: true, trigger: 'change', validator: validateRoleName }">
-        <el-input v-model="form.name"></el-input>
+        <el-input v-model="form.name" :disabled="isEdit"></el-input>
       </el-form-item>
       <el-form-item label="描述信息" prop="account">
         <el-input v-model="form.desc"></el-input>
@@ -236,3 +236,10 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+.permissions-group {
+  .sub-permissions {
+    margin-left: 25px;
+  }
+}
+</style>

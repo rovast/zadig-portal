@@ -70,6 +70,7 @@ export default {
           } else {
             this.isCanAdd = false
           }
+          this.$emit('canAdd', this.isCanAdd)
           bus.$once('check-tab:notify', () => {
             bus.$emit('receive-tab-check:notify', this.isCanAdd)
           })

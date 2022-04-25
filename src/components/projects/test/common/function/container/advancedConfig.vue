@@ -82,6 +82,7 @@
         <Notify
           ref="notifyComp"
           :editMode="isEdit"
+          @canAdd="getValid"
           :notify="testConfig.notify_ctls"
           :showTitle="false"
           :fromWorkflow="false"
@@ -102,6 +103,11 @@ export default {
     allCodeHosts: Array,
     validObj: Object
   },
+  data () {
+    return {
+      isValid: false
+    }
+  },
   computed: {
     projectName () {
       return this.$route.params.project_name
@@ -114,11 +120,23 @@ export default {
     }
   },
   methods: {
+    getValid (val) {
+      this.isValid = val
+    },
     validate () {
+      console.log(this.isValid)
       return Promise.all([
-        this.$refs.advancedRef.validate(),
-        this.$refs.notifyComp && this.$refs.notifyComp.$refs.notify.validate()
+        this.$refs.advancedRef.validate(), Promise.resolve(this.isValid)
       ])
+      // if (this.isValid) {
+      //   return Promise.all([
+      //     this.$refs.advancedRef.validate()
+      //   ])
+      // } else {
+      //   return Promise.all([
+      //     Promise.reject()
+      //   ])
+      // }
     },
     addTrigger () {
       this.testConfig.repos.forEach(repo => {

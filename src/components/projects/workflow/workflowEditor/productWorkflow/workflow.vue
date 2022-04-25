@@ -260,7 +260,6 @@ export default {
     savePipeline () {
       this.workflowInfo.schedule_enabled = this.workflowInfo.schedules.enabled
       this.workflowInfo.hook_ctl.product_tmpl_name = this.workflowInfo.product_tmpl_name
-      console.log(this.workflowInfo)
       this.checkCurrentTab().then(() => {
         (this.editMode ? updateWorkflowAPI : createWorkflowAPI)(this.workflowInfo).then(res => {
           this.$message.success('保存成功')

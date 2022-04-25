@@ -197,13 +197,14 @@ export default {
       if (!res[1]) {
         valid.push(Promise.reject())
       }
-      this.$nextTick(() => {
-        valid.push(
-          this.$refs.testFormRef.validate(),
-          this.$refs.advancedConfigRef.validate()
-        )
-      })
-      Promise.all(valid).then(() => {
+      valid.push(
+        this.$refs.testFormRef.validate(),
+        this.$refs.advancedConfigRef.validate()
+      )
+      Promise.all(valid).then((res) => {
+        if (res.flat().includes(false)) {
+          return
+        }
         this.test.repos.forEach(repo => {
           this.allCodeHosts.forEach(codehost => {
             if (repo.codehost_id === codehost.id) {

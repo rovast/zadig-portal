@@ -124,19 +124,9 @@ export default {
       this.isValid = val
     },
     validate () {
-      console.log(this.isValid)
       return Promise.all([
         this.$refs.advancedRef.validate(), Promise.resolve(this.isValid)
       ])
-      // if (this.isValid) {
-      //   return Promise.all([
-      //     this.$refs.advancedRef.validate()
-      //   ])
-      // } else {
-      //   return Promise.all([
-      //     Promise.reject()
-      //   ])
-      // }
     },
     addTrigger () {
       this.testConfig.repos.forEach(repo => {

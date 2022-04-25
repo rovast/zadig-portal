@@ -80,7 +80,6 @@
           <template slot="label">通知配置</template>
         </el-form-item>
         <Notify
-          v-if="testConfig.notify_ctls.length > 0"
           ref="notifyComp"
           :editMode="isEdit"
           :notify="testConfig.notify_ctls"

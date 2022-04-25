@@ -1,5 +1,5 @@
 <template>
-  <el-card class="notify box-card">{{isCanAdd}}
+  <el-card class="notify box-card">
     <div class="script dashed-container" v-if="showTitle">
       <span class="title">通知</span>
     </div>
@@ -15,7 +15,6 @@
 <script type="text/javascript">
 import bus from '@utils/eventBus'
 import NotifyItem from './components/notifyItem.vue'
-import { cloneDeep } from 'lodash'
 import mixin from '@/mixin/workflowMixin'
 import ValidateSubmit from '@utils/validateAsync'
 
@@ -65,31 +64,23 @@ export default {
         this.$refs.notifys.forEach(item => {
           valid.push(item.$refs.notify.validate())
         })
-
         return Promise.all(valid).then((res) => {
-          console.log(res.indexOf(false) === -1)
-          console.log(111111)
           if (res.indexOf(false) === -1) {
             this.isCanAdd = true
           } else {
             this.isCanAdd = false
           }
+          bus.$once('check-tab:notify', () => {
+            bus.$emit('receive-tab-check:notify', this.isCanAdd)
+          })
         })
       })
     }
   },
-  mounted () {
-
+  beforeDestroy () {
+    bus.$off('check-tab:notify')
   },
-
   watch: {
-    isCanAdd (newVal) {
-      if (newVal) {
-        bus.$once('check-tab:notify', () => {
-          bus.$emit('receive-tab-check:notify', newVal)
-        })
-      }
-    },
     notify: {
       handler (val) {
         if (val) {

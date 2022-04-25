@@ -147,8 +147,10 @@ export default {
         page: page_index,
         per_page: page_size
       }
-      const res = await getRoleListAPI(payload).catch(error =>
+      const res = await getRoleListAPI(payload).catch(error => {
         console.log(error)
+        this.loading = false
+      }
       )
 
       if (res) {

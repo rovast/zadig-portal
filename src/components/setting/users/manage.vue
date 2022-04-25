@@ -303,7 +303,6 @@ export default {
         if (valid) {
           const params = []
           const payload = this.addUser
-          console.log(this.addUser)
           addUserAPI(payload).then(async res => {
             this.dialogAddUserVisible = false
             if (payload.isAdmin) {
@@ -368,8 +367,10 @@ export default {
         page: page_index,
         per_page: page_size
       }
-      const res = await getRoleListAPI(payload).catch(error =>
+      const res = await getRoleListAPI(payload).catch(error => {
         console.log(error)
+        this.loading = false
+      }
       )
 
       if (res) {
@@ -396,7 +397,6 @@ export default {
 .users-overview-container {
   position: relative;
   flex: 1;
-  // padding: 15px 30px;
   overflow: auto;
   font-size: 13px;
 

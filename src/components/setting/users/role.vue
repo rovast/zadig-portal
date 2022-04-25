@@ -73,7 +73,6 @@ export default {
   methods: {
     roleOperate (type, row) {
       this.currentRole = row
-      console.log(this.currentRole)
       this.$refs.roleOperate.isShowDialogRoleVisible = true
     },
     editUserInfo (user) {
@@ -94,8 +93,11 @@ export default {
         per_page: page_size,
         name: keyword
       }
-      const res = await getRoleListAPI(payload).catch(error =>
+      const res = await getRoleListAPI(payload).catch(error => {
         console.log(error)
+        this.loading = false
+      }
+
       )
 
       if (res) {
@@ -155,7 +157,6 @@ export default {
 .roles-overview-container {
   position: relative;
   flex: 1;
-  // padding: 15px 30px;
   overflow: auto;
   font-size: 13px;
 

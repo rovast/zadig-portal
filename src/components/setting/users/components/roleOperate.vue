@@ -173,7 +173,6 @@ export default {
     async submit () {
       const res = await this.$refs.roleForm.validate()
       const resource = []
-      // const projectName = this.projectName
       Object.keys(resources).forEach(i => {
         if (resources[i]) {
           resource.push(i)

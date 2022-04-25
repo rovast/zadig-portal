@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card class="notifyItem box-card">
-      <i class="del el-icon-delete" @click="delNotify" v-if="fromWorkflow"></i>
+      <i class="del el-icon-delete" @click="delNotify"></i>
       <el-form :model="notify" :rules="notifyRules" label-position="top" ref="notify">
         <el-form-item prop="webhook_type">
           <span slot="label">
@@ -209,15 +209,6 @@ export default {
       type: Boolean,
       default: true
     }
-  },
-
-  created () {
-    bus.$on('check-tab:notify', () => {
-      this.$refs.notify.validate(valid => {
-        console.log(valid)
-        bus.$emit('receive-tab-check:notify', valid)
-      })
-    })
   },
   beforeDestroy () {
     bus.$off('check-tab:notify')

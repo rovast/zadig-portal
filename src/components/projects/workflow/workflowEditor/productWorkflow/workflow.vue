@@ -249,8 +249,9 @@ export default {
       }
 
       if (alias === 'notify') {
-        console.log(this.workflowInfo.notify_ctls)
+        // this.workflowInfo.notify_ctls[0].enabled = isEnabled
         this.workflowInfo.notify_ctls.forEach(item => { item.enabled = isEnabled })
+        console.log(this.workflowInfo.notify_ctls)
       }
 
       if (alias === 'extension') {
@@ -261,7 +262,9 @@ export default {
     savePipeline () {
       this.workflowInfo.schedule_enabled = this.workflowInfo.schedules.enabled
       this.workflowInfo.hook_ctl.product_tmpl_name = this.workflowInfo.product_tmpl_name
+      console.log(this.workflowInfo)
       this.checkCurrentTab().then(() => {
+        console.log(111);
         (this.editMode ? updateWorkflowAPI : createWorkflowAPI)(this.workflowInfo).then(res => {
           this.$message.success('保存成功')
           if (this.$route.query.from) {
@@ -270,7 +273,7 @@ export default {
             this.$router.push(`/v1/projects/detail/${this.workflowInfo.product_tmpl_name}/pipelines/multi/${this.workflowInfo.name}`)
           }
         })
-      })
+      }).catch(err => console.log(err))
     },
     saveDistributeDeploy ($event) {
       this.workflowInfo.distribute_stage = $event
@@ -316,7 +319,6 @@ export default {
             weChat_webHook: '',
             notify_type: []
           }])
-          console.log(this.workflowInfo)
         };
         if (!this.workflowInfo.artifact_stage) {
           this.$set(this.workflowInfo, 'artifact_stage', {
@@ -370,7 +372,7 @@ export default {
           artifactDeploy: res.artifact_stage.enabled || (res.artifact_stage && res.artifact_stage.enabled),
           test: res.test_stage.enabled,
           distribute: res.distribute_stage.enabled,
-          notify: res.notify_ctls.enabled,
+          notify: res.notify_ctls[0].enabled,
           trigger: res.hook_ctl.enabled || res.schedules.enabled,
           extension: res.extension_stage ? res.extension_stage.enabled : false
         }

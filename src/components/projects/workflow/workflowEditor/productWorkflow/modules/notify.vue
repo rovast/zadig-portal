@@ -1,12 +1,12 @@
 <template>
-  <el-card class="notify box-card">
+  <el-card class="notify box-card">{{isCanAdd}}
     <div class="script dashed-container" v-if="showTitle">
       <span class="title">通知</span>
     </div>
     <el-button @click="addNotifyItem()" size="mini" icon="el-icon-plus" plain>添加配置</el-button>
     <div class="dashed-container">
       <div class="notify-container" v-for="(item,index) in notify" :key="index">
-        <NotifyItem :notify="item" :curIndex="index" :fromWorkflow="fromWorkflow" @update="delNotify" />
+        <NotifyItem :notify="item" :validObj="validObj" ref="notifys" :curIndex="index" :fromWorkflow="fromWorkflow" @update="delNotify" />
       </div>
     </div>
   </el-card>
@@ -15,10 +15,20 @@
 <script type="text/javascript">
 import bus from '@utils/eventBus'
 import NotifyItem from './components/notifyItem.vue'
+import { cloneDeep } from 'lodash'
+import mixin from '@/mixin/workflowMixin'
+import ValidateSubmit from '@utils/validateAsync'
 
 export default {
+  mixins: [mixin],
+
   data () {
-    return {}
+    return {
+      notifys: [],
+      isCanAdd: false,
+      validObj: new ValidateSubmit()
+
+    }
   },
   components: { NotifyItem },
   props: {
@@ -37,19 +47,58 @@ export default {
   },
   methods: {
     addNotifyItem () {
-      this.notify.push({
-        enabled: true,
-        webhook_type: '',
-        notify_type: [],
-        id: Math.random()
-      })
+      if (this.isCanAdd) {
+        this.notify.push({
+          enabled: true,
+          webhook_type: '',
+          notify_type: []
+        })
+      }
+      this.isCanAdd = false
     },
     delNotify (curIndex) {
-      this.notify = this.notify.filter((item, index) => curIndex !== index)
+      this.notify.splice(curIndex, 1)
+    },
+    check () {
+      const valid = []
+      this.$nextTick(() => {
+        this.$refs.notifys.forEach(item => {
+          valid.push(item.$refs.notify.validate())
+        })
+
+        return Promise.all(valid).then((res) => {
+          console.log(res.indexOf(false) === -1)
+          console.log(111111)
+          if (res.indexOf(false) === -1) {
+            this.isCanAdd = true
+          } else {
+            this.isCanAdd = false
+          }
+        })
+      })
     }
   },
-  beforeDestroy () {
-    bus.$off('check-tab:notify')
+  mounted () {
+
+  },
+
+  watch: {
+    isCanAdd (newVal) {
+      if (newVal) {
+        bus.$once('check-tab:notify', () => {
+          bus.$emit('receive-tab-check:notify', newVal)
+        })
+      }
+    },
+    notify: {
+      handler (val) {
+        if (val) {
+          this.check()
+        }
+      },
+      deep: true,
+      immediate: true
+    }
   }
 }
 </script>

@@ -831,7 +831,7 @@ const routes = [
       },
       {
         path: 'users',
-        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/users/manage.vue'),
+        component: () => import(/* webpackChunkName: "Setting" */ '@/components/setting/users/home.vue'),
         meta: {
           requiresAuth: true,
           requiresSuperAdmin: true,

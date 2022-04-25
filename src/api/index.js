@@ -732,6 +732,17 @@ export function getTestReportAPI (projectName, workflowName, taskID, testJobName
 export function usersAPI (payload, projectName = '') {
   return http.post(`/api/v1/users/search?projectName=${projectName}`, payload)
 }
+export function getUsersAPI (payload, projectName = '') {
+  return http.post(`/api/v1/picket/users?projectName=${projectName}`, payload)
+}
+
+export function updateSystemRoleAPI (payload) {
+  return http.post(`/api/v1/system-rolebindings/update?userID=${payload.userID}`, payload)
+}
+
+export function deleteSystemRoleAPI (name) {
+  return http.delete(`/api/v1/system-roles/${name} `)
+}
 
 export function queryUserAPI (uid) {
   return http.get(`/api/v1/users/${uid}`)
@@ -759,6 +770,9 @@ export function getSystemRoleBindingsAPI () {
 
 export function addSystemRoleBindingsAPI (payload) {
   return http.post(`/api/v1/system-rolebindings`, payload)
+}
+export function updateSystemRoleBindingsAPI (uid, payload) {
+  return http.post(`/api/v1/system-rolebindings/update?userID=${uid}`, payload)
 }
 
 export function deleteSystemRoleBindingsAPI (name) {
@@ -1670,8 +1684,8 @@ export function editWorkloads (payload) {
 }
 
 // RBAC APIs
-export function queryPolicyDefinitionsAPI (projectName) {
-  return http.get(`/api/v1/policy-definitions?projectName=${projectName}`)
+export function queryPolicyDefinitionsAPI (projectName, project = '') {
+  return http.get(`/api/v1/policy-definitions?projectName=${projectName}&resourceScope=${project}`)
 }
 
 export function addRoleAPI (payload) {
@@ -1883,4 +1897,17 @@ export function deleteConfigObjectAPI ({ objectName, projectName, envName, commo
 
 export function getObjectHistoryVersionAPI ({ objectName, projectName, envName, commonEnvCfgType }) {
   return http.get(`/api/aslan/environment/envcfgs/${envName}/cfg/${objectName}?projectName=${projectName}&commonEnvCfgType=${commonEnvCfgType}`)
+}
+
+// 获取角色定义列表
+export function getRolePolicyListAPI (role) {
+  return http.get(`/api/v1/policy-definitions?scope=${role}`)
+}
+// 获取角色列表
+export function getRoleListAPI () {
+  return http.get(`/api/v1/system-roles`)
+}
+// 新增角色
+export function addSystemRoleAPI (payload) {
+  return http.post(`/api/v1/system-roles `, payload)
 }

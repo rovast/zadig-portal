@@ -1890,7 +1890,7 @@ export function getObjectHistoryVersionAPI ({ objectName, projectName, envName, 
 
 // 获取角色定义列表
 export function getRolePolicyListAPI (role) {
-  return http.get(`/api/v1/policy-definitions?resourceScope=${role}`)
+  return http.get(`/api/v1/policy-definitions?scope=${role}`)
 }
 // 获取角色列表
 export function getRoleListAPI () {

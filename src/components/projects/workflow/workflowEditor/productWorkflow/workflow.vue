@@ -249,9 +249,7 @@ export default {
       }
 
       if (alias === 'notify') {
-        // this.workflowInfo.notify_ctls[0].enabled = isEnabled
         this.workflowInfo.notify_ctls.forEach(item => { item.enabled = isEnabled })
-        console.log(this.workflowInfo.notify_ctls)
       }
 
       if (alias === 'extension') {
@@ -264,7 +262,6 @@ export default {
       this.workflowInfo.hook_ctl.product_tmpl_name = this.workflowInfo.product_tmpl_name
       console.log(this.workflowInfo)
       this.checkCurrentTab().then(() => {
-        console.log(111);
         (this.editMode ? updateWorkflowAPI : createWorkflowAPI)(this.workflowInfo).then(res => {
           this.$message.success('保存成功')
           if (this.$route.query.from) {
@@ -372,7 +369,7 @@ export default {
           artifactDeploy: res.artifact_stage.enabled || (res.artifact_stage && res.artifact_stage.enabled),
           test: res.test_stage.enabled,
           distribute: res.distribute_stage.enabled,
-          notify: res.notify_ctls[0].enabled,
+          notify: res.notify_ctls.length > 0,
           trigger: res.hook_ctl.enabled || res.schedules.enabled,
           extension: res.extension_stage ? res.extension_stage.enabled : false
         }

@@ -109,9 +109,9 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="lastLoginTime" label="登录信息">
+        <el-table-column prop="last_login_time" label="登录信息">
           <template slot-scope="scope">
-            <span v-if="scope.row.lastLoginTime">{{$utils.convertTimestamp(scope.row.lastLoginTime)}}</span>
+            <span v-if="scope.row.last_login_time">{{$utils.convertTimestamp(scope.row.last_login_time)}}</span>
             <span v-else>{{'尚未登录'}}</span>
           </template>
         </el-table-column>
@@ -259,28 +259,9 @@ export default {
       const usersData = await getUsersAPI(payload).catch(error =>
         console.log(error)
       )
-      // const rolesData = await getSystemRoleBindingsAPI().catch(error =>
-      //   console.log(error)
-      // )
       if (usersData) {
-        this.totalUser = usersData.totalCount
+        this.totalUser = usersData.total_count
         this.users = usersData.users
-        // this.users = sortBy(
-        //   usersData.users.map(user => {
-        //     const roleInfo = rolesData.find(role => {
-        //       return role.uid === user.uid
-        //     })
-        //     if (roleInfo) {
-        //       user.role = roleInfo.role
-        //       user.roleBindingName = roleInfo.name
-        //     } else {
-        //       user.role = ''
-        //     }
-        //     return user
-        //   }),
-        //   'account'
-        // )
-        console.log(this.users)
       }
       this.loading = false
     },
@@ -326,11 +307,6 @@ export default {
           addUserAPI(payload).then(async res => {
             this.dialogAddUserVisible = false
             if (payload.isAdmin) {
-              // const payload = {
-              //   name: `user:${res.uid},role:admin`,
-              //   role: this.addUser.isAdmin,
-              //   uid: res.uid
-              // }
               this.addUser.isAdmin.forEach((item, index) => {
                 const obj = {
                   name: `user:${res.uid},role:${item}`,

@@ -360,9 +360,15 @@
       <div class="sync-container">
         <el-button size="small" type="primary" plain @click="addAccount()">添加</el-button>
       </div>
-      <el-table :data="accounts" style="width: 100%;">
+      <el-table :data="accounts" style="width: 100%;"  @cell-mouse-enter="enter" @cell-mouse-leave="leave">
         <el-table-column label="账号系统名称">
-          <template slot-scope="scope">{{scope.row.name}}</template>
+          <template slot-scope="scope">
+            <span>{{scope.row.name}}</span>
+            <el-button type="primary" class="btn" size="mini" v-show="scope.row.is_default">默认</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column align="right">
+          <span slot-scope="scope"  style="display: none;" :ref="'popover' + scope.row.id"> <el-checkbox v-model="scope.row.is_default"  @change="setDefaultAccount(scope.row)">设置为默认账号系统</el-checkbox ></span>
         </el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
@@ -388,7 +394,8 @@ import {
   deleteConnectorAPI,
   updateConnectorAPI,
   createConnectorAPI,
-  syncLDAPAPI
+  syncLDAPAPI,
+  setDefaultAccountAPI
 } from '@api'
 import { cloneDeep, omit } from 'lodash'
 import { codemirror } from 'vue-codemirror'
@@ -1178,6 +1185,17 @@ export default {
           }
         })
       }
+    },
+    enter (row) {
+      this.$refs['popover' + row.id].style.display = 'inline'
+    },
+    leave (row) {
+      this.$refs['popover' + row.id].style.display = 'none'
+    },
+    setDefaultAccount (row) {
+      setDefaultAccountAPI({ defaultLogin: row.type }).then(res => {
+        this.getAccountConfig()
+      })
     }
   },
   components: {
@@ -1246,6 +1264,11 @@ export default {
     .el-input {
       display: inline-block;
     }
+  }
+
+  .btn {
+    display: inline-block;
+    margin-left: 16px;
   }
 }
 </style>

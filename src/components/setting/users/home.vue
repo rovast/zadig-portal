@@ -1,15 +1,15 @@
 <template>
   <div class="user-home">
     <div class="tab-container">
-      <el-tabs v-model="activeTab" type="card">
+      <el-tabs v-model="currentTab" type="card" @tab-click="changeTab">
         <el-tab-pane name="user" label="用户">
           <keep-alive>
-            <User v-if="activeTab === 'user'" />
+            <User v-if="currentTab === 'user'" />
           </keep-alive>
         </el-tab-pane>
         <el-tab-pane name="role" label="系统角色">
           <keep-alive>
-            <Role v-if="activeTab === 'role'" />
+            <Role v-if="currentTab === 'role'" />
           </keep-alive>
         </el-tab-pane>
       </el-tabs>
@@ -29,11 +29,26 @@ export default {
   },
   data () {
     return {
-      activeTab: 'user'
+      currentTab: 'user'
     }
   },
   mounted () {
     bus.$emit('set-topbar-title', { title: '用户配置', breadcrumb: [] })
+    this.showCurrentTab()
+  },
+  methods: {
+    showCurrentTab () {
+      const currentTab = this.$route.query.currentTab
+      if (currentTab) {
+        this.currentTab = currentTab
+      }
+    },
+    changeTab (detail) {
+      this.$router.replace({
+        path: '/v1/system/users',
+        query: { currentTab: detail.name }
+      })
+    }
   }
 }
 </script>

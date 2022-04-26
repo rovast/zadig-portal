@@ -1193,7 +1193,7 @@ export default {
       this.$refs['popover' + row.id].style.display = 'none'
     },
     setDefaultAccount (row) {
-      setDefaultAccountAPI({ defaultLogin: row.type }).then(res => {
+      setDefaultAccountAPI({ defaultLogin: row.id }).then(res => {
         this.getAccountConfig()
       })
     }

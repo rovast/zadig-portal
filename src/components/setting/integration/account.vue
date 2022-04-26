@@ -368,7 +368,9 @@
           </template>
         </el-table-column>
         <el-table-column align="right">
-          <span slot-scope="scope"  style="display: none;" :ref="'popover' + scope.row.id"> <el-checkbox v-model="scope.row.is_default"  @change="setDefaultAccount(scope.row)">设置为默认账号系统</el-checkbox ></span>
+          <span slot-scope="scope"  style="display: none;" :ref="'popover' + scope.row.id">
+            <el-checkbox  :value="scope.row.is_default"  @change="setDefaultAccount(scope.row)">设置为默认账号系统</el-checkbox >
+          </span>
         </el-table-column>
         <el-table-column label="操作" width="300">
           <template slot-scope="scope">
@@ -1193,8 +1195,20 @@ export default {
       this.$refs['popover' + row.id].style.display = 'none'
     },
     setDefaultAccount (row) {
-      setDefaultAccountAPI({ defaultLogin: row.id }).then(res => {
-        this.getAccountConfig()
+      const info = `<p>设置默认账号系统后，系统默认登录页面为默认账号系统登录页。</p>
+                    <p style='color: red'>请确保配置的账号系统可用，否则系统将无法登录。</p>`
+      this.$confirm(info, '确定设置默认账号系统?', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        dangerouslyUseHTMLString: true
+      }).then(res => {
+        const params = {
+          defaultLogin: !row.is_default ? row.id : 'local'
+        }
+        setDefaultAccountAPI(params).then(res => {
+          this.getAccountConfig()
+        })
       })
     }
   },

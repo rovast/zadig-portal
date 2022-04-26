@@ -4,7 +4,7 @@
       <span class="title">通知</span>
     </div>
     <el-button @click="addNotifyItem()" size="mini" icon="el-icon-plus" plain>添加配置</el-button>
-    <div class="dashed-container">
+    <div class="dashed-container" v-if='notify.length > 0'>
       <div class="notify-container" v-for="(item,index) in notify" :key="index">
         <NotifyItem :notify="item" :validObj="validObj" ref="notifys" :curIndex="index" :fromWorkflow="fromWorkflow" @update="delNotify" />
       </div>
@@ -23,7 +23,6 @@ export default {
 
   data () {
     return {
-      notifys: [],
       isCanAdd: false,
       validObj: new ValidateSubmit()
 
@@ -61,20 +60,22 @@ export default {
     check () {
       const valid = []
       this.$nextTick(() => {
-        this.$refs.notifys.forEach(item => {
-          valid.push(item.$refs.notify.validate())
-        })
-        return Promise.all(valid).then((res) => {
-          if (res.indexOf(false) === -1) {
-            this.isCanAdd = true
-          } else {
-            this.isCanAdd = false
-          }
-          this.$emit('canAdd', this.isCanAdd)
-          bus.$once('check-tab:notify', () => {
-            bus.$emit('receive-tab-check:notify', this.isCanAdd)
+        if (this.$refs.notifys) {
+          this.$refs.notifys.forEach(item => {
+            valid.push(item.$refs.notify.validate())
           })
-        })
+          return Promise.all(valid).then((res) => {
+            if (res.indexOf(false) === -1) {
+              this.isCanAdd = true
+            } else {
+              this.isCanAdd = false
+            }
+            this.$emit('canAdd', this.isCanAdd)
+            bus.$once('check-tab:notify', () => {
+              bus.$emit('receive-tab-check:notify', this.isCanAdd)
+            })
+          })
+        }
       })
     }
   },
@@ -85,6 +86,9 @@ export default {
     notify: {
       handler (val) {
         if (val) {
+          if (val.length === 0) {
+            this.isCanAdd = true
+          }
           this.check()
         }
       },

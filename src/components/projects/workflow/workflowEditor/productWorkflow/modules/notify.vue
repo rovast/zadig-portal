@@ -3,7 +3,7 @@
     <div class="script dashed-container" v-if="showTitle">
       <span class="title">通知</span>
     </div>
-    <el-button @click="addNotifyItem()" size="mini" icon="el-icon-plus" plain>添加配置</el-button>
+    <el-button v-if="fromWorkflow" @click="addNotifyItem()" size="mini" icon="el-icon-plus" plain>添加配置</el-button>
     <div class="dashed-container" v-if='notify.length > 0'>
       <div class="notify-container" v-for="(item,index) in notify" :key="index">
         <NotifyItem :notify="item" :validObj="validObj" ref="notifys" :curIndex="index" :fromWorkflow="fromWorkflow" @update="delNotify" />
@@ -46,7 +46,7 @@ export default {
   methods: {
     addNotifyItem () {
       if (this.isCanAdd) {
-        this.notify.push({
+        this.notify.unshift({
           enabled: true,
           webhook_type: '',
           notify_type: []
@@ -64,12 +64,18 @@ export default {
           this.$refs.notifys.forEach(item => {
             valid.push(item.$refs.notify.validate())
           })
-          return Promise.all(valid).then((res) => {
-            if (res.indexOf(false) === -1) {
+          Promise.all(valid).then((res) => {
+            if (!res.includes(false)) {
               this.isCanAdd = true
             } else {
               this.isCanAdd = false
             }
+            this.$emit('canAdd', this.isCanAdd)
+            bus.$once('check-tab:notify', () => {
+              bus.$emit('receive-tab-check:notify', this.isCanAdd)
+            })
+          }).catch(() => {
+            this.isCanAdd = false
             this.$emit('canAdd', this.isCanAdd)
             bus.$once('check-tab:notify', () => {
               bus.$emit('receive-tab-check:notify', this.isCanAdd)
@@ -88,8 +94,9 @@ export default {
         if (val) {
           if (val.length === 0) {
             this.isCanAdd = true
+          } else {
+            this.check()
           }
-          this.check()
         }
       },
       deep: true,

@@ -5,6 +5,7 @@
       <el-select v-model="source" size="small" value-key="key" :disabled="isEdit" @change="loadBuild(buildName)" filterable>
         <el-option v-for="(item,index) in originOptions" :key="index" :label="item.label" :value="item.value"></el-option>
       </el-select>
+      <el-checkbox v-if="source ==='zadig'" v-model="useTemplate">使用模板</el-checkbox>
     </div>
     <JenkinsBuild
       v-if="jenkinsEnabled"
@@ -19,6 +20,7 @@
       v-show="source === 'zadig'"
       ref="zadigBuildForm"
       :isCreate="!isEdit"
+      :useTemplate="useTemplate"
       :jenkinsEnabled="jenkinsEnabled"
       :buildConfigData="buildConfig"
       :serviceTargets="serviceTargets"
@@ -120,6 +122,7 @@ export default {
       serviceTargets: [],
       saveLoading: false,
       configDataLoading: true,
+      useTemplate: false,
       buildConfig: {},
       buildInfos: []
     }
@@ -201,12 +204,18 @@ export default {
         buildConfig.targets.forEach(t => {
           t.key = t.service_name + '/' + t.service_module
         })
+        buildConfig.target_repos.forEach(t => {
+          t.service.key = t.service.service_name + '/' + t.service.service_module
+        })
         if (buildConfig.source === 'jenkins') {
           this.source = 'jenkins'
           this.jenkinsBuild = buildConfig
         }
         if (!buildConfig.timeout) {
           this.$set(buildConfig, 'timeout', 60)
+        }
+        if (buildConfig.template_id) {
+          this.useTemplate = true
         }
         this.buildConfig = buildConfig
 
@@ -228,7 +237,9 @@ export default {
           }
         }
       }
-      this.$refs.zadigBuildForm.initData(this.buildConfig)
+      if (!this.useTemplate) {
+        this.$refs.zadigBuildForm.initData(this.buildConfig)
+      }
     },
     async initBuildInfo () {
       const currentService = this.serviceTargets.filter(element => {

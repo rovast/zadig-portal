@@ -135,11 +135,11 @@ export default {
           enabled: false,
           items: []
         },
-        notify_ctl: {
+        notify_ctls: [{
           enabled: false,
           weChat_webHook: '',
           notify_type: []
-        },
+        }],
         pre_test: {
           enable_proxy: false,
           build_os: 'focal',
@@ -201,8 +201,10 @@ export default {
         this.$refs.testFormRef.validate(),
         this.$refs.advancedConfigRef.validate()
       )
-
-      Promise.all(valid).then(() => {
+      Promise.all(valid).then((res) => {
+        if (res.flat().includes(false)) {
+          return
+        }
         this.test.repos.forEach(repo => {
           this.allCodeHosts.forEach(codehost => {
             if (repo.codehost_id === codehost.id) {
@@ -268,12 +270,12 @@ export default {
             items: []
           })
         }
-        if (!res.notify_ctl) {
-          this.$set(this.test, 'notify_ctl', {
+        if (!res.notify_ctls) {
+          this.$set(this.test, 'notify_ctls', [{
             enabled: false,
             weChat_webHook: '',
             notify_type: []
-          })
+          }])
         }
         if (this.test.artifact_paths.length === 0) {
           this.test.artifact_paths.push('')

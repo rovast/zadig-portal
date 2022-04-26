@@ -78,18 +78,12 @@
       <div class="notify">
         <el-form-item>
           <template slot="label">通知配置</template>
-          <el-button
-            @click="testConfig.notify_ctl.enabled = !testConfig.notify_ctl.enabled"
-            type="primary"
-            size="small"
-            plain
-          >{{testConfig.notify_ctl.enabled ? '删除': '添加'}}</el-button>
         </el-form-item>
         <Notify
-          v-if="testConfig.notify_ctl.enabled"
           ref="notifyComp"
           :editMode="isEdit"
-          :notify="testConfig.notify_ctl"
+          @canAdd="getValid"
+          :notify="testConfig.notify_ctls"
           :showTitle="false"
           :fromWorkflow="false"
           class="notify-content"
@@ -109,6 +103,11 @@ export default {
     allCodeHosts: Array,
     validObj: Object
   },
+  data () {
+    return {
+      isValid: false
+    }
+  },
   computed: {
     projectName () {
       return this.$route.params.project_name
@@ -121,10 +120,12 @@ export default {
     }
   },
   methods: {
+    getValid (val) {
+      this.isValid = val
+    },
     validate () {
       return Promise.all([
-        this.$refs.advancedRef.validate(),
-        this.$refs.notifyComp && this.$refs.notifyComp.$refs.notify.validate()
+        this.$refs.advancedRef.validate(), Promise.resolve(this.isValid)
       ])
     },
     addTrigger () {
@@ -187,7 +188,7 @@ export default {
         padding: 10px 20px;
 
         .notify-container {
-          margin: 0;
+          margin: 16px 0;
         }
       }
     }

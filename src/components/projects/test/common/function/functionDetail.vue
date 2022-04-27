@@ -269,6 +269,9 @@ export default {
         if (!res.notify_ctls) {
           this.$set(this.test, 'notify_ctls', [])
         }
+        if (res.notify_ctls.length > 0) {
+          res.notify_ctls = res.notify_ctls.filter(item => item.enabled)
+        }
         if (this.test.artifact_paths.length === 0) {
           this.test.artifact_paths.push('')
         }

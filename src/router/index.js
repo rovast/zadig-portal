@@ -347,6 +347,13 @@ const routes = [
             meta: {
               title: 'Kubernetes YAML 模板库'
             }
+          },
+          {
+            path: 'builds',
+            component: () => import(/* webpackChunkName: "Build Template" */ '@/components/templateLibrary/builds/index.vue'),
+            meta: {
+              title: '构建模板库'
+            }
           }]
       },
       {

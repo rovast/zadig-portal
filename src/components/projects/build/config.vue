@@ -35,9 +35,9 @@
                   </el-tooltip>
                 </div>
               </div>
-              <div v-hasPermi="{projectName: projectName, action: 'edit_build'}" class="change-serviceTarget">
+              <!-- <div v-hasPermi="{projectName: projectName, action: 'edit_build'}" class="change-serviceTarget">
                 <i @click="changeServiceTargets(scope.row)" class="el-icon-edit-outline"></i>
-              </div>
+              </div> -->
             </div>
           </template>
         </el-table-column>

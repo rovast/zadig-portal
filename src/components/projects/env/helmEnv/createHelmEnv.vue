@@ -143,7 +143,6 @@
 import {
   initProjectEnvAPI,
   getClusterListAPI,
-  getSingleProjectAPI,
   createHelmEnvAPI,
   getEnvironmentsAPI,
   getRegistryWhenBuildAPI,
@@ -181,7 +180,6 @@ export default {
         registry_id: '',
         selectedService: [] // will delete
       },
-      projectInfo: {},
       allCluster: [],
       startDeployLoading: false,
       loading: false,
@@ -270,10 +268,6 @@ export default {
       if (this.projectConfig.cluster_id) {
         this.changeCluster(this.projectConfig.cluster_id)
       }
-    },
-    async checkProjectFeature () {
-      const projectName = this.projectName
-      this.projectInfo = await getSingleProjectAPI(projectName)
     },
     async getTemplateAndImg () {
       const projectName = this.projectName
@@ -424,7 +418,6 @@ export default {
       ]
     })
     this.projectConfig.product_name = this.projectName
-    this.checkProjectFeature()
     this.getCluster()
     this.getEnvNames()
     getRegistryWhenBuildAPI(this.projectName).then(res => {

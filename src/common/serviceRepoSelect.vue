@@ -571,9 +571,6 @@ export default {
           const repoOwner = repo.repo_owner
           const repoName = repo.repo_name
           const uuid = repo.repo_uuid
-          // if (!this.codeInfo[targetIndex][repoIndex]) {
-          //   this.$set(this.codeInfo, targetIndex, {})
-          // }
           this.$set(this.codeInfo[targetIndex], repoIndex, {
             repo_owners: [],
             repos: [],
@@ -686,32 +683,9 @@ export default {
     getCodeSourceMaskedAPI(key).then(response => {
       this.allCodeHosts = response
     })
-    // this.showFirstLine && this.targets.repos.length === 0 && this.addFirstRepo()
-  },
-  watch: {
-    targets: {
-      handler (new_val, old_val) {
-        if (new_val.length > 0 && !this.isCreate) {
-          this.getInitRepoInfo(new_val)
-        }
-      },
-      deep: true,
-      immediate: true
+    if (!this.isCreate) {
+      this.getInitRepoInfo(this.targets)
     }
-    // 'target.repos' (new_val, old_val) {
-    //   if (this.validObj !== null) {
-    //     if (new_val && new_val.length > 0) {
-    //       this.validObj.addValidate({
-    //         name: this.validateName,
-    //         valid: this.validateForm
-    //       })
-    //     } else {
-    //       this.validObj.deleteValidate({
-    //         name: this.validateName
-    //       })
-    //     }
-    //   }
-    // }
   }
 }
 </script>

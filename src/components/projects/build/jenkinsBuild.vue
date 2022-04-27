@@ -3,7 +3,7 @@
     <el-form ref="jenkinsForm" :model="jenkinsBuild" label-position="left" class="primary-form" label-width="120px" inline-message>
       <slot name="origin"></slot>
       <el-form-item label="Jenkins 选择">
-        <el-select v-model="jenkinsBuild.jenkins_id" size="small" value-key="key" filterable>
+        <el-select v-model="jenkinsBuild.jenkins_build.jenkins_id" size="small" value-key="key" filterable>
           <el-option
             v-for="(item,index) in jenkinsList"
             :key="index"
@@ -88,8 +88,8 @@ export default {
         desc: '',
         targets: [],
         timeout: 60,
-        jenkins_id: '',
         jenkins_build: {
+          jenkins_id: '',
           job_name: '',
           jenkins_build_params: [],
           envs: []
@@ -114,7 +114,7 @@ export default {
     jenkinsList: {
       handler (val) {
         if (val.length > 0) {
-          this.initJenkinsBuild.jenkins_id = this.jenkinsList[0].id
+          this.initJenkinsBuild.jenkins_build.jenkins_id = this.jenkinsList[0].id
           this.getJenkinsJob()
         }
       },
@@ -138,13 +138,13 @@ export default {
       })
     },
     async getJenkinsJob () {
-      const res = await queryJenkinsJob(this.initJenkinsBuild.jenkins_id).catch(error => console.log(error))
+      const res = await queryJenkinsJob(this.initJenkinsBuild.jenkins_build.jenkins_id).catch(error => console.log(error))
       if (res) {
         this.jenkinsJobList = res
       }
     },
     async changeJobName (value) {
-      const res = await queryJenkinsParams(this.initJenkinsBuild.jenkins_id, value).catch(error =>
+      const res = await queryJenkinsParams(this.initJenkinsBuild.jenkins_build.jenkins_id, value).catch(error =>
         console.log(error)
       )
       if (res) {

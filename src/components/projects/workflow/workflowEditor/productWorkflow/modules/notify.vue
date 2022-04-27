@@ -1,5 +1,5 @@
 <template>
-  <el-card class="notify box-card">
+  <div :class="{'notify': fromWorkflow || notify.length > 0}">
     <div class="script dashed-container" v-if="showTitle">
       <span class="title">通知</span>
     </div>
@@ -9,7 +9,7 @@
         <NotifyItem :notify="item" :validObj="validObj" ref="notifys" :curIndex="index" :fromWorkflow="fromWorkflow" @update="delNotify" />
       </div>
     </div>
-  </el-card>
+  </div>
 </template>
 
 <script type="text/javascript">
@@ -77,9 +77,6 @@ export default {
           }).catch(() => {
             this.isCanAdd = false
             this.$emit('canAdd', this.isCanAdd)
-            bus.$once('check-tab:notify', () => {
-              bus.$emit('receive-tab-check:notify', this.isCanAdd)
-            })
           })
         }
       })
@@ -94,6 +91,7 @@ export default {
         if (val) {
           if (val.length === 0) {
             this.isCanAdd = true
+            this.$emit('canAdd', this.isCanAdd)
           } else {
             this.check()
           }
@@ -108,6 +106,12 @@ export default {
 
 <style lang="less" scoped>
 .notify {
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+
   .dashed-container {
     .notify-container {
       margin: 16px 0;
@@ -124,11 +128,6 @@ export default {
       padding-top: 6px;
       color: #606266;
       font-size: 14px;
-    }
-
-    .item-title {
-      margin-left: 5px;
-      color: #909399;
     }
   }
 }

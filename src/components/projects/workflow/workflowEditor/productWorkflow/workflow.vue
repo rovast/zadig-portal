@@ -310,6 +310,9 @@ export default {
         if (!this.workflowInfo.notify_ctls) {
           this.$set(this.workflowInfo, 'notify_ctls', [])
         };
+        if (this.workflowInfo.notify_ctls.length > 0) {
+          this.workflowInfo.notify_ctls = this.workflowInfo.notify_ctls.filter(item => item.enabled)
+        }
         if (!this.workflowInfo.artifact_stage) {
           this.$set(this.workflowInfo, 'artifact_stage', {
             enabled: false,

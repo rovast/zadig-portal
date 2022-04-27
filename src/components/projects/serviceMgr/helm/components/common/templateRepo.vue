@@ -35,6 +35,15 @@
         <CommonImportValues v-else ref="importValues" :importRepoInfo.sync="importRepoInfo" :resize="{height: '188px'}" showDelete></CommonImportValues>
       </div>
       <ImportValues v-else ref="importValues" :importRepoInfo.sync="importRepoInfo"></ImportValues>
+      <el-form-item prop="auto_deploy">
+        <span slot="label">
+          <span>自动同步</span>
+           <el-tooltip effect="dark" content="开启后，当服务模板更新时，服务配置会自动引用最新的模板配置。" placement="top">
+              <i class="pointer el-icon-question"></i>
+           </el-tooltip>
+        </span>
+        <el-switch v-model="tempData.auto_deploy" />
+      </el-form-item>
       <el-form-item style="text-align: right;">
         <el-button size="small" @click="commitDialogVisible(false)">取消</el-button>
         <el-button type="primary" size="small" @click="importTempRepo" :loading="importLoading">导入</el-button>
@@ -81,7 +90,8 @@ export default {
       tempCharts: [],
       tempData: {
         serviceName: '',
-        moduleName: ''
+        moduleName: '',
+        auto_deploy: false
       },
       importRepoInfo: {
         yamlSource: 'default',
@@ -180,6 +190,7 @@ export default {
         source: 'chartTemplate',
         name: this.tempData.serviceName,
         createFrom: {
+          auto_deploy: this.tempData.auto_deploy,
           templateName: this.tempData.moduleName,
           valuesYAML:
             this.importRepoInfo.yamlSource === 'default'

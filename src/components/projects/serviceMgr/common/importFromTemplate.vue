@@ -47,6 +47,15 @@
         </el-table>
       </template>
         </el-form-item>
+        <el-form-item prop="auto_deploy">
+           <span slot="label">
+              <span>自动同步</span>
+              <el-tooltip effect="dark" content="开启后，当服务模板更新时，服务配置会自动引用最新的模板配置。" placement="top">
+                <i class="pointer el-icon-question"></i>
+              </el-tooltip>
+           </span>
+           <el-switch v-model="importYaml.auto_deploy" />
+        </el-form-item>
         <el-form-item>
           <el-button :disabled="!importYaml.id" style="margin-left: 5px;" type="text" :icon="previewYamlFile?'el-icon-arrow-up':'el-icon-arrow-down'" @click="previewYamlFile = !previewYamlFile">
             {{
@@ -82,7 +91,8 @@ export default {
         id: '',
         yamls: [],
         variables: [],
-        content: ''
+        content: '',
+        auto_deploy: false
       },
       importTemplateEditorOption: {
         tabSize: 2,
@@ -140,11 +150,13 @@ export default {
       const projectName = this.projectName
       const templateId = this.importYaml.id
       const variables = this.importYaml.variables
+      const auto_deploy = this.importYaml.auto_deploy
       const payload = {
         service_name: serviceName,
         project_name: projectName,
         template_id: templateId,
-        variables: variables
+        variables: variables,
+        auto_deploy: auto_deploy
       }
       const valid = await this.$refs.importYamlForm.validate().catch((err) => { return err })
       if (valid) {

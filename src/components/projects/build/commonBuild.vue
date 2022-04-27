@@ -13,6 +13,7 @@
       :jenkinsBuildData="jenkinsBuild"
       :isCreate="!isEdit"
       :serviceTargets="serviceTargets"
+      :jenkinsList = "jenkinsList"
       :mini="mini"
     ></JenkinsBuild>
     <ZadigBuild
@@ -66,7 +67,8 @@ import {
   checkJenkinsConfigExistsAPI,
   getBuildConfigDetailAPI,
   getServiceTargetsAPI,
-  getBuildConfigsAPI
+  getBuildConfigsAPI,
+  queryJenkins
 } from '@api'
 
 export default {
@@ -118,6 +120,7 @@ export default {
       jenkinsEnabled: false,
       jenkinsBuild: {},
       serviceTargets: [],
+      jenkinsList: [],
       saveLoading: false,
       configDataLoading: true,
       buildConfig: {},
@@ -162,6 +165,7 @@ export default {
         })
     },
     async loadBuild (buildConfigName) {
+      console.log(buildConfigName)
       this.buildConfig = {
         name: buildConfigName || this.defaultBuildName
       }
@@ -246,11 +250,17 @@ export default {
       checkJenkinsConfigExistsAPI().then(res => {
         this.jenkinsEnabled = res.exists
       })
-
       // get all builds of the current project
       return await getBuildConfigsAPI(this.projectName).then(res => {
         this.buildInfos = res
       })
+    },
+    async getJenkins () {
+      const key = this.$utils.rsaEncrypt()
+      const res = await queryJenkins(key).catch(error => console.log(error))
+      if (res) {
+        this.jenkinsList = res
+      }
     }
   },
   computed: {
@@ -290,6 +300,9 @@ export default {
     this.initGlobalData().then(() => {
       this.loadBuild(this.buildName)
     })
+  },
+  mounted () {
+    this.getJenkins()
   },
   components: {
     JenkinsBuild,

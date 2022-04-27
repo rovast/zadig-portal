@@ -932,12 +932,12 @@ export function jenkinsConnection (payload) {
   return http.post('/api/aslan/system/jenkins/user/connection', payload)
 }
 
-export function queryJenkinsJob () {
-  return http.get('/api/aslan/system/jenkins/jobNames')
+export function queryJenkinsJob (id) {
+  return http.get(`/api/aslan/system/jenkins/jobNames/${id}`)
 }
 
-export function queryJenkinsParams (jobName) {
-  return http.get(`/api/aslan/system/jenkins/buildArgs/${jobName}`)
+export function queryJenkinsParams (id, jobName) {
+  return http.get(`/api/aslan/system/jenkins/buildArgs/${id}/${jobName}`)
 }
 
 // External System

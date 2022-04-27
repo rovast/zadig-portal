@@ -2,6 +2,16 @@
   <section class="jenkins-build-container" :class="{'small-padding': mini}">
     <el-form ref="jenkinsForm" :model="jenkinsBuild" label-position="left" class="primary-form" label-width="120px" inline-message>
       <slot name="origin"></slot>
+      <el-form-item label="Jenkins 选择">
+        <el-select v-model="jenkinsBuild.jenkins_id" size="small" value-key="key" filterable @change="changeJenkinsService">
+          <el-option
+            v-for="(item,index) in jenkinsList"
+            :key="index"
+            :label="item.url"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item
         label="构建名称"
         prop="name"
@@ -65,7 +75,8 @@ export default {
     jenkinsBuildData: Object,
     isCreate: Boolean,
     serviceTargets: Array,
-    mini: Boolean
+    mini: Boolean,
+    jenkinsList: Array
   },
   components: { EnvVariable },
   data () {
@@ -77,6 +88,7 @@ export default {
         desc: '',
         targets: [],
         timeout: 60,
+        jenkins_id: '',
         jenkins_build: {
           job_name: '',
           jenkins_build_params: [],
@@ -98,6 +110,15 @@ export default {
       if (!newVal.jenkins_build.envs) {
         this.transformParams(newVal.jenkins_build.jenkins_build_params)
       }
+    },
+    jenkinsList: {
+      handler (val) {
+        if (val.length > 0) {
+          this.initJenkinsBuild.jenkins_id = this.jenkinsList[0].id
+          this.getJenkinsJob()
+        }
+      },
+      immediate: true
     }
   },
   methods: {
@@ -117,13 +138,13 @@ export default {
       })
     },
     async getJenkinsJob () {
-      const res = await queryJenkinsJob().catch(error => console.log(error))
+      const res = await queryJenkinsJob(this.initJenkinsBuild.jenkins_id).catch(error => console.log(error))
       if (res) {
         this.jenkinsJobList = res
       }
     },
     async changeJobName (value) {
-      const res = await queryJenkinsParams(value).catch(error =>
+      const res = await queryJenkinsParams(this.initJenkinsBuild.jenkins_id, value).catch(error =>
         console.log(error)
       )
       if (res) {
@@ -139,9 +160,6 @@ export default {
       })
       this.jenkinsBuild.jenkins_build.envs = this.jenkinsBuild.jenkins_build.jenkins_build_params
     }
-  },
-  created () {
-    this.getJenkinsJob()
   }
 }
 </script>

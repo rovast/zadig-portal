@@ -890,6 +890,10 @@ export function syncLDAPAPI (id) {
   return http.post(`/api/v1/users/ldap/${id}`)
 }
 
+export function setDefaultAccountAPI (payload) {
+  return http.post(`/api/aslan/system/login/default`, payload)
+}
+
 // Jira
 export function getJiraAPI (key) {
   return http.get(`/api/v1/jira?encryptedKey=${key}`)

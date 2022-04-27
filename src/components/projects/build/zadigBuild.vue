@@ -225,7 +225,6 @@ export default {
         }
       }
       valid.push(this.$refs.zadigForm.validate())
-      console.log(valid)
       return Promise.all(valid).then(() => {
         const payload = this.$utils.cloneObj(this.buildConfig)
         payload.repos.forEach(repo => {

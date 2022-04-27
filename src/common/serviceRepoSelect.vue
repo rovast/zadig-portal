@@ -354,7 +354,7 @@ export default {
     },
     addBuildRepo (targetIndex, repoIndex) {
       const repoMeta = {
-        codehost_id: '',
+        codehost_id: null,
         repo_owner: '',
         repo_name: '',
         branch: '',
@@ -384,7 +384,7 @@ export default {
     },
     addFirstRepo (targetIndex) {
       const repoMeta = {
-        codehost_id: '',
+        codehost_id: null,
         repo_owner: '',
         repo_name: '',
         branch: '',
@@ -692,7 +692,6 @@ export default {
     targets: {
       handler (new_val, old_val) {
         if (new_val.length > 0 && !this.isCreate) {
-          console.log(new_val)
           this.getInitRepoInfo(new_val)
         }
       },

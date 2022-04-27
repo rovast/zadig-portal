@@ -3,7 +3,7 @@
     <el-form ref="jenkinsForm" :model="jenkinsBuild" label-position="left" class="primary-form" label-width="120px" inline-message>
       <slot name="origin"></slot>
       <el-form-item label="Jenkins 选择">
-        <el-select v-model="jenkinsBuild.jenkins_id" size="small" value-key="key" filterable @change="changeJenkinsService">
+        <el-select v-model="jenkinsBuild.jenkins_id" size="small" value-key="key" filterable>
           <el-option
             v-for="(item,index) in jenkinsList"
             :key="index"

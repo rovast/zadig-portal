@@ -1204,7 +1204,7 @@ export default {
         dangerouslyUseHTMLString: true
       }).then(res => {
         const params = {
-          defaultLogin: !row.is_default ? row.id : 'local'
+          default_login: !row.is_default ? row.id : 'local'
         }
         setDefaultAccountAPI(params).then(res => {
           this.getAccountConfig()

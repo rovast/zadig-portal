@@ -163,8 +163,8 @@ export default {
   watch: {
     dialogEditRoleVisible (value) {
       if (value) {
-        console.log(value)
         this.clonedUserInfo = cloneDeep(this.editUser)
+        this.getRoleList()
       }
     }
   }

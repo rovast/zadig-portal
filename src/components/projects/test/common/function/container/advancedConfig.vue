@@ -78,6 +78,7 @@
       <div class="notify">
         <el-form-item>
           <template slot="label">通知配置</template>
+          <el-button @click="addNotify" type="primary" size="small" plain >添加</el-button>
         </el-form-item>
         <Notify
           ref="notifyComp"
@@ -146,6 +147,9 @@ export default {
     },
     deleteArtifactPath (index) {
       this.testConfig.artifact_paths.splice(index, 1)
+    },
+    addNotify () {
+      this.$refs.notifyComp.addNotifyItem()
     }
   },
   components: {

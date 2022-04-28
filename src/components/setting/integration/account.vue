@@ -364,7 +364,7 @@
         <el-table-column label="账号系统名称">
           <template slot-scope="scope">
             <span>{{scope.row.name}}</span>
-            <el-button type="primary" class="btn" size="mini" v-show="scope.row.is_default">默认</el-button>
+             <el-tag size="mini" type="primary" plain  class="btn" v-show="scope.row.is_default">默认</el-tag>
           </template>
         </el-table-column>
         <el-table-column align="right">
@@ -1189,7 +1189,9 @@ export default {
       }
     },
     enter (row) {
-      this.$refs['popover' + row.id].style.display = 'inline'
+      if (row.type !== 'github') {
+        this.$refs['popover' + row.id].style.display = 'inline'
+      }
     },
     leave (row) {
       this.$refs['popover' + row.id].style.display = 'none'

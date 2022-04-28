@@ -11,6 +11,12 @@
           :loading="saveLoading"
           type="primary"
         >{{ compBind.isEdit ? '确认修改' : '立即新建' }}</el-button>
+        <el-button v-if="showSaveToTemplate"
+          @click="$refs.buildRef.saveBuildConfigToTemplate()"
+          @updateBtnLoading="saveLoading = $event"
+          :loading="saveLoading"
+          type="primary"
+        >保存为模板</el-button>
       </footer>
     </template>
   </CommonBuild>
@@ -44,6 +50,13 @@ export default {
         this.$route.path ===
         `/v1/projects/detail/${this.projectName}/builds/create`
       )
+    },
+    showSaveToTemplate () {
+      if (this.$refs.buildRef) {
+        return this.compBind.isEdit && this.$refs.buildRef.source === 'zadig' && !this.$refs.buildRef.useTemplate
+      } else {
+        return false
+      }
     }
   },
   methods: {

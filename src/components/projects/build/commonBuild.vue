@@ -68,7 +68,8 @@ import {
   checkJenkinsConfigExistsAPI,
   getBuildConfigDetailAPI,
   getServiceTargetsAPI,
-  getBuildConfigsAPI
+  getBuildConfigsAPI,
+  createBuildTemplateAPI
 } from '@api'
 
 export default {
@@ -163,6 +164,38 @@ export default {
           console.log('傻了吧', err)
           this.saveLoading = false
         })
+    },
+    async saveBuildConfigToTemplate () {
+      if (this.source === 'zadig') {
+        this.$confirm('保存为系统全局构建模板，其中的代码信息将会被去除，构建信息将会作为构建模板内容保存，请确认?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$refs.zadigBuildForm
+            .validate()
+            .then(data => {
+              const payload = data
+              this.$emit('updateBtnLoading', true)
+              createBuildTemplateAPI(payload)
+                .then(() => {
+                  this.$message({
+                    type: 'success',
+                    message: '保存模板成功'
+                  })
+                  this.$emit('updateBtnLoading', false)
+                })
+                .catch(() => {
+                  this.$emit('updateBtnLoading', false)
+                })
+            })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消保存'
+          })
+        })
+      }
     },
     async loadBuild (buildConfigName) {
       this.buildConfig = {

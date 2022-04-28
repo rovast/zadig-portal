@@ -399,7 +399,8 @@ export default {
 .users-overview-container {
   position: relative;
   flex: 1;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   font-size: 13px;
 
   .users-container {

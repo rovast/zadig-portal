@@ -7,10 +7,10 @@
   >
     <el-form :model="form" @submit.native.prevent ref="roleForm" label-position="left" label-width="120px" class="primary-form">
       <el-form-item label="角色名称" prop="name" :rules="{ required: true, trigger: 'change', validator: validateRoleName }">
-        <el-input v-model="form.name" :disabled="isEdit"></el-input>
+        <el-input size="small" v-model="form.name" :disabled="isEdit"></el-input>
       </el-form-item>
       <el-form-item label="描述信息" prop="account">
-        <el-input v-model="form.desc"></el-input>
+        <el-input size="small" v-model="form.desc"></el-input>
       </el-form-item>
       <el-form-item label="权限列表" prop="permissions" label-width="100px">
         <div class="permissions-group" v-for="(group,group_index) in permissionGroups" :key="group_index">
@@ -237,7 +237,6 @@ export default {
   watch: {
     isShowDialogRoleVisible: {
       handler: function (newVal, oldVal) {
-        console.log(this.currentRole)
         if (newVal && this.currentRole) {
           this.isEdit = true
           this.getRoleDetail(this.currentRole)

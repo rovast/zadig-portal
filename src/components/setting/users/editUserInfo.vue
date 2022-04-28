@@ -154,8 +154,6 @@ export default {
       )
 
       if (res) {
-        console.log(res)
-        // res.forEach((item)=>{item})
         this.roleList = res
       }
     }

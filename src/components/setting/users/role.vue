@@ -150,7 +150,6 @@ export default {
 .roles-overview-container {
   position: relative;
   flex: 1;
-  overflow: auto;
   font-size: 13px;
 
   .roles-container {

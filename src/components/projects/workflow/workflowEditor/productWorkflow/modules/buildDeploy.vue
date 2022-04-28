@@ -78,11 +78,7 @@
           </el-col>
           <el-col :span="6">
             <div class="build-item build">
-              <div v-if="associatedBuilds[`${config.target.service_name}/${config.target.service_module}`].isEdit === false">
-                <span>{{ config.target.build_name }}</span>
-                <i class="icon el-icon-edit icon-primary" @click="editAssociatedBuild('edit', config.target)"></i>
-              </div>
-              <div v-else>
+              <div v-if="(associatedBuilds[`${config.target.service_name}/${config.target.service_module}`] || { isEdit: false }).isEdit === true">
                 <el-select v-model="associatedBuilds[`${config.target.service_name}/${config.target.service_module}`].editBuildName" size="mini">
                   <el-option
                     v-for="(build, index) in associatedBuilds[`${config.target.service_name}/${config.target.service_module}`].moduleBuilds"
@@ -93,6 +89,10 @@
                 </el-select>
                 <i class="icon el-icon-circle-close icon-gray" @click="editAssociatedBuild('cancel', config.target)">取消</i>
                 <i class="icon el-icon-circle-check icon-primary" @click="editAssociatedBuild('save', config.target)">保存</i>
+              </div>
+              <div v-else>
+                <span>{{ config.target.build_name }}</span>
+                <i class="icon el-icon-edit" :class="[associatedBuilds[`${config.target.service_name}/${config.target.service_module}`] ? 'icon-primary' : 'icon-disabled']" @click="editAssociatedBuild('edit', config.target)"></i>
               </div>
             </div>
           </el-col>
@@ -208,8 +208,10 @@ export default {
     editAssociatedBuild (action, target) {
       const current = this.associatedBuilds[`${target.service_name}/${target.service_module}`]
       if (action === 'edit') {
-        current.editBuildName = target.build_name
-        current.isEdit = true
+        if (current) {
+          current.editBuildName = target.build_name
+          current.isEdit = true
+        }
       } else if (action === 'cancel') {
         current.editBuildName = target.build_name
         current.isEdit = false
@@ -272,6 +274,11 @@ export default {
 
         &.icon-primary {
           color: @themeColor;
+        }
+
+        &.icon-disabled {
+          color: #9ea3a9;
+          cursor: not-allowed;
         }
 
         &.icon-gray {

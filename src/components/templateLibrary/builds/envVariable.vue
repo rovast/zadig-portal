@@ -241,7 +241,7 @@ export default {
           // eslint-disable-next-line no-template-curly-in-string
           variable: '$<REPO>_BRANCH',
           // eslint-disable-next-line no-template-curly-in-string
-          desc: '构建时使用的代码分支信息，其中 <REPO> 是具体的代码仓库名称，使用时可以填写仓库名称或者结合 $REPO_index 变量使用，比如可以通过 eval PR=${${REPO_0}_BRANCH} 方式获取第一个代码库的分支信息'
+          desc: '构建时使用的代码分支信息，其中 <REPO> 是具体的代码仓库名称，使用时可以填写仓库名称或者结合 $REPO_index 变量使用，比如可以通过 eval BRANCH=${${REPO_0}_BRANCH} 方式获取第一个代码库的分支信息'
         },
         {
           // eslint-disable-next-line no-template-curly-in-string

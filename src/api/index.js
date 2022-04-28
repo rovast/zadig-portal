@@ -890,6 +890,10 @@ export function syncLDAPAPI (id) {
   return http.post(`/api/v1/users/ldap/${id}`)
 }
 
+export function setDefaultAccountAPI (payload) {
+  return http.post(`/api/aslan/system/login/default`, payload)
+}
+
 // Jira
 export function getJiraAPI (key) {
   return http.get(`/api/v1/jira?encryptedKey=${key}`)
@@ -1611,6 +1615,27 @@ export function loadServiceFromKubernetesTemplateAPI (payload) {
 
 export function reloadServiceFromKubernetesTemplateAPI (payload) {
   return http.post(`/api/aslan/service/template/reload`, payload)
+}
+
+// Template Build
+export function getBuildTemplatesAPI () {
+  return http.get(`/api/aslan/template/build?page_num=1&page_size=9999`)
+}
+
+export function createBuildTemplateAPI (payload) {
+  return http.post(`/api/aslan/template/build`, payload)
+}
+
+export function updateBuildTemplateAPI (id, payload) {
+  return http.put(`/api/aslan/template/build/${id}`, payload)
+}
+
+export function getBuildTemplateDetailAPI (id) {
+  return http.get(`/api/aslan/template/build/${id}`)
+}
+
+export function deleteBuildTemplateAPI (id) {
+  return http.delete(`/api/aslan/template/build/${id}`)
 }
 
 // Helm env and service

@@ -362,14 +362,12 @@ export default {
       this.getUsers(this.userPageSize, this.currentPageList, this.searchUser)
     },
     async getRoleList (page_size = 0, page_index = 0) {
-      this.loading = true
       const payload = {
         page: page_index,
         per_page: page_size
       }
       const res = await getRoleListAPI(payload).catch(error => {
         console.log(error)
-        this.loading = false
       }
       )
 
@@ -381,6 +379,11 @@ export default {
   watch: {
     searchUser: function (val, oldVal) {
       this.getUsers(this.userPageSize, this.currentPageList, val)
+    },
+    dialogAddUserVisible: function (val, oldVal) {
+      if (val) {
+        this.getRoleList()
+      }
     }
   },
   created () {
@@ -388,7 +391,6 @@ export default {
 
     this.getUsers(this.userPageSize, this.currentPageList, this.searchUser)
     this.checkRegistration()
-    this.getRoleList()
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <section class="other-step-container">
-    <el-drawer title="Dockerfile 模板预览" :visible.sync="showDockerfile" direction="rtl">
+    <el-drawer :modal-append-to-body="false" title="Dockerfile 模板预览" :visible.sync="showDockerfile" direction="rtl">
       <Codemirror
         v-model="dockerfileTemplate.content"
         :cmOption="{

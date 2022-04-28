@@ -110,9 +110,9 @@ export default {
     },
     dialogTitle () {
       if (this.chartInfo.type === 'delete') {
-        return `选择需要将 ${this.chartInfo.actionServiceName} 删除的环境`
+        return `选择需要将 ${this.chartInfo.actionServiceName} 服务删除的环境`
       } else {
-        return `选择需要将 ${this.chartInfo.actionServiceName} 加入的环境`
+        return `选择需要将 ${this.chartInfo.actionServiceName} 服务加入的环境`
       }
     }
   },

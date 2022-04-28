@@ -1195,21 +1195,36 @@ export default {
       this.$refs['popover' + row.id].style.display = 'none'
     },
     setDefaultAccount (row) {
-      const info = `<p>设置默认账号系统后，系统默认登录页面为默认账号系统登录页。</p>
-                    <p style='color: red'>请确保配置的账号系统可用，否则系统将无法登录。</p>`
-      this.$confirm(info, '确定设置默认账号系统?', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        dangerouslyUseHTMLString: true
-      }).then(res => {
-        const params = {
-          default_login: !row.is_default ? row.id : 'local'
-        }
+      const params = {
+        default_login: !row.is_default ? row.id : 'local'
+      }
+      if (!row.is_default) {
+        const confirmInfo = `<p>设置后，系统默认登录页面为默认账号系统登录页。</p>
+                    <p style='color: red' v-if="row.is_default">请确保配置的账号系统可用，否则系统将无法登录。</p>`
+        const cancelInfo = ``
+        this.$confirm(row.is_default ? cancelInfo : confirmInfo, `确定${row.is_default ? '取消' : '设置'}默认账号系统?`, {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          dangerouslyUseHTMLString: true
+        }).then(res => {
+          setDefaultAccountAPI(params).then(res => {
+            this.$message({
+              type: 'success',
+              message: '设置默认账号系统成功'
+            })
+            this.getAccountConfig()
+          })
+        })
+      } else {
         setDefaultAccountAPI(params).then(res => {
+          this.$message({
+            type: 'success',
+            message: '取消默认账号系统成功'
+          })
           this.getAccountConfig()
         })
-      })
+      }
     }
   },
   components: {

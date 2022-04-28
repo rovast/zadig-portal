@@ -259,10 +259,6 @@ export default {
         }
         this.buildConfig = buildConfig
 
-        this.serviceTargets = [
-          ...this.serviceTargets,
-          ...this.buildConfig.targets
-        ]
         if (!this.isEdit) {
           const currentServices = [
             ...this.buildConfig.targets,

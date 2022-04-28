@@ -220,19 +220,19 @@ export function analyticsRequestAPI (payload) {
 // Statistics
 
 export function getStatisticsOverviewAPI () {
-  return http.get('/api/aslan/stat/dashboard/overview')
+  return http.get('/api/v1/picket/stat/dashboard/overview')
 }
 
 export function getBuildStatisticsAPI (start, end) {
-  return http.get(`/api/aslan/stat/dashboard/build?startDate=${start}&endDate=${end}`)
+  return http.get(`/api/v1/picket/stat/dashboard/build?startDate=${start}&endDate=${end}`)
 }
 
 export function getDeployStatisticsAPI (start, end) {
-  return http.get(`/api/aslan/stat/dashboard/deploy?startDate=${start}&endDate=${end}`)
+  return http.get(`/api/v1/picket/stat/dashboard/deploy?startDate=${start}&endDate=${end}`)
 }
 
 export function getTestStatisticsAPI (start, end) {
-  return http.get(`/api/aslan/stat/dashboard/test?startDate=${start}&endDate=${end}`)
+  return http.get(`/api/v1/picket/stat/dashboard/test?startDate=${start}&endDate=${end}`)
 }
 
 // Status

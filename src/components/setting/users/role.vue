@@ -30,7 +30,7 @@
     <Operate-role
       ref="roleOperate"
       :currentRole="currentRole"
-      @refreshUserList="getRoleList(userPageSize, currentPageList, searchUser)"
+      @refreshUserList="getRoleList()"
     />
   </div>
 </template>
@@ -61,7 +61,6 @@ export default {
       editUser: {
         account: ''
       },
-      searchUser: '',
       isShowDialogRoleVisible: false,
       dialogAddUserVisible: false,
       searchInputVisible: true,
@@ -139,15 +138,9 @@ export default {
       })
     }
   },
-  watch: {
-    searchUser: function (val, oldVal) {
-      this.getRoleList(this.userPageSize, this.currentPageList, val)
-    }
-  },
   created () {
     bus.$emit('set-topbar-title', { title: '系统角色管理', breadcrumb: [] })
-
-    this.getRoleList(this.userPageSize, this.currentPageList, this.searchUser)
+    this.getRoleList()
     this.checkRegistration()
   }
 }

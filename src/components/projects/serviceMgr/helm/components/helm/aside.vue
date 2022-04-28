@@ -41,16 +41,13 @@
                 <template slot-scope="scope">
                   <!-- <router-link v-if="scope.row.build_name"
                   :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_name=${scope.row.build_name}`">-->
-                  <el-button
-                    size="small"
-                    v-if="scope.row.build_name"
-                    @click="editBuild(scope.row.name, scope.row.build_name)"
-                    type="text"
-                  >{{scope.row.build_name}}</el-button>
+                  <div v-for="(buildName, index) in scope.row.build_names" :key="index">
+                    <el-button size="small" @click="editBuild(scope.row.name, buildName)" type="text">{{ buildName }}</el-button>
+                  </div>
                   <!-- </router-link> -->
                   <!-- <router-link v-else
                   :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_add=true`">-->
-                  <el-button size="small" v-else type="text" @click="addBuild(scope.row.name)">添加构建</el-button>
+                  <el-button size="small" type="text" @click="addBuild(scope.row.name, scope.row.build_names)">添加构建</el-button>
                   <!-- </router-link> -->
                 </template>
               </el-table-column>
@@ -91,7 +88,13 @@
                   </span>
                 </el-tooltip>
               </span>
-              <el-input size="mini"  style="display: inline-block;" :value="currentService.release_naming" @input="handleInputChange" placeholder="请输入 Release 名称"></el-input>
+              <el-input
+                size="mini"
+                style="display: inline-block;"
+                :value="currentService.release_naming"
+                @input="handleInputChange"
+                placeholder="请输入 Release 名称"
+              ></el-input>
               <el-button size="mini" @click="renamingHelmRelease" type="primary" plain>保存</el-button>
             </div>
           </div>
@@ -136,14 +139,25 @@ export default {
     }
   },
   methods: {
-    addBuild (name) {
+    addBuild (name, build_names) {
+      const buildNameIndex = build_names.length
+        ? Math.max.apply(
+          null,
+          build_names.map(buildName => {
+            const names = buildName.split('--')
+            const last = names[names.length - 1]
+            return isNaN(last) ? 0 : Number(last) + 1
+          })
+        ) || 1
+        : 0
       const item = {
         id: name,
         type: 'components',
         componentsName: 'CommonBuild',
         label: '新增构建',
         name: name,
-        isEdit: false
+        isEdit: false,
+        buildNameIndex
       }
       this.changeExpandFileList('add', item)
     },
@@ -170,23 +184,29 @@ export default {
         service_name: this.serviceName,
         naming: this.currentService.release_naming
       }
-      this.$confirm('修改后服务会在已部署的环境中重建，请确认?', '修改 Helm Release 名称', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        renamingHelmReleaseAPI(projectName, payload).then((res) => {
-          this.$message({
-            message: '服务正在重启，稍后请前往环境中确认',
-            type: 'success'
+      this.$confirm(
+        '修改后服务会在已部署的环境中重建，请确认?',
+        '修改 Helm Release 名称',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          renamingHelmReleaseAPI(projectName, payload).then(res => {
+            this.$message({
+              message: '服务正在重启，稍后请前往环境中确认',
+              type: 'success'
+            })
           })
         })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消保存'
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消保存'
+          })
         })
-      })
     },
     changeRoute (step) {
       this.$router.replace({

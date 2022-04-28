@@ -9,13 +9,19 @@
             序号
           </div>
         </el-col>
-        <el-col :span="9">
+        <el-col :span="6">
           <div class="build-item service">
             服务
           </div>
         </el-col>
 
-        <el-col :span="10">
+        <el-col :span="6">
+          <div class="build-item build">
+            构建名称
+          </div>
+        </el-col>
+
+        <el-col :span="7">
           <div class="build-item deploy">
             部署
           </div>
@@ -58,7 +64,7 @@
               {{ _idx+1 }}
             </div>
           </el-col>
-          <el-col :span="9">
+          <el-col :span="6">
             <div class="build-item service">
               <span class="service-link">
                 <template>
@@ -70,7 +76,27 @@
               </span>
             </div>
           </el-col>
-          <el-col :span="10">
+          <el-col :span="6">
+            <div class="build-item build">
+              <div v-if="associatedBuilds[`${config.target.service_name}/${config.target.service_module}`].isEdit === false">
+                <span>{{ config.target.build_name }}</span>
+                <i class="icon el-icon-edit icon-primary" @click="editAssociatedBuild('edit', config.target)"></i>
+              </div>
+              <div v-else>
+                <el-select v-model="associatedBuilds[`${config.target.service_name}/${config.target.service_module}`].editBuildName" size="mini">
+                  <el-option
+                    v-for="(build, index) in associatedBuilds[`${config.target.service_name}/${config.target.service_module}`].moduleBuilds"
+                    :key="index"
+                    :label="build.name"
+                    :value="build.name"
+                  ></el-option>
+                </el-select>
+                <i class="icon el-icon-circle-close icon-gray" @click="editAssociatedBuild('cancel', config.target)">取消</i>
+                <i class="icon el-icon-circle-check icon-primary" @click="editAssociatedBuild('save', config.target)">保存</i>
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="7">
             <div class="build-item deploy">
               <div>
                 {{ `${config.target.service_name}/${config.target.service_module}`}}
@@ -93,9 +119,16 @@
 </template>
 
 <script type="text/javascript">
+import { getAssociatedBuildsAPI } from '@api'
+
 import bus from '@utils/eventBus'
 
 export default {
+  data () {
+    return {
+      associatedBuilds: {}
+    }
+  },
   computed: {
     presetMap () {
       return _.keyBy(this.presets, (i) => {
@@ -142,6 +175,9 @@ export default {
       if (oldVal) {
         this.serviceConfigs = []
       }
+      if (newVal !== oldVal) {
+        this.getAssociatedBuilds(newVal)
+      }
     },
     allTargets (newVal, oldVal) {
       if (!this.serviceConfigs.length) {
@@ -151,6 +187,35 @@ export default {
             target: tar
           }
         })
+      }
+    }
+  },
+  methods: {
+    getAssociatedBuilds (projectName) {
+      this.associatedBuilds = {}
+      getAssociatedBuildsAPI(projectName).then(res => {
+        const associatedBuilds = {}
+        res.forEach(re => {
+          associatedBuilds[`${re.service_name}/${re.service_module}`] = {
+            moduleBuilds: re.module_builds,
+            isEdit: false,
+            editBuildName: ''
+          }
+        })
+        this.associatedBuilds = associatedBuilds
+      })
+    },
+    editAssociatedBuild (action, target) {
+      const current = this.associatedBuilds[`${target.service_name}/${target.service_module}`]
+      if (action === 'edit') {
+        current.editBuildName = target.build_name
+        current.isEdit = true
+      } else if (action === 'cancel') {
+        current.editBuildName = target.build_name
+        current.isEdit = false
+      } else if (action === 'save') {
+        target.build_name = current.editBuildName
+        current.isEdit = false
       }
     }
   },
@@ -192,6 +257,25 @@ export default {
       .service-link {
         a {
           color: @themeColor;
+        }
+      }
+    }
+
+    .build {
+      .el-select {
+        width: calc(~'100% - 100px');
+      }
+
+      .icon {
+        margin-left: 3px;
+        cursor: pointer;
+
+        &.icon-primary {
+          color: @themeColor;
+        }
+
+        &.icon-gray {
+          color: #9ea3a9;
         }
       }
     }

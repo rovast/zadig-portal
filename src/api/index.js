@@ -571,6 +571,10 @@ export function deleteProductWorkflowAPI (projectName, name) {
   return http.delete(`/api/aslan/workflow/workflow/${name}?projectName=${projectName}`)
 }
 
+export function getAssociatedBuildsAPI (projectName) {
+  return http.get(`/api/aslan/build/build/serviceModule?projectName=${projectName}`)
+}
+
 export function checkRegularAPI (payload) { // {regular: '', branches: []}
   return http.post(`/api/aslan/code/codehost/branches/regular/check`, payload)
 }

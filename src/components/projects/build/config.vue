@@ -1,5 +1,10 @@
 <template>
-  <div v-loading="loading" element-loading-text="加载中..." element-loading-spinner="iconfont iconfont-loading iconvery-build" class="buildConfig-container">
+  <div
+    v-loading="loading"
+    element-loading-text="加载中..."
+    element-loading-spinner="iconfont iconfont-loading iconvery-build"
+    class="buildConfig-container"
+  >
     <!--start of edit service target dialog-->
     <el-dialog title="更新服务组件" width="40%" custom-class="create-buildconfig" :visible.sync="dialogEditTargetVisible">
       <el-form label-position="top" :model="editBuildManageTargets" @submit.native.prevent ref="editTargetForm">
@@ -78,7 +83,6 @@ import {
   saveBuildConfigTargetsAPI,
   getServiceTargetsAPI
 } from '@api'
-import { flattenDeep } from 'lodash'
 import bus from '@utils/eventBus'
 export default {
   data () {
@@ -96,18 +100,6 @@ export default {
     }
   },
   methods: {
-    filterAvailableServices (services) {
-      const existServices = []
-      this.buildConfigs.forEach(element => {
-        existServices.push(element.targets)
-      })
-      return services.filter(element => {
-        if (!flattenDeep(existServices).includes(element.service_name)) {
-          return element
-        }
-        return false
-      })
-    },
     removeBuildConfig (obj) {
       const projectName = this.projectName
       const str =
@@ -126,16 +118,6 @@ export default {
       })
     },
     changeServiceTargets (scope) {
-      const projectName = this.projectName
-      getServiceTargetsAPI(projectName).then(data => {
-        this.serviceTargets = [
-          ...this.filterAvailableServices(data),
-          ...scope.targets
-        ].map(element => {
-          element.key = element.service_name + '/' + element.service_module
-          return element
-        })
-      })
       this.editBuildManageTargets = this.$utils.cloneObj(scope)
       this.dialogEditTargetVisible = true
     },
@@ -210,6 +192,12 @@ export default {
         },
         { title: '构建', url: '' }
       ]
+    })
+    getServiceTargetsAPI(this.projectName).then(data => {
+      this.serviceTargets = data.map(element => {
+        element.key = element.service_name + '/' + element.service_module
+        return element
+      })
     })
   }
 }

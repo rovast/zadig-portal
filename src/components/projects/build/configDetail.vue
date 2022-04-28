@@ -24,7 +24,6 @@
 
 <script>
 import bus from '@utils/eventBus'
-
 import CommonBuild from './commonBuild.vue'
 export default {
   data () {
@@ -52,7 +51,7 @@ export default {
       )
     },
     showSaveToTemplate () {
-      if (this.$refs.buildRef) {
+      if (this.$refs.buildRef.source) {
         return this.compBind.isEdit && this.$refs.buildRef.source === 'zadig' && !this.$refs.buildRef.useTemplate
       } else {
         return false

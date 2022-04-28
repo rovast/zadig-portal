@@ -47,14 +47,14 @@
         </el-table>
       </template>
         </el-form-item>
-        <el-form-item prop="auto_deploy">
+        <el-form-item prop="auto_sync">
            <span slot="label">
               <span>自动同步</span>
               <el-tooltip effect="dark" content="开启后，当服务模板更新时，服务配置会自动引用最新的模板配置。" placement="top">
                 <i class="pointer el-icon-question"></i>
               </el-tooltip>
            </span>
-           <el-switch v-model="importYaml.auto_deploy" />
+           <el-switch v-model="importYaml.auto_sync" />
         </el-form-item>
         <el-form-item>
           <el-button :disabled="!importYaml.id" style="margin-left: 5px;" type="text" :icon="previewYamlFile?'el-icon-arrow-up':'el-icon-arrow-down'" @click="previewYamlFile = !previewYamlFile">
@@ -92,7 +92,7 @@ export default {
         yamls: [],
         variables: [],
         content: '',
-        auto_deploy: false
+        auto_sync: false
       },
       importTemplateEditorOption: {
         tabSize: 2,
@@ -135,7 +135,6 @@ export default {
         })
         if (res) {
           this.importYaml.content = res.content
-          this.importYaml.variables = res.variable
         }
       }
     },
@@ -150,13 +149,13 @@ export default {
       const projectName = this.projectName
       const templateId = this.importYaml.id
       const variables = this.importYaml.variables
-      const auto_deploy = this.importYaml.auto_deploy
+      const auto_sync = this.importYaml.auto_sync
       const payload = {
         service_name: serviceName,
         project_name: projectName,
         template_id: templateId,
         variables: variables,
-        auto_deploy: auto_deploy
+        auto_sync: auto_sync
       }
       const valid = await this.$refs.importYamlForm.validate().catch((err) => { return err })
       if (valid) {
@@ -225,6 +224,18 @@ export default {
       } else {
         this.importYaml.id = ''
       }
+    },
+    '$attrs.templateVariable': {
+      handler (val) {
+        if (val) {
+          this.importYaml.variables = [...val]
+        }
+      },
+      deep: true,
+      immediate: true
+    },
+    '$attrs.autoSync' (val, oldVal) {
+      this.importYaml.auto_sync = val
     }
   },
   mounted () {

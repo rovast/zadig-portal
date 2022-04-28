@@ -89,6 +89,8 @@
                            :basePath="`/v1/projects/detail/${projectName}/services`"
                            :showNext.sync="showNext"
                            :yamlChange="yamlChange"
+                           :templateVariable="templateVariable"
+                           :autoSync="autoSync"
                            ref="serviceTree"
                            @onAddCodeSource="addCodeSource"
                            @onJumpToKind="jumpToKind"
@@ -98,6 +100,7 @@
                            @onRefreshSharedService="getSharedServices"
                            @onSelectServiceChange="onSelectServiceChange"
                            @onShowJoinToEnvBtn="showJoinToEnvBtnEvent"
+                           @getServiceModules="getServiceModules"
                            @updateYaml="updateYaml($event)" />
             </div>
             <template v-if="service.service_name  &&  services.length >0">
@@ -191,7 +194,9 @@ export default {
       envNameList: [],
       deployableEnvs: [],
       activeEnvTabName: '',
-      deletedService: ''
+      deletedService: '',
+      templateVariable: [],
+      autoSync: false
     }
   },
   methods: {
@@ -233,12 +238,14 @@ export default {
       })
     },
     getServiceModules () {
-      const serviceName = this.service.service_name
+      const serviceName = this.service.service_name || this.serviceName
       const projectName = this.projectName
       serviceTemplateWithConfigAPI(serviceName, projectName).then(res => {
         this.detectedEnvs = res.custom_variable ? res.custom_variable : []
         this.detectedServices = res.service_module ? res.service_module : []
         this.systemEnvs = res.system_variable ? res.system_variable : []
+        this.templateVariable = res.template_variable || []
+        this.autoSync = res.service.auto_sync
       })
     },
     showJoinToEnvDialog () {
@@ -422,6 +429,7 @@ export default {
     this.checkProjectFeature()
     this.getServices()
     this.getSharedServices()
+    this.getServiceModules()
   },
   components: {
     ServiceAside,

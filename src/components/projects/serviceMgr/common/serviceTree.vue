@@ -142,6 +142,7 @@
       :currentUpdatedServiceTemplateId="currentUpdatedServiceTemplateId"
       :dialogImportFromYamlVisible.sync="openImportYamlDialog"
       @importYamlSuccess="importYamlSuccess"
+      v-bind="$attrs" v-on="$listeners"
     />
     <div class="menu-container">
       <el-row>
@@ -1152,6 +1153,7 @@ export default {
       this.$emit('update:showNext', true)
       this.$emit('onShowJoinToEnvBtn', true)
       this.$emit('onRefreshService')
+      this.$emit('getServiceModules')
       this.$router.replace({
         query: { service_name: serviceName, rightbar: 'var' }
       })

@@ -35,14 +35,14 @@
         <CommonImportValues v-else ref="importValues" :importRepoInfo.sync="importRepoInfo" :resize="{height: '188px'}" showDelete></CommonImportValues>
       </div>
       <ImportValues v-else ref="importValues" :importRepoInfo.sync="importRepoInfo"></ImportValues>
-      <el-form-item prop="auto_deploy">
+      <el-form-item prop="auto_sync">
         <span slot="label">
           <span>自动同步</span>
            <el-tooltip effect="dark" content="开启后，当服务模板更新时，服务配置会自动引用最新的模板配置。" placement="top">
               <i class="pointer el-icon-question"></i>
            </el-tooltip>
         </span>
-        <el-switch v-model="tempData.auto_deploy" />
+        <el-switch v-model="tempData.auto_sync" />
       </el-form-item>
       <el-form-item style="text-align: right;">
         <el-button size="small" @click="commitDialogVisible(false)">取消</el-button>
@@ -91,7 +91,7 @@ export default {
       tempData: {
         serviceName: '',
         moduleName: '',
-        auto_deploy: false
+        auto_sync: false
       },
       importRepoInfo: {
         yamlSource: 'default',
@@ -120,7 +120,8 @@ export default {
           const createFrom = val.create_from
           this.tempData = {
             serviceName: createFrom.service_name,
-            moduleName: createFrom.template_name
+            moduleName: createFrom.template_name,
+            auto_sync: val.auto_sync
           }
           if (createFrom.yaml_data) {
             this.importRepoInfo = {
@@ -168,7 +169,8 @@ export default {
     closeSelectRepo () {
       this.tempData = {
         serviceName: '',
-        moduleName: ''
+        moduleName: '',
+        auto_sync: false
       }
       this.variables = []
       this.importRepoInfo = {
@@ -189,8 +191,8 @@ export default {
       const payload = {
         source: 'chartTemplate',
         name: this.tempData.serviceName,
+        auto_sync: this.tempData.auto_sync,
         createFrom: {
-          auto_deploy: this.tempData.auto_deploy,
           templateName: this.tempData.moduleName,
           valuesYAML:
             this.importRepoInfo.yamlSource === 'default'
@@ -239,6 +241,7 @@ export default {
       const projectName = this.$route.params.project_name
       const payload = {
         source: 'chartTemplate',
+        auto_sync: this.tempData.auto_sync,
         createFrom: { templateName: this.tempData.moduleName },
         valuesData: {
           yamlSource: 'repo',

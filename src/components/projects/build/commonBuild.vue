@@ -284,7 +284,15 @@ export default {
         if (service) {
           this.buildConfig.target_repos.push({
             service: service,
-            repos: []
+            repos: [{
+              codehost_id: null,
+              repo_owner: '',
+              repo_name: '',
+              branch: '',
+              checkout_path: '',
+              remote_name: 'origin',
+              submodules: false
+            }]
           })
         }
         this.$refs.zadigBuildForm.initServiceRepoSelectData(this.buildConfig)

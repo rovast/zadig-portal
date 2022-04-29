@@ -26,7 +26,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="变量配置">
-        <template v-if="importYaml.variables.length > 0">
+        <template v-if="importYaml.id && importYaml.variables.length > 0">
         <el-table :data="importYaml.variables" style="width: auto;">
           <el-table-column label="键">
             <template slot-scope="scope">
@@ -135,6 +135,7 @@ export default {
         })
         if (res) {
           this.importYaml.content = res.content
+          this.importYaml.variables = res.variable
         }
       }
     },

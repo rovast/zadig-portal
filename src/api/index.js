@@ -1589,6 +1589,9 @@ export function updateKubernetesTemplateAPI (id, payload) {
   return http.put(`/api/aslan/template/yaml/${id}`, payload)
 }
 
+export function updateMulKubernetesTemplateAPI (id, payload) {
+  return http.post(`api/aslan/template/yaml/${id}/reference`)
+}
 export function praseKubernetesTemplateAPI (payload) {
   return http.post(`/api/aslan/template/yaml/getVariables`, payload)
 }
@@ -1628,6 +1631,10 @@ export function getEnvDefaultVariableAPI (projectName, envName) {
 
 export function createHelmEnvAPI (projectName, payload, scene = '') {
   return http.post(`/api/aslan/environment/environments?helm=true&projectName=${projectName}&scene=${scene}`, payload)
+}
+
+export function updateHelmTemplateAPI (templateName) {
+  return http.post(`api/aslan/template/charts/${templateName}/reference`)
 }
 
 export function updateHelmEnvAPI (projectName, payload) {

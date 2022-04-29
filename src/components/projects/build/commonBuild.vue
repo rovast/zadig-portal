@@ -105,6 +105,10 @@ export default {
     fromServicePage: {
       type: Boolean,
       default: false
+    },
+    buildNameIndex: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -255,10 +259,6 @@ export default {
         }
         this.buildConfig = buildConfig
 
-        this.serviceTargets = [
-          ...this.serviceTargets,
-          ...this.buildConfig.targets
-        ]
         if (!this.isEdit) {
           const currentServices = [
             ...this.buildConfig.targets,
@@ -349,7 +349,9 @@ export default {
     },
     defaultBuildName () {
       return this.initServiceName
-        ? this.projectName + '-build-' + this.name
+        ? `${this.projectName}-build-${this.name}${
+          this.buildNameIndex ? '-' + this.buildNameIndex : ''
+        }`
         : ''
     }
   },

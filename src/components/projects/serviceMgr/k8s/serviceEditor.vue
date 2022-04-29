@@ -165,8 +165,8 @@ export default {
         })
         this.keepInitYaml(payload.yaml)
         this.$emit('onUpdateService', {
-          service_name: serviceName,
-          service_status: this.service.status,
+          serviceName: serviceName,
+          serviceStatus: this.service.status,
           res
         })
         this.$emit('update:showJoinToEnvBtn', true)

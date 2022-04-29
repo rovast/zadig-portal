@@ -100,7 +100,6 @@
                            @onRefreshSharedService="getSharedServices"
                            @onSelectServiceChange="onSelectServiceChange"
                            @onShowJoinToEnvBtn="showJoinToEnvBtnEvent"
-                           @getServiceModules="getServiceModules"
                            @updateYaml="updateYaml($event)" />
             </div>
             <template v-if="service.service_name  &&  services.length >0">
@@ -238,7 +237,7 @@ export default {
       })
     },
     getServiceModules () {
-      const serviceName = this.service.service_name || this.serviceName
+      const serviceName = this.serviceName
       const projectName = this.projectName
       serviceTemplateWithConfigAPI(serviceName, projectName).then(res => {
         this.detectedEnvs = res.custom_variable ? res.custom_variable : []
@@ -429,7 +428,16 @@ export default {
     this.checkProjectFeature()
     this.getServices()
     this.getSharedServices()
-    this.getServiceModules()
+  },
+  watch: {
+    serviceName: {
+      handler (val) {
+        if (val) {
+          this.getServiceModules()
+        }
+      },
+      immediate: true
+    }
   },
   components: {
     ServiceAside,

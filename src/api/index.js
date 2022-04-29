@@ -1659,7 +1659,7 @@ export function createHelmEnvAPI (projectName, payload, scene = '') {
 }
 
 export function updateHelmTemplateAPI (templateName) {
-  return http.post(`api/aslan/template/charts/${templateName}/reference`)
+  return http.post(`/api/aslan/template/charts/${templateName}/reference`)
 }
 
 export function updateHelmEnvAPI (projectName, payload) {

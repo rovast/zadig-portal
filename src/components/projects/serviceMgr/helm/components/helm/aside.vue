@@ -39,16 +39,10 @@
               <el-table-column prop="image" label="当前镜像版本"></el-table-column>
               <el-table-column label="构建信息/操作">
                 <template slot-scope="scope">
-                  <!-- <router-link v-if="scope.row.build_name"
-                  :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_name=${scope.row.build_name}`">-->
                   <div v-for="(buildName, index) in scope.row.build_names" :key="index">
-                    <el-button size="small" @click="editBuild(scope.row.name, buildName)" type="text">{{ buildName }}</el-button>
+                    <span class="build-name" @click="editBuild(scope.row.name, buildName)">{{ buildName }}</span>
                   </div>
-                  <!-- </router-link> -->
-                  <!-- <router-link v-else
-                  :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_add=true`">-->
                   <el-button size="small" type="text" @click="addBuild(scope.row.name, scope.row.build_names)">添加构建</el-button>
-                  <!-- </router-link> -->
                 </template>
               </el-table-column>
             </el-table>
@@ -408,6 +402,19 @@ export default {
           .el-table td,
           .el-table th {
             padding: 6px 0;
+          }
+
+          .build-name {
+            display: inline-block;
+            margin-top: 6px;
+            color: @themeColor;
+            font-size: 12px;
+            line-height: 16px;
+            cursor: pointer;
+
+            &:hover {
+              color: @themeBorderColor;
+            }
           }
         }
 

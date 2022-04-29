@@ -71,7 +71,7 @@
               <el-table :data="serviceModules" stripe style="width: 100%;">
                 <el-table-column prop="name" label="服务组件"></el-table-column>
                 <el-table-column prop="image_name" label="镜像名"></el-table-column>
-                <el-table-column prop="image" label>
+                <el-table-column prop="image">
                   <template slot="header">
                     <span>当前镜像版本($IMAGE)</span>
                     <el-tooltip effect="dark" placement="top">
@@ -90,7 +90,7 @@
                   <template slot-scope="scope">
                     <div v-for="(buildName, index) in scope.row.build_names" :key="index">
                       <router-link :to="`${buildBaseUrl}?rightbar=build&service_name=${scope.row.name}&build_name=${buildName}`">
-                        <el-button size="small" type="text">{{buildName}}</el-button>
+                        <span class="build-name">{{ buildName }}</span>
                       </router-link>
                     </div>
                     <el-button size="small" :disabled="projectName !== projectNameOfService" @click="addBuild(scope.row)" type="text">添加构建</el-button>
@@ -753,6 +753,13 @@ export default {
             .el-table td,
             .el-table th {
               padding: 6px 0;
+            }
+
+            .build-name {
+              display: inline-block;
+              margin-top: 6px;
+              font-size: 12px;
+              line-height: 16px;
             }
           }
 

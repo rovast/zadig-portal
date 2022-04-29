@@ -18,7 +18,7 @@
       <el-table-column label="构建信息/操作">
         <template slot-scope="scope">
           <div v-for="(buildName, index) in scope.row.build_names" :key="index">
-            <el-button size="small" type="text" @click="openBuild(scope.row, buildName)">{{ buildName }}</el-button>
+            <span class="build-name" @click="openBuild(scope.row, buildName)">{{ buildName }}</span>
           </div>
           <el-button size="small" type="text" @click="openBuild(scope.row)">添加构建</el-button>
         </template>
@@ -44,6 +44,19 @@ export default {
   .title {
     color: #909399;
     font-weight: 300;
+  }
+
+  .build-name {
+    display: inline-block;
+    margin-top: 6px;
+    color: @themeColor;
+    font-size: 12px;
+    line-height: 16px;
+    cursor: pointer;
+
+    &:hover {
+      color: @themeBorderColor;
+    }
   }
 }
 </style>

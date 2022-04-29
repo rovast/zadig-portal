@@ -78,22 +78,19 @@
           </el-col>
           <el-col :span="6">
             <div class="build-item build">
-              <div v-if="(associatedBuilds[`${config.target.service_name}/${config.target.service_module}`] || { isEdit: false }).isEdit === true">
-                <el-select v-model="associatedBuilds[`${config.target.service_name}/${config.target.service_module}`].editBuildName" size="mini">
-                  <el-option
-                    v-for="(build, index) in associatedBuilds[`${config.target.service_name}/${config.target.service_module}`].moduleBuilds"
-                    :key="index"
-                    :label="build.name"
-                    :value="build.name"
-                  ></el-option>
-                </el-select>
-                <i class="icon el-icon-circle-close icon-gray" @click="editAssociatedBuild('cancel', config.target)">取消</i>
-                <i class="icon el-icon-circle-check icon-primary" @click="editAssociatedBuild('save', config.target)">保存</i>
-              </div>
-              <div v-else>
-                <span>{{ config.target.build_name }}</span>
-                <i class="icon el-icon-edit" :class="[associatedBuilds[`${config.target.service_name}/${config.target.service_module}`] ? 'icon-primary' : 'icon-disabled']" @click="editAssociatedBuild('edit', config.target)"></i>
-              </div>
+              <el-select
+                v-model="config.target.build_name"
+                size="mini"
+                :disabled="!associatedBuilds[`${config.target.service_name}/${config.target.service_module}`]"
+                :placeholder="!associatedBuilds[`${config.target.service_name}/${config.target.service_module}`] ? '无' : '请选择'"
+              >
+                <el-option
+                  v-for="(build, index) in associatedBuilds[`${config.target.service_name}/${config.target.service_module}`]"
+                  :key="index"
+                  :label="build.name"
+                  :value="build.name"
+                ></el-option>
+              </el-select>
             </div>
           </el-col>
           <el-col :span="7">
@@ -196,29 +193,10 @@ export default {
       getAssociatedBuildsAPI(projectName).then(res => {
         const associatedBuilds = {}
         res.forEach(re => {
-          associatedBuilds[`${re.service_name}/${re.service_module}`] = {
-            moduleBuilds: re.module_builds,
-            isEdit: false,
-            editBuildName: ''
-          }
+          associatedBuilds[`${re.service_name}/${re.service_module}`] = re.module_builds
         })
         this.associatedBuilds = associatedBuilds
       })
-    },
-    editAssociatedBuild (action, target) {
-      const current = this.associatedBuilds[`${target.service_name}/${target.service_module}`]
-      if (action === 'edit') {
-        if (current) {
-          current.editBuildName = target.build_name
-          current.isEdit = true
-        }
-      } else if (action === 'cancel') {
-        current.editBuildName = target.build_name
-        current.isEdit = false
-      } else if (action === 'save') {
-        target.build_name = current.editBuildName
-        current.isEdit = false
-      }
     }
   },
   created () {
@@ -241,55 +219,58 @@ export default {
       height: 42px;
       line-height: 42px;
       vertical-align: top;
-    }
 
-    .view {
-      display: block;
-      text-align: center;
+      &.view {
+        display: block;
+        text-align: center;
 
-      .icon {
-        font-size: 18px;
-        cursor: pointer;
-      }
-    }
-
-    .service {
-      word-break: break-all;
-
-      .service-link {
-        a {
-          color: @themeColor;
+        .icon {
+          font-size: 18px;
+          cursor: pointer;
         }
       }
-    }
 
-    .build {
-      .el-select {
-        width: calc(~'100% - 100px');
-      }
+      &.service {
+        word-break: break-all;
 
-      .icon {
-        margin-left: 3px;
-        cursor: pointer;
-
-        &.icon-primary {
-          color: @themeColor;
-        }
-
-        &.icon-disabled {
-          color: #9ea3a9;
-          cursor: not-allowed;
-        }
-
-        &.icon-gray {
-          color: #9ea3a9;
+        .service-link {
+          a {
+            color: @themeColor;
+          }
         }
       }
-    }
 
-    .deploy {
-      vertical-align: initial;
-      word-break: break-all;
+      &.deploy {
+        vertical-align: initial;
+        word-break: break-all;
+      }
+
+      &.build {
+        display: block;
+        width: 90%;
+
+        .el-select {
+          width: 100%;
+        }
+
+        .icon {
+          margin-left: 3px;
+          cursor: pointer;
+
+          &.icon-primary {
+            color: @themeColor;
+          }
+
+          &.icon-disabled {
+            color: #9ea3a9;
+            cursor: not-allowed;
+          }
+
+          &.icon-gray {
+            color: #9ea3a9;
+          }
+        }
+      }
     }
   }
 

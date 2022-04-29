@@ -84,20 +84,23 @@ export default {
         this.build.name = data.name
         this.build.buildName = null
         this.build.isEdit = false
+        // no build: no suffix
+        // build: the last number, take the maximum value + 1
         this.build.buildNameIndex = data.build_names.length
           ? Math.max.apply(
             null,
             data.build_names.map(buildName => {
               const names = buildName.split('-')
               const last = names[names.length - 1]
-              return isNaN(last) ? 0 : Number(last) + 1
+              return isNaN(last) ? 1 : Number(last) + 1
             })
-          ) || 1
+          )
           : 0
       }
       this.build.showModal = true
     },
     handlerNodeClick (data) {
+      // TODO: temporarily hidden
       // if (!data.children) {
       //   this.openBuild(data)
       // } else {

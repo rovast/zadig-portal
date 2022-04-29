@@ -323,15 +323,17 @@ export default {
   },
   methods: {
     async addBuild (item) {
+      // no build: no suffix
+      // build: the last number, take the maximum value + 1
       this.buildNameIndex = item.build_names.length
         ? Math.max.apply(
           null,
           item.build_names.map(buildName => {
             const names = buildName.split('-')
             const last = names[names.length - 1]
-            return isNaN(last) ? 0 : Number(last) + 1
+            return isNaN(last) ? 1 : Number(last) + 1
           })
-        ) || 1
+        )
         : 0
       const key = this.$utils.rsaEncrypt()
       const res = await getCodeProviderAPI(key)

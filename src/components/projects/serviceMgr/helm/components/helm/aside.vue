@@ -134,15 +134,17 @@ export default {
   },
   methods: {
     addBuild (name, build_names) {
+      // no build: no suffix
+      // build: the last number, take the maximum value + 1
       const buildNameIndex = build_names.length
         ? Math.max.apply(
           null,
           build_names.map(buildName => {
             const names = buildName.split('-')
             const last = names[names.length - 1]
-            return isNaN(last) ? 0 : Number(last) + 1
+            return isNaN(last) ? 1 : Number(last) + 1
           })
-        ) || 1
+        )
         : 0
       const item = {
         id: name,

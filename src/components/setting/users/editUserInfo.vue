@@ -154,8 +154,6 @@ export default {
       )
 
       if (res) {
-        console.log(res)
-        // res.forEach((item)=>{item})
         this.roleList = res
       }
     }
@@ -163,8 +161,8 @@ export default {
   watch: {
     dialogEditRoleVisible (value) {
       if (value) {
-        console.log(value)
         this.clonedUserInfo = cloneDeep(this.editUser)
+        this.getRoleList()
       }
     }
   }

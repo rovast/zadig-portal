@@ -102,11 +102,7 @@ export default {
         reset_image_policy: '',
         team: '',
         description: '',
-        notify_ctls: [{
-          enabled: false,
-          weChat_webHook: '',
-          notify_type: []
-        }],
+        notify_ctls: [],
         build_stage: {
           enabled: false,
           modules: []
@@ -249,7 +245,9 @@ export default {
       }
 
       if (alias === 'notify') {
-        this.workflowInfo.notify_ctls.forEach(item => { item.enabled = isEnabled })
+        if (this.workflowInfo.notify_ctls.length > 0) {
+          this.workflowInfo.notify_ctls.forEach(item => { item.enabled = isEnabled })
+        }
       }
 
       if (alias === 'extension') {
@@ -310,12 +308,11 @@ export default {
           })
         };
         if (!this.workflowInfo.notify_ctls) {
-          this.$set(this.workflowInfo, 'notify_ctls', [{
-            enabled: false,
-            weChat_webHook: '',
-            notify_type: []
-          }])
+          this.$set(this.workflowInfo, 'notify_ctls', [])
         };
+        if (this.workflowInfo.notify_ctls.length > 0) {
+          this.workflowInfo.notify_ctls = this.workflowInfo.notify_ctls.filter(item => item.enabled)
+        }
         if (!this.workflowInfo.artifact_stage) {
           this.$set(this.workflowInfo, 'artifact_stage', {
             enabled: false,

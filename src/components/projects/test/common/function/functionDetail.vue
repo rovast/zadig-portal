@@ -135,11 +135,7 @@ export default {
           enabled: false,
           items: []
         },
-        notify_ctls: [{
-          enabled: false,
-          weChat_webHook: '',
-          notify_type: []
-        }],
+        notify_ctls: [],
         pre_test: {
           enable_proxy: false,
           build_os: 'focal',
@@ -271,11 +267,10 @@ export default {
           })
         }
         if (!res.notify_ctls) {
-          this.$set(this.test, 'notify_ctls', [{
-            enabled: false,
-            weChat_webHook: '',
-            notify_type: []
-          }])
+          this.$set(this.test, 'notify_ctls', [])
+        }
+        if (res.notify_ctls.length > 0) {
+          res.notify_ctls = res.notify_ctls.filter(item => item.enabled)
         }
         if (this.test.artifact_paths.length === 0) {
           this.test.artifact_paths.push('')

@@ -1,6 +1,6 @@
 <template>
   <section class="zadig-build-container">
-    <section class="common-parcel-block" :class="{ 'show-source': jenkinsEnabled, 'small-padding': mini }">
+    <section class="common-parcel-block" :class="{  'small-padding': mini }">
       <div class="section">
         <el-form
           ref="zadigForm"
@@ -11,94 +11,57 @@
           label-width="120px"
           inline-message
         >
-          <slot name="buildName">
-            <el-form-item label="构建名称" prop="name">
-              <el-input v-model="buildConfig.name" placeholder="构建名称" autofocus size="small" :disabled="!isCreate" auto-complete="off"></el-input>
-            </el-form-item>
-          </slot>
-          <slot v-if="!useTemplate" name="serviceName">
-            <el-form-item label="服务选择">
-              <el-select v-model="buildConfig.targets" multiple size="small" value-key="key" filterable>
-                <el-option
-                  v-for="(service,index) in serviceTargets"
-                  :key="index"
-                  :label="`${service.service_module}(${service.service_name})`"
-                  :value="service"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </slot>
-          <slot v-if="useTemplate" name="template">
-            <el-form-item label="选择模板" prop="template_id">
-              <el-select v-model="buildConfig.template_id" size="small" filterable>
-                <el-option
-                  v-for="(template,index) in templates"
-                  :key="index"
-                  :label="template.name"
-                  :value="template.id"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </slot>
-          <BuildEnv v-if="!useTemplate" ref="buildEnvRef" :buildConfig="buildConfig" :isCreate="isCreate" :mini="mini"></BuildEnv>
+        <BuildEnv ref="buildEnvRef" :buildConfig="buildConfig" :isCreate="isCreate" :mini="mini"/>
         </el-form>
       </div>
-      <div v-if="!useTemplate" class="section">
-        <RepoSelect ref="repoSelectRef" :config="buildConfig" :validObj="validObj" class="build-secondary-form" showFirstLine></RepoSelect>
+      <div class="section">
+        <div class="primary-title">代码信息</div>
+        <span>使用模板新建时配置</span>
       </div>
-      <section v-if="useTemplate">
-        <ServiceRepoSelect ref="serviceRepoSelectRef" :serviceTargets="serviceTargets" :targets="buildConfig.target_repos" :isCreate="isCreate" :validObj="validObj" class="build-secondary-form" showFirstLine/>
-      </section>
-      <section v-if="!useTemplate">
+      <section>
         <div class="primary-title not-first-child">构建变量</div>
-        <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj" :fromServicePage="fromServicePage" :mini="mini"></EnvVariable>
+        <EnvVariable :preEnvs="buildConfig.pre_build" :validObj="validObj" :fromServicePage="false" :mini="mini"/>
         <div class="primary-title not-first-child">通用构建脚本</div>
         <div class="deploy-script">
           <Resize :resize="'both'">
-            <Editor v-model="buildConfig.scripts"></Editor>
+            <Editor v-model="buildConfig.scripts"/>
           </Resize>
         </div>
       </section>
     </section>
-    <template v-if="!useTemplate">
-      <section>
-        <div style="margin-bottom: 8px;">
-          <el-button type="primary" size="small" plain @click="buildConfig.advanced_setting_modified = !buildConfig.advanced_setting_modified">
-            高级配置
-            <i :class="[buildConfig.advanced_setting_modified ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
-          </el-button>
-        </div>
-        <AdvancedConfig
-          v-show="buildConfig.advanced_setting_modified"
-          ref="advancedConfigRef"
-          class="common-parcel-block"
-          :isCreate="isCreate"
-          :buildConfig="buildConfig"
-          :validObj="validObj"
-          @validateFailed="buildConfig.advanced_setting_modified = true"
-          :mini="mini"
-        ></AdvancedConfig>
-      </section>
-      <section>
-        <OtherSteps ref="otherStepsRef" :buildConfig="buildConfig" :validObj="validObj" :mini="mini" :usedToHost="usedToHost"></OtherSteps>
-      </section>
-    </template>
+    <section>
+      <div style="margin-bottom: 8px;">
+        <el-button type="primary" size="small" plain @click="buildConfig.advanced_setting_modified = !buildConfig.advanced_setting_modified">
+          高级配置
+          <i :class="[buildConfig.advanced_setting_modified ? 'el-icon-arrow-up' : 'el-icon-arrow-down']" style="margin-left: 8px;"></i>
+        </el-button>
+      </div>
+      <AdvancedConfig
+        ref="advancedConfigRef"
+        v-show="buildConfig.advanced_setting_modified"
+        class="common-parcel-block"
+        :isCreate="isCreate"
+        :buildConfig="buildConfig"
+        :validObj="validObj"
+        @validateFailed="buildConfig.advanced_setting_modified = true"
+        :mini="mini"
+      />
+    </section>
+    <section>
+      <OtherSteps ref="otherStepsRef" :buildConfig="buildConfig" :validObj="validObj" :mini="mini"/>
+    </section>
   </section>
 </template>
 
 <script>
 import Editor from 'vue2-ace-bind'
 import Resize from '@/components/common/resize.vue'
-
 import BuildEnv from './buildEnv.vue'
 import EnvVariable from './envVariable.vue'
 import AdvancedConfig from './advancedConfig.vue'
 import OtherSteps from './otherSteps.vue'
-
 import ValidateSubmit from '@utils/validateAsync'
-
-import { getCodeSourceMaskedAPI, getBuildTemplatesAPI } from '@api'
-
+import { getCodeSourceMaskedAPI } from '@api'
 import { cloneDeep } from 'lodash'
 
 const validateBuildConfigName = (rule, value, callback) => {
@@ -116,7 +79,6 @@ const validateBuildConfigName = (rule, value, callback) => {
 const initBuildConfig = {
   name: '',
   targets: [],
-  target_repos: [],
   desc: '',
   repos: [],
   timeout: 60,
@@ -148,25 +110,8 @@ export default {
       default: false,
       type: Boolean
     },
-    jenkinsEnabled: {
-      default: false,
-      type: Boolean
-    },
     isCreate: Boolean,
-    useTemplate: Boolean,
-    buildConfigData: Object,
-    serviceTargets: {
-      type: Array,
-      default: () => []
-    },
-    usedToHost: {
-      default: false,
-      type: Boolean
-    },
-    fromServicePage: {
-      type: Boolean,
-      default: false
-    }
+    buildConfigData: Object
   },
   data () {
     return {
@@ -179,14 +124,6 @@ export default {
             trigger: ['blur', 'change']
           }
         ],
-        template_id: [
-          {
-            type: 'string',
-            required: true,
-            message: '请选择构建模板',
-            trigger: ['blur', 'change']
-          }
-        ],
         'pre_build.image_id': {
           type: 'string',
           required: true,
@@ -196,7 +133,6 @@ export default {
       },
       validObj: new ValidateSubmit(),
       allCodeHosts: [],
-      templates: [],
       configDataLoading: true,
       buildConfig: cloneDeep(initBuildConfig)
     }
@@ -218,11 +154,9 @@ export default {
   methods: {
     async validate () {
       const valid = []
-      if (!this.useTemplate) {
-        const res = await this.validObj.validateAll()
-        if (!res[1]) {
-          valid.push(Promise.reject())
-        }
+      const res = await this.validObj.validateAll()
+      if (!res[1]) {
+        valid.push(Promise.reject())
       }
       valid.push(this.$refs.zadigForm.validate())
       return Promise.all(valid).then(() => {
@@ -256,32 +190,22 @@ export default {
       if (!buildConfig) {
         buildConfig = this.buildConfig
       }
-      if (!this.useTemplate) {
-        this.$refs.otherStepsRef.initStepStatus(buildConfig)
+      this.$refs.otherStepsRef.initStepStatus(buildConfig)
 
-        this.$refs.buildEnvRef.initData()
+      this.$refs.buildEnvRef.initData()
 
-        // Automatic selection of local clusters
-        this.$refs.advancedConfigRef.initAdvancedConfig(buildConfig)
+      // Automatic selection of local clusters
+      this.$refs.advancedConfigRef.initAdvancedConfig(buildConfig)
 
-        if (!buildConfig.id && buildConfig.repos.length === 0) {
-          this.$refs.repoSelectRef.addFirstBuildRepo()
-        }
+      if (!buildConfig.id && buildConfig.repos.length === 0) {
+        this.$refs.repoSelectRef.addFirstBuildRepo()
       }
-    },
-    initServiceRepoSelectData (buildConfig) {
-      this.$nextTick(() => {
-        this.$refs.serviceRepoSelectRef.getInitRepoInfo(buildConfig.target_repos)
-      })
     },
     initGlobalData () {
       // be used on Repo
       const key = this.$utils.rsaEncrypt()
       getCodeSourceMaskedAPI(key).then(response => {
         this.allCodeHosts = response
-      })
-      getBuildTemplatesAPI().then(response => {
-        this.templates = response.build_templates
       })
     }
   },

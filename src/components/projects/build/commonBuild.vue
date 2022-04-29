@@ -5,6 +5,7 @@
       <el-select v-model="source" size="small" value-key="key" :disabled="isEdit" @change="loadBuild(buildName)" filterable>
         <el-option v-for="(item,index) in originOptions" :key="index" :label="item.label" :value="item.value"></el-option>
       </el-select>
+      <el-checkbox v-if="source ==='zadig'" v-model="useTemplate">使用模板</el-checkbox>
     </div>
     <JenkinsBuild
       v-if="jenkinsEnabled"
@@ -13,12 +14,14 @@
       :jenkinsBuildData="jenkinsBuild"
       :isCreate="!isEdit"
       :serviceTargets="serviceTargets"
+      :jenkinsList = "jenkinsList"
       :mini="mini"
     ></JenkinsBuild>
     <ZadigBuild
       v-show="source === 'zadig'"
       ref="zadigBuildForm"
       :isCreate="!isEdit"
+      :useTemplate="useTemplate"
       :jenkinsEnabled="jenkinsEnabled"
       :buildConfigData="buildConfig"
       :serviceTargets="serviceTargets"
@@ -66,7 +69,9 @@ import {
   checkJenkinsConfigExistsAPI,
   getBuildConfigDetailAPI,
   getServiceTargetsAPI,
-  getBuildConfigsAPI
+  getBuildConfigsAPI,
+  queryJenkins,
+  createBuildTemplateAPI
 } from '@api'
 
 export default {
@@ -118,8 +123,10 @@ export default {
       jenkinsEnabled: false,
       jenkinsBuild: {},
       serviceTargets: [],
+      jenkinsList: [],
       saveLoading: false,
       configDataLoading: true,
+      useTemplate: false,
       buildConfig: {},
       buildInfos: []
     }
@@ -161,6 +168,38 @@ export default {
           this.saveLoading = false
         })
     },
+    async saveBuildConfigToTemplate () {
+      if (this.source === 'zadig') {
+        this.$confirm('保存为系统全局构建模板，其中的代码信息将会被去除，构建信息将会作为构建模板内容保存，请确认?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$refs.zadigBuildForm
+            .validate()
+            .then(data => {
+              const payload = data
+              this.$emit('updateBtnLoading', true)
+              createBuildTemplateAPI(payload)
+                .then(() => {
+                  this.$message({
+                    type: 'success',
+                    message: '保存模板成功'
+                  })
+                  this.$emit('updateBtnLoading', false)
+                })
+                .catch(() => {
+                  this.$emit('updateBtnLoading', false)
+                })
+            })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消保存'
+          })
+        })
+      }
+    },
     async loadBuild (buildConfigName) {
       this.buildConfig = {
         name: buildConfigName || this.defaultBuildName
@@ -201,12 +240,18 @@ export default {
         buildConfig.targets.forEach(t => {
           t.key = t.service_name + '/' + t.service_module
         })
+        buildConfig.target_repos.forEach(t => {
+          t.service.key = t.service.service_name + '/' + t.service.service_module
+        })
         if (buildConfig.source === 'jenkins') {
           this.source = 'jenkins'
           this.jenkinsBuild = buildConfig
         }
         if (!buildConfig.timeout) {
           this.$set(buildConfig, 'timeout', 60)
+        }
+        if (buildConfig.template_id) {
+          this.useTemplate = true
         }
         this.buildConfig = buildConfig
 
@@ -228,7 +273,22 @@ export default {
           }
         }
       }
-      this.$refs.zadigBuildForm.initData(this.buildConfig)
+      if (!this.useTemplate) {
+        this.$refs.zadigBuildForm.initData(this.buildConfig)
+      }
+      // Add current service to template targets_repos when creating a new build
+      if (this.useTemplate && !this.isEdit) {
+        const service = this.buildConfig.targets.find(
+          element => element.service_module === this.name
+        )
+        if (service) {
+          this.buildConfig.target_repos.push({
+            service: service,
+            repos: []
+          })
+        }
+        this.$refs.zadigBuildForm.initServiceRepoSelectData(this.buildConfig)
+      }
     },
     async initBuildInfo () {
       const currentService = this.serviceTargets.filter(element => {
@@ -246,11 +306,17 @@ export default {
       checkJenkinsConfigExistsAPI().then(res => {
         this.jenkinsEnabled = res.exists
       })
-
       // get all builds of the current project
       return await getBuildConfigsAPI(this.projectName).then(res => {
         this.buildInfos = res
       })
+    },
+    async getJenkins () {
+      const key = this.$utils.rsaEncrypt()
+      const res = await queryJenkins(key).catch(error => console.log(error))
+      if (res) {
+        this.jenkinsList = res
+      }
     }
   },
   computed: {
@@ -290,6 +356,9 @@ export default {
     this.initGlobalData().then(() => {
       this.loadBuild(this.buildName)
     })
+  },
+  mounted () {
+    this.getJenkins()
   },
   components: {
     JenkinsBuild,

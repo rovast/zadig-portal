@@ -21,7 +21,7 @@
         <el-table-column prop="desc" label="描述信息"></el-table-column>
         <el-table-column label="操作" width="280">
           <template slot-scope="scope">
-            <el-button @click="roleOperate('edit',scope.row)" type="primary" size="mini" plain>编辑</el-button>
+            <el-button :disabled="scope.row.name === 'admin'" @click="roleOperate('edit',scope.row)" type="primary" size="mini" plain>编辑</el-button>
             <el-button :disabled="scope.row.name === 'admin'" @click="deleteRole(scope.row)" type="danger" size="mini" plain>删除</el-button>
           </template>
         </el-table-column>
@@ -30,7 +30,7 @@
     <Operate-role
       ref="roleOperate"
       :currentRole="currentRole"
-      @refreshUserList="getRoleList(userPageSize, currentPageList, searchUser)"
+      @refreshUserList="getRoleList()"
     />
   </div>
 </template>
@@ -61,7 +61,6 @@ export default {
       editUser: {
         account: ''
       },
-      searchUser: '',
       isShowDialogRoleVisible: false,
       dialogAddUserVisible: false,
       searchInputVisible: true,
@@ -139,15 +138,9 @@ export default {
       })
     }
   },
-  watch: {
-    searchUser: function (val, oldVal) {
-      this.getRoleList(this.userPageSize, this.currentPageList, val)
-    }
-  },
   created () {
     bus.$emit('set-topbar-title', { title: '系统角色管理', breadcrumb: [] })
-
-    this.getRoleList(this.userPageSize, this.currentPageList, this.searchUser)
+    this.getRoleList()
     this.checkRegistration()
   }
 }
@@ -157,7 +150,6 @@ export default {
 .roles-overview-container {
   position: relative;
   flex: 1;
-  overflow: auto;
   font-size: 13px;
 
   .roles-container {

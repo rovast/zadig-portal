@@ -48,7 +48,7 @@ export default {
 
   .build-name {
     display: inline-block;
-    margin-top: 6px;
+    margin-top: 5px;
     color: @themeColor;
     font-size: 12px;
     line-height: 16px;

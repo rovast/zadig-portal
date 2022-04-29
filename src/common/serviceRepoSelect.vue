@@ -29,7 +29,7 @@
             style="margin-top: 10px;"
             size="mini"
             @click="addFirstRepo(targetIndex)"
-            type="primary"
+            type="text"
             plain
           >添加代码库</el-button>
           <div v-if="showDivider" class="divider item"></div>
@@ -736,7 +736,7 @@ export default {
 }
 
 .service-repo-container {
-  padding: 2px 10px 0 10px;
+  padding: 2px 10px 2px 10px;
   border: 1px solid #ebedf0;
   border-radius: 6px;
 

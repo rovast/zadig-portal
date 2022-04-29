@@ -15,7 +15,7 @@
           @click="$refs.buildRef.saveBuildConfigToTemplate()"
           @updateBtnLoading="saveLoading = $event"
           :loading="saveLoading"
-          type="primary"
+          type="text"
         >保存为模板</el-button>
       </footer>
     </template>

@@ -144,7 +144,7 @@ export default {
         ? Math.max.apply(
           null,
           build_names.map(buildName => {
-            const names = buildName.split('--')
+            const names = buildName.split('-')
             const last = names[names.length - 1]
             return isNaN(last) ? 0 : Number(last) + 1
           })

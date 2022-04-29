@@ -342,7 +342,7 @@ export default {
     defaultBuildName () {
       return this.initServiceName
         ? `${this.projectName}-build-${this.name}${
-          this.buildNameIndex ? '--' + this.buildNameIndex : ''
+          this.buildNameIndex ? '-' + this.buildNameIndex : ''
         }`
         : ''
     }

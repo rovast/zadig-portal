@@ -269,6 +269,11 @@ export default {
         }
       }
     },
+    initServiceRepoSelectData (buildConfig) {
+      this.$nextTick(() => {
+        this.$refs.serviceRepoSelectRef.getInitRepoInfo(buildConfig.target_repos)
+      })
+    },
     initGlobalData () {
       // be used on Repo
       const key = this.$utils.rsaEncrypt()

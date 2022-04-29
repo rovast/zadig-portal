@@ -14,7 +14,7 @@
           label-position="top"
           label-width="80px"
         >
-          <div style="margin-top: 10px;">
+          <div>
             <el-select v-model="target.service" size="small" value-key="key" filterable>
               <el-option
                 v-for="(service,index) in serviceTargets"
@@ -29,7 +29,7 @@
             style="margin-top: 10px;"
             size="mini"
             @click="addFirstRepo(targetIndex)"
-            type="primary"
+            type="text"
             plain
           >添加代码库</el-button>
           <div v-if="showDivider" class="divider item"></div>
@@ -736,7 +736,7 @@ export default {
 }
 
 .service-repo-container {
-  padding: 10px 10px 15px 10px;
+  padding: 2px 10px 2px 10px;
   border: 1px solid #ebedf0;
   border-radius: 6px;
 
@@ -750,7 +750,7 @@ export default {
   }
 
   &:not(:first-child) {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
   }
 }
 </style>

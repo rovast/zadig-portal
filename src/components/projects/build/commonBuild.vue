@@ -276,6 +276,19 @@ export default {
       if (!this.useTemplate) {
         this.$refs.zadigBuildForm.initData(this.buildConfig)
       }
+      // Add current service to template targets_repos when creating a new build
+      if (this.useTemplate && !this.isEdit) {
+        const service = this.buildConfig.targets.find(
+          element => element.service_module === this.name
+        )
+        if (service) {
+          this.buildConfig.target_repos.push({
+            service: service,
+            repos: []
+          })
+        }
+        this.$refs.zadigBuildForm.initServiceRepoSelectData(this.buildConfig)
+      }
     },
     async initBuildInfo () {
       const currentService = this.serviceTargets.filter(element => {

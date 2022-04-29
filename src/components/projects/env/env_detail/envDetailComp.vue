@@ -161,7 +161,7 @@
                 </el-dropdown>
               </template>
               <template v-if="productInfo.status!=='Disconnected' && productInfo.status!=='Creating'">
-                <el-dropdown v-if="envSource===''||envSource==='spock'" trigger="click">
+                <el-dropdown v-if="envSource===''||envSource==='spock'||envSource==='helm'" trigger="click">
                   <el-button type="primary" plain>
                     更多
                     <i class="el-icon-arrow-down el-icon--right"></i>

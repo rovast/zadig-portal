@@ -1714,7 +1714,7 @@ export function editWorkloads (payload) {
 
 // RBAC APIs
 export function queryPolicyDefinitionsAPI (projectName, project = '') {
-  return http.get(`/api/v1/policy-definitions?projectName=${projectName}&resourceScope=${project}`)
+  return http.get(`/api/v1/policy-definitions?projectName=${projectName}&scope=${project}`)
 }
 
 export function addRoleAPI (payload) {

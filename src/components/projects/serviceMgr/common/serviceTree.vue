@@ -142,7 +142,6 @@
       :currentUpdatedServiceTemplateId="currentUpdatedServiceTemplateId"
       :dialogImportFromYamlVisible.sync="openImportYamlDialog"
       @importYamlSuccess="importYamlSuccess"
-      v-bind="$attrs" v-on="$listeners"
     />
     <div class="menu-container">
       <el-row>

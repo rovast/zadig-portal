@@ -89,8 +89,6 @@
                            :basePath="`/v1/projects/detail/${projectName}/services`"
                            :showNext.sync="showNext"
                            :yamlChange="yamlChange"
-                           :templateVariable="templateVariable"
-                           :autoSync="autoSync"
                            ref="serviceTree"
                            @onAddCodeSource="addCodeSource"
                            @onJumpToKind="jumpToKind"
@@ -193,9 +191,7 @@ export default {
       envNameList: [],
       deployableEnvs: [],
       activeEnvTabName: '',
-      deletedService: '',
-      templateVariable: [],
-      autoSync: false
+      deletedService: ''
     }
   },
   methods: {
@@ -243,8 +239,6 @@ export default {
         this.detectedEnvs = res.custom_variable ? res.custom_variable : []
         this.detectedServices = res.service_module ? res.service_module : []
         this.systemEnvs = res.system_variable ? res.system_variable : []
-        this.templateVariable = res.template_variable || []
-        this.autoSync = res.service.auto_sync
       })
     },
     showJoinToEnvDialog () {
@@ -428,16 +422,6 @@ export default {
     this.checkProjectFeature()
     this.getServices()
     this.getSharedServices()
-  },
-  watch: {
-    serviceName: {
-      handler (val) {
-        if (val) {
-          this.getServiceModules()
-        }
-      },
-      immediate: true
-    }
   },
   components: {
     ServiceAside,

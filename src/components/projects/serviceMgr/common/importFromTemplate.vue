@@ -150,13 +150,13 @@ export default {
       const projectName = this.projectName
       const templateId = this.importYaml.id
       const variables = this.importYaml.variables
-      const auto_sync = this.importYaml.auto_sync
+      const autoSync = this.importYaml.auto_sync
       const payload = {
         service_name: serviceName,
         project_name: projectName,
         template_id: templateId,
         variables: variables,
-        auto_sync: auto_sync
+        auto_sync: autoSync
       }
       const valid = await this.$refs.importYamlForm.validate().catch((err) => { return err })
       if (valid) {
@@ -208,6 +208,9 @@ export default {
         }
       })
       return originYaml
+    },
+    serviceInfo () {
+      return this.$store.state.k8sService.k8sServiceInfo
     }
   },
   watch: {
@@ -226,17 +229,12 @@ export default {
         this.importYaml.id = ''
       }
     },
-    '$attrs.templateVariable': {
+    serviceInfo: {
       handler (val) {
-        if (val) {
-          this.importYaml.variables = [...val]
-        }
+        this.importYaml.auto_sync = val.service.auto_sync
+        this.importYaml.variables = val.template_variable
       },
-      deep: true,
-      immediate: true
-    },
-    '$attrs.autoSync' (val, oldVal) {
-      this.importYaml.auto_sync = val
+      deep: true
     }
   },
   mounted () {

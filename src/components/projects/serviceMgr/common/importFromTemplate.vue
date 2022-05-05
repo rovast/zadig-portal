@@ -66,7 +66,7 @@
       </el-form>
       <codemirror v-if="previewYamlFile" v-model="renderedYaml" :options="importTemplateEditorOption"></codemirror>
       <div slot="footer" class="dialog-footer">
-        <el-button plain native-type="submit" @click="$emit('update:dialogImportFromYamlVisible',false)" size="small">取消</el-button>
+        <el-button plain native-type="submit" @click="closeDialog" size="small">取消</el-button>
         <el-button type="primary" native-type="submit" size="small" class="start-create" @click="loadServiceFromKubernetesTemplate">{{currentUpdatedServiceName?'更新':'新建'}}</el-button>
       </div>
     </el-dialog>
@@ -184,6 +184,12 @@ export default {
           this.$emit('importYamlSuccess', serviceName)
         }
       }
+    },
+    closeDialog () {
+      this.$emit('update:dialogImportFromYamlVisible', false)
+      this.importYaml.serviceName = ''
+      this.importYaml.id = ''
+      this.importYaml.auto_sync = false
     }
   },
   computed: {
@@ -224,13 +230,13 @@ export default {
     currentUpdatedServiceTemplateId (val) {
       if (val) {
         this.importYaml.id = val
-        this.getKubernetesTemplate(val)
       } else {
         this.importYaml.id = ''
       }
     },
     serviceInfo: {
       handler (val) {
+        // update from k8s service
         this.importYaml.auto_sync = val.service.auto_sync
         this.importYaml.variables = val.template_variable
       },

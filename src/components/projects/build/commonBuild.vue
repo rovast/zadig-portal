@@ -1,15 +1,11 @@
 <template>
   <div class="build-config-container" :class="{'mini-width': mini}">
-    <div v-if="jenkinsEnabled" class="build-source" :class="{'small-padding': mini}">
+    <div class="build-source" :class="{'small-padding': mini}">
       <span class="build-source-title">构建方式</span>
-      <el-select v-model="source" size="small" value-key="key" :disabled="isEdit" @change="loadBuild(buildName)" filterable>
+      <el-select v-model="source" size="small" value-key="key" :disabled="isEdit || !jenkinsEnabled" @change="loadBuild(buildName)" filterable>
         <el-option v-for="(item,index) in originOptions" :key="index" :label="item.label" :value="item.value"></el-option>
       </el-select>
       <el-checkbox v-if="source ==='zadig'" v-model="useTemplate">使用模板</el-checkbox>
-    </div>
-    <div v-if="source ==='zadig' && !jenkinsEnabled" class="build-source" :class="{'small-padding': mini}">
-      <span class="build-source-title">使用模板</span>
-      <el-checkbox v-model="useTemplate"></el-checkbox>
     </div>
     <JenkinsBuild
       v-if="jenkinsEnabled"
@@ -172,7 +168,7 @@ export default {
             })
         })
         .catch(err => {
-          console.log('傻了吧', err)
+          console.log(err)
           this.saveLoading = false
         })
     },

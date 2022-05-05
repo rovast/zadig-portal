@@ -66,7 +66,7 @@
       </el-form>
       <codemirror v-if="previewYamlFile" v-model="renderedYaml" :options="importTemplateEditorOption"></codemirror>
       <div slot="footer" class="dialog-footer">
-        <el-button plain native-type="submit" @click="closeDialog" size="small">取消</el-button>
+        <el-button plain native-type="submit" @click="$emit('update:dialogImportFromYamlVisible', false)" size="small">取消</el-button>
         <el-button type="primary" native-type="submit" size="small" class="start-create" @click="loadServiceFromKubernetesTemplate">{{currentUpdatedServiceName?'更新':'新建'}}</el-button>
       </div>
     </el-dialog>
@@ -140,6 +140,9 @@ export default {
       }
     },
     async openImportYamlDialog () {
+      this.importYaml.serviceName = ''
+      this.importYaml.id = ''
+      this.importYaml.auto_sync = false
       const res = await getKubernetesTemplatesAPI()
       if (res) {
         this.importYaml.yamls = res.yaml_template
@@ -184,12 +187,6 @@ export default {
           this.$emit('importYamlSuccess', serviceName)
         }
       }
-    },
-    closeDialog () {
-      this.$emit('update:dialogImportFromYamlVisible', false)
-      this.importYaml.serviceName = ''
-      this.importYaml.id = ''
-      this.importYaml.auto_sync = false
     }
   },
   computed: {

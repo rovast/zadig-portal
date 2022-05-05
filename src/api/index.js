@@ -1713,8 +1713,8 @@ export function editWorkloads (payload) {
 }
 
 // RBAC APIs
-export function queryPolicyDefinitionsAPI (projectName, project = '', env_type = 'k8s') {
-  return http.get(`/api/v1/policy-definitions?projectName=${projectName}&scope=${project}&env_type=${env_type}`)
+export function queryPolicyDefinitionsAPI (projectName, project = '', envType = 'k8s') {
+  return http.get(`/api/v1/policy-definitions?projectName=${projectName}&scope=${project}&env_type=${envType}`)
 }
 
 export function addRoleAPI (payload) {

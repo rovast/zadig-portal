@@ -7,6 +7,10 @@
       </el-select>
       <el-checkbox v-if="source ==='zadig'" v-model="useTemplate">使用模板</el-checkbox>
     </div>
+    <div v-if="source ==='zadig' && !jenkinsEnabled" class="build-source" :class="{'small-padding': mini}">
+      <span class="build-source-title">使用模板</span>
+      <el-checkbox v-model="useTemplate"></el-checkbox>
+    </div>
     <JenkinsBuild
       v-if="jenkinsEnabled"
       v-show="source === 'jenkins'"

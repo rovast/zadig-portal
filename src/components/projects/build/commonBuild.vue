@@ -168,7 +168,7 @@ export default {
             })
         })
         .catch(err => {
-          console.log('傻了吧', err)
+          console.log(err)
           this.saveLoading = false
         })
     },

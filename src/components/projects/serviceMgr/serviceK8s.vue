@@ -233,7 +233,7 @@ export default {
       })
     },
     getServiceModules () {
-      const serviceName = this.service.service_name
+      const serviceName = this.serviceName
       const projectName = this.projectName
       serviceTemplateWithConfigAPI(serviceName, projectName).then(res => {
         this.detectedEnvs = res.custom_variable ? res.custom_variable : []

@@ -379,6 +379,7 @@ export default {
         ).then(res => {
           this.serviceModules = res.service_module
           this.sysEnvs = res.system_variable
+          this.$store.dispatch('queryk8sService', res)
         })
       }
       if (this.service.status === 'named') {

@@ -110,8 +110,8 @@
                        value="gitlab"></el-option>
             <el-option label="GitHub"
                        value="github"></el-option>
-            <el-option label="CodeHub"
-                       value="codehub"></el-option>
+            <!-- <el-option label="CodeHub"
+                       value="codehub"></el-option> -->
             <el-option label="Gerrit"
                        value="gerrit"></el-option>
           </el-select>
@@ -364,8 +364,8 @@
                        value="gitlab"></el-option>
             <el-option label="GitHub"
                        value="github"></el-option>
-            <el-option label="CodeHub"
-                       value="codehub"></el-option>
+            <!-- <el-option label="CodeHub"
+                       value="codehub"></el-option> -->
             <el-option label="Gerrit"
                        value="gerrit"></el-option>
             <el-option label="Gitee"

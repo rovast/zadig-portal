@@ -5,7 +5,7 @@
         <el-form-item label="服务部署超时设置（分钟）" prop="timeout">
           <el-input v-model.number="projectForm.timeout"></el-input>
         </el-form-item>
-        <el-form-item prop="auto_deploy.auto_sync" v-if="showAutoUpdate">
+        <el-form-item prop="auto_deploy.enable" v-if="showAutoUpdate">
           <span slot="label">
             <span>服务自动更新</span>
             <el-tooltip effect="dark" content="开启自动更新后，服务配置变更时，Zadig 会自动将其部署到项目中所有环境中" placement="top">
@@ -13,7 +13,7 @@
             </el-tooltip>
           </span>
           <span>开启自动更新</span>
-          <el-switch v-model="projectForm.auto_deploy.auto_sync" />
+          <el-switch v-model="projectForm.auto_deploy.enable" />
         </el-form-item>
         <el-form-item label="交付物命名规则设置">
           <span slot="label">
@@ -92,7 +92,7 @@ export default {
         timeout: null,
         custom_image_rule: {},
         auto_deploy: {
-          auto_sync: false
+          enable: false
         }
       },
       rules: {
@@ -131,7 +131,7 @@ export default {
           this.$set(this.projectForm, 'timeout', 10)
         }
         if (!res.auto_deploy) {
-          this.$set(this.projectForm, 'auto_deploy', { auto_sync: false })
+          this.$set(this.projectForm, 'auto_deploy', { enable: false })
         }
       })
     },

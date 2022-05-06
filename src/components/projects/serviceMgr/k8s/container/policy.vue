@@ -105,9 +105,6 @@ export default {
         if (!res.timeout) {
           this.$set(this.projectForm, 'timeout', 10)
         }
-        if (!res.auto_deploy) {
-          this.$set(this.projectForm, 'auto_deploy', { auto_sync: false })
-        }
       })
     },
     updatePolicy (projectName, payload) {

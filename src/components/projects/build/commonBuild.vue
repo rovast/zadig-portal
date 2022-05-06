@@ -1,8 +1,8 @@
 <template>
   <div class="build-config-container" :class="{'mini-width': mini}">
-    <div v-if="jenkinsEnabled" class="build-source" :class="{'small-padding': mini}">
+    <div class="build-source" :class="{'small-padding': mini}">
       <span class="build-source-title">构建方式</span>
-      <el-select v-model="source" size="small" value-key="key" :disabled="isEdit" @change="loadBuild(buildName)" filterable>
+      <el-select v-model="source" size="small" value-key="key" :disabled="isEdit || !jenkinsEnabled" @change="loadBuild(buildName)" filterable>
         <el-option v-for="(item,index) in originOptions" :key="index" :label="item.label" :value="item.value"></el-option>
       </el-select>
       <el-checkbox v-if="source ==='zadig'" v-model="useTemplate">使用模板</el-checkbox>
@@ -105,6 +105,10 @@ export default {
     fromServicePage: {
       type: Boolean,
       default: false
+    },
+    buildNameIndex: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -164,7 +168,7 @@ export default {
             })
         })
         .catch(err => {
-          console.log('傻了吧', err)
+          console.log(err)
           this.saveLoading = false
         })
     },
@@ -255,10 +259,6 @@ export default {
         }
         this.buildConfig = buildConfig
 
-        this.serviceTargets = [
-          ...this.serviceTargets,
-          ...this.buildConfig.targets
-        ]
         if (!this.isEdit) {
           const currentServices = [
             ...this.buildConfig.targets,
@@ -284,7 +284,15 @@ export default {
         if (service) {
           this.buildConfig.target_repos.push({
             service: service,
-            repos: []
+            repos: [{
+              codehost_id: null,
+              repo_owner: '',
+              repo_name: '',
+              branch: '',
+              checkout_path: '',
+              remote_name: 'origin',
+              submodules: false
+            }]
           })
         }
         this.$refs.zadigBuildForm.initServiceRepoSelectData(this.buildConfig)
@@ -341,7 +349,9 @@ export default {
     },
     defaultBuildName () {
       return this.initServiceName
-        ? this.projectName + '-build-' + this.name
+        ? `${this.projectName}-build-${this.name}${
+          this.buildNameIndex ? '-' + this.buildNameIndex : ''
+        }`
         : ''
     }
   },

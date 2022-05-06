@@ -571,6 +571,10 @@ export function deleteProductWorkflowAPI (projectName, name) {
   return http.delete(`/api/aslan/workflow/workflow/${name}?projectName=${projectName}`)
 }
 
+export function getAssociatedBuildsAPI (projectName) {
+  return http.get(`/api/aslan/build/build/serviceModule?projectName=${projectName}`)
+}
+
 export function checkRegularAPI (payload) { // {regular: '', branches: []}
   return http.post(`/api/aslan/code/codehost/branches/regular/check`, payload)
 }
@@ -1581,8 +1585,8 @@ export function getDockerfileTemplateBuildReferenceAPI (id) {
 }
 
 // Template Kubernetes
-export function getKubernetesTemplatesAPI () {
-  return http.get(`/api/aslan/template/yaml?page_num=1&page_size=9999`)
+export function getKubernetesTemplatesAPI (projectName = '') {
+  return http.get(`/api/aslan/template/yaml?projectName=${projectName}&page_num=1&page_size=9999`)
 }
 
 export function createKubernetesTemplateAPI (payload) {
@@ -1716,8 +1720,8 @@ export function editWorkloads (payload) {
 }
 
 // RBAC APIs
-export function queryPolicyDefinitionsAPI (projectName, project = '') {
-  return http.get(`/api/v1/policy-definitions?projectName=${projectName}&scope=${project}`)
+export function queryPolicyDefinitionsAPI (projectName, project = '', envType = 'k8s') {
+  return http.get(`/api/v1/policy-definitions?projectName=${projectName}&scope=${project}&env_type=${envType}`)
 }
 
 export function addRoleAPI (payload) {

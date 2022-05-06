@@ -143,7 +143,7 @@ export default {
       this.importYaml.serviceName = ''
       this.importYaml.id = ''
       this.importYaml.auto_sync = false
-      const res = await getKubernetesTemplatesAPI()
+      const res = await getKubernetesTemplatesAPI(this.projectName)
       if (res) {
         this.importYaml.yamls = res.yaml_template
       }

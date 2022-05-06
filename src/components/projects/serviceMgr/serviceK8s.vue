@@ -122,6 +122,7 @@
                 <aside class="service-aside service-aside-right"
                        :style="{ flexGrow: 1 }">
                   <ServiceAside :service="service"
+                                :services="services"
                                 :detectedEnvs="detectedEnvs"
                                 :detectedServices="detectedServices"
                                 :systemEnvs="systemEnvs"

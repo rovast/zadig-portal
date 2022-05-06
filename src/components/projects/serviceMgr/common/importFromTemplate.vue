@@ -130,7 +130,7 @@ export default {
       }
     },
     async openImportYamlDialog () {
-      const res = await getKubernetesTemplatesAPI()
+      const res = await getKubernetesTemplatesAPI(this.projectName)
       if (res) {
         this.importYaml.yamls = res.yaml_template
       }

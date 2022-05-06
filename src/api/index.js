@@ -1585,8 +1585,8 @@ export function getDockerfileTemplateBuildReferenceAPI (id) {
 }
 
 // Template Kubernetes
-export function getKubernetesTemplatesAPI () {
-  return http.get(`/api/aslan/template/yaml?page_num=1&page_size=9999`)
+export function getKubernetesTemplatesAPI (projectName = '') {
+  return http.get(`/api/aslan/template/yaml?projectName=${projectName}&page_num=1&page_size=9999`)
 }
 
 export function createKubernetesTemplateAPI (payload) {

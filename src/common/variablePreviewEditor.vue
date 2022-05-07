@@ -1,7 +1,7 @@
 <template>
   <div class="variable-preview-editor-container">
     <span @click="dialogVisible=true" class="view-btn">效果预览</span>
-    <el-dialog title="效果预览" :visible.sync="dialogVisible" width="60%" :close-on-click-modal="false">
+    <el-dialog title="效果预览" :visible.sync="dialogVisible" width="60%"  append-to-body :close-on-click-modal="false">
       <span>选择服务</span>
       <el-select v-model="currentService" @change="getPreviewYaml" size="small" placeholder="请选择服务">
         <el-option v-for="item in services" :key="item.service_name" :label="item.service_name" :value="item.service_name"></el-option>
@@ -58,13 +58,17 @@ export default {
         env_name: envName,
         variables: variables
       }
-      const res = await serviceTemplateAfterRenderByEnvAPI(
-        projectName,
-        serviceName,
-        payload
-      ).catch(err => console.log(err))
-      if (res) {
-        this.renderedYaml = res
+      if (serviceName) {
+        const res = await serviceTemplateAfterRenderByEnvAPI(
+          projectName,
+          serviceName,
+          payload
+        ).catch(err => console.log(err))
+        if (res) {
+          this.renderedYaml = res
+        }
+      } else {
+        this.renderedYaml = ''
       }
     }
   },
@@ -83,7 +87,7 @@ export default {
       default: ''
     },
     serviceName: {
-      required: true,
+      required: false,
       type: String
     },
     projectName: {
@@ -94,7 +98,13 @@ export default {
   watch: {
     dialogVisible (val) {
       if (val) {
-        this.currentService = this.serviceName
+        if (this.serviceName) {
+          this.currentService = this.serviceName
+        } else if (this.services.length > 0) {
+          this.currentService = this.services[0].service_name
+        } else {
+          this.currentService = ''
+        }
         this.getPreviewYaml()
       }
     }

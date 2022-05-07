@@ -4,12 +4,12 @@
     <span v-if="!disabled" class="full-screen">
       <i @click="dialogVisible=true" class="el-icon-full-screen"></i>
     </span>
-    <el-dialog :title="`变量 ${varKey}`" :visible.sync="dialogVisible" width="60%" :close-on-click-modal="false">
+    <el-dialog :title="`变量 ${varKey}`" :visible.sync="dialogVisible" width="60%" append-to-body :close-on-click-modal="false">
       <CodeMirror @input="changeValue" ref="codemirror-full" :value="value" :options="options" class="full" />
-      <span slot="footer" class="dialog-footer">
+      <!-- <span slot="footer" class="dialog-footer">
         <el-button size="small" type="primary" @click="saveValue">保存</el-button>
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-      </span>
+      </span> -->
     </el-dialog>
   </div>
 </template>
@@ -63,12 +63,15 @@ export default {
     }
   },
   watch: {
-    disabled (val) {
-      if (val) {
-        this.options.readOnly = 'nocursor'
-      } else {
-        this.options.readOnly = false
-      }
+    disabled: {
+      handler (val) {
+        if (val) {
+          this.options.readOnly = 'nocursor'
+        } else {
+          this.options.readOnly = false
+        }
+      },
+      immediate: true
     }
   }
 }

@@ -42,6 +42,11 @@ export default {
       }
     }
   },
+  computed: {
+    cm () {
+      return this.$refs['codemirror-full'].codemirror
+    }
+  },
   methods: {
     async getPreviewYaml () {
       const projectName = this.projectName
@@ -66,6 +71,9 @@ export default {
         ).catch(err => console.log(err))
         if (res) {
           this.renderedYaml = res
+          this.$nextTick(() => {
+            this.cm.execCommand('goDocStart')
+          })
         }
       } else {
         this.renderedYaml = ''

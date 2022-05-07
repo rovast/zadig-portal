@@ -323,6 +323,10 @@ export function deleteServiceTemplateAPI (name, type, projectName, visibility) {
   return http.delete(`/api/aslan/service/services/${name}/${type}?projectName=${projectName}&visibility=${visibility}`)
 }
 
+export function serviceTemplateAfterRenderByEnvAPI (projectName, serviceName, payload) {
+  return http.put(`/api/aslan/service/services/${serviceName}/yaml/view?projectName=${projectName}`, payload)
+}
+
 export function createPmServiceAPI (projectName, payload) {
   return http.post(`/api/aslan/service/pm/${projectName}?projectName=${projectName}`, payload)
 }

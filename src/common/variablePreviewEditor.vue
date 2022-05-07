@@ -19,7 +19,7 @@ import { serviceTemplateAfterRenderByEnvAPI } from '@api'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/yaml/yaml.js'
-import 'codemirror/theme/xq-light.css'
+import 'codemirror/theme/neo.css'
 export default {
   name: 'VariablePreviewEditor',
   components: {
@@ -33,9 +33,11 @@ export default {
       options: {
         tabSize: 2,
         mode: 'text/yaml',
-        lineNumbers: false,
+        lineNumbers: true,
+        theme: 'neo',
         line: true,
-        readOnly: 'nocursor',
+        showPrintMargin: false,
+        readOnly: true,
         collapseIdentical: true
       }
     }

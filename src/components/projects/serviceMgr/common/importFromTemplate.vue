@@ -48,13 +48,13 @@
       </template>
         </el-form-item>
         <el-form-item prop="auto_sync">
-           <span slot="label">
-              <span>自动同步</span>
-              <el-tooltip effect="dark" content="开启后，当服务模板更新时，服务配置会自动引用最新的模板配置。" placement="top">
-                <i class="pointer el-icon-question"></i>
-              </el-tooltip>
-           </span>
-           <el-switch v-model="importYaml.auto_sync" />
+          <span style="margin-right: 16px;">
+            <span>自动同步</span>
+            <el-tooltip  content="开启后，当服务模板更新时，服务配置会自动引用最新的模板配置。" placement="top">
+              <i  class="pointer el-icon-question"></i>
+            </el-tooltip>
+          </span>
+          <el-switch v-model="importYaml.auto_sync" />
         </el-form-item>
         <el-form-item>
           <el-button :disabled="!importYaml.id" style="margin-left: 5px;" type="text" :icon="previewYamlFile?'el-icon-arrow-up':'el-icon-arrow-down'" @click="previewYamlFile = !previewYamlFile">

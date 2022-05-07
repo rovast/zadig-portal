@@ -26,11 +26,6 @@
           <PageNav :displayedFile="displayedFile" :currentTab="currentTab" @updateFile="showFile"></PageNav>
         </div>
         <Codemirror v-if="currentTab" v-model="yaml" :cmOption="{ readOnly: true }" class="mirror"></Codemirror>
-        <div style="position: absolute; bottom: 10px; left: 20px;">
-          <el-button type="default"
-            size="small"
-            @click="multiUpdate">批量更新</el-button>
-        </div>
       </div>
       <multipane-resizer></multipane-resizer>
       <Aside
@@ -55,8 +50,7 @@ import Aside from './aside.vue'
 import {
   getChartTemplatesAPI,
   getChartTemplateByNameAPI,
-  getTemplateFileContentAPI,
-  updateHelmTemplateAPI
+  getTemplateFileContentAPI
 } from '@api'
 import { keyBy } from 'lodash'
 import bus from '@utils/eventBus'
@@ -252,21 +246,6 @@ export default {
       if (res) {
         data.yamlContent = res
       }
-    },
-    multiUpdate () {
-      this.$confirm(`确认后，所有开启「自动同步」的服务配置会应用最新的模板。`, '确定批量更新？', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          updateHelmTemplateAPI(this.serviceName).then(res => {
-            this.$message({
-              type: 'success',
-              message: `批量更新成功`
-            })
-          })
-        })
     }
   },
   watch: {

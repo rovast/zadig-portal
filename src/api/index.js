@@ -1602,7 +1602,7 @@ export function updateKubernetesTemplateAPI (id, payload) {
 }
 
 export function updateMulKubernetesTemplateAPI (id, payload) {
-  return http.post(`api/aslan/template/yaml/${id}/reference`)
+  return http.post(`/api/aslan/template/yaml/${id}/reference`)
 }
 export function praseKubernetesTemplateAPI (payload) {
   return http.post(`/api/aslan/template/yaml/getVariables`, payload)

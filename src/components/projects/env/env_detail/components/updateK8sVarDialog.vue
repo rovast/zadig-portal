@@ -35,7 +35,7 @@
         </el-table-column>
         <el-table-column label="Value">
           <template slot-scope="scope">
-            <VariableEditor @onSave="updateK8sEnvVar" :varKey="scope.row.key" :value.sync="scope.row.value" />
+            <VariableEditor :varKey="scope.row.key" :value.sync="scope.row.value" />
           </template>
         </el-table-column>
         <el-table-column label="关联服务">

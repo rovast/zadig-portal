@@ -1,7 +1,7 @@
 <template>
   <div class="variable-preview-editor-container">
     <span @click="dialogVisible=true" class="view-btn">效果预览</span>
-    <el-dialog title="效果预览" :visible.sync="dialogVisible" width="60%"  append-to-body :close-on-click-modal="false">
+    <el-dialog title="效果预览" :visible.sync="dialogVisible" width="60%" class="global-variable-preview-dialog" append-to-body :close-on-click-modal="false">
       <span>选择服务</span>
       <el-select v-model="currentService" @change="getPreviewYaml" size="small" placeholder="请选择服务">
         <el-option v-for="item in services" :key="item.service_name" :label="item.service_name" :value="item.service_name"></el-option>
@@ -113,6 +113,25 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.global-variable-preview-dialog {
+  .editor-container {
+    max-height: 100%;
+    margin-top: 10px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+
+    .vue-codemirror {
+      width: calc(~'100%');
+      overflow-y: auto;
+
+      /deep/ .CodeMirror {
+        height: auto;
+        border-radius: 2px;
+      }
+    }
+  }
+}
+
 .variable-preview-editor-container {
   display: inline-flex;
 

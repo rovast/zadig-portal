@@ -17,7 +17,7 @@
 
         <el-col :span="6">
           <div class="build-item build">
-            构建设置
+            构建名称
           </div>
         </el-col>
 
@@ -78,6 +78,20 @@
           </el-col>
           <el-col :span="6">
             <div class="build-item build">
+              <el-select
+                style="width: 60%;"
+                v-model="config.target.build_name"
+                size="mini"
+                :disabled="!associatedBuilds[`${config.target.service_name}/${config.target.service_module}`]"
+                :placeholder="!associatedBuilds[`${config.target.service_name}/${config.target.service_module}`] ? '无' : '请选择'"
+              >
+                <el-option
+                  v-for="(build, index) in associatedBuilds[`${config.target.service_name}/${config.target.service_module}`]"
+                  :key="index"
+                  :label="build.name"
+                  :value="build.name"
+                ></el-option>
+              </el-select>
               <el-button type="text" @click="showBuildOpeDialog(config,_idx)">设置</el-button>
               <buildOperate ref="buildOPerateRef"   v-model="serviceConfigs[_idx]"/>
             </div>

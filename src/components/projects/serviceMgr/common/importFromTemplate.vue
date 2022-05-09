@@ -50,7 +50,7 @@
         <el-form-item prop="auto_sync">
           <span style="margin-right: 16px;">
             <span>自动同步</span>
-            <el-tooltip  content="开启后，当服务模板更新时，服务配置会自动引用最新的模板配置。" placement="top">
+            <el-tooltip  content="开启后，模板库-批量更新时，该服务配置自动应用最新的服务模板。" placement="top">
               <i  class="pointer el-icon-question"></i>
             </el-tooltip>
           </span>

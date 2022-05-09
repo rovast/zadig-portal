@@ -75,7 +75,7 @@ export default {
       immediate: true
     },
     'configs.branch_filter': {
-      handler () {
+      handler (val) {
         this.filter()
       },
       deep: true,
@@ -118,10 +118,11 @@ export default {
         this.filter()
       })
     },
-    setRow (row, regular) {
-      if (row.tags.length > 0) {
+    setRow (regular, row) {
+      const { branches, tags } = row
+      if (tags && tags.length > 0) {
         const payload = {
-          branches: row.tags,
+          branches: tags,
           regular
         }
         checkRegularAPI(payload).then(res => {
@@ -131,9 +132,9 @@ export default {
           }
         })
       }
-      if (row.branches.length > 0) {
+      if (branches && branches.length > 0) {
         const payload = {
-          branches: row.branches,
+          branches: branches,
           regular
         }
         checkRegularAPI(payload).then(res => {
@@ -145,27 +146,30 @@ export default {
       }
     },
     checkRegular: debounce(function (regular, row) {
-      if (row.branches && row.branches.length > 0) {
-        this.setRow(row, regular)
+      const { codehost_id, repo_owner, repo_name, branches, tags } = row
+      if ((branches && branches.length) > 0 || (tags && tags.length) > 0) {
+        this.setRow(regular, row)
       } else {
-        const { codehost_id, repo_owner, repo_name } = row
-        Promise.all([
-          getBranchInfoByIdAPI(codehost_id, repo_owner, repo_name),
-          getTagsInfoByIdAPI(codehost_id, repo_owner, repo_name)
-        ]).then(res => {
-          const branches = []
-          const tags = []
-          res[0].forEach(item => {
-            branches.push(item.name)
+        if (!branches) {
+          getBranchInfoByIdAPI(codehost_id, repo_owner, repo_name).then(res => {
+            const branches = []
+            res.forEach(item => {
+              branches.push(item.name)
+            })
+            this.$set(row, 'branches', branches)
+            this.setRow(regular, row)
           })
-          this.$set(row, 'branches', branches)
-
-          res[1].forEach(item => {
-            tags.push(item.name)
+        }
+        if (!tags) {
+          getTagsInfoByIdAPI(codehost_id, repo_owner, repo_name).then(res => {
+            const tags = []
+            res.forEach(item => {
+              tags.push(item.name)
+            })
+            this.$set(row, 'tags', tags)
+            this.setRow(regular, row)
           })
-          this.$set(row, 'tags', tags)
-          this.setRow(row, regular)
-        })
+        }
       }
     }, 500)
   }

@@ -17,7 +17,8 @@
 
         <el-col :span="6">
           <div class="build-item build">
-            构建名称
+            <!-- 构建名称 -->
+            构建设置
           </div>
         </el-col>
 
@@ -78,10 +79,12 @@
           </el-col>
           <el-col :span="6">
             <div class="build-item build">
-              <el-select
+              <el-button type="text" @click="showBuildOpeDialog(config,_idx)">设置</el-button>
+              <buildOperate ref="buildOPerateRef"   v-model="serviceConfigs[_idx]"/>
+
+              <!-- <el-select
                 v-model="config.target.build_name"
                 size="mini"
-                :disabled="!associatedBuilds[`${config.target.service_name}/${config.target.service_module}`]"
                 :placeholder="!associatedBuilds[`${config.target.service_name}/${config.target.service_module}`] ? '无' : '请选择'"
               >
                 <el-option
@@ -90,7 +93,7 @@
                   :label="build.name"
                   :value="build.name"
                 ></el-option>
-              </el-select>
+              </el-select> -->
             </div>
           </el-col>
           <el-col :span="7">
@@ -117,15 +120,18 @@
 
 <script type="text/javascript">
 import { getAssociatedBuildsAPI } from '@api'
-
+import buildOperate from './components/buildOperate.vue'
 import bus from '@utils/eventBus'
 
 export default {
   data () {
     return {
+      configs: {},
       associatedBuilds: {}
+
     }
   },
+  components: { buildOperate },
   computed: {
     presetMap () {
       return _.keyBy(this.presets, (i) => {
@@ -197,7 +203,13 @@ export default {
         })
         this.associatedBuilds = associatedBuilds
       })
+    },
+    showBuildOpeDialog (row, _idx) {
+      this.$nextTick(() => {
+        this.$refs.buildOPerateRef[_idx].showCurBuildOpeDialog()
+      })
     }
+
   },
   created () {
     bus.$on('check-tab:buildDeploy', () => {

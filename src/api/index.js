@@ -855,6 +855,16 @@ export function getBranchInfoByIdAPI (id, repoOwner, repoName, repoUUID = '', pa
     return http.get(`/api/aslan/code/codehost/${id}/branches`, { params })
   }
 }
+export function getTagsInfoByIdAPI (id, repoOwner, repoName, page = 1, perPage = 200, key = '') {
+  const params = {
+    repoOwner: repoOwner,
+    repoName: repoName,
+    page: page,
+    per_page: perPage,
+    key: key
+  }
+  return http.get(`/api/aslan/code/codehost/${id}/tags`, { params })
+}
 
 // GitHub App
 export function getGithubAppAPI (payload) {

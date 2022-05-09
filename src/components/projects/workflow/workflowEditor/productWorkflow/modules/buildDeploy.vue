@@ -144,6 +144,9 @@ export default {
           if (typeof config.hide_service_module === 'undefined') {
             this.$set(config, 'hide_service_module', false)
           }
+          if (!config.branch_filter) {
+            this.$set(config, 'branch_filter', [])
+          }
           return config
         })
       },

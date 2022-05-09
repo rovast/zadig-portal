@@ -69,10 +69,10 @@ export default {
     value: {
       handler (val) {
         this.originRepoList = this.originRepoList.filter(
-          x => !val.branch_filter.some(item => x.repo_name === item.repo_name)
+          x => !this.configs.branch_filter.some(item => x.repo_name === item.repo_name)
         )
-        this.$emit('input', Object.assign({}, val))
         this.configs = { ...val }
+        this.$emit('input', Object.assign({}, this.configs))
       },
       deep: true,
       immediate: true

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="构建设置" :visible.sync="isShowBuildOperateDialog" width="50%" center>
+  <el-dialog title="构建设置" :visible.sync="isShowBuildOperateDialog" width="40%" center>
     <template>
       <div class="build-configs">
         <h4>代码信息</h4>
@@ -14,11 +14,11 @@
                 v-model="scope.row.filter_regexp"
               ></el-input>
               <div>
-                <span>匹配到分支：{{scope.row.matchedBranches && scope.row.matchedBranches.length === 0 ? '无': ''}}</span>
+                <span>匹配到分支：</span>
                 <span v-if="scope.row.matchedBranches" class="match">{{scope.row.matchedBranches.toString()}}</span>
               </div>
               <div>
-                <span>匹配到 Tag：{{scope.row.matchedTags && scope.row.matchedTags.length === 0 ? '无': ''}}</span>
+                <span>匹配到 Tag：</span>
                 <span v-if="scope.row.matchedTags" class="match">{{scope.row.matchedTags.toString()}}</span>
               </div>
             </template>
@@ -31,7 +31,7 @@
         </el-table>
         <div class="repo">
           <el-select v-model="form.repo" value-key="repo_name" filterable size="small" placeholder="请选择代码库" style="width: 200px;">
-            <el-option v-for="repo of originRepoList" :key="repo.repo_name" :label="repo.branch" :value="repo"></el-option>
+            <el-option v-for="repo of originRepoList" :key="repo.repo_name" :label="repo.repo_name" :value="repo"></el-option>
           </el-select>
           <el-button @click="addBuild" type="default" size="small" icon="el-icon-plus">添加</el-button>
         </div>
@@ -68,22 +68,31 @@ export default {
   watch: {
     value: {
       handler (val) {
-        this.originRepoList = this.originRepoList.filter(
-          x => !this.configs.branch_filter.some(item => x.repo_name === item.repo_name)
-        )
         this.configs = { ...val }
         this.$emit('input', Object.assign({}, this.configs))
       },
       deep: true,
       immediate: true
+    },
+    'configs.branch_filter': {
+      handler () {
+        this.filter()
+      },
+      deep: true,
+      immediate: true
     }
   },
-
   methods: {
+    filter () {
+      this.originRepoList = this.originRepoList.filter(
+        x =>
+          !this.configs.branch_filter.some(
+            item => x.repo_name === item.repo_name
+          )
+      )
+    },
     showCurBuildOpeDialog () {
-      this.configs = {}
       this.isShowBuildOperateDialog = true
-      this.configs = { ...this.value }
       if (!this.configs.target.build_name) {
         return
       }
@@ -106,6 +115,7 @@ export default {
       if (!buildName) return
       getBuildConfigDetailAPI(buildName, projectName).then(res => {
         this.originRepoList = [...res.repos] || []
+        this.filter()
       })
     },
     setRow (row, regular) {

@@ -159,7 +159,6 @@ export default {
     },
     getChartNames (envName = this.envName) {
       this.$refs.filterStatusRef.init()
-      this.updateFilter({ type: '', list: [] })
 
       this.chartNames = []
       getHelmReleaseListAPI(this.projectName, envName).then(res => {
@@ -183,14 +182,11 @@ export default {
           ? this.filteredChartNames.map(chart => chart.serviceName)
           : []
       )
-
-      console.log('修改搜索条件-----submit', type, list)
     },
     refreshServices (list = []) {
       this.searchServicesByChart(list.join('|'))
     },
     updateChartService (chart, action) {
-      console.log('---chart', chart, action)
       if (action === 'update') {
         this.updateDialogVisible = true
         this.currentChart = {
@@ -248,7 +244,6 @@ export default {
         () => {
           this.$message.success(`${this.currentChart.serviceName} 更新成功！`)
           this.fetchAllData()
-          this.getChartNames()
           this.dialogBeforeClose()
         }
       )

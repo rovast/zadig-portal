@@ -832,6 +832,7 @@ export default {
         if (this.page === 1 && flag !== 'search') {
           await this.getProductEnvInfo(projectName, envName)
           if (this.envSource === 'helm') {
+            this.filterChartName = ''
             this.$refs.chartListRef.getChartNames(envName)
           }
         }

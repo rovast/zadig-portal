@@ -323,6 +323,10 @@ export function deleteServiceTemplateAPI (name, type, projectName, visibility) {
   return http.delete(`/api/aslan/service/services/${name}/${type}?projectName=${projectName}&visibility=${visibility}`)
 }
 
+export function serviceTemplateAfterRenderByEnvAPI (projectName, serviceName, payload) {
+  return http.put(`/api/aslan/service/services/${serviceName}/yaml/view?projectName=${projectName}`, payload)
+}
+
 export function createPmServiceAPI (projectName, payload) {
   return http.post(`/api/aslan/service/pm/${projectName}?projectName=${projectName}`, payload)
 }
@@ -1595,8 +1599,8 @@ export function getDockerfileTemplateBuildReferenceAPI (id) {
 }
 
 // Template Kubernetes
-export function getKubernetesTemplatesAPI () {
-  return http.get(`/api/aslan/template/yaml?page_num=1&page_size=9999`)
+export function getKubernetesTemplatesAPI (projectName = '') {
+  return http.get(`/api/aslan/template/yaml?projectName=${projectName}&page_num=1&page_size=9999`)
 }
 
 export function createKubernetesTemplateAPI (payload) {
@@ -1607,6 +1611,9 @@ export function updateKubernetesTemplateAPI (id, payload) {
   return http.put(`/api/aslan/template/yaml/${id}`, payload)
 }
 
+export function updateMulKubernetesTemplateAPI (id, payload) {
+  return http.post(`/api/aslan/template/yaml/${id}/reference`)
+}
 export function praseKubernetesTemplateAPI (payload) {
   return http.post(`/api/aslan/template/yaml/getVariables`, payload)
 }
@@ -1669,6 +1676,10 @@ export function createHelmEnvAPI (projectName, payload, scene = '') {
   return http.post(`/api/aslan/environment/environments?helm=true&projectName=${projectName}&scene=${scene}`, payload)
 }
 
+export function updateHelmTemplateAPI (templateName) {
+  return http.post(`/api/aslan/template/charts/${templateName}/reference`)
+}
+
 export function updateHelmEnvAPI (projectName, payload) {
   return http.put(`/api/aslan/environment/environments?helm=true&projectName=${projectName}`, payload)
 }
@@ -1723,8 +1734,8 @@ export function editWorkloads (payload) {
 }
 
 // RBAC APIs
-export function queryPolicyDefinitionsAPI (projectName, project = '') {
-  return http.get(`/api/v1/policy-definitions?projectName=${projectName}&scope=${project}`)
+export function queryPolicyDefinitionsAPI (projectName, project = '', envType = 'k8s') {
+  return http.get(`/api/v1/policy-definitions?projectName=${projectName}&scope=${project}&env_type=${envType}`)
 }
 
 export function addRoleAPI (payload) {

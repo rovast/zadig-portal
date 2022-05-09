@@ -1152,6 +1152,7 @@ export default {
       this.$emit('update:showNext', true)
       this.$emit('onShowJoinToEnvBtn', true)
       this.$emit('onRefreshService')
+      this.$emit('getServiceModules')
       this.$router.replace({
         query: { service_name: serviceName, rightbar: 'var' }
       })

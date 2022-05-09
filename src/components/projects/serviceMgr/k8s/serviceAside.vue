@@ -129,6 +129,7 @@
                     <i class="el-icon-question"></i>
                   </span>
                 </el-tooltip>
+                 <VariablePreviewEditor :serviceName="service.service_name" :services="services" :projectName="projectName" :variables="customEnvs" />
               </h4>
               <div class="kv-container">
                 <el-table :data="customEnvs" style="width: 100%;">
@@ -139,14 +140,7 @@
                   </el-table-column>
                   <el-table-column label="Value">
                     <template slot-scope="scope">
-                      <el-input
-                        size="small"
-                        :disabled="!editEnvIndex[scope.$index]"
-                        v-model="scope.row.value"
-                        type="textarea"
-                        :autosize="{ minRows: 1, maxRows: 4}"
-                        placeholder="请输入内容"
-                      ></el-input>
+                      <VariableEditor :disabled="!editEnvIndex[scope.$index]" @onSave="saveRenderKey(scope.$index,scope.row.state)" :varKey="scope.row.key" :value.sync="scope.row.value" />
                     </template>
                   </el-table-column>
                   <el-table-column v-hasPermi="{projectName: projectName, action: 'edit_service'}" label="操作" width="150">
@@ -379,6 +373,7 @@ export default {
         ).then(res => {
           this.serviceModules = res.service_module
           this.sysEnvs = res.system_variable
+          this.$store.dispatch('queryk8sService', res)
         })
       }
       if (this.service.status === 'named') {
@@ -531,6 +526,10 @@ export default {
     service: {
       required: false,
       type: Object
+    },
+    services: {
+      required: false,
+      type: Array
     },
     buildBaseUrl: {
       required: true,

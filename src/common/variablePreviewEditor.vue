@@ -1,12 +1,27 @@
 <template>
   <div class="variable-preview-editor-container">
     <span @click="dialogVisible=true" class="view-btn">效果预览</span>
-    <el-dialog title="效果预览" :visible.sync="dialogVisible" width="60%" class="global-variable-preview-dialog" append-to-body :close-on-click-modal="false">
+    <el-dialog
+      title="效果预览"
+      :visible.sync="dialogVisible"
+      width="60%"
+      class="global-variable-preview-dialog"
+      append-to-body
+      :close-on-click-modal="false"
+    >
       <span>选择服务</span>
       <el-select v-model="currentService" @change="getPreviewYaml" size="small" placeholder="请选择服务">
         <el-option v-for="item in services" :key="item.service_name" :label="item.service_name" :value="item.service_name"></el-option>
       </el-select>
       <CodeMirror ref="codemirror-full" :value="renderedYaml" :options="options" class="editor-container" />
+      <div v-if="errors.length > 0" class="yaml-errors__container">
+        <ul class="yaml-errors__errors-list">
+          <li v-for="(error,index) in errors" :key="index" class="yaml-errors__errors-list-item">
+            <div class="yaml-errors__errors-list-item-counter">{{index+1}}</div>
+            <div class="yaml-errors__errors-list-item-text">{{error.message}}</div>
+          </li>
+        </ul>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" type="primary" @click="dialogVisible = false">确定</el-button>
       </span>
@@ -15,7 +30,7 @@
 </template>
 
 <script>
-import { serviceTemplateAfterRenderByEnvAPI } from '@api'
+import { serviceTemplateAfterRenderByEnvAPI, validateYamlAPI } from '@api'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/yaml/yaml.js'
@@ -30,6 +45,7 @@ export default {
       dialogVisible: false,
       renderedYaml: '',
       currentService: '',
+      errors: [],
       options: {
         tabSize: 2,
         mode: 'text/yaml',
@@ -74,6 +90,19 @@ export default {
           this.$nextTick(() => {
             this.cm.execCommand('goDocStart')
           })
+          const validatePayload = {
+            yaml: res
+          }
+          const errors = validateYamlAPI(projectName, validatePayload).catch(
+            error => {
+              console.log(error)
+            }
+          )
+          if (errors) {
+            this.errors = errors
+          } else {
+            this.errors = []
+          }
         }
       } else {
         this.renderedYaml = ''
@@ -135,6 +164,54 @@ export default {
       /deep/ .CodeMirror {
         height: auto;
         border-radius: 2px;
+      }
+    }
+  }
+
+  .yaml-errors__container {
+    position: relative;
+    margin-bottom: 0;
+    overflow-y: hidden;
+    background-color: #eb5848;
+
+    .yaml-errors__errors-list {
+      max-height: 180px;
+      margin: 0;
+      list-style: none;
+      background-color: #eb5848;
+
+      &.yaml-infos__infos-list {
+        background-color: #909399;
+      }
+
+      .yaml-errors__errors-list-item {
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+        color: #fff;
+        font-size: 14px;
+        background-color: #eb5848;
+        border-bottom: 1px solid #ff7666;
+
+        &.yaml-infos__infos-list-item {
+          background-color: #909399;
+        }
+
+        .yaml-errors__errors-list-item-counter {
+          margin-right: 20px;
+          font-weight: bold;
+        }
+
+        .yaml-errors__errors-list-item-text {
+          flex: 1;
+          width: 300px;
+          max-width: 100%;
+          padding: 5px 0;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
       }
     }
   }

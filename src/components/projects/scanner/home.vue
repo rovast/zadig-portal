@@ -16,18 +16,20 @@
           :scannerInfo="scannerInfo"
           :removeCodeScanner="removeCodeScanner"
           :runCodeScanner="runCodeScanner"
-        ></ScannerRow>
+        />
       </ul>
     </div>
     <div v-if="scannerList.length === 0 && !loading" class="no-product">
       <img src="@assets/icons/illustration/test.svg" alt />
       <p>暂无可展示的代码扫描，请手动新建代码扫描</p>
     </div>
+    <RunScannerTask :dialogVisible.sync="runScanner" :scannerInfo="currentScannerInfo" />
   </div>
 </template>
 
 <script>
-import ScannerRow from './container/scannerRow.vue'
+import ScannerRow from './common/scannerRow.vue'
+import RunScannerTask from './common/runScannerTask.vue'
 import bus from '@utils/eventBus'
 import { getCodeScannerListAPI, deleteCodeScannerAPI } from '@api'
 
@@ -36,6 +38,8 @@ export default {
     return {
       scannerList: [],
       loading: false,
+      runScanner: false,
+      currentScannerInfo: {},
       selectKey: ''
     }
   },
@@ -55,11 +59,12 @@ export default {
         this.scannerList = res
       })
     },
-    runCodeScanner (name) {
-      console.log('执行当前代码扫描', name)
+    runCodeScanner (scannerInfo) {
+      this.currentScannerInfo = scannerInfo
+      this.runScanner = true
     },
     removeCodeScanner ({ name, id }) {
-      this.$confirm(`确定要删除 ${name} 吗？`, '确认', {
+      this.$confirm(`确定要删除 ${name} 这个配置吗？`, '确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -87,7 +92,8 @@ export default {
     this.fetchScannerList()
   },
   components: {
-    ScannerRow
+    ScannerRow,
+    RunScannerTask
   }
 }
 </script>

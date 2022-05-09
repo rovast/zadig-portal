@@ -12,7 +12,7 @@
       <div class="value">{{ scannerInfo.statistics.run_time_average + 's' || 'N/A' }}</div>
     </section>
     <section class="operations">
-      <el-button type="primary" class="button-exec" @click="runCodeScanner(scannerInfo.name)">
+      <el-button type="primary" class="button-exec" @click="runCodeScanner(scannerInfo)">
         <span class="iconfont iconzhixing">&nbsp;执行</span>
       </el-button>
       <router-link :to="`/v1/projects/detail/${projectName}/scanner/edit/${scannerInfo.name}?id=${scannerInfo.id}`">

@@ -1,7 +1,7 @@
 <template>
   <div class="code-scanner-detail">
     <el-card class="scanner-basic-info">
-      <el-button type="primary" effect="dark" @click="startTask" class="left">
+      <el-button type="primary" effect="dark" @click="runTask" class="left">
         <span class="iconfont iconzhixing">&nbsp;执行</span>
       </el-button>
       <router-link :to="`/v1/projects/detail/${projectName}/scanner/edit/${scannerName}?id=${scannerID}`" class="middle">
@@ -29,16 +29,16 @@
         :scannerID="scannerID"
         :currentPage="pageStart"
         @currentChange="changeTaskPage"
-      ></TaskList>
+      />
     </el-card>
-
-    <el-dialog :visible.sync="taskDialogVisible" title="运行" custom-class="run-scanner" width="60%" class="dialog">TEST</el-dialog>
+    <RunScannerTask :dialogVisible.sync="taskDialogVisible" :scannerInfo="{id:scannerID,name:scannerName}" />
   </div>
 </template>
 
 <script>
 import { getCodeScannerHistoryAPI } from '@api'
-import TaskList from './container/taskList.vue'
+import TaskList from './common/taskList.vue'
+import RunScannerTask from './common/runScannerTask.vue'
 import bus from '@utils/eventBus'
 export default {
   data () {
@@ -97,8 +97,8 @@ export default {
       this.pageStart = val
       this.getCommonScannerTasks(val, this.pageSize)
     },
-    startTask () {
-      console.log('开始代码扫描')
+    runTask () {
+      this.taskDialogVisible = true
     }
   },
   beforeDestroy () {
@@ -126,7 +126,8 @@ export default {
     this.autoRefreshHistoryTask()
   },
   components: {
-    TaskList
+    TaskList,
+    RunScannerTask
   }
 }
 </script>

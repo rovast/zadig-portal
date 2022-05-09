@@ -736,7 +736,7 @@ export function getTestReportAPI (projectName, workflowName, taskID, testJobName
   )
 }
 
-// code canner
+// Code Scanner
 export function createCodeScannerAPI (payload) {
   return http.post(`/api/aslan/testing/scanning?projectName=${payload.product_name}`, payload)
 }
@@ -757,6 +757,10 @@ export function getCodeScannerListAPI (projectName) {
 
 export function getCodeScannerHistoryAPI (id, projectName, page_num, page_size) {
   return http.get(`/api/aslan/testing/scanning/${id}/task?projectName=${projectName}&page_num=${page_num}&page_size=${page_size}`)
+}
+
+export function runCodeScannerTaskAPI (id, payload) {
+  return http.post(`/api/aslan/testing/scanning/${id}/task`, payload)
 }
 
 // User Management

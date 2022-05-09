@@ -25,17 +25,14 @@
 
         <el-form-item label="扫描环境" prop="image_id">
           <el-select v-model="scannerConfig.image_id" placeholder="选择扫描环境" size="small">
+            <el-option v-for="(sys,index) in systems" :key="index" :label="sys.label" :value="sys.id">
+              {{sys.label}}
+            </el-option>
             <el-option disabled value="NEWCUSTOM">
               <router-link to="/v1/system/imgs" class="env-link">
                 <i class="el-icon-circle-plus-outline" style="margin-right: 3px;"></i>
-                扫描环境
+                新建扫描环境
               </router-link>
-            </el-option>
-            <el-option v-for="(sys,index) in systems" :key="index" :label="sys.label" :value="sys.id">
-              <span>
-                {{sys.label}}
-                <el-tag v-if="sys.image_from==='custom'" type="info" size="mini" effect="light">自定义</el-tag>
-              </span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -119,7 +116,7 @@
 import Editor from 'vue2-ace-bind'
 import Resize from '@/components/common/resize.vue'
 
-import AdvancedConfig from './container/advancedConfig.vue'
+import AdvancedConfig from './common/advancedConfig.vue'
 import ValidateSubmit from '@utils/validateAsync'
 
 import {

@@ -32,8 +32,8 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-button type="default" size="small" @click="multiUpdate">批量更新</el-button>
         <el-button type="primary" @click="saveCustomVariables" size="small" :loading="saveLoading">保存</el-button>
+        <el-button type="default" size="small" @click="multiUpdate">批量更新</el-button>
       </article>
     </section>
   </div>

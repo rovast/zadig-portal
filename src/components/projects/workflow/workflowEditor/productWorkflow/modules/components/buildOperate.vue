@@ -5,7 +5,7 @@
         <h4>代码信息</h4>
         <el-table :data="configs.branch_filter">
           <el-table-column prop="repo_name" label="代码库" width="200px"></el-table-column>
-          <el-table-column prop="filter_regexp" label="Branch/Tag过滤规则">
+          <el-table-column prop="filter_regexp" label="Branch/Tag 过滤规则">
             <template slot-scope="scope">
               <el-input
                 style="width: 70%;"

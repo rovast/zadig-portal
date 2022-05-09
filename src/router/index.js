@@ -224,7 +224,7 @@ const routes = [
           },
           {
             path: 'scanner',
-            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/scanner/home.vue'),
+            component: () => import(/* webpackChunkName: "Project Scanner" */ '@/components/projects/scanner/home.vue'),
             meta: {
               requiresAuth: true,
               requiresSuperAdmin: false,
@@ -233,7 +233,7 @@ const routes = [
           },
           {
             path: 'scanner/create',
-            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/scanner/create.vue'),
+            component: () => import(/* webpackChunkName: "Project Scanner" */ '@/components/projects/scanner/create.vue'),
             meta: {
               requiresAuth: true,
               requiresSuperAdmin: false,
@@ -242,7 +242,7 @@ const routes = [
           },
           {
             path: 'scanner/edit/:scanner_name',
-            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/scanner/create.vue'),
+            component: () => import(/* webpackChunkName: "Project Scanner" */ '@/components/projects/scanner/create.vue'),
             meta: {
               requiresAuth: true,
               requiresSuperAdmin: false,
@@ -251,11 +251,20 @@ const routes = [
           },
           {
             path: 'scanner/detail/:scanner_name',
-            component: () => import(/* webpackChunkName: "Project Delivery" */ '@/components/projects/scanner/history.vue'),
+            component: () => import(/* webpackChunkName: "Project Scanner" */ '@/components/projects/scanner/history.vue'),
             meta: {
               requiresAuth: true,
               requiresSuperAdmin: false,
               title: '扫描列表'
+            }
+          },
+          {
+            path: 'scanner/detail/:scanner_name/task/:task_id',
+            component: () => import(/* webpackChunkName: "Project Scanner" */ '@/components/projects/scanner/taskDetail.vue'),
+            meta: {
+              requiresAuth: true,
+              requiresSuperAdmin: false,
+              title: '扫描任务详情'
             }
           },
           {

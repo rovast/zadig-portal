@@ -4,7 +4,7 @@
       <el-table-column prop="scan_id" label="ID" min-width="80" sortable>
         <template slot-scope="scope">
           <router-link
-            :to="`/v1/projects/detail/${projectName}/scanner/detail/${scope.row.scan_id}?status=${scope.row.status}&id=${scannerID}`"
+            :to="`/v1/projects/detail/${projectName}/scanner/detail/${scannerName}/task/${scope.row.scan_id}?status=${scope.row.status}&id=${scannerID}`"
             class="task-id"
           >{{ '#' +scope.row.scan_id }}</router-link>
         </template>
@@ -80,9 +80,12 @@ export default {
       required: true,
       type: Array
     },
+    scannerName: {
+      required: true,
+      type: String
+    },
     scannerID: {
-      required: false,
-      default: '',
+      required: true,
       type: String
     },
     total: {
@@ -91,7 +94,7 @@ export default {
       type: Number
     },
     projectName: {
-      required: false,
+      required: true,
       default: '',
       type: String
     },

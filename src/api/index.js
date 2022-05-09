@@ -763,6 +763,26 @@ export function runCodeScannerTaskAPI (id, payload) {
   return http.post(`/api/aslan/testing/scanning/${id}/task`, payload)
 }
 
+export function scannerTaskDetailAPI (scannerId, taskId) {
+  return http.get(`/api/aslan/testing/scanning/${scannerId}/task/${taskId}`)
+}
+
+export function scannerTaskDetailSSEAPI (scannerId, taskId) {
+  return makeEventSource(`/api/aslan/testing/scanning/${scannerId}/task/${taskId}`)
+}
+
+export function restartScannerTaskAPI (scannerId, taskId, payload) {
+  return http.post(`/api/aslan/testing/scanning/${scannerId}/task/${taskId}`, payload)
+}
+
+export function cancelScannerTaskAPI (scannerId, taskId, payload) {
+  return http.post(`/api/aslan/testing/scanning/${scannerId}/task/${taskId}`, payload)
+}
+
+export function getScannerTaskLogAPI (scannerId, taskId) {
+  return http.get(`/api/aslan/logs/log/scanning/${scannerId}/task/${taskId}`)
+}
+
 // User Management
 export function usersAPI (payload, projectName = '') {
   return http.post(`/api/v1/users/search?projectName=${projectName}`, payload)

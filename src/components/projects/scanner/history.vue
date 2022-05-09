@@ -26,6 +26,7 @@
         :total="total"
         :pageSize="pageSize"
         :projectName="projectName"
+        :scannerName="scannerName"
         :scannerID="scannerID"
         :currentPage="pageStart"
         @currentChange="changeTaskPage"
@@ -69,11 +70,15 @@ export default {
   },
   methods: {
     async autoRefreshHistoryTask () {
+      const projectName = this.projectName
+      const scannerID = this.scannerID
+      const pageSize = this.pageSize
+      const pageStart = this.pageStart
       const res = await getCodeScannerHistoryAPI(
-        this.scannerID,
-        this.projectName,
-        this.pageStart,
-        this.pageSize
+        scannerID,
+        projectName,
+        pageStart,
+        pageSize
       ).catch(err => console.log(err))
       if (res) {
         this.scannerInfo = res.scan_info
@@ -113,7 +118,8 @@ export default {
         { title: '项目', url: '/v1/projects' },
         {
           title: projectName,
-          url: `/v1/projects/detail/${projectName}`
+          isProjectName: true,
+          url: `/v1/projects/detail/${projectName}/detail`
         },
         {
           title: '代码扫描',

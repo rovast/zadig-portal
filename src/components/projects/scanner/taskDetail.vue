@@ -88,7 +88,7 @@ import {
 } from '@api'
 import { wordTranslate, colorTranslate } from '@utils/wordTranslate.js'
 import bus from '@utils/eventBus'
-import TaskDetailScanner from './common/TaskDetailScanner.vue'
+import TaskDetailScanner from './common/taskDetailScanner.vue'
 export default {
   data () {
     return {

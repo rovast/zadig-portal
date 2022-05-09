@@ -262,7 +262,10 @@ export function envRevisionsAPI (projectName, envName) {
 }
 
 export function productServicesAPI (projectName, envName, envSource, searchName = '', perPage = 20, page = 1) {
-  if (envSource === 'helm' || envSource === 'external') {
+  if (envSource === 'helm') {
+    // searchName: serviceName=xxx|yyy,name=zzz
+    return http.get(`/api/aslan/environment/environments/${envName}/workloads?projectName=${projectName}&filter=${searchName}&perPage=${perPage}&page=${page}`)
+  } else if (envSource === 'external') {
     return http.get(`/api/aslan/environment/environments/${envName}/workloads?projectName=${projectName}&filter=name=${searchName}&perPage=${perPage}&page=${page}`)
   } else {
     return http.get(`/api/aslan/environment/environments/${envName}/groups?projectName=${projectName}&serviceName=${searchName}&perPage=${perPage}&page=${page}`)
@@ -1664,7 +1667,15 @@ export function updateHelmEnvAPI (projectName, payload) {
 }
 
 export function updateHelmEnvVarAPI (projectName, envName, payload) {
-  return http.put(`/api/aslan/environment/environments/${envName}/renderset?projectName=${projectName}`, payload)
+  return http.put(`/api/aslan/environment/environments/${envName}/helm/default-values?projectName=${projectName}`, payload)
+}
+
+export function updateHelmServiceVarAPI (projectName, envName, payload) {
+  return http.put(`/api/aslan/environment/environments/${envName}/helm/charts?projectName=${projectName}`, payload)
+}
+
+export function getRunningValuesYamlAPI (projectName, envName, serviceName) {
+  return http.get(`/api/aslan/environment/environments/${envName}/helm/values?projectName=${projectName}&serviceName=${serviceName}`)
 }
 
 export function updateMatchRulesAPI (projectName, payload) {

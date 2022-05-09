@@ -10,6 +10,7 @@
               <el-input
                 style="width: 70%;"
                 size="mini"
+                placeholder="正则表达式"
                 @change="(currentValue)=>{checkRegular(currentValue,scope.row)}"
                 v-model="scope.row.filter_regexp"
               ></el-input>

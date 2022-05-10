@@ -173,6 +173,8 @@ export default {
 </script>
 <style lang="less" scoped>
 .build-configs {
+  margin-top: -50px;
+
   .repo {
     margin: 20px 0;
   }

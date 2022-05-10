@@ -11,7 +11,7 @@
                 style="width: 70%;"
                 size="mini"
                 placeholder="正则表达式"
-                @input="(currentValue)=>{checkRegular(currentValue,scope.row)}"
+                @input="(currentValue)=>{inputCheck(currentValue,scope.row)}"
                 v-model="scope.row.filter_regexp"
               ></el-input>
               <div v-if="scope.row.filter_regexp">
@@ -48,6 +48,8 @@ import {
   getBranchInfoByIdAPI,
   getTagsInfoByIdAPI
 } from '@api'
+import { debounce } from 'lodash'
+
 export default {
   data () {
     return {
@@ -154,6 +156,9 @@ export default {
           this.$set(row, 'matchedBranches', res)
         })
       }
+    },
+    inputCheck: function (regular, row) {
+      debounce(() => this.checkRegular(regular, row), 500)()
     },
     checkRegular: function (regular, row) {
       const { codehost_id, repo_owner, repo_name, branches, tags } = row

@@ -287,7 +287,7 @@ export default {
 <style lang="less" scoped>
 .chart-list-container {
   position: relative;
-  margin-right: 18px;
+  margin-right: 20px;
   background: white;
   border-top-right-radius: 0;
 

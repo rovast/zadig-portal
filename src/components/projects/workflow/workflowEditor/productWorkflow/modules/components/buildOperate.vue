@@ -14,11 +14,11 @@
                 @change="(currentValue)=>{checkRegular(currentValue,scope.row)}"
                 v-model="scope.row.filter_regexp"
               ></el-input>
-              <div>
+              <div v-if="scope.row.filter_regexp">
                 <span>匹配到分支：</span>
                 <span v-if="scope.row.matchedBranches" class="match">{{scope.row.matchedBranches.toString()}}</span>
               </div>
-              <div>
+              <div v-if="scope.row.filter_regexp">
                 <span>匹配到 Tag：</span>
                 <span v-if="scope.row.matchedTags" class="match">{{scope.row.matchedTags.toString()}}</span>
               </div>
@@ -120,6 +120,7 @@ export default {
       })
     },
     setRow (regular, row) {
+      if (!regular) return
       const { branches, tags } = row
       if (tags && tags.length > 0) {
         const payload = {
@@ -127,10 +128,7 @@ export default {
           regular
         }
         checkRegularAPI(payload).then(res => {
-          if (res.length > 0) {
-            this.$set(row, 'matchedTags', res)
-            this.$set(row, 'matchedBranches', [])
-          }
+          this.$set(row, 'matchedTags', res)
         })
       }
       if (branches && branches.length > 0) {
@@ -139,10 +137,7 @@ export default {
           regular
         }
         checkRegularAPI(payload).then(res => {
-          if (res.length > 0) {
-            this.$set(row, 'matchedBranches', res)
-            this.$set(row, 'matchedTags', [])
-          }
+          this.$set(row, 'matchedBranches', res)
         })
       }
     },

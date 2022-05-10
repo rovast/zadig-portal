@@ -12,13 +12,17 @@
           :showFilterRes="false"
         ></FilterStatus>
       </div>
-      <div v-for="(chart, index) in filteredChartNames" :key="index" class="chart-content">
+      <div v-for="(chart, index) in filteredChartNames" :key="index" class="chart-content" :class="[chart.selected ? 'selected' : '']">
         <span class="chart-left">
           <i v-if="chart.status === 'pending'" class="el-icon-refresh common-icon transition"></i>
         </span>
-        <span class="chart-middle" :style="{ color: chart.status === 'failed' ? '#f56c6c' : 'inherit'}">
+        <span
+          class="chart-middle"
+          @click="refreshChartSelected(chart.serviceName);refreshServices([chart.serviceName])"
+          :style="{ color: chart.status === 'failed' ? '#f56c6c' : 'inherit'}"
+        >
           <el-tooltip effect="dark" placement="top">
-            <span @click="refreshServices([chart.serviceName])">{{ chart.serviceName }}</span>
+            <span>{{ chart.serviceName }}</span>
             <div slot="content">
               <div>{{ chart.serviceName }}</div>
               <div v-if="chart.status === 'failed'" style="margin-top: 5px;">ERROR: {{ chart.error || 'NO' }}</div>
@@ -31,7 +35,7 @@
           </el-tooltip>
           <el-tooltip effect="dark" content="更新服务" placement="top">
             <i
-              class="el-icon-upload common-icon pointer"
+              class="iconfont icongengxin common-icon pointer"
               :class="[chart.status === 'pending' ? 'disabled' : '']"
               @click="updateChartService(chart, 'update', chart.status === 'pending')"
             ></i>
@@ -74,7 +78,7 @@
       :before-close="dialogBeforeClose"
     >
       <div>
-        <Codemirror class="codemirror" ref="codemirror" :value="currentChart.valuesYaml" :cmOption="cmOption"></Codemirror>
+        <Codemirror class="value-codemirror" ref="codemirror" :value="currentChart.valuesYaml" :cmOption="cmOption"></Codemirror>
       </div>
       <div slot="footer">
         <el-button size="small" @click="dialogBeforeClose()">取 消</el-button>
@@ -167,8 +171,13 @@ export default {
 
       this.chartNames = []
       getHelmReleaseListAPI(this.projectName, envName).then(res => {
-        this.chartNames = res
-        this.filteredChartNames = res
+        this.chartNames = res.map(re => {
+          return {
+            ...re,
+            selected: false
+          }
+        })
+        this.filteredChartNames = this.chartNames
       })
     },
 
@@ -182,11 +191,21 @@ export default {
         })
         : chartNames
 
+      this.refreshChartSelected()
       this.refreshServices(
         this.filteredChartNames.length !== this.chartNames.length
           ? this.filteredChartNames.map(chart => chart.serviceName)
           : []
       )
+    },
+    refreshChartSelected (serviceName = '') {
+      this.filteredChartNames.forEach(chart => {
+        if (chart.serviceName === serviceName) {
+          chart.selected = true
+        } else {
+          chart.selected = false
+        }
+      })
     },
     refreshServices (list = []) {
       this.searchServicesByChart(list.join('|'))
@@ -268,7 +287,7 @@ export default {
 <style lang="less" scoped>
 .chart-list-container {
   position: relative;
-  margin-right: 12px;
+  margin-right: 18px;
   background: white;
   border-top-right-radius: 0;
 
@@ -290,7 +309,18 @@ export default {
     .chart-content {
       display: flex;
       align-items: center;
-      line-height: 30px;
+      line-height: 26px;
+      border: 0 solid white;
+      border-top-width: 3px;
+      border-bottom-width: 3px;
+
+      &.selected {
+        background: #06f3;
+      }
+
+      &:hover {
+        background: #f5f7fa;
+      }
 
       .chart-left {
         flex: 0 0 18px;
@@ -320,10 +350,12 @@ export default {
 
       .chart-right {
         flex: 0 0 70px;
+        color: @themeColor;
         text-align: right;
 
         .common-icon {
           margin-right: 4px;
+          font-size: 16px;
 
           &.pointer {
             cursor: pointer;
@@ -331,7 +363,7 @@ export default {
 
           &.disabled {
             cursor: not-allowed;
-            opacity: 0.75;
+            opacity: 0.5;
           }
         }
       }
@@ -340,15 +372,15 @@ export default {
 
   .arrow-icon {
     position: absolute;
-    top: -1px;
-    right: -11px;
-    width: 12px;
+    top: 0;
+    right: -15px;
+    width: 15px;
     height: 40px;
-    color: #fff;
+    color: @themeColor;
     line-height: 40px;
     text-align: center;
     text-decoration: none;
-    background-color: @borderGray;
+    background-color: white;
     border-radius: 0 3px 3px 0;
     cursor: pointer;
   }
@@ -371,7 +403,7 @@ export default {
         }
       }
 
-      .codemirror {
+      .value-codemirror {
         height: 300px;
         padding: 5px;
         border: 1px solid #dcdfe6;

@@ -21,7 +21,7 @@
           <el-icon name="time"></el-icon>
           <span v-if="scope.row.status!=='running'" style="margin-left: 5px;">{{ $utils.timeFormatEn(scope.row.run_time) }}</span>
           <span v-else style="margin-left: 5px;">
-            {{ taskDuration(scope.row.scan_id,scope.row.start_time) +
+            {{ taskDuration(scope.row.scan_id,scope.row.created_at) +
             $utils.timeFormatEn(durationSet[scope.row.scan_id]) }}
             <el-tooltip v-if="durationSet[scope.row.task_id]<0" content="本地系统时间和服务端可能存在不一致，请同步。" placement="top">
               <i class="el-icon-warning" style="color: red;"></i>
@@ -62,10 +62,10 @@ export default {
     wordTranslation (word, category, subitem) {
       return wordTranslate(word, category, subitem)
     },
-    taskDuration (task_id, started) {
+    taskDuration (taskId, started) {
       const refresh = () => {
         const duration = Math.floor(Date.now() / 1000) - started
-        this.$set(this.durationSet, task_id, duration)
+        this.$set(this.durationSet, taskId, duration)
       }
       setInterval(refresh, 1000)
       return ''

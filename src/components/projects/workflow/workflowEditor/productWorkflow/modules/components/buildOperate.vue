@@ -11,7 +11,7 @@
                 style="width: 70%;"
                 size="mini"
                 placeholder="正则表达式"
-                @change="(currentValue)=>{checkRegular(currentValue,scope.row)}"
+                @input="(currentValue)=>{checkRegular(currentValue,scope.row)}"
                 v-model="scope.row.filter_regexp"
               ></el-input>
               <div v-if="scope.row.filter_regexp">
@@ -42,7 +42,6 @@
 </template>
 
 <script type="text/javascript">
-import { debounce } from 'lodash'
 import {
   checkRegularAPI,
   getBuildConfigDetailAPI,
@@ -64,6 +63,10 @@ export default {
     value: {
       type: Object,
       required: true
+    },
+    buildName: {
+      type: String,
+      default: ''
     }
   },
   watch: {
@@ -81,7 +84,18 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    buildName (newVal, oldVal) {
+      if (newVal) {
+        this.getRepoList(newVal, this.$route.query.projectName)
+        this.configs.branch_filter = []
+      }
     }
+  },
+  mounted () {
+    this.configs.branch_filter.forEach(item => {
+      this.checkRegular(item.filter_regexp, item)
+    })
   },
   methods: {
     filter () {
@@ -98,7 +112,7 @@ export default {
         return
       }
       this.getRepoList(
-        this.configs.target.build_name,
+        this.buildName,
         this.$route.query.projectName
       )
     },
@@ -141,7 +155,7 @@ export default {
         })
       }
     },
-    checkRegular: debounce(function (regular, row) {
+    checkRegular: function (regular, row) {
       const { codehost_id, repo_owner, repo_name, branches, tags } = row
       if ((branches && branches.length) > 0 || (tags && tags.length) > 0) {
         this.setRow(regular, row)
@@ -167,7 +181,7 @@ export default {
           })
         }
       }
-    }, 500)
+    }
   }
 }
 </script>

@@ -93,7 +93,7 @@
                 ></el-option>
               </el-select>
               <el-button type="text" @click="showBuildOpeDialog(config,_idx)">设置</el-button>
-              <buildOperate ref="buildOPerateRef"   v-model="serviceConfigs[_idx]"/>
+              <buildOperate ref="buildOPerateRef"  :buildName="config.target.build_name"  v-model="serviceConfigs[_idx]"/>
             </div>
           </el-col>
           <el-col :span="7">

@@ -72,7 +72,7 @@
     </el-dialog>
 
     <el-dialog
-      :title="`values 文件 - ${currentChart.serviceName}`"
+      :title="`Values 文件 - ${currentChart.serviceName}`"
       :visible.sync="valuesDialogVisible"
       width="60"
       :before-close="dialogBeforeClose"
@@ -195,7 +195,7 @@ export default {
       this.refreshServices(
         this.filteredChartNames.length !== this.chartNames.length
           ? this.filteredChartNames.map(chart => chart.serviceName)
-          : []
+          : ['*']
       )
     },
     refreshChartSelected (serviceName = '') {

@@ -514,7 +514,7 @@ export default {
       imageRegistry: [],
       shareEnvStatus: null,
       shareEnvStatusId: null,
-      filterChartName: ''
+      filterChartName: '*'
     }
   },
   computed: {
@@ -832,7 +832,7 @@ export default {
         if (this.page === 1 && flag !== 'search') {
           await this.getProductEnvInfo(projectName, envName)
           if (this.envSource === 'helm') {
-            this.filterChartName = ''
+            this.filterChartName = '*'
             this.$refs.chartListRef.getChartNames(envName)
           }
         }

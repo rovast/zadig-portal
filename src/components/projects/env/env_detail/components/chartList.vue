@@ -2,13 +2,14 @@
   <div class="chart-list-container" :style="{width: leftShow ? '250px' : '0'}">
     <div class="chart-list">
       <div class="block-title">
-        <span>刷选</span>
+        <span>Chart</span>
         <FilterStatus
           ref="filterStatusRef"
           :filteredItems="filteredItems"
           :defaultFilterList="defaultFilterList"
           :getFilterList="getFilterList"
           @updateFilter="updateFilter"
+          :showFilterRes="false"
         ></FilterStatus>
       </div>
       <div v-for="(chart, index) in filteredChartNames" :key="index" class="chart-content">
@@ -29,7 +30,11 @@
             <i class="el-icon-question common-icon"></i>
           </el-tooltip>
           <el-tooltip effect="dark" content="更新服务" placement="top">
-            <i class="el-icon-upload common-icon pointer" @click="updateChartService(chart, 'update')"></i>
+            <i
+              class="el-icon-upload common-icon pointer"
+              :class="[chart.status === 'pending' ? 'disabled' : '']"
+              @click="updateChartService(chart, 'update', chart.status === 'pending')"
+            ></i>
           </el-tooltip>
           <i class="el-icon-document common-icon pointer" @click="updateChartService(chart, 'value')"></i>
         </span>
@@ -101,7 +106,7 @@ export default {
       lineNumbers: false
     }
     return {
-      leftShow: true,
+      leftShow: false,
       filteredItems: [
         {
           value: 'serviceName',
@@ -186,7 +191,10 @@ export default {
     refreshServices (list = []) {
       this.searchServicesByChart(list.join('|'))
     },
-    updateChartService (chart, action) {
+    updateChartService (chart, action, disabled) {
+      if (disabled) {
+        return
+      }
       if (action === 'update') {
         this.updateDialogVisible = true
         this.currentChart = {
@@ -320,6 +328,11 @@ export default {
           &.pointer {
             cursor: pointer;
           }
+
+          &.disabled {
+            cursor: not-allowed;
+            opacity: 0.75;
+          }
         }
       }
     }
@@ -335,7 +348,7 @@ export default {
     line-height: 40px;
     text-align: center;
     text-decoration: none;
-    background-color: @fontGray;
+    background-color: @borderGray;
     border-radius: 0 3px 3px 0;
     cursor: pointer;
   }

@@ -42,7 +42,7 @@
       <el-button type="primary" size="mini" plain style=" margin-left: 10px; padding: 3px;" @click="clearFilter">
         <i class="el-icon-close" style="font-size: 16px;"></i>
       </el-button>
-      <span class="filter-list">
+      <span class="filter-list" v-if="showFilterRes">
         {{ filteredItems.find(item => item.value === filterInfo.type).text || '过滤' }}:
         {{ filterInfo.searchList.map(li =>li.text || li).join(',') }}
       </span>
@@ -60,7 +60,11 @@ export default {
       default: () => [] // {value, text}
     },
     defaultFilterList: Object,
-    getFilterList: Function
+    getFilterList: Function,
+    showFilterRes: {
+      default: true,
+      type: Boolean
+    }
   },
   data () {
     return {

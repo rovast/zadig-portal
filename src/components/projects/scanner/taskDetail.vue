@@ -156,9 +156,9 @@ export default {
       })
     },
     fetchRunningTaskDetail () {
-      const scannerName = this.scannerName
+      const scannerId = this.scannerId
       const taskID = this.taskID
-      return scannerTaskDetailSSEAPI(scannerName, taskID)
+      return scannerTaskDetailSSEAPI(scannerId, taskID)
         .then(res => {
           this.adaptTaskDetail(res.data)
           this.taskDetail = res.data
@@ -166,9 +166,9 @@ export default {
         .closeWhenDestroy(this)
     },
     fetchHistoryTaskDetail () {
-      const scannerName = this.scannerName
+      const scannerId = this.scannerId
       const taskID = this.taskID
-      scannerTaskDetailAPI(scannerName, taskID).then(res => {
+      scannerTaskDetailAPI(scannerId, taskID).then(res => {
         this.adaptTaskDetail(res)
         this.taskDetail = res
       })

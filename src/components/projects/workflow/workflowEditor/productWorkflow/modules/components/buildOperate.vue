@@ -3,7 +3,7 @@
     <template>
       <div class="build-configs">
         <h4>代码信息</h4>
-        <el-table :data="configs.branch_filter">
+        <el-table :data="value.branch_filter">
           <el-table-column prop="repo_name" label="代码库" width="200px"></el-table-column>
           <el-table-column prop="filter_regexp" label="Branch/Tag 过滤规则">
             <template slot-scope="scope">
@@ -58,7 +58,7 @@ export default {
       },
       originRepoList: [],
       isShowBuildOperateDialog: false,
-      configs: { branch_filter: [] }
+      firstload: null
     }
   },
   props: {
@@ -72,30 +72,30 @@ export default {
     }
   },
   watch: {
-    value: {
-      handler (val) {
-        this.configs = { ...val }
-        this.$emit('input', Object.assign({}, this.configs))
-      },
-      deep: true,
-      immediate: true
-    },
-    'configs.branch_filter': {
-      handler (val) {
+    'value.branch_filter': {
+      handler () {
         this.filter()
       },
       deep: true,
       immediate: true
     },
-    buildName (newVal, oldVal) {
-      if (newVal) {
-        this.getRepoList(newVal, this.$route.query.projectName)
-        this.configs.branch_filter = []
-      }
+    'value.target.build_name': {
+      handler (val) {
+        // store current branch-filter
+        if (!this.firstload) {
+          this.firstload = {}
+          this.firstload[val] = this.value.branch_filter
+          return
+        }
+        this.$set(this.value, 'branch_filter', this.firstload && this.firstload[val] ? this.firstload[val] : [])
+        this.getRepoList(val, this.$route.query.projectName)
+        this.$emit('input', this.value)
+      },
+      immediate: true
     }
   },
   mounted () {
-    this.configs.branch_filter.forEach(item => {
+    this.value.branch_filter.forEach(item => {
       this.checkRegular(item.filter_regexp, item)
     })
   },
@@ -103,29 +103,24 @@ export default {
     filter () {
       this.originRepoList = this.originRepoList.filter(
         x =>
-          !this.configs.branch_filter.some(
-            item => x.repo_name === item.repo_name
-          )
+          !this.value.branch_filter.some(item => x.repo_name === item.repo_name)
       )
     },
     showCurBuildOpeDialog () {
       this.isShowBuildOperateDialog = true
-      if (!this.configs.target.build_name) {
+      if (!this.value.target.build_name) {
         return
       }
-      this.getRepoList(
-        this.buildName,
-        this.$route.query.projectName
-      )
+      this.getRepoList(this.buildName, this.$route.query.projectName)
     },
     addBuild () {
       if (Object.keys(this.form.repo).length > 0) {
-        this.configs.branch_filter.push(this.form.repo)
+        this.value.branch_filter.push(this.form.repo)
         this.form.repo = {}
       }
     },
     delBuild (index, row) {
-      this.configs.branch_filter.splice(index, 1)
+      this.value.branch_filter.splice(index, 1)
       this.originRepoList.push(row)
     },
     getRepoList (buildName, projectName) {

@@ -17,7 +17,7 @@
           <el-input v-model="scannerConfig.description" placeholder="请输入描述信息" autofocus size="small" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="扫描工具">
-          <el-select v-model="scannerConfig.scanner_type" placeholder="选择扫描工具" size="small">
+          <el-select v-model="scannerConfig.scanner_type" placeholder="选择扫描工具" size="small" @change="getImageList">
             <el-option label="SonarQube" value="sonarQube"></el-option>
             <el-option label="其他" value="other"></el-option>
           </el-select>
@@ -272,6 +272,15 @@ export default {
         this.currentEnv.image_from = imageSys.image_from
         this.currentEnv.build_os = imageSys.value
       }
+    },
+    getImageList (scannerType, initConfig = true) {
+      const imageFrom = scannerType === 'sonarQube' ? 'sonar' : ''
+      getImgListAPI('', imageFrom).then(res => {
+        this.systems = res
+        if (initConfig && res.length) {
+          this.scannerConfig.image_id = res[0].id
+        }
+      })
     }
   },
   created () {
@@ -301,12 +310,8 @@ export default {
     getCodeSourceMaskedAPI(key).then(response => {
       this.allCodeHosts = response
     })
-    getImgListAPI('', 'sonar').then(res => {
-      this.systems = res
-      if (!this.isEdit && res.length) {
-        this.scannerConfig.image_id = res[0].id
-      }
-    })
+
+    this.getImageList(this.scannerConfig.scanner_type, !this.isEdit)
 
     querySonarAPI(key).then(res => {
       this.sonarList = res

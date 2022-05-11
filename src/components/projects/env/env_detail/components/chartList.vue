@@ -25,7 +25,7 @@
             <span>{{ chart.serviceName }}</span>
             <div slot="content">
               <div>{{ chart.serviceName }}</div>
-              <div v-if="chart.status === 'failed'" style="margin-top: 5px;">ERROR: {{ chart.error || 'NO' }}</div>
+              <div v-if="chart.status === 'failed'" style="margin-top: 5px;">ERROR: {{ chart.error || 'N/A' }}</div>
             </div>
           </el-tooltip>
         </span>
@@ -125,8 +125,8 @@ export default {
         status: [
           { text: '部署成功', value: 'deployed' },
           { text: '部署失败', value: 'failed' },
-          { text: '安装/升级中', value: 'pending' },
-          { text: '尚未安装', value: 'notDeployed' }
+          { text: '部署中', value: 'pending' },
+          { text: '尚未部署', value: 'notDeployed' }
         ]
       },
       chartNames: [],

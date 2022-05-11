@@ -25,7 +25,7 @@
             <span>{{ chart.serviceName }}</span>
             <div slot="content">
               <div>{{ chart.serviceName }}</div>
-              <div v-if="chart.status === 'failed'" style="margin-top: 5px;">ERROR: {{ chart.error || 'NO' }}</div>
+              <div v-if="chart.status === 'failed'" style="margin-top: 5px;">ERROR: {{ chart.error || 'N/A' }}</div>
             </div>
           </el-tooltip>
         </span>

@@ -263,7 +263,6 @@
           />
           <ServiceList
             class="right"
-            :class="[envSource !== 'helm' ? 'hidden-border' : '']"
             :containerServiceList="containerServiceList"
             :setRoute="setRoute"
             :serviceStatus="serviceStatus"

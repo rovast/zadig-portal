@@ -131,7 +131,7 @@ export default {
           }
           this.hasNewTestMsg = false
         }, 500)
-        const url = `/api/aslan/logs/sse/scanning/${this.scannerId}/task/${this.taskId}`
+        const url = `/api/aslan/logs/sse/scanning/${this.scannerId}/task/${this.taskID}`
         this.$sse(url, { format: 'plain' })
           .then(sse => {
             // Store SSE object at a higher scope

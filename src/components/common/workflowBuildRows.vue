@@ -24,6 +24,7 @@
 
               <el-col :span="7">
                 <el-select
+                  ref="inputSelect"
                   v-model="build.branchOrTag"
                   remote
                   :remote-method="(query)=>{searchRepoInfo(build,query)}"
@@ -282,9 +283,11 @@ export default {
     changeBranchOrTag (build) {
       if (build.branchOrTag) {
         build[build.prNumberPropName] = null
+        this.$emit('isDisabled', false)
       }
     },
     async searchRepoInfo (build, query) {
+      this.$emit('isDisabled', true)
       let reposQuery = []
       if (build.source === 'codehub') {
         reposQuery = [
@@ -347,7 +350,20 @@ export default {
       } else {
         return {}
       }
+    },
+    checkSelect () {
+      if (this.$refs.inputSelect) {
+        const res = this.$refs.inputSelect.find(item => {
+          return !item.query
+        })
+        this.$emit('isDisabled', !!res)
+      }
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.checkSelect()
+    })
   }
 }
 </script>

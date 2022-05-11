@@ -101,7 +101,7 @@
       </el-form-item>
       <!-- Build -->
       <div v-if="pickedTargets.length > 0">
-        <WorkflowBuildRows :pickedTargets="pickedTargets"></WorkflowBuildRows>
+        <WorkflowBuildRows :pickedTargets="pickedTargets" @isDisabled="setDisabled"></WorkflowBuildRows>
       </div>
     </div>
 
@@ -160,6 +160,7 @@
       <el-button @click="startTask"
                  :loading="startTaskLoading"
                  type="primary"
+                 :disabled="isDisabledBtn"
                  size="small">
         {{ startTaskLoading?'启动中':'启动任务' }}
       </el-button>
@@ -198,7 +199,8 @@ export default {
       startTaskLoading: false,
       quickSelectEnabled: false,
       isHelm: false,
-      isPm: false
+      isPm: false,
+      isDisabledBtn: false
     }
   },
   computed: {
@@ -649,6 +651,9 @@ export default {
       getRegistryWhenBuildAPI(projectName).then(res => {
         this.imageRegistry = res
       })
+    },
+    setDisabled (val) {
+      this.isDisabledBtn = val
     }
   },
   created () {

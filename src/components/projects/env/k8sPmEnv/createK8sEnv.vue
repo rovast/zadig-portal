@@ -109,7 +109,9 @@
         v-if="variables.length && !$utils.isEmpty(containerMap) && projectConfig.source==='system'"
         class="common-parcel-block box-card-service"
       >
-        <div class="primary-title">变量列表</div>
+        <div class="primary-title">变量列表
+         <VariablePreviewEditor :services="previewServices" :projectName="projectConfig.product_name" :variables="variables" />
+        </div>
         <VarList :variables="variables" :rollbackMode="rollbackMode"></VarList>
       </div>
       <div v-if="projectConfig.source==='system'" class="common-parcel-block">
@@ -300,6 +302,9 @@ export default {
     },
     serviceNames () {
       return Object.keys(this.containerMap)
+    },
+    previewServices () {
+      return this.serviceNames.map(item => { return { service_name: item } })
     },
     variables () {
       const services = this.projectConfig.selectedService

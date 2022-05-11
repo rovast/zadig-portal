@@ -768,7 +768,7 @@ export function scannerTaskDetailAPI (scannerId, taskId) {
 }
 
 export function scannerTaskDetailSSEAPI (scannerId, taskId) {
-  return makeEventSource(`/api/aslan/testing/scanning/${scannerId}/task/${taskId}`)
+  return makeEventSource(`/api/aslan/testing/scanning/${scannerId}/task/${taskId}/sse`)
 }
 
 export function restartScannerTaskAPI (scannerId, taskId, payload) {

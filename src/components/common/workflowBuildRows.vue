@@ -24,7 +24,6 @@
 
               <el-col :span="7">
                 <el-select
-                  ref="inputSelect"
                   v-model="build.branchOrTag"
                   remote
                   :remote-method="(query)=>{searchRepoInfo(build,query)}"

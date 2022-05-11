@@ -32,7 +32,7 @@
         @currentChange="changeTaskPage"
       />
     </el-card>
-    <RunScannerTask :dialogVisible.sync="taskDialogVisible" :scannerInfo="{id:scannerID,name:scannerName}" />
+    <RunScannerTask :dialogVisible.sync="taskDialogVisible" :scannerInfo="{id:scannerID,name:scannerName}" :projectName="projectName" />
   </div>
 </template>
 

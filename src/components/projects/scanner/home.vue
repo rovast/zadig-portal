@@ -23,7 +23,7 @@
       <img src="@assets/icons/illustration/test.svg" alt />
       <p>暂无可展示的代码扫描，请手动新建代码扫描</p>
     </div>
-    <RunScannerTask :dialogVisible.sync="runScanner" :scannerInfo="currentScannerInfo" />
+    <RunScannerTask :dialogVisible.sync="runScanner" :scannerInfo="currentScannerInfo" :projectName="projectName" />
   </div>
 </template>
 

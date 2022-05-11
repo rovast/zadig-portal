@@ -113,6 +113,10 @@ export default {
     scannerInfo: {
       type: Object,
       require: true
+    },
+    projectName: {
+      type: String,
+      required: true
     }
   },
   methods: {
@@ -142,13 +146,24 @@ export default {
         }
       })
       this.startTaskLoading = true
-      const res = runCodeScannerTaskAPI(id, payload).catch(error => {
+      const res = await runCodeScannerTaskAPI(id, payload).catch(error => {
         this.startTaskLoading = false
         console.log(error)
       })
       if (res) {
+        const projectName = this.projectName
+        const scannerName = this.scannerInfo.name
+        const scannerId = this.scannerInfo.id
+        const taskId = res.task_id
         this.startTaskLoading = false
         this.$emit('update:dialogVisible', false)
+        this.$message({
+          type: 'success',
+          message: '任务创建成功'
+        })
+        this.$router.push(
+          `/v1/projects/detail/${projectName}/scanner/detail/${scannerName}/task/${taskId}?status=running&id=${scannerId}`
+        )
       }
     },
     async getScannerDetail () {

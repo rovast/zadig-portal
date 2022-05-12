@@ -960,6 +960,13 @@ const routes = [
     }
   },
   {
+    path: '/login/pure',
+    component: () => import('@/components/entry/pureLogin.vue'),
+    meta: {
+      title: '登录'
+    }
+  },
+  {
     path: '*',
     component: () => import('@/components/entry/404.vue'),
     meta: {

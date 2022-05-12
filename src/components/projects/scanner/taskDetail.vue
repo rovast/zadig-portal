@@ -73,7 +73,7 @@
           <el-table-column label="链接">
             <template slot-scope="scope">
               <span v-if="scope.row.result_link">
-                <a :href="scope.row.result_link" target="_blank" rel="noopener noreferrer">链接</a>
+                <a :href="scope.row.result_link" target="_blank" rel="noopener noreferrer">查看</a>
               </span>
               <span v-else>N/A</span>
             </template>

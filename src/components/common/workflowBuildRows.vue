@@ -341,12 +341,12 @@ export default {
       }
       if (query) {
         branches.options.unshift({
-          id: 'branch-' + query,
+          id: 'addBranch-' + query,
           name: query,
           type: 'branch'
         })
         tags.options.unshift({
-          id: 'tag-' + query,
+          id: 'addTag-' + query,
           name: query,
           type: 'tag'
         })

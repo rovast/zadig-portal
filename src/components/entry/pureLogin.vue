@@ -1,42 +1,46 @@
 <template>
   <div class="pure-login">
     <div class="container-fluid">
-      <div class="col-lg-7 col-md-12 col-pad-0 form-section">
-        <div class="login-inner-form">
-          <header>
-            <a href="#">
-              <img src="@assets/icons/logo/default-logo.png" alt="logo" />
-            </a>
-          </header>
-          <section>
-            <el-form :model="loginForm" status-icon :rules="rules" ref="loginForm" hide-required-asterisk>
-              <el-form-item label="用户名" prop="account">
-                <el-input v-model="loginForm.account" placeholder="请输入用户名" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="密码" prop="password">
-                <el-input
-                  type="password"
-                  @keyup.enter.native="login"
-                  v-model="loginForm.password"
-                  autocomplete="off"
-                  placeholder="请输入密码"
-                  show-password
-                ></el-input>
-              </el-form-item>
-            </el-form>
-            <el-button type="submit" @click="login" v-loading="loading" class="btn-md">登录</el-button>
-          </section>
+      <div class="row">
+        <div class="col-lg-7 col-md-12 col-pad-0 form-section">
+          <div class="login-inner-form">
+            <div class="details">
+              <header>
+                <a href="#">
+                  <img src="@assets/icons/logo/default-logo.png" alt="logo" />
+                </a>
+              </header>
+              <section>
+                <el-form :model="loginForm" status-icon :rules="rules" ref="loginForm" hide-required-asterisk>
+                  <el-form-item label="用户名" prop="account">
+                    <el-input v-model="loginForm.account" placeholder="请输入用户名" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="密码" prop="password">
+                    <el-input
+                      type="password"
+                      @keyup.enter.native="login"
+                      v-model="loginForm.password"
+                      autocomplete="off"
+                      placeholder="请输入密码"
+                      show-password
+                    ></el-input>
+                  </el-form-item>
+                </el-form>
+                <el-button type="submit" @click="login" v-loading="loading" class="btn-md btn-theme btn-block login-btn">登录</el-button>
+              </section>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="col-lg-5 col-md-12 col-pad-0 bg-img none-992">
-        <div class="information">
-          <h3>高效研发从现在开始</h3>
-          <p>面向开发者设计的高可用 CI/CD：Zadig 强大的云原生多环境能力，轻松实现本地联调、微服务并行构建、集成测试和持续部署。</p>
+        <div class="col-lg-5 col-md-12 col-pad-0 bg-img none-992">
+          <div class="information">
+            <h3>高效研发从现在开始</h3>
+            <p>面向开发者设计的高可用 CI/CD：Zadig 强大的云原生多环境能力，轻松实现本地联调、微服务并行构建、集成测试和持续部署。</p>
+          </div>
         </div>
       </div>
     </div>
     <footer>
-      <span>
+      <div class="copyright">
         筑栈（上海）信息技术有限公司 KodeRover ©{{moment().format('YYYY')}}
         <el-tooltip>
           <div slot="content">
@@ -48,7 +52,7 @@
           </div>
           <span v-if="processEnv && processEnv.BUILD_TIME" class="el-icon-info"></span>
         </el-tooltip>
-      </span>
+      </div>
     </footer>
   </div>
 </template>
@@ -96,117 +100,127 @@ export default {
 @import url('~@assets/css/quote/bootstarp.less');
 
 .pure-login {
-  position: relative;
+  .information {
+    margin: 0 20px 0 70px;
+    color: #fff;
 
-  .container-fluid {
-    display: flex;
-    height: 100%;
-    padding: 0;
-
-    .form-section {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      padding: 30px 30px -20px;
-
-      .login-inner-form {
-        width: 100%;
-        max-width: 350px;
-        color: #717171;
-        font-size: 15px;
-
-        header {
-          text-align: center;
-
-          img {
-            height: 60px;
-          }
-        }
-
-        section {
-          /deep/.el-form {
-            .el-form-item__label {
-              color: #717171;
-            }
-
-            .el-form-item {
-              margin-bottom: 18px;
-            }
-
-            .el-input {
-              .el-input__inner {
-                border-radius: 0.25rem;
-              }
-            }
-          }
-
-          .btn-md {
-            width: 100%;
-            margin-bottom: 8px;
-            padding: 12px 30px 11px 30px;
-            color: #fff;
-            font-weight: 400;
-            font-size: 14px;
-            letter-spacing: 1px;
-            background: @themeColor;
-            border: none;
-            border-radius: 0.25rem;
-            cursor: pointer;
-
-            &:hover {
-              background: #0066ffc2;
-            }
-          }
-        }
-      }
+    h3 {
+      margin-bottom: 20px;
+      color: #fff;
+      font-size: 25px;
     }
 
-    .bg-img {
-      position: relative;
-      top: 0;
-      bottom: 0;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    p {
+      margin-bottom: 20px;
+      color: #fff;
+      line-height: 28px;
+    }
+  }
+
+  .form-section {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 30px;
+    text-align: center;
+
+    .login-inner-form {
       width: 100%;
-      min-height: 100vh;
-      padding: 30px 30px;
-      text-align: left;
-      background:
-        rgba(0, 0, 0, 0.04) url('~@assets/background/login.jpg') top
-        left repeat;
-      background-size: cover;
-      border-radius: 100% 0 0 100%;
-      opacity: 1;
+      max-width: 350px;
+      color: #717171;
+      text-align: center;
 
-      .information {
-        margin: 0 20px 0 70px;
-        color: #fff;
+      .details {
+        font-size: 15px;
 
-        h3 {
-          margin-bottom: 20px;
-          font-size: 25px;
+        img {
+          height: 60px;
         }
 
-        p {
-          margin-bottom: 20px;
-          line-height: 28px;
+        .btn-md {
+          padding: 12px 30px 11px 30px;
+          font-weight: 400;
+          font-size: 14px;
+          letter-spacing: 1px;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        /deep/ .el-form-item {
+          margin-bottom: 18px;
+        }
+
+        /deep/ .el-input {
+          .el-input__inner {
+            border-radius: 0.25rem;
+          }
+        }
+
+        /deep/ .el-form-item__label {
+          color: #717171;
+        }
+
+        button:focus {
+          outline: none;
+          outline: 0 auto -webkit-focus-ring-color;
+        }
+
+        .btn-theme {
+          color: #fff;
+          background: @themeColor;
+          border: none;
+          border-radius: 0.25rem;
+        }
+
+        .btn-theme.focus,
+        .btn-theme:focus {
+          box-shadow: none;
+        }
+
+        .btn-theme:hover {
+          background: #0066ffc2;
+        }
+
+        .login-btn {
+          margin-bottom: 8px;
         }
       }
     }
   }
 
+  .bg-img {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 30px;
+    text-align: left;
+    background:
+      rgba(0, 0, 0, 0.04) url('~@assets/background/login.jpg') top
+      left repeat;
+    background-size: cover;
+    border-radius: 100% 0 0 100%;
+    opacity: 1;
+  }
+
   footer {
-    position: absolute;
-    right: 0;
-    bottom: 30px;
-    left: 0;
-    color: #8f9bb2;
-    font-size: 14px;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+
+    .copyright {
+      position: absolute;
+      bottom: 0;
+      margin-bottom: 30px;
+      color: #8f9bb2;
+      font-size: 14px;
+    }
   }
 }
 

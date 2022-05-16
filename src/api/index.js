@@ -1012,8 +1012,8 @@ export function queryJenkinsParams (id, jobName) {
   return http.get(`/api/aslan/system/jenkins/buildArgs/${id}/${jobName}`)
 }
 // Sonar
-export function querySonarAPI (key) {
-  return http.get(`/api/aslan/system/sonar/integration?encryptedKey=${key}`)
+export function querySonarAPI (key, projectName = '') {
+  return http.get(`/api/aslan/system/sonar/integration?encryptedKey=${key}&projectName=${projectName}`)
 }
 
 export function addSonarAPI (payload) {

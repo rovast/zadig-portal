@@ -741,10 +741,10 @@ export function getTestReportAPI (projectName, workflowName, taskID, testJobName
 
 // Code Scanner
 export function createCodeScannerAPI (payload) {
-  return http.post(`/api/aslan/testing/scanning?projectName=${payload.product_name}`, payload)
+  return http.post(`/api/aslan/testing/scanning?projectName=${payload.project_name}`, payload)
 }
 export function updateCodeScannerAPI (id, payload) {
-  return http.put(`/api/aslan/testing/scanning/${id}?projectName=${payload.product_name}`, payload)
+  return http.put(`/api/aslan/testing/scanning/${id}?projectName=${payload.project_name}`, payload)
 }
 
 export function getCodeScannerDetailAPI (id, projectName) {

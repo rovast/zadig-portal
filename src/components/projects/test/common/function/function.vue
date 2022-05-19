@@ -70,7 +70,7 @@ export default {
   },
   props: {
     basePath: {
-      request: true,
+      required: true,
       type: String
     }
   },
